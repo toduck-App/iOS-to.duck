@@ -15,6 +15,13 @@
 		16A24A5F2BFCD7A700B028A8 /* toduckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A5E2BFCD7A700B028A8 /* toduckTests.swift */; };
 		16A24A692BFCD7A700B028A8 /* toduckUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A682BFCD7A700B028A8 /* toduckUITests.swift */; };
 		16A24A6B2BFCD7A700B028A8 /* toduckUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A6A2BFCD7A700B028A8 /* toduckUITestsLaunchTests.swift */; };
+		16A24A792BFCE17600B028A8 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A782BFCE17600B028A8 /* OHHTTPStubs */; };
+		16A24A7B2BFCE17600B028A8 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A7A2BFCE17600B028A8 /* OHHTTPStubsSwift */; };
+		16A24A7E2BFCE19D00B028A8 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A7D2BFCE19D00B028A8 /* SnapKit */; };
+		16A24A812BFCE1AF00B028A8 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A802BFCE1AF00B028A8 /* Then */; };
+		16A24A842BFCE1CD00B028A8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A832BFCE1CD00B028A8 /* Kingfisher */; };
+		16A24A872BFCE23800B028A8 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A862BFCE23800B028A8 /* CombineMoya */; };
+		16A24A892BFCE23800B028A8 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A882BFCE23800B028A8 /* Moya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +61,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16A24A7E2BFCE19D00B028A8 /* SnapKit in Frameworks */,
+				16A24A792BFCE17600B028A8 /* OHHTTPStubs in Frameworks */,
+				16A24A872BFCE23800B028A8 /* CombineMoya in Frameworks */,
+				16A24A7B2BFCE17600B028A8 /* OHHTTPStubsSwift in Frameworks */,
+				16A24A812BFCE1AF00B028A8 /* Then in Frameworks */,
+				16A24A892BFCE23800B028A8 /* Moya in Frameworks */,
+				16A24A842BFCE1CD00B028A8 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +154,15 @@
 			dependencies = (
 			);
 			name = toduck;
+			packageProductDependencies = (
+				16A24A782BFCE17600B028A8 /* OHHTTPStubs */,
+				16A24A7A2BFCE17600B028A8 /* OHHTTPStubsSwift */,
+				16A24A7D2BFCE19D00B028A8 /* SnapKit */,
+				16A24A802BFCE1AF00B028A8 /* Then */,
+				16A24A832BFCE1CD00B028A8 /* Kingfisher */,
+				16A24A862BFCE23800B028A8 /* CombineMoya */,
+				16A24A882BFCE23800B028A8 /* Moya */,
+			);
 			productName = toduck;
 			productReference = 16A24A442BFCD7A500B028A8 /* toduck.app */;
 			productType = "com.apple.product-type.application";
@@ -212,6 +235,13 @@
 				Base,
 			);
 			mainGroup = 16A24A3B2BFCD7A500B028A8;
+			packageReferences = (
+				16A24A772BFCE17600B028A8 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
+				16A24A7C2BFCE19D00B028A8 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				16A24A7F2BFCE1AF00B028A8 /* XCRemoteSwiftPackageReference "Then" */,
+				16A24A822BFCE1CD00B028A8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				16A24A852BFCE23800B028A8 /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			productRefGroup = 16A24A452BFCD7A500B028A8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -607,6 +637,87 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		16A24A772BFCE17600B028A8 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/OHHTTPStubs";
+			requirement = {
+				kind = exactVersion;
+				version = 9.1.0;
+			};
+		};
+		16A24A7C2BFCE19D00B028A8 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 5.7.1;
+			};
+		};
+		16A24A7F2BFCE1AF00B028A8 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.0.0;
+			};
+		};
+		16A24A822BFCE1CD00B028A8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = exactVersion;
+				version = 7.11.0;
+			};
+		};
+		16A24A852BFCE23800B028A8 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = exactVersion;
+				version = 15.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		16A24A782BFCE17600B028A8 /* OHHTTPStubs */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A772BFCE17600B028A8 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */;
+			productName = OHHTTPStubs;
+		};
+		16A24A7A2BFCE17600B028A8 /* OHHTTPStubsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A772BFCE17600B028A8 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */;
+			productName = OHHTTPStubsSwift;
+		};
+		16A24A7D2BFCE19D00B028A8 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A7C2BFCE19D00B028A8 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		16A24A802BFCE1AF00B028A8 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A7F2BFCE1AF00B028A8 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+		16A24A832BFCE1CD00B028A8 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A822BFCE1CD00B028A8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		16A24A862BFCE23800B028A8 /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A852BFCE23800B028A8 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		16A24A882BFCE23800B028A8 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16A24A852BFCE23800B028A8 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 16A24A3C2BFCD7A500B028A8 /* Project object */;
 }
