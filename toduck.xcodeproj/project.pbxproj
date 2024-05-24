@@ -18,9 +18,9 @@
 		0E9542E82C00BAC600566A9D /* TempCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9542E72C00BAC600566A9D /* TempCommon.swift */; };
 		0E9542EA2C00BACE00566A9D /* TempDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9542E92C00BACE00566A9D /* TempDesign.swift */; };
 		0E9542ED2C00BBC600566A9D /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9542EC2C00BBC600566A9D /* Coordinator.swift */; };
+		0E9542EF2C00BE5900566A9D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E9542EE2C00BE5900566A9D /* Assets.xcassets */; };
 		16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A472BFCD7A500B028A8 /* AppDelegate.swift */; };
 		16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */; };
-		16A24A512BFCD7A700B028A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 16A24A502BFCD7A700B028A8 /* Assets.xcassets */; };
 		16A24A542BFCD7A700B028A8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 16A24A532BFCD7A700B028A8 /* Base */; };
 		16A24A5F2BFCD7A700B028A8 /* toduckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A5E2BFCD7A700B028A8 /* toduckTests.swift */; };
 		16A24A692BFCD7A700B028A8 /* toduckUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A682BFCD7A700B028A8 /* toduckUITests.swift */; };
@@ -63,10 +63,10 @@
 		0E9542E72C00BAC600566A9D /* TempCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempCommon.swift; sourceTree = "<group>"; };
 		0E9542E92C00BACE00566A9D /* TempDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDesign.swift; sourceTree = "<group>"; };
 		0E9542EC2C00BBC600566A9D /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		0E9542EE2C00BE5900566A9D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../../Documents/Assets.xcassets; sourceTree = "<group>"; };
 		16A24A442BFCD7A500B028A8 /* toduck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = toduck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16A24A472BFCD7A500B028A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		16A24A502BFCD7A700B028A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		16A24A532BFCD7A700B028A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		16A24A552BFCD7A700B028A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		16A24A5A2BFCD7A700B028A8 /* toduckTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = toduckTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,7 +121,7 @@
 		0E9542C82C00B93F00566A9D /* Resource */ = {
 			isa = PBXGroup;
 			children = (
-				16A24A502BFCD7A700B028A8 /* Assets.xcassets */,
+				0E9542EE2C00BE5900566A9D /* Assets.xcassets */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -424,7 +424,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16A24A512BFCD7A700B028A8 /* Assets.xcassets in Resources */,
+				0E9542EF2C00BE5900566A9D /* Assets.xcassets in Resources */,
 				16A24A542BFCD7A700B028A8 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
