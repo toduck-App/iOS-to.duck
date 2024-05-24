@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E1E24F32C00D09200955938 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E24F22C00D09200955938 /* Coordinator.swift */; };
+		0E1E24F72C00D0DA00955938 /* TempCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E24F62C00D0DA00955938 /* TempCommon.swift */; };
+		0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E24F82C00D0F700955938 /* TempDesign.swift */; };
+		0E1E25032C00D17200955938 /* Moya.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25022C00D17200955938 /* Moya.swift */; };
+		0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25042C00D1CA00955938 /* TempDTO.swift */; };
+		0E1E25072C00D1D200955938 /* TempRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25062C00D1D200955938 /* TempRepo.swift */; };
+		0E1E25092C00D1D800955938 /* TempService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25082C00D1D800955938 /* TempService.swift */; };
+		0E1E250B2C00D1E500955938 /* TempRP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250A2C00D1E500955938 /* TempRP.swift */; };
+		0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250C2C00D1ED00955938 /* TempError.swift */; };
+		0E1E250F2C00D1F300955938 /* TempUC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250E2C00D1F300955938 /* TempUC.swift */; };
+		0E1E25112C00D1FB00955938 /* TempEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25102C00D1FB00955938 /* TempEntity.swift */; };
 		16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A472BFCD7A500B028A8 /* AppDelegate.swift */; };
 		16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */; };
 		16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A4B2BFCD7A500B028A8 /* ViewController.swift */; };
@@ -42,13 +53,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E1E24F22C00D09200955938 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		0E1E24F62C00D0DA00955938 /* TempCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempCommon.swift; sourceTree = "<group>"; };
+		0E1E24F82C00D0F700955938 /* TempDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDesign.swift; sourceTree = "<group>"; };
+		0E1E25022C00D17200955938 /* Moya.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Moya.swift; sourceTree = "<group>"; };
+		0E1E25042C00D1CA00955938 /* TempDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDTO.swift; sourceTree = "<group>"; };
+		0E1E25062C00D1D200955938 /* TempRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempRepo.swift; sourceTree = "<group>"; };
+		0E1E25082C00D1D800955938 /* TempService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempService.swift; sourceTree = "<group>"; };
+		0E1E250A2C00D1E500955938 /* TempRP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempRP.swift; sourceTree = "<group>"; };
+		0E1E250C2C00D1ED00955938 /* TempError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempError.swift; sourceTree = "<group>"; };
+		0E1E250E2C00D1F300955938 /* TempUC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempUC.swift; sourceTree = "<group>"; };
+		0E1E25102C00D1FB00955938 /* TempEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempEntity.swift; sourceTree = "<group>"; };
 		16A24A442BFCD7A500B028A8 /* toduck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = toduck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16A24A472BFCD7A500B028A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		16A24A4B2BFCD7A500B028A8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		16A24A502BFCD7A700B028A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		16A24A502BFCD7A700B028A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = toduck/Resource/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		16A24A532BFCD7A700B028A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		16A24A552BFCD7A700B028A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		16A24A552BFCD7A700B028A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = toduck/App/Info.plist; sourceTree = SOURCE_ROOT; };
 		16A24A5A2BFCD7A700B028A8 /* toduckTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = toduckTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		16A24A5E2BFCD7A700B028A8 /* toduckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toduckTests.swift; sourceTree = "<group>"; };
 		16A24A642BFCD7A700B028A8 /* toduckUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = toduckUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +110,154 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E1E24EB2C00CFC400955938 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				16A24A472BFCD7A500B028A8 /* AppDelegate.swift */,
+				16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */,
+				16A24A552BFCD7A700B028A8 /* Info.plist */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		0E1E24EC2C00D04600955938 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				16A24A502BFCD7A700B028A8 /* Assets.xcassets */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		0E1E24ED2C00D04C00955938 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E24EE2C00D05700955938 /* Design */,
+				0E1E24EF2C00D05F00955938 /* Protocol */,
+				0E1E24F42C00D0C100955938 /* Presentation */,
+				0E1E24F12C00D06800955938 /* Domain */,
+				0E1E24F02C00D06400955938 /* Data */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		0E1E24EE2C00D05700955938 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E24F82C00D0F700955938 /* TempDesign.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		0E1E24EF2C00D05F00955938 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E24F22C00D09200955938 /* Coordinator.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		0E1E24F02C00D06400955938 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E25002C00D14600955938 /* DTO */,
+				0E1E24FF2C00D13C00955938 /* Network */,
+				0E1E24FE2C00D12B00955938 /* Repository */,
+				0E1E25012C00D14C00955938 /* Service */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		0E1E24F12C00D06800955938 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E24FD2C00D12500955938 /* Entity */,
+				0E1E24FC2C00D12000955938 /* Usecase */,
+				0E1E24FB2C00D11600955938 /* Error */,
+				0E1E24FA2C00D10700955938 /* RepositoryProtocol */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		0E1E24F42C00D0C100955938 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E24F52C00D0D000955938 /* Common */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		0E1E24F52C00D0D000955938 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E24F62C00D0DA00955938 /* TempCommon.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		0E1E24FA2C00D10700955938 /* RepositoryProtocol */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E250A2C00D1E500955938 /* TempRP.swift */,
+			);
+			path = RepositoryProtocol;
+			sourceTree = "<group>";
+		};
+		0E1E24FB2C00D11600955938 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E250C2C00D1ED00955938 /* TempError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
+		0E1E24FC2C00D12000955938 /* Usecase */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E250E2C00D1F300955938 /* TempUC.swift */,
+			);
+			path = Usecase;
+			sourceTree = "<group>";
+		};
+		0E1E24FD2C00D12500955938 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E25102C00D1FB00955938 /* TempEntity.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
+		0E1E24FE2C00D12B00955938 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E25062C00D1D200955938 /* TempRepo.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		0E1E24FF2C00D13C00955938 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E25022C00D17200955938 /* Moya.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		0E1E25002C00D14600955938 /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E25042C00D1CA00955938 /* TempDTO.swift */,
+			);
+			path = DTO;
+			sourceTree = "<group>";
+		};
+		0E1E25012C00D14C00955938 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				0E1E25082C00D1D800955938 /* TempService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		16A24A3B2BFCD7A500B028A8 = {
 			isa = PBXGroup;
 			children = (
@@ -111,12 +281,11 @@
 		16A24A462BFCD7A500B028A8 /* toduck */ = {
 			isa = PBXGroup;
 			children = (
-				16A24A472BFCD7A500B028A8 /* AppDelegate.swift */,
-				16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */,
+				0E1E24EB2C00CFC400955938 /* App */,
+				0E1E24EC2C00D04600955938 /* Resource */,
+				0E1E24ED2C00D04C00955938 /* Source */,
 				16A24A4B2BFCD7A500B028A8 /* ViewController.swift */,
-				16A24A502BFCD7A700B028A8 /* Assets.xcassets */,
 				16A24A522BFCD7A700B028A8 /* LaunchScreen.storyboard */,
-				16A24A552BFCD7A700B028A8 /* Info.plist */,
 			);
 			path = toduck;
 			sourceTree = "<group>";
@@ -284,8 +453,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E1E24F72C00D0DA00955938 /* TempCommon.swift in Sources */,
+				0E1E25072C00D1D200955938 /* TempRepo.swift in Sources */,
+				0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */,
+				0E1E250B2C00D1E500955938 /* TempRP.swift in Sources */,
+				0E1E25112C00D1FB00955938 /* TempEntity.swift in Sources */,
+				0E1E25032C00D17200955938 /* Moya.swift in Sources */,
+				0E1E250F2C00D1F300955938 /* TempUC.swift in Sources */,
+				0E1E24F32C00D09200955938 /* Coordinator.swift in Sources */,
 				16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */,
+				0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */,
+				0E1E25092C00D1D800955938 /* TempService.swift in Sources */,
 				16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */,
+				0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */,
 				16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -462,7 +642,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y6Z9S947T8;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = toduck/Info.plist;
+				INFOPLIST_FILE = toduck/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -496,7 +676,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y6Z9S947T8;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = toduck/Info.plist;
+				INFOPLIST_FILE = toduck/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
