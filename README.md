@@ -8,10 +8,11 @@
 * AutoLayout + Code base
 * MVVM + Coordinator + Clean Architecture
 * Combine
+* CI: XcodeCloud
 
 ### 🎁 Library
 
-| Name              |       |       |
+| Name              | Version    |       |
 | ----------------- | ----- | ----- |
 | SnapKit           | `5.7.1` | `SPM` |
 | Then              | `3.0.0` | `SPM` |
