@@ -10,27 +10,27 @@ import Foundation
 public final class ScheduleRepository: ScheduleRepositoryProtocol {
     
     public func fetchSchedule() async throws -> Schedule {
-        <#code#>
+        return Schedule(id: 1, title: "asd", isRepeating: false, alarm: false, isFinish: false)
     }
     
     public func fetchScheduleList() async throws -> [Schedule] {
-        <#code#>
+        return [Schedule(id: 1, title: "asd", isRepeating: false, alarm: false, isFinish: false)]
     }
     
     public func moveTomorrowSchedule(scheduleId: Int) async throws -> Bool {
-        <#code#>
+        return false
     }
     
     public func createSchedule(schedule: Schedule) async throws -> Bool {
-        <#code#>
+        return false
     }
     
     
     public func updateSchedule(scheduleId: Int) async throws -> Bool {
-        <#code#>
+        return false
     }
     
     public func deleteSchedule(scheduleId: Int) async throws -> Bool {
-        <#code#>
+        return false
     }
 }

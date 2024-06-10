@@ -9,22 +9,22 @@ import Foundation
 
 public final class RoutineRepository: RoutineRepositoryProtocol {
     public func fetchRoutineList() async throws -> [Routine] {
-        <#code#>
+        return [Routine(id: 1, title: "123", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)]
     }
     
     public func createRoutine(routine: Routine) async throws -> Bool {
-        <#code#>
+        return false
     }
     
     public func fetchRoutine() async throws -> Routine {
-        <#code#>
+        return Routine(id: 1, title: "123", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)
     }
     
     public func updateRoutine(routineId: Int) async throws -> Bool {
-        <#code#>
+        return false
     }
     
     public func deleteRoutine(routineId: Int) async throws -> Bool {
-        <#code#>
+        return false
     }
 }
