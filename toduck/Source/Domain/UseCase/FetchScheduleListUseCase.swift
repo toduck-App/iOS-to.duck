@@ -1,5 +1,5 @@
 //
-//  FetchScheduleUseCase.swift
+//  FetchScheduleListUseCase.swift
 //  toduck
 //
 //  Created by 박효준 on 6/6/24.
@@ -7,14 +7,14 @@
 
 import Foundation
 
-final class FetchScheduleListUseCase {
-    private let scheduleListRepository: ScheduleListRepositoryProtocol
+public final class FetchScheduleListUseCase {
+    private let scheduleListRepository: ScheduleRepositoryProtocol
     
-    init(scheduleListRepository: ScheduleListRepositoryProtocol) {
+    public init(scheduleListRepository: ScheduleRepositoryProtocol) {
         self.scheduleListRepository = scheduleListRepository
     }
     
-    func execute() async throws -> [Schedule] {
+    public func execute() async throws -> [Schedule] {
         return try await scheduleListRepository.fetchScheduleList()
     }
 }

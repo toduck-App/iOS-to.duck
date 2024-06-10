@@ -7,21 +7,30 @@
 
 import Foundation
 
-final class ScheduleRepository: ScheduleRepositoryProtocol {
-    func fetchSchedule() async throws -> Schedule {
+public final class ScheduleRepository: ScheduleRepositoryProtocol {
+    
+    public func fetchSchedule() async throws -> Schedule {
         <#code#>
     }
     
-    func updateSchedule(scheduleId: Int) async throws -> Bool {
+    public func fetchScheduleList() async throws -> [Schedule] {
         <#code#>
     }
     
-    func deleteSchedule(scheduleId: Int) async throws -> Bool {
+    public func moveTomorrowSchedule(scheduleId: Int) async throws -> Bool {
         <#code#>
     }
     
-    // 매개변수 수정
-    func createSchedule() async throws -> Bool {
+    public func createSchedule(schedule: Schedule) async throws -> Bool {
+        <#code#>
+    }
+    
+    
+    public func updateSchedule(scheduleId: Int) async throws -> Bool {
+        <#code#>
+    }
+    
+    public func deleteSchedule(scheduleId: Int) async throws -> Bool {
         <#code#>
     }
 }

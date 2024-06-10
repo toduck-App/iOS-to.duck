@@ -13,7 +13,7 @@ struct RecommendedRoutine: Hashable {
     let memo: String?
 }
 
-struct Routine: Hashable {
+public struct Routine: Hashable {
     let id: Int
     var title: String
     var category: String? // 일정의 이모티콘 아님

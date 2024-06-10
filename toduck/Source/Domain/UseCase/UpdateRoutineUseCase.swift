@@ -7,14 +7,14 @@
 
 import Foundation
 
-final class UpdateRoutineUseCase {
+public final class UpdateRoutineUseCase {
     private let routineRepository: RoutineRepositoryProtocol
     
-    init(routineRepository: RoutineRepositoryProtocol) {
+    public init(routineRepository: RoutineRepositoryProtocol) {
         self.routineRepository = routineRepository
     }
     
-    func execute(routineId: Int) async throws -> Bool {
+    public func execute(routineId: Int) async throws -> Bool {
         return try await routineRepository.updateRoutine(routineId: routineId)
     }
 }

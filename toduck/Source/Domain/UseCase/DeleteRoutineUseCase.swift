@@ -7,14 +7,14 @@
 
 import Foundation
 
-final class DeleteRoutineUseCase {
+public final class DeleteRoutineUseCase {
     private let routineRepository: RoutineRepositoryProtocol
     
-    init(routineRepository: RoutineRepositoryProtocol) {
+    public init(routineRepository: RoutineRepositoryProtocol) {
         self.routineRepository = routineRepository
     }
     
-    func execute(routineID: Int) async throws -> Bool {
+    public func execute(routineID: Int) async throws -> Bool {
         return try await routineRepository.deleteRoutine(routineId: routineID)
     }
 }

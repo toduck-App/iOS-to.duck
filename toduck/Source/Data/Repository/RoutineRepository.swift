@@ -7,26 +7,24 @@
 
 import Foundation
 
-final class RoutineRepository: RoutineRepositoryProtocol {
-    
-    func fetchRoutine() async throws -> Routine {
+public final class RoutineRepository: RoutineRepositoryProtocol {
+    public func fetchRoutineList() async throws -> [Routine] {
         <#code#>
     }
     
-    func updateRoutine(routineId: Int) async throws -> Bool {
+    public func createRoutine(routine: Routine) async throws -> Bool {
         <#code#>
     }
     
-    func deleteRoutine(routineId: Int) async throws -> Bool {
+    public func fetchRoutine() async throws -> Routine {
         <#code#>
     }
     
-    func moveTomorrowRoutine(routineId: Int) async throws -> Bool {
+    public func updateRoutine(routineId: Int) async throws -> Bool {
         <#code#>
     }
     
-    // 매개변수 수정
-    func createRoutine() async throws -> Bool {
-        return true
+    public func deleteRoutine(routineId: Int) async throws -> Bool {
+        <#code#>
     }
 }

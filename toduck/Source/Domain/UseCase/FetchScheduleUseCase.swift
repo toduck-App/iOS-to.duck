@@ -7,14 +7,14 @@
 
 import Foundation
 
-final class FetchScheduleUseCase {
+public final class FetchScheduleUseCase {
     private let scheduleRepository: ScheduleRepositoryProtocol
     
-    init(scheduleRepository: ScheduleRepositoryProtocol) {
+    public init(scheduleRepository: ScheduleRepositoryProtocol) {
         self.scheduleRepository = scheduleRepository
     }
     
-    func execute() async throws -> Schedule {
+    public func execute() async throws -> Schedule {
         return try await scheduleRepository.fetchSchedule()
     }
 }

@@ -22,7 +22,7 @@ enum AlarmTime: String, Codable, Hashable {
     case tenMinutesBefore = "10"
 }
 
-struct Schedule: Hashable {
+public struct Schedule: Hashable {
     let id: Int
     var title: String
     var categoryImage: CategoryImage?

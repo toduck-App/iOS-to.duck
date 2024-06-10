@@ -7,14 +7,14 @@
 
 import Foundation
 
-final class DeleteScheduleUseCase {
+public final class DeleteScheduleUseCase {
     private let scheduleRepository: ScheduleRepositoryProtocol
     
-    init(scheduleRepository: ScheduleRepositoryProtocol) {
+    public init(scheduleRepository: ScheduleRepositoryProtocol) {
         self.scheduleRepository = scheduleRepository
     }
     
-    func execute(scheduleId: Int) async throws -> Bool {
+    public func execute(scheduleId: Int) async throws -> Bool {
         return try await scheduleRepository.deleteSchedule(scheduleId: scheduleId)
     }
 }

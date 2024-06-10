@@ -7,14 +7,15 @@
 
 import Foundation
 
-final class FetchRoutineUseCase {
+public final class FetchRoutineUseCase {
     private let routineRepository: RoutineRepository
     
-    init(routineRepository: RoutineRepository) {
+    public init(routineRepository: RoutineRepository) {
         self.routineRepository = routineRepository
     }
     
-    func execute() async throws -> Routine {
+    public func execute() async throws -> Routine {
+        
         return try await routineRepository.fetchRoutine()
     }
 }
