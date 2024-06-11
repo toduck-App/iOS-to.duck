@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Focus: Hashable {
+public struct Focus : Hashable{
     public var focusPercent: Int
     public var focusTime: Time
     
