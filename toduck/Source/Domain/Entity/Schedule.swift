@@ -40,12 +40,12 @@ public struct Schedule: Hashable {
     func dateString() -> String? {
         guard let date = dateAndTime else { return nil }
         
-        return DateUtils.stringFromDate(date)
+        return Date.stringFromDate(date)
     }
     
     func timeString(use24HourFormat: Bool) -> String? {
         guard let time = dateAndTime else { return nil }
         
-        return DateUtils.stringFromTime(time, use24HourFormat: use24HourFormat)
+        return Date.stringFromTime(time, use24HourFormat: use24HourFormat)
     }
 }
