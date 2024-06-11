@@ -14,12 +14,11 @@
 		0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25042C00D1CA00955938 /* TempDTO.swift */; };
 		0E1E25092C00D1D800955938 /* TempService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25082C00D1D800955938 /* TempService.swift */; };
 		0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250C2C00D1ED00955938 /* TempError.swift */; };
+		0E5F11E42C18189600542C26 /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5F11E32C18189600542C26 /* Date+.swift */; };
 		0E83A6B62C09FA0400EB662B /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6B52C09FA0400EB662B /* Schedule.swift */; };
 		0E83A6B82C0A02F200EB662B /* Routine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6B72C0A02F200EB662B /* Routine.swift */; };
 		0E83A6BB2C0A0CAD00EB662B /* EmojiType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6BA2C0A0CAD00EB662B /* EmojiType.swift */; };
 		0E83A6BF2C0A162A00EB662B /* PomodoroTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */; };
-		0E83A6C22C0AD6F000EB662B /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6C12C0AD6F000EB662B /* Color+.swift */; };
-		0EB6A1392C10A2E3009A3301 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB6A1382C10A2E3009A3301 /* DateUtils.swift */; };
 		0EC109682C1188060028D38C /* FetchScheduleListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109672C1188060028D38C /* FetchScheduleListUseCase.swift */; };
 		0EC1096A2C11881E0028D38C /* DeleteScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109692C11881E0028D38C /* DeleteScheduleUseCase.swift */; };
 		0EC1096C2C11885F0028D38C /* UpdateScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC1096B2C11885F0028D38C /* UpdateScheduleUseCase.swift */; };
@@ -77,12 +76,11 @@
 		0E1E25042C00D1CA00955938 /* TempDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDTO.swift; sourceTree = "<group>"; };
 		0E1E25082C00D1D800955938 /* TempService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempService.swift; sourceTree = "<group>"; };
 		0E1E250C2C00D1ED00955938 /* TempError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempError.swift; sourceTree = "<group>"; };
+		0E5F11E32C18189600542C26 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
 		0E83A6B52C09FA0400EB662B /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		0E83A6B72C0A02F200EB662B /* Routine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routine.swift; sourceTree = "<group>"; };
 		0E83A6BA2C0A0CAD00EB662B /* EmojiType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiType.swift; sourceTree = "<group>"; };
 		0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroTimer.swift; sourceTree = "<group>"; };
-		0E83A6C12C0AD6F000EB662B /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
-		0EB6A1382C10A2E3009A3301 /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		0EC109672C1188060028D38C /* FetchScheduleListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchScheduleListUseCase.swift; sourceTree = "<group>"; };
 		0EC109692C11881E0028D38C /* DeleteScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteScheduleUseCase.swift; sourceTree = "<group>"; };
 		0EC1096B2C11885F0028D38C /* UpdateScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateScheduleUseCase.swift; sourceTree = "<group>"; };
@@ -271,7 +269,6 @@
 				0E83A6B52C09FA0400EB662B /* Schedule.swift */,
 				0E83A6B72C0A02F200EB662B /* Routine.swift */,
 				0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */,
-				0EB6A1382C10A2E3009A3301 /* DateUtils.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -320,7 +317,7 @@
 		0E83A6C02C0AD6DD00EB662B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				0E83A6C12C0AD6F000EB662B /* Color+.swift */,
+				0E5F11E32C18189600542C26 /* Date+.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -526,7 +523,6 @@
 				0EC109942C1228A00028D38C /* CreateScheduleUseCase.swift in Sources */,
 				0E1E24F72C00D0DA00955938 /* TempCommon.swift in Sources */,
 				0EC109962C122C960028D38C /* FetchScheduleUseCase.swift in Sources */,
-				0EB6A1392C10A2E3009A3301 /* DateUtils.swift in Sources */,
 				0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */,
 				0E83A6B62C09FA0400EB662B /* Schedule.swift in Sources */,
 				0E1E25032C00D17200955938 /* Moya.swift in Sources */,
@@ -535,8 +531,8 @@
 				0EC109902C12278F0028D38C /* FetchRoutineListUseCase.swift in Sources */,
 				0EC109862C1223690028D38C /* RoutineRepositoryProtocol.swift in Sources */,
 				16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */,
+				0E5F11E42C18189600542C26 /* Date+.swift in Sources */,
 				0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */,
-				0E83A6C22C0AD6F000EB662B /* Color+.swift in Sources */,
 				0EC109682C1188060028D38C /* FetchScheduleListUseCase.swift in Sources */,
 				0EC109782C1189300028D38C /* UpdateRoutineUseCase.swift in Sources */,
 				0E1E25092C00D1D800955938 /* TempService.swift in Sources */,
