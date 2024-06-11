@@ -12,12 +12,28 @@
 		0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E24F82C00D0F700955938 /* TempDesign.swift */; };
 		0E1E25032C00D17200955938 /* Moya.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25022C00D17200955938 /* Moya.swift */; };
 		0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25042C00D1CA00955938 /* TempDTO.swift */; };
-		0E1E25072C00D1D200955938 /* TempRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25062C00D1D200955938 /* TempRepo.swift */; };
 		0E1E25092C00D1D800955938 /* TempService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25082C00D1D800955938 /* TempService.swift */; };
-		0E1E250B2C00D1E500955938 /* TempRP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250A2C00D1E500955938 /* TempRP.swift */; };
 		0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250C2C00D1ED00955938 /* TempError.swift */; };
-		0E1E250F2C00D1F300955938 /* TempUC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250E2C00D1F300955938 /* TempUC.swift */; };
-		0E1E25112C00D1FB00955938 /* TempEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25102C00D1FB00955938 /* TempEntity.swift */; };
+		0E5F11E42C18189600542C26 /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5F11E32C18189600542C26 /* Date+.swift */; };
+		0E83A6B62C09FA0400EB662B /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6B52C09FA0400EB662B /* Schedule.swift */; };
+		0E83A6B82C0A02F200EB662B /* Routine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6B72C0A02F200EB662B /* Routine.swift */; };
+		0E83A6BB2C0A0CAD00EB662B /* EmojiType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6BA2C0A0CAD00EB662B /* EmojiType.swift */; };
+		0E83A6BF2C0A162A00EB662B /* PomodoroTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */; };
+		0EC109682C1188060028D38C /* FetchScheduleListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109672C1188060028D38C /* FetchScheduleListUseCase.swift */; };
+		0EC1096A2C11881E0028D38C /* DeleteScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109692C11881E0028D38C /* DeleteScheduleUseCase.swift */; };
+		0EC1096C2C11885F0028D38C /* UpdateScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC1096B2C11885F0028D38C /* UpdateScheduleUseCase.swift */; };
+		0EC109702C1188A50028D38C /* FetchRoutineUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC1096F2C1188A50028D38C /* FetchRoutineUseCase.swift */; };
+		0EC109782C1189300028D38C /* UpdateRoutineUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109772C1189300028D38C /* UpdateRoutineUseCase.swift */; };
+		0EC1097A2C1189380028D38C /* DeleteRoutineUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109792C1189380028D38C /* DeleteRoutineUseCase.swift */; };
+		0EC109842C12235C0028D38C /* ScheduleRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109832C12235C0028D38C /* ScheduleRepositoryProtocol.swift */; };
+		0EC109862C1223690028D38C /* RoutineRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109852C1223690028D38C /* RoutineRepositoryProtocol.swift */; };
+		0EC109882C1224240028D38C /* RoutineRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109872C1224240028D38C /* RoutineRepository.swift */; };
+		0EC1098E2C12265F0028D38C /* ScheduleRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC1098D2C12265F0028D38C /* ScheduleRepository.swift */; };
+		0EC109902C12278F0028D38C /* FetchRoutineListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC1098F2C12278F0028D38C /* FetchRoutineListUseCase.swift */; };
+		0EC109922C1227A20028D38C /* CreateRoutineUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109912C1227A20028D38C /* CreateRoutineUseCase.swift */; };
+		0EC109942C1228A00028D38C /* CreateScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109932C1228A00028D38C /* CreateScheduleUseCase.swift */; };
+		0EC109962C122C960028D38C /* FetchScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109952C122C960028D38C /* FetchScheduleUseCase.swift */; };
+		0EC109982C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC109972C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift */; };
 		16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A472BFCD7A500B028A8 /* AppDelegate.swift */; };
 		16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */; };
 		16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A4B2BFCD7A500B028A8 /* ViewController.swift */; };
@@ -58,12 +74,28 @@
 		0E1E24F82C00D0F700955938 /* TempDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDesign.swift; sourceTree = "<group>"; };
 		0E1E25022C00D17200955938 /* Moya.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Moya.swift; sourceTree = "<group>"; };
 		0E1E25042C00D1CA00955938 /* TempDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempDTO.swift; sourceTree = "<group>"; };
-		0E1E25062C00D1D200955938 /* TempRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempRepo.swift; sourceTree = "<group>"; };
 		0E1E25082C00D1D800955938 /* TempService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempService.swift; sourceTree = "<group>"; };
-		0E1E250A2C00D1E500955938 /* TempRP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempRP.swift; sourceTree = "<group>"; };
 		0E1E250C2C00D1ED00955938 /* TempError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempError.swift; sourceTree = "<group>"; };
-		0E1E250E2C00D1F300955938 /* TempUC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempUC.swift; sourceTree = "<group>"; };
-		0E1E25102C00D1FB00955938 /* TempEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempEntity.swift; sourceTree = "<group>"; };
+		0E5F11E32C18189600542C26 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
+		0E83A6B52C09FA0400EB662B /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
+		0E83A6B72C0A02F200EB662B /* Routine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routine.swift; sourceTree = "<group>"; };
+		0E83A6BA2C0A0CAD00EB662B /* EmojiType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiType.swift; sourceTree = "<group>"; };
+		0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroTimer.swift; sourceTree = "<group>"; };
+		0EC109672C1188060028D38C /* FetchScheduleListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchScheduleListUseCase.swift; sourceTree = "<group>"; };
+		0EC109692C11881E0028D38C /* DeleteScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteScheduleUseCase.swift; sourceTree = "<group>"; };
+		0EC1096B2C11885F0028D38C /* UpdateScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateScheduleUseCase.swift; sourceTree = "<group>"; };
+		0EC1096F2C1188A50028D38C /* FetchRoutineUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRoutineUseCase.swift; sourceTree = "<group>"; };
+		0EC109772C1189300028D38C /* UpdateRoutineUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoutineUseCase.swift; sourceTree = "<group>"; };
+		0EC109792C1189380028D38C /* DeleteRoutineUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteRoutineUseCase.swift; sourceTree = "<group>"; };
+		0EC109832C12235C0028D38C /* ScheduleRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleRepositoryProtocol.swift; sourceTree = "<group>"; };
+		0EC109852C1223690028D38C /* RoutineRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineRepositoryProtocol.swift; sourceTree = "<group>"; };
+		0EC109872C1224240028D38C /* RoutineRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineRepository.swift; sourceTree = "<group>"; };
+		0EC1098D2C12265F0028D38C /* ScheduleRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleRepository.swift; sourceTree = "<group>"; };
+		0EC1098F2C12278F0028D38C /* FetchRoutineListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRoutineListUseCase.swift; sourceTree = "<group>"; };
+		0EC109912C1227A20028D38C /* CreateRoutineUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRoutineUseCase.swift; sourceTree = "<group>"; };
+		0EC109932C1228A00028D38C /* CreateScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateScheduleUseCase.swift; sourceTree = "<group>"; };
+		0EC109952C122C960028D38C /* FetchScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchScheduleUseCase.swift; sourceTree = "<group>"; };
+		0EC109972C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveTomorrowScheduleUseCase.swift; sourceTree = "<group>"; };
 		16A24A442BFCD7A500B028A8 /* toduck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = toduck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16A24A472BFCD7A500B028A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -131,6 +163,7 @@
 		0E1E24ED2C00D04C00955938 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0E83A6C02C0AD6DD00EB662B /* Extension */,
 				0E1E24EE2C00D05700955938 /* Design */,
 				0E1E24EF2C00D05F00955938 /* Protocol */,
 				0E1E24F42C00D0C100955938 /* Presentation */,
@@ -171,9 +204,9 @@
 			isa = PBXGroup;
 			children = (
 				0E1E24FD2C00D12500955938 /* Entity */,
-				0E1E24FC2C00D12000955938 /* Usecase */,
 				0E1E24FB2C00D11600955938 /* Error */,
 				0E1E24FA2C00D10700955938 /* RepositoryProtocol */,
+				0E1E24FC2C00D12000955938 /* UseCase */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -197,7 +230,8 @@
 		0E1E24FA2C00D10700955938 /* RepositoryProtocol */ = {
 			isa = PBXGroup;
 			children = (
-				0E1E250A2C00D1E500955938 /* TempRP.swift */,
+				0EC109852C1223690028D38C /* RoutineRepositoryProtocol.swift */,
+				0EC109832C12235C0028D38C /* ScheduleRepositoryProtocol.swift */,
 			);
 			path = RepositoryProtocol;
 			sourceTree = "<group>";
@@ -210,18 +244,31 @@
 			path = Error;
 			sourceTree = "<group>";
 		};
-		0E1E24FC2C00D12000955938 /* Usecase */ = {
+		0E1E24FC2C00D12000955938 /* UseCase */ = {
 			isa = PBXGroup;
 			children = (
-				0E1E250E2C00D1F300955938 /* TempUC.swift */,
+				0EC109912C1227A20028D38C /* CreateRoutineUseCase.swift */,
+				0EC109932C1228A00028D38C /* CreateScheduleUseCase.swift */,
+				0EC109792C1189380028D38C /* DeleteRoutineUseCase.swift */,
+				0EC109692C11881E0028D38C /* DeleteScheduleUseCase.swift */,
+				0EC1098F2C12278F0028D38C /* FetchRoutineListUseCase.swift */,
+				0EC1096F2C1188A50028D38C /* FetchRoutineUseCase.swift */,
+				0EC109672C1188060028D38C /* FetchScheduleListUseCase.swift */,
+				0EC109952C122C960028D38C /* FetchScheduleUseCase.swift */,
+				0EC109972C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift */,
+				0EC109772C1189300028D38C /* UpdateRoutineUseCase.swift */,
+				0EC1096B2C11885F0028D38C /* UpdateScheduleUseCase.swift */,
 			);
-			path = Usecase;
+			path = UseCase;
 			sourceTree = "<group>";
 		};
 		0E1E24FD2C00D12500955938 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
-				0E1E25102C00D1FB00955938 /* TempEntity.swift */,
+				0E83A6B92C0A0C9A00EB662B /* Enum */,
+				0E83A6B52C09FA0400EB662B /* Schedule.swift */,
+				0E83A6B72C0A02F200EB662B /* Routine.swift */,
+				0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -229,7 +276,8 @@
 		0E1E24FE2C00D12B00955938 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-				0E1E25062C00D1D200955938 /* TempRepo.swift */,
+				0EC109872C1224240028D38C /* RoutineRepository.swift */,
+				0EC1098D2C12265F0028D38C /* ScheduleRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -256,6 +304,22 @@
 				0E1E25082C00D1D800955938 /* TempService.swift */,
 			);
 			path = Service;
+			sourceTree = "<group>";
+		};
+		0E83A6B92C0A0C9A00EB662B /* Enum */ = {
+			isa = PBXGroup;
+			children = (
+				0E83A6BA2C0A0CAD00EB662B /* EmojiType.swift */,
+			);
+			path = Enum;
+			sourceTree = "<group>";
+		};
+		0E83A6C02C0AD6DD00EB662B /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				0E5F11E32C18189600542C26 /* Date+.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		16A24A3B2BFCD7A500B028A8 = {
@@ -453,20 +517,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0EC1098E2C12265F0028D38C /* ScheduleRepository.swift in Sources */,
+				0E83A6BB2C0A0CAD00EB662B /* EmojiType.swift in Sources */,
+				0EC1096C2C11885F0028D38C /* UpdateScheduleUseCase.swift in Sources */,
+				0EC109942C1228A00028D38C /* CreateScheduleUseCase.swift in Sources */,
 				0E1E24F72C00D0DA00955938 /* TempCommon.swift in Sources */,
-				0E1E25072C00D1D200955938 /* TempRepo.swift in Sources */,
+				0EC109962C122C960028D38C /* FetchScheduleUseCase.swift in Sources */,
 				0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */,
-				0E1E250B2C00D1E500955938 /* TempRP.swift in Sources */,
-				0E1E25112C00D1FB00955938 /* TempEntity.swift in Sources */,
+				0E83A6B62C09FA0400EB662B /* Schedule.swift in Sources */,
 				0E1E25032C00D17200955938 /* Moya.swift in Sources */,
-				0E1E250F2C00D1F300955938 /* TempUC.swift in Sources */,
+				0EC1096A2C11881E0028D38C /* DeleteScheduleUseCase.swift in Sources */,
 				0E1E24F32C00D09200955938 /* Coordinator.swift in Sources */,
+				0EC109902C12278F0028D38C /* FetchRoutineListUseCase.swift in Sources */,
+				0EC109862C1223690028D38C /* RoutineRepositoryProtocol.swift in Sources */,
 				16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */,
+				0E5F11E42C18189600542C26 /* Date+.swift in Sources */,
 				0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */,
+				0EC109682C1188060028D38C /* FetchScheduleListUseCase.swift in Sources */,
+				0EC109782C1189300028D38C /* UpdateRoutineUseCase.swift in Sources */,
 				0E1E25092C00D1D800955938 /* TempService.swift in Sources */,
 				16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */,
+				0EC1097A2C1189380028D38C /* DeleteRoutineUseCase.swift in Sources */,
+				0EC109922C1227A20028D38C /* CreateRoutineUseCase.swift in Sources */,
 				0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */,
+				0E83A6BF2C0A162A00EB662B /* PomodoroTimer.swift in Sources */,
+				0EC109702C1188A50028D38C /* FetchRoutineUseCase.swift in Sources */,
+				0E83A6B82C0A02F200EB662B /* Routine.swift in Sources */,
+				0EC109982C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift in Sources */,
+				0EC109842C12235C0028D38C /* ScheduleRepositoryProtocol.swift in Sources */,
 				16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */,
+				0EC109882C1224240028D38C /* RoutineRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
