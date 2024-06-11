@@ -18,6 +18,8 @@
 		0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250C2C00D1ED00955938 /* TempError.swift */; };
 		0E1E250F2C00D1F300955938 /* TempUC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E250E2C00D1F300955938 /* TempUC.swift */; };
 		0E1E25112C00D1FB00955938 /* TempEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1E25102C00D1FB00955938 /* TempEntity.swift */; };
+		160500362C0DBE5E00FF226D /* Diary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160500352C0DBE5E00FF226D /* Diary.swift */; };
+		160500382C0DBE6800FF226D /* Focus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160500372C0DBE6700FF226D /* Focus.swift */; };
 		16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A472BFCD7A500B028A8 /* AppDelegate.swift */; };
 		16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */; };
 		16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A24A4B2BFCD7A500B028A8 /* ViewController.swift */; };
@@ -33,6 +35,12 @@
 		16A24A842BFCE1CD00B028A8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A832BFCE1CD00B028A8 /* Kingfisher */; };
 		16A24A872BFCE23800B028A8 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A862BFCE23800B028A8 /* CombineMoya */; };
 		16A24A892BFCE23800B028A8 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 16A24A882BFCE23800B028A8 /* Moya */; };
+		16FAD2842C16D59C00BF746A /* CreateDiaryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD2832C16D59C00BF746A /* CreateDiaryUseCase.swift */; };
+		16FAD2862C16D5AE00BF746A /* FetchDiaryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD2852C16D5AE00BF746A /* FetchDiaryUseCase.swift */; };
+		16FAD2882C16D5BF00BF746A /* UpdateDiaryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD2872C16D5BF00BF746A /* UpdateDiaryUseCase.swift */; };
+		16FAD28A2C16D5DB00BF746A /* DeleteDiaryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD2892C16D5DB00BF746A /* DeleteDiaryUseCase.swift */; };
+		16FAD28C2C16DBE600BF746A /* DiaryRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD28B2C16DBE600BF746A /* DiaryRepositoryProtocol.swift */; };
+		16FAD28E2C16DD3200BF746A /* DiaryRepositoryDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD28D2C16DD3200BF746A /* DiaryRepositoryDummy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +72,8 @@
 		0E1E250C2C00D1ED00955938 /* TempError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempError.swift; sourceTree = "<group>"; };
 		0E1E250E2C00D1F300955938 /* TempUC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempUC.swift; sourceTree = "<group>"; };
 		0E1E25102C00D1FB00955938 /* TempEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempEntity.swift; sourceTree = "<group>"; };
+		160500352C0DBE5E00FF226D /* Diary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diary.swift; sourceTree = "<group>"; };
+		160500372C0DBE6700FF226D /* Focus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Focus.swift; sourceTree = "<group>"; };
 		16A24A442BFCD7A500B028A8 /* toduck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = toduck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16A24A472BFCD7A500B028A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16A24A492BFCD7A500B028A8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +86,12 @@
 		16A24A642BFCD7A700B028A8 /* toduckUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = toduckUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		16A24A682BFCD7A700B028A8 /* toduckUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toduckUITests.swift; sourceTree = "<group>"; };
 		16A24A6A2BFCD7A700B028A8 /* toduckUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toduckUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		16FAD2832C16D59C00BF746A /* CreateDiaryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryUseCase.swift; sourceTree = "<group>"; };
+		16FAD2852C16D5AE00BF746A /* FetchDiaryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchDiaryUseCase.swift; sourceTree = "<group>"; };
+		16FAD2872C16D5BF00BF746A /* UpdateDiaryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateDiaryUseCase.swift; sourceTree = "<group>"; };
+		16FAD2892C16D5DB00BF746A /* DeleteDiaryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteDiaryUseCase.swift; sourceTree = "<group>"; };
+		16FAD28B2C16DBE600BF746A /* DiaryRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryRepositoryProtocol.swift; sourceTree = "<group>"; };
+		16FAD28D2C16DD3200BF746A /* DiaryRepositoryDummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryRepositoryDummy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				0E1E250A2C00D1E500955938 /* TempRP.swift */,
+				16FAD28B2C16DBE600BF746A /* DiaryRepositoryProtocol.swift */,
 			);
 			path = RepositoryProtocol;
 			sourceTree = "<group>";
@@ -214,6 +231,10 @@
 			isa = PBXGroup;
 			children = (
 				0E1E250E2C00D1F300955938 /* TempUC.swift */,
+				16FAD2832C16D59C00BF746A /* CreateDiaryUseCase.swift */,
+				16FAD2852C16D5AE00BF746A /* FetchDiaryUseCase.swift */,
+				16FAD2872C16D5BF00BF746A /* UpdateDiaryUseCase.swift */,
+				16FAD2892C16D5DB00BF746A /* DeleteDiaryUseCase.swift */,
 			);
 			path = Usecase;
 			sourceTree = "<group>";
@@ -222,6 +243,8 @@
 			isa = PBXGroup;
 			children = (
 				0E1E25102C00D1FB00955938 /* TempEntity.swift */,
+				160500352C0DBE5E00FF226D /* Diary.swift */,
+				160500372C0DBE6700FF226D /* Focus.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -230,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				0E1E25062C00D1D200955938 /* TempRepo.swift */,
+				16FAD28D2C16DD3200BF746A /* DiaryRepositoryDummy.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -454,16 +478,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				0E1E24F72C00D0DA00955938 /* TempCommon.swift in Sources */,
+				16FAD2882C16D5BF00BF746A /* UpdateDiaryUseCase.swift in Sources */,
 				0E1E25072C00D1D200955938 /* TempRepo.swift in Sources */,
 				0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */,
 				0E1E250B2C00D1E500955938 /* TempRP.swift in Sources */,
 				0E1E25112C00D1FB00955938 /* TempEntity.swift in Sources */,
 				0E1E25032C00D17200955938 /* Moya.swift in Sources */,
+				16FAD2842C16D59C00BF746A /* CreateDiaryUseCase.swift in Sources */,
+				160500382C0DBE6800FF226D /* Focus.swift in Sources */,
+				16FAD2862C16D5AE00BF746A /* FetchDiaryUseCase.swift in Sources */,
 				0E1E250F2C00D1F300955938 /* TempUC.swift in Sources */,
 				0E1E24F32C00D09200955938 /* Coordinator.swift in Sources */,
+				16FAD28C2C16DBE600BF746A /* DiaryRepositoryProtocol.swift in Sources */,
+				16FAD28A2C16D5DB00BF746A /* DeleteDiaryUseCase.swift in Sources */,
+				16FAD28E2C16DD3200BF746A /* DiaryRepositoryDummy.swift in Sources */,
 				16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */,
 				0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */,
 				0E1E25092C00D1D800955938 /* TempService.swift in Sources */,
+				160500362C0DBE5E00FF226D /* Diary.swift in Sources */,
 				16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */,
 				0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */,
 				16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */,
