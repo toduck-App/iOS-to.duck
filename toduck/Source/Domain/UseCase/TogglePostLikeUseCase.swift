@@ -8,13 +8,13 @@
 import Foundation
 
 public final class TogglePostLikeUseCase {
-    private let postRepository: PostRepositoryProtocol
+    private let repository: PostRepositoryProtocol
     
-    public init(postRepository: PostRepositoryProtocol) {
-        self.postRepository = postRepository
+    public init(repository: PostRepositoryProtocol) {
+        self.repository = repository
     }
     
     public func execute(post: Post) async throws -> Bool {
-        return try await postRepository.togglePostLike(postId: post.id)
+        return try await repository.togglePostLike(postId: post.id)
     }
 }   
