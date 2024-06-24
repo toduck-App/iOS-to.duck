@@ -58,6 +58,36 @@
 		16FAD28A2C16D5DB00BF746A /* DeleteDiaryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD2892C16D5DB00BF746A /* DeleteDiaryUseCase.swift */; };
 		16FAD28C2C16DBE600BF746A /* DiaryRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD28B2C16DBE600BF746A /* DiaryRepositoryProtocol.swift */; };
 		16FAD28E2C16DD3200BF746A /* DiaryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAD28D2C16DD3200BF746A /* DiaryRepository.swift */; };
+		2A2A49C22C1A0CBD00B21A7F /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49C12C1A0CBD00B21A7F /* Post.swift */; };
+		2A2A49C42C1A0CF000B21A7F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49C32C1A0CF000B21A7F /* User.swift */; };
+		2A2A49C62C1A118600B21A7F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49C52C1A118600B21A7F /* UserRepository.swift */; };
+		2A2A49C82C1A119300B21A7F /* CommentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49C72C1A119300B21A7F /* CommentRepository.swift */; };
+		2A2A49CA2C1A119D00B21A7F /* PostRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49C92C1A119D00B21A7F /* PostRepository.swift */; };
+		2A2A49CC2C1A122F00B21A7F /* UserRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49CB2C1A122F00B21A7F /* UserRepositoryProtocol.swift */; };
+		2A2A49CE2C1A13C300B21A7F /* PostRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2A49CD2C1A13C300B21A7F /* PostRepositoryProtocol.swift */; };
+		2A3FA5CC2C26E4B3000D15E6 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5CB2C26E4B3000D15E6 /* Comment.swift */; };
+		2A3FA5CE2C26E4E6000D15E6 /* CommentRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5CD2C26E4E6000D15E6 /* CommentRepositoryProtocol.swift */; };
+		2A3FA5D02C26E561000D15E6 /* FetchPostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5CF2C26E561000D15E6 /* FetchPostUseCase.swift */; };
+		2A3FA5D22C26E5B3000D15E6 /* CreatePostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5D12C26E5B3000D15E6 /* CreatePostUseCase.swift */; };
+		2A3FA5D42C26E5C2000D15E6 /* DeletePostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5D32C26E5C2000D15E6 /* DeletePostUseCase.swift */; };
+		2A3FA5D62C26E5D1000D15E6 /* UpdatePostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5D52C26E5D1000D15E6 /* UpdatePostUseCase.swift */; };
+		2A3FA5D82C26E5E2000D15E6 /* BlockPostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5D72C26E5E2000D15E6 /* BlockPostUseCase.swift */; };
+		2A3FA5DA2C26E5EF000D15E6 /* ReportPostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5D92C26E5EF000D15E6 /* ReportPostUseCase.swift */; };
+		2A3FA5DC2C26EA7F000D15E6 /* SearchPostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5DB2C26EA7F000D15E6 /* SearchPostUseCase.swift */; };
+		2A3FA5DF2C26F072000D15E6 /* TogglePostLikeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5DE2C26F072000D15E6 /* TogglePostLikeUseCase.swift */; };
+		2A3FA5E12C26F5F4000D15E6 /* FetchUserUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5E02C26F5F4000D15E6 /* FetchUserUseCase.swift */; };
+		2A3FA5E32C26F602000D15E6 /* FetchUserDetailUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5E22C26F602000D15E6 /* FetchUserDetailUseCase.swift */; };
+		2A3FA5E52C26F620000D15E6 /* FetchUserPostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5E42C26F620000D15E6 /* FetchUserPostUseCase.swift */; };
+		2A3FA5E72C26F62F000D15E6 /* FetchUserRoutineUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5E62C26F62F000D15E6 /* FetchUserRoutineUseCase.swift */; };
+		2A3FA5E92C26F66D000D15E6 /* ToggleUserFollowUserCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5E82C26F66D000D15E6 /* ToggleUserFollowUserCase.swift */; };
+		2A3FA5EB2C26F690000D15E6 /* FetchUserShareUrlUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5EA2C26F690000D15E6 /* FetchUserShareUrlUseCase.swift */; };
+		2A3FA5ED2C271285000D15E6 /* CreateCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5EC2C271285000D15E6 /* CreateCommentUseCase.swift */; };
+		2A3FA5EF2C271299000D15E6 /* UpdateCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5EE2C271299000D15E6 /* UpdateCommentUseCase.swift */; };
+		2A3FA5F12C2712A8000D15E6 /* DeleteCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5F02C2712A8000D15E6 /* DeleteCommentUseCase.swift */; };
+		2A3FA5F32C2712BA000D15E6 /* FetchCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5F22C2712BA000D15E6 /* FetchCommentUseCase.swift */; };
+		2A3FA5F52C2712CA000D15E6 /* ToggleCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5F42C2712CA000D15E6 /* ToggleCommentUseCase.swift */; };
+		2A3FA5F72C2712D9000D15E6 /* ReportCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5F62C2712D9000D15E6 /* ReportCommentUseCase.swift */; };
+		2A3FA5F92C2712E9000D15E6 /* BlockCommentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FA5F82C2712E9000D15E6 /* BlockCommentUseCase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +156,36 @@
 		16FAD2892C16D5DB00BF746A /* DeleteDiaryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteDiaryUseCase.swift; sourceTree = "<group>"; };
 		16FAD28B2C16DBE600BF746A /* DiaryRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryRepositoryProtocol.swift; sourceTree = "<group>"; };
 		16FAD28D2C16DD3200BF746A /* DiaryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryRepository.swift; sourceTree = "<group>"; };
+		2A2A49C12C1A0CBD00B21A7F /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		2A2A49C32C1A0CF000B21A7F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		2A2A49C52C1A118600B21A7F /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
+		2A2A49C72C1A119300B21A7F /* CommentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepository.swift; sourceTree = "<group>"; };
+		2A2A49C92C1A119D00B21A7F /* PostRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRepository.swift; sourceTree = "<group>"; };
+		2A2A49CB2C1A122F00B21A7F /* UserRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepositoryProtocol.swift; sourceTree = "<group>"; };
+		2A2A49CD2C1A13C300B21A7F /* PostRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRepositoryProtocol.swift; sourceTree = "<group>"; };
+		2A3FA5CB2C26E4B3000D15E6 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		2A3FA5CD2C26E4E6000D15E6 /* CommentRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepositoryProtocol.swift; sourceTree = "<group>"; };
+		2A3FA5CF2C26E561000D15E6 /* FetchPostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5D12C26E5B3000D15E6 /* CreatePostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5D32C26E5C2000D15E6 /* DeletePostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5D52C26E5D1000D15E6 /* UpdatePostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5D72C26E5E2000D15E6 /* BlockPostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockPostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5D92C26E5EF000D15E6 /* ReportPostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5DB2C26EA7F000D15E6 /* SearchPostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5DE2C26F072000D15E6 /* TogglePostLikeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglePostLikeUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5E02C26F5F4000D15E6 /* FetchUserUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5E22C26F602000D15E6 /* FetchUserDetailUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserDetailUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5E42C26F620000D15E6 /* FetchUserPostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserPostUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5E62C26F62F000D15E6 /* FetchUserRoutineUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserRoutineUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5E82C26F66D000D15E6 /* ToggleUserFollowUserCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleUserFollowUserCase.swift; sourceTree = "<group>"; };
+		2A3FA5EA2C26F690000D15E6 /* FetchUserShareUrlUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserShareUrlUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5EC2C271285000D15E6 /* CreateCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCommentUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5EE2C271299000D15E6 /* UpdateCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCommentUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5F02C2712A8000D15E6 /* DeleteCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteCommentUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5F22C2712BA000D15E6 /* FetchCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchCommentUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5F42C2712CA000D15E6 /* ToggleCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCommentUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5F62C2712D9000D15E6 /* ReportCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportCommentUseCase.swift; sourceTree = "<group>"; };
+		2A3FA5F82C2712E9000D15E6 /* BlockCommentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCommentUseCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,12 +241,12 @@
 		0E1E24ED2C00D04C00955938 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0E1E24F02C00D06400955938 /* Data */,
 				0E83A6C02C0AD6DD00EB662B /* Extension */,
 				0E1E24EE2C00D05700955938 /* Design */,
 				0E1E24EF2C00D05F00955938 /* Protocol */,
 				0E1E24F42C00D0C100955938 /* Presentation */,
 				0E1E24F12C00D06800955938 /* Domain */,
-				0E1E24F02C00D06400955938 /* Data */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -251,6 +311,9 @@
 				16FAD28B2C16DBE600BF746A /* DiaryRepositoryProtocol.swift */,
 				0EC109852C1223690028D38C /* RoutineRepositoryProtocol.swift */,
 				0EC109832C12235C0028D38C /* ScheduleRepositoryProtocol.swift */,
+				2A2A49CB2C1A122F00B21A7F /* UserRepositoryProtocol.swift */,
+				2A2A49CD2C1A13C300B21A7F /* PostRepositoryProtocol.swift */,
+				2A3FA5CD2C26E4E6000D15E6 /* CommentRepositoryProtocol.swift */,
 			);
 			path = RepositoryProtocol;
 			sourceTree = "<group>";
@@ -281,6 +344,27 @@
 				0EC109972C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift */,
 				0EC109772C1189300028D38C /* UpdateRoutineUseCase.swift */,
 				0EC1096B2C11885F0028D38C /* UpdateScheduleUseCase.swift */,
+				2A3FA5CF2C26E561000D15E6 /* FetchPostUseCase.swift */,
+				2A3FA5D12C26E5B3000D15E6 /* CreatePostUseCase.swift */,
+				2A3FA5D32C26E5C2000D15E6 /* DeletePostUseCase.swift */,
+				2A3FA5D52C26E5D1000D15E6 /* UpdatePostUseCase.swift */,
+				2A3FA5D72C26E5E2000D15E6 /* BlockPostUseCase.swift */,
+				2A3FA5D92C26E5EF000D15E6 /* ReportPostUseCase.swift */,
+				2A3FA5DB2C26EA7F000D15E6 /* SearchPostUseCase.swift */,
+				2A3FA5DE2C26F072000D15E6 /* TogglePostLikeUseCase.swift */,
+				2A3FA5E02C26F5F4000D15E6 /* FetchUserUseCase.swift */,
+				2A3FA5E22C26F602000D15E6 /* FetchUserDetailUseCase.swift */,
+				2A3FA5E42C26F620000D15E6 /* FetchUserPostUseCase.swift */,
+				2A3FA5E62C26F62F000D15E6 /* FetchUserRoutineUseCase.swift */,
+				2A3FA5E82C26F66D000D15E6 /* ToggleUserFollowUserCase.swift */,
+				2A3FA5EA2C26F690000D15E6 /* FetchUserShareUrlUseCase.swift */,
+				2A3FA5EC2C271285000D15E6 /* CreateCommentUseCase.swift */,
+				2A3FA5EE2C271299000D15E6 /* UpdateCommentUseCase.swift */,
+				2A3FA5F02C2712A8000D15E6 /* DeleteCommentUseCase.swift */,
+				2A3FA5F22C2712BA000D15E6 /* FetchCommentUseCase.swift */,
+				2A3FA5F42C2712CA000D15E6 /* ToggleCommentUseCase.swift */,
+				2A3FA5F62C2712D9000D15E6 /* ReportCommentUseCase.swift */,
+				2A3FA5F82C2712E9000D15E6 /* BlockCommentUseCase.swift */,
 			);
 			path = UseCase;
 			sourceTree = "<group>";
@@ -290,10 +374,13 @@
 			children = (
 				160500352C0DBE5E00FF226D /* Diary.swift */,
 				160500372C0DBE6700FF226D /* Focus.swift */,
+				2A2A49C32C1A0CF000B21A7F /* User.swift */,
 				0E83A6B92C0A0C9A00EB662B /* Enum */,
 				0E83A6B52C09FA0400EB662B /* Schedule.swift */,
 				0E83A6B72C0A02F200EB662B /* Routine.swift */,
 				0E83A6BE2C0A162A00EB662B /* PomodoroTimer.swift */,
+				2A2A49C12C1A0CBD00B21A7F /* Post.swift */,
+				2A3FA5CB2C26E4B3000D15E6 /* Comment.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -304,6 +391,9 @@
 				16FAD28D2C16DD3200BF746A /* DiaryRepository.swift */,
 				0EC109872C1224240028D38C /* RoutineRepository.swift */,
 				0EC1098D2C12265F0028D38C /* ScheduleRepository.swift */,
+				2A2A49C52C1A118600B21A7F /* UserRepository.swift */,
+				2A2A49C72C1A119300B21A7F /* CommentRepository.swift */,
+				2A2A49C92C1A119D00B21A7F /* PostRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -545,12 +635,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				0EC1098E2C12265F0028D38C /* ScheduleRepository.swift in Sources */,
+				2A3FA5E52C26F620000D15E6 /* FetchUserPostUseCase.swift in Sources */,
+				2A3FA5D22C26E5B3000D15E6 /* CreatePostUseCase.swift in Sources */,
 				0E83A6BB2C0A0CAD00EB662B /* EmojiType.swift in Sources */,
+				2A3FA5CE2C26E4E6000D15E6 /* CommentRepositoryProtocol.swift in Sources */,
+				2A3FA5ED2C271285000D15E6 /* CreateCommentUseCase.swift in Sources */,
 				0EC1096C2C11885F0028D38C /* UpdateScheduleUseCase.swift in Sources */,
 				0EC109942C1228A00028D38C /* CreateScheduleUseCase.swift in Sources */,
+				2A3FA5DF2C26F072000D15E6 /* TogglePostLikeUseCase.swift in Sources */,
 				0E1E24F72C00D0DA00955938 /* TempCommon.swift in Sources */,
+				2A2A49CE2C1A13C300B21A7F /* PostRepositoryProtocol.swift in Sources */,
+				2A3FA5D42C26E5C2000D15E6 /* DeletePostUseCase.swift in Sources */,
 				16FAD2882C16D5BF00BF746A /* UpdateDiaryUseCase.swift in Sources */,
 				0EC109962C122C960028D38C /* FetchScheduleUseCase.swift in Sources */,
+				2A3FA5DA2C26E5EF000D15E6 /* ReportPostUseCase.swift in Sources */,
+				2A3FA5F72C2712D9000D15E6 /* ReportCommentUseCase.swift in Sources */,
+				2A3FA5EB2C26F690000D15E6 /* FetchUserShareUrlUseCase.swift in Sources */,
 				0E1E24F92C00D0F700955938 /* TempDesign.swift in Sources */,
 				0E83A6B62C09FA0400EB662B /* Schedule.swift in Sources */,
 				0E1E25032C00D17200955938 /* Moya.swift in Sources */,
@@ -564,24 +664,44 @@
 				16FAD28E2C16DD3200BF746A /* DiaryRepository.swift in Sources */,
 				0EC1096A2C11881E0028D38C /* DeleteScheduleUseCase.swift in Sources */,
 				0E1E24F32C00D09200955938 /* Coordinator.swift in Sources */,
+				2A3FA5D62C26E5D1000D15E6 /* UpdatePostUseCase.swift in Sources */,
+				2A2A49C42C1A0CF000B21A7F /* User.swift in Sources */,
 				0EC109902C12278F0028D38C /* FetchRoutineListUseCase.swift in Sources */,
+				2A3FA5E32C26F602000D15E6 /* FetchUserDetailUseCase.swift in Sources */,
 				0EC109862C1223690028D38C /* RoutineRepositoryProtocol.swift in Sources */,
+				2A3FA5E92C26F66D000D15E6 /* ToggleUserFollowUserCase.swift in Sources */,
 				16A24A4C2BFCD7A500B028A8 /* ViewController.swift in Sources */,
 				0E5F11E42C18189600542C26 /* Date+.swift in Sources */,
+				2A3FA5EF2C271299000D15E6 /* UpdateCommentUseCase.swift in Sources */,
 				0E1E25052C00D1CA00955938 /* TempDTO.swift in Sources */,
+				2A3FA5E12C26F5F4000D15E6 /* FetchUserUseCase.swift in Sources */,
 				0EC109682C1188060028D38C /* FetchScheduleListUseCase.swift in Sources */,
 				0EC109782C1189300028D38C /* UpdateRoutineUseCase.swift in Sources */,
+				2A3FA5F12C2712A8000D15E6 /* DeleteCommentUseCase.swift in Sources */,
+				2A2A49C62C1A118600B21A7F /* UserRepository.swift in Sources */,
 				0E1E25092C00D1D800955938 /* TempService.swift in Sources */,
 				160500362C0DBE5E00FF226D /* Diary.swift in Sources */,
 				16A24A482BFCD7A500B028A8 /* AppDelegate.swift in Sources */,
 				0EC1097A2C1189380028D38C /* DeleteRoutineUseCase.swift in Sources */,
 				0EC109922C1227A20028D38C /* CreateRoutineUseCase.swift in Sources */,
+				2A2A49C22C1A0CBD00B21A7F /* Post.swift in Sources */,
+				2A3FA5F92C2712E9000D15E6 /* BlockCommentUseCase.swift in Sources */,
 				0E1E250D2C00D1ED00955938 /* TempError.swift in Sources */,
 				0E83A6BF2C0A162A00EB662B /* PomodoroTimer.swift in Sources */,
 				0EC109702C1188A50028D38C /* FetchRoutineUseCase.swift in Sources */,
+				2A3FA5D82C26E5E2000D15E6 /* BlockPostUseCase.swift in Sources */,
+				2A2A49C82C1A119300B21A7F /* CommentRepository.swift in Sources */,
+				2A3FA5F52C2712CA000D15E6 /* ToggleCommentUseCase.swift in Sources */,
+				2A2A49CA2C1A119D00B21A7F /* PostRepository.swift in Sources */,
+				2A3FA5DC2C26EA7F000D15E6 /* SearchPostUseCase.swift in Sources */,
 				0E83A6B82C0A02F200EB662B /* Routine.swift in Sources */,
+				2A3FA5E72C26F62F000D15E6 /* FetchUserRoutineUseCase.swift in Sources */,
 				0EC109982C122CFB0028D38C /* MoveTomorrowScheduleUseCase.swift in Sources */,
+				2A3FA5D02C26E561000D15E6 /* FetchPostUseCase.swift in Sources */,
+				2A3FA5CC2C26E4B3000D15E6 /* Comment.swift in Sources */,
+				2A2A49CC2C1A122F00B21A7F /* UserRepositoryProtocol.swift in Sources */,
 				0EC109842C12235C0028D38C /* ScheduleRepositoryProtocol.swift in Sources */,
+				2A3FA5F32C2712BA000D15E6 /* FetchCommentUseCase.swift in Sources */,
 				16A24A4A2BFCD7A500B028A8 /* SceneDelegate.swift in Sources */,
 				0EC109882C1224240028D38C /* RoutineRepository.swift in Sources */,
 			);
