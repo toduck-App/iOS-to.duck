@@ -1,20 +1,16 @@
 import ProjectDescription
 
 let dependencies: [TargetDependency] = [
-    .external(name: "Alamofire",condition: nil),
-    .external(name: "SnapKit",condition: nil),
-    .external(name: "Kingfisher",condition: nil),
-    .external(name: "Moya",condition: nil),
-    .external(name: "Then",condition: nil),
+    
 ]
 
 let targets: [Target] = [
     .target(
         name: "toduck",
-        destinations: .iOS,
+        destinations: [.iPhone],
         product: .app,
         bundleId: "to.duck.toduck",
-        infoPlist: .dictionary([
+        infoPlist: .extendingDefault(with: [
             "CFBundleIdentifier": "to.duck.toduck",
             "CFBundleVersion": "1.0",
             "CFBundleShortVersionString": "1.0",
@@ -36,8 +32,13 @@ let targets: [Target] = [
             ]
         ]),
         sources: ["toduck/**"],
-//          resources: ["toduck/Resources/**"],
-        dependencies: dependencies
+        //          resources: ["toduck/Resources/**"],
+        dependencies: [
+            .external(name: "Alamofire"),
+            .external(name: "SnapKit"),
+            .external(name: "Kingfisher"),
+            .external(name: "Moya"),
+            .external(name: "Then")]
     )
 ]
 
