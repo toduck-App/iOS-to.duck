@@ -3,7 +3,7 @@ import ProjectDescription
 let dependencies: [TargetDependency] = [
     .external(name: "Alamofire",condition: nil),
     .external(name: "SnapKit",condition: nil),
-    .external(name: "Kingfisher",condition: nil),
+//    .external(name: "Kingfisher",condition: nil),
     .external(name: "Moya",condition: nil),
     .external(name: "Then",condition: nil),
 ]
