@@ -1,6 +1,5 @@
 #!/bin/sh
 echo "install"
 curl https://mise.jdx.dev/install.sh | sh
-mise install # Installs the version from .mise.toml
-
+mise install 
 mise x tuist generate
