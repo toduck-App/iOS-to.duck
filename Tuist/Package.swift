@@ -17,7 +17,7 @@ let package = Package(
     dependencies: [
             .package(url: "https://github.com/Alamofire/Alamofire", from: "5.0.0"),
             .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.7.1"),
-//            .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.11.0"),
+            .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.11.0"),
             .package(url: "https://github.com/Moya/Moya.git", from: "15.0.3"),
             .package(url: "https://github.com/devxoul/Then.git", from: "3.0.0")
         ]
