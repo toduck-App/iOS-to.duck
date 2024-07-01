@@ -1,9 +1,5 @@
 import ProjectDescription
 
-let dependencies: [TargetDependency] = [
-    
-]
-
 let targets: [Target] = [
     .target(
         name: "toduck",
