@@ -2,11 +2,10 @@
 echo "installing Tuist.."
 
 brew tap tuist/tuist
-brew install tuist
 brew install tuist@4.18.0
 
 echo "installed Tuist"
-cd..
+cd ..
 tuist clean
 tuist install
 tuist generate
