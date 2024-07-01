@@ -1,6 +1,8 @@
 // tuist_install.sh파일
 #!/bin/sh
 
+echo "tuist started..."
+
 curl -Ls https://install.tuist.io | bash
 
 echo "tuist install..."
