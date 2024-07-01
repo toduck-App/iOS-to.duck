@@ -41,6 +41,9 @@ PROJECT_DIR="${WORKSPACE_DIR}/${PROJECT_DIR_NAME}/${PROJECT_NAME}"
 echo "- Project Directory: ${PROJECT_DIR}"
 echo "------------------------------------------------------------------"
 
+echo "node install ... "
+mise use --global node@20
+
 echo "\n[1] > mise install and use tuist ...\n"
 mise install tuist@4.18.0
 mise use -g tuist@4.18.0
