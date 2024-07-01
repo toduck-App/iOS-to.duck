@@ -1,10 +1,10 @@
 import ProjectDescription
 
 let dependencies: [TargetDependency] = [
-    .external(name: "alamofire",condition: nil),
-    .external(name: "snapkit",condition: nil),
+    .external(name: "Alamofire",condition: nil),
+    .external(name: "SnapKit",condition: nil),
     .external(name: "kingfisher",condition: nil),
-    .external(name: "moya",condition: nil),
+    .external(name: "Moya",condition: nil),
     .external(name: "then",condition: nil),
 ]
 
