@@ -1,6 +1,12 @@
 #!/bin/sh
-# Tuist 설치 확인 및 설치
-brew install tuist@4.18.0
+echo "installing Tuist.."
+
+brew tap tuist/tuist
+brew install tuist
+brew install tuist@x.y.z
+
+echo "installed Tuist"
 
 tuist clean
+tuist install
 tuist generate
