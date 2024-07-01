@@ -8,4 +8,4 @@ echo "installed Tuist"
 cd ..
 tuist clean
 tuist install
-tuist generate
+tuist generate --no-binary-cache
