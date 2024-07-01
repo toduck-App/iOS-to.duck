@@ -5,7 +5,7 @@ echo "installed Tuist.."
 
 cd ..
 echo ".."
-tuist clean
+tuist clean plugins binaries
 echo "cleaned"
 tuist install
 echo "installed Tuist"
