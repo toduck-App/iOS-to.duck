@@ -13,9 +13,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .yellow
         print("Debug2")
-        // Do any additional setup after loading the view.
     }
-
-
 }
 
