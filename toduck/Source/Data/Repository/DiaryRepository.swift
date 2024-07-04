@@ -26,7 +26,7 @@ public final class DiaryRepositoryDummy: DiaryRepositoryProtocol {
     }
     
     public func addDiary(diary: Diary) async throws -> Diary {
-        var newDiary = diary
+        let newDiary = diary
         diaries.append(newDiary)
         return newDiary
     }
