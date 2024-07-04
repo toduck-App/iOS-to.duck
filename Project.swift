@@ -28,7 +28,7 @@ let targets: [Target] = [
             ]
         ]),
         sources: ["toduck/**"],
-        //resources: ["toduck/Resources/**"],
+        resources: ["toduck/Resources/**"],
         dependencies: [
             .external(name: "Alamofire"),
             .external(name: "SnapKit"),
