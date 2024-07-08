@@ -16,7 +16,9 @@ echo "tuist installing"
 tuist install
 
 # *.xcconfig 파일이 생성될 폴더 경로
-FOLDER_PATH="/Volumes/workspace/repository/iOS-to.duck/Configurations"
+FOLDER_PATH="/Volumes/workspace/repository/Configurations"
+# 폴더가 없으면 생성
+mkdir -p "$FOLDER_PATH"
 # *.xcconfig 파일 이름
 DEBUG_CONFIG_FILENAME="Debug.xcconfig"
 RELEASE_CONFIG_FILENAME="Release.xcconfig"
