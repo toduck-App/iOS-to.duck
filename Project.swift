@@ -26,7 +26,7 @@ let targets: [Target] = [
                 "UIColorName": "",
                 "UIImageName": ""
             ],
-            "BASE_API_URL": "https://$(SERVER_URL)"
+            "SERVER_URL": "https://$(SERVER_URL)"
         ]),
         sources: ["toduck/**"],
         resources: ["toduck/Resources/**"],
