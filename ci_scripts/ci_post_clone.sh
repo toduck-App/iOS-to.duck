@@ -49,7 +49,12 @@ echo "Updating $RELEASE_CONFIG_FILE_PATH..."
     echo "PRODUCT_BUNDLE_IDENTIFIER = $PRODUCT_BUNDLE_IDENTIFIER"
     echo "PRODUCT_NAME = toduck"
 } >> "$RELEASE_CONFIG_FILE_PATH"
-cat $DEBUG_CONFIG_FILE
+
+echo "=================================================================="
+echo "CONFIG FILE >>"
+cat $DEBUG_CONFIG_FILE_PATH
+echo "=================================================================="
+
 echo "tuist generating"
 tuist generate --no-binary-cache
 echo "=================================================================="
