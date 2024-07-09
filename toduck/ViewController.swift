@@ -12,7 +12,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .yellow
-        print("Debug2")
+        if let baseUrl = Bundle.main.infoDictionary?["SERVER_URL"] as? String {
+            print("Base API URL: \(baseUrl)")
+        }
     }
 }
 

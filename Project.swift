@@ -25,7 +25,8 @@ let targets: [Target] = [
             "UILaunchScreen": [
                 "UIColorName": "",
                 "UIImageName": ""
-            ]
+            ],
+            "SERVER_URL": "https://$(SERVER_URL)"
         ]),
         sources: ["toduck/**"],
         resources: ["toduck/Resources/**"],
@@ -34,7 +35,11 @@ let targets: [Target] = [
             .external(name: "SnapKit"),
             .external(name: "Kingfisher"),
             .external(name: "Moya"),
-            .external(name: "Then")]
+            .external(name: "Then")],
+        settings: .settings(configurations: [
+            .debug(name: "Debug", xcconfig: "Configurations/Debug.xcconfig"),
+            .release(name: "Release", xcconfig: "Configurations/Release.xcconfig")
+        ])
     )
 ]
 
@@ -43,7 +48,3 @@ let project = Project(
     settings: .settings(defaultSettings: .recommended),
     targets: targets
 )
-
-
-
-
