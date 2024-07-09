@@ -30,5 +30,8 @@ class ViewController: UIViewController {
             label.widthAnchor.constraint(equalToConstant: 300),
             label.heightAnchor.constraint(equalToConstant: 100)
         ])
+        if let baseUrl = Bundle.main.infoDictionary?["SERVER_URL"] as? String {
+            print("Base API URL: \(baseUrl)")
+        }
     }
 }
