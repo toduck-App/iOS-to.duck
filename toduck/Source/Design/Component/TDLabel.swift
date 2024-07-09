@@ -18,9 +18,9 @@ final class TDLabel: UILabel {
     init(
         frame: CGRect = .zero,
         toduckFont: TDFont,
-        alignment: NSTextAlignment,
-        toduckColor: UIColor,
-        labelText: String
+        alignment: NSTextAlignment = .justified,
+        toduckColor: UIColor = TDColor.Neutral.neutral800,
+        labelText: String = ""
     ) {
         self.toduckFont = toduckFont
         self.alignment = alignment

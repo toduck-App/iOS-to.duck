@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     let label: TDLabel = .init(
         frame: .zero,
         toduckFont: TDFont.mediumHeader1,
-        alignment: .center,
+        alignment: .justified,
         toduckColor: TDColor.baseBlack,
         labelText: "Custom TDLabel"
     )
