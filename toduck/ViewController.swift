@@ -13,13 +13,13 @@ class ViewController: UIViewController {
         frame: .zero,
         toduckFont: TDFont.mediumHeader1,
         alignment: .center,
-        toduckColor: TDColor.baseBlack.color,
+        toduckColor: TDColor.baseBlack,
         labelText: "Custom TDLabel"
     )
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = TDColor.Diary.diarySosoColor.color
+        self.view.backgroundColor = TDColor.Diary.diaryHappyColor
         view.addSubview(label)
         
         label.translatesAutoresizingMaskIntoConstraints = false
