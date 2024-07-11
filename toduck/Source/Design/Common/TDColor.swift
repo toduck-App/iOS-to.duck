@@ -39,23 +39,23 @@ public enum TDColor {
     }
     
     public enum Diary {
-        public static let diaryAngryColor = ToduckAsset.Colors.diaryAngryColor.color
-        public static let diaryAnxietyColor = ToduckAsset.Colors.diaryAnxietyColor.color
-        public static let diaryHappyColor = ToduckAsset.Colors.diaryHappyColor.color
-        public static let diarySadColor = ToduckAsset.Colors.diarySadColor.color
-        public static let diarySosoColor = ToduckAsset.Colors.diarySosoColor.color
-        public static let diaryTiredColor = ToduckAsset.Colors.diaryTiredColor.color
+        public static let angry = ToduckAsset.Colors.diaryAngryColor.color
+        public static let anxiety = ToduckAsset.Colors.diaryAnxietyColor.color
+        public static let happy = ToduckAsset.Colors.diaryHappyColor.color
+        public static let sad = ToduckAsset.Colors.diarySadColor.color
+        public static let soso = ToduckAsset.Colors.diarySosoColor.color
+        public static let tired = ToduckAsset.Colors.diaryTiredColor.color
     }
 
     public enum Timer {
-        public static let timerStartColor = ToduckAsset.Colors.timerStartColor.color
-        public static let timerStopColor = ToduckAsset.Colors.timerStopColor.color
+        public static let start = ToduckAsset.Colors.timerStartColor.color
+        public static let stop = ToduckAsset.Colors.timerStopColor.color
     }
     
     public enum Semantic {
-        public static let semanticErrorColor = ToduckAsset.Colors.semanticErrorColor.color
-        public static let semanticInfoColor = ToduckAsset.Colors.semanticInfoColor.color
-        public static let semanticSuccessColor = ToduckAsset.Colors.semanticSuccessColor.color
-        public static let semanticWamingColor = ToduckAsset.Colors.semanticWamingColor.color
+        public static let error = ToduckAsset.Colors.semanticErrorColor.color
+        public static let info = ToduckAsset.Colors.semanticInfoColor.color
+        public static let success = ToduckAsset.Colors.semanticSuccessColor.color
+        public static let warning = ToduckAsset.Colors.semanticWamingColor.color
     }
 }
