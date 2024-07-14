@@ -75,4 +75,84 @@ extension ScheduleTarget: TargetType {
 //        }
         return headers
     }
+    
+    var sampleData: Data {
+        switch self {
+        case .fetchSchedule:
+            return """
+            {
+                "id": 1,
+                "title": "회의",
+                "categoryImage": "a",
+                "dateAndTime": "2024-07-10T09:00:00Z",
+                "isRepeating": true,
+                "repeatDays": ["월", "수", "금"],
+                "alarm": true,
+                "alarmTimes": ["60", "30"],
+                "place": "디스코드"
+                "memo": "프로젝트 진행 상황 점검",
+                "isFinish": false
+            }
+            """.data(using: .utf8)!
+        case .fetchScheduleList:
+            return """
+            [
+                {
+                    "id": 1,
+                    "title": "회의",
+                    "categoryImage": "a",
+                    "dateAndTime": "2024-07-10T09:00:00Z",
+                    "isRepeating": true,
+                    "repeatDays": ["월", "수", "금"],
+                    "alarm": true,
+                    "alarmTimes": ["60", "30"],
+                    "place": "디스코드",
+                    "memo": "프로젝트 진행 상황 점검",
+                    "isFinish": false
+                },
+                {
+                    "id": 2,
+                    "title": "운동",
+                    "categoryImage": "a",
+                    "dateAndTime": "2024-07-11T18:00:00Z",
+                    "isRepeating": false,
+                    "repeatDays": null,
+                    "alarm": true,
+                    "alarmTimes": ["10"],
+                    "place": "헬스장",
+                    "memo": "웨이트 운동 1회",
+                    "isFinish": false
+                }
+            ]
+            """.data(using: .utf8)!
+        case .createSchedule, .updateSchedule:
+            return """
+            {
+                "id": 1,
+                "title": "회의",
+                "categoryImage": "a",
+                "dateAndTime": "2024-07-10T09:00:00Z",
+                "isRepeating": true,
+                "repeatDays": ["월", "수", "금"],
+                "alarm": true,
+                "alarmTimes": ["60", "30"],
+                "place": "디스코드",
+                "memo": "프로젝트 진행 상황 점검",
+                "isFinish": false
+            }
+            """.data(using: .utf8)!
+        case .deleteSchedule:
+            return """
+            {
+                "success": true
+            }
+            """.data(using: .utf8)!
+        case .moveTomorrowSchedule(scheduleId: let scheduleId):
+            return """
+            {
+                "success": true
+            }
+            """.data(using: .utf8)!
+        }
+    }
 }
