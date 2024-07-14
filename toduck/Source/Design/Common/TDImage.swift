@@ -8,6 +8,42 @@
 import Foundation
 
 public enum TDImage {
+    public static let addMedium = ToduckAsset.Images.addMedium.image
+    public static let alarmMedium = ToduckAsset.Images.alarmMedium.image
+    public static let badMedium = ToduckAsset.Images.badMedium.image
+    public static let cameraMedium = ToduckAsset.Images.cameraMedium.image
+    public static let chartMedium = ToduckAsset.Images.chartMedium.image
+    public static let checkMedium = ToduckAsset.Images.checkMedium.image
+    public static let clockMedium = ToduckAsset.Images.clockMedium.image
+    public static let commentMedium = ToduckAsset.Images.commentMedium.image
+    public static let filterMedium = ToduckAsset.Images.filterMedium.image
+    public static let goodMedium = ToduckAsset.Images.goodMedium.image
+    public static let hamburgerMedium = ToduckAsset.Images.hamburgerMedium.image
+    public static let imageMedium = ToduckAsset.Images.imageMedium.image
+    public static let likeMedium = ToduckAsset.Images.likeMedium.image
+    public static let listMedium = ToduckAsset.Images.listMedium.image
+    public static let locationMedium = ToduckAsset.Images.locationMedium.image
+    public static let penMedium = ToduckAsset.Images.penMedium.image
+    public static let repeatMedium = ToduckAsset.Images.repeatMedium.image
+    public static let reportMedium = ToduckAsset.Images.reportMedium.image
+    public static let shareMedium = ToduckAsset.Images.shareMedium.image
+    public static let sortMedium = ToduckAsset.Images.sortMedium.image
+    public static let trashMedium = ToduckAsset.Images.trashMedium.image
+    public static let addSmall = ToduckAsset.Images.addSmall.image
+    public static let alarmSmall = ToduckAsset.Images.alarmSmall.image
+    public static let badSmall = ToduckAsset.Images.badSmall.image
+    public static let cameraSmall = ToduckAsset.Images.cameraSmall.image
+    public static let chartSmall = ToduckAsset.Images.chartSmall.image
+    public static let commentSmall = ToduckAsset.Images.commentSmall.image
+    public static let goodSmall = ToduckAsset.Images.goodSmall.image
+    public static let hamburgerSmall = ToduckAsset.Images.hamburgerSmall.image
+    public static let imageSmall = ToduckAsset.Images.imageSmall.image
+    public static let likeSmall = ToduckAsset.Images.likeSmall.image
+    public static let locationSmall = ToduckAsset.Images.locationSmall.image
+    public static let penSmall = ToduckAsset.Images.penSmall.image
+    public static let repeatSmall = ToduckAsset.Images.repeatSmall.image
+    public static let sortSmall = ToduckAsset.Images.sortSmall.image
+    
     public enum Bell {
         public static let offMedium = ToduckAsset.Images.bellOffMedium.image
         public static let onMedium = ToduckAsset.Images.bellOnMedium.image
@@ -18,50 +54,50 @@ public enum TDImage {
         public static let onSmall = ToduckAsset.Images.bellOnSmall.image
         public static let ringingSmall = ToduckAsset.Images.bellRingingSmall.image
     }
-
+    
     public enum Calendar {
         public static let medium = ToduckAsset.Images.calendarMedium.image
         public static let top2Medium = ToduckAsset.Images.calendarTop2Medium.image
         public static let top3Medium = ToduckAsset.Images.calendarTop3Medium.image
         public static let small = ToduckAsset.Images.calendarSmall.image
     }
-
+    
     public enum Diary {
         public static let colorMedium = ToduckAsset.Images.diaryColorMedium.image
         public static let medium = ToduckAsset.Images.diaryMedium.image
     }
-
+    
     public enum Dot {
         public static let horizontalMedium = ToduckAsset.Images.dotHorizontalMedium.image
         public static let verticalMedium = ToduckAsset.Images.dotVerticalMedium.image
         public static let horizontalSmall = ToduckAsset.Images.dotHorizontalSmall.image
         public static let verticalSmall = ToduckAsset.Images.dotVerticalSmall.image
     }
-
+    
     public enum Eye {
         public static let closedMedium = ToduckAsset.Images.eyeClosedMedium.image
         public static let openMedium = ToduckAsset.Images.eyeOpenMedium.image
         public static let closedSmall = ToduckAsset.Images.eyeClosedSmall.image
         public static let openSmall = ToduckAsset.Images.eyeOpenSmall.image
     }
-
+    
     public enum Home {
         public static let colorMedium = ToduckAsset.Images.homeColorMedium.image
         public static let medium = ToduckAsset.Images.homeMedium.image
     }
-
+    
     public enum Lock {
         public static let medium = ToduckAsset.Images.lockMedium.image
         public static let openMedium = ToduckAsset.Images.lockOpenMedium.image
         public static let small = ToduckAsset.Images.lockSmall.image
         public static let openSmall = ToduckAsset.Images.lockOpenSmall.image
     }
-
+    
     public enum Memo {
         public static let lineMedium = ToduckAsset.Images.memoLineMedium.image
         public static let medium = ToduckAsset.Images.memoMedium.image
     }
-
+    
     public enum Play {
         public static let fillColorMedium = ToduckAsset.Images.play1FillColorMedium.image
         public static let fillX2Medium = ToduckAsset.Images.play1FillX2Medium.image
@@ -70,36 +106,36 @@ public enum TDImage {
         public static let play1Small = ToduckAsset.Images.play1Small.image
         public static let play2Small = ToduckAsset.Images.play2Small.image
     }
-
+    
     public enum Setting {
         public static let bottomColorMedium = ToduckAsset.Images.settingBottomColorMedium.image
         public static let bottomMedium = ToduckAsset.Images.settingBottomMedium.image
         public static let fillMedium = ToduckAsset.Images.settingFillMedium.image
         public static let medium = ToduckAsset.Images.settingMedium.image
     }
-
+    
     public enum Social {
         public static let colorMedium = ToduckAsset.Images.socialColorMedium.image
         public static let medium = ToduckAsset.Images.socialMedium.image
     }
-
+    
     public enum Stop {
         public static let medium = ToduckAsset.Images.stopMedium.image
         public static let x2Medium = ToduckAsset.Images.stopX2Medium.image
     }
-
+    
     public enum Timer {
         public static let colorMedium = ToduckAsset.Images.timerColorMedium.image
         public static let medium = ToduckAsset.Images.timerMedium.image
         public static let small = ToduckAsset.Images.timeSmall.image
     }
-
+    
     public enum X {
         public static let x1Medium = ToduckAsset.Images.x1Medium.image
         public static let x2Medium = ToduckAsset.Images.x2Medium.image
         public static let x2Small = ToduckAsset.Images.x2Small.image
     }
-
+    
     public enum Direction {
         public static let left2Medium = ToduckAsset.Images.left2Medium.image
         public static let leftMedium = ToduckAsset.Images.leftMedium.image
@@ -112,45 +148,7 @@ public enum TDImage {
         public static let upSmall = ToduckAsset.Images.upSmall.image
         public static let downSmall = ToduckAsset.Images.downSmall.image
     }
-
-    public enum Action {
-        public static let addMedium = ToduckAsset.Images.addMedium.image
-        public static let alarmMedium = ToduckAsset.Images.alarmMedium.image
-        public static let badMedium = ToduckAsset.Images.badMedium.image
-        public static let cameraMedium = ToduckAsset.Images.cameraMedium.image
-        public static let chartMedium = ToduckAsset.Images.chartMedium.image
-        public static let checkMedium = ToduckAsset.Images.checkMedium.image
-        public static let clockMedium = ToduckAsset.Images.clockMedium.image
-        public static let commentMedium = ToduckAsset.Images.commentMedium.image
-        public static let filterMedium = ToduckAsset.Images.filterMedium.image
-        public static let goodMedium = ToduckAsset.Images.goodMedium.image
-        public static let hamburgerMedium = ToduckAsset.Images.hamburgerMedium.image
-        public static let imageMedium = ToduckAsset.Images.imageMedium.image
-        public static let likeMedium = ToduckAsset.Images.likeMedium.image
-        public static let listMedium = ToduckAsset.Images.listMedium.image
-        public static let locationMedium = ToduckAsset.Images.locationMedium.image
-        public static let penMedium = ToduckAsset.Images.penMedium.image
-        public static let repeatMedium = ToduckAsset.Images.repeatMedium.image
-        public static let reportMedium = ToduckAsset.Images.reportMedium.image
-        public static let shareMedium = ToduckAsset.Images.shareMedium.image
-        public static let sortMedium = ToduckAsset.Images.sortMedium.image
-        public static let trashMedium = ToduckAsset.Images.trashMedium.image
-        public static let addSmall = ToduckAsset.Images.addSmall.image
-        public static let alarmSmall = ToduckAsset.Images.alarmSmall.image
-        public static let badSmall = ToduckAsset.Images.badSmall.image
-        public static let cameraSmall = ToduckAsset.Images.cameraSmall.image
-        public static let chartSmall = ToduckAsset.Images.chartSmall.image
-        public static let commentSmall = ToduckAsset.Images.commentSmall.image
-        public static let goodSmall = ToduckAsset.Images.goodSmall.image
-        public static let hamburgerSmall = ToduckAsset.Images.hamburgerSmall.image
-        public static let imageSmall = ToduckAsset.Images.imageSmall.image
-        public static let likeSmall = ToduckAsset.Images.likeSmall.image
-        public static let locationSmall = ToduckAsset.Images.locationSmall.image
-        public static let penSmall = ToduckAsset.Images.penSmall.image
-        public static let repeatSmall = ToduckAsset.Images.repeatSmall.image
-        public static let sortSmall = ToduckAsset.Images.sortSmall.image
-    }
-
+    
     public enum Logo {
         public static let appleLogo = ToduckAsset.Images.appleLogo.image
         public static let googleLogo = ToduckAsset.Images.googleLogo.image
