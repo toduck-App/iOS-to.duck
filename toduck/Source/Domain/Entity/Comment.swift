@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Comment {
-    public init(id: String, user: User, content: String, timestamp: Date, isLike: Bool, like: Int?) {
+    public init(id: Int, user: User, content: String, timestamp: Date, isLike: Bool, like: Int?) {
         self.id = id
         self.user = user
         self.content = content
@@ -16,7 +16,7 @@ public struct Comment {
         self.isLike = isLike
         self.like = like
     }
-    let id: String
+    let id: Int
     var user: User
     var content: String
     var timestamp: Date

@@ -8,10 +8,10 @@
 import Foundation
 
 public protocol UserRepositoryProtocol {
-    func fetchUser(userId: String) async throws -> User?
-    func fetchUserDetail(userId: String) async throws -> UserDetail
-    func fetchUserPostList(userId: String) async throws -> [Post]?
-    func fetchUserRoutineList(userId: String) async throws -> [Routine]?
-    func fetchUserShareUrl(userId: String) async throws -> String
-    func toggleUserFollow(userId: String,targetUserId: String) async throws -> Bool
+    func fetchUser(userId: Int) async throws -> User?
+    func fetchUserDetail(userId: Int) async throws -> UserDetail
+    func fetchUserPostList(userId: Int) async throws -> [Post]?
+    func fetchUserRoutineList(userId: Int) async throws -> [Routine]?
+    func fetchUserShareUrl(userId: Int) async throws -> String
+    func toggleUserFollow(userId: Int,targetUserId: Int) async throws -> Bool
 }

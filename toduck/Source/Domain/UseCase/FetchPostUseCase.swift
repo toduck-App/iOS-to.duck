@@ -17,7 +17,7 @@ public final class FetchPostUseCase {
     public func execute(type: PostType, category: PostCategory) async throws -> [Post]? {
         return try await repository.fetchPostList(type: type, category: category)
     }
-    public func excute(postId: String) async throws -> Post? {
+    public func excute(postId: Int) async throws -> Post? {
         return try await repository.fetchPost(postId: postId)
     }
 }
