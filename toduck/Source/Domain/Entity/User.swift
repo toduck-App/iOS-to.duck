@@ -8,14 +8,14 @@
 import Foundation
 
 public struct User {
-    let id: String
+    let id: Int
     var name: String
     var icon: String
     var title: String
     var isblock: Bool
     
     init(
-        id: String,
+        id: Int,
         name: String,
         icon: String,
         title: String,

@@ -178,9 +178,9 @@ extension SocialTarget: TargetType {
             return """
                [
                    {
-                       "id": "1",
+                       "id": 1,
                        "user": {
-                           "id": "user1",
+                           "id": 1,
                            "name": "toduck",
                            "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                            "title": "작심삼일",
@@ -203,10 +203,10 @@ extension SocialTarget: TargetType {
             return """
                [
                    {
-                       "id": "2",
+                       "id": 2,
                        "user": {
-                           "id": "user2",
-                           "name": "toduck",
+                           "id": 2,
+                           "name": "toduck2",
                            "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                            "title": "작심삼일",
                            "isblock": false
@@ -251,10 +251,10 @@ extension SocialTarget: TargetType {
         case .createPost, .updatePost:
             return """
                {
-                   "id": "3",
+                   "id": 3,
                    "user": {
-                       "id": "user3",
-                       "name": "toduck",
+                       "id": 3,
+                       "name": "toduck3",
                        "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                        "title": "작심삼일",
                        "isblock": false
@@ -280,9 +280,9 @@ extension SocialTarget: TargetType {
         case .fetchPost:
             return """
                {
-                   "id": "1",
+                   "id": 1,
                    "user": {
-                       "id": "user1",
+                       "id": 1,
                        "name": "toduck",
                        "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                        "title": "작심삼일",
@@ -309,9 +309,9 @@ extension SocialTarget: TargetType {
         case .toggleCommentLike, .fetchCommentList, .fetchUserCommentList, .createComment, .updateComment, .deleteComment, .reportComment, .blockComment:
             return """
                {
-                   "id": "1",
+                   "id": 1,
                    "user": {
-                       "id": "user1",
+                       "id": 1,
                        "name": "toduck",
                        "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                        "title": "작심삼일",
@@ -326,7 +326,7 @@ extension SocialTarget: TargetType {
         case .fetchUser, .fetchUserDetail:
             return """
                {
-                   "id": "user1",
+                   "id": 1,
                    "name": "toduck",
                    "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                    "title": "작심삼일",
@@ -337,9 +337,9 @@ extension SocialTarget: TargetType {
             return """
                [
                    {
-                       "id": "1",
+                       "id": 1,
                        "user": {
-                           "id": "user1",
+                           "id": 1,
                            "name": "toduck",
                            "icon": "https://geojecci.korcham.net/images/no-image01.gif",
                            "title": "작심삼일",
