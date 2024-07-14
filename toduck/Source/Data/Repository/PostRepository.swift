@@ -9,7 +9,7 @@ import Foundation
 
 public final class PostRepository: PostRepositoryProtocol {
     private let dummyRoutine = Routine(id: 0, title: "", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)
-    private let dummyUser = User(id: "", name: "", icon: "", title: "", isblock: false)
+    private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
 
     public init() {}
 
@@ -21,7 +21,7 @@ public final class PostRepository: PostRepositoryProtocol {
         return []
     }
 
-    public func togglePostLike(postId: String) async throws -> Bool {
+    public func togglePostLike(postId: Int) async throws -> Bool {
         return false;
     }
 
@@ -37,19 +37,19 @@ public final class PostRepository: PostRepositoryProtocol {
         return false;
     }
 
-    public func deletePost(postId: String) async throws -> Bool {
-        return false;   
-    }
-
-    public func fetchPost(postId: String) async throws -> Post {
-        return Post(id: "", user: dummyUser, contentText: "", imageList: [], timestamp: Date(), likeCount: 0, isLike: false, commentCount: 0, shareCount: 0, routine: dummyRoutine, type: .communication, category: .none);
-    }
-
-    public func reportPost(postId: String) async throws -> Bool {
+    public func deletePost(postId: Int) async throws -> Bool {
         return false;
     }
 
-    public func blockPost(postId: String) async throws -> Bool {
+    public func fetchPost(postId: Int) async throws -> Post {
+        return Post(id: 0, user: dummyUser, contentText: "", imageList: [], timestamp: Date(), likeCount: 0, isLike: false, commentCount: 0, shareCount: 0, routine: dummyRoutine, type: .communication, category: .none);
+    }
+
+    public func reportPost(postId: Int) async throws -> Bool {
+        return false;
+    }
+
+    public func blockPost(postId: Int) async throws -> Bool {
         return false;
     }
 

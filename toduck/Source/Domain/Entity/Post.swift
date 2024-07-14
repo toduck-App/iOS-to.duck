@@ -22,7 +22,7 @@ public enum PostCategory: String {
 }
 public struct Post {
     public init(
-        id: String,
+        id: Int,
         user: User,
         contentText: String,
         imageList: [String]?,
@@ -50,7 +50,7 @@ public struct Post {
     }
 
 
-    let id: String
+    let id: Int
     var user: User
     var contentText: String
     var imageList: [String]?

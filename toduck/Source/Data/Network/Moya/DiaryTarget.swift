@@ -72,4 +72,54 @@ extension DiaryTarget: TargetType {
 //        }
         return headers
     }
+    
+    var sampleData: Data {
+            switch self {
+            case .fetchDiary:
+                return """
+                {
+                    "id": 1,
+                    "focus": {"focusPercent": 75, "focusTime": {"hours": 2, "minutes": 30}},
+                    "emotion": {"name": "행복"},
+                    "contentText": "오늘은 행복한 날",
+                    "date": "2024-07-10T12:34:56Z"
+                }
+                """.data(using: .utf8)!
+            case .fetchDiaryList:
+                return """
+                [
+                    {
+                        "id": 1,
+                        "focus": {"focusPercent": 75, "focusTime": {"hours": 2, "minutes": 30}},
+                        "emotion": {"name": "행복"},
+                        "contentText": "오늘은 행복한 날",
+                        "date": "2024-07-10T12:34:56Z"
+                    },
+                    {
+                        "id": 2,
+                        "focus": {"focusPercent": 50, "focusTime": {"hours": 1, "minutes": 45}},
+                        "emotion": {"name": "슬픔"},
+                        "contentText": "오늘은 슬픈 날",
+                        "date": "2024-07-11T14:22:33Z"
+                    }
+                ]
+                """.data(using: .utf8)!
+            case .addDiary, .updateDiary:
+                return """
+                {
+                    "id": 1,
+                    "focus": {"focusPercent": 75, "focusTime": {"hours": 2, "minutes": 30}},
+                    "emotion": {"name": "행복"},
+                    "contentText": "오늘은 행복한 날",
+                    "date": "2024-07-10T12:34:56Z"
+                }
+                """.data(using: .utf8)!
+            case .deleteDiary:
+                return """
+                {
+                    "success": true
+                }
+                """.data(using: .utf8)!
+            }
+        }
 }

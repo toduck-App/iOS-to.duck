@@ -12,15 +12,15 @@ public final class CommentRepository: CommentRepositoryProtocol {
 
     public init() {}
     
-    public func toggleCommentLike(commentId: String) async throws -> Bool {
+    public func toggleCommentLike(commentId: Int) async throws -> Bool {
         return false
     }
     
-    public func fetchCommentList(commentId: String) async throws -> [Comment]? {
+    public func fetchCommentList(commentId: Int) async throws -> [Comment]? {
         return []
     }
     
-    public func fetchUserCommentList(userId: String) async throws -> [Comment]? {
+    public func fetchUserCommentList(userId: Int) async throws -> [Comment]? {
         return []
     }
     
@@ -32,15 +32,15 @@ public final class CommentRepository: CommentRepositoryProtocol {
         return false
     }
     
-    public func deleteComment(commentId: String) async throws -> Bool {
+    public func deleteComment(commentId: Int) async throws -> Bool {
         return false
     }
     
-    public func reportComment(commentId: String) async throws -> Bool {
+    public func reportComment(commentId: Int) async throws -> Bool {
         return false
     }
     
-    public func blockComment(commentId: String) async throws -> Bool {
+    public func blockComment(commentId: Int) async throws -> Bool {
         return false
     }
 }
