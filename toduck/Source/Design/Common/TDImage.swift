@@ -88,9 +88,12 @@ public enum TDImage {
     
     public enum Lock {
         public static let medium = ToduckAsset.Images.lockMedium.image
-        public static let openMedium = ToduckAsset.Images.lockOpenMedium.image
         public static let small = ToduckAsset.Images.lockSmall.image
-        public static let openSmall = ToduckAsset.Images.lockOpenSmall.image
+    }
+    
+    public enum UnLock {
+        public static let medium = ToduckAsset.Images.lockOpenMedium.image
+        public static let small = ToduckAsset.Images.lockOpenSmall.image
     }
     
     public enum Memo {
