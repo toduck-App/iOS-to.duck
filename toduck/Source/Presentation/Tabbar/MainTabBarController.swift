@@ -8,9 +8,9 @@
 import UIKit
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
-    private weak var coordinator: TabbarCoordinator?
+    weak var coordinator: TabBarCoordinator?
     
-    init(coordinator: TabbarCoordinator? = nil) {
+    init(coordinator: TabBarCoordinator? = nil) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
@@ -22,16 +22,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
-        setupTabBar()
-    }
-    
-    private func setupTabBar() {
-        let viewControllers = TabbarItem.allCases.map { item -> UINavigationController in
-            let viewController = UIViewController() // 각 탭에 해당하는 뷰 컨트롤러를 생성
-            viewController.tabBarItem = item.item
-            return UINavigationController(rootViewController: viewController)
-        }
-        
-        self.viewControllers = viewControllers
+        tabBar.backgroundColor = TDColor.baseWhite
+        tabBar.tintColor = TDColor.Primary.primary400
+        tabBar.unselectedItemTintColor = TDColor.Neutral.neutral600
     }
 }
