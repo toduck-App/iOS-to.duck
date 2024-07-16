@@ -21,45 +21,47 @@ final class TabBarCoordinator: Coordinator {
     }
     
     func start() {
-        let items: [UINavigationController] = TabbarItem.allCases.map { createNavigationController($0) }
-        configureTabBarController(items)
+        let items: [UINavigationController] = TabbarItem.allCases.map { createNavigationController(item: $0) }
+        configureTabBarController(with: items)
     }
     
-    private func configureTabBarController(_ viewControllers: [UIViewController]) {
+    // setViewControllers 메소드의 파라미터가 [UIVC]이므로 start()의 items 업캐스팅
+    private func configureTabBarController(with viewControllers: [UIViewController]) {
         navigationController.setNavigationBarHidden(true, animated: false)
         tabBarController.setViewControllers(viewControllers, animated: false)
         navigationController.viewControllers = [tabBarController]
     }
     
-    private func createNavigationController(_ item: TabbarItem) -> UINavigationController {
-        let navController = UINavigationController()
-        navController.setNavigationBarHidden(false, animated: false)
-        navController.tabBarItem = item.item
-        configureCoordinator(item, navController)
-        return navController
+    private func createNavigationController(item: TabbarItem) -> UINavigationController {
+        let navigationController = UINavigationController()
+        navigationController.setNavigationBarHidden(false, animated: false)
+        navigationController.tabBarItem = item.item
+        configureCoordinator(item: item, navigationController: navigationController)
+        
+        return navigationController
     }
     
-    private func configureCoordinator(_ item: TabbarItem, _ navController: UINavigationController) {
+    private func configureCoordinator(item: TabbarItem, navigationController: UINavigationController) {
         switch item {
         case .home:
-            let coordinator = HomeCoordinator(navigationController: navController)
-            addCoordinator(coordinator)
+            let coordinator = HomeCoordinator(navigationController: navigationController)
+            addCoordinator(coordinator: coordinator)
         case .timer:
-            let coordinator = TimerCoordinator(navigationController: navController)
-            addCoordinator(coordinator)
+            let coordinator = TimerCoordinator(navigationController: navigationController)
+            addCoordinator(coordinator: coordinator)
         case .diary:
-            let coordinator = DiaryCoordinator(navigationController: navController)
-            addCoordinator(coordinator)
+            let coordinator = DiaryCoordinator(navigationController: navigationController)
+            addCoordinator(coordinator: coordinator)
         case .social:
-            let coordinator = SocialCoordinator(navigationController: navController)
-            addCoordinator(coordinator)
+            let coordinator = SocialCoordinator(navigationController: navigationController)
+            addCoordinator(coordinator: coordinator)
         case .mypage:
-            let coordinator = MyPageCoordinator(navigationController: navController)
-            addCoordinator(coordinator)
+            let coordinator = MyPageCoordinator(navigationController: navigationController)
+            addCoordinator(coordinator: coordinator)
         }
     }
     
-    private func addCoordinator(_ coordinator: Coordinator) {
+    private func addCoordinator(coordinator: Coordinator) {
         coordinator.finishDelegate = self
         coordinator.start()
         childCoordinators.append(coordinator)
@@ -68,9 +70,14 @@ final class TabBarCoordinator: Coordinator {
 
 extension TabBarCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: any Coordinator) {
+        // MARK: TabBarItem 자식 뷰컨 하나만 종료됐음을 알림
         if let index = childCoordinators.firstIndex(where: { $0 === childCoordinator }) {
             childCoordinators.remove(at: index)
         }
-        finish()
+        
+        // 필요한지 모르겠으나, 자식 뷰컨 5개 모두 종료되면, TabBarCoordinator도 AppCoordinator에게 종료됨을 알림
+        if childCoordinators.isEmpty {
+            finish()
+        }
     }
 }
