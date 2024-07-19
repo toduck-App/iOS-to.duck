@@ -43,6 +43,7 @@ public enum TDImage {
     public static let penSmall = ToduckAsset.Images.penSmall.image
     public static let repeatSmall = ToduckAsset.Images.repeatSmall.image
     public static let sortSmall = ToduckAsset.Images.sortSmall.image
+    public static let timeSmall = ToduckAsset.Images.timeSmall.image
     
     public enum Bell {
         public static let offMedium = ToduckAsset.Images.bellOffMedium.image
@@ -130,7 +131,6 @@ public enum TDImage {
     public enum Timer {
         public static let colorMedium = ToduckAsset.Images.timerColorMedium.image
         public static let medium = ToduckAsset.Images.timerMedium.image
-        public static let small = ToduckAsset.Images.timeSmall.image
     }
     
     public enum X {
