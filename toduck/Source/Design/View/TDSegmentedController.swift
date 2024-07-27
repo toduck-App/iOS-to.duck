@@ -6,12 +6,11 @@
 //
 
 import UIKit
-
 import SnapKit
 import Then
 
 final class TDSegmentedController: UISegmentedControl {
-    private var indicatorView = UIView().then {
+    private var underLineView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral800
     }
     
@@ -27,7 +26,7 @@ final class TDSegmentedController: UISegmentedControl {
     
     private func setSegmentedControl() {
         selectedSegmentIndex = 0
-        addSubview(indicatorView)
+        addSubview(underLineView)
         addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
         
         setSegmentedImage()
@@ -35,31 +34,31 @@ final class TDSegmentedController: UISegmentedControl {
         layout()
     }
     
+    // MARK: 세그먼트 컨트롤 외형 커스터마이징 (투명 설정)
     private func setSegmentedImage() {
-        // 세그먼트 컨트롤 외형 커스터마이징
         setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
         setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
     }
     
+    // MARK: 폰트 & 색상 설정
     private func setSegmentedFont() {
-        // 선택안된 버튼의 폰트 & 색상 설정
-        let normalAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: TDColor.Neutral.neutral500,
-            .font: TDFont.boldHeader5.font
-        ]
-        setTitleTextAttributes(normalAttributes, for: .normal)
-        
-        // 선택된 버튼의 폰트 & 색상 설정
         let selectedAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: TDColor.Neutral.neutral800,
             .font: TDFont.boldHeader5.font
         ]
         setTitleTextAttributes(selectedAttributes, for: .selected)
+        
+        let normalAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: TDColor.Neutral.neutral500,
+            .font: TDFont.boldHeader5.font
+        ]
+        setTitleTextAttributes(normalAttributes, for: .normal)
     }
     
+    // MARK: indicatorView 설정
     private func layout() {
-        indicatorView.snp.makeConstraints {
+        underLineView.snp.makeConstraints {
             $0.top.equalTo(self.snp.bottom).offset(-1)
             $0.height.equalTo(1.5)
             $0.width.equalTo(self.snp.width).dividedBy(self.numberOfSegments)
@@ -74,13 +73,13 @@ final class TDSegmentedController: UISegmentedControl {
         // 애니메이션 여부에 따라 위치 업데이트
         if animated {
             UIView.animate(withDuration: 0.3) {
-                self.indicatorView.snp.updateConstraints {
+                self.underLineView.snp.updateConstraints {
                     $0.leading.equalTo(self.snp.leading).offset(leadingDistance)
                 }
                 self.layoutIfNeeded()
             }
         } else {
-            indicatorView.snp.updateConstraints {
+            underLineView.snp.updateConstraints {
                 $0.leading.equalTo(self.snp.leading).offset(leadingDistance)
             }
             layoutIfNeeded()
