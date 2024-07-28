@@ -72,7 +72,7 @@ final class TDSegmentedController: UISegmentedControl {
         
         // 애니메이션 여부에 따라 위치 업데이트
         if animated {
-            UIView.animate(withDuration: 0.3) {
+            UIView.animate(withDuration: 0.2) {
                 self.underLineView.snp.updateConstraints {
                     $0.leading.equalTo(self.snp.leading).offset(leadingDistance)
                 }
@@ -88,10 +88,5 @@ final class TDSegmentedController: UISegmentedControl {
     
     @objc func segmentChanged() {
         updateIndicatorPosition(animated: true)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateIndicatorPosition(animated: false)
     }
 }
