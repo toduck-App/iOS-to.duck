@@ -3,15 +3,21 @@ import SnapKit
 import UIKit
 
 public enum TDButtonSize {
-    case small
-    case medium
+    case small // 40
+    case mediumSmall // 48
+    case medium // 52
+    case large // 56
 
     var height: CGFloat {
         switch self {
         case .small:
             return 32
+        case .mediumSmall:
+            return 48
         case .medium:
-            return 54
+            return 52
+        case .large:
+            return 56
         }
     }
 
@@ -19,7 +25,9 @@ public enum TDButtonSize {
         switch self {
         case .small:
             return 8
-        case .medium:
+        case .mediumSmall,
+             .medium,
+             .large:
             return 12
         }
     }
@@ -28,7 +36,9 @@ public enum TDButtonSize {
         switch self {
         case .small:
             return TDFont.boldBody2.font
-        case .medium:
+        case .mediumSmall,
+             .medium,
+             .large:
             return TDFont.boldHeader3.font
         }
     }
@@ -53,9 +63,6 @@ public final class TDButton: TDBaseButton {
                    font: size.font)
     }
 
-    required init?(coder _: NSCoder) {
-        super.init(frame: .zero)
-    }
 
     override func layout() {
         snp.updateConstraints {
