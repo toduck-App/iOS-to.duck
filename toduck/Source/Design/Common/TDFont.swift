@@ -40,7 +40,7 @@ public enum TDFont {
 }
 
 extension TDFont {
-    var font: UIFont {
+    public var font: UIFont {
         switch self {
         case .mediumHeader1:
             return ToduckFontFamily.Pretendard.medium.font(size: 34.0)
