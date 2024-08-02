@@ -1,9 +1,6 @@
 
-import Foundation
 import SnapKit
 import UIKit
-
-
 
 public class TDBaseButton: UIButton {
     var title: String
@@ -56,9 +53,12 @@ public class TDBaseButton: UIButton {
                 titleEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
 
             } else {
-                imageEdgeInsets = UIEdgeInsets.zero
-                contentHorizontalAlignment = .center
-                contentVerticalAlignment = .center
+                let spacing: CGFloat = 4
+                let imageWidth = image.size.width
+                let titleWidth = titleLabel?.intrinsicContentSize.width ?? 0
+                let totalWidth = imageWidth + spacing + titleWidth
+                imageEdgeInsets = UIEdgeInsets(top: 0, left: -(totalWidth - imageWidth), bottom: 0, right: 0)
+                titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -(totalWidth - titleWidth))
             }
         } else if title != "" {
             setTitle(title, for: .normal)
