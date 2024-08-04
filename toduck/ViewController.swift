@@ -11,10 +11,10 @@ class ViewController: UIViewController {
     
     let label: TDLabel = .init(
         frame: .zero,
+        labelText: "Custom TDLabel",
         toduckFont: TDFont.mediumHeader1,
         alignment: .justified,
-        toduckColor: TDColor.baseBlack,
-        labelText: "Custom TDLabel"
+        toduckColor: TDColor.baseBlack
     )
     
     let calendarImageView: UIImageView = {

@@ -6,6 +6,7 @@ let targets: [Target] = [
         destinations: [.iPhone],
         product: .app,
         bundleId: "to.duck.toduck",
+        deploymentTargets: .iOS("16.0"),
         infoPlist: .extendingDefault(with: [
             "CFBundleIdentifier": "to.duck.toduck",
             "CFBundleVersion": "1.0",

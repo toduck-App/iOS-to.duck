@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, TDSheetPresentation {
     let segmentedControl = TDSegmentedController(items: ["토덕", "일정", "루틴"])
     
     let todoViewController = ToduckViewController()
