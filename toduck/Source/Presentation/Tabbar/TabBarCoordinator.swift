@@ -74,10 +74,5 @@ extension TabBarCoordinator: CoordinatorFinishDelegate {
         if let index = childCoordinators.firstIndex(where: { $0 === childCoordinator }) {
             childCoordinators.remove(at: index)
         }
-        
-        // 필요한지 모르겠으나, 자식 뷰컨 5개 모두 종료되면, TabBarCoordinator도 AppCoordinator에게 종료됨을 알림
-        if childCoordinators.isEmpty {
-            finish()
-        }
     }
 }

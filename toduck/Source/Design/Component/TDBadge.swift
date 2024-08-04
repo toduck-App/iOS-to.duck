@@ -17,15 +17,13 @@ public final class TDBadge: UIView {
     }
 
     func setupBadge() {
-        label = TDLabel(toduckFont: .mediumCaption2, toduckColor: foregroundToduckColor, labelText: title)
+        label = TDLabel(labelText: title, toduckFont: .mediumCaption2, toduckColor: foregroundToduckColor)
         label.textAlignment = .center
         label.sizeToFit()
         label.layer.cornerRadius = 4
         label.layer.masksToBounds = true
         label.backgroundColor = backgroundToduckColor
         addSubview(label)
-
-
     }
 
     func layout() {
