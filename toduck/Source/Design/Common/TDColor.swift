@@ -11,6 +11,47 @@ public enum TDColor {
     public static let baseBlack = ToduckAsset.Colors.baseBlack.color
     public static let baseWhite = ToduckAsset.Colors.baseWhite.color
     
+    public enum Schedule {
+        public static let back1 = ToduckAsset.Colors.back1.color
+        public static let back2 = ToduckAsset.Colors.back2.color
+        public static let back3 = ToduckAsset.Colors.back3.color
+        public static let back4 = ToduckAsset.Colors.back4.color
+        public static let back5 = ToduckAsset.Colors.back5.color
+        public static let back6 = ToduckAsset.Colors.back6.color
+        public static let back7 = ToduckAsset.Colors.back7.color
+        public static let back8 = ToduckAsset.Colors.back8.color
+        public static let back9 = ToduckAsset.Colors.back9.color
+        public static let back10 = ToduckAsset.Colors.back10.color
+        public static let back11 = ToduckAsset.Colors.back11.color
+        public static let back12 = ToduckAsset.Colors.back12.color
+        public static let back13 = ToduckAsset.Colors.back13.color
+        public static let back14 = ToduckAsset.Colors.back14.color
+        public static let back15 = ToduckAsset.Colors.back15.color
+        public static let back16 = ToduckAsset.Colors.back16.color
+        public static let back17 = ToduckAsset.Colors.back17.color
+        public static let back18 = ToduckAsset.Colors.back18.color
+        public static let back19 = ToduckAsset.Colors.back19.color
+        public static let back20 = ToduckAsset.Colors.back20.color
+
+        public static let text1 = ToduckAsset.Colors.text1.color
+        public static let text2 = ToduckAsset.Colors.text2.color
+        public static let text3 = ToduckAsset.Colors.text3.color
+        public static let text4 = ToduckAsset.Colors.text4.color
+        public static let text5 = ToduckAsset.Colors.text5.color
+        public static let text6 = ToduckAsset.Colors.text6.color
+        public static let text7 = ToduckAsset.Colors.text7.color
+        public static let text8 = ToduckAsset.Colors.text8.color
+        public static let text9 = ToduckAsset.Colors.text9.color
+        public static let text10 = ToduckAsset.Colors.text10.color
+        public static let text11 = ToduckAsset.Colors.text11.color
+        public static let text12 = ToduckAsset.Colors.text12.color
+        public static let text13 = ToduckAsset.Colors.text13.color
+        public static let text14 = ToduckAsset.Colors.text14.color
+        public static let text15 = ToduckAsset.Colors.text15.color
+        
+        public static let textPH = ToduckAsset.Colors.ph.color
+    }
+    
     public enum Neutral {
         public static let neutral50 = ToduckAsset.Colors.neutral50.color
         public static let neutral100 = ToduckAsset.Colors.neutral100.color

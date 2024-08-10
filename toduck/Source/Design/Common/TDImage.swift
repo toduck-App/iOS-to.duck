@@ -24,7 +24,6 @@ public enum TDImage {
     public static let listMedium = ToduckAsset.Images.listMedium.image
     public static let locationMedium = ToduckAsset.Images.locationMedium.image
     public static let penMedium = ToduckAsset.Images.penMedium.image
-    public static let repeatMedium = ToduckAsset.Images.repeatMedium.image
     public static let reportMedium = ToduckAsset.Images.reportMedium.image
     public static let shareMedium = ToduckAsset.Images.shareMedium.image
     public static let sortMedium = ToduckAsset.Images.sortMedium.image
@@ -41,9 +40,20 @@ public enum TDImage {
     public static let likeSmall = ToduckAsset.Images.likeSmall.image
     public static let locationSmall = ToduckAsset.Images.locationSmall.image
     public static let penSmall = ToduckAsset.Images.penSmall.image
-    public static let repeatSmall = ToduckAsset.Images.repeatSmall.image
     public static let sortSmall = ToduckAsset.Images.sortSmall.image
     public static let timeSmall = ToduckAsset.Images.timeSmall.image
+    
+    public enum Profile {
+        public static let large = ToduckAsset.Images.profileLarge
+        public static let medium = ToduckAsset.Images.profileMedium
+        public static let small = ToduckAsset.Images.profileSmall
+    }
+    
+    public enum Repeat {
+        public static let cycleMedium = ToduckAsset.Images.repeatCycleMedium.image
+        public static let cycleSmall = ToduckAsset.Images.repeatCycleSmall.image
+        public static let arrowMedium = ToduckAsset.Images.repeatArrowMedium.image
+    }
     
     public enum Bell {
         public static let offMedium = ToduckAsset.Images.bellOffMedium.image
