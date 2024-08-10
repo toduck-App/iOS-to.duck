@@ -86,7 +86,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var titleLabel = TDLabel(toduckFont: .mediumCaption2, toduckColor: TDColor.Primary.primary500, labelText:  "").then{
+    private var titleLabel = TDLabel(labelText:  "", toduckFont: .mediumCaption2, toduckColor: TDColor.Primary.primary500).then{
         $0.backgroundColor = TDColor.Primary.primary50
     }
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)

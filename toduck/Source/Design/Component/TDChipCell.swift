@@ -48,7 +48,7 @@ class TDChipCell: UICollectionViewCell {
     private var chipType: TDChipType = .capsule
     private var isActive: Bool = false
     
-    private let titleLabel = TDLabel(toduckFont: TDFont.regularBody2, toduckColor: TDColor.Neutral.neutral200, labelText: "")
+    private let titleLabel = TDLabel(labelText: "", toduckFont: TDFont.regularBody2, toduckColor: TDColor.Neutral.neutral200)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
