@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SocialViewController: UIViewController {
+class SocialViewController: UIViewController, TDSheetPresentation {
 
     override func viewDidLoad() {
         super.viewDidLoad()

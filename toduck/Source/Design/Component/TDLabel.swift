@@ -17,15 +17,15 @@ final class TDLabel: UILabel {
     
     init(
         frame: CGRect = .zero,
+        labelText: String = "",
         toduckFont: TDFont,
         alignment: NSTextAlignment = .justified,
-        toduckColor: UIColor = TDColor.Neutral.neutral800,
-        labelText: String = ""
+        toduckColor: UIColor = TDColor.Neutral.neutral800
     ) {
+        self.labelText = labelText
         self.toduckFont = toduckFont
         self.alignment = alignment
         self.toduckColor = toduckColor
-        self.labelText = labelText
         
         super.init(frame: frame)
         setupAttributes()
