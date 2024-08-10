@@ -22,7 +22,7 @@ public final class TDTextField: UIView {
                     errorStack.removeArrangedSubview(errorLabel)
                     errorLabel.removeFromSuperview()
                 }
-                let errorLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Semantic.error, labelText: error)
+                let errorLabel = TDLabel(labelText: error, toduckFont: .mediumBody2, toduckColor: TDColor.Semantic.error)
                 errorStack.addArrangedSubview(errorLabel)
                 topLabel?.setColor(TDColor.Semantic.error)
             } else {
@@ -68,7 +68,7 @@ public final class TDTextField: UIView {
         addSubview(mainStack)
 
         if existLabel {
-            let label = TDLabel(toduckFont: .mediumHeader5, labelText: labelText)
+            let label = TDLabel(labelText: labelText, toduckFont: .mediumHeader5)
             topLabel = label
             mainStack.addArrangedSubview(label)
         }
