@@ -76,7 +76,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     lazy var shareIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.repeatSmall
+        $0.image = TDImage.Repeat.cycleSmall // 변경
     }
     
     lazy var avatarView = UIImageView().then {
