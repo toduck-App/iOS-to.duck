@@ -64,13 +64,13 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     lazy var likeIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.likeSmall
+        $0.image = TDImage.likeMedium
     }
     
     lazy var commentIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.commentSmall
+        $0.image = TDImage.commentMedium
     }
     
     lazy var shareIconView = UIImageView().then {
@@ -130,13 +130,13 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     func configure(with item: Post) {
         titleLabel.setText(item.user.title)
         nicknameLabel.setText(item.user.name)
-        dateLabel.setText("1시간 전")
+        dateLabel.setText(Date.relatveTimeFromDate(item.timestamp))
         contentLabel.setText(item.contentText)
-        guard let likeCount = item.likeCount, let commentCount = item.commentCount else { return }
-        likeLabel.setText("\(likeCount)")
-        commentLabel.setText("\(commentCount)")
+        likeLabel.setText("\(item.likeCount ?? 0)")
+        commentLabel.setText("\(item.commentCount ?? 0)")
         
         guard let url = URL(string: item.user.icon) else { return }
+        // lloadImage 수정 필요
         loadImages(url: url)
         
         if let shareCount = item.shareCount, shareCount > 0 {
@@ -148,11 +148,11 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         
         if let routine = item.routine {
             bodyStackView.addArrangedSubview(routineView)
-            routineView.isHidden = false
             routineTitleLabel.setText(routine.title)
             routineContentLabel.setText(routine.memo ?? "sdf")
-            routineDateLabel.setText(routine.dateString() ?? "AM 00:00")
-            
+            if let routineDate = routine.dateAndTime {
+                routineDateLabel.setText(Date.stringFromDate(routineDate, formatType: .time12HourEnglish))
+            }
             setupRoutineView()
         }
     }
