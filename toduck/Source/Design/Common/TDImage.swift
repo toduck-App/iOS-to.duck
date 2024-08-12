@@ -44,9 +44,9 @@ public enum TDImage {
     public static let timeSmall = ToduckAsset.Images.timeSmall.image
     
     public enum Profile {
-        public static let large = ToduckAsset.Images.profileLarge
-        public static let medium = ToduckAsset.Images.profileMedium
-        public static let small = ToduckAsset.Images.profileSmall
+        public static let large = ToduckAsset.Images.profileLarge.image
+        public static let medium = ToduckAsset.Images.profileMedium.image
+        public static let small = ToduckAsset.Images.profileSmall.image
     }
     
     public enum Repeat {

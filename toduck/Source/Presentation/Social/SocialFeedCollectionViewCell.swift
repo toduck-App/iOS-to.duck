@@ -64,7 +64,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     lazy var likeIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.likeMedium
+        $0.image = TDImage.likeSmall
     }
     
     lazy var commentIconView = UIImageView().then {
@@ -76,7 +76,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     lazy var shareIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Repeat.cycleSmall // 변경
+        $0.image = TDImage.Repeat.arrowMedium
     }
     
     lazy var avatarView = UIImageView().then {
@@ -164,43 +164,46 @@ private extension SocialFeedCollectionViewCell {
     }
     
     func loadImages(url: URL) {
-        avatarView.image = TDImage.Social.colorMedium
+        avatarView.image = TDImage.Profile.medium
     }
     
     func setupLayout() {
         addSubview(containerView)
+        [titleLabel,nicknameLabel,dateLabel].forEach{
+            headerLeftStackView.addArrangedSubview($0)
+        }
+        
+        headerRightStackView.addArrangedSubview(dotIconView)
+        
+        [headerLeftStackView,headerRightStackView].forEach{
+            headerStackView.addArrangedSubview($0)
+        }
+        
+        bodyStackView.addArrangedSubview(contentLabel)
+        
+        [avatarView, verticalStackView].forEach{
+            containerView.addSubview($0)
+        }
+        
+        [headerStackView, bodyStackView, footerView].forEach{
+            verticalStackView.addArrangedSubview($0)
+        }
+        
+        [likeIconView, likeLabel, commentIconView, commentLabel, shareIconView, shareLabel].forEach{
+            footerView.addSubview($0)
+        }
+        
         containerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
             make.leading.trailing.equalToSuperview()
         }
         
-        containerView.addSubview(avatarView)
+        
         avatarView.snp.makeConstraints { make in
             make.top.leading.equalToSuperview()
             make.size.equalTo(36)
         }
-        
-        headerLeftStackView.addArrangedSubview(titleLabel)
-        headerLeftStackView.addArrangedSubview(nicknameLabel)
-        headerLeftStackView.addArrangedSubview(dateLabel)
-        
-        headerRightStackView.addArrangedSubview(dotIconView)
-        headerStackView.addArrangedSubview(headerLeftStackView)
-        headerStackView.addArrangedSubview(headerRightStackView)
-        
-        bodyStackView.addArrangedSubview(contentLabel)
-        containerView.addSubview(verticalStackView)
-        verticalStackView.addArrangedSubview(headerStackView)
-        verticalStackView.addArrangedSubview(bodyStackView)
-        verticalStackView.addArrangedSubview(footerView)
-        
-        footerView.addSubview(likeIconView)
-        footerView.addSubview(likeLabel)
-        footerView.addSubview(commentIconView)
-        footerView.addSubview(commentLabel)
-        footerView.addSubview(shareIconView)
-        footerView.addSubview(shareLabel)
         
         [titleLabel, nicknameLabel, dateLabel, dotIconView, likeIconView,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
             $0.snp.makeConstraints { make in
