@@ -16,7 +16,7 @@ public final class TDBadge: UIView {
         layout()
     }
 
-    func setupBadge() {
+    private func setupBadge() {
         label = TDLabel(labelText: title, toduckFont: .mediumCaption2, toduckColor: foregroundToduckColor)
         label.textAlignment = .center
         label.sizeToFit()
@@ -26,12 +26,16 @@ public final class TDBadge: UIView {
         addSubview(label)
     }
 
-    func layout() {
+    private func layout() { 
         label.snp.makeConstraints {
             $0.width.equalTo(54)
             $0.height.equalTo(20)
-            $0.bottom.top.equalToSuperview()
-            $0.leading.leading.equalToSuperview().inset(10)
+    
         }
+    }
+
+    public func setTitle(_ title: String) {
+        self.title = title
+        label.text = title
     }
 }
