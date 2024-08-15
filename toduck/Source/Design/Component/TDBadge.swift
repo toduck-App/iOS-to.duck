@@ -2,36 +2,105 @@ import Foundation
 import UIKit
 
 public final class TDBadge: UIView {
-    private var title: String!
-    private var backgroundToduckColor: UIColor!
-    private var foregroundToduckColor: UIColor!
+    // 색깔 정해지면 나중에 Extension으로 빼기,
 
-    private var label: TDLabel!
-    convenience init(_ title: String, backgroundToduckColor: UIColor = TDColor.Primary.primary25, foregroundToduckColor: UIColor = TDColor.Primary.primary500) {
-        self.init(frame: .zero)
+    private var title: String
+    private var backgroundToduckColor: UIColor
+    private var foregroundToduckColor: UIColor
+    private var cornerRadius: CGFloat
+    private var font: TDFont
+    private var label: TDLabel
+
+    public init(frame: CGRect = .zero,
+                title: String,
+                font: TDFont,
+                backgroundToduckColor: UIColor,
+                foregroundToduckColor: UIColor,
+                cornerRadius: CGFloat)
+    {
         self.title = title
+        self.font = font
         self.backgroundToduckColor = backgroundToduckColor
         self.foregroundToduckColor = foregroundToduckColor
+        self.cornerRadius = cornerRadius
+        label = TDLabel(labelText: title, toduckFont: self.font, toduckColor: self.foregroundToduckColor)
+        super.init(frame: .zero)
+
         setupBadge()
         layout()
     }
 
-    func setupBadge() {
-        label = TDLabel(labelText: title, toduckFont: .mediumCaption2, toduckColor: foregroundToduckColor)
-        label.textAlignment = .center
-        label.sizeToFit()
-        label.layer.cornerRadius = 4
-        label.layer.masksToBounds = true
-        label.backgroundColor = backgroundToduckColor
-        addSubview(label)
+    convenience init(badgeTitle: String) {
+        self.init(badgeTitle: badgeTitle, backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary200)
     }
 
-    func layout() {
-        label.snp.makeConstraints {
-            $0.width.equalTo(54)
+    convenience init(badgeTitle: String, backgroundColor: UIColor, foregroundColor: UIColor) {
+        self.init(
+            title: badgeTitle,
+            font: .mediumCaption2,
+            backgroundToduckColor: backgroundColor,
+            foregroundToduckColor: foregroundColor,
+            cornerRadius: 4
+        )
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    @available(*, deprecated, message: "Please use init(badgeTitle:backgroundToduckColor:foregroundToduckColor:) instead")
+    convenience init(_ title: String, backgroundToduckColor: UIColor = TDColor.Primary.primary25, foregroundToduckColor: UIColor = TDColor.Primary.primary500) {
+        self.init(badgeTitle: title, backgroundColor: backgroundToduckColor, foregroundColor: foregroundToduckColor)
+    }
+
+    private func setupBadge() {
+        label.sizeToFit()
+        layer.cornerRadius = cornerRadius
+        layer.masksToBounds = true
+        backgroundColor = backgroundToduckColor
+    }
+
+    private func layout() {
+        addSubview(label)
+
+        self.snp.makeConstraints {
             $0.height.equalTo(20)
-            $0.bottom.top.equalToSuperview()
-            $0.leading.leading.equalToSuperview().inset(10)
         }
+
+        label.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.bottom.top.equalToSuperview()
+        }
+    }
+
+    public func setTitle(_ title: String) {
+        self.title = title
+        label.setText(self.title)
+        setupBadge()
+    }
+
+    public func setFont(_ font: TDFont) {
+        self.font = font
+        label.setFont(font)
+        setupBadge()
+    }
+
+    public func setCornerRadius(_ cornerRadius: CGFloat) {
+        self.cornerRadius = cornerRadius
+        layer.cornerRadius = cornerRadius
+        setupBadge()
+    }
+
+    public func setTitleColor(_ titleColor: UIColor) {
+        self.foregroundToduckColor = titleColor
+        label.setColor(foregroundToduckColor)
+        setupBadge()
+    }
+
+    public func setBackgroundToduckColor(_ backgroundToduckColor: UIColor) {
+        self.backgroundToduckColor = backgroundToduckColor
+        backgroundColor = backgroundToduckColor
+        setupBadge()
     }
 }

@@ -37,6 +37,9 @@ public enum TDFont {
     case regularCaption2
     case mediumCaption2
     case boldCaption2
+
+    case regularCaption3
+    case mediumCaption3
 }
 
 extension TDFont {
@@ -88,6 +91,10 @@ extension TDFont {
             return ToduckFontFamily.Pretendard.medium.font(size: 10.0)
         case .boldCaption2:
             return ToduckFontFamily.Pretendard.semiBold.font(size: 10.0)
+        case .regularCaption3:
+            return ToduckFontFamily.Pretendard.regular.font(size: 9.0)
+        case .mediumCaption3:
+            return ToduckFontFamily.Pretendard.medium.font(size: 9.0)
         }
     }
     
