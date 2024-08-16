@@ -33,28 +33,43 @@ extension Date {
             }
         }
     }
+}
+
+// MARK: - Date <-> String 타입변환 Extension
+extension Date {
     
-    // MARK: - Date 타입을 String으로 변환
+    /// String을 Format을 지정하여 Date?으로 변환합니다.
+    ///
+    /// - Date.dateFromString("2021년 1월", format: .yearMonth) -> 2021-01-01 00:00:00 +0000
+    /// - Parameters:
+    ///   - dateString: format과 일치하는 String형을 입력
+    ///   - format: DateFormatType으로 직접 format을 지정할 수 있음
+    /// - Returns: Date? 타입으로 반환
+    static func dateFromString(_ dateString: String, format: DateFormatType) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format.formatter.dateFormat
+        return dateFormatter.date(from: dateString)
+    }
+    /// Date을 Format을 지정하여 String 타입으로 변환합니다.
+    ///
+    /// Date.stringFromDate("2021-01-01", formatType: .yearMonth) -> "2021년 1월"
+    /// - Parameters:
+    ///   - date: date 타입의 값을 입력
+    ///   - formatType: DateFormatType으로 직접 format을 지정할 수 있음
+    /// - Returns: Format에 맞는 String형 반환
     static func stringFromDate(_ date: Date, formatType: DateFormatType = .yearMonth) -> String {
         return formatType.formatter.string(from: date)
     }
-    
-    // MARK: - String 타입을 Date 타입으로 변환
-    static func dateFromString(_ dateString: String, format: String) -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = format
-        return dateFormatter.date(from: dateString)
-    }
-    
-    static func timeFromString(_ timeString: String, use24HourFormat: Bool = false) -> Date? {
-        let formatType: DateFormatType = use24HourFormat ? .time24Hour : .time12Hour
-        return formatType.formatter.date(from: timeString)
-    }
-    
-    // MARK: - N시간 전, N초 같은 상대시간을 표시해주는 함수
-    static func relatveTimeFromDate(_ time: Date) -> String {
+}
+
+// MARK: - Format으로 표현할 수 없는 경우의 Date Extension
+extension Date {
+    /// pram의 Date와 현재 시간을 비교하는 상대시간을 String으로 반환하는 함수
+    /// - Parameter date: Date 타입의 값을 입력
+    /// - Returns: 1시간전, 1일전, 1주전, 1개월전, 1년전과 같은 상대시간을 반환
+    static func relatveTimeFromDate(_ date: Date) -> String {
         let now = Date()
-        let diff = Int(now.timeIntervalSince(time))
+        let diff = Int(now.timeIntervalSince(date))
         
         let minute = 60
         let hour = 60 * minute
