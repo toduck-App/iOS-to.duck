@@ -33,12 +33,12 @@ public struct Routine: Hashable {
     func dateString() -> String? {
         guard let date = dateAndTime else { return nil }
         
-        return Date.stringFromDate(date)
+        return date.convertToString()
     }
     
     func timeString(use24HourFormat: Bool) -> String? {
         guard let time = dateAndTime else { return nil }
         
-        return Date.stringFromDate(time, formatType: .time24Hour)
+        return time.convertToString(formatType: .time24Hour)
     }
 }

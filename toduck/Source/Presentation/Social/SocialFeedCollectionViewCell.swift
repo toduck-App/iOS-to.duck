@@ -132,7 +132,8 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     func configure(with item: Post) {
         titleBagde.setTitle(item.user.title)
         nicknameLabel.setText(item.user.name)
-        dateLabel.setText(Date.relatveTimeFromDate(item.timestamp))
+        
+        dateLabel.setText(item.timestamp.convertRelativeTime())
         contentLabel.setText(item.contentText)
         likeLabel.setText("\(item.likeCount ?? 0)")
         commentLabel.setText("\(item.commentCount ?? 0)")
@@ -153,7 +154,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
             routineTitleLabel.setText(routine.title)
             routineContentLabel.setText(routine.memo ?? "")
             if let routineDate = routine.dateAndTime {
-                routineDateLabel.setText(Date.stringFromDate(routineDate, formatType: .time12HourEnglish))
+                routineDateLabel.setText(routineDate.convertToString(formatType: .time12HourEnglish))
             }
             setupRoutineView()
         }
