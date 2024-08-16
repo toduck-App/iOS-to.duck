@@ -85,7 +85,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var titleBagde = TDBadge("")
+    private var titleBagde = TDBadge(badgeTitle: "")
     
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
     private var dateLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
@@ -205,10 +205,6 @@ private extension SocialFeedCollectionViewCell {
         avatarView.snp.makeConstraints { make in
             make.top.leading.equalToSuperview()
             make.size.equalTo(36)
-        }
-        titleBagde.snp.makeConstraints { make in
-            make.width.equalTo(46)
-            make.height.equalTo(20)
         }
         [titleBagde, nicknameLabel, dateLabel, dotIconView, likeIconView,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
             $0.snp.makeConstraints { make in
