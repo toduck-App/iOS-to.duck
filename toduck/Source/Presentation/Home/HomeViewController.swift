@@ -12,22 +12,20 @@ import Then
 
 class HomeViewController: BaseViewController<BaseView>, TDSheetPresentation {
 
-    let calendar = FSCalendar().then {
-        $0.scrollDirection = .horizontal
-        $0.locale = Locale(identifier: "ko_KR")
-        $0.backgroundColor = .systemBackground
-        $0.scope = .month
-        $0.appearance.weekdayTextColor = .gray
-        $0.placeholderType = .none
-        $0.allowsMultipleSelection = true
-
-        // 인접한 달의 헤더 텍스트 숨기기
-        $0.appearance.headerMinimumDissolvedAlpha = 0.0
-    }
+    let baseCalendar = BaseCalendar()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .gray
+        
+        view.addSubview(baseCalendar)
+        baseCalendar.snp.makeConstraints {
+            $0.centerX.equalTo(view)
+            $0.centerY.equalTo(view)
+            $0.width.equalTo(300)  // 명시적 크기 설정
+            $0.height.equalTo(400) // 명시적 크기 설정
+        }
     }
 }
 

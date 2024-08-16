@@ -9,10 +9,6 @@ import UIKit
 import SnapKit
 import Then
 
-class DiaryCalendarViewController: UIViewController {
+final class DiaryCalendar: BaseCalendar {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-    }
 }
