@@ -56,39 +56,37 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     lazy var dotIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Dot.horizontalMedium
+        $0.image = TDImage.Dot.horizontalMedium.withRenderingMode(.alwaysTemplate)
     }
     
-    
-    
     lazy var likeIconView = UIImageView().then {
+        
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.likeMedium
+        $0.image = TDImage.likeMedium.withRenderingMode(.alwaysTemplate)
     }
     
     lazy var commentIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.commentMedium
+        $0.image = TDImage.commentMedium.withRenderingMode(.alwaysTemplate)
     }
     
     lazy var shareIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Repeat.arrowMedium
+        $0.image = TDImage.Repeat.arrowMedium.withRenderingMode(.alwaysTemplate)
     }
     
     lazy var avatarView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 20
+        $0.layer.cornerRadius = 18
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var titleLabel = TDLabel(labelText:  "", toduckFont: .mediumCaption2, toduckColor: TDColor.Primary.primary500).then{
-        $0.backgroundColor = TDColor.Primary.primary50
-    }
+    private var titleBagde = TDBadge("")
+    
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
     private var dateLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
     
@@ -100,10 +98,14 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     private var commentLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600)
     private var shareLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600)
     
-    private var routineView = UIView().then{
+    private var routineStackView = UIStackView().then{
         $0.backgroundColor = TDColor.Neutral.neutral100
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
+        $0.axis = .vertical
+        $0.spacing = 10
+        $0.alignment = .fill
+        $0.distribution = .fill
     }
     
     // Semibold가 없어요
@@ -128,7 +130,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
     func configure(with item: Post) {
-        titleLabel.setText(item.user.title)
+        titleBagde.setTitle(item.user.title)
         nicknameLabel.setText(item.user.name)
         dateLabel.setText(Date.relatveTimeFromDate(item.timestamp))
         contentLabel.setText(item.contentText)
@@ -147,9 +149,9 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         }
         
         if let routine = item.routine {
-            bodyStackView.addArrangedSubview(routineView)
+            bodyStackView.addArrangedSubview(routineStackView)
             routineTitleLabel.setText(routine.title)
-            routineContentLabel.setText(routine.memo ?? "sdf")
+            routineContentLabel.setText(routine.memo ?? "")
             if let routineDate = routine.dateAndTime {
                 routineDateLabel.setText(Date.stringFromDate(routineDate, formatType: .time12HourEnglish))
             }
@@ -169,7 +171,7 @@ private extension SocialFeedCollectionViewCell {
     
     func setupLayout() {
         addSubview(containerView)
-        [titleLabel,nicknameLabel,dateLabel].forEach{
+        [titleBagde,nicknameLabel,dateLabel].forEach{
             headerLeftStackView.addArrangedSubview($0)
         }
         
@@ -204,8 +206,11 @@ private extension SocialFeedCollectionViewCell {
             make.top.leading.equalToSuperview()
             make.size.equalTo(36)
         }
-        
-        [titleLabel, nicknameLabel, dateLabel, dotIconView, likeIconView,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
+        titleBagde.snp.makeConstraints { make in
+            make.width.equalTo(46)
+            make.height.equalTo(20)
+        }
+        [titleBagde, nicknameLabel, dateLabel, dotIconView, likeIconView,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
             $0.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
             }
@@ -262,14 +267,18 @@ private extension SocialFeedCollectionViewCell {
     
     func setupRoutineView() {
         
-        bodyStackView.addArrangedSubview(routineView)
-        routineView.snp.makeConstraints { make in
+        bodyStackView.addArrangedSubview(routineStackView)
+        routineStackView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.height.equalTo(114)
         }
-        routineView.addSubview(routineTitleLabel)
-        routineView.addSubview(routineContentLabel)
-        routineView.addSubview(routineDateLabel)
+        let spacingView = UIView()
+        spacingView.snp.makeConstraints { make in
+            make.height.equalTo(4)
+        }
+        [spacingView,routineTitleLabel, routineContentLabel, routineDateLabel,spacingView].forEach {
+            routineStackView.addArrangedSubview($0)
+        }
+        
         routineTitleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(14)
             make.leading.equalToSuperview().offset(20)
@@ -277,15 +286,14 @@ private extension SocialFeedCollectionViewCell {
         }
         
         routineContentLabel.snp.makeConstraints { make in
-            make.top.equalTo(routineTitleLabel.snp.bottom).offset(10)
+            make.bottom.equalTo(routineDateLabel.snp.top).offset(-18)
             make.leading.trailing.equalTo(routineTitleLabel)
             
         }
         
         routineDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(routineContentLabel.snp.bottom).offset(18)
-            make.leading.trailing.equalTo(routineTitleLabel)
             make.bottom.equalToSuperview().offset(-10)
+            make.leading.trailing.equalTo(routineTitleLabel)
         }
     }
 }

@@ -89,7 +89,7 @@ extension Post {
                                isLike: false,
                                commentCount: 7,
                                shareCount: 12,
-                               routine: Routine(id: 1, title: "✌️ 나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: "일", isPublic: true, dateAndTime: .now, isRepeating: true, isRepeatAllDay: false, repeatDays: [.monday,.friday], alarm: true, alarmTimes: [.oneHourBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
+                               routine: Routine(id: 1, title: "✌️ 나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: "일", isPublic: true, dateAndTime: .now, isRepeating: true, isRepeatAllDay: false, repeatDays: [.monday,.friday], alarm: true, alarmTimes: [.oneHourBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
                                type: .communication,
                                category: [.anxiety]),
                           Post(id: 3,
