@@ -12,19 +12,27 @@ import Then
 
 class HomeViewController: BaseViewController<BaseView>, TDSheetPresentation {
 
+    let calendarHeader = CalendarHeaderStackView(type: .toduck)
     let baseCalendar = BaseCalendar()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .gray
+        view.backgroundColor = .systemBackground
         
+        view.addSubview(calendarHeader)
         view.addSubview(baseCalendar)
+        
+        calendarHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(15)
+        }
+        
         baseCalendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
-            $0.centerY.equalTo(view)
-            $0.width.equalTo(300)  // 명시적 크기 설정
-            $0.height.equalTo(400) // 명시적 크기 설정
+            $0.top.equalTo(calendarHeader.snp.top).offset(100)
+            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.9)
+            $0.height.equalTo(400)
         }
     }
 }

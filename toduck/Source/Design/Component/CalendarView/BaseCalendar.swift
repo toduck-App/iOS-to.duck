@@ -1,5 +1,5 @@
 //
-//  BaseCalendarViewController.swift
+//  BaseCalendar.swift
 //  toduck
 //
 //  Created by 박효준 on 8/16/24.
@@ -60,14 +60,14 @@ extension BaseCalendar: FSCalendarDelegate {
 // MARK: - FSCalendarDelegateAppearance
 /// 데코레이션 관리 (텍스트 색, 점 색.. 등등)
 extension BaseCalendar: FSCalendarDelegateAppearance {
-    // 기본 폰트 색상 설정
+    // 기본 폰트 색
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-        return colorForDate(date)
+        colorForDate(date)
     }
     
-    // 선택된 날짜에 대한 폰트 색상 설정
+    // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleSelectionColorFor date: Date) -> UIColor? {
-        return colorForDate(date)
+        colorForDate(date)
     }
     
     // 공통된 날짜 색상 로직 처리
