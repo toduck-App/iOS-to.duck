@@ -12,7 +12,7 @@ import Then
 
 class HomeViewController: BaseViewController<BaseView>, TDSheetPresentation {
 
-    let calendarHeader = CalendarHeaderStackView(type: .toduck)
+    let calendarHeader = CalendarHeaderStackView(type: .sheet)
     let baseCalendar = BaseCalendar()
     
     

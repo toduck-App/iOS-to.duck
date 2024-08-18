@@ -15,12 +15,10 @@ public enum TDImage {
     public static let chartMedium = ToduckAsset.Images.chartMedium.image
     public static let checkMedium = ToduckAsset.Images.checkMedium.image
     public static let clockMedium = ToduckAsset.Images.clockMedium.image
-    public static let commentMedium = ToduckAsset.Images.commentMedium.image
     public static let filterMedium = ToduckAsset.Images.filterMedium.image
     public static let goodMedium = ToduckAsset.Images.goodMedium.image
     public static let hamburgerMedium = ToduckAsset.Images.hamburgerMedium.image
     public static let imageMedium = ToduckAsset.Images.imageMedium.image
-    public static let likeMedium = ToduckAsset.Images.likeMedium.image
     public static let listMedium = ToduckAsset.Images.listMedium.image
     public static let locationMedium = ToduckAsset.Images.locationMedium.image
     public static let penMedium = ToduckAsset.Images.penMedium.image
@@ -33,15 +31,25 @@ public enum TDImage {
     public static let badSmall = ToduckAsset.Images.badSmall.image
     public static let cameraSmall = ToduckAsset.Images.cameraSmall.image
     public static let chartSmall = ToduckAsset.Images.chartSmall.image
-    public static let commentSmall = ToduckAsset.Images.commentSmall.image
     public static let goodSmall = ToduckAsset.Images.goodSmall.image
     public static let hamburgerSmall = ToduckAsset.Images.hamburgerSmall.image
     public static let imageSmall = ToduckAsset.Images.imageSmall.image
-    public static let likeSmall = ToduckAsset.Images.likeSmall.image
     public static let locationSmall = ToduckAsset.Images.locationSmall.image
     public static let penSmall = ToduckAsset.Images.penSmall.image
     public static let sortSmall = ToduckAsset.Images.sortSmall.image
     public static let timeSmall = ToduckAsset.Images.timeSmall.image
+    
+    public enum Like {
+        public static let small = ToduckAsset.Images.likeSmall.image
+        public static let emptyMedium = ToduckAsset.Images.likeEmptyMedium.image
+        public static let filledMedium = ToduckAsset.Images.likeFilledMedium.image
+    }
+    
+    public enum Comment {
+        public static let small = ToduckAsset.Images.commentSmall.image
+        public static let rightMedium = ToduckAsset.Images.commentRightMedium.image
+        public static let leftMedium = ToduckAsset.Images.commentLeftMedium.image
+    }
     
     public enum Profile {
         public static let large = ToduckAsset.Images.profileLarge.image
