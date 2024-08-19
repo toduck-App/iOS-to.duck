@@ -10,14 +10,14 @@ import Then
 import SnapKit
 
 class SocialViewController: UIViewController, TDSheetPresentation {
-    private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .capsule)
-    private(set) lazy var chipCollectionView2 = TDChipCollectionView(chipType: .roundedRectangle)
+    private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .capsule, hasAllSelectChip: false)
+    private(set) lazy var chipCollectionView2 = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
         
     }
     
-    let chipTexts = ["전체", "집중력", "기억력", "충동", "불안", "수면", "test", "test2", "test3", "test4", "test5"]
+    let chipTexts = ["집중력", "기억력", "충동", "불안", "수면", "test", "test2", "test3", "test4", "test5"]
     let posts : [Post] = Post.dummy
     override func viewDidLoad() {
         super.viewDidLoad()

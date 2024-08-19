@@ -14,14 +14,17 @@ class TDChipCollectionView: UICollectionView, UICollectionViewDelegateFlowLayout
     private var chips: [chipItem] = []
     private var selectedStates: [Bool] = []
     private var defaultChipType: TDChipType
+    private var hasAllSelectChip: Bool = false
     weak var chipDelegate: TDChipCollectionViewDelegate?
     
-    init(chipType: TDChipType) {
+    init(chipType: TDChipType, hasAllSelectChip: Bool = false) {
+        self.hasAllSelectChip = hasAllSelectChip
         self.defaultChipType = chipType
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 10
         super.init(frame: .zero, collectionViewLayout: layout)
+
         self.backgroundColor = TDColor.baseWhite
         self.delegate = self
         self.dataSource = self
@@ -35,8 +38,13 @@ class TDChipCollectionView: UICollectionView, UICollectionViewDelegateFlowLayout
     }
     
     func setChips(_ chipTexts: [String]) {
+        
         self.chips = chipTexts.map { chipItem(title: $0, type: defaultChipType) }
         self.selectedStates = Array(repeating: false, count: chipTexts.count)
+        if hasAllSelectChip {
+            self.chips.insert(chipItem(title: "전체", type: defaultChipType), at: 0)
+            self.selectedStates.insert(false, at: 0)
+        }
         self.reloadData()
     }
     
@@ -59,15 +67,19 @@ class TDChipCollectionView: UICollectionView, UICollectionViewDelegateFlowLayout
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        switch indexPath.item {
-        case selectedStates.startIndex:
-            selectedStates = Array(repeating: !selectedStates[0], count: chips.count)
-        default:
-            selectedStates[indexPath.item].toggle()
-            if selectedStates[indexPath.item] == false { selectedStates[0] = false }
-            if (selectedStates[1...].allSatisfy{ $0 == true }) {
-                selectedStates[0] = true
+        if hasAllSelectChip {
+            switch indexPath.item {
+            case selectedStates.startIndex:
+                selectedStates = Array(repeating: !selectedStates[0], count: chips.count)
+            default:
+                selectedStates[indexPath.item].toggle()
+                if selectedStates[indexPath.item] == false { selectedStates[0] = false }
+                if (selectedStates[1...].allSatisfy{ $0 == true }) {
+                    selectedStates[0] = true
+                }
             }
+        } else {
+            selectedStates[indexPath.item].toggle()
         }
         
         if let cell = collectionView.cellForItem(at: indexPath) as? TDChipCell {
