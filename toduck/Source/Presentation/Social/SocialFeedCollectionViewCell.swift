@@ -46,12 +46,12 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     private var bodyStackView = UIStackView().then{
         $0.axis = .vertical
-        $0.spacing = 10
+        $0.spacing = 14
         $0.alignment = .fill
         $0.distribution = .fill
     }
     
-    private var footerView = UIView()
+    private let footerView = UIView()
     
     lazy var dotIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
@@ -110,7 +110,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     // Semibold가 없어요
     private var routineTitleLabel = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800).then {
-        $0.numberOfLines = 0
+        $0.numberOfLines = 2
     }
     
     private var routineContentLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then{
@@ -215,7 +215,7 @@ private extension SocialFeedCollectionViewCell {
         
         verticalStackView.snp.makeConstraints { make in
             make.leading.equalTo(avatarView.snp.trailing).offset(10)
-            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-16)
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -266,31 +266,17 @@ private extension SocialFeedCollectionViewCell {
         
         bodyStackView.addArrangedSubview(routineStackView)
         routineStackView.snp.makeConstraints { make in
-            make.width.equalToSuperview()
+            make.leading.equalTo(verticalStackView.snp.leading)
+            make.trailing.equalToSuperview()
         }
-        let spacingView = UIView()
-        spacingView.snp.makeConstraints { make in
-            make.height.equalTo(4)
-        }
-        [spacingView,routineTitleLabel, routineContentLabel, routineDateLabel,spacingView].forEach {
+
+        [routineTitleLabel, routineContentLabel, routineDateLabel].forEach {
             routineStackView.addArrangedSubview($0)
         }
         
-        routineTitleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(14)
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
-        }
+        routineStackView.layoutMargins = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
+        routineStackView.isLayoutMarginsRelativeArrangement = true
         
-        routineContentLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(routineDateLabel.snp.top).offset(-18)
-            make.leading.trailing.equalTo(routineTitleLabel)
-            
-        }
-        
-        routineDateLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-10)
-            make.leading.trailing.equalTo(routineTitleLabel)
-        }
+
     }
 }
