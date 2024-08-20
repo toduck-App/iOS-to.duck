@@ -10,16 +10,22 @@ import SnapKit
 import UIKit
 
 class SocialView: BaseView {
+    private let segmentedControl = TDSegmentedController(items: ["전체", "소통", "질문"])
     private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
     }
     
     override func layout() {
-
+        segmentedControl.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(18)
+            make.leading.equalToSuperview().offset(16)
+            make.width.equalTo(180)
+            make.height.equalTo(43)
+        }
         chipCollectionView.snp.makeConstraints { make in
             make.height.equalTo(50)
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(10)
+            make.top.equalTo(segmentedControl.snp.bottom).offset(10)
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
         }
@@ -35,7 +41,7 @@ class SocialView: BaseView {
         backgroundColor = .white
     }
     override func addview() {
-        [chipCollectionView,socialFeedCollectionView].forEach {
+        [segmentedControl, chipCollectionView, socialFeedCollectionView].forEach {
             addSubview($0)
         }
     }

@@ -25,7 +25,7 @@ class TDChipCollectionView: UICollectionView, UICollectionViewDelegateFlowLayout
         layout.minimumInteritemSpacing = 10
         super.init(frame: .zero, collectionViewLayout: layout)
 
-        self.backgroundColor = TDColor.baseWhite
+        self.backgroundColor = .clear
         self.delegate = self
         self.dataSource = self
         self.register(with: TDChipCell.self)
