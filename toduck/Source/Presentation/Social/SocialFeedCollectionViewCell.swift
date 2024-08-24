@@ -66,7 +66,6 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     lazy var likeButton = UIButton().then {
         $0.tintColor = TDColor.Neutral.neutral500
-        $0.setImage(TDImage.likeMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(didSelectLikeButton), for: .touchUpInside)
     }
@@ -135,6 +134,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
         setupUI()
     }
+    
     func configure(with item: Post) {
         titleBagde.setTitle(item.user.title)
         nicknameLabel.setText(item.user.name)
@@ -144,8 +144,8 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         likeLabel.setText("\(item.likeCount ?? 0)")
         commentLabel.setText("\(item.commentCount ?? 0)")
         likeButton.setImage(item.isLike ?
-                            TDImage.likeColorMedium.withRenderingMode(.alwaysOriginal) :
-                            TDImage.likeMedium.withRenderingMode(.alwaysTemplate), for: .normal)
+                            TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
+                            TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         
         
         guard let url = URL(string: item.user.icon) else { return }
