@@ -14,7 +14,7 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
     private var isSearchActive: Bool = false
     
     let chipTexts = ["집중력", "기억력", "충동", "불안", "수면"]
-    let posts: [Post] = Post.dummy
+    var posts: [Post] = Post.dummy
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +59,7 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.chipCollectionView.chipDelegate = self
         layoutView.chipCollectionView.setChips(chipTexts)
+        
     }
 }
 
@@ -89,11 +90,36 @@ extension SocialViewController: UICollectionViewDataSource, UICollectionViewDele
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
         let post = isSearchActive ? filteredPosts[indexPath.item] : posts[indexPath.item]
+        cell.socialFeedCellDelegate = self
         cell.configure(with: post)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("[LOG] Clicked")
+    }
+}
+
+extension SocialViewController: SocialFeedCollectionViewCellDelegate{
+
+    func didTapCommentButton(_ cell: SocialFeedCollectionViewCell) {
+        print("[LOG] Comment Button Clicked")
+    }
+
+    func didTapShareButton(_ cell: SocialFeedCollectionViewCell) {
+        print("[LOG] Share Button Clicked")
+    }
+
+    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {
+        print("[LOG] Like Button Clicked")
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        
+        
+        let postIndex = indexPath.item
+        print(indexPath.item)
+        posts[postIndex].isLike.toggle()
+        layoutView.socialFeedCollectionView.reloadItems(at: [indexPath])
     }
 }
