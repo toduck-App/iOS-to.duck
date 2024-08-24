@@ -68,6 +68,7 @@ public enum TDColor {
     public enum Primary {
         public static let primary25 = ToduckAsset.Colors.primary25.color
         public static let primary50 = ToduckAsset.Colors.primary50.color
+        public static let primary100 = ToduckAsset.Colors.primary100.color
         public static let primary200 = ToduckAsset.Colors.primary200.color
         public static let primary300 = ToduckAsset.Colors.primary300.color
         public static let primary400 = ToduckAsset.Colors.primary400.color

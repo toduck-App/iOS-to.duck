@@ -35,7 +35,9 @@ let targets: [Target] = [
             .external(name: "SnapKit"),
             .external(name: "Kingfisher"),
             .external(name: "Moya"),
-            .external(name: "Then")],
+            .external(name: "Then"),
+            .external(name: "FSCalendar")
+        ],
         settings: .settings(configurations: [
             .debug(name: "Debug", xcconfig: "Configurations/Debug.xcconfig"),
             .release(name: "Release", xcconfig: "Configurations/Release.xcconfig")

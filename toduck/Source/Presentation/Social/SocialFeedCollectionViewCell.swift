@@ -63,13 +63,13 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.likeMedium.withRenderingMode(.alwaysTemplate)
+        $0.image = TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate)
     }
     
     lazy var commentIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.commentMedium.withRenderingMode(.alwaysTemplate)
+        $0.image = TDImage.Comment.leftMedium.withRenderingMode(.alwaysTemplate)
     }
     
     lazy var shareIconView = UIImageView().then {
