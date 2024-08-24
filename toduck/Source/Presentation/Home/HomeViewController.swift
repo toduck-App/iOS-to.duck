@@ -10,30 +10,58 @@ import FSCalendar
 import SnapKit
 import Then
 
-class HomeViewController: BaseViewController<BaseView>, TDSheetPresentation {
-
-    let calendarHeader = CalendarHeaderStackView(type: .sheet)
-    let baseCalendar = BaseCalendar()
+class HomeViewController: BaseViewController<BaseView>, TDSheetPresentation, TDCalendarConfigurable {
+    var calendarHeader = CalendarHeaderStackView(type: .sheet)
+    var calendar = SheetCalendar()
     
+    let headerDateFormatter = DateFormatter().then { $0.dateFormat = "yyyy년 M월" }
+    let dateFormatter = DateFormatter().then { $0.dateFormat = "yyyy-MM-dd" }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        view.addSubview(calendarHeader)
-        view.addSubview(baseCalendar)
-        
+        setupCalendar()
         calendarHeader.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
             $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(15)
         }
         
-        baseCalendar.snp.makeConstraints {
+        calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.top).offset(100)
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.9)
             $0.height.equalTo(400)
         }
+    }
+}
+
+
+// MARK: - FSCalendarDelegate
+/// 클릭됐을 때 동작
+extension HomeViewController {
+    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        let dateString = dateFormatter.string(from: date)
+        print("선택된 날짜: \(dateString)")
+    }
+    
+    // FSCalendarDelegate 메소드, 페이지 바뀔 때마다 실행됨
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        updateHeaderLabel(for: calendar.currentPage)
+    }
+}
+
+// MARK: - FSCalendarDelegateAppearance
+/// 데코레이션 관리 (텍스트 색, 점 색.. 등등)
+extension HomeViewController {
+    // 기본 폰트 색
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
+        colorForDate(date)
+    }
+    
+    // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleSelectionColorFor date: Date) -> UIColor? {
+        colorForDate(date)
     }
 }
 
