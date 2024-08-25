@@ -8,13 +8,7 @@
 import UIKit
 import FSCalendar
 
-// TODO: 이 프로토콜을 채택하면, Diary Sheet TD 자식 캘린더를 쓰는 뷰컨에서 문제 발생
-// associatedtype으로 해결 (프로토콜 계의 제네릭)
-
-// TODO: BaseCalendar에 넣으면 되지, 왜 TDCalendarConfigurable을 사용하나 ?
-/// 모듈 느낌으로 분리하고 싶었음
-/// DiaryCalendar 같은 경우, 토일은 색이 들어가지 않음 -> DiaryCalendar를 쓰는 뷰컨은 이 프로토콜을 채택 안 하게..? 하려했음
-protocol TDCalendarConfigurable: FSCalendarDelegateAppearance,
+protocol TDCalendarConfigurable: FSCalendarDelegateAppearance, FSCalendarDataSource,
                                     FSCalendarDelegate where Self: UIViewController {
     associatedtype CalendarType: BaseCalendar
     
@@ -30,11 +24,7 @@ extension TDCalendarConfigurable {
         view.addSubview(calendarHeader)
         view.addSubview(calendar)
         calendar.delegate = self
-        
-        calendar.appearance.headerMinimumDissolvedAlpha = 0.0 // 인접한 달 헤더 제거
-        calendar.appearance.todayColor = .clear // 오늘 날짜 동그라미 색상 제거
-        calendar.appearance.selectionColor = TDColor.Primary.primary100
-        calendar.appearance.weekdayTextColor = TDColor.Neutral.neutral600
+        calendar.dataSource = self
         updateHeaderLabel(for: calendar.currentPage)
     }
     
