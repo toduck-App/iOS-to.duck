@@ -35,7 +35,6 @@ class HomeViewController: UIViewController, TDSheetPresentation {
             make.width.equalTo(180)
             make.height.equalTo(43)
         }
-                calendar.reloadData()
 
         segmentedControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
     }
