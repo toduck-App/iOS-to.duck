@@ -10,7 +10,7 @@ import SnapKit
 import Then
 import UIKit
 
-final class SheetCalendar: BaseCalendar {
+final class SheetCalendar: BaseCalendar {    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupSheetCalendar()
@@ -23,7 +23,7 @@ final class SheetCalendar: BaseCalendar {
     
     private func setupSheetCalendar() {
         self.allowsMultipleSelection = true
-        self.register(SelectDatesCustomFSCalendarCell.self, forCellReuseIdentifier: SelectDatesCustomFSCalendarCell.identifier)
+        self.register(SheetCalendarSelectDateCell.self, forCellReuseIdentifier: SheetCalendarSelectDateCell.identifier)
         self.appearance.selectionColor = .clear
     }
 }

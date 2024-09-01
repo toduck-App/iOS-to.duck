@@ -10,7 +10,7 @@ import SnapKit
 import Then
 import UIKit
 
-class BaseCalendar: FSCalendar {
+class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate {
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		setupHeader()
@@ -42,6 +42,6 @@ class BaseCalendar: FSCalendar {
 		self.calendarHeaderView.isHidden = true
 		self.headerHeight = 0
 	}
-    
-    
 }
+
+

@@ -9,7 +9,7 @@ import FSCalendar
 import SnapKit
 import Then
 
-final class SelectDatesCustomFSCalendarCell: FSCalendarCell {
+final class SheetCalendarSelectDateCell: FSCalendarCell {
 	let circleBackImageView = UIImageView()
 	let leftRectBackImageView = UIImageView()
 	let rightRectBackImageView = UIImageView()
@@ -72,7 +72,7 @@ final class SelectDatesCustomFSCalendarCell: FSCalendarCell {
 	}
 }
 
-extension SelectDatesCustomFSCalendarCell {
+extension SheetCalendarSelectDateCell {
 	func updateBackImage(_ dateType: SelectedDateType) {
 		switch dateType {
 		case .singleDate:

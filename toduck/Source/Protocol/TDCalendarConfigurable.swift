@@ -8,6 +8,8 @@
 import UIKit
 import FSCalendar
 
+// MARK: 캘린더 헤더와 몸통을 세팅해주는 프로토콜
+
 protocol TDCalendarConfigurable: FSCalendarDelegateAppearance, FSCalendarDataSource,
                                     FSCalendarDelegate where Self: UIViewController {
     associatedtype CalendarType: BaseCalendar
