@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         appCoordinator = AppCoordinator(navigationController: navigationController)
         appCoordinator?.start()
         
-        window?.rootViewController = SheetCalendarViewController()
+        window?.rootViewController = navigationController
         window?.windowScene = windowScene
         window?.makeKeyAndVisible()
     }
