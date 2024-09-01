@@ -22,9 +22,7 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     var calendar = SheetCalendar()
     
     var selectDates = TDLabel(toduckFont: TDFont.mediumHeader5,
-                              toduckColor: TDColor.Neutral.neutral600).then {
-        $0.text = ""
-    }
+                              toduckColor: TDColor.Neutral.neutral600)
     
     override func viewDidLoad() {
         super.viewDidLoad()
