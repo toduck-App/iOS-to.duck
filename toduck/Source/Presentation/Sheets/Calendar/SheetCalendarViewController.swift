@@ -49,6 +49,37 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     }
 }
 
+// MARK: 선택된 날짜를 업데이트 (우측 상단 Label)
+extension SheetCalendarViewController {
+    private func updateSelectedDatesLabel() {
+        guard let firstDate = firstDate else {
+            selectDates.text = ""
+            return
+        }
+
+        // firstDate와 lastDate가 모두 존재하고, 서로 다른 날짜일 경우
+        if let lastDate = lastDate, firstDate != lastDate {
+            let firstMonth = Calendar.current.component(.month, from: firstDate)
+            let lastMonth = Calendar.current.component(.month, from: lastDate)
+
+            // 같은 달일 경우 "M월 d - d일" 형식으로 표시
+            if firstMonth == lastMonth {
+                let monthDayFormatter = DateFormatter()
+                monthDayFormatter.dateFormat = "M월 d"
+                selectDates.text = "\(monthDayFormatter.string(from: firstDate)) - \(dayFormatter.string(from: lastDate))"
+            } else {
+                // 다른 달일 경우 "M월 d일 - M월 d일" 형식으로 표시
+                let monthDayFormatter = DateFormatter()
+                monthDayFormatter.dateFormat = "M월 d일"
+                selectDates.text = "\(monthDayFormatter.string(from: firstDate)) - \(monthDayFormatter.string(from: lastDate))"
+            }
+        } else {
+            // 단일 날짜가 선택된 경우 "d일" 형식으로 표시
+            selectDates.text = "\(dayFormatter.string(from: firstDate))"
+        }
+    }
+}
+
 // MARK: - FSCalendarDelegateAppearance
 /// 데코레이션 관리 (텍스트 색, 점 색.. 등등)
 extension SheetCalendarViewController {
@@ -199,18 +230,5 @@ extension SheetCalendarViewController {
         if date == firstDate { return .firstDate }
         if date == lastDate { return .lastDate }
         else { return .middleDate }
-    }
-}
-
-extension SheetCalendarViewController {
-    // 선택된 날짜를 업데이트하는 메서드
-    private func updateSelectedDatesLabel() {
-        if let firstDate = firstDate, let lastDate = lastDate, firstDate != lastDate {
-            selectDates.text = "\(dayFormatter.string(from: firstDate)) - \(dayFormatter.string(from: lastDate))"
-        } else if let firstDate = firstDate {
-            selectDates.text = "\(dayFormatter.string(from: firstDate))"
-        } else {
-            selectDates.text = ""
-        }
     }
 }
