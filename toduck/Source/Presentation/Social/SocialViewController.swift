@@ -18,39 +18,6 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupNavigationBar()
-        self.setupSearchBar()
-        
-    }
-    
-    private func setupSearchBar() {
-        // 서치 바 설정
-        searchBar.placeholder = "제목이나 키워드를 입력해보세요."
-        searchBar.searchTextField.font = TDFont.mediumBody2.font
-        searchBar.setImage(UIImage(named: "search_back"), for: .search, state: .normal)
-        searchBar.setPositionAdjustment(UIOffset(horizontal: 16, vertical: 0), for: .search)
-        searchBar.showsCancelButton = false
-        searchBar.delegate = self
-        
-    }
-    
-    @objc private func setupNavigationBar() {
-        self.navigationItem.titleView = nil
-        // 네비게이션 바 왼쪽에 "소셜" 텍스트 추가
-        let leftLabel = TDLabel(labelText: "소셜",toduckFont: .boldHeader4)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLabel)
-        
-        // 네비게이션 바 오른쪽에 돋보기 버튼 추가
-        let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(didTapSearchButton))
-        self.navigationItem.rightBarButtonItem = searchButton
-    }
-    
-    @objc private func didTapSearchButton() {
-        // 돋보기 버튼 클릭 시 서치 바를 네비게이션 바에 추가
-        self.navigationItem.titleView = searchBar
-        self.navigationItem.leftBarButtonItem = nil
-        
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(setupNavigationBar))
     }
     
     override func configure() {
@@ -59,6 +26,17 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.chipCollectionView.chipDelegate = self
         layoutView.chipCollectionView.setChips(chipTexts)
+    }
+    
+    override func addView() {
+        
+    }
+    
+    override func layout() {
+        
+    }
+    
+    override func binding() {
         
     }
 }
@@ -115,8 +93,6 @@ extension SocialViewController: SocialFeedCollectionViewCellDelegate{
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
-        
-        
         let postIndex = indexPath.item
         print(indexPath.item)
         posts[postIndex].isLike.toggle()
