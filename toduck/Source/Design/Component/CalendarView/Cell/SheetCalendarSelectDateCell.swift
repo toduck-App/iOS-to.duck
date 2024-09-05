@@ -14,7 +14,7 @@ final class SheetCalendarSelectDateCell: FSCalendarCell {
 	let leftRectBackImageView = UIImageView()
 	let rightRectBackImageView = UIImageView()
 
-	override init!(frame: CGRect) {
+	override init(frame: CGRect) {
 		super.init(frame: frame)
 
 		setConfigure()
@@ -22,8 +22,8 @@ final class SheetCalendarSelectDateCell: FSCalendarCell {
 		settingImageView()
 	}
 
-	required init!(coder aDecoder: NSCoder!) {
-		super.init(coder: aDecoder)
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
 
 		setConfigure()
 		setConstraints()
