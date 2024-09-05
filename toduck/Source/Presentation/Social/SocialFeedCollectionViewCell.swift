@@ -13,6 +13,8 @@ protocol SocialFeedCollectionViewCellDelegate: AnyObject {
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
     func didTapCommentButton(_ cell: SocialFeedCollectionViewCell)
     func didTapShareButton(_ cell: SocialFeedCollectionViewCell)
+    func didTapMoreButton(_ cell: SocialFeedCollectionViewCell)
+    func didTapNickname(_ cell: SocialFeedCollectionViewCell)
 }
 
 class SocialFeedCollectionViewCell: UICollectionViewCell {
@@ -169,6 +171,18 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
             }
             setupRoutineView()
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        likeButton.setImage(TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
+        likeLabel.setText("0")
+        commentLabel.setText("0")
+        shareLabel.setText("0")
+        routineStackView.removeFromSuperview()
+        shareIconView.isHidden = false
+        shareLabel.isHidden = false
+        avatarView.image = TDImage.Profile.medium
     }
 }
 private extension SocialFeedCollectionViewCell {

@@ -79,7 +79,14 @@ extension SocialViewController: UICollectionViewDataSource, UICollectionViewDele
 }
 
 extension SocialViewController: SocialFeedCollectionViewCellDelegate{
+    func didTapNickname(_ cell: SocialFeedCollectionViewCell) {
+        
+    }
 
+    func didTapMoreButton(_ cell: SocialFeedCollectionViewCell) {
+    
+    }
+    
     func didTapCommentButton(_ cell: SocialFeedCollectionViewCell) {
         print("[LOG] Comment Button Clicked")
     }
@@ -93,9 +100,9 @@ extension SocialViewController: SocialFeedCollectionViewCellDelegate{
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
+        
         let postIndex = indexPath.item
-        print(indexPath.item)
         posts[postIndex].isLike.toggle()
-        layoutView.socialFeedCollectionView.reloadItems(at: [indexPath])
+        cell.configure(with: posts[postIndex])
     }
 }
