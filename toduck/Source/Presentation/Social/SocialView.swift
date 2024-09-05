@@ -4,47 +4,52 @@
 //
 //  Created by 승재 on 8/20/24.
 //
-
-import Foundation
 import SnapKit
 import UIKit
 
 class SocialView: BaseView {
-    private let segmentedControl = TDSegmentedController(items: ["전체", "소통", "질문"])
     private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
     }
+    private(set) var tempView = UIButton().then {
+        $0.setTitle("최신순", for: .normal)
+        $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
+    }
     
     override func layout() {
-        segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(18)
-            make.leading.equalToSuperview().offset(16)
-            make.width.equalTo(180)
-            make.height.equalTo(43)
+        tempView.snp.makeConstraints { make in
+            make.width.equalTo(65)
+            make.height.equalTo(30)
+            make.top.equalTo(safeAreaLayoutGuide)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(10)
         }
+        
         chipCollectionView.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.top.equalTo(segmentedControl.snp.bottom).offset(10)
-            make.leading.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
+            make.height.equalTo(33)
+            make.top.equalTo(tempView)
+            make.leading.equalTo(tempView.snp.trailing).offset(10)
+            make.trailing.equalToSuperview().inset(10)
         }
+        
         socialFeedCollectionView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
             make.top.equalTo(chipCollectionView.snp.bottom).offset(20)
             make.leading.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.width.equalToSuperview()
         }
     }
     
     override func configure() {
         backgroundColor = .white
     }
+    
     override func addview() {
-        [segmentedControl, chipCollectionView, socialFeedCollectionView].forEach {
+        [tempView, chipCollectionView, socialFeedCollectionView].forEach {
             addSubview($0)
         }
     }
+    
     override func binding() {
         
     }
@@ -63,21 +68,21 @@ private extension SocialView{
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(300)
         )
-
+        
         let edgeSpacing = NSCollectionLayoutEdgeSpacing(
             leading: .fixed(0),
             top: .fixed(itemPadding),
             trailing: .fixed(0),
             bottom: .fixed(itemPadding)
         )
-
+        
         let groupInset = NSDirectionalEdgeInsets(
             top: 0,
             leading: groupPadding,
             bottom: 0,
             trailing: groupPadding
         )
-
+        
         return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
             itemSize: itemSize,
             itemEdgeSpacing: edgeSpacing,
