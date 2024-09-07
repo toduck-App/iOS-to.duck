@@ -43,12 +43,34 @@ class FocusCalendarViewController: BaseViewController<BaseView>, TDCalendarConfi
 
 extension FocusCalendarViewController {
     func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
-  
         guard let cell = calendar.dequeueReusableCell(withIdentifier: FocusCalendarSelectDateCell.identifier, for: date, at: position) as? FocusCalendarSelectDateCell else { return FSCalendarCell() }
-        if focusDates.contains(date) {
-            cell.backImageView.image = TDImage.cameraSmall
-            cell.backImageView.alpha = 0.5
+        
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: date)
+
+        switch day {
+        case 1:
+            cell.backImageView.image = TDImage.Mood.sad
+            cell.titleLabel = nil
+        case 2:
+            cell.backImageView.image = TDImage.Mood.angry
+            cell.titleLabel = nil
+        case 3:
+            cell.backImageView.image = TDImage.Mood.tired
+            cell.titleLabel = nil
+        case 4:
+            cell.backImageView.image = TDImage.Mood.calmness
+            cell.titleLabel = nil
+        case 5:
+            cell.backImageView.image = TDImage.Mood.happy
+            cell.titleLabel = nil
+        case 6:
+            cell.backImageView.image = TDImage.Mood.anxiety
+            cell.titleLabel = nil
+        default:
+            cell.backImageView.image = nil // Default 상태 설정
         }
+        cell.backImageView.alpha = 1.0
 
         return cell
     }

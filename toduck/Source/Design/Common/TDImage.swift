@@ -176,4 +176,13 @@ public enum TDImage {
         public static let kakaoLogo = ToduckAsset.Images.kakaoLogo.image
         public static let naverLogo = ToduckAsset.Images.naverLogo.image
     }
+    
+    public enum Mood {
+        public static let sad = ToduckAsset.Images.sadMood.image
+        public static let happy = ToduckAsset.Images.happyMood.image
+        public static let angry = ToduckAsset.Images.angryMood.image
+        public static let anxiety = ToduckAsset.Images.anxietyMood.image
+        public static let calmness = ToduckAsset.Images.calmnessMood.image
+        public static let tired = ToduckAsset.Images.tiredMood.image
+    }
 }
