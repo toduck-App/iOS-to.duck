@@ -5,7 +5,7 @@ protocol TDPopupPresent {
     func presentPopup<T: BaseView>(with vc: TDPopupViewController<T>)
 }
 
-extension TDPopupPresent where Self: UIViewController {
+extension TDPopupPresentable where Self: UIViewController {
     func presentPopup<T: BaseView>(with viewController: TDPopupViewController<T>) {
         viewController.modalPresentationStyle = .overFullScreen
         viewController.modalTransitionStyle = .crossDissolve
