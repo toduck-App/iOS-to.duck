@@ -56,6 +56,12 @@ class TDChipCollectionView: UICollectionView, UICollectionViewDelegateFlowLayout
         let cell: TDChipCell = collectionView.dequeueReusableCell(for: indexPath)
         let chip = chips[indexPath.item]
         let isActive = selectedStates[indexPath.item]
+        
+        if hasAllSelectChip && indexPath.item == 0 {
+            cell.configure(title: chip.title, chipType: chip.type, isActive: isActive, image: TDImage.hamburgerMedium)
+            return cell
+        }
+        
         cell.configure(title: chip.title, chipType: chip.type, isActive: isActive)
         return cell
     }
