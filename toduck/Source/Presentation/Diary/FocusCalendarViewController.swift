@@ -15,9 +15,9 @@ class FocusCalendarViewController: BaseViewController<BaseView>, TDCalendarConfi
     var calendarHeader = CalendarHeaderStackView(type: .mood)
     var calendar = FocusCalendar()
     let focusDates = [
-        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 1)),
-        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 2)),
-        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 3))
+        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 9)),
+        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 10)),
+        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 11))
     ].compactMap { $0 }
     
     override func viewDidLoad() {
@@ -48,6 +48,11 @@ extension FocusCalendarViewController {
         let calendar = Calendar.current
         let day = calendar.component(.day, from: date)
 
+        if focusDates.contains(date) {
+            cell.backImageView.image = TDImage.Memo.medium
+            return cell
+        }
+        
         switch day {
         case 1:
             cell.backImageView.image = TDImage.Mood.sad
@@ -68,9 +73,8 @@ extension FocusCalendarViewController {
             cell.backImageView.image = TDImage.Mood.anxiety
             cell.titleLabel = nil
         default:
-            cell.backImageView.image = nil // Default 상태 설정
+            cell.backImageView.image = nil
         }
-        cell.backImageView.alpha = 1.0
 
         return cell
     }
