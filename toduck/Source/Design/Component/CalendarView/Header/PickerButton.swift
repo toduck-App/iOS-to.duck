@@ -14,7 +14,7 @@ final class PickerButton: UIButton {
         super.init(frame: .zero)
         
         switch type {
-        case .toduck, .mood, .focus:
+        case .toduck, .diary:
             self.setImage(TDImage.Direction.rightMedium, for: .normal)
         case .sheet:
             self.setImage(TDImage.Direction.rightSmall, for: .normal)

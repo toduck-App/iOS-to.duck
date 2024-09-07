@@ -12,8 +12,8 @@ import UIKit
 
 
 class FocusCalendarViewController: BaseViewController<BaseView>, TDCalendarConfigurable {
-    var calendarHeader = CalendarHeaderStackView(type: .mood)
-    var calendar = FocusCalendar()
+    var calendarHeader = CalendarHeaderStackView(type: .diary)
+    var calendar = DiaryCalendar()
     let focusDates = [
         Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 9)),
         Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 10)),
@@ -43,7 +43,7 @@ class FocusCalendarViewController: BaseViewController<BaseView>, TDCalendarConfi
 
 extension FocusCalendarViewController {
     func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
-        guard let cell = calendar.dequeueReusableCell(withIdentifier: FocusCalendarSelectDateCell.identifier, for: date, at: position) as? FocusCalendarSelectDateCell else { return FSCalendarCell() }
+        guard let cell = calendar.dequeueReusableCell(withIdentifier: DiaryCalendarSelectDateCell.identifier, for: date, at: position) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
         
         let calendar = Calendar.current
         let day = calendar.component(.day, from: date)

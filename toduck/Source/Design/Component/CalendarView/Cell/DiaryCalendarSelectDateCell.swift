@@ -9,7 +9,7 @@ import FSCalendar
 import SnapKit
 import Then
 
-final class FocusCalendarSelectDateCell: FSCalendarCell {
+final class DiaryCalendarSelectDateCell: FSCalendarCell {
     var backImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
