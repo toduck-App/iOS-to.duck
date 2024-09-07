@@ -6,7 +6,8 @@
 //
 
 enum CalendarType {
-    case toduck
-    case diary
-    case sheet
+    case toduck // GNB - 좌측
+    case sheet  // 일정&루틴 - 날짜
+    case mood   // 일기 - 기분
+    case focus  // 일기 - 집중도
 }

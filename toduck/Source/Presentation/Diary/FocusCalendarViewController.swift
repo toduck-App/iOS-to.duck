@@ -12,8 +12,13 @@ import UIKit
 
 
 class FocusCalendarViewController: BaseViewController<BaseView>, TDCalendarConfigurable {
-    var calendarHeader = CalendarHeaderStackView(type: .diary)
+    var calendarHeader = CalendarHeaderStackView(type: .mood)
     var calendar = FocusCalendar()
+    let focusDates = [
+        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 1)),
+        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 2)),
+        Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 3))
+    ].compactMap { $0 }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,16 +39,16 @@ class FocusCalendarViewController: BaseViewController<BaseView>, TDCalendarConfi
     }
 }
 
+// MARK: - DataSource
+
 extension FocusCalendarViewController {
-    
     func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
   
         guard let cell = calendar.dequeueReusableCell(withIdentifier: FocusCalendarSelectDateCell.identifier, for: date, at: position) as? FocusCalendarSelectDateCell else { return FSCalendarCell() }
-        
-        cell.backImageView.image = TDImage.cameraSmall
-        
-        // 현재 선택되어 있는 날짜인지 확인 후 배경 이미지의 alpha값을 조절한다
-        cell.backImageView.alpha = 0.5
+        if focusDates.contains(date) {
+            cell.backImageView.image = TDImage.cameraSmall
+            cell.backImageView.alpha = 0.5
+        }
 
         return cell
     }

@@ -19,7 +19,7 @@ final class CalendarHeaderStackView: UIStackView {
         super.init(frame: .zero)
         
         switch type {
-        case .toduck, .diary:
+        case .toduck, .mood, .focus:
             setupDefaultHeader()
         case .sheet:
             setupSheetHeader()
