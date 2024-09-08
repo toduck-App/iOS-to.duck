@@ -94,7 +94,7 @@ extension TDChipCollectionView: UICollectionViewDelegateFlowLayout {
                     selectedStates = Array(repeating: false, count: chips.count)
                     selectedStates[0] = true
                 } else {
-                    selectedStates[0] = false
+                    selectedStates = Array(repeating: false, count: chips.count)
                     selectedStates[indexPath.item] = true
                 }
             }
