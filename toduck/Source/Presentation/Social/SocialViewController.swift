@@ -11,9 +11,15 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
     
     private let searchBar = UISearchBar()
     private var filteredPosts: [Post] = []
-    private var isSearchActive: Bool = false
     
-    let chipTexts = ["집중력", "기억력", "충동", "불안", "수면"]
+    let chips: [TDChipItem] = [
+        TDChipItem(title: "집중력"),
+        TDChipItem(title: "기억력"),
+        TDChipItem(title: "충돌"),
+        TDChipItem(title: "불안"),
+        TDChipItem(title: "수면"),
+    ]
+    
     var posts: [Post] = Post.dummy
     
     override func viewDidLoad() {
@@ -25,7 +31,7 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
         layoutView.socialFeedCollectionView.dataSource = self
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(chipTexts)
+        layoutView.chipCollectionView.setChips(chips)
     }
     
     override func addView() {
@@ -41,19 +47,6 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
     }
 }
 
-extension SocialViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let lowercasedSearchText = searchText.lowercased()
-        if lowercasedSearchText.isEmpty {
-            isSearchActive = false
-            filteredPosts.removeAll()
-        } else {
-            isSearchActive = true
-            filteredPosts = posts.filter { $0.contentText.lowercased().contains(lowercasedSearchText) }
-        }
-        layoutView.socialFeedCollectionView.reloadData()
-    }
-}
 extension SocialViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
         print("[LOG] 현재 Select 한 Chip: \(chipText) , Index = : \(index)")
@@ -62,12 +55,12 @@ extension SocialViewController: TDChipCollectionViewDelegate {
 
 extension SocialViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isSearchActive ? filteredPosts.count : posts.count
+        return posts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-        let post = isSearchActive ? filteredPosts[indexPath.item] : posts[indexPath.item]
+        let post = posts[indexPath.item]
         cell.socialFeedCellDelegate = self
         cell.configure(with: post)
         return cell

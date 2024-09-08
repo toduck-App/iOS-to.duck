@@ -3,83 +3,101 @@ import SnapKit
 import Then
 
 class TDChipCell: UICollectionViewCell {
-    private var chipType: TDChipType = .capsule {
+    private var chipType: TDChipType? {
         didSet {
-            contentView.layer.cornerRadius = chipType.cornerRadius
-        }
-    }
-    private var isActive: Bool = false {
-        didSet {
-            updateButtonState()
+            updateState()
         }
     }
     
+    private var isActive: Bool = false {
+        didSet {
+            updateState()
+        }
+    }
+    
+    private let stackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+        $0.distribution = .equalSpacing
+    }
+    
     private let titleLabel = TDLabel(labelText: "", toduckFont: TDFont.regularBody2, toduckColor: TDColor.Neutral.neutral200)
-    private let imageView = UIImageView().then {
+    
+    private let leftImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private let rightImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(imageView)
-        contentView.clipsToBounds = true
+        layout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(title: String, chipType: TDChipType, isActive: Bool, image: UIImage? = nil) {
+    func configure(item: TDChipItem, chipType: TDChipType, isActive: Bool) {
         self.chipType = chipType
-        self.titleLabel.text = title
         self.isActive = isActive
-        if let image = image {
-            imageView.image = image.withRenderingMode(.alwaysTemplate)
-            setImageConstraints()
-        } else {
-            setTitleConstraints()
+        self.titleLabel.setText(item.title)
+        if let leftImage = item.leftImage {
+            leftImageView.image = leftImage.withRenderingMode(.alwaysTemplate)
+            stackView.addArrangedSubview(leftImageView)
+        }
+        stackView.addArrangedSubview(titleLabel)
+        if let rightImage = item.rightImage {
+            rightImageView.image = rightImage.withRenderingMode(.alwaysTemplate)
+            stackView.addArrangedSubview(rightImageView)
         }
     }
     
-    private func setTitleConstraints() {
-        titleLabel.snp.remakeConstraints { make in
-            make.center.equalTo(contentView)
-            make.leading.equalTo(contentView).offset(8)
-            make.trailing.equalTo(contentView).offset(-8)
-        }
+    func deSelected() {
+        self.isActive = false
     }
     
-    private func setImageConstraints() {
-        imageView.snp.remakeConstraints { make in
-            make.width.height.equalTo(24)
-            make.centerY.equalTo(contentView)
-            make.leading.equalTo(contentView).offset(8)
-        }
-        
-        titleLabel.snp.remakeConstraints { make in
-            make.centerY.equalTo(contentView)
-            make.trailing.equalTo(contentView).offset(-8)
-        } 
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview() 
-        }
+    func selected() {
+        self.isActive = true
     }
     
     func toggle() {
-        self.isActive = !isActive
-        updateButtonState()
+        self.isActive.toggle()
+    }
+    
+    private func layout() {
+        contentView.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        leftImageView.snp.makeConstraints { make in
+            make.size.equalTo(24)
+        }
+        
+        rightImageView.snp.makeConstraints { make in
+            make.size.equalTo(24)
+        }
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = ""
-        imageView.image = nil
+        leftImageView.image = nil
+        rightImageView.image = nil
+        stackView.removeArrangedSubview(leftImageView)
+        stackView.removeArrangedSubview(rightImageView)
     }
     
-    private func updateButtonState() {
+    private func updateState() {
+        guard let chipType else { return }
+        contentView.layer.cornerRadius = chipType.cornerRadius
         contentView.backgroundColor = isActive ? chipType.activeColor : chipType.inactiveColor
-        titleLabel.textColor = isActive ? chipType.inactiveColor : chipType.activeColor
-        imageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
+        titleLabel.setColor(isActive ? chipType.inactiveColor : chipType.activeColor)
+        leftImageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
+        rightImageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
     }
 }
