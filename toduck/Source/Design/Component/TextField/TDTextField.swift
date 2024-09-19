@@ -1,6 +1,10 @@
 import SnapKit
 import UIKit
 
+/// 투덕 TextField 입니다.
+/// 
+/// `error` 프로퍼티를 통해 에러 메시지를 표시할 수 있습니다.
+/// `error` state는  `error`에 값이 있을때 변경됩니다.
 public final class TDTextField: UIView {
     private var textField: TDTextFieldCore
     private var placeholder: String

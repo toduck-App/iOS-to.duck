@@ -2,6 +2,16 @@
 import SnapKit
 import UIKit
 
+
+/// 투덕 Base Button 클래스 입니다.
+/// - 버튼의 기본 설정을 제공합니다.
+/// - example:
+/// ```
+///final class TDExampleButton: TDBaseButton {
+///   init(title: String) {
+///    super.init(title: title) 
+///}
+/// ```
 public class TDBaseButton: UIButton {
     var title: String
     var foregroundToduckColor: UIColor
@@ -11,6 +21,15 @@ public class TDBaseButton: UIButton {
     var font: UIFont
     var inset: NSDirectionalEdgeInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
 
+    /// 투덕 Base Button의 초기화 메서드 입니다.
+    /// - Parameters:
+    ///   - frame: 
+    ///   - title: 버튼의 title을 설정합니다. 기본 값은 "" 입니다.
+    ///   - image: 버튼의 image를 설정합니다. 기본 값은 nil 입니다.
+    ///   - backgroundColor: 버튼의 배경색을 설정합니다. 기본 값은 TDColor.Primary.primary500 입니다.
+    ///   - foregroundColor: 버튼의 전경색을 설정합니다. 기본 값은 .white 입니다.
+    ///   - radius: 버튼의 radius를 설정합니다. 기본 값은 12 입니다.
+    ///   - font: 버튼의 font를 설정합니다. 기본 값은 TDFont.boldHeader3.font 입니다.
     public init(frame: CGRect = .zero,
                 title: String = "",
                 image: UIImage? = nil,
@@ -35,6 +54,7 @@ public class TDBaseButton: UIButton {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 
     func setupButton() {
         backgroundColor = backgroundToduckColor
@@ -124,6 +144,7 @@ public class TDBaseButton: UIButton {
 
     // MARK: - Shadow
 
+    /// 버튼에 그림자를 설정합니다.
     func setShadow() {
         layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
         layer.shadowOpacity = 1

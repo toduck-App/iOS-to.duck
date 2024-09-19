@@ -1,8 +1,13 @@
 import SnapKit
 import UIKit
 
-// MARK: - Require Rename
 
+
+
+/// 투덕 ToggleButton 입니다.
+/// 
+/// `isSelected` 프로퍼티를 통해 선택 여부를 확인할 수 있습니다.
+///
 public final class TDToggleButton: TDBaseButton {
     public init(frame: CGRect = .zero, title: String) {
         super.init(frame: frame,

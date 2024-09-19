@@ -2,7 +2,6 @@ import Foundation
 import UIKit
 
 public final class TDBadge: UIView {
-    // 색깔 정해지면 나중에 Extension으로 빼기,
 
     private var title: String
     private var backgroundToduckColor: UIColor
@@ -11,6 +10,14 @@ public final class TDBadge: UIView {
     private var font: TDFont
     private var label: TDLabel
 
+    /// 투덕에서 사용되는 뱃지를 만드는 초기화 메서드입니다.
+    /// - Parameters:
+    ///   - frame: 프레임
+    ///   - title: 뱃지의 텍스트
+    ///   - font: 텍스트의 폰트
+    ///   - backgroundToduckColor: 뱃지의 배경 색상
+    ///   - foregroundToduckColor: 뱃지의 텍스트 색상
+    ///   - cornerRadius: 뱃지의 모서리 둥글기
     public init(frame: CGRect = .zero,
                 title: String,
                 font: TDFont,
@@ -29,11 +36,17 @@ public final class TDBadge: UIView {
         setupBadge()
         layout()
     }
-
+    /// 기본 색으로 지정된 뱃지를 만드는 초기화 메서드입니다.
+    /// - Parameter badgeTitle: 뱃지에 표시할 텍스트
     convenience init(badgeTitle: String) {
         self.init(badgeTitle: badgeTitle, backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary200)
     }
 
+    /// 색깔을 지정할 수 있는 뱃지를 만드는 초기화 메서드입니다.
+    /// - Parameters:
+    ///   - badgeTitle: 뱃지의 텍스트
+    ///   - backgroundColor: 뱃지의 배경 색상
+    ///   - foregroundColor: 뱃지의 텍스트 색상
     convenience init(badgeTitle: String, backgroundColor: UIColor, foregroundColor: UIColor) {
         self.init(
             title: badgeTitle,
@@ -74,30 +87,44 @@ public final class TDBadge: UIView {
         }
     }
 
+    // MARK: - Public Methods
+
+    /// 뱃지에 표시할 문자열을 설정합니다.
+    /// - Parameter title: 뱃지에 표시할 문자열
     public func setTitle(_ title: String) {
         self.title = title
         label.setText(self.title)
         setupBadge()
     }
 
+
+    /// 뱃지의 폰트를 설정합니다.
+    /// - Parameter font: 뱃지의 폰트
     public func setFont(_ font: TDFont) {
         self.font = font
         label.setFont(font)
         setupBadge()
     }
 
+    /// 뱃지의 모서리 둥글기를 설정합니다.
+    /// - Parameter cornerRadius: 뱃지의 모서리 둥글기
     public func setCornerRadius(_ cornerRadius: CGFloat) {
         self.cornerRadius = cornerRadius
         layer.cornerRadius = cornerRadius
         setupBadge()
     }
 
+    /// 뱃지의 텍스트 색상을 설정합니다.
+    /// - Parameter titleColor: 뱃지의 텍스트 색상
     public func setTitleColor(_ titleColor: UIColor) {
         self.foregroundToduckColor = titleColor
         label.setColor(foregroundToduckColor)
         setupBadge()
     }
 
+
+    /// 뱃지의 배경 색상을 설정합니다.
+    /// - Parameter backgroundColor: 뱃지의 배경 색상
     public func setBackgroundToduckColor(_ backgroundToduckColor: UIColor) {
         self.backgroundToduckColor = backgroundToduckColor
         backgroundColor = backgroundToduckColor

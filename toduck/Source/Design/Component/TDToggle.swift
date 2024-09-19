@@ -2,7 +2,6 @@ import UIKit
 import Foundation
 import SnapKit
 
-//TODO: 이름 생각 해보기
 public final class TDToggle: UISwitch {
     convenience init() {
         self.init(frame: .zero)

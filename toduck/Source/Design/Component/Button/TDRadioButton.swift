@@ -1,6 +1,10 @@
 import SnapKit
 import UIKit
 
+/// 투덕 RadioButton 입니다.
+/// 
+/// `isSelected` 프로퍼티를 통해 선택 여부를 설정 및 확인 가능합니다.
+/// 
 public final class TDRadioButton: UIButton {
     private let outerCircleLayer = CAShapeLayer()
     private let innerCircleLayer = CAShapeLayer()
@@ -11,9 +15,11 @@ public final class TDRadioButton: UIButton {
         layout()
     }
 
-    @available(*, unavailable)
-    public required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupRadioButton()
+        layout()
     }
 
     private func setupRadioButton() {
