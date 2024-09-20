@@ -2,17 +2,20 @@ import SnapKit
 import UIKit
 
 class SocialView: BaseView {
+    
     private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true, isMultiSelect: false)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
     }
-    private(set) var tempView = UIButton().then {
-        $0.setTitle("최신순", for: .normal)
-        $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
-    }
+    
+    private let dataSource = ["최신순", "댓글순", "공감순"]
+    private let dropDownButton = TDDropDownButton(title: "선택")
+    
+    private lazy var dropDownView = DropDownView(anchorView: dropDownButton)
+    private var isDropDownVisible = false 
     
     override func layout() {
-        tempView.snp.makeConstraints { make in
+        dropDownView.snp.makeConstraints { make in
             make.width.equalTo(65)
             make.height.equalTo(30)
             make.top.equalTo(safeAreaLayoutGuide)
@@ -21,8 +24,8 @@ class SocialView: BaseView {
         
         chipCollectionView.snp.makeConstraints { make in
             make.height.equalTo(33)
-            make.top.equalTo(tempView)
-            make.leading.equalTo(tempView.snp.trailing).offset(10)
+            make.top.equalTo(dropDownButton)
+            make.leading.equalTo(dropDownButton.snp.trailing).offset(10)
             make.trailing.equalToSuperview().inset(10)
         }
         
@@ -39,15 +42,24 @@ class SocialView: BaseView {
     }
     
     override func addview() {
-        [tempView, chipCollectionView, socialFeedCollectionView].forEach {
+        [dropDownView, chipCollectionView, socialFeedCollectionView].forEach {
             addSubview($0)
         }
     }
     
     override func binding() {
-        
+        dropDownView.dataSource = dataSource
+        dropDownView.delegate = self
     }
     
+}
+
+extension SocialView : DropDownDelegate {
+    
+    func dropDown(_ dropDownView: DropDownView, didSelectRowAt indexPath: IndexPath) {
+        let title = dropDownView.dataSource[indexPath.row]
+        dropDownButton.setTitle(title)
+    }
 }
 
 private extension SocialView{

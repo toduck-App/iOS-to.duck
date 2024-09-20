@@ -1,69 +1,67 @@
 import UIKit
 import SnapKit
+import Then
 
-enum DropDownTextMode {
-    case title
-    case option
+protocol DropDownButtonDelegate: AnyObject {
+    func didTapDropDownButton(_ button: TDDropDownButton)
 }
 
-final class DropDownButton: UIView {
-    var textMode: DropDownTextMode = .title {
-        didSet {
-            switch textMode {
-            case .title:
-                label.textColor = .systemGray2
-            case .option:
-                label.textColor = .black
-            }
-        }
+final class TDDropDownButton: UIView {
+    private let stackView = UIStackView().then {
+        $0.spacing = 5
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.distribution = .equalSpacing
     }
     
-    private let label = UILabel()
+    private let labelView = TDLabel(labelText: "", toduckFont: TDFont.boldBody2, alignment: .center, toduckColor: TDColor.Neutral.neutral700)
+    
     private let downImage = UIImageView(image: UIImage(systemName: "chevron.down"))
     
-    init() {
-        super.init(frame: .zero)
-        self.layer.cornerRadius = 4
-        self.layer.borderWidth = 1.2
-        self.layer.borderColor = UIColor.black.cgColor
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupUI()
+    }
+    
+    convenience init(title: String) {
+        self.init(frame: .zero)
+        setTitle(title)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }
 
 // MARK: - UI Methods
-private extension DropDownButton {
+private extension TDDropDownButton {
     func setupUI() {
         setViewHierarchy()
         setConstraints()
     }
     
     func setViewHierarchy() {
-        addSubview(label)
-        addSubview(downImage)
+        addSubview(stackView)
+        stackView.addArrangedSubview(labelView)
+        stackView.addArrangedSubview(downImage)
     }
     
     func setConstraints() {
-        label.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(4)
-            make.top.equalToSuperview().offset(12)
-            make.bottom.equalToSuperview().offset(-12)
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         
         downImage.snp.makeConstraints { make in
-            make.centerY.equalTo(label)
-            make.trailing.equalToSuperview().offset(-12)
+            make.width.equalTo(24)
+            make.height.equalTo(24)
         }
     }
 }
 
 // MARK: - Internal Methods
-extension DropDownButton {
-    func setTitle(_ title: String?, for mode: DropDownTextMode) {
-        self.textMode = mode
-        self.label.text = title
+extension TDDropDownButton {
+    func setTitle(_ title: String) {
+        self.labelView.setText(title)
     }
 }

@@ -41,6 +41,11 @@ final class DropDownView: UIView {
         setupUI()
     }
     
+    convenience init(anchorView: UIView, selectedOption: String) {
+            self.init(anchorView: anchorView)
+            self.selectedOption = selectedOption
+        }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -74,7 +79,8 @@ final class DropDownView: UIView {
 private extension DropDownView {
     func setupUI() {
         self.addSubview(anchorView)
-        anchorView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        anchorView.snp.makeConstraints { $0.edges.equalToSuperview()
+        }
         
         setConstraints {
             $0.leading.trailing.equalTo(self.anchorView)

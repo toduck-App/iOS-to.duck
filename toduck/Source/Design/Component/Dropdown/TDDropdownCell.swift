@@ -6,12 +6,12 @@ final class DropDownCell: UITableViewCell {
     
     override var isSelected: Bool {
         didSet {
-            optionLabel.textColor = isSelected ? .black : .systemGray2
+            contentView.backgroundColor = isSelected ? TDColor.Neutral.neutral300 : TDColor.baseWhite
         }
     }
     
     // MARK: - UI Components
-    private let optionLabel = UILabel()
+    private let optionLabel = TDLabel(labelText: "", toduckFont: TDFont.boldBody2, alignment: .center, toduckColor: TDColor.Neutral.neutral700)
     
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -26,7 +26,7 @@ final class DropDownCell: UITableViewCell {
     
     // MARK: - Configure
     func configure(with text: String) {
-        optionLabel.text = text
+        optionLabel.setText(text)
     }
 }
 

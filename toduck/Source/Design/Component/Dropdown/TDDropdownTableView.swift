@@ -1,18 +1,17 @@
 import UIKit
 
 final class DropDownTableView: UITableView {
-    private let itemHeight: CGFloat = 32
+    private let itemHeight: CGFloat = 40
     private let minHeight: CGFloat = 0
-    private let maxHeight: CGFloat = 192 // 32 * 6
+    private let maxHeight: CGFloat = 192
     
     // MARK: - Initializers
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
         
         rowHeight = itemHeight
-        layer.cornerRadius = 4
+        layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.systemGray2.cgColor
         separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         register(DropDownCell.self, forCellReuseIdentifier: DropDownCell.identifier)
     }
