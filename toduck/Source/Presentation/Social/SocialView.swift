@@ -9,17 +9,15 @@ class SocialView: BaseView {
     }
     
     private let dataSource = ["최신순", "댓글순", "공감순"]
-    private let dropDownButton = TDDropDownButton(title: "선택")
-    
-    private lazy var dropDownView = DropDownView(anchorView: dropDownButton)
-    private var isDropDownVisible = false 
+    private let dropDownButton = SocialDropdownButton(title: "최신순")
+    private lazy var dropDownView = TDDropdownView(anchorView: dropDownButton, selectedOption: "최신순", layout: .leading, width: 100)
     
     override func layout() {
         dropDownView.snp.makeConstraints { make in
             make.width.equalTo(65)
             make.height.equalTo(30)
             make.top.equalTo(safeAreaLayoutGuide)
-            make.leading.equalTo(safeAreaLayoutGuide).offset(10)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(16)
         }
         
         chipCollectionView.snp.makeConstraints { make in
@@ -51,12 +49,18 @@ class SocialView: BaseView {
         dropDownView.dataSource = dataSource
         dropDownView.delegate = self
     }
-    
+}
+
+// MARK: Method
+extension SocialView {
+    func hideDropdown() {
+        dropDownView.hideDropDown()
+    }
 }
 
 extension SocialView : DropDownDelegate {
     
-    func dropDown(_ dropDownView: DropDownView, didSelectRowAt indexPath: IndexPath) {
+    func dropDown(_ dropDownView: TDDropdownView, didSelectRowAt indexPath: IndexPath) {
         let title = dropDownView.dataSource[indexPath.row]
         dropDownButton.setTitle(title)
     }

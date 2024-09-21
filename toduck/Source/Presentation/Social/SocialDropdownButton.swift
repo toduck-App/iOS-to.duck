@@ -3,10 +3,10 @@ import SnapKit
 import Then
 
 protocol DropDownButtonDelegate: AnyObject {
-    func didTapDropDownButton(_ button: TDDropDownButton)
+    func didTapDropDownButton(_ button: SocialDropdownButton)
 }
 
-final class TDDropDownButton: UIView {
+final class SocialDropdownButton: UIView {
     private let stackView = UIStackView().then {
         $0.spacing = 5
         $0.axis = .horizontal
@@ -16,7 +16,11 @@ final class TDDropDownButton: UIView {
     
     private let labelView = TDLabel(labelText: "", toduckFont: TDFont.boldBody2, alignment: .center, toduckColor: TDColor.Neutral.neutral700)
     
-    private let downImage = UIImageView(image: UIImage(systemName: "chevron.down"))
+    private lazy var downImage = UIImageView().then {
+        $0.tintColor = TDColor.Neutral.neutral500
+        $0.contentMode = .scaleAspectFit
+        $0.image = TDImage.downMedium.withRenderingMode(.alwaysTemplate)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,7 +39,7 @@ final class TDDropDownButton: UIView {
 }
 
 // MARK: - UI Methods
-private extension TDDropDownButton {
+private extension SocialDropdownButton {
     func setupUI() {
         setViewHierarchy()
         setConstraints()
@@ -60,7 +64,7 @@ private extension TDDropDownButton {
 }
 
 // MARK: - Internal Methods
-extension TDDropDownButton {
+extension SocialDropdownButton {
     func setTitle(_ title: String) {
         self.labelView.setText(title)
     }

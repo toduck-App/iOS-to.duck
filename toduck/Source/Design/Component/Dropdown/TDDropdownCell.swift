@@ -11,7 +11,7 @@ final class DropDownCell: UITableViewCell {
     }
     
     // MARK: - UI Components
-    private let optionLabel = TDLabel(labelText: "", toduckFont: TDFont.boldBody2, alignment: .center, toduckColor: TDColor.Neutral.neutral700)
+    private let optionLabel = TDLabel(labelText: "", toduckFont: TDFont.boldBody2, alignment: .center, toduckColor: TDColor.Neutral.neutral800)
     
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -42,6 +42,8 @@ private extension DropDownCell {
     }
     
     func setConstraints() {
-        optionLabel.snp.makeConstraints { $0.edges.equalToSuperview().inset(8) }
+        optionLabel.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(8)
+        }
     }
 }
