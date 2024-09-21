@@ -86,7 +86,7 @@ private extension TDDropdownView {
         containerView.layer.shadowOpacity = 0.1
         containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
         containerView.layer.shadowRadius = 10
-        containerView.layer.cornerRadius = 8
+        containerView.layer.cornerRadius = 12
         containerView.backgroundColor = .clear
         containerView.addSubview(dropDownTableView)
         

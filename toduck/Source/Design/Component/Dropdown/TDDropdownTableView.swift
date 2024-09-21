@@ -9,10 +9,11 @@ final class DropDownTableView: UITableView {
         
         rowHeight = itemHeight
         
-        layer.cornerRadius = 8
+        layer.cornerRadius = 12
         layer.masksToBounds = true
         
-        separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        separatorInset = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
+        separatorColor = TDColor.Neutral.neutral200
         register(DropDownCell.self, forCellReuseIdentifier: DropDownCell.identifier)
     }
     
