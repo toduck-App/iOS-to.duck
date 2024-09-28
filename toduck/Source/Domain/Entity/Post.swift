@@ -131,3 +131,15 @@ extension Post {
                           
     ]
 }
+
+extension Post: Equatable {
+    public static func == (lhs: Post, rhs: Post) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+
+extension Post: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

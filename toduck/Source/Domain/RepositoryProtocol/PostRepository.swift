@@ -1,13 +1,6 @@
-//
-//  PostRepositroyProtocol.swift
-//  toduck
-//
-//  Created by 신효성 on 6/13/24.
-//
-
 import Foundation
 
-public protocol PostRepositoryProtocol {
+public protocol PostRepository {
     
     func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post]
     func searchPost(keyword: String,type: PostType,category: PostCategory) async throws -> [Post]?
@@ -22,4 +15,3 @@ public protocol PostRepositoryProtocol {
     func reportPost(postId: Int) async throws -> Bool
     func blockPost(postId: Int) async throws -> Bool
 }
-

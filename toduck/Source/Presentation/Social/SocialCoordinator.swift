@@ -10,7 +10,10 @@ final class SocialCoordinator: Coordinator {
     }
 
     func start() {
-        let socialViewController = SocialViewController()
+        let repository = PostRepositoryImpl()
+        let fetchPostUseCase = FetchPostUseCaseImpl(repository: repository)
+        let socialViewModel = SocialViewModel(useCase: fetchPostUseCase)
+        let socialViewController = SocialViewController(viewModel: socialViewModel)
         navigationController.pushViewController(socialViewController, animated: false)
     }
 }

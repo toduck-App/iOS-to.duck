@@ -8,6 +8,7 @@ class SocialView: BaseView {
         $0.backgroundColor = TDColor.baseWhite
     }
     
+    
     private let dataSource = ["최신순", "댓글순", "공감순"]
     private let dropDownButton = SocialDropdownButton(title: "최신순")
     private lazy var dropDownView = TDDropdownView(anchorView: dropDownButton, selectedOption: "최신순", layout: .leading, width: 100)
@@ -37,6 +38,7 @@ class SocialView: BaseView {
     
     override func configure() {
         backgroundColor = .white
+        socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
     override func addview() {
@@ -51,8 +53,24 @@ class SocialView: BaseView {
     }
 }
 
-// MARK: Method
+// MARK: External Method
 extension SocialView {
+    func showLoadingView() {
+        
+    }
+    
+    func showFinishView() {
+        
+    }
+    
+    func showEmptyView() {
+        
+    }
+    
+    func showErrorView() {
+        
+    }
+    
     func hideDropdown() {
         dropDownView.hideDropDown()
     }
