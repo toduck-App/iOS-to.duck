@@ -58,7 +58,7 @@ extension SocialView {
     }
 }
 
-extension SocialView : DropDownDelegate {
+extension SocialView : TDDropDownDelegate {
     
     func dropDown(_ dropDownView: TDDropdownView, didSelectRowAt indexPath: IndexPath) {
         let title = dropDownView.dataSource[indexPath.row]

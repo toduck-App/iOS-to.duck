@@ -16,7 +16,6 @@ final class DropDownCell: UITableViewCell {
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
         setupUI()
     }
     
@@ -33,6 +32,7 @@ final class DropDownCell: UITableViewCell {
 // MARK: - UI Methods
 private extension DropDownCell {
     func setupUI() {
+        self.selectionStyle = .none
         setViewHierarchy()
         setConstraints()
     }

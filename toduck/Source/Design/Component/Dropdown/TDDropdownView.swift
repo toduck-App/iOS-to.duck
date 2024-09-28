@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-protocol DropDownDelegate: AnyObject {
+protocol TDDropDownDelegate: AnyObject {
     func dropDown(_ dropDownView: TDDropdownView, didSelectRowAt indexPath: IndexPath)
 }
 
@@ -19,7 +19,7 @@ final class TDDropdownView: UIView {
         case trailing
     }
     
-    weak var delegate: DropDownDelegate?
+    weak var delegate: TDDropDownDelegate?
     
     private var dropDownConstraints: ((ConstraintMaker) -> Void)?
     private var dropDownMode: DropDownMode = .hide
@@ -92,8 +92,8 @@ private extension TDDropdownView {
         
         dropDownTableView.layer.cornerRadius = 8
         dropDownTableView.layer.masksToBounds = true
-        dropDownTableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        dropDownTableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         self.addSubview(anchorView)
