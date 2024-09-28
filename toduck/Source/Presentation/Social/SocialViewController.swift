@@ -50,6 +50,7 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
 extension SocialViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
         print("[LOG] 현재 Select 한 Chip: \(chipText) , Index = : \(index)")
+        layoutView.hideDropdown()
     }
 }
 
@@ -67,7 +68,7 @@ extension SocialViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("[LOG] Clicked")
+        layoutView.hideDropdown()
     }
 }
 
