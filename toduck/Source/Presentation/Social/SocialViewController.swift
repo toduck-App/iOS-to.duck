@@ -1,14 +1,6 @@
-//
-//  SocialViewController.swift
-//  toduck
-//
-//  Created by 박효준 on 7/15/24.
-//
-
 import UIKit
 
 class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation {
-    
     private let searchBar = UISearchBar()
     private var filteredPosts: [Post] = []
     

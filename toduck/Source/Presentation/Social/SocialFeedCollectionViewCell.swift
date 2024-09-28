@@ -1,9 +1,3 @@
-//
-//  SocialFeedCollectionViewCell.swift
-//  toduck
-//
-//  Created by 승재 on 8/3/24.
-//
 import SnapKit
 import Then
 import Kingfisher
@@ -151,7 +145,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         
         
         guard let url = URL(string: item.user.icon) else { return }
-        // lloadImage 수정 필요
+        // TODO: lloadImage 수정 필요
         loadImages(url: url)
         
         
@@ -227,11 +221,11 @@ private extension SocialFeedCollectionViewCell {
             make.leading.trailing.equalToSuperview()
         }
         
-        
         avatarView.snp.makeConstraints { make in
             make.top.leading.equalToSuperview()
             make.size.equalTo(36)
         }
+        
         [titleBagde, nicknameLabel, dateLabel, dotIconView, likeButton,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
             $0.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
@@ -244,9 +238,11 @@ private extension SocialFeedCollectionViewCell {
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+        
         headerStackView.snp.makeConstraints { make in
             make.height.equalTo(24)
         }
+        
         footerView.snp.makeConstraints { make in
             make.height.equalTo(24)
         }
@@ -283,9 +279,7 @@ private extension SocialFeedCollectionViewCell {
             make.leading.equalTo(shareIconView.snp.trailing).offset(2)
             make.centerY.equalTo(shareIconView)
         }
-        
     }
-    
     
     func setupRoutineView() {
         
@@ -301,12 +295,9 @@ private extension SocialFeedCollectionViewCell {
         
         routineStackView.layoutMargins = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
         routineStackView.isLayoutMarginsRelativeArrangement = true
-        
-
     }
 }
 
-// Delegate 처리
 extension SocialFeedCollectionViewCell {
     @objc func didSelectLikeButton() {
         socialFeedCellDelegate?.didTapLikeButton(self)

@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-protocol DropDownButtonDelegate: AnyObject {
+protocol SocialDropDownDelegate: AnyObject {
     func didTapDropDownButton(_ button: SocialDropdownButton)
 }
 
@@ -33,9 +33,8 @@ final class SocialDropdownButton: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
     }
-    
 }
 
 // MARK: - UI Methods

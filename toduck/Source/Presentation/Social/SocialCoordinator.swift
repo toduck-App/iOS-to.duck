@@ -1,10 +1,3 @@
-//
-//  SocialCoordinator.swift
-//  toduck
-//
-//  Created by 박효준 on 7/16/24.
-//
-
 import UIKit
 
 final class SocialCoordinator: Coordinator {
@@ -20,5 +13,4 @@ final class SocialCoordinator: Coordinator {
         let socialViewController = SocialViewController()
         navigationController.pushViewController(socialViewController, animated: false)
     }
-    
 }
