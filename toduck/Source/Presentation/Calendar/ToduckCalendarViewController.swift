@@ -72,6 +72,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateConstants()
+        view.bringSubviewToFront(selectedDayScheduleView)
     }
     
     func updateConstants() {

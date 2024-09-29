@@ -28,7 +28,7 @@ final class SelectedDayScheduleView: BaseView {
     }
     
     private let scheduleTableView = UITableView().then {
-        $0.backgroundColor = .clear
+        $0.backgroundColor = .blue
         $0.separatorStyle = .none
     }
     
@@ -44,6 +44,7 @@ final class SelectedDayScheduleView: BaseView {
     
     func updateDateLabel(date: Date) {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "M월 d일 (E)"
         dateLabel.text = dateFormatter.string(from: date)
     }
