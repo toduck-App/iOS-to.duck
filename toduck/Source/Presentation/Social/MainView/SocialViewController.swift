@@ -2,6 +2,7 @@ import Combine
 import UIKit
 
 class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation {
+    weak var coordinator: SocialCoordinator?
     private let searchBar = UISearchBar()
     private var filteredPosts: [Post] = []
     private var datasource: UICollectionViewDiffableDataSource<Int, Post>?
@@ -92,7 +93,7 @@ extension SocialViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        layoutView.hideDropdown()
+        coordinator?.moveToSocialDetailController(by: indexPath.item)
     }
 }
 
@@ -118,7 +119,6 @@ extension SocialViewController: SocialFeedCollectionViewCellDelegate{
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
-        viewModel.likePost(at: indexPath.item)
-        cell.configure(with: viewModel.posts[indexPath.item])
+        viewModel.action(.likePost(at: indexPath.item))
     }
 }

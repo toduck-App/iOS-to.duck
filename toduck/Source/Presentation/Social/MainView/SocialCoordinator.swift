@@ -12,8 +12,15 @@ final class SocialCoordinator: Coordinator {
     func start() {
         let repository = PostRepositoryImpl()
         let fetchPostUseCase = FetchPostUseCaseImpl(repository: repository)
-        let socialViewModel = SocialViewModel(useCase: fetchPostUseCase)
+        let togglePostLikeUseCase = TogglePostLikeUseCaseImpl(repository: repository)
+        let socialViewModel = SocialViewModel(fetchPostUseCase: fetchPostUseCase, togglePostLikeUseCase: togglePostLikeUseCase)
         let socialViewController = SocialViewController(viewModel: socialViewModel)
+        socialViewController.coordinator = self
         navigationController.pushViewController(socialViewController, animated: false)
+    }
+    
+    func moveToSocialDetailController(by id: Int){
+        let socialDetailCoordinator = SocialDetailCoordinator(navigationController: navigationController, id: id)
+        socialDetailCoordinator.start()
     }
 }

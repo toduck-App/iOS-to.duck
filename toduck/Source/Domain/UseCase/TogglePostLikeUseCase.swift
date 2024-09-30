@@ -7,7 +7,11 @@
 
 import Foundation
 
-public final class TogglePostLikeUseCase {
+public protocol TogglePostLikeUseCase {
+    func execute(post: Post) async throws -> Bool
+}
+
+public final class TogglePostLikeUseCaseImpl: TogglePostLikeUseCase {
     private let repository: PostRepository
     
     public init(repository: PostRepository) {
