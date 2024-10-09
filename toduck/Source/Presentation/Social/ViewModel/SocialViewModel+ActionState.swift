@@ -6,13 +6,13 @@ extension SocialViewModel {
     
     enum FetchState {
         case loading
-        case finish
+        case finish(post: [Post])
         case empty
         case error
     }
     
     enum LikeState {
-        case finish
+        case finish(post: Post)
         case error
     }
 }

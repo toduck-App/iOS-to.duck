@@ -52,12 +52,22 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
             switch state {
             case .loading:
                 self?.layoutView.showLoadingView()
-            case .finish:
+            case .finish(let posts):
                 self?.layoutView.showFinishView()
+                self?.applySnapshot(posts)
             case .empty:
                 self?.layoutView.showEmptyView()
             case .error:
                 self?.layoutView.showErrorView()
+            }
+        }.store(in: &cancellables)
+        
+        viewModel.likeState.sink { [weak self] state in
+            switch state {
+            case .finish(let post):
+                self?.updateSnapshot(post)
+            case .error:
+                self?.layoutView.showEmptyView()
             }
         }.store(in: &cancellables)
     }
@@ -74,22 +84,18 @@ extension SocialViewController: TDChipCollectionViewDelegate {
 extension SocialViewController: UICollectionViewDelegate {
     
     private func setupDataSource() {
-        datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+        datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, post in
            
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-            let post = self.viewModel.posts[indexPath.item]
             cell.socialFeedCellDelegate = self
             cell.configure(with: post)
             return cell
         })
-        
-        guard let datasource else { return }
-        viewModel.configureDatasource(datasource)
     }
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.posts.count
+        return viewModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -97,6 +103,7 @@ extension SocialViewController: UICollectionViewDelegate {
     }
 }
 
+//MARK: Colleciton View Cell Delegate
 extension SocialViewController: SocialFeedCollectionViewCellDelegate{
     func didTapNickname(_ cell: SocialFeedCollectionViewCell) {
         
@@ -120,5 +127,21 @@ extension SocialViewController: SocialFeedCollectionViewCellDelegate{
             return
         }
         viewModel.action(.likePost(at: indexPath.item))
+    }
+}
+
+// MARK: Collection View Datasource Apply
+extension SocialViewController {
+    private func applySnapshot(_ posts: [Post]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Post>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(posts)
+        datasource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func updateSnapshot(_ post: Post) {
+        var snapshot = datasource?.snapshot()
+        snapshot?.reloadItems([post])
+        datasource?.apply(snapshot!, animatingDifferences: false)
     }
 }
