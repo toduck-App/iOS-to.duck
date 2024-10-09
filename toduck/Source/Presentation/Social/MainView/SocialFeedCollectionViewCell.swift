@@ -52,6 +52,13 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
+    private var bodyHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+        $0.alignment = .fill
+        $0.distribution = .fillProportionally
+    }
+    
     private let footerView = UIView()
     
     lazy var dotIconView = UIImageView().then {
@@ -95,6 +102,19 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.numberOfLines = 0
     }
     
+    private var contentImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 4
+    }
+    
+    private var countView = TDLabel(toduckFont: .regularCaption3, alignment: .center, toduckColor: .white).then {
+        $0.layer.cornerRadius = 4
+        $0.clipsToBounds = true
+        $0.backgroundColor = TDColor.baseBlack
+        $0.alpha = 0.5
+    }
+    
     private var likeLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600)
     
     private var commentLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600)
@@ -134,7 +154,6 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
     func configure(with item: Post) {
         titleBagde.setTitle(item.user.title)
         nicknameLabel.setText(item.user.name)
-        
         dateLabel.setText(item.timestamp.convertRelativeTime())
         contentLabel.setText(item.contentText)
         likeLabel.setText("\(item.likeCount ?? 0)")
@@ -143,28 +162,10 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
                             TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
                             TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         
-        
-        guard let url = URL(string: item.user.icon) else { return }
-        // TODO: lloadImage 수정 필요
-        loadImages(url: url)
-        
-        
-        if let shareCount = item.shareCount, shareCount > 0 {
-            shareLabel.setText("\(shareCount)")
-        } else {
-            shareIconView.isHidden = true
-            shareLabel.isHidden = true
-        }
-        
-        if let routine = item.routine {
-            bodyStackView.addArrangedSubview(routineStackView)
-            routineTitleLabel.setText(routine.title)
-            routineContentLabel.setText(routine.memo ?? "")
-            if let routineDate = routine.dateAndTime {
-                routineDateLabel.setText(routineDate.convertToString(formatType: .time12HourEnglish))
-            }
-            setupRoutineView()
-        }
+        configureUserImage(with: item.user.icon)
+        configureShareCount(with: item.shareCount)
+        configureRoutine(with: item.routine)
+        configureImageList(with: item.imageList)
     }
     
     override func prepareForReuse() {
@@ -179,14 +180,11 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         avatarView.image = TDImage.Profile.medium
     }
 }
+// MARK: Layout
 private extension SocialFeedCollectionViewCell {
-    
+
     func setupUI() {
         setupLayout()
-    }
-    
-    func loadImages(url: URL) {
-        avatarView.image = TDImage.Profile.medium
     }
     
     func setupLayout() {
@@ -200,9 +198,10 @@ private extension SocialFeedCollectionViewCell {
         [headerLeftStackView,headerRightStackView].forEach{
             headerStackView.addArrangedSubview($0)
         }
-        
-        bodyStackView.addArrangedSubview(contentLabel)
-        
+        bodyStackView.addArrangedSubview(bodyHorizontalStackView)
+        bodyHorizontalStackView.addArrangedSubview(contentLabel)
+
+
         [avatarView, verticalStackView].forEach{
             containerView.addSubview($0)
         }
@@ -280,10 +279,54 @@ private extension SocialFeedCollectionViewCell {
             make.centerY.equalTo(shareIconView)
         }
     }
+}
+
+//MARK: Priavte Method
+extension SocialFeedCollectionViewCell {
+    private func configureUserImage(with image: String?) {
+        if let image = image {
+            avatarView.kf.setImage(with: URL(string: image))
+        } else {
+            avatarView.image = TDImage.Profile.medium
+        }
+    }
+
+    private func configureRoutine(with routine: Routine?) {
+        if let routine = routine {
+            bodyStackView.addArrangedSubview(routineStackView)
+            routineTitleLabel.setText(routine.title)
+            routineContentLabel.setText(routine.memo ?? "")
+            if let routineDate = routine.dateAndTime {
+                routineDateLabel.setText(routineDate.convertToString(formatType: .time12HourEnglish))
+            }
+            updateRoutineLayout()
+        }
+    }
+
+    private func configureShareCount(with shareCount: Int?) {
+        if let shareCount = shareCount, shareCount > 0 {
+            shareLabel.setText("\(shareCount)")
+        } else {
+            shareIconView.isHidden = true
+            shareLabel.isHidden = true
+        }
+    }
     
-    func setupRoutineView() {
+    private func setupImageView() {
+        contentImageView.snp.makeConstraints { make in
+            make.size.equalTo(50)
+        }
         
-        bodyStackView.addArrangedSubview(routineStackView)
+        contentImageView.addSubview(countView)
+        countView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(4)
+            make.top.equalToSuperview().inset(4)
+            make.width.equalTo(18)
+            make.height.equalTo(13)
+        }
+    }
+    
+    private func updateRoutineLayout() {
         routineStackView.snp.makeConstraints { make in
             make.leading.equalTo(verticalStackView.snp.leading)
             make.trailing.equalToSuperview()
@@ -296,8 +339,19 @@ private extension SocialFeedCollectionViewCell {
         routineStackView.layoutMargins = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
         routineStackView.isLayoutMarginsRelativeArrangement = true
     }
+    
+    private func configureImageList(with imageList: [String]?) {
+        if let imageList = imageList {
+            bodyHorizontalStackView.addArrangedSubview(contentImageView)
+            contentImageView.kf.setImage(with: URL(string: imageList[0]))
+            countView.setText("+\(imageList.count)")
+            setupImageView()
+            layoutIfNeeded()
+        }
+    }
 }
 
+//MARK: Delegate
 extension SocialFeedCollectionViewCell {
     @objc func didSelectLikeButton() {
         socialFeedCellDelegate?.didTapLikeButton(self)
