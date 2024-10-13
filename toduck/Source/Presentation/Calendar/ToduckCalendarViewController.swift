@@ -26,30 +26,9 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var selectedDayViewTopExpanded: CGFloat = 0
     private var selectedDayViewTopCollapsed: CGFloat = 0
     private var selectedDayViewTopHidden: CGFloat = 0
+    private var isFirst = true
     
     let tempSchedules: [Int: [TempSchedule]] = [
-        15: [
-            TempSchedule(name: "테스트1", color: .red),
-            TempSchedule(name: "테스트2", color: .blue),
-            TempSchedule(name: "테스트2", color: .blue),
-            TempSchedule(name: "테스트2", color: .blue)
-        ],
-        16: [
-            TempSchedule(name: "테스트3", color: .green),
-            TempSchedule(name: "테스트4", color: .yellow)
-        ],
-        17: [
-            TempSchedule(name: "테스트5", color: .purple),
-            TempSchedule(name: "테스트6", color: .orange)
-        ],
-        18: [
-            TempSchedule(name: "테스트7", color: .brown),
-            TempSchedule(name: "테스트8", color: .cyan)
-        ],
-        19: [
-            TempSchedule(name: "테스트9", color: .magenta),
-            TempSchedule(name: "테스트10", color: .systemPink)
-        ],
         20: [
             TempSchedule(name: "테스트11", color: .systemTeal),
             TempSchedule(name: "테스트12", color: .systemIndigo)
@@ -63,7 +42,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        calendar.backgroundColor = .red
         setupUI()
         setupGesture()
         selectToday()
@@ -72,18 +50,20 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateConstants()
+        if isFirst {
+            selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
+            isFirst = false
+        }
         view.bringSubviewToFront(selectedDayScheduleView)
     }
     
     func updateConstants() {
         let safeAreaTop = view.safeAreaInsets.top
-        let calendarHeaderTopOffset: CGFloat = 30
         let calendarHeaderHeight = calendarHeader.frame.height
-        let calendarTopOffset: CGFloat = 20
         let calendarHeight = calendar.frame.height
-
-        selectedDayViewTopExpanded = safeAreaTop + calendarHeaderTopOffset + calendarHeaderHeight
-        selectedDayViewTopCollapsed = selectedDayViewTopExpanded + calendarTopOffset + calendarHeight
+        
+        selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset + calendarHeaderHeight
+        selectedDayViewTopCollapsed = selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
         selectedDayViewTopHidden = view.bounds.height
     }
 }
@@ -109,13 +89,27 @@ private extension ToduckCalendarViewController {
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
-            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.9)
+            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
             $0.height.equalTo(334)
         }
         selectedDayScheduleView.snp.makeConstraints {
-            self.selectedDayViewTopConstraint = $0.top.equalTo(view).offset(50).constraint
+            self.selectedDayViewTopConstraint = $0.top.equalTo(view).offset(10).constraint // 문제의 코드
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+        /*
+         문제: 시작할 때 selectedDayViewTopConstraint의 Top이 view에 걸려있음 (= 화면을 꽉 채운 채로 등장하게 됨)
+        시도 1
+        - selectedDayViewTopConstraint을 여기서 설정 안 하면 계속 nil이 유지 돼 버림
+        
+        시도 2
+        - calendar.snp.bottom으로 하면 뷰가 이상하게 그려짐
+        - 프로퍼티 3개는 멀쩡하나, selectedDayViewTopConstraint가 top 기준 점을 계속 calendar.snp.bottom와 잡음
+        
+        시도 3 (해결)
+        - snp 설정해서 view로 잡아두고, viewDidLayoutSubviews에서 selectedDayScheduleView의 Top을 calendar.snp.bottom으로 설정함
+        - 그러나, 3번처럼 하면 Top이 계속 calendar.snp.bottom에 고정되어 있어서 스크롤이 안되는 것처럼 보임
+        - 처음 화면 띄워질 때만 Top을 calendar.snp.bottom에 두게끔 프로퍼티 하나 둠
+         */
     }
     
     func setupGesture() {
@@ -259,5 +253,12 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         let day = Calendar.current.component(.day, from: date)
         guard let schedules = tempSchedules[day] else { return nil }
         return schedules.map { $0.color }
+    }
+}
+
+extension ToduckCalendarViewController {
+    private enum Constant {
+        static let calendarHeaderTopOffset: CGFloat = 30
+        static let calendarTopOffset: CGFloat = 20
     }
 }
