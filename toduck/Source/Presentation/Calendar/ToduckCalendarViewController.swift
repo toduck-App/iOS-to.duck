@@ -20,13 +20,13 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     let calendarHeader = CalendarHeaderStackView(type: .toduck)
     let calendar = ToduckCalendar()
     private let selectedDayScheduleView = SelectedDayScheduleView()
+    private var isInitialLayoutDone = false
     
     // MARK: - Properties
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
     private var selectedDayViewTopCollapsed: CGFloat = 0
     private var selectedDayViewTopHidden: CGFloat = 0
-    private var isFirst = true
     
     let tempSchedules: [Int: [TempSchedule]] = [
         20: [
@@ -46,13 +46,14 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         setupGesture()
         selectToday()
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        updateConstants()
-        if isFirst {
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !isInitialLayoutDone {
+            updateConstants()
             selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
-            isFirst = false
+            calendar.reloadData()
+            isInitialLayoutDone = true
         }
         view.bringSubviewToFront(selectedDayScheduleView)
     }
@@ -92,24 +93,12 @@ private extension ToduckCalendarViewController {
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
             $0.height.equalTo(334)
         }
+        view.layoutIfNeeded()
+        let initialOffset = calendar.frame.maxY
         selectedDayScheduleView.snp.makeConstraints {
-            self.selectedDayViewTopConstraint = $0.top.equalTo(view).offset(10).constraint // 문제의 코드
+            self.selectedDayViewTopConstraint = $0.top.equalTo(view).offset(initialOffset).constraint
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        /*
-         문제: 시작할 때 selectedDayViewTopConstraint의 Top이 view에 걸려있음 (= 화면을 꽉 채운 채로 등장하게 됨)
-        시도 1
-        - selectedDayViewTopConstraint을 여기서 설정 안 하면 계속 nil이 유지 돼 버림
-        
-        시도 2
-        - calendar.snp.bottom으로 하면 뷰가 이상하게 그려짐
-        - 프로퍼티 3개는 멀쩡하나, selectedDayViewTopConstraint가 top 기준 점을 계속 calendar.snp.bottom와 잡음
-        
-        시도 3 (해결)
-        - snp 설정해서 view로 잡아두고, viewDidLayoutSubviews에서 selectedDayScheduleView의 Top을 calendar.snp.bottom으로 설정함
-        - 그러나, 3번처럼 하면 Top이 계속 calendar.snp.bottom에 고정되어 있어서 스크롤이 안되는 것처럼 보임
-        - 처음 화면 띄워질 때만 Top을 calendar.snp.bottom에 두게끔 프로퍼티 하나 둠
-         */
     }
     
     func setupGesture() {
