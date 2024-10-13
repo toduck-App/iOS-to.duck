@@ -93,10 +93,8 @@ private extension ToduckCalendarViewController {
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
             $0.height.equalTo(334)
         }
-        view.layoutIfNeeded()
-        let initialOffset = calendar.frame.maxY
         selectedDayScheduleView.snp.makeConstraints {
-            self.selectedDayViewTopConstraint = $0.top.equalTo(view).offset(initialOffset).constraint
+            self.selectedDayViewTopConstraint = $0.top.equalTo(view).constraint
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
@@ -117,7 +115,6 @@ private extension ToduckCalendarViewController {
             newTop = max(selectedDayViewTopExpanded, min(selectedDayViewTopHidden, newTop))
             selectedDayViewTopConstraint?.update(offset: newTop)
             gesture.setTranslation(.zero, in: view)
-            view.layoutIfNeeded()
 
         case .ended, .cancelled:
             let currentTop = selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed
