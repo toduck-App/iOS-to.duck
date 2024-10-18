@@ -14,7 +14,7 @@ public final class PostRepositoryImpl: PostRepository {
     public init() {}
 
     public func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post] {
-        return Post.dummy
+        return Post.dummy.sorted { $0.timestamp > $1.timestamp }
     }
 
     public func searchPost(keyword: String, type: PostType, category: PostCategory) async throws -> [Post]? {

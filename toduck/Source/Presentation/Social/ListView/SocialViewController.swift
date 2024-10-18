@@ -5,7 +5,7 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
     weak var coordinator: SocialCoordinator?
     private let searchBar = UISearchBar()
     private var filteredPosts: [Post] = []
-    private var datasource: UICollectionViewDiffableDataSource<Int, Post>?
+    private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     private let viewModel: SocialViewModel!
     private var cancellables = Set<AnyCancellable>()
     
@@ -33,9 +33,13 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
     
     override func configure() {
         layoutView.socialFeedCollectionView.delegate = self
+        layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
         layoutView.chipCollectionView.setChips(chips)
         setupDataSource()
+        layoutView.dropDownFilterHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
+        layoutView.dropDownFilterHoverView.delegate = self
+        layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
         viewModel.action(.fetchPosts)
     }
     
@@ -54,7 +58,9 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
                 self?.layoutView.showLoadingView()
             case .finish(let posts):
                 self?.layoutView.showFinishView()
-                self?.applySnapshot(posts)
+                DispatchQueue.main.async {
+                    self?.applySnapshot(posts)
+                }
             case .empty:
                 self?.layoutView.showEmptyView()
             case .error:
@@ -65,7 +71,9 @@ class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation 
         viewModel.likeState.sink { [weak self] state in
             switch state {
             case .finish(let post):
-                self?.updateSnapshot(post)
+                DispatchQueue.main.async {
+                    self?.updateSnapshot(post)
+                }
             case .error:
                 self?.layoutView.showEmptyView()
             }
@@ -84,11 +92,12 @@ extension SocialViewController: TDChipCollectionViewDelegate {
 extension SocialViewController: UICollectionViewDelegate {
     
     private func setupDataSource() {
-        datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, post in
-           
+        datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, postID in
+            guard let post = self.viewModel.post(id: postID) else { return UICollectionViewCell() }
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
             cell.socialFeedCellDelegate = self
             cell.configure(with: post)
+            
             return cell
         })
     }
@@ -103,8 +112,18 @@ extension SocialViewController: UICollectionViewDelegate {
     }
 }
 
-//MARK: Colleciton View Cell Delegate
-extension SocialViewController: SocialFeedCollectionViewCellDelegate{
+//MARK: Input
+extension SocialViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
+    func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let option = SocialSortType.allCases[indexPath.row]
+        layoutView.dropDownFilterView.setTitle(option.rawValue)
+        viewModel.action(.sortPost(by: option))
+    }
+    
+    @objc func didRefresh() {
+        viewModel.action(.fetchPosts)
+    }
+    
     func didTapNickname(_ cell: SocialFeedCollectionViewCell) {
         
     }
@@ -133,15 +152,15 @@ extension SocialViewController: SocialFeedCollectionViewCellDelegate{
 // MARK: Collection View Datasource Apply
 extension SocialViewController {
     private func applySnapshot(_ posts: [Post]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, Post>()
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
         snapshot.appendSections([0])
-        snapshot.appendItems(posts)
+        snapshot.appendItems(posts.map { $0.id })
         datasource?.apply(snapshot, animatingDifferences: true)
     }
     
     private func updateSnapshot(_ post: Post) {
         var snapshot = datasource?.snapshot()
-        snapshot?.reloadItems([post])
-        datasource?.apply(snapshot!, animatingDifferences: false)
+        snapshot?.reloadItems([post.id])
+        datasource?.apply(snapshot!, animatingDifferences: true)
     }
 }

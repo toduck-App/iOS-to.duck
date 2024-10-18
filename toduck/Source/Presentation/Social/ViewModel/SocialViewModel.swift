@@ -27,7 +27,13 @@ final class SocialViewModel: BaseViewModel {
             fetchPosts()
         case .likePost(let index):
             likePost(at: index)
+        case .sortPost(let option):
+            sortPost(by: option)
         }
+    }
+    
+    func post(id: Int) -> Post? {
+        posts.first { $0.id == id }
     }
 }
 
@@ -55,6 +61,18 @@ extension SocialViewModel {
                 likeState.send(.error)
             }
         }
+    }
+    
+    private func sortPost(by option: SocialSortType) {
+        switch option {
+        case .recent:
+            posts.sort { $0.timestamp > $1.timestamp }
+        case .comment:
+            posts.sort { $0.commentCount ?? 0 > $1.commentCount ?? 0 }
+        case .sympathy:
+            posts.sort { $0.likeCount ?? 0 > $1.likeCount ?? 0 }
+        }
+        fetchState.send(.finish(post: posts))
     }
 }
 

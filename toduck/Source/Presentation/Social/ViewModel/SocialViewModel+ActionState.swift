@@ -2,6 +2,7 @@ extension SocialViewModel {
     enum Action {
         case fetchPosts
         case likePost(at: Int)
+        case sortPost(by: SocialSortType)
     }
     
     enum FetchState {

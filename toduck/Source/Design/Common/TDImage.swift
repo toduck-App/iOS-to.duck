@@ -92,6 +92,7 @@ public enum TDImage {
         public static let verticalMedium = ToduckAsset.Images.dotVerticalMedium.image
         public static let horizontalSmall = ToduckAsset.Images.dotHorizontalSmall.image
         public static let verticalSmall = ToduckAsset.Images.dotVerticalSmall.image
+        public static let vertical2Small = ToduckAsset.Images.dotVertical2Small.image
     }
     
     public enum Eye {
