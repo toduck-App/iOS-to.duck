@@ -5,7 +5,7 @@ echo "ci_post_clone Script"
 echo "=================================================================="
 brew tap tuist/tuist
 echo "installing Tuist.."
-brew install tuist@4.18.0
+brew install tuist@4.30.0
 echo "installed Tuist"
 echo "------------------------------------------------------------------"
 
@@ -56,7 +56,7 @@ cat $DEBUG_CONFIG_FILE_PATH
 echo "=================================================================="
 
 echo "tuist generating"
-tuist generate --no-binary-cache
+tuist generate
 echo "=================================================================="
 echo "tuist setting finish"
 echo "=================================================================="
