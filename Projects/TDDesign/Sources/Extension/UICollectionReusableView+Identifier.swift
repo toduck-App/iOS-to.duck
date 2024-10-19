@@ -7,8 +7,7 @@
 
 import UIKit
 
-extension UICollectionReusableView {
-
+public extension UICollectionReusableView {
     static var identifier: String {
         String(describing: self)
     }

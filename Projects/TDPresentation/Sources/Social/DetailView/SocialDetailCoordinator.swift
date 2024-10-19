@@ -1,3 +1,4 @@
+import TDDomain
 import UIKit
 
 final class SocialDetailCoordinator: Coordinator {

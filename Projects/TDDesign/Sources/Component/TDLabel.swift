@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TDLabel: UILabel {
+public final class TDLabel: UILabel {
     private var toduckFont: TDFont
     private let alignment: NSTextAlignment
     private var toduckColor: UIColor
@@ -24,7 +24,7 @@ final class TDLabel: UILabel {
     ///   - alignment: 텍스트 정렬 방식. 기본값은 `.justified`입니다.
     ///   - toduckColor: 텍스트 색상. 기본값은 `TDColor.Neutral.neutral800`입니다.
     
-    init(
+    public init(
         frame: CGRect = .zero,
         labelText: String = "",
         toduckFont: TDFont,

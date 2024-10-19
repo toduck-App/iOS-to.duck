@@ -28,15 +28,14 @@ public class TDBaseButton: UIButton {
         super.init(frame: frame)
         // configurationUpdateHandler = buttonHandler
         setupButton()
-        layout()
     }
 
     @available(*, unavailable)
-    required init?(coder _: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setupButton() {
+    public func setupButton() {
         backgroundColor = backgroundToduckColor
 
         setTitleColor(foregroundToduckColor, for: .normal)
@@ -77,49 +76,42 @@ public class TDBaseButton: UIButton {
             }
         }
     }
-
-    func layout() {
-        // snp.updateConstraints {
-        //     $0.height.equalTo(56)
-        // }
-    }
-
     // MARK: - Radius
 
-    func setRadius(radius: CGFloat) {
+    public func setRadius(radius: CGFloat) {
         self.radius = radius
         setupButton()
     }
 
     // MARK: - Font
 
-    func setFont(font: UIFont) {
+    public func setFont(font: UIFont) {
         self.font = font
         setupButton()
     }
 
-    func setFont(toduckFont: TDFont) {
+    public func setFont(toduckFont: TDFont) {
         setFont(font: toduckFont.font)
     }
 
     // MARK: - Inset
 
-    func setInset(top: CGFloat = 0, leading: CGFloat = 0, bottom: CGFloat = 0, trailing: CGFloat = 0) {
+    private func setInset(top: CGFloat = 0, leading: CGFloat = 0, bottom: CGFloat = 0, trailing: CGFloat = 0) {
         inset = NSDirectionalEdgeInsets(top: top, leading: leading, bottom: bottom, trailing: trailing)
         setupButton()
     }
 
-    func setInset(x: CGFloat = 0, y: CGFloat = 0) {
+    public func setInset(x: CGFloat = 0, y: CGFloat = 0) {
         setInset(top: y, leading: x, bottom: y, trailing: x)
     }
 
-    func setInset(edges: CGFloat) {
+    public func setInset(edges: CGFloat) {
         setInset(top: edges, leading: edges, bottom: edges, trailing: edges)
     }
 
     // MARK: - Shadow
 
-    func setShadow() {
+    public func setShadow() {
         layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
         layer.shadowOpacity = 1
         layer.shadowRadius = 10

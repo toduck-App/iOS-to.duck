@@ -11,6 +11,9 @@ let project = Project.project(
             sources: .sources,
             resources: .default,
             dependencies: [
+                .external(name: "FSCalendar"),
+                .external(name: "SnapKit"),
+                .external(name: "Then"),
             ]
         )
     ]

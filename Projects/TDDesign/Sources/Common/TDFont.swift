@@ -46,55 +46,55 @@ extension TDFont {
     public var font: UIFont {
         switch self {
         case .mediumHeader1:
-            return ToduckFontFamily.Pretendard.medium.font(size: 34.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 34.0)
         case .mediumHeader2:
-            return ToduckFontFamily.Pretendard.medium.font(size: 24.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 24.0)
         case .mediumHeader3:
-            return ToduckFontFamily.Pretendard.medium.font(size: 20.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 20.0)
         case .mediumHeader4:
-            return ToduckFontFamily.Pretendard.medium.font(size: 18.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 18.0)
         case .mediumHeader5:
-            return ToduckFontFamily.Pretendard.medium.font(size: 16.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 16.0)
         case .boldHeader1:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 34.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 34.0)
         case .boldHeader2:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 24.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 24.0)
         case .boldHeader3:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 20.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 20.0)
         case .boldHeader4:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 18.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 18.0)
         case .boldHeader5:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 16.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 16.0)
         case .mediumBody1:
-            return ToduckFontFamily.Pretendard.medium.font(size: 16.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 16.0)
         case .boldBody1:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 16.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 16.0)
         case .regularBody2:
-            return ToduckFontFamily.Pretendard.regular.font(size: 14.0)
+            return TDDesignFontFamily.Pretendard.regular.font(size: 14.0)
         case .mediumBody2:
-            return ToduckFontFamily.Pretendard.medium.font(size: 14.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 14.0)
         case .boldBody2:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 14.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 14.0)
         case .mediumButton:
-            return ToduckFontFamily.Pretendard.medium.font(size: 12.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 12.0)
         case .boldButton:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 12.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 12.0)
         case .regularCaption1:
-            return ToduckFontFamily.Pretendard.regular.font(size: 12.0)
+            return TDDesignFontFamily.Pretendard.regular.font(size: 12.0)
         case .mediumCaption1:
-            return ToduckFontFamily.Pretendard.medium.font(size: 12.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 12.0)
         case .boldCaption1:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 12.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 12.0)
         case .regularCaption2:
-            return ToduckFontFamily.Pretendard.regular.font(size: 10.0)
+            return TDDesignFontFamily.Pretendard.regular.font(size: 10.0)
         case .mediumCaption2:
-            return ToduckFontFamily.Pretendard.medium.font(size: 10.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 10.0)
         case .boldCaption2:
-            return ToduckFontFamily.Pretendard.semiBold.font(size: 10.0)
+            return TDDesignFontFamily.Pretendard.semiBold.font(size: 10.0)
         case .regularCaption3:
-            return ToduckFontFamily.Pretendard.regular.font(size: 9.0)
+            return TDDesignFontFamily.Pretendard.regular.font(size: 9.0)
         case .mediumCaption3:
-            return ToduckFontFamily.Pretendard.medium.font(size: 9.0)
+            return TDDesignFontFamily.Pretendard.medium.font(size: 9.0)
         }
     }
     

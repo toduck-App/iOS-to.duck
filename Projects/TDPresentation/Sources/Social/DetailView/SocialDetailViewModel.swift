@@ -1,4 +1,5 @@
 import Foundation
+import TDDomain
 
 public final class SocialDetailViewModel: BaseViewModel {
     

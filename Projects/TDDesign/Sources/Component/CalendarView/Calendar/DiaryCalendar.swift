@@ -26,3 +26,4 @@ final class DiaryCalendar: BaseCalendar {
         self.appearance.selectionColor = .clear
     }
 }
+
