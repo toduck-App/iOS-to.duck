@@ -40,7 +40,7 @@ public final class TDLabel: UILabel {
         setupAttributes()
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         self.labelText = ""
         self.toduckFont = TDFont.mediumHeader5
         self.alignment = .justified
@@ -89,17 +89,17 @@ public final class TDLabel: UILabel {
         textColor = toduckColor
     }
     
-    func setFont(_ font: TDFont) {
+    public func setFont(_ font: TDFont) {
         self.toduckFont = font
         setupAttributes()
     }
     
-    func setColor(_ color: UIColor) {
+    public func setColor(_ color: UIColor) {
         self.toduckColor = color
         setupAttributes()
     }
     
-    func setText(_ text: String) {
+    public func setText(_ text: String) {
         self.labelText = text
         setupAttributes()
     }

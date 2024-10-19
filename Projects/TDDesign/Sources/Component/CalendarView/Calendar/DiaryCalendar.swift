@@ -10,13 +10,13 @@ import SnapKit
 import Then
 import UIKit
 
-final class DiaryCalendar: BaseCalendar {
-    override init(frame: CGRect) {
+public final class DiaryCalendar: BaseCalendar {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setupFocusCalendar()
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupFocusCalendar()
     }

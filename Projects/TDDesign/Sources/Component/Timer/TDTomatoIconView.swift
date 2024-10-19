@@ -7,12 +7,14 @@
 
 import UIKit
 
-final class TDTomato: UIView {
-
+final class TDTomatoIconView: UIView {
+    // MARK: - Properties
     private let tomatoTerm = TDImage.tomatoTerm
     private let termImageView: UIImageView 
     private let tomatoSize: TDTomatoSize
     private var fruitColor: UIColor
+    
+    // MARK: - Initialize
     init(fruitColor: UIColor,size: TDTomatoSize, hasTerm: Bool = true) {
         self.fruitColor = fruitColor
         self.tomatoSize = size
@@ -31,6 +33,7 @@ final class TDTomato: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Methods
     func setup() {
         layer.cornerRadius = CGFloat(tomatoSize.size / 2)
         backgroundColor = fruitColor

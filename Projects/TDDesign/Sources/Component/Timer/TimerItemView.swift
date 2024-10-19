@@ -6,8 +6,9 @@
 //
 import UIKit
 
-final class TimerItemView: BaseView {
+final class TimerItemView: UIView {
     //TODO: 이름 파일이름 다시 생각
+    private let stack: UIStackView
     private(set) var totalCount: Int
     private(set) var currentCount: Int {
         didSet {
@@ -17,8 +18,6 @@ final class TimerItemView: BaseView {
         }
     }
     
-    private let stack: UIStackView
-
     init(totalCount: Int = 4, currentCount: Int = 0) {
         self.totalCount = totalCount
         self.currentCount = currentCount
@@ -28,15 +27,21 @@ final class TimerItemView: BaseView {
         }).then { 
             $0.spacing = 8
         }
-    
         super.init(frame: .zero)
+        configure()
+        layout()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
-    override func configure() {
+    private func configure() {
         self.backgroundColor = .clear
     }
 
-    override func layout() {
+    private func layout() {
         addSubview(stack)
         stack.snp.makeConstraints {
             $0.width.equalTo(16 * totalCount + 8 * (totalCount - 1))
@@ -45,18 +50,11 @@ final class TimerItemView: BaseView {
         }
     }
 
-
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-
-    func setCount(count: Int) {
+    public func setCount(count: Int) {
         totalCount = count
     }
 
-    func setCurrentCount(_ count: Int) {
+    public func setCurrentCount(_ count: Int) {
         currentCount = count
     }
 }

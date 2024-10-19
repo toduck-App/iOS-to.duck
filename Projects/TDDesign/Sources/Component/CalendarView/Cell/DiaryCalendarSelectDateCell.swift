@@ -9,18 +9,18 @@ import FSCalendar
 import SnapKit
 import Then
 
-final class DiaryCalendarSelectDateCell: FSCalendarCell {
-    var backImageView = UIImageView().then {
+public final class DiaryCalendarSelectDateCell: FSCalendarCell {
+    public var backImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
     }
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setConstraints()
     }
 
-    required init(coder: NSCoder) {
+    public required init(coder: NSCoder) {
         super.init(coder: coder)
         setConstraints()
     }
@@ -38,17 +38,17 @@ final class DiaryCalendarSelectDateCell: FSCalendarCell {
         backImageView.layer.cornerRadius = minSize() / 2
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
     }
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         backImageView.image = nil
     }
     
     // 셀의 높이와 너비 중 작은 값을 리턴한다
-    func minSize() -> CGFloat {
+    public func minSize() -> CGFloat {
         let width = contentView.bounds.width - 5
         let height = contentView.bounds.height - 5
 

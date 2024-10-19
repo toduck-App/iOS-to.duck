@@ -9,13 +9,13 @@ import UIKit
 import SnapKit
 import Then
 
-final class CalendarHeaderStackView: UIStackView {
+public final class CalendarHeaderStackView: UIStackView {
     let titleLabel = TDLabel(labelText: "", toduckFont: TDFont.boldHeader4)
     let pickerButton = UIButton(type: .system).then {
         $0.setImage(TDImage.Direction.right2Medium, for: .normal)
     }
     
-    init(type: CalendarType) {
+    public init(type: CalendarType) {
         super.init(frame: .zero)
         
         switch type {

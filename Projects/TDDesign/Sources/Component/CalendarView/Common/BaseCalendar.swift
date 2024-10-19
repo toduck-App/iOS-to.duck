@@ -10,14 +10,14 @@ import SnapKit
 import Then
 import UIKit
 
-class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate {
-    override init(frame: CGRect) {
+public class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setupHeader()
         setupCalendar()
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupHeader()
         setupCalendar()
