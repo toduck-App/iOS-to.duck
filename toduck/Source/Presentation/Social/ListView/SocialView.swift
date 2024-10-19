@@ -1,19 +1,27 @@
 import SnapKit
+import Then
 import UIKit
 
 class SocialView: BaseView {
-    
     private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true, isMultiSelect: false)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
     }
     
-    private let dataSource = ["최신순", "댓글순", "공감순"]
-    private let dropDownButton = SocialDropdownButton(title: "최신순")
-    private lazy var dropDownView = TDDropdownView(anchorView: dropDownButton, selectedOption: "최신순", layout: .leading, width: 100)
+    private let dropDownDataSource: [SocialSortType] = [.recent, .comment, .sympathy]
+    
+    private(set) lazy var dropDownFilterView = SocialDropdownView(title: dropDownDataSource[0].rawValue)
+    private(set) lazy var dropDownFilterHoverView = TDDropdownHoverView(anchorView: dropDownFilterView, selectedOption: dropDownDataSource[0].rawValue, layout: .leading, width: 100)
+    
+    private(set) lazy var refreshControl = UIRefreshControl().then {
+        $0.tintColor = .systemGray
+    }
+    private let loadingView = UIView().then {
+        $0.backgroundColor = .white
+    }
     
     override func layout() {
-        dropDownView.snp.makeConstraints { make in
+        dropDownFilterHoverView.snp.makeConstraints { make in
             make.width.equalTo(65)
             make.height.equalTo(30)
             make.top.equalTo(safeAreaLayoutGuide)
@@ -22,8 +30,8 @@ class SocialView: BaseView {
         
         chipCollectionView.snp.makeConstraints { make in
             make.height.equalTo(33)
-            make.top.equalTo(dropDownButton)
-            make.leading.equalTo(dropDownButton.snp.trailing).offset(10)
+            make.top.equalTo(dropDownFilterView)
+            make.leading.equalTo(dropDownFilterView.snp.trailing).offset(10)
             make.trailing.equalToSuperview().inset(10)
         }
         
@@ -33,36 +41,58 @@ class SocialView: BaseView {
             make.leading.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+        
+        loadingView.snp.makeConstraints { make in
+            make.edges.equalTo(socialFeedCollectionView)
+        }
     }
     
     override func configure() {
         backgroundColor = .white
+        socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
     override func addview() {
-        [dropDownView, chipCollectionView, socialFeedCollectionView].forEach {
+        [dropDownFilterHoverView, chipCollectionView, socialFeedCollectionView, loadingView].forEach {
             addSubview($0)
         }
     }
     
     override func binding() {
-        dropDownView.dataSource = dataSource
-        dropDownView.delegate = self
+        
     }
 }
 
-// MARK: Method
+// MARK: External Method
 extension SocialView {
-    func hideDropdown() {
-        dropDownView.hideDropDown()
+    func showLoadingView() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.refreshControl.endRefreshing()
+            UIView.animate(withDuration: 0.5) {
+                self.loadingView.alpha = 1
+            }
+        }
     }
-}
-
-extension SocialView : TDDropDownDelegate {
     
-    func dropDown(_ dropDownView: TDDropdownView, didSelectRowAt indexPath: IndexPath) {
-        let title = dropDownView.dataSource[indexPath.row]
-        dropDownButton.setTitle(title)
+    func showFinishView() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.refreshControl.endRefreshing()
+            UIView.animate(withDuration: 0.5) {
+                self.loadingView.alpha = 0
+            }
+        }
+    }
+    
+    func showEmptyView() {
+        
+    }
+    
+    func showErrorView() {
+        
+    }
+    
+    func hideDropdown() {
+        dropDownFilterHoverView.hideDropDown()
     }
 }
 
@@ -72,11 +102,11 @@ private extension SocialView{
         let groupPadding: CGFloat = 16
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(300)
+            heightDimension: .estimated(500)
         )
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(300)
+            heightDimension: .estimated(500)
         )
         
         let edgeSpacing = NSCollectionLayoutEdgeSpacing(

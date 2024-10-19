@@ -7,14 +7,14 @@
 
 import Foundation
 
-public final class PostRepository: PostRepositoryProtocol {
+public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(id: 0, title: "", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)
     private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
 
     public init() {}
 
     public func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post] {
-        return []
+        return Post.dummy.sorted { $0.timestamp > $1.timestamp }
     }
 
     public func searchPost(keyword: String, type: PostType, category: PostCategory) async throws -> [Post]? {

@@ -2,11 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-protocol DropDownButtonDelegate: AnyObject {
-    func didTapDropDownButton(_ button: SocialDropdownButton)
-}
-
-final class SocialDropdownButton: UIView {
+final class SocialDropdownView: UIView {
     private let stackView = UIStackView().then {
         $0.spacing = 5
         $0.axis = .horizontal
@@ -33,13 +29,12 @@ final class SocialDropdownButton: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
     }
-    
 }
 
 // MARK: - UI Methods
-private extension SocialDropdownButton {
+private extension SocialDropdownView {
     func setupUI() {
         setViewHierarchy()
         setConstraints()
@@ -63,8 +58,8 @@ private extension SocialDropdownButton {
     }
 }
 
-// MARK: - Internal Methods
-extension SocialDropdownButton {
+// MARK: - External Methods
+extension SocialDropdownView {
     func setTitle(_ title: String) {
         self.labelView.setText(title)
     }

@@ -2,10 +2,10 @@ import UIKit
 import SnapKit
 
 protocol TDDropDownDelegate: AnyObject {
-    func dropDown(_ dropDownView: TDDropdownView, didSelectRowAt indexPath: IndexPath)
+    func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath)
 }
 
-final class TDDropdownView: UIView {
+final class TDDropdownHoverView: UIView {
     private let containerView = UIView()
     private let dropDownTableView = DropDownTableView()
     
@@ -80,7 +80,7 @@ final class TDDropdownView: UIView {
     }
 }
 
-private extension TDDropdownView {
+private extension TDDropdownHoverView {
     func setupUI() {
         containerView.layer.shadowColor = UIColor.black.cgColor
         containerView.layer.shadowOpacity = 0.1
@@ -119,7 +119,7 @@ private extension TDDropdownView {
 }
 
 // MARK: - DropDown Logic
-extension TDDropdownView {
+extension TDDropdownHoverView {
     func displayDropDown(with constraints: ((ConstraintMaker) -> Void)?) {
         guard let constraints = constraints else { return }
         window?.addSubview(containerView)
@@ -136,7 +136,7 @@ extension TDDropdownView {
 }
 
 // MARK: - UITableViewDataSource
-extension TDDropdownView: UITableViewDataSource {
+extension TDDropdownHoverView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
@@ -159,7 +159,7 @@ extension TDDropdownView: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension TDDropdownView: UITableViewDelegate {
+extension TDDropdownHoverView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedOption = dataSource[indexPath.row]
         delegate?.dropDown(self, didSelectRowAt: indexPath)
