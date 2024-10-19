@@ -1,7 +1,7 @@
 import Combine
 import UIKit
 
-class SocialViewController: BaseViewController<SocialView>, TDSheetPresentation {
+class SocialViewController: BaseViewController<SocialView> {
     weak var coordinator: SocialCoordinator?
     private let searchBar = UISearchBar()
     private var filteredPosts: [Post] = []

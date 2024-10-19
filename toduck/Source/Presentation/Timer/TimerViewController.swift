@@ -1,10 +1,6 @@
 import UIKit
 
-final class TimerViewController: BaseViewController<TimerView>, TDSheetPresentation {
- 
-
-    
-    private let delegate = TDSheetTransitioningDelegate()
+final class TimerViewController: BaseViewController<TimerView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,7 +13,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDSheetPresentat
         // vc.modalPresentationStyle = .custom
         // vc.transitioningDelegate = delegate
         // present(vc, animated: true)
-        showSheet(with: vc)
     }
 
     

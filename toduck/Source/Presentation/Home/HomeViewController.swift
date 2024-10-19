@@ -11,7 +11,7 @@ import UIKit
 
 // TODO: 처음 시작할 때, 세그먼트 내부 뷰컨이 '토덕' 0번 인덱스가 아닌, '루틴' 2번 인덱스로 열리고 있음
 // '토덕'은 원래 블루인데, 처음에 빨강으로 뜸, 다른 곳 갔다오면 블루로 보임
-class HomeViewController: UIViewController, TDSheetPresentation {
+class HomeViewController: UIViewController {
     let segmentedControl = TDSegmentedController(items: ["토덕", "일정", "루틴"])
 
     let todoViewController = ToduckViewController()
