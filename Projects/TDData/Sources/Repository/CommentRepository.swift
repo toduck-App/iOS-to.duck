@@ -9,9 +9,7 @@ import TDDomain
 import Foundation
 
 public final class CommentRepository: CommentRepositoryProtocol {
-
-
-    public init() {}
+    public init() { }
     
     public func toggleCommentLike(commentId: Int) async throws -> Bool {
         return false

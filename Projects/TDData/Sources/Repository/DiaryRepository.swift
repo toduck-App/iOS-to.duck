@@ -9,11 +9,10 @@ import TDDomain
 import Foundation
 
 public final class DiaryRepositoryDummy: DiaryRepositoryProtocol {
-    
     private var diaries: [Diary] = []
     private var nextId = 1
     
-    public init() {}
+    public init() { }
     
     public func fetchDiary(id: Int) async throws -> Diary {
         guard let diary = diaries.first(where: { $0.id == id }) else {

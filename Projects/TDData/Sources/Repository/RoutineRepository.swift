@@ -9,6 +9,8 @@ import TDDomain
 import Foundation
 
 public final class RoutineRepository: RoutineRepositoryProtocol {
+    public init() { }
+    
     public func fetchRoutineList() async throws -> [Routine] {
         return [Routine(id: 1, title: "123", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)]
     }

@@ -15,7 +15,6 @@ public enum Emotion: String, CaseIterable, Hashable {
     case anxious = "불안"
     case tired = "피곤"
     
-    
     public var imageName: String {
         switch self {
         case .happy:

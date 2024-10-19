@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-enum AuthTarget {
+public enum AuthTarget {
     case requestPhoneVerification(phoneNumber: String) // 휴대폰 본인 인증 요청
     case checkPhoneVerification(code: String) // 휴대폰 본인 인증 확인
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
@@ -25,11 +25,11 @@ enum AuthTarget {
 }
 
 extension AuthTarget: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
 
-    var path: String {
+    public var path: String {
         switch self {
         case .requestPhoneVerification:
             return "/auth/request-phone-verification"
@@ -60,7 +60,7 @@ extension AuthTarget: TargetType {
         }
     }
 
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .refreshToken:
             return .get
@@ -81,7 +81,7 @@ extension AuthTarget: TargetType {
         }
     }
 
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .requestPhoneVerification(let phoneNumber):
             return .requestParameters(parameters: ["phoneNumber": phoneNumber], encoding: URLEncoding.default)
@@ -106,7 +106,7 @@ extension AuthTarget: TargetType {
         }
     }
 
-    var headers: [String : String]? {
+    public var headers: [String : String]? {
         var headers: [String: String] = ["Content-Type": "application/json"]
         switch self {
         case .requestPhoneVerification,

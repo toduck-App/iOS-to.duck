@@ -12,7 +12,7 @@ public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(id: 0, title: "", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)
     private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
 
-    public init() {}
+    public init() { }
 
     public func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post] {
         return Post.dummy.sorted { $0.timestamp > $1.timestamp }
@@ -53,6 +53,4 @@ public final class PostRepositoryImpl: PostRepository {
     public func blockPost(postId: Int) async throws -> Bool {
         return false;
     }
-
-
 }

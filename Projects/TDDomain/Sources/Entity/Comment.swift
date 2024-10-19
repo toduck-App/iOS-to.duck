@@ -30,5 +30,4 @@ public struct Comment {
         self.isLike = isLike
         self.like = like
     }
-    
 }

@@ -11,7 +11,7 @@ import Foundation
 public final class UserRepository: UserRepositoryProtocol {
     private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
 
-    public init() {}
+    public init() { }
 
     public func fetchUser(userId: Int) async throws -> User? {
         return dummyUser
