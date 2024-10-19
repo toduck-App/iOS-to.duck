@@ -36,7 +36,8 @@ let targets: [Target] = [
             .external(name: "Kingfisher"),
             .external(name: "Moya"),
             .external(name: "Then"),
-            .external(name: "FSCalendar")
+            .external(name: "FSCalendar"),
+            .external(name: "FittedSheets")
         ],
         settings: .settings(configurations: [
             .debug(name: "Debug", xcconfig: "Configurations/Debug.xcconfig"),
