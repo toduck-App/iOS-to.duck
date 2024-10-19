@@ -15,11 +15,13 @@ struct TempSchedule {
     let color: UIColor
 }
 
+// TODO: FSCalendarCell의 높이에 따라 Label 투명도 조절
 final class ToduckCalendarViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
     let calendarHeader = CalendarHeaderStackView(type: .toduck)
     let calendar = ToduckCalendar()
     private let selectedDayScheduleView = SelectedDayScheduleView()
+    private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var isInitialLayoutDone = false
     
     // MARK: - Properties
