@@ -23,8 +23,8 @@ let appTarget = Target.target(
         .domain(),
     ],
     settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "Projects/toduck/Supporting Files/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "Projects/toduck/Supporting Files/Release.xcconfig")
+        .debug(name: "Debug", xcconfig: "Supporting Files/Debug.xcconfig"),
+        .release(name: "Release", xcconfig: "Supporting Files/Release.xcconfig")
     ])
 )
 
