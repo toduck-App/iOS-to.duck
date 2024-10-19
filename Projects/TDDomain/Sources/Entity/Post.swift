@@ -51,24 +51,24 @@ public struct Post: Identifiable {
     }
 
     public let id: Int
-    var user: User
-    var contentText: String
-    var imageList: [String]?
-    var timestamp: Date
+    public let user: User
+    public let contentText: String
+    public let imageList: [String]?
+    public let timestamp: Date
     
-    var likeCount: Int?
-    var isLike: Bool
-    var commentCount: Int?
-    var shareCount: Int?
-    var routine: Routine?
+    public let likeCount: Int?
+    public let isLike: Bool
+    public let commentCount: Int?
+    public let shareCount: Int?
+    public let routine: Routine?
     
     //보이지 않는 property
-    var type: PostType
-    var category: [PostCategory]?
+    public let type: PostType
+    public let category: [PostCategory]?
 }
 
 extension Post {
-    static var dummy : [Post] = [Post(id: 1,
+    static let dummy : [Post] = [Post(id: 1,
                                user: .init(id: 1, name: "오리발", icon: "https://avatars.githubusercontent.com/u/46300191?v=4", title: "작심삼일", isblock: false),
                                contentText: "콘서타는 먹었는데 다른 약 먹는걸 깜빡했다.. 요새 매일 이러네 ㅠㅠ 저만 이런가요?콘서타는 먹었는데 다른 약 먹는걸 깜빡했다.. 요새 매일 이러네 ㅠㅠ 저만 이런가요? ",
                                imageList: ["https://pbs.twimg.com/media/EFHWmyXUEAASe0o.jpg", "https://pbs.twimg.com/media/EHsTI9GUcAAOvS1.jpg:small"],

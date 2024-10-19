@@ -8,11 +8,11 @@
 import Foundation
 
 public struct User {
-    let id: Int
-    var name: String
-    var icon: String?
-    var title: String
-    var isblock: Bool
+    public let id: Int
+    public let name: String
+    public let icon: String?
+    public let title: String
+    public let isblock: Bool
     
     init(
         id: Int,
@@ -30,16 +30,37 @@ public struct User {
 }
 
 public struct UserDetail {
-    var isFollowing: Bool
-    var follwingCount: Int
-    var followerCount: Int
+    public let isFollowing: Bool
+    public let follwingCount: Int
+    public let followerCount: Int
     
-    var totalPostNReply: Int
-    var profileURL: String
+    public let totalPostNReply: Int
+    public let profileURL: String
 
-    var whofollow: [String]?
-    var routines: [Routine]?
-    var routineShareCount: Int
-    var posts: [Post]?
+    public let whofollow: [String]?
+    public let routines: [Routine]?
+    public let routineShareCount: Int
+    public let posts: [Post]?
+    
+    public init(
+        isFollowing: Bool,
+        follwingCount: Int,
+        followerCount: Int,
+        totalPostNReply: Int,
+        profileURL: String,
+        whofollow: [String]? = nil,
+        routines: [Routine]? = nil,
+        routineShareCount: Int,
+        posts: [Post]? = nil
+    ) {
+        self.isFollowing = isFollowing
+        self.follwingCount = follwingCount
+        self.followerCount = followerCount
+        self.totalPostNReply = totalPostNReply
+        self.profileURL = profileURL
+        self.whofollow = whofollow
+        self.routines = routines
+        self.routineShareCount = routineShareCount
+        self.posts = posts
+    }
 }
-

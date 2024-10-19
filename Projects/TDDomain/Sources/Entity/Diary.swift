@@ -10,12 +10,18 @@ import UIKit
 
 public struct Diary: Hashable {
     public let id: Int
-    public var focus: Focus
-    public var emotion: Emotion
-    public var contentText: String
+    public let focus: Focus
+    public let emotion: Emotion
+    public let contentText: String
     public let date: Date
     
-    public init(id: Int, focus: Focus, emotion: Emotion, contentText: String, date: Date) {
+    public init(
+        id: Int,
+        focus: Focus,
+        emotion: Emotion,
+        contentText: String,
+        date: Date
+    ) {
         self.id = id
         self.focus = focus
         self.emotion = emotion

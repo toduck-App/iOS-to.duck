@@ -9,11 +9,15 @@ import Foundation
 import UIKit
 
 public struct Time: Hashable{
-    var hours: Int
-    var minutes: Int
-    var seconds: Int
+    public let hours: Int
+    public let minutes: Int
+    public let seconds: Int
     
-    public init(hours: Int = 0, minutes: Int = 0, seconds: Int = 0) {
+    public init(
+        hours: Int = 0,
+        minutes: Int = 0,
+        seconds: Int = 0
+    ) {
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
@@ -47,10 +51,10 @@ enum WhiteNoise {
 }
 
 struct PomodoroTimer {
-    var studyingToduckImage: UIImage
-    var timerState: TimeState
-    var theme: Theme
-    var whiteNoise: WhiteNoise?
-    var todayConcentrationTime: Time?
-    var curConcentrationTime: Time?
+    public let studyingToduckImage: UIImage
+    public let timerState: TimeState
+    public let theme: Theme
+    public let whiteNoise: WhiteNoise?
+    public let todayConcentrationTime: Time?
+    public let curConcentrationTime: Time?
 }
