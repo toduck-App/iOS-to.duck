@@ -39,7 +39,7 @@ private extension SocialImageListView {
         axis = .horizontal
         distribution = .equalSpacing
         alignment = .leading
-        spacing = 8
+        spacing = 4
         
         setupLayout()
     }
@@ -53,7 +53,7 @@ private extension SocialImageListView {
             }
             addArrangedSubview(imageView)
             imageView.snp.makeConstraints { make in
-                make.size.equalTo(self.snp.width).inset(4).dividedBy(maxImagesToShow)
+                make.size.equalTo(self.snp.width).inset(2).dividedBy(maxImagesToShow)
             }
         }
     }
