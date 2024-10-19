@@ -1,0 +1,9 @@
+SERVER_URL = www.example.com
+API_KEY = example_api_key
+
+CODE_SIGN_IDENTITY = Apple Development
+CODE_SIGN_STYLE = Manual
+DEVELOPMENT_TEAM = 456
+PROVISIONING_PROFILE_SPECIFIER = 123
+PRODUCT_BUNDLE_IDENTIFIER = to.duck.toduck
+PRODUCT_NAME = toduck

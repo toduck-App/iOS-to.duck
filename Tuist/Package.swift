@@ -1,3 +1,10 @@
+//
+//  Package.swift
+//  Config
+//
+//  Created by 박효준 on 10/19/24.
+//
+
 // swift-tools-version: 6.0
 @preconcurrency import PackageDescription
 
