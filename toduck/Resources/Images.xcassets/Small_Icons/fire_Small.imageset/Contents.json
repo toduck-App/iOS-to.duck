@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ic=Stop_x2, Size=Medium.png",
+      "filename" : "small_fire.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ic=Stop_x2, Size=Medium@2x.png",
+      "filename" : "small_fire@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ic=Stop_x2, Size=Medium@3x.png",
+      "filename" : "small_fire@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

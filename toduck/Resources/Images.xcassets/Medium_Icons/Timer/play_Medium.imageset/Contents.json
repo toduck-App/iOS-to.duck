@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ic=Stop, Size=Medium.png",
+      "filename" : "play.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ic=Stop, Size=Medium@2x.png",
+      "filename" : "play@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ic=Stop, Size=Medium@3x.png",
+      "filename" : "play@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
