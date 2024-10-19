@@ -10,6 +10,13 @@ let project = Project(
             sources: .sources,
             dependencies: [
             ]
+        ),
+        Target.target(
+            name: "\(TDModule.TDCore.rawValue)Test",
+            product: .unitTests,
+            sources: .tests,
+            dependencies: [
+            ]
         )
     ]
 )

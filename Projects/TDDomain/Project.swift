@@ -12,5 +12,13 @@ let project = Project.project(
             dependencies: [
             ]
         ),
+        Target.target(
+            name: "\(TDModule.TDDomain.rawValue)Test",
+            product: .unitTests,
+            bundleId: Project.bundleID + ".domaintest",
+            sources: .tests,
+            dependencies: [
+            ]
+        )
     ]
 )

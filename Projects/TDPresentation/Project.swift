@@ -20,6 +20,23 @@ let project = Project(
                 .external(name: "Kingfisher"),
                 .external(name: "FittedSheets"),
             ]
+        ),
+        Target.target(
+            name: "\(TDModule.TDPresentation.rawValue)Test",
+            product: .unitTests,
+            bundleId: Project.bundleID + ".presentationtest",
+            sources: .tests,
+            dependencies: [
+                // Module
+                .domain(),
+                .design(),
+                // External
+                .external(name: "Then"),
+                .external(name: "SnapKit"),
+                .external(name: "FSCalendar"),
+                .external(name: "Kingfisher"),
+                .external(name: "FittedSheets"),
+            ]
         )
     ]
 )

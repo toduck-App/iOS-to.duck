@@ -6,7 +6,7 @@ import ProjectDescriptionHelpers
 let appTarget = Target.target(
     name: "toduck",
     product: .app,
-    bundleId: Project.bundleID + ".app".lowercased(),
+    bundleId: Project.bundleID,
     infoPlist: .file(path: .relativeToRoot("Projects/toduck/Supporting Files/Info.plist")),
     sources: .sources,
     resources: [

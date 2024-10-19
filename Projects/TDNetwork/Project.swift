@@ -19,6 +19,15 @@ let project = Project.project(
             dependencies: [
                 .external(name: "Moya")
             ]
+        ),
+        Target.target(
+            name: "\(TDModule.TDNetwork.rawValue)Test",
+            product: .unitTests,
+            bundleId: Project.bundleID + ".networktest",
+            sources: .tests,
+            dependencies: [
+                .external(name: "Moya")
+            ]
         )
     ]
 )

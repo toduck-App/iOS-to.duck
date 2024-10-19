@@ -20,6 +20,14 @@ let project = Project(
                 .domain(),
                 .network()
             ]
+        ),
+        Target.target(
+            name: "\(TDModule.TDData.rawValue)Test",
+            product: .unitTests,
+            bundleId: Project.bundleID + ".datatest",
+            sources: .tests,
+            dependencies: [
+            ]
         )
     ]
 )

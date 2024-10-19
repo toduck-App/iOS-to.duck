@@ -18,6 +18,14 @@ let project = Project.project(
             sources: .sources,
             dependencies: [
             ]
+        ),
+        Target.target(
+            name: "\(TDModule.TDStorage.rawValue)Test",
+            product: .unitTests,
+            bundleId: Project.bundleID + ".storagetest",
+            sources: .tests,
+            dependencies: [
+            ]
         )
     ]
 )
