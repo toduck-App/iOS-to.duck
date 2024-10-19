@@ -23,6 +23,8 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     
     var selectDates = TDLabel(toduckFont: TDFont.mediumHeader5,
                               toduckColor: TDColor.Neutral.neutral600)
+    var saveButton = TDButton(title: "저장", size: .large)
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,21 +32,30 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         
         setupCalendar()
         calendarHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(24)
             $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(15)
         }
         
+        view.addSubview(saveButton)
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
-            $0.top.equalTo(calendarHeader.snp.top).offset(100)
+            $0.top.equalTo(calendarHeader.snp.top).offset(44)
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.9)
-            $0.height.equalTo(400)
+            $0.height.equalTo(300)
+            $0.bottom.equalTo(saveButton.snp.top).offset(-20)
         }
         
         view.addSubview(selectDates)
         selectDates.snp.makeConstraints {
             $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-21)
             $0.centerY.equalTo(calendarHeader.snp.centerY)
+        }
+        
+        saveButton.snp.makeConstraints {
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(20)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-20)
+            $0.centerX.equalTo(view)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
     }
 }
