@@ -4,9 +4,7 @@
 //
 //  Created by 박효준 on 7/15/24.
 //
-
-import SnapKit
-import Then
+import TDDesign
 import UIKit
 
 // TODO: 처음 시작할 때, 세그먼트 내부 뷰컨이 '토덕' 0번 인덱스가 아닌, '루틴' 2번 인덱스로 열리고 있음

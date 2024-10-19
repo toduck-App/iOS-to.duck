@@ -9,17 +9,17 @@ import UIKit
 import SnapKit
 import Then
 
-final class TDSegmentedController: UISegmentedControl {
+public final class TDSegmentedController: UISegmentedControl {
     private var underLineView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral800
     }
     
-    override init(items: [Any]?) {
+    public override init(items: [Any]?) {
         super.init(items: items)
         setSegmentedControl()
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setSegmentedControl()
     }

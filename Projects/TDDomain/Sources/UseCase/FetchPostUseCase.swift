@@ -1,6 +1,6 @@
 import Foundation
 
-protocol FetchPostUseCase {
+public protocol FetchPostUseCase {
     func execute(type: PostType, category: PostCategory) async throws -> [Post]?
     func execute(postId: Int) async throws -> Post?
 }

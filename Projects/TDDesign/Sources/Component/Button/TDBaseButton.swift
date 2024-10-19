@@ -76,6 +76,11 @@ public class TDBaseButton: UIButton {
             }
         }
     }
+    
+    // MARK: - Layout (Need Override)
+    
+    public func layout() { }
+    
     // MARK: - Radius
 
     public func setRadius(radius: CGFloat) {

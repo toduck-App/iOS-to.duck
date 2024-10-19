@@ -19,7 +19,7 @@ public final class TDToggleButton: TDBaseButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func setupButton() {
+    public override func setupButton() {
         super.setupButton()
 
         backgroundColor = TDColor.Neutral.neutral50
@@ -28,7 +28,7 @@ public final class TDToggleButton: TDBaseButton {
         layer.borderWidth = 0
     }
 
-    override func layout() {
+    public override func layout() {
         snp.updateConstraints {
             $0.height.equalTo(56)
         }

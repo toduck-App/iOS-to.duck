@@ -16,13 +16,13 @@ public final class TDTimerButton: TDBaseButton {
         super.init(image: icon,backgroundColor: state.backgroundColor, foregroundColor: state.foregroundColor,radius: 40)
     }
 
-    override func layout() {
+    public override func layout() {
         snp.makeConstraints {
             $0.width.height.equalTo(80)
         }
     }
 
-    override func setupButton() {
+    public override func setupButton() {
         layer.borderWidth = 5
         layer.borderColor = outlineColor.cgColor
         super.setupButton()

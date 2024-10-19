@@ -64,7 +64,7 @@ public final class TDButton: TDBaseButton {
     }
 
 
-    override func layout() {
+    public override func layout() {
         snp.updateConstraints {
             $0.height.equalTo(size.height)
         }
