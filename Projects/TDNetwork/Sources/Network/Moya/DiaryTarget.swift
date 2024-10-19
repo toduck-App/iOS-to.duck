@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import TDDomain
 import Moya
 
-enum DiaryTarget {
+public enum DiaryTarget {
     case fetchDiary(id: Int) // 특정 다이어리 조회
     case fetchDiaryList(from: Date, to: Date) // 다이어리 리스트 조회
     case addDiary(diary: Diary) // 다이어리 추가
@@ -17,11 +18,11 @@ enum DiaryTarget {
 }
 
 extension DiaryTarget: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
 
-    var path: String {
+    public var path: String {
         switch self {
         case .fetchDiary(let id):
             return "/diary/\(id)"
@@ -36,7 +37,7 @@ extension DiaryTarget: TargetType {
         }
     }
 
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .fetchDiary, .fetchDiaryList:
             return .get
@@ -49,7 +50,7 @@ extension DiaryTarget: TargetType {
         }
     }
 
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .fetchDiary, .deleteDiary:
             return .requestPlain
@@ -65,7 +66,7 @@ extension DiaryTarget: TargetType {
         }
     }
 
-    var headers: [String: String]? {
+    public var headers: [String: String]? {
         var headers: [String: String] = ["Content-Type": "application/json"]
 //        if let accessToken = TokenManager.shared.accessToken {
 //            headers["Authorization"] = "Bearer \(accessToken)"
@@ -73,7 +74,7 @@ extension DiaryTarget: TargetType {
         return headers
     }
     
-    var sampleData: Data {
+    public var sampleData: Data {
             switch self {
             case .fetchDiary:
                 return """

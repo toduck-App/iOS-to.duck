@@ -5,6 +5,7 @@
 //  Created by 승재 on 6/10/24.
 //
 
+import TDDomain
 import Foundation
 
 public final class DiaryRepositoryDummy: DiaryRepositoryProtocol {

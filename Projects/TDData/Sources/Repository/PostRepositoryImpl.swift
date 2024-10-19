@@ -5,6 +5,7 @@
 //  Created by 신효성 on 6/13/24.
 //
 
+import TDDomain
 import Foundation
 
 public final class PostRepositoryImpl: PostRepository {

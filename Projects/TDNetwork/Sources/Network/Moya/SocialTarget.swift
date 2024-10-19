@@ -5,10 +5,11 @@
 //  Created by 승재 on 7/9/24.
 //
 
+import TDDomain
 import Foundation
 import Moya
 
-enum SocialTarget {
+public enum SocialTarget {
     case fetchPostList(type: PostType, category: PostCategory)
     case searchPost(keyword: String, type: PostType, category: PostCategory)
     case togglePostLike(postId: String)
@@ -38,11 +39,11 @@ enum SocialTarget {
 }
 
 extension SocialTarget: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .fetchPostList:
             return "/posts"
@@ -97,7 +98,7 @@ extension SocialTarget: TargetType {
         }
     }
     
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .fetchPostList,
                 .searchPost,
@@ -128,7 +129,7 @@ extension SocialTarget: TargetType {
         }
     }
     
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .fetchPostList(let type, let category):
             return .requestParameters(parameters: ["type": type, "category": category.rawValue], encoding: URLEncoding.queryString)
@@ -164,7 +165,7 @@ extension SocialTarget: TargetType {
         }
     }
     
-    var headers: [String: String]? {
+    public var headers: [String: String]? {
         var headers: [String: String] = ["Content-Type": "application/json"]
         //        if let accessToken = TokenManager.shared.accessToken {
         //            headers["Authorization"] = "Bearer \(accessToken)"
@@ -172,7 +173,7 @@ extension SocialTarget: TargetType {
         return headers
     }
     
-    var sampleData: Data {
+    public var sampleData: Data {
         switch self {
         case .fetchPostList:
             return """

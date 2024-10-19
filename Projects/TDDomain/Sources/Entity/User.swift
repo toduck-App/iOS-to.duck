@@ -14,7 +14,7 @@ public struct User {
     public let title: String
     public let isblock: Bool
     
-    init(
+    public init(
         id: Int,
         name: String,
         icon: String?,

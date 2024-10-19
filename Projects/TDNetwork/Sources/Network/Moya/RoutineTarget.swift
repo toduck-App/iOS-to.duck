@@ -5,10 +5,11 @@
 //  Created by 승재 on 7/9/24.
 //
 
+import TDDomain
 import Foundation
 import Moya
 
-enum RoutineTarget {
+public enum RoutineTarget {
     case fetchRoutineList // 모든 루틴 조회
     case createRoutine(routine: Routine) // 루틴 생성
     case fetchRoutine(routineId: Int) // 특정 루틴 조회
@@ -17,11 +18,11 @@ enum RoutineTarget {
 }
 
 extension RoutineTarget: TargetType {
-    var baseURL: URL {
+    public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .fetchRoutineList:
             return "/routines"
@@ -36,7 +37,7 @@ extension RoutineTarget: TargetType {
         }
     }
     
-    var method: Moya.Method {
+    public var method: Moya.Method {
         switch self {
         case .fetchRoutineList, .fetchRoutine:
             return .get
@@ -49,7 +50,7 @@ extension RoutineTarget: TargetType {
         }
     }
     
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
         case .fetchRoutineList,
                 .fetchRoutine,
@@ -60,7 +61,7 @@ extension RoutineTarget: TargetType {
         }
     }
     
-    var headers: [String: String]? {
+    public var headers: [String: String]? {
         var headers: [String: String] = ["Content-Type": "application/json"]
         // MARK: 나중에 토큰 관리 회의 후 결정
         //        if let accessToken = TokenManager.shared.accessToken {
@@ -69,7 +70,7 @@ extension RoutineTarget: TargetType {
         return headers
     }
     
-    var sampleData: Data {
+    public var sampleData: Data {
         switch self {
         case .fetchRoutineList:
             return """

@@ -5,6 +5,7 @@
 //  Created by 박효준 on 6/7/24.
 //
 
+import TDDomain
 import Foundation
 
 public final class ScheduleRepository: ScheduleRepositoryProtocol {
