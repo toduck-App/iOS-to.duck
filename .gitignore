@@ -68,7 +68,7 @@ Derived/
 
 ### Tuist managed dependencies ###
 Tuist/.build
-## *.xcconfig
+*.xcconfig
 
 .vscode/
 buildServer.json
