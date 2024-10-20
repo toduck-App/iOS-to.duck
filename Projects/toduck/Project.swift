@@ -7,7 +7,7 @@ let appTarget = Target.target(
     name: "toduck",
     product: .app,
     bundleId: Project.bundleID,
-    infoPlist: .file(path: .relativeToRoot("Projects/toduck/Supporting Files/Info.plist")),
+    infoPlist: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/Info.plist")),
     sources: .sources,
     resources: [
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/**")),
@@ -23,8 +23,8 @@ let appTarget = Target.target(
         .domain(),
     ],
     settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "Supporting Files/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "Supporting Files/Release.xcconfig")
+        .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
+        .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
     ])
 )
 
