@@ -20,8 +20,7 @@ let appTarget = Target.target(
         .design(),
         .network(),
         .storage(),
-        .domain(),
-        .external(name: "Swinject")
+        .domain()
     ],
     settings: .settings(configurations: [
         .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),

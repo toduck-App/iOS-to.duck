@@ -9,6 +9,7 @@ let project = Project(
             product: .staticLibrary,
             sources: .sources,
             dependencies: [
+                .external(name: "Swinject")
             ]
         ),
         Target.target(
@@ -16,6 +17,7 @@ let project = Project(
             product: .unitTests,
             sources: .tests,
             dependencies: [
+                .external(name: "Swinject")
             ]
         )
     ]

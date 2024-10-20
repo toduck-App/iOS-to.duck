@@ -17,6 +17,7 @@ let project = Project.project(
             bundleId: Project.bundleID + ".network",
             sources: .sources,
             dependencies: [
+                .core(),
                 .external(name: "Moya")
             ]
         ),

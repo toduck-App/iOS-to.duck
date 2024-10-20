@@ -13,7 +13,7 @@ let project = Project(
                 // Module
                 .domain(),
                 .design(),
-                .data(), // TODO: 제거해야 함
+                .core(),
                 // External
                 .external(name: "Then"),
                 .external(name: "SnapKit"),
@@ -37,7 +37,6 @@ let project = Project(
                 .external(name: "FSCalendar"),
                 .external(name: "Kingfisher"),
                 .external(name: "FittedSheets"),
-                .external(name: "Swinject")
             ]
         )
     ]
