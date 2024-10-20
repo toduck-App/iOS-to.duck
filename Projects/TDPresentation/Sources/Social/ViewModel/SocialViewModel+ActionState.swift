@@ -1,3 +1,5 @@
+import TDDomain
+
 extension SocialViewModel {
     enum Action {
         case fetchPosts

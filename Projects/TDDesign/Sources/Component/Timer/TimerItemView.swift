@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class TimerItemView: UIView {
+public final class TimerItemView: UIView {
     //TODO: 이름 파일이름 다시 생각
     private let stack: UIStackView
     private(set) var totalCount: Int
@@ -18,7 +18,7 @@ final class TimerItemView: UIView {
         }
     }
     
-    init(totalCount: Int = 4, currentCount: Int = 0) {
+    public init(totalCount: Int = 4, currentCount: Int = 0) {
         self.totalCount = totalCount
         self.currentCount = currentCount
         
@@ -33,7 +33,7 @@ final class TimerItemView: UIView {
     }
     
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

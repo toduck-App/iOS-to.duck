@@ -1,8 +1,9 @@
 import SnapKit
+import TDDesign
 import Then
 import UIKit
 
-class SocialView: BaseView {
+final class SocialView: BaseView {
     private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true, isMultiSelect: false)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
@@ -17,7 +18,7 @@ class SocialView: BaseView {
         $0.tintColor = .systemGray
     }
     private let loadingView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = TDColor.baseWhite
     }
     
     override func layout() {

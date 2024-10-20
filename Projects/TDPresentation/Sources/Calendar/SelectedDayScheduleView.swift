@@ -5,9 +5,7 @@
 //  Created by 박효준 on 9/29/24.
 //
 
-import FSCalendar
-import SnapKit
-import Then
+import TDDesign
 import UIKit
 
 final class SelectedDayScheduleView: BaseView {

@@ -1,4 +1,5 @@
 import Combine
+import TDDomain
 import UIKit
 
 final class SocialViewModel: BaseViewModel {

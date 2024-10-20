@@ -7,10 +7,10 @@
 
 import UIKit
 
-final class TDToast: UIView {
-    let toastView: TDToastView
+public final class TDToast: UIView {
+    public let toastView: TDToastView
     
-    init(foregroundColor: UIColor, titleText: String, contentText: String) {
+    public init(foregroundColor: UIColor, titleText: String, contentText: String) {
         toastView = TDToastView(foregroundColor: foregroundColor, titleText: titleText, contentText: contentText)
         super.init(frame: .zero)
         configure()
@@ -18,7 +18,7 @@ final class TDToast: UIView {
     }
     
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     

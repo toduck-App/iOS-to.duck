@@ -9,12 +9,12 @@ import FSCalendar
 import SnapKit
 import Then
 
-final class SheetCalendarSelectDateCell: FSCalendarCell {
-	let circleBackImageView = UIImageView()
-	let leftRectBackImageView = UIImageView()
-	let rightRectBackImageView = UIImageView()
+public final class SheetCalendarSelectDateCell: FSCalendarCell {
+    public let circleBackImageView = UIImageView()
+    public let leftRectBackImageView = UIImageView()
+    public let rightRectBackImageView = UIImageView()
 
-	override init(frame: CGRect) {
+    public override init(frame: CGRect) {
 		super.init(frame: frame)
 
 		setConfigure()
@@ -22,7 +22,8 @@ final class SheetCalendarSelectDateCell: FSCalendarCell {
 		settingImageView()
 	}
 
-	required init(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init(coder: NSCoder) {
 		super.init(coder: coder)
 
 		setConfigure()
@@ -73,7 +74,7 @@ final class SheetCalendarSelectDateCell: FSCalendarCell {
 }
 
 extension SheetCalendarSelectDateCell {
-	func updateBackImage(_ dateType: SelectedDateType) {
+    public func updateBackImage(_ dateType: SelectedDateType) {
 		switch dateType {
 		case .singleDate:
 			leftRectBackImageView.isHidden = true

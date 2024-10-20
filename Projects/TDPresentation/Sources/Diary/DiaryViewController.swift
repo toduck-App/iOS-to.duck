@@ -5,6 +5,7 @@
 //  Created by 박효준 on 7/15/24.
 //
 
+import TDDesign
 import UIKit
 
 class DiaryViewController: UIViewController {

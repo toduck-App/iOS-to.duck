@@ -1,40 +1,44 @@
 import UIKit
 import SnapKit
 
-protocol TDDropDownDelegate: AnyObject {
+public protocol TDDropDownDelegate: AnyObject {
     func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath)
 }
 
-final class TDDropdownHoverView: UIView {
-    private let containerView = UIView()
-    private let dropDownTableView = DropDownTableView()
+public final class TDDropdownHoverView: UIView {
+    // MARK: - Nested Type
     
     private enum DropDownMode {
         case display
         case hide
     }
     
-    enum LocateLayout {
+    public enum LocateLayout {
         case leading
         case trailing
     }
     
-    weak var delegate: TDDropDownDelegate?
+    // MARK: - Properties
     
+    private let containerView = UIView()
+    private let dropDownTableView = DropDownTableView()
     private var dropDownConstraints: ((ConstraintMaker) -> Void)?
     private var dropDownMode: DropDownMode = .hide
     private var locate: LocateLayout = .leading
-    var dataSource = [String]() {
+    private(set) var selectedOption: String?
+    private var width: CGFloat = 0
+    private let anchorView: UIView
+    
+    public override var canBecomeFirstResponder: Bool { true }
+    public var dataSource = [String]() {
         didSet { dropDownTableView.reloadData() }
     }
     
-    private(set) var selectedOption: String?
-    private var width: CGFloat = 0
-    override var canBecomeFirstResponder: Bool { true }
+    public weak var delegate: TDDropDownDelegate?
     
-    private let anchorView: UIView
+    // MARK: - Initializer
     
-    init(anchorView: UIView) {
+    public init(anchorView: UIView) {
         self.anchorView = anchorView
         super.init(frame: .zero)
         
@@ -44,18 +48,18 @@ final class TDDropdownHoverView: UIView {
         setupUI()
     }
     
-    convenience init(anchorView: UIView, selectedOption: String, layout: LocateLayout, width: CGFloat) {
+    public convenience init(anchorView: UIView, selectedOption: String, layout: LocateLayout, width: CGFloat) {
         self.init(anchorView: anchorView)
         self.selectedOption = selectedOption
         self.locate = layout
         self.width = width
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if dropDownMode == .display {
             resignFirstResponder()
         } else {
@@ -64,7 +68,7 @@ final class TDDropdownHoverView: UIView {
     }
     
     @discardableResult
-    override func becomeFirstResponder() -> Bool {
+    public override func becomeFirstResponder() -> Bool {
         super.becomeFirstResponder()
         dropDownMode = .display
         displayDropDown(with: dropDownConstraints)
@@ -72,7 +76,7 @@ final class TDDropdownHoverView: UIView {
     }
     
     @discardableResult
-    override func resignFirstResponder() -> Bool {
+    public override func resignFirstResponder() -> Bool {
         super.resignFirstResponder()
         dropDownMode = .hide
         hideDropDown()
@@ -119,7 +123,7 @@ private extension TDDropdownHoverView {
 }
 
 // MARK: - DropDown Logic
-extension TDDropdownHoverView {
+public extension TDDropdownHoverView {
     func displayDropDown(with constraints: ((ConstraintMaker) -> Void)?) {
         guard let constraints = constraints else { return }
         window?.addSubview(containerView)
@@ -137,11 +141,11 @@ extension TDDropdownHoverView {
 
 // MARK: - UITableViewDataSource
 extension TDDropdownHoverView: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: DropDownCell.identifier,
             for: indexPath
@@ -160,7 +164,7 @@ extension TDDropdownHoverView: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension TDDropdownHoverView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedOption = dataSource[indexPath.row]
         delegate?.dropDown(self, didSelectRowAt: indexPath)
         dropDownTableView.selectRow(at: indexPath)

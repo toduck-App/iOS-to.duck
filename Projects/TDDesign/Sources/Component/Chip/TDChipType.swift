@@ -1,10 +1,10 @@
 import UIKit
 
-enum TDChipType {
+public enum TDChipType {
     case capsule
     case roundedRectangle
     
-    var activeColor: UIColor {
+    public var activeColor: UIColor {
         switch self {
         case .capsule:
             return TDColor.Neutral.neutral800
@@ -13,7 +13,7 @@ enum TDChipType {
         }
     }
     
-    var inactiveColor: UIColor {
+    public var inactiveColor: UIColor {
         switch self {
         case .capsule:
             return TDColor.Neutral.neutral200
@@ -22,7 +22,7 @@ enum TDChipType {
         }
     }
     
-    var cornerRadius: CGFloat {
+    public var cornerRadius: CGFloat {
         switch self {
         case .capsule:
             return 14
@@ -31,7 +31,7 @@ enum TDChipType {
         }
     }
     
-    var height: CGFloat {
+    public var height: CGFloat {
         switch self {
         case .capsule:
             return 28

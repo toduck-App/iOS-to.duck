@@ -8,7 +8,7 @@
 import UIKit
 
 // REFACTOR: 변수 이름들 생각
-final class TDToastView: UIView {
+public final class TDToastView: UIView {
     // MARK: - Properties
     private let foregroundColor: UIColor
     private let titleText: String

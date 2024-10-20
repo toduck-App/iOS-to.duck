@@ -1,4 +1,3 @@
-import Foundation
 import UIKit
 
 public final class TDBadge: UIView {
@@ -30,11 +29,11 @@ public final class TDBadge: UIView {
         layout()
     }
 
-    convenience init(badgeTitle: String) {
+    public convenience init(badgeTitle: String) {
         self.init(badgeTitle: badgeTitle, backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary200)
     }
 
-    convenience init(badgeTitle: String, backgroundColor: UIColor, foregroundColor: UIColor) {
+    public convenience init(badgeTitle: String, backgroundColor: UIColor, foregroundColor: UIColor) {
         self.init(
             title: badgeTitle,
             font: .mediumCaption2,
@@ -45,15 +44,10 @@ public final class TDBadge: UIView {
     }
 
     @available(*, unavailable)
-    required init?(coder _: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    @available(*, deprecated, message: "Please use init(badgeTitle:backgroundToduckColor:foregroundToduckColor:) instead")
-    convenience init(_ title: String, backgroundToduckColor: UIColor = TDColor.Primary.primary25, foregroundToduckColor: UIColor = TDColor.Primary.primary500) {
-        self.init(badgeTitle: title, backgroundColor: backgroundToduckColor, foregroundColor: foregroundToduckColor)
-    }
-
+    
     private func setupBadge() {
         label.sizeToFit()
         layer.cornerRadius = cornerRadius

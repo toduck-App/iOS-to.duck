@@ -1,25 +1,35 @@
 import UIKit
 
-struct TDChipItem {
-    var title: String
-    var leftImage: UIImage? = nil
-    var rightImage: UIImage? = nil
+public struct TDChipItem {
+    public var title: String
+    public var leftImage: UIImage? = nil
+    public var rightImage: UIImage? = nil
+    
+    public init(
+        title: String,
+        leftImage: UIImage? = nil,
+        rightImage: UIImage? = nil
+    ) {
+        self.title = title
+        self.leftImage = leftImage
+        self.rightImage = rightImage
+    }
 }
 
-protocol TDChipCollectionViewDelegate: AnyObject {
+public protocol TDChipCollectionViewDelegate: AnyObject {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String)
 }
 
-class TDChipCollectionView: UICollectionView {
- 
+public final class TDChipCollectionView: UICollectionView {
     private var chips: [TDChipItem] = []
     private var selectedStates: [Bool] = []
     private var defaultChipType: TDChipType
     private var hasAllSelectChip: Bool = false
     private var isMultiSelect: Bool = false
-    weak var chipDelegate: TDChipCollectionViewDelegate?
     
-    init(chipType: TDChipType, hasAllSelectChip: Bool = false, isMultiSelect: Bool = false) {
+    public weak var chipDelegate: TDChipCollectionViewDelegate?
+    
+    public init(chipType: TDChipType, hasAllSelectChip: Bool = false, isMultiSelect: Bool = false) {
         self.hasAllSelectChip = hasAllSelectChip
         self.isMultiSelect = isMultiSelect
         self.defaultChipType = chipType
@@ -39,11 +49,12 @@ class TDChipCollectionView: UICollectionView {
         self.allowsSelection = true
     }
     
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setChips(_ chips: [TDChipItem]) {
+    public func setChips(_ chips: [TDChipItem]) {
         self.chips.append(contentsOf: chips)
         self.selectedStates.append(contentsOf: Array(repeating: false, count: chips.count))
         self.reloadData()
@@ -51,11 +62,11 @@ class TDChipCollectionView: UICollectionView {
 }
 
 extension TDChipCollectionView: UICollectionViewDataSource{
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return chips.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: TDChipCell = collectionView.dequeueReusableCell(for: indexPath)
         cell.configure(item: chips[indexPath.item], chipType: defaultChipType, isActive: selectedStates[indexPath.item])
         return cell
@@ -63,7 +74,7 @@ extension TDChipCollectionView: UICollectionViewDataSource{
 }
 
 extension TDChipCollectionView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let text = chips[indexPath.item].title
         var width = (text as NSString).size(withAttributes: [NSAttributedString.Key.font: TDFont.regularBody2.font]).width
         width += (chips[indexPath.item].leftImage != nil) ? 24 : 0
@@ -71,11 +82,10 @@ extension TDChipCollectionView: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width + 24, height: defaultChipType.height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? TDChipCell else { return }
         
         let chip = chips[indexPath.item]
-        
         
         // "전체" 칩이 선택되었을 때 처리
         if hasAllSelectChip{

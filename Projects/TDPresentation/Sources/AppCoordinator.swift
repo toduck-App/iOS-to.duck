@@ -6,17 +6,17 @@
 //
 
 import UIKit
+
+public final class AppCoordinator: Coordinator {
+    public var navigationController: UINavigationController
+    public var childCoordinators: [any Coordinator] = []
+    public var finishDelegate: CoordinatorFinishDelegate?
     
-final class AppCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    var childCoordinators: [any Coordinator] = []
-    var finishDelegate: CoordinatorFinishDelegate?
-    
-    init(navigationController: UINavigationController) {
+    public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
     
-    func start() {
+    public func start() {
         let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
         tabBarCoordinator.start()
         childCoordinators.append(tabBarCoordinator)

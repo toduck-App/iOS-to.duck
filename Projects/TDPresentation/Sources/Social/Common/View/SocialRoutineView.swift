@@ -1,3 +1,5 @@
+import TDDomain
+import TDDesign
 import UIKit
 import SnapKit
 
@@ -16,6 +18,7 @@ final class SocialRoutineView: UIView {
         super.init(frame: frame)
     }
     
+    // TODO: Presentation Model
     convenience init(with routine: Routine) {
         self.init()
         self.routineTitleLabel.setText(routine.title)

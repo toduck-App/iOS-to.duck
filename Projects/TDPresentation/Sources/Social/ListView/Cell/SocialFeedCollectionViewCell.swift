@@ -1,4 +1,6 @@
 import SnapKit
+import TDDesign
+import TDDomain
 import Then
 import Kingfisher
 import UIKit
@@ -86,6 +88,7 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
     
+    // TODO: Presentation Model
     func configure(with item: Post) {
         titleBagde.setTitle(item.user.title)
         nicknameLabel.setText(item.user.name)

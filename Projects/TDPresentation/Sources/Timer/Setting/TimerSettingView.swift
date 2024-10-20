@@ -1,3 +1,4 @@
+import TDDesign
 import UIKit
 
 final class TimerSettingView: BaseView {

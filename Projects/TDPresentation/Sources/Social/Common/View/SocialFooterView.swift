@@ -1,3 +1,4 @@
+import TDDesign
 import UIKit
 
 protocol SocialFooterDelegate: AnyObject {

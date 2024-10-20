@@ -10,14 +10,14 @@ import SnapKit
 import Then
 import FSCalendar
 
-final class ToduckCalendar: BaseCalendar {
-    override init(frame: CGRect) {
+public final class ToduckCalendar: BaseCalendar {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setupTDCalendar()
     }
     
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupTDCalendar()
     }

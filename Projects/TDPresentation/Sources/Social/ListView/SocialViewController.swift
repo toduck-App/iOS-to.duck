@@ -1,10 +1,10 @@
 import Combine
+import TDDesign
+import TDDomain
 import UIKit
 
 class SocialViewController: BaseViewController<SocialView> {
     weak var coordinator: SocialCoordinator?
-    private let searchBar = UISearchBar()
-    private var filteredPosts: [Post] = []
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     private let viewModel: SocialViewModel!
     private var cancellables = Set<AnyCancellable>()

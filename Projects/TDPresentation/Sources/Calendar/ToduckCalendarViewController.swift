@@ -7,7 +7,7 @@
 
 import FSCalendar
 import SnapKit
-import Then
+import TDDesign
 import UIKit
 
 struct TempSchedule {

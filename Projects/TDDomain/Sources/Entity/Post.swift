@@ -57,7 +57,7 @@ public struct Post: Identifiable {
     public let timestamp: Date
     
     public let likeCount: Int?
-    public let isLike: Bool
+    public var isLike: Bool
     public let commentCount: Int?
     public let shareCount: Int?
     public let routine: Routine?
