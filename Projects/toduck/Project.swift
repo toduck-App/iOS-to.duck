@@ -21,6 +21,7 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
+        .external(name: "Swinject")
     ],
     settings: .settings(configurations: [
         .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
