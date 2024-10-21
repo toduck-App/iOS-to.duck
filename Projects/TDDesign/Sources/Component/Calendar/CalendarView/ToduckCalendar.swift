@@ -23,7 +23,7 @@ public final class ToduckCalendar: BaseCalendar {
     }
     
     private func setupTDCalendar() {
-        self.register(SheetCalendarSelectDateCell.self, forCellReuseIdentifier: SheetCalendarSelectDateCell.identifier)
+        self.register(ToduckCalendarDateCell.self, forCellReuseIdentifier: ToduckCalendarDateCell.identifier)
         self.appearance.selectionColor = TDColor.Primary.primary100
         self.appearance.titleSelectionColor = .black
         self.appearance.todayColor = TDColor.Primary.primary500
