@@ -65,8 +65,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         let calendarHeaderHeight = calendarHeader.frame.height
         let calendarHeight = calendar.frame.height
         
-        selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset + calendarHeaderHeight
-        selectedDayViewTopCollapsed = selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
+        selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset
+        selectedDayViewTopCollapsed = calendarHeaderHeight + selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
         selectedDayViewTopHidden = view.bounds.height
     }
 }
