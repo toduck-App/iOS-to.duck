@@ -6,7 +6,8 @@ let project = Project(
     targets: [
         Target.target(
             name: TDModule.TDCore.rawValue,
-            product: .staticLibrary,
+            product: .framework,
+            bundleId: Project.bundleID + ".core",
             sources: .sources,
             dependencies: [
                 .external(name: "Swinject")
