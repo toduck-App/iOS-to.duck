@@ -18,6 +18,7 @@ let project = Project.project(
             sources: .sources,
             dependencies: [
                 .core(),
+                .domain(), // TODO: Domain 의존성 제거
                 .external(name: "Moya")
             ]
         ),
