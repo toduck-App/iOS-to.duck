@@ -20,15 +20,14 @@ public protocol DependencyResolvable {
 public typealias DependencyInjectable = DependencyAssemblable & DependencyResolvable
 
 public final class DIContainer: DependencyInjectable {
-    private let container: Container
+    public static var shared: DIContainer = DIContainer()
+    private var container: Container = Container()
     
-    public init(container: Container) {
-        self.container = container
-    }
+    private init() { }
     
     public func assemble(_ assemblyList: [Assembly]) {
         for assembly in assemblyList {
-            assembly.assemble(container: self.container)
+            assembly.assemble(container: container)
         }
     }
     
@@ -41,6 +40,7 @@ public final class DIContainer: DependencyInjectable {
     }
     
     public func resolve<Service>(_ serviceType: Service.Type) -> Service {
+        print("")
         guard let service = container.resolve(serviceType) else {
             fatalError("\(serviceType)를 Resolve 실패함")
         }

@@ -16,13 +16,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var appCoordinator: (any Coordinator)?
     let navigationController = UINavigationController()
-    let injector: DependencyInjectable = DIContainer(container: Container())
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        
-        injector.assemble([DataAssembly(), DomainAssembly()])
+        assembleDependencies()
         appCoordinator = AppCoordinator(navigationController: navigationController)
         appCoordinator?.start()
         
@@ -30,6 +28,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         window?.makeKeyAndVisible()
     }
+    
+    func assembleDependencies() {
+        DIContainer.shared.assemble([DataAssembly(), DomainAssembly()])
+    }
 }
-
-
