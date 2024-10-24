@@ -5,7 +5,7 @@ public struct TDChipType {
     public var fontColor: ActiveColor
     public var cornerRadius: CGFloat
     public var height: CGFloat
-    public var borderColor: ActiveColor? = .init(activeColor: .clear, inActiveColor: TDColor.Neutral.neutral200)
+    public var borderColor: ActiveColor = .init(activeColor: .clear, inActiveColor: TDColor.Neutral.neutral200)
     
     public init(
         backgroundColor: ActiveColor,

@@ -3,7 +3,7 @@ import TDDesign
 import TDDomain
 import UIKit
 
-class SocialListViewController: BaseViewController<SocialList> {
+class SocialListViewController: BaseViewController<SocialListView> {
     weak var coordinator: SocialListCoordinator?
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     private let viewModel: SocialViewModel!
@@ -108,7 +108,7 @@ extension SocialListViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator?.moveToSocialDetailController(by: indexPath.item)
+        coordinator?.didTapPost(id: indexPath.item)
     }
 }
 

@@ -3,8 +3,15 @@ import TDDesign
 import Then
 import UIKit
 
-final class SocialList: BaseView {
-    private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: .roundedRectangle, hasAllSelectChip: true, isMultiSelect: false)
+final class SocialListView: BaseView {
+    private let chipType: TDChipType = TDChipType(
+        backgroundColor: .init(activeColor: TDColor.Primary.primary500, inActiveColor: TDColor.baseWhite),
+        fontColor: .init(activeColor: TDColor.baseWhite, inActiveColor: TDColor.Neutral.neutral700),
+        cornerRadius: 8,
+        height: 33
+    )
+    
+    private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: chipType, hasAllSelectChip: false, isMultiSelect: false)
     private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
         $0.backgroundColor = TDColor.baseWhite
     }
@@ -65,7 +72,7 @@ final class SocialList: BaseView {
 }
 
 // MARK: External Method
-extension SocialList {
+extension SocialListView {
     func showLoadingView() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.refreshControl.endRefreshing()
@@ -97,7 +104,7 @@ extension SocialList {
     }
 }
 
-private extension SocialList{
+private extension SocialListView{
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 10
         let groupPadding: CGFloat = 16
