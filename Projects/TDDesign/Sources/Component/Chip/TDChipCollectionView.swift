@@ -1,21 +1,5 @@
 import UIKit
 
-public struct TDChipItem {
-    public var title: String
-    public var leftImage: UIImage? = nil
-    public var rightImage: UIImage? = nil
-    
-    public init(
-        title: String,
-        leftImage: UIImage? = nil,
-        rightImage: UIImage? = nil
-    ) {
-        self.title = title
-        self.leftImage = leftImage
-        self.rightImage = rightImage
-    }
-}
-
 public protocol TDChipCollectionViewDelegate: AnyObject {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String)
 }
@@ -79,7 +63,7 @@ extension TDChipCollectionView: UICollectionViewDelegateFlowLayout {
         var width = (text as NSString).size(withAttributes: [NSAttributedString.Key.font: TDFont.regularBody2.font]).width
         width += (chips[indexPath.item].leftImage != nil) ? 24 : 0
         width += (chips[indexPath.item].rightImage != nil) ? 24 : 0
-        return CGSize(width: width + 24, height: defaultChipType.height)
+        return CGSize(width: width + 24, height: defaultChipType.height + 12)
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
