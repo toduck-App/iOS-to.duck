@@ -3,11 +3,8 @@ import SnapKit
 import Then
 
 class TDChipCell: UICollectionViewCell {
-    private var chipType: TDChipType? {
-        didSet {
-            updateState()
-        }
-    }
+    private var chipType: TDChipType?
+    private var item: TDChipItem?
     
     private var isActive: Bool = false {
         didSet {
@@ -44,16 +41,18 @@ class TDChipCell: UICollectionViewCell {
     func configure(item: TDChipItem, chipType: TDChipType, isActive: Bool) {
         self.chipType = chipType
         self.isActive = isActive
+        self.item = item
         self.titleLabel.setText(item.title)
         if let leftImage = item.leftImage {
-            leftImageView.image = leftImage.withRenderingMode(.alwaysTemplate)
+            leftImageView.image = leftImage.image
             stackView.addArrangedSubview(leftImageView)
         }
         stackView.addArrangedSubview(titleLabel)
         if let rightImage = item.rightImage {
-            rightImageView.image = rightImage.withRenderingMode(.alwaysTemplate)
+            rightImageView.image = rightImage.image
             stackView.addArrangedSubview(rightImageView)
         }
+        updateState()
     }
     
     func deSelected() {
@@ -95,9 +94,9 @@ class TDChipCell: UICollectionViewCell {
     private func updateState() {
         guard let chipType else { return }
         contentView.layer.cornerRadius = chipType.cornerRadius
-        contentView.backgroundColor = isActive ? chipType.activeColor : chipType.inactiveColor
-        titleLabel.setColor(isActive ? chipType.inactiveColor : chipType.activeColor)
-        leftImageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
-        rightImageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
+        contentView.backgroundColor = isActive ? chipType.activeBackgroundColor : chipType.inActiveBackroundColor
+        titleLabel.setColor(isActive ? chipType.activeFontColor : chipType.inActiveFontColor)
+        leftImageView.tintColor = isActive ? item?.leftImage?.activeColor: item?.leftImage?.inActiveColor
+        rightImageView.tintColor = isActive ? item?.leftImage?.activeColor : item?.rightImage?.inActiveColor
     }
 }
