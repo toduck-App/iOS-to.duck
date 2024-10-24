@@ -21,14 +21,12 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private var headerStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .leading
-        stackView.spacing = 10
-        stackView.distribution = .equalSpacing
-        return stackView
-    }()
+    private var headerStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .leading
+        $0.spacing = 10
+        $0.distribution = .equalSpacing
+    }
     
     private var headerLeftStackView = UIStackView().then {
         $0.axis = .horizontal
