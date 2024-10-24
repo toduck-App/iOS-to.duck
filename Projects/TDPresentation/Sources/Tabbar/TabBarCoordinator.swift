@@ -53,7 +53,7 @@ final class TabBarCoordinator: Coordinator {
             let coordinator = DiaryCoordinator(navigationController: navigationController)
             addCoordinator(coordinator: coordinator)
         case .social:
-            let coordinator = SocialCoordinator(navigationController: navigationController)
+            let coordinator = SocialListCoordinator(navigationController: navigationController)
             addCoordinator(coordinator: coordinator)
         case .mypage:
             let coordinator = MyPageCoordinator(navigationController: navigationController)

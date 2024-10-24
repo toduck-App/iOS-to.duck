@@ -3,8 +3,8 @@ import TDDesign
 import TDDomain
 import UIKit
 
-class SocialViewController: BaseViewController<SocialView> {
-    weak var coordinator: SocialCoordinator?
+class SocialListViewController: BaseViewController<SocialList> {
+    weak var coordinator: SocialListCoordinator?
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     private let viewModel: SocialViewModel!
     private var cancellables = Set<AnyCancellable>()
@@ -82,14 +82,14 @@ class SocialViewController: BaseViewController<SocialView> {
 }
 
 
-extension SocialViewController: TDChipCollectionViewDelegate {
+extension SocialListViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
         print("[LOG] 현재 Select 한 Chip: \(chipText) , Index = : \(index)")
         layoutView.hideDropdown()
     }
 }
 
-extension SocialViewController: UICollectionViewDelegate {
+extension SocialListViewController: UICollectionViewDelegate {
     
     private func setupDataSource() {
         datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, postID in
@@ -113,7 +113,7 @@ extension SocialViewController: UICollectionViewDelegate {
 }
 
 //MARK: Input
-extension SocialViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
+extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
     func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
         let option = SocialSortType.allCases[indexPath.row]
         layoutView.dropDownFilterView.setTitle(option.rawValue)
@@ -150,7 +150,7 @@ extension SocialViewController: SocialFeedCollectionViewCellDelegate, TDDropDown
 }
 
 // MARK: Collection View Datasource Apply
-extension SocialViewController {
+extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
         snapshot.appendSections([0])
