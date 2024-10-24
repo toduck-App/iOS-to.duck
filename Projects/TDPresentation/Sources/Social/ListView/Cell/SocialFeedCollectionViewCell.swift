@@ -75,6 +75,10 @@ class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.delegate = self
     }
     
+    private let separatorView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral100
+    }
+    
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -125,7 +129,7 @@ private extension SocialFeedCollectionViewCell {
     
     func setupLayout() {
         addSubview(containerView)
-        [avatarView, verticalStackView].forEach{
+        [avatarView, verticalStackView, separatorView].forEach{
             containerView.addSubview($0)
         }
         [titleBagde,nicknameLabel,dateLabel].forEach{
@@ -140,6 +144,7 @@ private extension SocialFeedCollectionViewCell {
         [headerStackView, bodyStackView, footerView].forEach{
             verticalStackView.addArrangedSubview($0)
         }
+        
     }
     
     func setupConstraints() {
@@ -181,6 +186,12 @@ private extension SocialFeedCollectionViewCell {
         
         dotIconView.snp.makeConstraints { make in
             make.size.equalTo(24)
+        }
+        
+        separatorView.snp.makeConstraints { make in
+            make.top.equalTo(verticalStackView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(1)
         }
     }
 }
