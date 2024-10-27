@@ -43,7 +43,7 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postId: Int) async throws -> Post {
-        return Post(id: 0, user: dummyUser, contentText: "", imageList: [], timestamp: Date(), likeCount: 0, isLike: false, commentCount: 0, shareCount: 0, routine: dummyRoutine, type: .communication, category: .none);
+        return Post.dummy.randomElement()!
     }
 
     public func reportPost(postId: Int) async throws -> Bool {

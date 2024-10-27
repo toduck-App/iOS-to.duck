@@ -29,7 +29,9 @@ final class SocialDetailCoordinator: Coordinator {
             at: postID
         )
         
-        let socialDetailViewController = SocialDetailViewController()
+        let socialDetailViewController = SocialDetailViewController(
+            viewModel: socialDetailViewModel
+        )
         socialDetailViewController.coordinator = self
         navigationController.pushViewController(socialDetailViewController, animated: true)
     }

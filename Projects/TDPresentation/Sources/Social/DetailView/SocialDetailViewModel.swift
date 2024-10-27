@@ -2,11 +2,14 @@ import Foundation
 import TDDomain
 
 public final class SocialDetailViewModel: BaseViewModel {
+    private let postID: Int
+    private let fetchPostUsecase: FetchPostUseCase
+    private let likePostUseCase: TogglePostLikeUseCase
+    private let createCommentUseCase: CreateCommentUseCase
+    private let reportPostUseCase: ReportPostUseCase
     
-    private var fetchPostUsecase: FetchPostUseCase
-    private var likePostUseCase: TogglePostLikeUseCase
-    private var createCommentUseCase: CreateCommentUseCase
-    private var reportPostUseCase: ReportPostUseCase
+    @Published private(set) var post: Post?
+    @Published private(set) var comments: [Comment] = []
     
     init(
         fetchPostUsecase: FetchPostUseCase,
@@ -19,6 +22,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         self.likePostUseCase = likePostUseCase
         self.createCommentUseCase = createCommentUseCase
         self.reportPostUseCase = reportPostUseCase
+        self.postID = postID
     }
     
     func action(
@@ -26,7 +30,7 @@ public final class SocialDetailViewModel: BaseViewModel {
     ) {
         switch action {
         case .fetchPost:
-            break
+            fetchPost()
         case .likePost:
             break
         case .createComment:
@@ -39,6 +43,19 @@ public final class SocialDetailViewModel: BaseViewModel {
             break
         case .blockCommet:
             break
+        }
+    }
+}
+
+private extension SocialDetailViewModel {
+    func fetchPost() {
+        Task {
+            do {
+                guard let post = try await fetchPostUsecase.execute(postId: postID) else { return }
+                self.post = post
+            } catch (let error) {
+                self.post = nil
+            }
         }
     }
 }

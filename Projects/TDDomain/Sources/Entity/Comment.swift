@@ -31,3 +31,15 @@ public struct Comment {
         self.like = like
     }
 }
+
+extension Comment: Identifiable { }
+
+extension Comment: Hashable {
+    public static func == (lhs: Comment, rhs: Comment) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
