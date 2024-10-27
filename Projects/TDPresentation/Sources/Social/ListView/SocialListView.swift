@@ -104,7 +104,7 @@ extension SocialListView {
     }
 }
 
-private extension SocialListView{
+private extension SocialListView {
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 10
         let groupPadding: CGFloat = 16

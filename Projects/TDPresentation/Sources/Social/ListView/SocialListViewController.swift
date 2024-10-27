@@ -29,6 +29,7 @@ class SocialListViewController: BaseViewController<SocialListView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.action(.fetchPosts)
     }
     
     override func configure() {
@@ -40,7 +41,6 @@ class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.dropDownFilterHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
         layoutView.dropDownFilterHoverView.delegate = self
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
-        viewModel.action(.fetchPosts)
     }
     
     override func addView() {

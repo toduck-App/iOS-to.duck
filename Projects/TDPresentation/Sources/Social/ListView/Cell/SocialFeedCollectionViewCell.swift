@@ -11,7 +11,7 @@ protocol SocialFeedCollectionViewCellDelegate: AnyObject {
     func didTapNickname(_ cell: SocialFeedCollectionViewCell)
 }
 
-class SocialFeedCollectionViewCell: UICollectionViewCell {
+final class SocialFeedCollectionViewCell: UICollectionViewCell {
     private let containerView = UIView()
     weak var socialFeedCellDelegate: SocialFeedCollectionViewCellDelegate?
     
