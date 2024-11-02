@@ -29,10 +29,7 @@ final class SocialHeaderView: UIStackView {
     
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
     
-    private var dateLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500).then {
-        $0.isUserInteractionEnabled = true
-        $0.addGestureRecognizer(UITapGestureRecognizer(target: SocialHeaderView.self, action: #selector(didTapMore)))
-    }
+    private var dateLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
     
     private var dotIconView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
