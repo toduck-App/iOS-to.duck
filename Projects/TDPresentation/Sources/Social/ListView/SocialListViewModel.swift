@@ -2,7 +2,7 @@ import Combine
 import TDDomain
 import UIKit
 
-final class SocialViewModel: BaseViewModel {
+final class SocialListViewModel: BaseViewModel {
     private var posts: [Post] = []
     
     private(set) var fetchState = PassthroughSubject<FetchState, Never>()
@@ -38,7 +38,7 @@ final class SocialViewModel: BaseViewModel {
     }
 }
 
-extension SocialViewModel {
+extension SocialListViewModel {
     private func fetchPosts() {
         Task {
             do {
@@ -77,6 +77,6 @@ extension SocialViewModel {
     }
 }
 
-extension SocialViewModel {
+extension SocialListViewModel {
    
 }

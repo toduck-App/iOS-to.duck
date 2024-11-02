@@ -6,12 +6,12 @@ import UIKit
 class SocialListViewController: BaseViewController<SocialListView> {
     static private let chipsString = ["집중력", "기억력", "충돌", "불안", "수면"]
     weak var coordinator: SocialListCoordinator?
-    private let viewModel: SocialViewModel!
+    private let viewModel: SocialListViewModel!
     private let chips: [TDChipItem] = chipsString.map { TDChipItem(title: $0) }
     private var cancellables = Set<AnyCancellable>()
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     
-    init(viewModel: SocialViewModel) {
+    init(viewModel: SocialListViewModel) {
         self.viewModel = viewModel
         super.init()
     }

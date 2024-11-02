@@ -1,6 +1,6 @@
 import TDDomain
 
-extension SocialViewModel {
+extension SocialListViewModel {
     enum Action {
         case fetchPosts
         case refreshPosts
