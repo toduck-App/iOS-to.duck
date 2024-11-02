@@ -63,7 +63,6 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
     
-    // TODO: Presentation Model
     func configure(with item: Post) {
         headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
         contentLabel.setText(item.contentText)
