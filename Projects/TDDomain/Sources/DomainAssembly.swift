@@ -26,6 +26,11 @@ public struct DomainAssembly: Assembly {
             return CreateCommentUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchCommentUseCase.self) { resolver in
+            let repository = resolver.resolve(CommentRepository.self)!
+            return FetchCommentUseCaseImpl(repository: repository)
+        }
+        
         container.register(ReportPostUseCase.self) { resolver in
             let repository = resolver.resolve(PostRepository.self)!
             return ReportPostUseCaseImpl(repository: repository)

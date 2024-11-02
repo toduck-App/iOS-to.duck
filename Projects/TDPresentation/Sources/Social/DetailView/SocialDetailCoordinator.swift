@@ -18,11 +18,13 @@ final class SocialDetailCoordinator: Coordinator {
     func start() {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let likePostUseCase = injector.resolve(TogglePostLikeUseCase.self)
+        let fetchCommentUseCase = injector.resolve(FetchCommentUseCase.self)
         let createCommentUseCase =  injector.resolve(CreateCommentUseCase.self)
         let reportPostUseCase = injector.resolve(ReportPostUseCase.self)
         
         let socialDetailViewModel = SocialDetailViewModel(
             fetchPostUsecase: fetchPostUseCase,
+            fetchCommentUsecase: fetchCommentUseCase,
             likePostUseCase: likePostUseCase,
             createCommentUseCase: createCommentUseCase,
             reportPostUseCase: reportPostUseCase,

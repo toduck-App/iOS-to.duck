@@ -2,7 +2,6 @@ import Combine
 import TDDomain
 import UIKit
 
-
 final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     private enum Section: Hashable, CaseIterable {
         case post
@@ -20,11 +19,6 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     private let viewModel: SocialDetailViewModel!
     private var cancellables = Set<AnyCancellable>()
     
-    override init() {
-        self.viewModel = nil
-        super.init()
-    }
-    
     public init(viewModel: SocialDetailViewModel) {
         self.viewModel = viewModel
         super.init()
@@ -37,6 +31,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.action(.fetchPost)
+        viewModel.action(.fetchComments)
     }
     
     override func configure() {
@@ -58,13 +53,18 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
             }
             return UICollectionViewCell()
         })
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.post,.comments])
+        datasource.apply(snapshot, animatingDifferences: true)
     }
     
     override func binding() {
         viewModel.$post
             .sink { [weak self] post in
                 guard let self = self, let post = post else { return }
-                self.applySnapshot(items: [.post(post.id)], to: .post)
+                DispatchQueue.main.async {
+                    self.applySnapshot(items: [.post(post.id)], to: .post)
+                }
             }
             .store(in: &cancellables)
         
@@ -72,8 +72,9 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
             .sink { [weak self] comments in
                 guard let self = self else { return }
                 let items = comments.map { Item.comment($0.id) }
-                self.applySnapshot(items: items, to: .comments)
-                
+                DispatchQueue.main.async {
+                    self.applySnapshot(items: items, to: .comments)
+                }
             }
             .store(in: &cancellables)
     }
@@ -82,15 +83,8 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
 // MARK: Iternal Method
 extension SocialDetailViewController {
     private func applySnapshot(items: [Item], to section: Section) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([section])
+        var snapshot = datasource.snapshot()
         snapshot.appendItems(items, toSection: section)
         datasource.apply(snapshot, animatingDifferences: true)
     }
-    
-//    private func updateSnapshot(item: Item, to section: Section) {
-//        var snapshot = datasource.snapshot()
-//        snapshot.reloadItems([item])
-//        datasource.apply(snapshot, animatingDifferences: true)
-//    }
 }
