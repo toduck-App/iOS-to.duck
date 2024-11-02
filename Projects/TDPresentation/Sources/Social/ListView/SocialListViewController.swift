@@ -114,38 +114,33 @@ extension SocialListViewController: UICollectionViewDelegate {
 
 //MARK: Input
 extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
-    func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
-        let option = SocialSortType.allCases[indexPath.row]
-        layoutView.dropDownFilterView.setTitle(option.rawValue)
-        viewModel.action(.sortPost(by: option))
+    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell) {
+        // TODO: Routine 공유 View
     }
     
-    @objc func didRefresh() {
-        viewModel.action(.fetchPosts)
+    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
+        // TODO: 프로필 view로 이동
     }
     
-    func didTapNickname(_ cell: SocialFeedCollectionViewCell) {
-        
-    }
-
     func didTapMoreButton(_ cell: SocialFeedCollectionViewCell) {
-    
+        // TODO: 신고하기/차단하기 && 내꺼라면 삭제하기
     }
     
-    func didTapCommentButton(_ cell: SocialFeedCollectionViewCell) {
-        print("[LOG] Comment Button Clicked")
-    }
-
-    func didTapShareButton(_ cell: SocialFeedCollectionViewCell) {
-        print("[LOG] Share Button Clicked")
-    }
-
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {
-        print("[LOG] Like Button Clicked")
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
         viewModel.action(.likePost(at: indexPath.item))
+    }
+    
+    @objc func didRefresh() {
+        viewModel.action(.refreshPosts)
+    }
+    
+    func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let option = SocialSortType.allCases[indexPath.row]
+        layoutView.dropDownFilterView.setTitle(option.rawValue)
+        viewModel.action(.sortPost(by: option))
     }
 }
 

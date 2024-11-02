@@ -3,7 +3,13 @@ import TDDesign
 import UIKit
 import SnapKit
 
+protocol SocialRoutineViewDelegate: AnyObject {
+    func didTapRoutine(_ view: SocialRoutineView)
+}
+
 final class SocialRoutineView: UIView {
+    weak var delegate: SocialRoutineViewDelegate?
+    
     private var routineTitleLabel = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 2
     }
@@ -28,6 +34,7 @@ final class SocialRoutineView: UIView {
         }
         setupUI()
         setupLayout()
+        setupRecognizer()
     }
     
     required init?(coder: NSCoder) {
@@ -67,5 +74,18 @@ private extension SocialRoutineView {
             make.bottom.equalToSuperview().inset(14)
             make.height.equalTo(24)
          }
+    }
+    
+    func setupRecognizer() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapRoutine))
+        addGestureRecognizer(tapGesture)
+    }
+}
+
+// MARK: Action
+
+extension SocialRoutineView {
+    @objc private func didTapRoutine() {
+        delegate?.didTapRoutine(self)
     }
 }

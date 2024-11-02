@@ -3,6 +3,7 @@ import TDDomain
 extension SocialViewModel {
     enum Action {
         case fetchPosts
+        case refreshPosts
         case likePost(at: Int)
         case sortPost(by: SocialSortType)
     }

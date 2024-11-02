@@ -2,7 +2,7 @@ import TDDesign
 import UIKit
 
 protocol SocialFooterDelegate: AnyObject {
-    func didSelectLikeButton()
+    func didTapLikeButton()
 }
 
 final class SocialFooterView: UIView {
@@ -49,20 +49,20 @@ final class SocialFooterView: UIView {
     
     func configure(isLike: Bool, likeCount: Int?, commentCount: Int?, shareCount: Int?) {
         likeButton.setImage(isLike ?
-                            TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
-                                TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
+            TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
+            TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         likeLabel.setText("\(likeCount ?? 0)")
         commentLabel.setText("\(commentCount ?? 0)")
         configureShareCount(with: shareCount)
     }
-    
 }
 
 // MARK: SetupUI
+
 private extension SocialFooterView {
     func setupConstraints() {
-        [likeButton,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
-            addSubview($0)
+        for item in [likeButton, likeLabel, commentIconView, commentLabel, shareIconView, shareLabel] {
+            addSubview(item)
         }
         likeButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
@@ -106,8 +106,9 @@ private extension SocialFooterView {
 }
 
 // MARK: Delegate
+
 extension SocialFooterView {
     @objc func didSelectLikeButton() {
-        delegate?.didSelectLikeButton()
+        delegate?.didTapLikeButton()
     }
 }

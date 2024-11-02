@@ -24,7 +24,7 @@ final class SocialViewModel: BaseViewModel {
     
     func action(_ action: Action) {
         switch action {
-        case .fetchPosts:
+        case .fetchPosts, .refreshPosts:
             fetchPosts()
         case .likePost(let index):
             likePost(at: index)

@@ -8,7 +8,8 @@ import UIKit
 protocol SocialFeedCollectionViewCellDelegate: AnyObject {
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
     func didTapMoreButton(_ cell: SocialFeedCollectionViewCell)
-    func didTapNickname(_ cell: SocialFeedCollectionViewCell)
+    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
+    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
 }
 
 final class SocialFeedCollectionViewCell: UICollectionViewCell {
@@ -21,30 +22,8 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private var headerStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .leading
-        $0.spacing = 10
-        $0.distribution = .equalSpacing
-    }
-    
-    private var headerLeftStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .leading
-        $0.spacing = 10
-        $0.distribution = .equalSpacing
-    }
-    
-    private var headerRightStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .fill
-        $0.spacing = 10
-        $0.distribution = .equalSpacing
-    }
-    
-    lazy var dotIconView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Dot.vertical2Small
+    lazy private var headerView = SocialHeaderView().then{
+        $0.delegate = self
     }
     
     private var bodyStackView = UIStackView().then{
@@ -60,12 +39,6 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.layer.cornerRadius = 18
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
-    
-    private var titleBagde = TDBadge(badgeTitle: "",backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
-    
-    private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
-    
-    private var dateLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
     
     private var contentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
@@ -92,11 +65,8 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     // TODO: Presentation Model
     func configure(with item: Post) {
-        titleBagde.setTitle(item.user.title)
-        nicknameLabel.setText(item.user.name)
-        dateLabel.setText(item.timestamp.convertRelativeTime())
+        headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
         contentLabel.setText(item.contentText)
-        
         footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
         
         configureUserImage(with: item.user.icon)
@@ -106,12 +76,8 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        titleBagde.setTitle("")
-        nicknameLabel.setText("")
-        dateLabel.setText("")
         contentLabel.setText("")
         avatarView.image = TDImage.Profile.medium
-        
         bodyStackView.arrangedSubviews.forEach {
             if $0 is SocialRoutineView || $0 is SocialImageListView {
                 $0.removeFromSuperview()
@@ -132,19 +98,11 @@ private extension SocialFeedCollectionViewCell {
         [avatarView, verticalStackView, separatorView].forEach{
             containerView.addSubview($0)
         }
-        [titleBagde,nicknameLabel,dateLabel].forEach{
-            headerLeftStackView.addArrangedSubview($0)
-        }
-        headerRightStackView.addArrangedSubview(dotIconView)
-        
-        [headerLeftStackView,headerRightStackView].forEach{
-            headerStackView.addArrangedSubview($0)
-        }
         bodyStackView.addArrangedSubview(contentLabel)
-        [headerStackView, bodyStackView, footerView].forEach{
+        
+        [headerView, bodyStackView, footerView].forEach{
             verticalStackView.addArrangedSubview($0)
         }
-        
     }
     
     func setupConstraints() {
@@ -159,14 +117,16 @@ private extension SocialFeedCollectionViewCell {
             make.size.equalTo(36)
         }
         
+        headerView.snp.makeConstraints { make in
+            make.height.equalTo(24)
+        }
+        
         bodyStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
         }
         
-        [titleBagde, nicknameLabel, dateLabel, dotIconView].forEach {
-            $0.snp.makeConstraints { make in
-                make.centerY.equalToSuperview()
-            }
+        footerView.snp.makeConstraints { make in
+            make.height.equalTo(24)
         }
         
         verticalStackView.snp.makeConstraints { make in
@@ -174,18 +134,6 @@ private extension SocialFeedCollectionViewCell {
             make.trailing.equalToSuperview().offset(-16)
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
-        }
-        
-        headerStackView.snp.makeConstraints { make in
-            make.height.equalTo(24)
-        }
-        
-        footerView.snp.makeConstraints { make in
-            make.height.equalTo(24)
-        }
-        
-        dotIconView.snp.makeConstraints { make in
-            make.size.equalTo(24)
         }
         
         separatorView.snp.makeConstraints { make in
@@ -208,7 +156,10 @@ extension SocialFeedCollectionViewCell {
     
     private func configureRoutine(with routine: Routine?) {
         if let routine = routine {
-            bodyStackView.addArrangedSubview(SocialRoutineView(with: routine))
+            let routineView = SocialRoutineView(with: routine).then {
+                $0.delegate = self
+            }
+            bodyStackView.addArrangedSubview(routineView)
         }
     }
     
@@ -219,12 +170,26 @@ extension SocialFeedCollectionViewCell {
     }
 }
 
-//MARK: Delegate
-extension SocialFeedCollectionViewCell: SocialFooterDelegate {
-    @objc func didSelectLikeButton() {
+// MARK: Delegate
+
+extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
+    func didTapRoutine(_ view: SocialRoutineView) {
+        socialFeedCellDelegate?.didTapRoutineView(self)
+    }
+
+    func didTapNickname(_ view: UIStackView) {
+        socialFeedCellDelegate?.didTapNicknameLabel(self)
+    }
+
+    func didTapMore(_ view: UIStackView) {
+        socialFeedCellDelegate?.didTapMoreButton(self)
+    }
+
+    @objc func didTapLikeButton() {
         socialFeedCellDelegate?.didTapLikeButton(self)
     }
-    @objc func didSelectMoreButton() {
-        socialFeedCellDelegate?.didTapMoreButton(self)
+    
+    @objc func didTapRoutine() {
+        socialFeedCellDelegate?.didTapRoutineView(self)
     }
 }
