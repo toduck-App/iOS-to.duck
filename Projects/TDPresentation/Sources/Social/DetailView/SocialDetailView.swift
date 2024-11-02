@@ -13,7 +13,7 @@ final class SocialDetailView: BaseView {
     
     override func configure() {
         backgroundColor = TDColor.Neutral.neutral100
-        detailCollectionView.register(with: SocialDetailPostCell.self)
+        detailCollectionView.register(with: SocialFeedCollectionViewCell.self)
         detailCollectionView.register(with: SocialDetailCommentCell.self)
     }
     

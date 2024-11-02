@@ -184,11 +184,7 @@ extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineV
         socialFeedCellDelegate?.didTapMoreButton(self)
     }
 
-    @objc func didTapLikeButton() {
+    @objc func didTapLikeButton(_ imageView: UIImageView) {
         socialFeedCellDelegate?.didTapLikeButton(self)
-    }
-    
-    @objc func didTapRoutine() {
-        socialFeedCellDelegate?.didTapRoutineView(self)
     }
 }

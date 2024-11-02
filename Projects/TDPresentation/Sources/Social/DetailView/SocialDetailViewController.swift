@@ -38,7 +38,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         datasource = .init(collectionView: layoutView.detailCollectionView, cellProvider: { collectionView, indexPath, item in
             switch item {
             case .post:
-                let cell: SocialDetailPostCell = collectionView.dequeueReusableCell(for: indexPath)
+                let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 if let post = self.viewModel.post {
                     cell.configure(with: post)
                     return cell

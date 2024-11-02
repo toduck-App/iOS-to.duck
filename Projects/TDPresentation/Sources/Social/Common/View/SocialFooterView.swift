@@ -2,7 +2,7 @@ import TDDesign
 import UIKit
 
 protocol SocialFooterDelegate: AnyObject {
-    func didTapLikeButton()
+    func didTapLikeButton(_ view: SocialFooterView)
 }
 
 final class SocialFooterView: UIView {
@@ -109,6 +109,6 @@ private extension SocialFooterView {
 
 extension SocialFooterView {
     @objc func didSelectLikeButton() {
-        delegate?.didTapLikeButton()
+        delegate?.didTapLikeButton(self)
     }
 }
