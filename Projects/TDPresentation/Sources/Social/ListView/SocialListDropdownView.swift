@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SocialDropdownView: UIView {
+final class SocialListDropdownView: UIView {
     private let stackView = UIStackView().then {
         $0.spacing = 5
         $0.axis = .horizontal
@@ -35,7 +35,7 @@ final class SocialDropdownView: UIView {
 }
 
 // MARK: - UI Methods
-private extension SocialDropdownView {
+private extension SocialListDropdownView {
     func setupUI() {
         setViewHierarchy()
         setConstraints()
@@ -60,7 +60,7 @@ private extension SocialDropdownView {
 }
 
 // MARK: - External Methods
-extension SocialDropdownView {
+extension SocialListDropdownView {
     func setTitle(_ title: String) {
         self.labelView.setText(title)
     }

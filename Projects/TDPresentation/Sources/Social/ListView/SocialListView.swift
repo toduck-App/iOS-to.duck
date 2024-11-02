@@ -18,7 +18,7 @@ final class SocialListView: BaseView {
     
     private let dropDownDataSource: [SocialSortType] = [.recent, .comment, .sympathy]
     
-    private(set) lazy var dropDownFilterView = SocialDropdownView(title: dropDownDataSource[0].rawValue)
+    private(set) lazy var dropDownFilterView = SocialListDropdownView(title: dropDownDataSource[0].rawValue)
     private(set) lazy var dropDownFilterHoverView = TDDropdownHoverView(anchorView: dropDownFilterView, selectedOption: dropDownDataSource[0].rawValue, layout: .leading, width: 100)
     
     private(set) lazy var refreshControl = UIRefreshControl().then {
