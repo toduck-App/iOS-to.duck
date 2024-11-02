@@ -4,18 +4,12 @@ import TDDomain
 import UIKit
 
 class SocialListViewController: BaseViewController<SocialListView> {
+    static private let chipsString = ["집중력", "기억력", "충돌", "불안", "수면"]
     weak var coordinator: SocialListCoordinator?
-    private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     private let viewModel: SocialViewModel!
+    private let chips: [TDChipItem] = chipsString.map { TDChipItem(title: $0) }
     private var cancellables = Set<AnyCancellable>()
-    
-    let chips: [TDChipItem] = [
-        TDChipItem(title: "집중력"),
-        TDChipItem(title: "기억력"),
-        TDChipItem(title: "충돌"),
-        TDChipItem(title: "불안"),
-        TDChipItem(title: "수면"),
-    ]
+    private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     
     init(viewModel: SocialViewModel) {
         self.viewModel = viewModel
