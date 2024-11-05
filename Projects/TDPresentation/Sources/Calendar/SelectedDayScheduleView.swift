@@ -58,7 +58,7 @@ private extension SelectedDayScheduleView {
         
         headerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(48)
+            $0.height.equalTo(48).priority(.high)
         }
         
         calendarImageView.snp.makeConstraints {
