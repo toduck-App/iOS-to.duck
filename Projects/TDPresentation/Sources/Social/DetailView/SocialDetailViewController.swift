@@ -38,7 +38,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         datasource = .init(collectionView: layoutView.detailCollectionView, cellProvider: { collectionView, indexPath, item in
             switch item {
             case .post:
-                let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                let cell: SocialDetailPostCell = collectionView.dequeueReusableCell(for: indexPath)
                 if let post = self.viewModel.post {
                     cell.configure(with: post)
                     return cell
@@ -85,6 +85,6 @@ extension SocialDetailViewController {
     private func applySnapshot(items: [Item], to section: Section) {
         var snapshot = datasource.snapshot()
         snapshot.appendItems(items, toSection: section)
-        datasource.apply(snapshot, animatingDifferences: true)
+        datasource.apply(snapshot, animatingDifferences: false)
     }
 }
