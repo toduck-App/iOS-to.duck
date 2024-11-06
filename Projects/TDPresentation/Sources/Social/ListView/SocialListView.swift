@@ -5,21 +5,51 @@ import UIKit
 
 final class SocialListView: BaseView {
     private let chipType: TDChipType = TDChipType(
-        backgroundColor: .init(activeColor: TDColor.Primary.primary500, inActiveColor: TDColor.baseWhite),
-        fontColor: .init(activeColor: TDColor.baseWhite, inActiveColor: TDColor.Neutral.neutral700),
+        backgroundColor: .init(
+            activeColor: TDColor.Primary.primary500,
+            inActiveColor: TDColor.baseWhite
+        ),
+        fontColor: .init(
+            activeColor: TDColor.baseWhite,
+            inActiveColor: TDColor.Neutral.neutral700
+        ),
         cornerRadius: 8,
         height: 33
     )
     
-    private(set) lazy var chipCollectionView = TDChipCollectionView(chipType: chipType, hasAllSelectChip: false, isMultiSelect: false)
-    private(set) lazy var socialFeedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
+    private let segmentedControl = TDSegmentedController(
+        items: ["전체", "주제별"]
+    )
+    
+    private(set) lazy var chipCollectionView = TDChipCollectionView(
+        chipType: chipType,
+        hasAllSelectChip: false,
+        isMultiSelect: false
+    )
+    
+    private(set) lazy var socialFeedCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeCollectionViewLayout()
+    ).then {
         $0.backgroundColor = TDColor.baseWhite
     }
     
-    private let dropDownDataSource: [SocialSortType] = [.recent, .comment, .sympathy]
+    private let dropDownDataSource: [SocialSortType] = [
+        .recent,
+        .comment,
+        .sympathy
+    ]
     
-    private(set) lazy var dropDownFilterView = SocialListDropdownView(title: dropDownDataSource[0].rawValue)
-    private(set) lazy var dropDownFilterHoverView = TDDropdownHoverView(anchorView: dropDownFilterView, selectedOption: dropDownDataSource[0].rawValue, layout: .leading, width: 100)
+    private(set) lazy var dropDownAnchorView = SocialListDropdownView(
+        title: dropDownDataSource[0].rawValue
+    )
+    
+    private(set) lazy var dropDownHoverView = TDDropdownHoverView(
+        anchorView: dropDownAnchorView,
+        selectedOption: dropDownDataSource[0].rawValue,
+        layout: .trailing,
+        width: 100
+    )
     
     private(set) lazy var refreshControl = UIRefreshControl().then {
         $0.tintColor = .systemGray
@@ -29,18 +59,25 @@ final class SocialListView: BaseView {
     }
     
     override func layout() {
-        dropDownFilterHoverView.snp.makeConstraints { make in
-            make.width.equalTo(65)
-            make.height.equalTo(30)
+        segmentedControl.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
             make.leading.equalTo(safeAreaLayoutGuide).offset(16)
+            make.width.equalTo(133)
+            make.height.equalTo(43)
+        }
+        
+        dropDownAnchorView.snp.makeConstraints { make in
+            make.height.equalTo(43)
+            make.top.equalTo(safeAreaLayoutGuide)
+            make.trailing.equalTo(safeAreaLayoutGuide).offset(-16)
+            make.width.equalTo(65)
         }
         
         chipCollectionView.snp.makeConstraints { make in
             make.height.equalTo(33)
-            make.top.equalTo(dropDownFilterView)
-            make.leading.equalTo(dropDownFilterView.snp.trailing).offset(10)
-            make.trailing.equalToSuperview().inset(10)
+            make.top.equalTo(segmentedControl.snp.bottom).offset(16)
+            make.leading.equalTo(segmentedControl.snp.leading).offset(10)
+            make.trailing.equalToSuperview().inset(16)
         }
         
         socialFeedCollectionView.snp.makeConstraints { make in
@@ -61,7 +98,7 @@ final class SocialListView: BaseView {
     }
     
     override func addview() {
-        [dropDownFilterHoverView, chipCollectionView, socialFeedCollectionView, loadingView].forEach {
+        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, loadingView].forEach {
             addSubview($0)
         }
     }
@@ -100,7 +137,7 @@ extension SocialListView {
     }
     
     func hideDropdown() {
-        dropDownFilterHoverView.hideDropDown()
+        dropDownHoverView.hideDropDown()
     }
 }
 

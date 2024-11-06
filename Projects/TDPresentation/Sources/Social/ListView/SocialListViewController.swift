@@ -4,7 +4,7 @@ import TDDomain
 import UIKit
 
 class SocialListViewController: BaseViewController<SocialListView> {
-    static private let chipsString = ["집중력", "기억력", "충돌", "불안", "수면"]
+    static private let chipsString = ["집중력", "기억력", "충돌", "불안", "수면", "일반"]
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
     private let chips: [TDChipItem] = chipsString.map { TDChipItem(title: $0) }
@@ -32,8 +32,8 @@ class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.chipCollectionView.chipDelegate = self
         layoutView.chipCollectionView.setChips(chips)
         setupDataSource()
-        layoutView.dropDownFilterHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
-        layoutView.dropDownFilterHoverView.delegate = self
+        layoutView.dropDownHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
+        layoutView.dropDownHoverView.delegate = self
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
     }
     
@@ -133,7 +133,7 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
     
     func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
         let option = SocialSortType.allCases[indexPath.row]
-        layoutView.dropDownFilterView.setTitle(option.rawValue)
+        layoutView.dropDownAnchorView.setTitle(option.rawValue)
         viewModel.action(.sortPost(by: option))
     }
 }

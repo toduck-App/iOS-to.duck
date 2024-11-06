@@ -38,21 +38,16 @@ public final class TDDropdownHoverView: UIView {
     
     // MARK: - Initializer
     
-    public init(anchorView: UIView) {
+    public init(anchorView: UIView, selectedOption: String, layout: LocateLayout, width: CGFloat) {
         self.anchorView = anchorView
-        super.init(frame: .zero)
-        
+        self.selectedOption = selectedOption
+        self.locate = layout
+        self.width = width
+        super.init(frame: anchorView.frame)
         dropDownTableView.dataSource = self
         dropDownTableView.delegate = self
         
         setupUI()
-    }
-    
-    public convenience init(anchorView: UIView, selectedOption: String, layout: LocateLayout, width: CGFloat) {
-        self.init(anchorView: anchorView)
-        self.selectedOption = selectedOption
-        self.locate = layout
-        self.width = width
     }
     
     public required init?(coder: NSCoder) {
@@ -100,10 +95,11 @@ private extension TDDropdownHoverView {
             $0.edges.equalToSuperview()
         }
         
+        
         self.addSubview(anchorView)
         
-        anchorView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        self.snp.makeConstraints {
+            $0.edges.equalTo(anchorView)
         }
 
         if locate == .leading {
@@ -114,7 +110,7 @@ private extension TDDropdownHoverView {
             }
         } else if locate == .trailing {
             setConstraints {
-                $0.trailing.equalTo(self.anchorView)
+                $0.trailing.equalTo(self.anchorView.snp.trailing)
                 $0.width.equalTo(self.width)
                 $0.top.equalTo(self.anchorView.snp.bottom)
             }
