@@ -13,8 +13,9 @@ protocol SocialFeedCollectionViewCellDelegate: AnyObject {
 }
 
 final class SocialFeedCollectionViewCell: UICollectionViewCell {
-    private let containerView = UIView()
     weak var socialFeedCellDelegate: SocialFeedCollectionViewCellDelegate?
+    
+    private let containerView = UIView()
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -184,7 +185,7 @@ extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineV
         socialFeedCellDelegate?.didTapMoreButton(self)
     }
 
-    @objc func didTapLikeButton(_ imageView: UIImageView) {
+    @objc func didTapLikeButton(_ view: SocialFooterView) {
         socialFeedCellDelegate?.didTapLikeButton(self)
     }
 }
