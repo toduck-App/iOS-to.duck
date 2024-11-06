@@ -101,10 +101,14 @@ private extension SocialDetailPostCell {
     }
     
     func setupLayout() {
-        addSubview(containerView)
-        [avatarView, verticalStackView, separatorView].forEach{
+        [containerView, separatorView].forEach{
+            addSubview($0)
+        }
+        
+        [avatarView, verticalStackView].forEach{
             containerView.addSubview($0)
         }
+        
         bodyStackView.addArrangedSubview(contentLabel)
         
         [headerView, bodyStackView, footerView].forEach{
@@ -116,7 +120,7 @@ private extension SocialDetailPostCell {
         containerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
         
         avatarView.snp.makeConstraints { make in
@@ -146,7 +150,7 @@ private extension SocialDetailPostCell {
         separatorView.snp.makeConstraints { make in
             make.top.equalTo(verticalStackView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(1)
+            make.height.equalTo(12)
         }
     }
 }

@@ -13,6 +13,7 @@ final class SocialDetailCoordinator: Coordinator {
     init(navigationController: UINavigationController, id: Int) {
         self.navigationController = navigationController
         self.postID = id
+        setNavigationBar()
     }
 
     func start() {
@@ -36,5 +37,16 @@ final class SocialDetailCoordinator: Coordinator {
         )
         socialDetailViewController.coordinator = self
         navigationController.pushViewController(socialDetailViewController, animated: true)
+    }
+    
+    private func setNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.shadowColor = nil
+        
+        navigationController.navigationBar.standardAppearance = appearance
+        navigationController.navigationBar.scrollEdgeAppearance = appearance
+        navigationController.navigationBar.compactAppearance = appearance
     }
 }

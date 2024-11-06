@@ -80,6 +80,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
 
 private extension SocialDetailCommentCell {
     func setupUI() {
+        backgroundColor = TDColor.baseWhite
         setupLayout()
         setupConstraints()
     }
@@ -100,7 +101,7 @@ private extension SocialDetailCommentCell {
         containerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
         
         avatarView.snp.makeConstraints { make in

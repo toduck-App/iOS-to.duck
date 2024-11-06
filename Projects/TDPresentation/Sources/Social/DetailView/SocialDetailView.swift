@@ -20,7 +20,7 @@ final class SocialDetailView: BaseView {
     override func layout() {
         detailCollectionView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.top.equalTo(safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(safeAreaLayoutGuide)
             make.leading.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -29,8 +29,6 @@ final class SocialDetailView: BaseView {
 
 private extension SocialDetailView {
     func makeCollectionViewLayout() -> UICollectionViewLayout {
-        let itemPadding: CGFloat = 10
-        let groupPadding: CGFloat = 16
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(1.0)
@@ -40,25 +38,9 @@ private extension SocialDetailView {
             heightDimension: .estimated(1.0)
         )
         
-        let edgeSpacing = NSCollectionLayoutEdgeSpacing(
-            leading: .fixed(0),
-            top: .fixed(0),
-            trailing: .fixed(0),
-            bottom: .fixed(12)
-        )
-        
-        let groupInset = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: groupPadding,
-            bottom: 0,
-            trailing: groupPadding
-        )
-        
         return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
             itemSize: itemSize,
-            itemEdgeSpacing: edgeSpacing,
-            groupSize: groupSize,
-            groupInset: groupInset
+            groupSize: groupSize
         )
     }
     
