@@ -15,7 +15,14 @@ public final class PostRepositoryImpl: PostRepository {
     public init() { }
 
     public func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post] {
-        return Post.dummy.sorted { $0.timestamp > $1.timestamp }
+        if category == .all {
+            return Post.dummy
+                .filter { $0.type == type }
+                .sorted { $0.timestamp > $1.timestamp }
+        }
+        return Post.dummy
+            .filter { $0.type == type && $0.category?.contains(category) ?? false }
+            .sorted { $0.timestamp > $1.timestamp }
     }
 
     public func searchPost(keyword: String, type: PostType, category: PostCategory) async throws -> [Post]? {

@@ -17,7 +17,7 @@ final class SocialListView: BaseView {
         height: 33
     )
     
-    private let segmentedControl = TDSegmentedController(
+    private(set) var segmentedControl = TDSegmentedController(
         items: ["전체", "주제별"]
     )
     
@@ -110,12 +110,15 @@ final class SocialListView: BaseView {
 
 // MARK: External Method
 extension SocialListView {
-    func showLoadingView() {
+    func showEndRefreshControl() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.refreshControl.endRefreshing()
-            UIView.animate(withDuration: 0.5) {
-                self.loadingView.alpha = 1
-            }
+        }
+    }
+    
+    func showLoadingView() {
+        DispatchQueue.main.async {
+            self.loadingView.alpha = 1
         }
     }
     
@@ -141,7 +144,10 @@ extension SocialListView {
     }
 }
 
+// MARK: Layout
+
 private extension SocialListView {
+    
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 10
         let groupPadding: CGFloat = 16

@@ -1,13 +1,26 @@
 import Combine
+import TDDesign
 import TDDomain
 import UIKit
 
 final class SocialListViewModel: BaseViewModel {
     private var posts: [Post] = []
+    private(set) var chips: [TDChipItem] = [
+        "집중력",
+        "기억력",
+        "충돌",
+        "불안",
+        "수면",
+        "일반"
+    ].map { TDChipItem(title: $0) }
     
     private(set) var fetchState = PassthroughSubject<FetchState, Never>()
+    private(set) var refreshState = PassthroughSubject<RefreshState, Never>()
     private(set) var likeState = PassthroughSubject<LikeState, Never>()
     
+    private var currentCategory: PostCategory = .all
+    private var currentChip: TDChipItem?
+    private var currentSort: SocialSortType = .recent
     var count: Int {
         posts.count
     }
@@ -24,12 +37,21 @@ final class SocialListViewModel: BaseViewModel {
     
     func action(_ action: Action) {
         switch action {
-        case .fetchPosts, .refreshPosts:
+        case .fetchPosts:
             fetchPosts()
+        case .refreshPosts:
+            refreshPosts()
         case .likePost(let index):
             likePost(at: index)
         case .sortPost(let option):
             sortPost(by: option)
+        case .chipSelect(let index):
+            selectChips(at: index)
+        case .segmentSelect(let index):
+            if index == 0 {
+                currentCategory = .all
+            }
+            fetchPosts()
         }
     }
     
@@ -43,12 +65,25 @@ extension SocialListViewModel {
         Task {
             do {
                 fetchState.send(.loading)
-                guard let items = try await fetchPostUseCase.execute(type: .communication, category: .all) else { return }
+                guard let items = try await fetchPostUseCase.execute(type: .communication, category: currentCategory) else { return }
                 posts = items
                 posts.isEmpty ? fetchState.send(.empty) : fetchState.send(.finish(post: posts))
             } catch {
                 posts = []
                 fetchState.send(.error)
+            }
+        }
+    }
+    
+    private func refreshPosts() {
+        Task {
+            do {
+                guard let items = try await fetchPostUseCase.execute(type: .communication, category: currentCategory) else { return }
+                posts = items
+                posts.isEmpty ? refreshState.send(.empty) : refreshState.send(.finish(post: posts))
+            } catch {
+                posts = []
+                refreshState.send(.error)
             }
         }
     }
@@ -75,8 +110,9 @@ extension SocialListViewModel {
         }
         fetchState.send(.finish(post: posts))
     }
-}
-
-extension SocialListViewModel {
-   
+    
+    private func selectChips(at index: Int) {
+        currentCategory = PostCategory(rawValue: chips[index].title) ?? .all
+        fetchPosts()
+    }
 }

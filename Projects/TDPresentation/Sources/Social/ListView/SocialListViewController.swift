@@ -4,10 +4,8 @@ import TDDomain
 import UIKit
 
 class SocialListViewController: BaseViewController<SocialListView> {
-    static private let chipsString = ["집중력", "기억력", "충돌", "불안", "수면", "일반"]
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
-    private let chips: [TDChipItem] = chipsString.map { TDChipItem(title: $0) }
     private var cancellables = Set<AnyCancellable>()
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     
@@ -30,11 +28,12 @@ class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(chips)
+        layoutView.chipCollectionView.setChips(viewModel.chips)
         setupDataSource()
         layoutView.dropDownHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
         layoutView.dropDownHoverView.delegate = self
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
+        layoutView.segmentedControl.addTarget(self, action: #selector(didTapSegmentedControl), for: .valueChanged)
     }
     
     override func addView() {
@@ -51,9 +50,23 @@ class SocialListViewController: BaseViewController<SocialListView> {
             case .loading:
                 self?.layoutView.showLoadingView()
             case .finish(let posts):
-                self?.layoutView.showFinishView()
                 DispatchQueue.main.async {
                     self?.applySnapshot(posts)
+                }
+                self?.layoutView.showFinishView()
+            case .empty:
+                self?.layoutView.showEmptyView()
+            case .error:
+                self?.layoutView.showErrorView()
+            }
+        }.store(in: &cancellables)
+        
+        viewModel.refreshState.sink { [weak self] state in
+            switch state {
+            case .finish(let posts):
+                DispatchQueue.main.async {
+                    self?.applySnapshot(posts)
+                    self?.layoutView.showEndRefreshControl()
                 }
             case .empty:
                 self?.layoutView.showEmptyView()
@@ -69,7 +82,7 @@ class SocialListViewController: BaseViewController<SocialListView> {
                     self?.updateSnapshot(post)
                 }
             case .error:
-                self?.layoutView.showEmptyView()
+                self?.layoutView.showErrorView()
             }
         }.store(in: &cancellables)
     }
@@ -78,7 +91,7 @@ class SocialListViewController: BaseViewController<SocialListView> {
 
 extension SocialListViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
-        print("[LOG] 현재 Select 한 Chip: \(chipText) , Index = : \(index)")
+        viewModel.action(.chipSelect(at: index))
         layoutView.hideDropdown()
     }
 }
@@ -127,6 +140,10 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
         viewModel.action(.likePost(at: indexPath.item))
     }
     
+    @objc func didTapSegmentedControl(sender: UISegmentedControl) {
+        viewModel.action(.segmentSelect(at: sender.selectedSegmentIndex))
+    }
+    
     @objc func didRefresh() {
         viewModel.action(.refreshPosts)
     }
@@ -144,12 +161,12 @@ extension SocialListViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
         snapshot.appendSections([0])
         snapshot.appendItems(posts.map { $0.id })
-        datasource?.apply(snapshot, animatingDifferences: true)
+        datasource?.apply(snapshot, animatingDifferences: false)
     }
     
     private func updateSnapshot(_ post: Post) {
         var snapshot = datasource?.snapshot()
         snapshot?.reloadItems([post.id])
-        datasource?.apply(snapshot!, animatingDifferences: true)
+        datasource?.apply(snapshot!, animatingDifferences: false)
     }
 }
