@@ -12,22 +12,25 @@ final class SocialDetailView: BaseView {
     }
     
     override func configure() {
-        backgroundColor = TDColor.Neutral.neutral100
-        detailCollectionView.register(with: SocialFeedCollectionViewCell.self)
+        backgroundColor = TDColor.baseWhite
+        detailCollectionView.register(with: SocialDetailPostCell.self)
         detailCollectionView.register(with: SocialDetailCommentCell.self)
     }
     
     override func layout() {
         detailCollectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
+            make.leading.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
 }
 
 private extension SocialDetailView {
     func makeCollectionViewLayout() -> UICollectionViewLayout {
-        let horizontalSpacing: CGFloat = 16
-        let verticalSpacing: CGFloat = 12
+        let itemPadding: CGFloat = 10
+        let groupPadding: CGFloat = 16
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(1.0)
@@ -36,17 +39,27 @@ private extension SocialDetailView {
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(1.0)
         )
-        let itemEdgeSpacing = NSCollectionLayoutEdgeSpacing(
-            leading: .fixed(horizontalSpacing),
-            top: .fixed(verticalSpacing),
-            trailing: .fixed(horizontalSpacing),
-            bottom: .fixed(verticalSpacing)
+        
+        let edgeSpacing = NSCollectionLayoutEdgeSpacing(
+            leading: .fixed(0),
+            top: .fixed(0),
+            trailing: .fixed(0),
+            bottom: .fixed(12)
+        )
+        
+        let groupInset = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: groupPadding,
+            bottom: 0,
+            trailing: groupPadding
         )
         
         return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
             itemSize: itemSize,
-            itemEdgeSpacing: itemEdgeSpacing,
-            groupSize: groupSize
+            itemEdgeSpacing: edgeSpacing,
+            groupSize: groupSize,
+            groupInset: groupInset
         )
     }
+    
 }
