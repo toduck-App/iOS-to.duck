@@ -88,7 +88,11 @@ extension SocialListViewModel {
     private func likePost(at index: Int) {
         Task {
             do {
-                posts[index].isLike = try await togglePostLikeUseCase.execute(post: posts[index])
+                let result = try await togglePostLikeUseCase.execute(post: posts[index])
+                guard let likeCount = posts[index].likeCount else { return }
+                posts[index].isLike.toggle()
+                posts[index].likeCount = posts[index].isLike ? likeCount + 1 : likeCount - 1
+                
                 likeState.send(.finish(post: posts[index]))
             } catch {
                 likeState.send(.error)

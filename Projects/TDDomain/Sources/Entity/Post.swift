@@ -57,7 +57,7 @@ public struct Post: Identifiable {
     public let imageList: [String]?
     public let timestamp: Date
 
-    public let likeCount: Int?
+    public var likeCount: Int?
     public var isLike: Bool
     public let commentCount: Int?
     public let shareCount: Int?
