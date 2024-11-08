@@ -89,6 +89,7 @@ class TDChipCell: UICollectionViewCell {
         rightImageView.image = nil
         stackView.removeArrangedSubview(leftImageView)
         stackView.removeArrangedSubview(rightImageView)
+        isActive = false
     }
     
     private func updateState() {

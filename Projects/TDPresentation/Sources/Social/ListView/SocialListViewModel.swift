@@ -19,6 +19,7 @@ final class SocialListViewModel: BaseViewModel {
     private(set) var likeState = PassthroughSubject<LikeState, Never>()
     
     private var currentCategory: PostCategory = .all
+    private var currentSegment: Int = 0
     private var currentChip: TDChipItem?
     private var currentSort: SocialSortType = .recent
     var count: Int {
@@ -48,9 +49,7 @@ final class SocialListViewModel: BaseViewModel {
         case .chipSelect(let index):
             selectChips(at: index)
         case .segmentSelect(let index):
-            if index == 0 {
-                currentCategory = .all
-            }
+            currentSegment = index
             fetchPosts()
         }
     }
@@ -60,8 +59,9 @@ extension SocialListViewModel {
     private func fetchPosts() {
         Task {
             do {
+                let category = currentSegment == 0 ? .all : currentCategory
                 fetchState.send(.loading)
-                guard let items = try await fetchPostUseCase.execute(type: .communication, category: currentCategory) else { return }
+                guard let items = try await fetchPostUseCase.execute(type: .communication, category: category) else { return }
                 posts = items
                 posts.isEmpty ? fetchState.send(.empty) : fetchState.send(.finish(post: posts))
             } catch {
@@ -74,7 +74,8 @@ extension SocialListViewModel {
     private func refreshPosts() {
         Task {
             do {
-                guard let items = try await fetchPostUseCase.execute(type: .communication, category: currentCategory) else { return }
+                let category = currentSegment == 0 ? .all : currentCategory
+                guard let items = try await fetchPostUseCase.execute(type: .communication, category: category) else { return }
                 posts = items
                 posts.isEmpty ? refreshState.send(.empty) : refreshState.send(.finish(post: posts))
             } catch {
