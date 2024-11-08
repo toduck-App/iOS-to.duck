@@ -56,6 +56,10 @@ final class SocialListView: BaseView {
         $0.backgroundColor = TDColor.baseWhite
     }
     
+    private var chipCollectionViewHeightConstraint: Constraint?
+    private var chipCollectionViewTopConstraint: Constraint?
+    private var socialFeedCollectionViewTopConstraint: Constraint?
+    
     override func layout() {
         segmentedControl.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
@@ -63,31 +67,32 @@ final class SocialListView: BaseView {
             make.width.equalTo(133)
             make.height.equalTo(43)
         }
-        
+
         dropDownAnchorView.snp.makeConstraints { make in
             make.height.equalTo(43)
             make.top.equalTo(safeAreaLayoutGuide)
             make.trailing.equalTo(safeAreaLayoutGuide).offset(-16)
             make.width.equalTo(65)
         }
-        
+
         chipCollectionView.snp.makeConstraints { make in
-            make.height.equalTo(33)
-            make.top.equalTo(segmentedControl.snp.bottom).offset(16)
+            chipCollectionViewTopConstraint = make.top.equalTo(segmentedControl.snp.bottom).offset(0).constraint
             make.leading.equalTo(segmentedControl.snp.leading).offset(10)
             make.trailing.equalToSuperview().inset(16)
+            chipCollectionViewHeightConstraint = make.height.equalTo(0).constraint
         }
-        
+
         socialFeedCollectionView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.top.equalTo(chipCollectionView.snp.bottom).offset(20)
             make.leading.equalToSuperview()
             make.bottom.equalToSuperview()
+            socialFeedCollectionViewTopConstraint = make.top.equalTo(chipCollectionView.snp.bottom).offset(0).constraint
         }
-        
+
         loadingView.snp.makeConstraints { make in
             make.edges.equalTo(socialFeedCollectionView)
         }
+
     }
     
     override func configure() {
@@ -140,6 +145,33 @@ extension SocialListView {
     func hideDropdown() {
         dropDownHoverView.hideDropDown()
     }
+    
+    func updateLayoutForSegmentedControl(index: Int) {
+        self.chipCollectionView.isHidden = false
+        let animationIndex = index
+        let animator = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) {
+            if animationIndex == 0 {
+                self.chipCollectionView.alpha = 0.3
+                self.chipCollectionViewHeightConstraint?.update(offset: 0)
+                self.chipCollectionViewTopConstraint?.update(offset: 0)
+                self.socialFeedCollectionViewTopConstraint?.update(offset: 0)
+            } else {
+                self.chipCollectionView.alpha = 1
+                self.chipCollectionViewHeightConstraint?.update(offset: 33)
+                self.chipCollectionViewTopConstraint?.update(offset: 16)
+                self.socialFeedCollectionViewTopConstraint?.update(offset: 10)
+            }
+            self.layoutIfNeeded()
+        }
+        animator.addCompletion { position in
+            if animationIndex == 0 {
+                self.chipCollectionView.isHidden = true
+            } else {
+                self.chipCollectionView.isHidden = false
+            }
+        }
+        animator.startAnimation()
+    }
 }
 
 // MARK: Layout
@@ -160,7 +192,7 @@ private extension SocialListView {
         
         let edgeSpacing = NSCollectionLayoutEdgeSpacing(
             leading: .fixed(0),
-            top: .fixed(itemPadding),
+            top: .fixed(0),
             trailing: .fixed(0),
             bottom: .fixed(itemPadding)
         )

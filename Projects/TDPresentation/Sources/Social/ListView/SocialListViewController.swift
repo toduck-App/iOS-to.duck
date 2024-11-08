@@ -141,6 +141,7 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
     
     @objc func didTapSegmentedControl(sender: UISegmentedControl) {
         viewModel.action(.segmentSelect(at: sender.selectedSegmentIndex))
+        layoutView.updateLayoutForSegmentedControl(index: sender.selectedSegmentIndex)
     }
     
     @objc func didRefresh() {
