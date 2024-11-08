@@ -50,7 +50,7 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postId: Int) async throws -> Post {
-        return Post.dummy.randomElement()!
+        return Post.dummy.filter { $0.id == postId }.first!
     }
 
     public func reportPost(postId: Int) async throws -> Bool {

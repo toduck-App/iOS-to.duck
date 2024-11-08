@@ -40,7 +40,6 @@ final class SocialFooterView: UIView {
     convenience init(isLike: Bool, likeCount: Int?, commentCount: Int?, shareCount: Int?) {
         self.init(frame: .zero)
         configure(isLike: isLike, likeCount: likeCount, commentCount: commentCount, shareCount: shareCount)
-        configureShareCount(with: shareCount)
     }
     
     required init?(coder: NSCoder) {
@@ -52,7 +51,7 @@ final class SocialFooterView: UIView {
             TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
             TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         likeLabel.setText("\(likeCount ?? 0)")
-        commentLabel.setText("\(commentCount ?? 0)")
+        configureCommentCount(with: commentCount)
         configureShareCount(with: shareCount)
     }
 }
@@ -95,9 +94,22 @@ private extension SocialFooterView {
         }
     }
     
+    private func configureCommentCount(with commentCount: Int?) {
+        if let commentCount = commentCount, commentCount > 0 {
+            commentLabel.setText("\(commentCount)")
+            commentIconView.isHidden = false
+            commentLabel.isHidden = false
+        } else {
+            commentIconView.isHidden = true
+            commentLabel.isHidden = true
+        }
+    }
+    
     private func configureShareCount(with shareCount: Int?) {
         if let shareCount = shareCount, shareCount > 0 {
             shareLabel.setText("\(shareCount)")
+            shareIconView.isHidden = false
+            shareLabel.isHidden = false
         } else {
             shareIconView.isHidden = true
             shareLabel.isHidden = true

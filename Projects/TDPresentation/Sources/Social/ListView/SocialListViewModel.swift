@@ -4,7 +4,7 @@ import TDDomain
 import UIKit
 
 final class SocialListViewModel: BaseViewModel {
-    private var posts: [Post] = []
+    private(set) var posts: [Post] = []
     private(set) var chips: [TDChipItem] = [
         "집중력",
         "기억력",
@@ -53,10 +53,6 @@ final class SocialListViewModel: BaseViewModel {
             }
             fetchPosts()
         }
-    }
-    
-    func post(id: Int) -> Post? {
-        posts.first { $0.id == id }
     }
 }
 

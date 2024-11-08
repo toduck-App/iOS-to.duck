@@ -100,7 +100,7 @@ extension SocialListViewController: UICollectionViewDelegate {
     
     private func setupDataSource() {
         datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, postID in
-            guard let post = self.viewModel.post(id: postID) else { return UICollectionViewCell() }
+            guard let post = self.viewModel.posts.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
             cell.socialFeedCellDelegate = self
             cell.configure(with: post)
@@ -115,7 +115,8 @@ extension SocialListViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator?.didTapPost(id: indexPath.item)
+        let postId = viewModel.posts[indexPath.item].id
+        coordinator?.didTapPost(id: postId)
     }
 }
 
