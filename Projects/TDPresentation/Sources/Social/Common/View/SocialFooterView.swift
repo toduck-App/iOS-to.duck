@@ -65,32 +65,35 @@ private extension SocialFooterView {
         }
         likeButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
         likeLabel.snp.makeConstraints { make in
             make.leading.equalTo(likeButton.snp.trailing).offset(2)
-            make.centerY.equalTo(likeButton)
+            make.centerY.equalToSuperview()
         }
         
         commentIconView.snp.makeConstraints { make in
             make.leading.equalTo(likeLabel.snp.trailing).offset(10)
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
         commentLabel.snp.makeConstraints { make in
             make.leading.equalTo(commentIconView.snp.trailing).offset(2)
-            make.centerY.equalTo(commentIconView)
+            make.centerY.equalToSuperview()
         }
         
         shareIconView.snp.makeConstraints { make in
             make.leading.equalTo(commentLabel.snp.trailing).offset(10)
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
         shareLabel.snp.makeConstraints { make in
             make.leading.equalTo(shareIconView.snp.trailing).offset(2)
-            make.centerY.equalTo(shareIconView)
+            make.centerY.equalToSuperview()
         }
     }
     
