@@ -14,7 +14,6 @@ import UIKit
 
 protocol SocialDetailPostCellDelegate: AnyObject {
     func didTapLikeButton(_ cell: SocialDetailPostCell)
-    func didTapMoreButton(_ cell: SocialDetailPostCell)
     func didTapNicknameLabel(_ cell: SocialDetailPostCell)
     func didTapRoutineView(_ cell: SocialDetailPostCell)
 }
@@ -184,16 +183,20 @@ extension SocialDetailPostCell {
 // MARK: Delegate
 
 extension SocialDetailPostCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
+    func didTapReport(_ view: UIView) {
+        print("didTapReport")
+    }
+
+    func didTapBlock(_ view: UIView) {
+        print("didTapBlock")
+    }
+
     func didTapRoutine(_ view: SocialRoutineView) {
         socialDetailPostCellDelegate?.didTapRoutineView(self)
     }
 
-    func didTapNickname(_ view: UIStackView) {
+    func didTapNickname(_ view: UIView) {
         socialDetailPostCellDelegate?.didTapNicknameLabel(self)
-    }
-
-    func didTapMore(_ view: UIStackView) {
-        socialDetailPostCellDelegate?.didTapMoreButton(self)
     }
 
     @objc func didTapLikeButton(_ view: SocialFooterView) {

@@ -4,26 +4,13 @@ import TDDesign
 import UIKit
 
 protocol SocialHeaderViewDelegate: AnyObject {
-    func didTapNickname(_ view: UIStackView)
-    func didTapMore(_ view: UIStackView)
+    func didTapNickname(_ view: UIView)
+    func didTapReport(_ view: UIView)
+    func didTapBlock(_ view: UIView)
 }
 
-final class SocialHeaderView: UIStackView {
+final class SocialHeaderView: UIView {
     weak var delegate: SocialHeaderViewDelegate?
-    
-    private var headerLeftStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .leading
-        $0.spacing = 10
-        $0.distribution = .equalSpacing
-    }
-    
-    private var headerRightStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .fill
-        $0.spacing = 10
-        $0.distribution = .equalSpacing
-    }
 
     private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
     
@@ -36,17 +23,24 @@ final class SocialHeaderView: UIStackView {
         $0.image = TDImage.Dot.vertical2Small
     }
     
+    private(set) lazy var dropDownHoverView = TDDropdownHoverView(
+        anchorView: dotIconView,
+        layout: .trailing,
+        width: 100
+    ).then{
+        $0.dataSource = SocialFeedMoreType.allCases.map { $0.dropdownItem }
+        $0.delegate = self
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        setupLayout()
         setupRecognizer()
     }
     
-    required init(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
-        setupLayout()
         setupRecognizer()
     }
     
@@ -61,31 +55,35 @@ final class SocialHeaderView: UIStackView {
 
 private extension SocialHeaderView {
     func setupUI() {
-        axis = .horizontal
-        alignment = .leading
-        distribution = .equalSpacing
-        spacing = 10
+        setupLayout()
+        setupConstraints()
     }
     
     func setupLayout() {
-        [headerLeftStackView, headerRightStackView].forEach {
-            addArrangedSubview($0)
+        [titleBagde, nicknameLabel, dateLabel, dropDownHoverView].forEach {
+            addSubview($0)
         }
-        
-        [titleBagde, nicknameLabel, dateLabel].forEach {
-            headerLeftStackView.addArrangedSubview($0)
-        }
-
-        headerRightStackView.addArrangedSubview(dotIconView)
     }
     
     func setupConstraints() {
-        snp.makeConstraints { make in
-            make.height.equalTo(24)
-            make.leading.trailing.equalToSuperview()
+        titleBagde.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview()
         }
+        
+        nicknameLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(titleBagde)
+            make.leading.equalTo(titleBagde.snp.trailing).offset(10)
+        }
+        
+        dateLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(titleBagde)
+            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
+        }
+        
         dotIconView.snp.makeConstraints { make in
-            make.size.equalTo(24)
+            make.centerY.equalTo(titleBagde)
+            make.trailing.equalTo(self)
+            make.width.height.equalTo(24)
         }
     }
     
@@ -93,21 +91,23 @@ private extension SocialHeaderView {
         let nicknameTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapNickname))
         nicknameLabel.isUserInteractionEnabled = true
         nicknameLabel.addGestureRecognizer(nicknameTapGesture)
-        
-        let dotIconTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapMore))
-        dotIconView.isUserInteractionEnabled = true
-        dotIconView.addGestureRecognizer(dotIconTapGesture)
     }
 }
 
 // MARK: Action
 
-extension SocialHeaderView {
-    @objc private func didTapNickname() {
-        delegate?.didTapNickname(self)
+extension SocialHeaderView: TDDropDownDelegate {
+    func dropDown(_ dropDownView: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let type = SocialFeedMoreType.allCases[indexPath.row]
+        switch type {
+        case .report:
+            delegate?.didTapReport(self)
+        case .block:
+            delegate?.didTapBlock(self)
+        }
     }
     
-    @objc private func didTapMore() {
-        delegate?.didTapMore(self)
+    @objc private func didTapNickname() {
+        delegate?.didTapNickname(self)
     }
 }

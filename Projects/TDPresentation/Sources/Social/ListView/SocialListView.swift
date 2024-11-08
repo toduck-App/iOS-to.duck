@@ -34,11 +34,7 @@ final class SocialListView: BaseView {
         $0.backgroundColor = TDColor.baseWhite
     }
     
-    private let dropDownDataSource: [SocialSortType] = [
-        .recent,
-        .comment,
-        .sympathy
-    ]
+    private let dropDownDataSource: [SocialSortType] = SocialSortType.allCases
     
     private(set) lazy var dropDownAnchorView = SocialListDropdownView(
         title: dropDownDataSource[0].rawValue
@@ -49,7 +45,9 @@ final class SocialListView: BaseView {
         selectedOption: dropDownDataSource[0].rawValue,
         layout: .trailing,
         width: 100
-    )
+    ).then {
+        $0.dataSource = dropDownDataSource.map { $0.dropdownItem }
+    }
     
     private(set) lazy var refreshControl = UIRefreshControl().then {
         $0.tintColor = .systemGray

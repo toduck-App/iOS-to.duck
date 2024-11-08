@@ -7,7 +7,6 @@ import UIKit
 
 protocol SocialFeedCollectionViewCellDelegate: AnyObject {
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
-    func didTapMoreButton(_ cell: SocialFeedCollectionViewCell)
     func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
     func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
 }
@@ -52,6 +51,8 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     private let separatorView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
+    
+    
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -173,16 +174,20 @@ extension SocialFeedCollectionViewCell {
 // MARK: Delegate
 
 extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
+    func didTapReport(_ view: UIView) {
+        print("didTapReport")
+    }
+
+    func didTapBlock(_ view: UIView) {
+        print("didTapBlock")
+    }
+
     func didTapRoutine(_ view: SocialRoutineView) {
         socialFeedCellDelegate?.didTapRoutineView(self)
     }
 
-    func didTapNickname(_ view: UIStackView) {
+    func didTapNickname(_ view: UIView) {
         socialFeedCellDelegate?.didTapNicknameLabel(self)
-    }
-
-    func didTapMore(_ view: UIStackView) {
-        socialFeedCellDelegate?.didTapMoreButton(self)
     }
 
     @objc func didTapLikeButton(_ view: SocialFooterView) {

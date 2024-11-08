@@ -30,7 +30,6 @@ class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.chipCollectionView.chipDelegate = self
         layoutView.chipCollectionView.setChips(viewModel.chips)
         setupDataSource()
-        layoutView.dropDownHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
         layoutView.dropDownHoverView.delegate = self
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
         layoutView.segmentedControl.addTarget(self, action: #selector(didTapSegmentedControl), for: .valueChanged)
@@ -92,7 +91,6 @@ class SocialListViewController: BaseViewController<SocialListView> {
 extension SocialListViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
         viewModel.action(.chipSelect(at: index))
-        layoutView.hideDropdown()
     }
 }
 

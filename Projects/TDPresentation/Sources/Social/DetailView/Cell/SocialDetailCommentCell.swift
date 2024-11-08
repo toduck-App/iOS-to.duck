@@ -4,7 +4,6 @@ import UIKit
 
 protocol SocialDetailCommentCellDelegate: AnyObject {
     func didTapLikeButton(_ cell: SocialDetailCommentCell)
-    func didTapMoreButton(_ cell: SocialDetailCommentCell)
     func didTapNicknameLabel(_ cell: SocialDetailCommentCell)
 }
 
@@ -143,12 +142,16 @@ private extension SocialDetailCommentCell {
 }
 
 extension SocialDetailCommentCell: SocialHeaderViewDelegate, SocialFooterDelegate {
-    func didTapNickname(_ view: UIStackView) {
-        commentDelegate?.didTapNicknameLabel(self)
+    func didTapReport(_ view: UIView) {
+        print("didTapReport")
     }
-    
-    func didTapMore(_ view: UIStackView) {
-        commentDelegate?.didTapMoreButton(self)
+
+    func didTapBlock(_ view: UIView) {
+        print("didTapBlock")
+    }
+
+    func didTapNickname(_ view: UIView) {
+        commentDelegate?.didTapNicknameLabel(self)
     }
     
     func didTapLikeButton(_ view: SocialFooterView) {

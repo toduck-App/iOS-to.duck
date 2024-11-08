@@ -11,7 +11,7 @@ final class DropDownTableView: UITableView {
         
         layer.cornerRadius = 12
         layer.masksToBounds = true
-        
+        isScrollEnabled = false
         separatorInset = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
         separatorColor = TDColor.Neutral.neutral200
         register(DropDownCell.self, forCellReuseIdentifier: DropDownCell.identifier)
