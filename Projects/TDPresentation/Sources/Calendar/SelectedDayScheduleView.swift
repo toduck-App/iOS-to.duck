@@ -24,20 +24,20 @@ final class SelectedDayScheduleView: BaseView {
     private let downDirectionImageView = UIImageView().then {
         $0.image = TDImage.Direction.downMedium
     }
-    
     private let scheduleTableView = UITableView().then {
-        $0.backgroundColor = .blue
-        $0.separatorStyle = .none
+        $0.backgroundColor = .white
     }
     
     init() {
         super.init(frame: .zero)
-        setConstraints()
+        setup()
+        setupLayout()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        setup()
+        setupLayout()
     }
     
     func updateDateLabel(date: Date) {
@@ -46,10 +46,15 @@ final class SelectedDayScheduleView: BaseView {
         dateFormatter.dateFormat = "M월 d일 (E)"
         dateLabel.text = dateFormatter.string(from: date)
     }
-}
-
-private extension SelectedDayScheduleView {
-    func setConstraints() {
+    
+    private func setup() {
+        scheduleTableView.register(
+            ScheduleDetailCell.self,
+            forCellReuseIdentifier: ScheduleDetailCell.identifier
+        )
+    }
+    
+    private func setupLayout() {
         addSubview(headerView)
         addSubview(scheduleTableView)
         [calendarImageView, dateLabel, downDirectionImageView].forEach {
