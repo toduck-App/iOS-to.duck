@@ -128,7 +128,6 @@ private extension ToduckCalendarViewController {
     
     private func setupGesture() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        panGesture.delegate = self // 제스처 인식기 동시 인식 허용
         view.addGestureRecognizer(panGesture)
     }
     
@@ -226,22 +225,6 @@ private extension ToduckCalendarViewController {
             self.calendar.setNeedsLayout()
             self.calendar.layoutIfNeeded()
         })
-    }
-}
-
-// MARK: - Gesture Recognizer Delegate
-extension ToduckCalendarViewController: UIGestureRecognizerDelegate {
-    // 다른 제스처 인식기와 동시에 인식할 수 있도록 설정
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true // 두 개의 제스처를 동시에 인식하게 허용
-    }
-    
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        // selectedDayScheduleView의 터치도 허용
-        if touch.view?.isDescendant(of: selectedDayScheduleView) ?? false {
-            return true
-        }
-        return true
     }
 }
 
