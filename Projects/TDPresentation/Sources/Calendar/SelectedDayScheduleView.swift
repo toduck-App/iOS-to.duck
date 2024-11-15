@@ -24,7 +24,7 @@ final class SelectedDayScheduleView: BaseView {
     private let downDirectionImageView = UIImageView().then {
         $0.image = TDImage.Direction.downMedium
     }
-    private let scheduleTableView = UITableView().then {
+    let scheduleTableView = UITableView().then {
         $0.backgroundColor = .white
     }
     
@@ -85,7 +85,9 @@ final class SelectedDayScheduleView: BaseView {
         
         scheduleTableView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.equalTo(22)
+            $0.trailing.equalTo(-16)
+            $0.bottom.equalToSuperview()
         }
     }
 }

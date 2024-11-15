@@ -31,6 +31,7 @@ public final class ToduckCalendarViewController: UIViewController {
     private let selectedDayScheduleView = SelectedDayScheduleView()
     
     // MARK: - Properties
+    private let viewModel = ToduckCalendarViewModel()
     private var calendarHeightConstraint: Constraint?
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
@@ -54,6 +55,7 @@ public final class ToduckCalendarViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        setup()
         addSubviews()
         setupCalendar()
         setupConstraints()
@@ -82,6 +84,12 @@ public final class ToduckCalendarViewController: UIViewController {
     }
     
     // MARK: - Setup
+    private func setup() {
+        selectedDayScheduleView.scheduleTableView.delegate = self
+        selectedDayScheduleView.scheduleTableView.dataSource = self
+        selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+    }
+    
     private func addSubviews() {
         view.addSubview(calendarHeader)
         view.addSubview(calendar)
@@ -304,3 +312,36 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         return nil
     }
 }
+
+// MARK: - UITableViewDelegate
+extension ToduckCalendarViewController: UITableViewDelegate {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ToduckCalendarViewController: UITableViewDataSource {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        30
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ScheduleDetailCell.identifier,
+            for: indexPath
+        ) as? ScheduleDetailCell else { return UITableViewCell() }
+        
+        let dummyData = viewModel.dummyData[indexPath.row]
+        let dummyImage = indexPath.row % 2 == 0 ? TDImage.Profile.medium : nil
+        cell.configure(
+            title: dummyData.title,
+            time: dummyData.date,
+            category: dummyImage,
+            isFinish: dummyData.isFinished
+        )
+        
+        return cell
+    }
+}
+
