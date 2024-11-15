@@ -303,6 +303,20 @@ extension ToduckCalendarViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
+    
+    // TODO: 셀 좌측 색상 바와 우측 삭제 버튼 Radius 처리
+    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: nil,
+            handler: { _, _, _ in
+                // TODO: 삭제 액션
+            }
+        )
+        deleteAction.image = TDImage.trashWhiteMedium
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
 }
 
 // MARK: - UITableViewDataSource
