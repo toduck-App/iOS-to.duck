@@ -9,7 +9,7 @@ import TDDesign
 import UIKit
 
 final class SelectedDayScheduleView: BaseView {
-    private let headerView = UIView().then {
+    let headerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
     }
     private let calendarImageView = UIImageView().then {

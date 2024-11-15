@@ -65,6 +65,7 @@ public final class ToduckCalendarViewController: UIViewController {
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         if !isInitialLayoutDone {
             updateConstants()
             selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
@@ -80,7 +81,7 @@ public final class ToduckCalendarViewController: UIViewController {
         
         selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset
         selectedDayViewTopCollapsed = calendarHeaderHeight + selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
-        selectedDayViewTopHidden = view.bounds.height - view.safeAreaInsets.bottom
+        selectedDayViewTopHidden = view.bounds.height - view.safeAreaInsets.bottom * 2
     }
     
     // MARK: - Setup
@@ -105,7 +106,7 @@ public final class ToduckCalendarViewController: UIViewController {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
-            self.calendarHeightConstraint = $0.height.equalTo(334).constraint
+            self.calendarHeightConstraint = $0.height.equalTo(340).constraint
         }
         selectedDayScheduleView.snp.makeConstraints {
             self.selectedDayViewTopConstraint = $0.top.equalTo(view).constraint
@@ -128,7 +129,7 @@ private extension ToduckCalendarViewController {
     
     private func setupGesture() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        view.addGestureRecognizer(panGesture)
+        selectedDayScheduleView.headerView.addGestureRecognizer(panGesture)
     }
     
     @objc
