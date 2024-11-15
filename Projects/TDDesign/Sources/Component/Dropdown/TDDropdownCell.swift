@@ -1,9 +1,7 @@
 import UIKit
 import SnapKit
 
-final class DropDownCell: UITableViewCell {
-    static let identifier = "DropDownCell"
-    
+final class DropDownCell: UITableViewCell {    
     override var isSelected: Bool {
         didSet {
             contentView.backgroundColor = isSelected ? TDColor.Neutral.neutral300 : TDColor.baseWhite
