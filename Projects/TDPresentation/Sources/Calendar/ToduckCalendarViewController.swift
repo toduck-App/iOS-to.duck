@@ -333,9 +333,10 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         
         let dummyData = viewModel.dummyData[indexPath.row]
         let dummyImage = indexPath.row % 2 == 0 ? TDImage.Profile.medium : nil
+        let dummyText = indexPath.row % 3 == 0 ? nil : dummyData.date
         cell.configure(
             title: dummyData.title,
-            time: dummyData.date,
+            time: dummyText,
             category: dummyImage,
             isFinish: dummyData.isFinished
         )

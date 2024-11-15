@@ -15,7 +15,7 @@ public final class ScheduleDetailCell: UITableViewCell {
         alignment: .left,
         toduckColor: TDColor.Neutral.neutral800
     )
-    private let clockImageView = UIImageView().then {
+    private let timeImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = TDImage.clockMedium
     }
@@ -24,7 +24,7 @@ public final class ScheduleDetailCell: UITableViewCell {
         alignment: .left,
         toduckColor: TDColor.Neutral.neutral600
     )
-    private let detailHorizontalStackView = UIStackView().then {
+    private let timeDetailHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .leading
         $0.spacing = 4
@@ -69,14 +69,19 @@ public final class ScheduleDetailCell: UITableViewCell {
     }
     
     // MARK: - Setup & Configuration
-    public func configure(title: String, time: String, category: UIImage?, isFinish: Bool) {
+    public func configure(title: String, time: String?, category: UIImage?, isFinish: Bool) {
         titleLabel.text = title
         timeLabel.text = time
         if let category = category {
             categoryImageView.image = category
-            categoryImageView.isHidden = false
         } else {
             categoryImageView.isHidden = true
+        }
+        
+        if let time = time {
+            timeLabel.text = time
+        } else {
+            timeDetailHorizontalStackView.isHidden = true
         }
         checkBoxImageView.image = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
     }
@@ -91,10 +96,10 @@ public final class ScheduleDetailCell: UITableViewCell {
         containerHorizontalStackView.addArrangedSubview(scheduleVerticalStackView)
         
         scheduleVerticalStackView.addArrangedSubview(titleLabel)
-        scheduleVerticalStackView.addArrangedSubview(detailHorizontalStackView)
+        scheduleVerticalStackView.addArrangedSubview(timeDetailHorizontalStackView)
         
-        detailHorizontalStackView.addArrangedSubview(clockImageView)
-        detailHorizontalStackView.addArrangedSubview(timeLabel)
+        timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
+        timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
         contentView.addSubview(checkBoxImageView)
     }
     
