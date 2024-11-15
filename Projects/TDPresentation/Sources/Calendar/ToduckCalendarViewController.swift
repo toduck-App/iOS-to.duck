@@ -106,7 +106,7 @@ public final class ToduckCalendarViewController: UIViewController {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
-            self.calendarHeightConstraint = $0.height.equalTo(340).constraint
+            self.calendarHeightConstraint = $0.height.equalTo(Constant.calendarHeight).constraint
         }
         selectedDayScheduleView.snp.makeConstraints {
             self.selectedDayViewTopConstraint = $0.top.equalTo(view).constraint
@@ -125,6 +125,7 @@ private extension ToduckCalendarViewController {
     private enum Constant {
         static let calendarHeaderTopOffset: CGFloat = 30
         static let calendarTopOffset: CGFloat = 20
+        static let calendarHeight: CGFloat = 334
     }
     
     private func setupGesture() {
@@ -207,7 +208,7 @@ private extension ToduckCalendarViewController {
         case .topHidden:
             newCalendarHeight = selectedDayViewTopHidden - (calendarHeader.frame.maxY + view.safeAreaInsets.bottom)
         case .topExpanded, .topCollapsed:
-            newCalendarHeight = 334
+            newCalendarHeight = Constant.calendarHeight
         }
         
         // 먼저 rowHeight를 계산
