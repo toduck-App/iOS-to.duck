@@ -42,6 +42,25 @@ public enum TDImage {
     public static let tomatoTerm = TDDesignAsset.Images.tomatoTerm.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
     
+    public enum CheckBox {
+        public static let empty = TDDesignAsset.Images.emptyCheckBox.image
+        public static let filled = TDDesignAsset.Images.back1CheckBox.image
+        public static let back2 = TDDesignAsset.Images.back2CheckBox.image
+        public static let back3 = TDDesignAsset.Images.back3CheckBox.image
+        public static let back4 = TDDesignAsset.Images.back4CheckBox.image
+        public static let back5 = TDDesignAsset.Images.back5CheckBox.image
+        public static let back6 = TDDesignAsset.Images.back6CheckBox.image
+        public static let back7 = TDDesignAsset.Images.back7CheckBox.image
+        public static let back8 = TDDesignAsset.Images.back8CheckBox.image
+        public static let back9 = TDDesignAsset.Images.back9CheckBox.image
+        public static let back10 = TDDesignAsset.Images.back10CheckBox.image
+        public static let back11 = TDDesignAsset.Images.back11CheckBox.image
+        public static let back12 = TDDesignAsset.Images.back12CheckBox.image
+        public static let back13 = TDDesignAsset.Images.back13CheckBox.image
+        public static let back14 = TDDesignAsset.Images.back14CheckBox.image
+        public static let back15 = TDDesignAsset.Images.back15CheckBox.image
+    }
+    
     public enum Like {
         public static let small = TDDesignAsset.Images.likeSmall.image
         public static let emptyMedium = TDDesignAsset.Images.likeEmptyMedium.image
