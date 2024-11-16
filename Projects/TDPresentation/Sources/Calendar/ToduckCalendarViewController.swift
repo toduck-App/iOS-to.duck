@@ -73,14 +73,17 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         let safeAreaTop = view.safeAreaInsets.top
         let calendarHeaderHeight = calendarHeader.frame.height
         let calendarHeight = calendar.frame.height
+        let dragViewHeight = selectedDayScheduleView.headerView.frame.height
+        let tabBarHeight = tabBarController?.tabBar.frame.height ?? 0
         
         selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset
         selectedDayViewTopCollapsed = calendarHeaderHeight + selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
-        selectedDayViewTopHidden = view.bounds.height - view.safeAreaInsets.bottom * 2
+        selectedDayViewTopHidden = view.bounds.height - dragViewHeight - tabBarHeight
     }
     
     // MARK: - Setup
     private func setup() {
+        navigationController?.navigationBar.isHidden = true
         selectedDayScheduleView.scheduleTableView.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
