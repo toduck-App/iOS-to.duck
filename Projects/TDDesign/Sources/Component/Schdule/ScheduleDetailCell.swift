@@ -4,6 +4,7 @@ import Then
 import UIKit
 
 public final class ScheduleDetailCell: UITableViewCell {
+    // MARK: - UI Components
     private let scheduleIdentyColorView = UIView().then {
         $0.backgroundColor = TDColor.Schedule.text3
     }
@@ -45,7 +46,7 @@ public final class ScheduleDetailCell: UITableViewCell {
     }
     
     // MARK: - Initializer
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setup()
@@ -71,18 +72,12 @@ public final class ScheduleDetailCell: UITableViewCell {
     // MARK: - Setup & Configuration
     public func configure(title: String, time: String?, category: UIImage?, isFinish: Bool) {
         titleLabel.text = title
-        timeLabel.text = time
-        if let category = category {
-            categoryImageView.image = category
-        } else {
-            categoryImageView.isHidden = true
-        }
+        categoryImageView.image = category != nil ? category : nil
+        categoryImageView.isHidden = category == nil
+
+        timeLabel.text = time != nil ? time : nil
+        timeDetailHorizontalStackView.isHidden = time == nil
         
-        if let time = time {
-            timeLabel.text = time
-        } else {
-            timeDetailHorizontalStackView.isHidden = true
-        }
         checkBoxImageView.image = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
     }
     

@@ -9,9 +9,7 @@ import TDDesign
 import UIKit
 
 final class SelectedDayScheduleView: BaseView {
-    let headerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral50
-    }
+    // MARK: - UI Components
     private let calendarImageView = UIImageView().then {
         $0.image = TDImage.Calendar.top3Medium
         $0.contentMode = .scaleAspectFill
@@ -24,20 +22,28 @@ final class SelectedDayScheduleView: BaseView {
     private let downDirectionImageView = UIImageView().then {
         $0.image = TDImage.Direction.downMedium
     }
+    let headerView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral50
+    }
     let scheduleTableView = UITableView().then {
         $0.backgroundColor = .white
     }
     
+    // MARK: - Initializer
     init() {
         super.init(frame: .zero)
+        
         setup()
-        setupLayout()
+        configureAddSubview()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        
         setup()
-        setupLayout()
+        configureAddSubview()
+        configureLayout()
     }
     
     func updateDateLabel(date: Date) {
@@ -47,6 +53,7 @@ final class SelectedDayScheduleView: BaseView {
         dateLabel.text = dateFormatter.string(from: date)
     }
     
+    // MARK: - Setup & Configuration
     private func setup() {
         scheduleTableView.register(
             ScheduleDetailCell.self,
@@ -54,13 +61,15 @@ final class SelectedDayScheduleView: BaseView {
         )
     }
     
-    private func setupLayout() {
+    private func configureAddSubview() {
         addSubview(headerView)
         addSubview(scheduleTableView)
-        [calendarImageView, dateLabel, downDirectionImageView].forEach {
-            headerView.addSubview($0)
-        }
-        
+        headerView.addSubview(calendarImageView)
+        headerView.addSubview(dateLabel)
+        headerView.addSubview(downDirectionImageView)
+    }
+    
+    private func configureLayout() {
         headerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(48).priority(.high)

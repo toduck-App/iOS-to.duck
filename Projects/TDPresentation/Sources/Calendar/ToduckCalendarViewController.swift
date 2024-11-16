@@ -10,14 +10,9 @@ import SnapKit
 import TDDesign
 import UIKit
 
-struct TempSchedule {
-    let name: String
-    let color: UIColor
-}
-
 // TODO: FSCalendarCell의 높이에 따라 Label 투명도 조절
-// FIXME: FSCalendarCollectionView가 아니라 UIView가 늘어나고 있음
-public final class ToduckCalendarViewController: UIViewController {
+// FIXME: 실 기기에서 빌드할 경우 캘린더 깨짐 현상 발생
+final class ToduckCalendarViewController: BaseViewController<BaseView> {
     // MARK: Nested Types
     private enum DetailViewState {
         case topExpanded
@@ -42,8 +37,8 @@ public final class ToduckCalendarViewController: UIViewController {
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
     
-    public init() {
-        super.init(nibName: nil, bundle: nil)
+    override init() {
+        super.init()
     }
     
     required init?(coder: NSCoder) {
@@ -201,6 +196,7 @@ private extension ToduckCalendarViewController {
         }
     }
     
+    // FIXME: FSCalendarCollectionView가 아니라 UIView가 늘어나고 있음
     private func adjustCalendarHeight(for detailViewState: DetailViewState) {
         let newCalendarHeight: CGFloat
         
@@ -232,7 +228,7 @@ private extension ToduckCalendarViewController {
 
 // MARK: - FSCalendarDelegateAppearance, FSCalendarDataSource, FSCalendarDelegate
 extension ToduckCalendarViewController: TDCalendarConfigurable {
-    public func calendar(
+    func calendar(
         _ calendar: FSCalendar,
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
@@ -240,13 +236,13 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         selectedDayScheduleView.updateDateLabel(date: date)
     }
     
-    public func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         updateHeaderLabel(for: calendar.currentPage)
     }
     
     // MARK: - 날짜 폰트 색상
     // 기본 폰트 색
-    public func calendar(
+    func calendar(
         _ calendar: FSCalendar,
         appearance: FSCalendarAppearance,
         titleDefaultColorFor date: Date
@@ -256,7 +252,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     }
     
     // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
-    public func calendar(
+    func calendar(
         _ calendar: FSCalendar,
         appearance: FSCalendarAppearance,
         titleSelectionColorFor date: Date
@@ -266,7 +262,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     
     // MARK: - 날짜 아래의 이벤트
     // 날짜 아래 점 개수 지정
-    public func calendar(
+    func calendar(
         _ calendar: FSCalendar,
         numberOfEventsFor date: Date
     ) -> Int {
@@ -274,7 +270,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     }
     
     // 날짜 아래 점 색상 지정 (이벤트 색상)
-    public func calendar(
+    func calendar(
         _ calendar: FSCalendar,
         appearance: FSCalendarAppearance,
         eventDefaultColorsFor date: Date
@@ -283,7 +279,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     }
     
     // 선택된 날짜에도 동일한 이벤트 색상을 유지하도록 설정
-    public func calendar(
+    func calendar(
         _ calendar: FSCalendar,
         appearance: FSCalendarAppearance,
         eventSelectionColorsFor date: Date
@@ -293,19 +289,19 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     
     // TODO: 나중에 TDCalendarConfigurable로 옮겨야 함, tempSchedules 생각하기
     // 날짜에 대한 일정 색상을 반환하는 헬퍼 메서드
-    public func colorFromEvent(for date: Date) -> [UIColor]? {
+    func colorFromEvent(for date: Date) -> [UIColor]? {
         return nil
     }
 }
 
 // MARK: - UITableViewDelegate
 extension ToduckCalendarViewController: UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
     
     // TODO: 셀 좌측 색상 바와 우측 삭제 버튼 Radius 처리
-    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: nil,
@@ -321,11 +317,11 @@ extension ToduckCalendarViewController: UITableViewDelegate {
 
 // MARK: - UITableViewDataSource
 extension ToduckCalendarViewController: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         30
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ScheduleDetailCell.identifier,
             for: indexPath
