@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class TDChipCell: UICollectionViewCell {
+final class TDChipCell: UICollectionViewCell {
     private var chipType: TDChipType?
     private var item: TDChipItem?
     
@@ -96,10 +96,26 @@ class TDChipCell: UICollectionViewCell {
         guard let chipType else { return }
         contentView.layer.cornerRadius = chipType.cornerRadius
         contentView.layer.borderWidth = 1
-        contentView.backgroundColor = isActive ? chipType.backgroundColor.activeColor : chipType.backgroundColor.inActiveColor
-        titleLabel.setColor(isActive ? chipType.fontColor.activeColor : chipType.fontColor.inActiveColor)
-        leftImageView.tintColor = isActive ? item?.leftImage?.activeColor: item?.leftImage?.inActiveColor
-        rightImageView.tintColor = isActive ? item?.leftImage?.activeColor : item?.rightImage?.inActiveColor
-        contentView.layer.borderColor = isActive ? chipType.borderColor.activeColor.cgColor : chipType.borderColor.inActiveColor.cgColor
+        titleLabel.setColor(
+            isActive
+            ? chipType.fontColor.activeColor
+            : chipType.fontColor.inActiveColor
+        )
+        
+        contentView.backgroundColor = isActive
+        ? chipType.backgroundColor.activeColor
+        : chipType.backgroundColor.inActiveColor
+        
+        leftImageView.tintColor = isActive
+        ? item?.leftImage?.activeColor
+        : item?.leftImage?.inActiveColor
+        
+        rightImageView.tintColor = isActive
+        ? item?.leftImage?.activeColor
+        : item?.rightImage?.inActiveColor
+        
+        contentView.layer.borderColor = isActive
+        ? chipType.borderColor.activeColor.cgColor
+        : chipType.borderColor.inActiveColor.cgColor
     }
 }

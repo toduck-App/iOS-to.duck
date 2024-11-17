@@ -1,9 +1,9 @@
 import UIKit
 
 public struct TDChipItem {
-    public var title: String
-    public var leftImage: TDChipIcon? = nil
-    public var rightImage: TDChipIcon? = nil
+    public let title: String
+    public let leftImage: TDChipIcon?
+    public let rightImage: TDChipIcon?
     
     public init(
         title: String,

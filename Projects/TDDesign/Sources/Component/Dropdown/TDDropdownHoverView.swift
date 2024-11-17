@@ -136,8 +136,7 @@ public extension TDDropdownHoverView {
         guard let constraints = constraints else { return }
         if let window = window {
             window.addSubview(overlayView)
-            overlayView.snp.makeConstraints { $0.edges.equalToSuperview()
-            }
+            overlayView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
             overlayView.addSubview(containerView)
             containerView.snp.makeConstraints(constraints)

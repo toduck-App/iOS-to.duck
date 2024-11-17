@@ -3,7 +3,7 @@ import TDDesign
 import TDDomain
 import UIKit
 
-class SocialListViewController: BaseViewController<SocialListView> {
+final class SocialListViewController: BaseViewController<SocialListView> {
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
     private var cancellables = Set<AnyCancellable>()

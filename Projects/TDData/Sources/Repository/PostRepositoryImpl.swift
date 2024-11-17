@@ -50,7 +50,11 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postId: Int) async throws -> Post {
-        return Post.dummy.filter { $0.id == postId }.first!
+        guard let post = Post.dummy.filter({ $0.id == postId }).first else {
+            // 에러 정의가 없어서 임시로 구현
+            return Post.dummy[0]
+        }
+        return post
     }
 
     public func reportPost(postId: Int) async throws -> Bool {

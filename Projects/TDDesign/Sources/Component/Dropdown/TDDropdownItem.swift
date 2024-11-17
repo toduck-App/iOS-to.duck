@@ -1,9 +1,9 @@
 import UIKit
 
 public struct TDDropdownItem {
-    public var title: String
-    public var leftImage: UIImage? = nil
-    public var rightImage: UIImage? = nil
+    public let title: String
+    public let leftImage: UIImage?
+    public let rightImage: UIImage?
     
     public init(
         title: String,

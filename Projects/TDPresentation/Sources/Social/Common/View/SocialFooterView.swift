@@ -60,8 +60,8 @@ final class SocialFooterView: UIView {
 
 private extension SocialFooterView {
     func setupConstraints() {
-        for item in [likeButton, likeLabel, commentIconView, commentLabel, shareIconView, shareLabel] {
-            addSubview(item)
+        [likeButton, likeLabel, commentIconView, commentLabel, shareIconView,   shareLabel].forEach {
+            addSubview($0)
         }
         likeButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
