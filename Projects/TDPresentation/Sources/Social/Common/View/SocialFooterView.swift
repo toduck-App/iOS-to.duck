@@ -2,7 +2,7 @@ import TDDesign
 import UIKit
 
 protocol SocialFooterDelegate: AnyObject {
-    func didSelectLikeButton()
+    func didTapLikeButton(_ view: SocialFooterView)
 }
 
 final class SocialFooterView: UIView {
@@ -40,7 +40,6 @@ final class SocialFooterView: UIView {
     convenience init(isLike: Bool, likeCount: Int?, commentCount: Int?, shareCount: Int?) {
         self.init(frame: .zero)
         configure(isLike: isLike, likeCount: likeCount, commentCount: commentCount, shareCount: shareCount)
-        configureShareCount(with: shareCount)
     }
     
     required init?(coder: NSCoder) {
@@ -49,55 +48,71 @@ final class SocialFooterView: UIView {
     
     func configure(isLike: Bool, likeCount: Int?, commentCount: Int?, shareCount: Int?) {
         likeButton.setImage(isLike ?
-                            TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
-                                TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
+            TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
+            TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         likeLabel.setText("\(likeCount ?? 0)")
-        commentLabel.setText("\(commentCount ?? 0)")
+        configureCommentCount(with: commentCount)
         configureShareCount(with: shareCount)
     }
-    
 }
 
 // MARK: SetupUI
+
 private extension SocialFooterView {
     func setupConstraints() {
-        [likeButton,likeLabel,commentIconView,commentLabel,shareIconView,shareLabel].forEach {
+        [likeButton, likeLabel, commentIconView, commentLabel, shareIconView,   shareLabel].forEach {
             addSubview($0)
         }
         likeButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
         likeLabel.snp.makeConstraints { make in
             make.leading.equalTo(likeButton.snp.trailing).offset(2)
-            make.centerY.equalTo(likeButton)
+            make.centerY.equalToSuperview()
         }
         
         commentIconView.snp.makeConstraints { make in
             make.leading.equalTo(likeLabel.snp.trailing).offset(10)
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
         commentLabel.snp.makeConstraints { make in
             make.leading.equalTo(commentIconView.snp.trailing).offset(2)
-            make.centerY.equalTo(commentIconView)
+            make.centerY.equalToSuperview()
         }
         
         shareIconView.snp.makeConstraints { make in
             make.leading.equalTo(commentLabel.snp.trailing).offset(10)
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
         shareLabel.snp.makeConstraints { make in
             make.leading.equalTo(shareIconView.snp.trailing).offset(2)
-            make.centerY.equalTo(shareIconView)
+            make.centerY.equalToSuperview()
+        }
+    }
+    
+    private func configureCommentCount(with commentCount: Int?) {
+        if let commentCount = commentCount, commentCount > 0 {
+            commentLabel.setText("\(commentCount)")
+            commentIconView.isHidden = false
+            commentLabel.isHidden = false
+        } else {
+            commentIconView.isHidden = true
+            commentLabel.isHidden = true
         }
     }
     
     private func configureShareCount(with shareCount: Int?) {
         if let shareCount = shareCount, shareCount > 0 {
             shareLabel.setText("\(shareCount)")
+            shareIconView.isHidden = false
+            shareLabel.isHidden = false
         } else {
             shareIconView.isHidden = true
             shareLabel.isHidden = true
@@ -106,8 +121,9 @@ private extension SocialFooterView {
 }
 
 // MARK: Delegate
+
 extension SocialFooterView {
     @objc func didSelectLikeButton() {
-        delegate?.didSelectLikeButton()
+        delegate?.didTapLikeButton(self)
     }
 }

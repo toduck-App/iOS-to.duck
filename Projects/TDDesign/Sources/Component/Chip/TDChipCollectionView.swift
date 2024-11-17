@@ -1,29 +1,22 @@
 import UIKit
 
-public struct TDChipItem {
-    public var title: String
-    public var leftImage: UIImage? = nil
-    public var rightImage: UIImage? = nil
-    
-    public init(
-        title: String,
-        leftImage: UIImage? = nil,
-        rightImage: UIImage? = nil
-    ) {
-        self.title = title
-        self.leftImage = leftImage
-        self.rightImage = rightImage
-    }
-}
-
 public protocol TDChipCollectionViewDelegate: AnyObject {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String)
 }
 
 public final class TDChipCollectionView: UICollectionView {
+    // MARK: Properties
     private var chips: [TDChipItem] = []
+    private let allSelectChipItem: TDChipItem = TDChipItem(
+        title: "전체",
+        leftImage: .init(
+            image: TDImage.hamburgerMedium,
+            activeColor: TDColor.Neutral.neutral700,
+            inActiveColor: TDColor.baseWhite
+        )
+    )
     private var selectedStates: [Bool] = []
-    private var defaultChipType: TDChipType
+    private var chipType: TDChipType
     private var hasAllSelectChip: Bool = false
     private var isMultiSelect: Bool = false
     
@@ -32,12 +25,12 @@ public final class TDChipCollectionView: UICollectionView {
     public init(chipType: TDChipType, hasAllSelectChip: Bool = false, isMultiSelect: Bool = false) {
         self.hasAllSelectChip = hasAllSelectChip
         self.isMultiSelect = isMultiSelect
-        self.defaultChipType = chipType
+        self.chipType = chipType
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 10
         if hasAllSelectChip {
-            self.chips.insert(TDChipItem(title: "전체", leftImage: TDImage.hamburgerMedium), at: 0)
+            self.chips.insert(allSelectChipItem, at: 0)
             self.selectedStates.insert(true, at: 0)
         }
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -68,7 +61,7 @@ extension TDChipCollectionView: UICollectionViewDataSource{
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: TDChipCell = collectionView.dequeueReusableCell(for: indexPath)
-        cell.configure(item: chips[indexPath.item], chipType: defaultChipType, isActive: selectedStates[indexPath.item])
+        cell.configure(item: chips[indexPath.item], chipType: chipType, isActive: selectedStates[indexPath.item])
         return cell
     }
 }
@@ -79,7 +72,7 @@ extension TDChipCollectionView: UICollectionViewDelegateFlowLayout {
         var width = (text as NSString).size(withAttributes: [NSAttributedString.Key.font: TDFont.regularBody2.font]).width
         width += (chips[indexPath.item].leftImage != nil) ? 24 : 0
         width += (chips[indexPath.item].rightImage != nil) ? 24 : 0
-        return CGSize(width: width + 24, height: defaultChipType.height)
+        return CGSize(width: width + 24, height: chipType.height)
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

@@ -1,18 +1,14 @@
-import SnapKit
 import TDDesign
 import TDDomain
-import Then
-import Kingfisher
 import UIKit
 
-protocol SocialFeedCollectionViewCellDelegate: AnyObject {
-    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
-    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
-    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
+protocol SocialDetailCommentCellDelegate: AnyObject {
+    func didTapLikeButton(_ cell: SocialDetailCommentCell)
+    func didTapNicknameLabel(_ cell: SocialDetailCommentCell)
 }
 
-final class SocialFeedCollectionViewCell: UICollectionViewCell {
-    weak var socialFeedCellDelegate: SocialFeedCollectionViewCellDelegate?
+final class SocialDetailCommentCell: UICollectionViewCell {
+    weak var commentDelegate: SocialDetailCommentCellDelegate?
     
     private let containerView = UIView()
     
@@ -48,13 +44,8 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.delegate = self
     }
     
-    private let separatorView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
-    }
-    
-    
-    
     // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -65,14 +56,11 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
     
-    func configure(with item: Post) {
+    func configure(with item: Comment) {
         headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
-        contentLabel.setText(item.contentText)
-        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
-        
+        contentLabel.setText(item.content)
+        footerView.configure(isLike: item.isLike, likeCount: item.like, commentCount: nil, shareCount: nil)
         configureUserImage(with: item.user.icon)
-        configureRoutine(with: item.routine)
-        configureImageList(with: item.imageList)
     }
     
     override func prepareForReuse() {
@@ -86,17 +74,19 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         }
     }
 }
+
 // MARK: Layout
-private extension SocialFeedCollectionViewCell {
-    
+
+private extension SocialDetailCommentCell {
     func setupUI() {
+        backgroundColor = TDColor.baseWhite
         setupLayout()
         setupConstraints()
     }
     
     func setupLayout() {
         addSubview(containerView)
-        [avatarView, verticalStackView, separatorView].forEach{
+        [avatarView, verticalStackView].forEach{
             containerView.addSubview($0)
         }
         bodyStackView.addArrangedSubview(contentLabel)
@@ -110,7 +100,7 @@ private extension SocialFeedCollectionViewCell {
         containerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
         
         avatarView.snp.makeConstraints { make in
@@ -136,44 +126,22 @@ private extension SocialFeedCollectionViewCell {
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
         }
-        
-        separatorView.snp.makeConstraints { make in
-            make.top.equalTo(verticalStackView.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(1)
-        }
     }
 }
 
-//MARK: Priavte Method
-extension SocialFeedCollectionViewCell {
-    private func configureUserImage(with image: String?) {
+// MARK: Private Method
+
+private extension SocialDetailCommentCell {
+    func configureUserImage(with image: String?) {
         if let image = image {
             avatarView.kf.setImage(with: URL(string: image))
         } else {
             avatarView.image = TDImage.Profile.medium
         }
     }
-    
-    private func configureRoutine(with routine: Routine?) {
-        if let routine = routine {
-            let routineView = SocialRoutineView(with: routine).then {
-                $0.delegate = self
-            }
-            bodyStackView.addArrangedSubview(routineView)
-        }
-    }
-    
-    private func configureImageList(with imageList: [String]?) {
-        if let imageList = imageList {
-            bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
-        }
-    }
 }
 
-// MARK: Delegate
-
-extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
+extension SocialDetailCommentCell: SocialHeaderViewDelegate, SocialFooterDelegate {
     func didTapReport(_ view: UIView) {
         print("didTapReport")
     }
@@ -182,15 +150,11 @@ extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineV
         print("didTapBlock")
     }
 
-    func didTapRoutine(_ view: SocialRoutineView) {
-        socialFeedCellDelegate?.didTapRoutineView(self)
-    }
-
     func didTapNickname(_ view: UIView) {
-        socialFeedCellDelegate?.didTapNicknameLabel(self)
+        commentDelegate?.didTapNicknameLabel(self)
     }
-
-    @objc func didTapLikeButton(_ view: SocialFooterView) {
-        socialFeedCellDelegate?.didTapLikeButton(self)
+    
+    func didTapLikeButton(_ view: SocialFooterView) {
+        commentDelegate?.didTapLikeButton(self)
     }
 }

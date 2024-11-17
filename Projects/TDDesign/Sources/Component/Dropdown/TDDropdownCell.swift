@@ -9,10 +9,10 @@ final class DropDownCell: UITableViewCell {
     }
     
     private let stackView = UIStackView().then {
-        $0.spacing = 5
+        $0.spacing = 1.5
         $0.axis = .horizontal
         $0.alignment = .center
-        $0.distribution = .equalSpacing
+        $0.distribution = .fillProportionally
     }
     
     // MARK: - UI Components
@@ -46,15 +46,15 @@ final class DropDownCell: UITableViewCell {
     }
     
     // MARK: - Configure
-    func configure(with text: String, leftImage: UIImage? = nil, rightImage: UIImage? = nil) {
-        if let leftImage = leftImage {
+    func configure(with item: TDDropdownItem) {
+        if let leftImage = item.leftImage {
             leftImageView.image = leftImage
             stackView.addArrangedSubview(leftImageView)
         }
-        optionLabel.setText(text)
+        optionLabel.setText(item.title)
         stackView.addArrangedSubview(optionLabel)
         
-        if let rightImage = rightImage {
+        if let rightImage = item.rightImage {
             rightImageView.image = rightImage
             stackView.addArrangedSubview(rightImageView)
         }
@@ -76,6 +76,14 @@ private extension DropDownCell {
     func setConstraints() {
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(8)
+        }
+        
+        leftImageView.snp.makeConstraints {
+            $0.size.equalTo(24)
+        }
+        
+        rightImageView.snp.makeConstraints {
+            $0.size.equalTo(24)
         }
     }
 }
