@@ -3,21 +3,13 @@ import TDDesign
 import TDDomain
 import UIKit
 
-class SocialViewController: BaseViewController<SocialView> {
-    weak var coordinator: SocialCoordinator?
-    private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
-    private let viewModel: SocialViewModel!
+final class SocialListViewController: BaseViewController<SocialListView> {
+    weak var coordinator: SocialListCoordinator?
+    private let viewModel: SocialListViewModel!
     private var cancellables = Set<AnyCancellable>()
+    private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     
-    let chips: [TDChipItem] = [
-        TDChipItem(title: "집중력"),
-        TDChipItem(title: "기억력"),
-        TDChipItem(title: "충돌"),
-        TDChipItem(title: "불안"),
-        TDChipItem(title: "수면"),
-    ]
-    
-    init(viewModel: SocialViewModel) {
+    init(viewModel: SocialListViewModel) {
         self.viewModel = viewModel
         super.init()
     }
@@ -29,18 +21,18 @@ class SocialViewController: BaseViewController<SocialView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.action(.fetchPosts)
     }
     
     override func configure() {
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(chips)
+        layoutView.chipCollectionView.setChips(viewModel.chips)
         setupDataSource()
-        layoutView.dropDownFilterHoverView.dataSource = SocialSortType.allCases.map { $0.rawValue }
-        layoutView.dropDownFilterHoverView.delegate = self
+        layoutView.dropDownHoverView.delegate = self
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
-        viewModel.action(.fetchPosts)
+        layoutView.segmentedControl.addTarget(self, action: #selector(didTapSegmentedControl), for: .valueChanged)
     }
     
     override func addView() {
@@ -57,9 +49,23 @@ class SocialViewController: BaseViewController<SocialView> {
             case .loading:
                 self?.layoutView.showLoadingView()
             case .finish(let posts):
-                self?.layoutView.showFinishView()
                 DispatchQueue.main.async {
                     self?.applySnapshot(posts)
+                }
+                self?.layoutView.showFinishView()
+            case .empty:
+                self?.layoutView.showEmptyView()
+            case .error:
+                self?.layoutView.showErrorView()
+            }
+        }.store(in: &cancellables)
+        
+        viewModel.refreshState.sink { [weak self] state in
+            switch state {
+            case .finish(let posts):
+                DispatchQueue.main.async {
+                    self?.applySnapshot(posts)
+                    self?.layoutView.showEndRefreshControl()
                 }
             case .empty:
                 self?.layoutView.showEmptyView()
@@ -75,25 +81,24 @@ class SocialViewController: BaseViewController<SocialView> {
                     self?.updateSnapshot(post)
                 }
             case .error:
-                self?.layoutView.showEmptyView()
+                self?.layoutView.showErrorView()
             }
         }.store(in: &cancellables)
     }
 }
 
 
-extension SocialViewController: TDChipCollectionViewDelegate {
+extension SocialListViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
-        print("[LOG] 현재 Select 한 Chip: \(chipText) , Index = : \(index)")
-        layoutView.hideDropdown()
+        viewModel.action(.chipSelect(at: index))
     }
 }
 
-extension SocialViewController: UICollectionViewDelegate {
+extension SocialListViewController: UICollectionViewDelegate {
     
     private func setupDataSource() {
         datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, postID in
-            guard let post = self.viewModel.post(id: postID) else { return UICollectionViewCell() }
+            guard let post = self.viewModel.posts.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
             cell.socialFeedCellDelegate = self
             cell.configure(with: post)
@@ -108,59 +113,60 @@ extension SocialViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator?.moveToSocialDetailController(by: indexPath.item)
+        let postId = viewModel.posts[indexPath.item].id
+        coordinator?.didTapPost(id: postId)
     }
 }
 
 //MARK: Input
-extension SocialViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
-    func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
-        let option = SocialSortType.allCases[indexPath.row]
-        layoutView.dropDownFilterView.setTitle(option.rawValue)
-        viewModel.action(.sortPost(by: option))
+extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
+    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell) {
+        // TODO: Routine 공유 View
     }
     
-    @objc func didRefresh() {
-        viewModel.action(.fetchPosts)
+    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
+        // TODO: 프로필 view로 이동
     }
     
-    func didTapNickname(_ cell: SocialFeedCollectionViewCell) {
-        
-    }
-
     func didTapMoreButton(_ cell: SocialFeedCollectionViewCell) {
-    
+        // TODO: 신고하기/차단하기 && 내꺼라면 삭제하기
     }
     
-    func didTapCommentButton(_ cell: SocialFeedCollectionViewCell) {
-        print("[LOG] Comment Button Clicked")
-    }
-
-    func didTapShareButton(_ cell: SocialFeedCollectionViewCell) {
-        print("[LOG] Share Button Clicked")
-    }
-
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {
-        print("[LOG] Like Button Clicked")
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
         viewModel.action(.likePost(at: indexPath.item))
     }
+    
+    @objc func didTapSegmentedControl(sender: UISegmentedControl) {
+        viewModel.action(.segmentSelect(at: sender.selectedSegmentIndex))
+        layoutView.updateLayoutForSegmentedControl(index: sender.selectedSegmentIndex)
+    }
+    
+    @objc func didRefresh() {
+        viewModel.action(.refreshPosts)
+    }
+    
+    func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let option = SocialSortType.allCases[indexPath.row]
+        layoutView.dropDownAnchorView.setTitle(option.rawValue)
+        viewModel.action(.sortPost(by: option))
+    }
 }
 
 // MARK: Collection View Datasource Apply
-extension SocialViewController {
+extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
         snapshot.appendSections([0])
         snapshot.appendItems(posts.map { $0.id })
-        datasource?.apply(snapshot, animatingDifferences: true)
+        datasource?.apply(snapshot, animatingDifferences: false)
     }
     
     private func updateSnapshot(_ post: Post) {
         var snapshot = datasource?.snapshot()
         snapshot?.reloadItems([post.id])
-        datasource?.apply(snapshot!, animatingDifferences: true)
+        datasource?.apply(snapshot!, animatingDifferences: false)
     }
 }

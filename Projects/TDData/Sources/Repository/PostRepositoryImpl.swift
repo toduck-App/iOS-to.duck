@@ -15,7 +15,14 @@ public final class PostRepositoryImpl: PostRepository {
     public init() { }
 
     public func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post] {
-        return Post.dummy.sorted { $0.timestamp > $1.timestamp }
+        if category == .all {
+            return Post.dummy
+                .filter { $0.type == type }
+                .sorted { $0.timestamp > $1.timestamp }
+        }
+        return Post.dummy
+            .filter { $0.type == type && $0.category?.contains(category) ?? false }
+            .sorted { $0.timestamp > $1.timestamp }
     }
 
     public func searchPost(keyword: String, type: PostType, category: PostCategory) async throws -> [Post]? {
@@ -43,7 +50,11 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postId: Int) async throws -> Post {
-        return Post(id: 0, user: dummyUser, contentText: "", imageList: [], timestamp: Date(), likeCount: 0, isLike: false, commentCount: 0, shareCount: 0, routine: dummyRoutine, type: .communication, category: .none);
+        guard let post = Post.dummy.filter({ $0.id == postId }).first else {
+            // 에러 정의가 없어서 임시로 구현
+            return Post.dummy[0]
+        }
+        return post
     }
 
     public func reportPost(postId: Int) async throws -> Bool {

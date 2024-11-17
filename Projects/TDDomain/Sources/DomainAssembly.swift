@@ -12,22 +12,38 @@ public struct DomainAssembly: Assembly {
     
     public func assemble(container: Container) {
         container.register(FetchPostUseCase.self) { resolver in
-            let repository = resolver.resolve(PostRepository.self)!
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            
             return FetchPostUseCaseImpl(repository: repository)
         }
         
         container.register(TogglePostLikeUseCase.self) { resolver in
-            let repository = resolver.resolve(PostRepository.self)!
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
             return TogglePostLikeUseCaseImpl(repository: repository)
         }
         
         container.register(CreateCommentUseCase.self) { resolver in
-            let repository = resolver.resolve(CommentRepository.self)!
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
             return CreateCommentUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchCommentUseCaseImpl(repository: repository)
+        }
+        
         container.register(ReportPostUseCase.self) { resolver in
-            let repository = resolver.resolve(PostRepository.self)!
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
             return ReportPostUseCaseImpl(repository: repository)
         }
         

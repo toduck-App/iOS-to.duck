@@ -15,6 +15,10 @@ public final class CommentRepositoryImpl: CommentRepository {
         return false
     }
     
+    public func fetchCommentList(postId: Int) async throws -> [Comment]? {
+        return Comment.dummy
+    }
+    
     public func fetchCommentList(commentId: Int) async throws -> [Comment]? {
         return []
     }

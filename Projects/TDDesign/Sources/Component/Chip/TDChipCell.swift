@@ -2,12 +2,9 @@ import UIKit
 import SnapKit
 import Then
 
-class TDChipCell: UICollectionViewCell {
-    private var chipType: TDChipType? {
-        didSet {
-            updateState()
-        }
-    }
+final class TDChipCell: UICollectionViewCell {
+    private var chipType: TDChipType?
+    private var item: TDChipItem?
     
     private var isActive: Bool = false {
         didSet {
@@ -44,16 +41,18 @@ class TDChipCell: UICollectionViewCell {
     func configure(item: TDChipItem, chipType: TDChipType, isActive: Bool) {
         self.chipType = chipType
         self.isActive = isActive
+        self.item = item
         self.titleLabel.setText(item.title)
         if let leftImage = item.leftImage {
-            leftImageView.image = leftImage.withRenderingMode(.alwaysTemplate)
+            leftImageView.image = leftImage.image
             stackView.addArrangedSubview(leftImageView)
         }
         stackView.addArrangedSubview(titleLabel)
         if let rightImage = item.rightImage {
-            rightImageView.image = rightImage.withRenderingMode(.alwaysTemplate)
+            rightImageView.image = rightImage.image
             stackView.addArrangedSubview(rightImageView)
         }
+        updateState()
     }
     
     func deSelected() {
@@ -90,14 +89,33 @@ class TDChipCell: UICollectionViewCell {
         rightImageView.image = nil
         stackView.removeArrangedSubview(leftImageView)
         stackView.removeArrangedSubview(rightImageView)
+        isActive = false
     }
     
     private func updateState() {
         guard let chipType else { return }
         contentView.layer.cornerRadius = chipType.cornerRadius
-        contentView.backgroundColor = isActive ? chipType.activeColor : chipType.inactiveColor
-        titleLabel.setColor(isActive ? chipType.inactiveColor : chipType.activeColor)
-        leftImageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
-        rightImageView.tintColor = isActive ? chipType.inactiveColor : chipType.activeColor
+        contentView.layer.borderWidth = 1
+        titleLabel.setColor(
+            isActive
+            ? chipType.fontColor.activeColor
+            : chipType.fontColor.inActiveColor
+        )
+        
+        contentView.backgroundColor = isActive
+        ? chipType.backgroundColor.activeColor
+        : chipType.backgroundColor.inActiveColor
+        
+        leftImageView.tintColor = isActive
+        ? item?.leftImage?.activeColor
+        : item?.leftImage?.inActiveColor
+        
+        rightImageView.tintColor = isActive
+        ? item?.leftImage?.activeColor
+        : item?.rightImage?.inActiveColor
+        
+        contentView.layer.borderColor = isActive
+        ? chipType.borderColor.activeColor.cgColor
+        : chipType.borderColor.inActiveColor.cgColor
     }
 }

@@ -1,3 +1,10 @@
+//
+//  SocialDetailPostCell.swift
+//  TDPresentation
+//
+//  Created by 승재 on 11/6/24.
+//
+
 import SnapKit
 import TDDesign
 import TDDomain
@@ -5,14 +12,14 @@ import Then
 import Kingfisher
 import UIKit
 
-protocol SocialFeedCollectionViewCellDelegate: AnyObject {
-    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
-    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
-    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
+protocol SocialDetailPostCellDelegate: AnyObject {
+    func didTapLikeButton(_ cell: SocialDetailPostCell)
+    func didTapNicknameLabel(_ cell: SocialDetailPostCell)
+    func didTapRoutineView(_ cell: SocialDetailPostCell)
 }
 
-final class SocialFeedCollectionViewCell: UICollectionViewCell {
-    weak var socialFeedCellDelegate: SocialFeedCollectionViewCellDelegate?
+final class SocialDetailPostCell: UICollectionViewCell {
+    weak var socialDetailPostCellDelegate: SocialDetailPostCellDelegate?
     
     private let containerView = UIView()
     
@@ -52,8 +59,6 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    
-    
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -87,7 +92,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     }
 }
 // MARK: Layout
-private extension SocialFeedCollectionViewCell {
+private extension SocialDetailPostCell {
     
     func setupUI() {
         setupLayout()
@@ -95,10 +100,14 @@ private extension SocialFeedCollectionViewCell {
     }
     
     func setupLayout() {
-        addSubview(containerView)
-        [avatarView, verticalStackView, separatorView].forEach{
+        [containerView, separatorView].forEach{
+            addSubview($0)
+        }
+        
+        [avatarView, verticalStackView].forEach{
             containerView.addSubview($0)
         }
+        
         bodyStackView.addArrangedSubview(contentLabel)
         
         [headerView, bodyStackView, footerView].forEach{
@@ -110,7 +119,7 @@ private extension SocialFeedCollectionViewCell {
         containerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
         
         avatarView.snp.makeConstraints { make in
@@ -140,13 +149,13 @@ private extension SocialFeedCollectionViewCell {
         separatorView.snp.makeConstraints { make in
             make.top.equalTo(verticalStackView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(1)
+            make.height.equalTo(12)
         }
     }
 }
 
 //MARK: Priavte Method
-extension SocialFeedCollectionViewCell {
+extension SocialDetailPostCell {
     private func configureUserImage(with image: String?) {
         if let image = image {
             avatarView.kf.setImage(with: URL(string: image))
@@ -173,7 +182,7 @@ extension SocialFeedCollectionViewCell {
 
 // MARK: Delegate
 
-extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
+extension SocialDetailPostCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
     func didTapReport(_ view: UIView) {
         print("didTapReport")
     }
@@ -183,14 +192,14 @@ extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineV
     }
 
     func didTapRoutine(_ view: SocialRoutineView) {
-        socialFeedCellDelegate?.didTapRoutineView(self)
+        socialDetailPostCellDelegate?.didTapRoutineView(self)
     }
 
     func didTapNickname(_ view: UIView) {
-        socialFeedCellDelegate?.didTapNicknameLabel(self)
+        socialDetailPostCellDelegate?.didTapNicknameLabel(self)
     }
 
     @objc func didTapLikeButton(_ view: SocialFooterView) {
-        socialFeedCellDelegate?.didTapLikeButton(self)
+        socialDetailPostCellDelegate?.didTapLikeButton(self)
     }
 }

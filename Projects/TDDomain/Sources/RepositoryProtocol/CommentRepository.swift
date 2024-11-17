@@ -9,7 +9,8 @@ import Foundation
 
 public protocol CommentRepository {
     func toggleCommentLike(commentId: Int) async throws -> Bool
-
+    
+    func fetchCommentList(postId: Int) async throws -> [Comment]?
     func fetchCommentList(commentId: Int) async throws -> [Comment]?
     func fetchUserCommentList(userId: Int) async throws -> [Comment]?
     // MARK: - Comment CRUD
