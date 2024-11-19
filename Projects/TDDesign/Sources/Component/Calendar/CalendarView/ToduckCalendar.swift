@@ -13,16 +13,16 @@ import FSCalendar
 public final class ToduckCalendar: BaseCalendar {
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setupTDCalendar()
+        setup()
     }
     
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupTDCalendar()
+        setup()
     }
     
-    private func setupTDCalendar() {
+    private func setup() {
         self.register(SheetCalendarSelectDateCell.self, forCellReuseIdentifier: SheetCalendarSelectDateCell.identifier)
         self.appearance.selectionColor = TDColor.Primary.primary100
         self.appearance.titleSelectionColor = .black

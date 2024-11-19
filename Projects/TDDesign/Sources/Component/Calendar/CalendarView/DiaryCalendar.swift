@@ -13,15 +13,15 @@ import UIKit
 public final class DiaryCalendar: BaseCalendar {
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setupFocusCalendar()
+        setup()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupFocusCalendar()
+        setup()
     }
     
-    private func setupFocusCalendar() {
+    private func setup() {
         self.register(DiaryCalendarSelectDateCell.self, forCellReuseIdentifier: DiaryCalendarSelectDateCell.identifier)
         self.appearance.selectionColor = .clear
     }

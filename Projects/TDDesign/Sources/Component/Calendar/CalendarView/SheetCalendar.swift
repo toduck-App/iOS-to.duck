@@ -13,15 +13,15 @@ import UIKit
 public final class SheetCalendar: BaseCalendar {
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setupSheetCalendar()
+        setup()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupSheetCalendar()
+        setup()
     }
     
-    private func setupSheetCalendar() {
+    private func setup() {
         self.allowsMultipleSelection = true
         self.register(SheetCalendarSelectDateCell.self, forCellReuseIdentifier: SheetCalendarSelectDateCell.identifier)
         self.appearance.selectionColor = .clear
