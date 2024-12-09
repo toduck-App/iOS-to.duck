@@ -124,5 +124,9 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(22)
         }
+        
+        timeLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+        }
     }
 }
