@@ -337,7 +337,8 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             title: dummyData.title,
             time: dummyText,
             category: dummyImage,
-            isFinish: dummyData.isFinished
+            isFinish: dummyData.isFinished,
+            location: dummyData.location
         )
         
         return cell

@@ -29,6 +29,20 @@ public final class ScheduleDetailCell: UITableViewCell {
         $0.alignment = .leading
         $0.spacing = 4
     }
+    private let locationImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = TDImage.locationMedium
+    }
+    private let locationLabel = TDLabel(
+        toduckFont: TDFont.regularBody2,
+        alignment: .left,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    private let locationHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .leading
+        $0.spacing = 4
+    }
     private let scheduleVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .leading
@@ -65,17 +79,20 @@ public final class ScheduleDetailCell: UITableViewCell {
         categoryImageView.image = nil
         titleLabel.text = nil
         timeLabel.text = nil
+        locationLabel.text = nil
         checkBoxImageView.image = nil
     }
     
     // MARK: - Setup & Configuration
-    public func configure(title: String, time: String?, category: UIImage?, isFinish: Bool) {
+    public func configure(title: String, time: String?, category: UIImage?, isFinish: Bool, location: String?) {
         titleLabel.text = title
         categoryImageView.image = category != nil ? category : nil
         categoryImageView.isHidden = category == nil
 
         timeLabel.text = time != nil ? time : nil
         timeDetailHorizontalStackView.isHidden = time == nil
+        locationLabel.text = location != nil ? location : nil
+        locationHorizontalStackView.isHidden = location == nil
         
         checkBoxImageView.image = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
     }
@@ -91,10 +108,14 @@ public final class ScheduleDetailCell: UITableViewCell {
         
         scheduleVerticalStackView.addArrangedSubview(titleLabel)
         scheduleVerticalStackView.addArrangedSubview(timeDetailHorizontalStackView)
+        scheduleVerticalStackView.addArrangedSubview(locationHorizontalStackView)
         
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
         contentView.addSubview(checkBoxImageView)
+        
+        locationHorizontalStackView.addArrangedSubview(locationImageView)
+        locationHorizontalStackView.addArrangedSubview(locationLabel)
     }
     
     private func setupLayout() {
