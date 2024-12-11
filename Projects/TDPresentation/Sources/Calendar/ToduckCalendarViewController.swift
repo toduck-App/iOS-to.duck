@@ -307,11 +307,10 @@ extension ToduckCalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: nil,
-            handler: { _, _, _ in
-                // TODO: 삭제 액션
-            }
-        )
+            title: nil
+        ) { _, _, _ in
+            
+        }
         deleteAction.image = TDImage.trashWhiteMedium
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
@@ -333,13 +332,16 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         let dummyData = viewModel.dummyData[indexPath.row]
         let dummyImage = indexPath.row % 2 == 0 ? TDImage.Profile.medium : nil
         let dummyText = indexPath.row % 3 == 0 ? nil : dummyData.date
-        cell.configure(
+        cell.configureCell(
             title: dummyData.title,
             time: dummyText,
             category: dummyImage,
-            isFinish: dummyData.isFinished,
+            isFinished: dummyData.isFinished,
             location: dummyData.location
         )
+        cell.configureButtonAction {
+            print("체크박스 클릭")
+        }
         
         return cell
     }

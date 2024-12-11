@@ -48,15 +48,18 @@ public final class ScheduleDetailCell: UITableViewCell {
         $0.alignment = .leading
         $0.spacing = 4
     }
-    private let checkBoxImageView = UIImageView().then {
+    private let checkBoxButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.CheckBox.empty
+        $0.setImage(TDImage.CheckBox.empty, for: .normal)
     }
     private let containerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 10
         $0.alignment = .center
     }
+    
+    // MARK: - Properties
+    private var isFinished: Bool = false
     
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -80,21 +83,42 @@ public final class ScheduleDetailCell: UITableViewCell {
         titleLabel.text = nil
         timeLabel.text = nil
         locationLabel.text = nil
-        checkBoxImageView.image = nil
     }
     
     // MARK: - Setup & Configuration
-    public func configure(title: String, time: String?, category: UIImage?, isFinish: Bool, location: String?) {
+    // MARK: - Configuration
+    public func configureCell(
+        title: String,
+        time: String?,
+        category: UIImage?,
+        isFinished: Bool,
+        location: String?
+    ) {
+        self.isFinished = isFinished
         titleLabel.text = title
-        categoryImageView.image = category != nil ? category : nil
-        categoryImageView.isHidden = category == nil
-
-        timeLabel.text = time != nil ? time : nil
-        timeDetailHorizontalStackView.isHidden = time == nil
-        locationLabel.text = location != nil ? location : nil
-        locationHorizontalStackView.isHidden = location == nil
+        categoryImageView.image = category
+        categoryImageView.isHidden = (category == nil)
         
-        checkBoxImageView.image = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+        timeLabel.text = time
+        timeDetailHorizontalStackView.isHidden = (time == nil)
+        locationLabel.text = location
+        locationHorizontalStackView.isHidden = (location == nil)
+        
+        changeCheckBoxButtonImage(isFinished: isFinished)
+    }
+
+    public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
+        checkBoxButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            checkBoxAction()
+            self.isFinished.toggle()
+            self.changeCheckBoxButtonImage(isFinished: self.isFinished)
+        }, for: .touchUpInside)
+    }
+
+    private func changeCheckBoxButtonImage(isFinished: Bool) {
+        let checkBoxImage = isFinished ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+        checkBoxButton.setImage(checkBoxImage, for: .normal)
     }
     
     private func setup() {
@@ -112,7 +136,7 @@ public final class ScheduleDetailCell: UITableViewCell {
         
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
-        contentView.addSubview(checkBoxImageView)
+        contentView.addSubview(checkBoxButton)
         
         locationHorizontalStackView.addArrangedSubview(locationImageView)
         locationHorizontalStackView.addArrangedSubview(locationLabel)
@@ -129,7 +153,7 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.top.bottom.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(scheduleIdentyColorView.snp.trailing).offset(16)
-            $0.trailing.equalTo(checkBoxImageView.snp.leading).offset(-16)
+            $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
         }
         
         categoryImageView.snp.makeConstraints {
@@ -140,7 +164,7 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.centerY.equalTo(containerHorizontalStackView.snp.centerY)
         }
         
-        checkBoxImageView.snp.makeConstraints {
+        checkBoxButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(22)
