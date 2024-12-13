@@ -1,14 +1,13 @@
 import Foundation
 
-public struct Schedule: Hashable {
+public struct Schedule {
     public let id: UUID
     public let title: String
-    public let imageURL: String?
-    public let dateAndTime: Date?
-    public let isRepeating: Bool
-    public let alarm: Bool
-    public let alarmTimes: [AlarmTime]?
+    public let category: TDCategory
+    public let date: Date?
+    public let time: Date?
     public let repeatDays: [TDWeekDay]?
+    public let alarmTimes: [AlarmType]?
     public let place: String?
     public let memo: String?
     public let isFinish: Bool
@@ -16,23 +15,21 @@ public struct Schedule: Hashable {
     public init(
         id: UUID = UUID(),
         title: String,
-        imageURL: String? = nil,
-        dateAndTime: Date? = nil,
-        isRepeating: Bool,
-        repeatDays: [Weekday]? = nil,
-        alarm: Bool,
-        alarmTimes: [AlarmTime]? = nil,
-        place: String? = nil,
-        memo: String? = nil,
+        category: TDCategory,
+        date: Date?,
+        time: Date?,
+        repeatDays: [TDWeekDay]?,
+        alarmTimes: [AlarmType]?,
+        place: String?,
+        memo: String?,
         isFinish: Bool
     ) {
         self.id = id
         self.title = title
-        self.imageURL = imageURL
-        self.dateAndTime = dateAndTime
-        self.isRepeating = isRepeating
+        self.category = category
+        self.date = date
+        self.time = time
         self.repeatDays = repeatDays
-        self.alarm = alarm
         self.alarmTimes = alarmTimes
         self.place = place
         self.memo = memo

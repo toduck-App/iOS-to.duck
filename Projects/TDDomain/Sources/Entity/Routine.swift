@@ -21,9 +21,9 @@ public struct Routine: Hashable {
     public let dateAndTime: Date?
     public let isRepeating: Bool
     public let isRepeatAllDay: Bool // 반복이 종일인지
-    public let repeatDays: [Weekday]?
+    public let repeatDays: [TDWeekDay]?
     public let alarm: Bool
-    public let alarmTimes: [AlarmTime]?
+    public let alarmTimes: [AlarmType]?
     public let memo: String?
     public let recommendedRoutines: [String]?
     public let isFinish: Bool
@@ -36,9 +36,9 @@ public struct Routine: Hashable {
         dateAndTime: Date? = nil,
         isRepeating: Bool,
         isRepeatAllDay: Bool,
-        repeatDays: [Weekday]? = nil,
+        repeatDays: [TDWeekDay]? = nil,
         alarm: Bool,
-        alarmTimes: [AlarmTime]? = nil,
+        alarmTimes: [AlarmType]? = nil,
         memo: String? = nil,
         recommendedRoutines: [String]? = nil,
         isFinish: Bool
