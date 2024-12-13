@@ -5,7 +5,7 @@ import TDDomain
 
 final class SocialCreateViewModel: BaseViewModel {
     enum Input {
-        case setCategory(PostCategory)
+        case chipSelect(at: Int)
         case setRoutine(Routine)
         case setContent(String)
         case setImages([Data?])
@@ -13,24 +13,40 @@ final class SocialCreateViewModel: BaseViewModel {
     
     enum Output {
         case success
+        case notSelectCategory
         case failure(String)
     }
     
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
     
     private let output = PassthroughSubject<Output, Never>()
+    private var cancellables = Set<AnyCancellable>()
     private var category: PostCategory?
     private var routine: Routine?
     private var content: String = ""
     private var images: [Data?] = []
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        output.eraseToAnyPublisher()
+        input.sink { [weak self] event in
+            switch event {
+            case .chipSelect(let index):
+                self?.setCategory(at: index)
+            case .setRoutine:
+                break
+            case .setContent:
+                break
+            case .setImages:
+                break
+            }
+        }.store(in: &cancellables)
+        
+        return output.eraseToAnyPublisher()
     }
 }
 
 extension SocialCreateViewModel {
-    private func setCategory(_ category: PostCategory) {
+    private func setCategory(at index: Int) {
+        guard let category = PostCategory(rawValue: chips[index].title) else { return }
         self.category = category
     }
     
