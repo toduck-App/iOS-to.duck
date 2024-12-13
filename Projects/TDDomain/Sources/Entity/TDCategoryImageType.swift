@@ -1,4 +1,4 @@
-public enum CategoryImageType {
+public enum TDCategoryImageType {
     case computer
     case food
     case pencil

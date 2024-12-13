@@ -1,4 +1,4 @@
-public enum CategoryColor {
+public enum TDCategoryColor {
     case back1
     case back2
     case back3
