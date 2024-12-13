@@ -79,6 +79,7 @@ extension SocialListCoordinator: SocialListDelegate {
         let createCoordinator = SocialCreateCoordinator(
             navigationController: navigationController
         )
+        createCoordinator.finishDelegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
     }

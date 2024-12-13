@@ -64,5 +64,3 @@ final class SocialCreateView: BaseView {
         }
     }
 }
-
-private extension SocialCreateView {}
