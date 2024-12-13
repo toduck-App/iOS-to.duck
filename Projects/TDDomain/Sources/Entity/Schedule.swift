@@ -10,11 +10,6 @@ public enum Weekday: String {
     case sunday = "일"
 }
 
-public enum AlarmTime: String {
-    case oneHourBefore = "60"
-    case thirtyMinutesBefore = "30"
-    case tenMinutesBefore = "10"
-}
 
 public struct Schedule: Hashable {
     public let id: UUID
