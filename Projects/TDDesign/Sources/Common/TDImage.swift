@@ -30,6 +30,7 @@ public enum TDImage {
     public static let trashMedium = TDDesignAsset.Images.trashMedium.image
     public static let trashWhiteMedium = TDDesignAsset.Images.trashWhiteMedium.image
     public static let downMedium = TDDesignAsset.Images.downMedium.image
+    public static let warningMedium = TDDesignAsset.Images.warningMedium.image
     public static let addSmall = TDDesignAsset.Images.addSmall.image
     public static let alarmSmall = TDDesignAsset.Images.alarmSmall.image
     public static let badSmall = TDDesignAsset.Images.badSmall.image
@@ -167,7 +168,6 @@ public enum TDImage {
         public static let medium = TDDesignAsset.Images.socialMedium.image
     }
     
-    
     public enum Timer {
         public static let colorMedium = TDDesignAsset.Images.timerColorMedium.image
         public static let medium = TDDesignAsset.Images.timerMedium.image
@@ -226,6 +226,7 @@ public enum TDImage {
             public static let percent90 = TDDesignAsset.Images.percentDot90.image
             public static let percent100 = TDDesignAsset.Images.percentDot100.image
         }
+
         public static let percent0 = TDDesignAsset.Images.percent0.image
         public static let percent10 = TDDesignAsset.Images.percent10.image
         public static let percent20 = TDDesignAsset.Images.percent20.image
