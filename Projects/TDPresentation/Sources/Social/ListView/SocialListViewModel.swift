@@ -23,7 +23,7 @@ final class SocialListViewModel: BaseViewModel {
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
     
     private let output = PassthroughSubject<Output, Never>()
-    private var currentCategory: PostCategory = .all
+    private var currentCategory: PostCategory?
     private var currentSegment: Int = 0
     private var currentChip: TDChipItem?
     private var currentSort: SocialSortType = .recent
@@ -64,9 +64,9 @@ extension SocialListViewModel {
     private func fetchPosts() {
         Task {
             do {
-                let category = currentSegment == 0 ? .all : currentCategory
+                let category = currentSegment == 0 ? nil : currentCategory
                 
-                guard let items = try await fetchPostUseCase.execute(type: .communication, category: category) else { return }
+                guard let items = try await fetchPostUseCase.execute(category: category) else { return }
                 posts = items
                 output.send(.fetchPosts)
             } catch {
@@ -103,7 +103,7 @@ extension SocialListViewModel {
     }
     
     private func selectChips(at index: Int) {
-        currentCategory = PostCategory(rawValue: chips[index].title) ?? .all
+        currentCategory = PostCategory(rawValue: chips[index].title)
         fetchPosts()
     }
 }

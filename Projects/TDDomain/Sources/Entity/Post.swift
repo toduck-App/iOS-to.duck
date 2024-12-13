@@ -7,13 +7,7 @@
 
 import Foundation
 
-public enum PostType {
-    case communication
-    case question
-}
-
 public enum PostCategory: String, CaseIterable {
-    case all = "전체"
     case concentration = "집중력"
     case memory = "기억력"
     case impulse = "충동"
@@ -34,7 +28,6 @@ public struct Post: Identifiable {
         commentCount: Int?,
         shareCount: Int?,
         routine: Routine?,
-        type: PostType,
         category: [PostCategory]?
     ) {
         self.id = id
@@ -47,7 +40,6 @@ public struct Post: Identifiable {
         self.commentCount = commentCount
         self.shareCount = shareCount
         self.routine = routine
-        self.type = type
         self.category = category
     }
     
@@ -64,7 +56,6 @@ public struct Post: Identifiable {
     public let routine: Routine?
     
     // 보이지 않는 property
-    public let type: PostType
     public let category: [PostCategory]?
 }
 
@@ -79,7 +70,6 @@ public extension Post {
                                      commentCount: 3,
                                      shareCount: nil,
                                      routine: nil,
-                                     type: .communication,
                                      category: [.anxiety, .impulse]),
                                 Post(id: 2,
                                      user: .init(id: 2, name: "꽉꽉", icon: "https://avatars.githubusercontent.com/u/129862357?v=4", title: "작심삼일", isblock: false),
@@ -93,9 +83,8 @@ public extension Post {
                                      isLike: false,
                                      commentCount: 3,
                                      shareCount: 12,
-                                     routine: Routine(id: UUID(), title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: false, date: nil, time: nil, repeatDays: [.friday, .saturday], alarmTimes: [.oneDayBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
-                                     type: .communication,
-                                     category: [.anxiety, .impulse]),
+                                     routine: Routine(id: 1, title: "✌️ 나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: "일", isPublic: true, dateAndTime: .now, isRepeating: true, isRepeatAllDay: false, repeatDays: [.monday, .friday], alarm: true, alarmTimes: [.oneHourBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
+                                     category: [.anxiety, .concentration, .impulse]),
                                 Post(id: 3,
                                      user: .init(id: 3, name: "오리궁뎅이", icon: "https://avatars.githubusercontent.com/u/57449485?v=4", title: "작심삼일", isblock: false),
                                      contentText: "오늘은 피곤해서 진짜 일찍 자고싶은데 ㅠㅠ 잠이 안와서 괴로워요ㅠㅠㅠㅠㅠ",
@@ -106,7 +95,6 @@ public extension Post {
                                      commentCount: 1,
                                      shareCount: 12,
                                      routine: nil,
-                                     type: .communication,
                                      category: [.anxiety, .memory, .sleep]),
                                 Post(id: 4,
                                      user: .init(id: 76, name: "꽉꽉", icon: nil, title: "작심삼일", isblock: false),
@@ -117,8 +105,7 @@ public extension Post {
                                      isLike: false,
                                      commentCount: 7,
                                      shareCount: 12,
-                                     routine: Routine(id: UUID(), title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: false, date: nil, time: nil, repeatDays: [.friday, .saturday], alarmTimes: [.oneDayBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
-                                     type: .communication,
+                                     routine: Routine(id: 12, title: "✌️ 나가기 전 잊지 말고 챙기자", category: "일", isPublic: true, dateAndTime: .now, isRepeating: true, isRepeatAllDay: false, repeatDays: [.monday, .friday], alarm: true, alarmTimes: [.oneHourBefore], memo: "지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
                                      category: [.anxiety, .impulse, .anxiety]),
                                 Post(id: 5,
                                      user: .init(id: 33, name: "오리궁뎅이", icon: nil, title: "작심삼일", isblock: false),
@@ -130,7 +117,6 @@ public extension Post {
                                      commentCount: 7,
                                      shareCount: 12,
                                      routine: nil,
-                                     type: .communication,
                                      category: [.anxiety, .concentration, .memory])]
 }
 

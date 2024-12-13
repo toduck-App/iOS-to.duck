@@ -10,8 +10,8 @@ import Foundation
 import Moya
 
 public enum SocialTarget {
-    case fetchPostList(type: PostType, category: PostCategory)
-    case searchPost(keyword: String, type: PostType, category: PostCategory)
+    case fetchPostList(category: PostCategory)
+    case searchPost(keyword: String, category: PostCategory)
     case togglePostLike(postId: String)
     case bringUserRoutine(routine: Routine)
     case createPost(post: Post)
@@ -131,10 +131,10 @@ extension SocialTarget: TargetType {
     
     public var task: Moya.Task {
         switch self {
-        case .fetchPostList(let type, let category):
-            return .requestParameters(parameters: ["type": type, "category": category.rawValue], encoding: URLEncoding.queryString)
-        case .searchPost(let keyword, let type, let category):
-            return .requestParameters(parameters: ["keyword": keyword, "type": type, "category": category.rawValue], encoding: URLEncoding.queryString)
+        case .fetchPostList(let category):
+            return .requestParameters(parameters: ["category": category.rawValue], encoding: URLEncoding.queryString)
+        case .searchPost(let keyword, let category):
+            return .requestParameters(parameters: ["keyword": keyword, "category": category.rawValue], encoding: URLEncoding.queryString)
         case .togglePostLike,
                 .fetchPost,
                 .reportPost,
