@@ -12,7 +12,7 @@ public enum PostType {
     case question
 }
 
-public enum PostCategory: String {
+public enum PostCategory: String, CaseIterable {
     case all = "전체"
     case concentration = "집중력"
     case memory = "기억력"

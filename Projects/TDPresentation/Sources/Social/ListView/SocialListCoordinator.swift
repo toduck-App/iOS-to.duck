@@ -4,6 +4,7 @@ import UIKit
 
 protocol SocialListDelegate: AnyObject {
     func didTapPost(id: Int)
+    func didTapCreateButton()
 }
 
 final class SocialListCoordinator: Coordinator {
@@ -50,6 +51,15 @@ extension SocialListCoordinator: SocialListDelegate {
         socialDetailCoordinator.finishDelegate = self
         childCoordinators.append(socialDetailCoordinator)
         socialDetailCoordinator.start()
+    }
+
+    func didTapCreateButton() {
+        let createCoordinator = SocialCreateCoordinator(
+            navigationController: navigationController
+        )
+        createCoordinator.finishDelegate = self
+        childCoordinators.append(createCoordinator)
+        createCoordinator.start()
     }
 }
 

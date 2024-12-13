@@ -20,14 +20,7 @@ final class SocialListViewModel: BaseViewModel {
     }
 
     private(set) var posts: [Post] = []
-    private(set) var chips: [TDChipItem] = [
-        "집중력",
-        "기억력",
-        "충돌",
-        "불안",
-        "수면",
-        "일반"
-    ].map { TDChipItem(title: $0) }
+    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
     
     private let output = PassthroughSubject<Output, Never>()
     private var currentCategory: PostCategory = .all
