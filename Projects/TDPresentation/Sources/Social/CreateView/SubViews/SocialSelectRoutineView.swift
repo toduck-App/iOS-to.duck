@@ -4,21 +4,23 @@ import Then
 import UIKit
 
 final class SocialSelectRoutineView: UIView {
-    private let title = TDRequiredTitle(title: "루틴 공유하기", isRequired: false)
+    private let title = TDRequiredTitle().then {
+        $0.setTitleLabel("루틴 공유하기")
+    }
+
     private let routineSelectView = UIView().then {
         $0.layer.cornerRadius = 8
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         $0.layer.borderWidth = 1
     }
     
-    private let routineSelectLabel = TDLabel(labelText: "공유할 루틴을 선택해주세요",toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private let routineSelectLabel = TDLabel(labelText: "공유할 루틴을 선택해주세요", toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 1
     }
     
     private let downArrowImageView = UIImageView().then {
         $0.image = TDImage.downMedium
     }
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)

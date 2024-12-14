@@ -3,15 +3,10 @@ import UIKit
 
 public final class TDRequiredTitle: UIView {
     private let label = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800)
-    private let requiredLabel = TDLabel(toduckFont: .boldBody1,alignment: .left, toduckColor: TDColor.Primary.primary500)
+    private let requiredLabel = TDLabel(labelText: "*", toduckFont: .boldBody1, alignment: .left, toduckColor: TDColor.Primary.primary500)
 
-    public init(title: String, isRequired: Bool) {
+    public init() {
         super.init(frame: .zero)
-        setTitleLabel(title)
-        if isRequired {
-            requiredLabel.setText("*")
-            setRequiredLabel()
-        }
     }
     
     @available(*, unavailable)
@@ -19,7 +14,7 @@ public final class TDRequiredTitle: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setTitleLabel(_ title: String) {
+    public func setTitleLabel(_ title: String) {
         label.setText("\(title)")
         addSubview(label)
         
@@ -28,7 +23,7 @@ public final class TDRequiredTitle: UIView {
         }
     }
     
-    private func setRequiredLabel() {
+    public func setRequiredLabel() {
         addSubview(requiredLabel)
         
         requiredLabel.snp.makeConstraints { make in

@@ -4,7 +4,11 @@ import Then
 import UIKit
 
 final class SocialSelectCategoryView: UIView {
-    private let title = TDRequiredTitle(title: "카테고리", isRequired: true)
+    private let title = TDRequiredTitle().then {
+        $0.setTitleLabel("카테고리")
+        $0.setRequiredLabel()
+    }
+
     private(set) lazy var categorySelectView = TDChipCollectionView(
         chipType: .init(
             backgroundColor: .init(
@@ -50,7 +54,7 @@ extension SocialSelectCategoryView {
         }
         
         categorySelectView.snp.makeConstraints { make in
-            make.top.equalTo(title.snp.bottom).offset(14)
+            make.top.equalTo(title.snp.bottom).offset(12)
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
