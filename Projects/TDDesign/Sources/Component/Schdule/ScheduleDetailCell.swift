@@ -33,12 +33,12 @@ public final class ScheduleDetailCell: UITableViewCell {
         $0.contentMode = .scaleAspectFit
         $0.image = TDImage.locationMedium
     }
-    private let locationLabel = TDLabel(
+    private let placeLabel = TDLabel(
         toduckFont: TDFont.regularBody2,
         alignment: .left,
         toduckColor: TDColor.Neutral.neutral600
     )
-    private let locationHorizontalStackView = UIStackView().then {
+    private let placeHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .leading
         $0.spacing = 4
@@ -59,7 +59,7 @@ public final class ScheduleDetailCell: UITableViewCell {
     }
     
     // MARK: - Properties
-    private var isFinished: Bool = false
+    private var isFinish: Bool = false
     
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -82,7 +82,7 @@ public final class ScheduleDetailCell: UITableViewCell {
         categoryImageView.image = nil
         titleLabel.text = nil
         timeLabel.text = nil
-        locationLabel.text = nil
+        placeLabel.text = nil
     }
     
     // MARK: - Setup & Configuration
@@ -91,33 +91,33 @@ public final class ScheduleDetailCell: UITableViewCell {
         title: String,
         time: String?,
         category: UIImage?,
-        isFinished: Bool,
-        location: String?
+        isFinish: Bool,
+        place: String?
     ) {
-        self.isFinished = isFinished
+        self.isFinish = isFinish
         titleLabel.text = title
         categoryImageView.image = category
         categoryImageView.isHidden = (category == nil)
         
         timeLabel.text = time
         timeDetailHorizontalStackView.isHidden = (time == nil)
-        locationLabel.text = location
-        locationHorizontalStackView.isHidden = (location == nil)
+        placeLabel.text = place
+        placeHorizontalStackView.isHidden = (place == nil)
         
-        changeCheckBoxButtonImage(isFinished: isFinished)
+        changeCheckBoxButtonImage(isFinish: isFinish)
     }
 
     public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
         checkBoxButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             checkBoxAction()
-            self.isFinished.toggle()
-            self.changeCheckBoxButtonImage(isFinished: self.isFinished)
+            self.isFinish.toggle()
+            self.changeCheckBoxButtonImage(isFinish: self.isFinish)
         }, for: .touchUpInside)
     }
 
-    private func changeCheckBoxButtonImage(isFinished: Bool) {
-        let checkBoxImage = isFinished ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+    private func changeCheckBoxButtonImage(isFinish: Bool) {
+        let checkBoxImage = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
         checkBoxButton.setImage(checkBoxImage, for: .normal)
     }
     
@@ -132,14 +132,14 @@ public final class ScheduleDetailCell: UITableViewCell {
         
         scheduleVerticalStackView.addArrangedSubview(titleLabel)
         scheduleVerticalStackView.addArrangedSubview(timeDetailHorizontalStackView)
-        scheduleVerticalStackView.addArrangedSubview(locationHorizontalStackView)
+        scheduleVerticalStackView.addArrangedSubview(placeHorizontalStackView)
         
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
         contentView.addSubview(checkBoxButton)
         
-        locationHorizontalStackView.addArrangedSubview(locationImageView)
-        locationHorizontalStackView.addArrangedSubview(locationLabel)
+        placeHorizontalStackView.addArrangedSubview(locationImageView)
+        placeHorizontalStackView.addArrangedSubview(placeLabel)
     }
     
     private func setupLayout() {
@@ -174,7 +174,7 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.centerY.equalToSuperview()
         }
         
-        locationLabel.snp.makeConstraints {
+        placeLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
         }
     }
