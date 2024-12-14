@@ -9,6 +9,7 @@ import FSCalendar
 import SnapKit
 import TDDesign
 import UIKit
+import Combine
 
 // FIXME: 실 기기에서 빌드할 경우 캘린더 깨짐 현상 발생
 final class ToduckCalendarViewController: BaseViewController<BaseView> {
@@ -26,6 +27,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     
     // MARK: - Properties
     private let viewModel: ToduckCalendarViewModel!
+    private let input = PassthroughSubject<ToduckCalendarViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     private var calendarHeightConstraint: Constraint?
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
@@ -53,6 +56,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         view.backgroundColor = .white
         
         setup()
+        binding()
+        input.send(.fetchScheduleList)
         addSubviews()
         setupCalendar()
         setupConstraints()
@@ -89,6 +94,21 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         selectedDayScheduleView.scheduleTableView.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedScheduleList:
+                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                case .failure(let errorMessage):
+                    print(errorMessage)
+                }
+            }.store(in: &cancellables)
     }
     
     private func addSubviews() {
@@ -322,7 +342,7 @@ extension ToduckCalendarViewController: UITableViewDelegate {
 // MARK: - UITableViewDataSource
 extension ToduckCalendarViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        30
+        return viewModel.scheduleList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -9,6 +9,7 @@ final class ToduckCalendarViewModel {
     }
     
     enum Output {
+        case fetchedScheduleList
         case failure(error: String)
     }
     
@@ -40,6 +41,7 @@ final class ToduckCalendarViewModel {
         do {
             let scheduleList = try await fetchScheduleListUseCase.execute()
             self.scheduleList = scheduleList
+            output.send(.fetchedScheduleList)
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }
