@@ -10,7 +10,6 @@ import SnapKit
 import TDDesign
 import UIKit
 
-// TODO: FSCalendarCell의 높이에 따라 Label 투명도 조절
 // FIXME: 실 기기에서 빌드할 경우 캘린더 깨짐 현상 발생
 final class ToduckCalendarViewController: BaseViewController<BaseView> {
     // MARK: Nested Types
@@ -26,7 +25,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private let selectedDayScheduleView = SelectedDayScheduleView()
     
     // MARK: - Properties
-    private let viewModel = ToduckCalendarViewModel()
+    private let viewModel: ToduckCalendarViewModel!
     private var calendarHeightConstraint: Constraint?
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
@@ -36,12 +35,15 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
+    weak var coordinator: ToduckCalendarCoordinator?
     
-    override init() {
+    init(viewModel: ToduckCalendarViewModel) {
+        self.viewModel = viewModel
         super.init()
     }
     
     required init?(coder: NSCoder) {
+        viewModel = nil
         super.init(coder: coder)
     }
     
@@ -329,18 +331,16 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             for: indexPath
         ) as? ScheduleDetailCell else { return UITableViewCell() }
         
-        let dummyData = viewModel.dummyData[indexPath.row]
-        let dummyImage = indexPath.row % 2 == 0 ? TDImage.Profile.medium : nil
-        let dummyText = indexPath.row % 3 == 0 ? nil : dummyData.date
+        let dummyData = viewModel.scheduleList[indexPath.row]
         cell.configureCell(
             title: dummyData.title,
-            time: dummyText,
-            category: dummyImage,
-            isFinished: dummyData.isFinished,
-            location: dummyData.location
+            time: nil,
+            category: nil,
+            isFinish: dummyData.isFinish,
+            place: dummyData.place
         )
         cell.configureButtonAction {
-            print("체크박스 클릭")
+            print("체크박스 클릭") // input.send
         }
         
         return cell
