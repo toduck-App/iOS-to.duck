@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: 일정 하나 상세 불러오기
-public protocol ScheduleRepositoryProtocol {
+public protocol ScheduleRepository {
     func fetchSchedule() async throws -> Schedule
     func fetchScheduleList() async throws -> [Schedule]
     func updateSchedule(scheduleId: Int) async throws -> Bool

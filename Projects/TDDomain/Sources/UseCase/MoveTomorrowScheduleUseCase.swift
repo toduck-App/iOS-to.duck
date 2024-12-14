@@ -8,9 +8,9 @@
 import Foundation
 
 public final class MoveTomorrowScheduleUseCase {
-    private let scheduleRepository: ScheduleRepositoryProtocol
+    private let scheduleRepository: ScheduleRepository
     
-    public init(scheduleRepository: ScheduleRepositoryProtocol) {
+    public init(scheduleRepository: ScheduleRepository) {
         self.scheduleRepository = scheduleRepository
     }
     

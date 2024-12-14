@@ -8,7 +8,7 @@
 import TDDomain
 import Foundation
 
-public final class ScheduleRepository: ScheduleRepositoryProtocol {
+public final class ScheduleRepositoryImpl: ScheduleRepository {
     public init() { }
     
     public func fetchSchedule() async throws -> Schedule {
