@@ -15,15 +15,19 @@ class HomeViewController: UIViewController {
     let todoViewController = ToduckViewController()
     let scheduleViewController = ScheduleViewController()
     let routineViewController = RoutineViewController()
-
+    weak var coordinator: HomeCoordinator?
+    
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = .systemBackground
+        setupNavigationBar(style: .home, navigationDelegate: coordinator!)
         setupSegmentedControl()
         setupViewControllers()
     }
-
+    
+    // MARK: - Setup
     private func setupSegmentedControl() {
         view.addSubview(segmentedControl)
 
