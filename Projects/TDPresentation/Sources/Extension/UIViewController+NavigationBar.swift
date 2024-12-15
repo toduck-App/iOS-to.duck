@@ -45,7 +45,7 @@ extension UIViewController {
             }, for: .touchUpInside)
         case .social:
             // 검색 버튼
-            button.setImage(TDImage.Setting.fillMedium, for: .normal)
+            button.setImage(TDImage.searchMedium, for: .normal)
             button.addAction(UIAction { _ in
                 print("검색 버튼 클릭")
             }, for: .touchUpInside)
