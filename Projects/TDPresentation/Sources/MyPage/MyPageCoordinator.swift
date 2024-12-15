@@ -24,6 +24,24 @@ final class MyPageCoordinator: Coordinator {
 
     func start() {
         let myPageViewController = MyPageViewController()
+        myPageViewController.coordinator = self
         navigationController.pushViewController(myPageViewController, animated: false)
+    }
+}
+
+// MARK: - Coordinator Finish Delegate
+extension MyPageCoordinator: CoordinatorFinishDelegate {
+    func didFinish(childCoordinator: Coordinator) {
+        childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+// MARK: - Navigation Delegate
+extension MyPageCoordinator: NavigationDelegate {
+    func didTapCalendarButton() {
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        toduckCalendarCoordinator.finishDelegate = self
+        childCoordinators.append(toduckCalendarCoordinator)
+        toduckCalendarCoordinator.start()
     }
 }
