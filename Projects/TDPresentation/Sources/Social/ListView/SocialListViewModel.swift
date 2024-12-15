@@ -11,6 +11,7 @@ final class SocialListViewModel: BaseViewModel {
         case sortPost(by: SocialSortType)
         case chipSelect(at: Int)
         case segmentSelect(at: Int)
+        case blockUser(to: User)
     }
 
     enum Output {
@@ -29,14 +30,18 @@ final class SocialListViewModel: BaseViewModel {
     private var currentSort: SocialSortType = .recent
     private let fetchPostUseCase: FetchPostUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
+    private let blockUserUseCase: BlockUserUseCase
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: Initializer
+
     init(fetchPostUseCase: FetchPostUseCase,
-         togglePostLikeUseCase: TogglePostLikeUseCase
-    ) {
+         togglePostLikeUseCase: TogglePostLikeUseCase,
+         blockUserUseCase: BlockUserUseCase)
+    {
         self.fetchPostUseCase = fetchPostUseCase
         self.togglePostLikeUseCase = togglePostLikeUseCase
+        self.blockUserUseCase = blockUserUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -53,6 +58,8 @@ final class SocialListViewModel: BaseViewModel {
             case .segmentSelect(let index):
                 self?.currentSegment = index
                 self?.fetchPosts()
+            case .blockUser(let user):
+                self?.blockUser(to: user)
             }
         }.store(in: &cancellables)
         
@@ -105,5 +112,16 @@ extension SocialListViewModel {
     private func selectChips(at index: Int) {
         currentCategory = PostCategory(rawValue: chips[index].title)
         fetchPosts()
+    }
+    
+    private func blockUser(to user: User) {
+        Task {
+            do {
+                let result = try await blockUserUseCase.execute(user: user)
+                // TODO: ALERT OUTPUT 필요
+            } catch {
+                output.send(.failure("사용자 차단에 실패했습니다."))
+            }
+        }
     }
 }

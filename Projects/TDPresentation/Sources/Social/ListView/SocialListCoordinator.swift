@@ -25,9 +25,11 @@ final class SocialListCoordinator: Coordinator {
     func start() {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
+        let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
         let socialViewModel = SocialListViewModel(
             fetchPostUseCase: fetchPostUseCase,
-            togglePostLikeUseCase: togglePostLikeUseCase
+            togglePostLikeUseCase: togglePostLikeUseCase,
+            blockUserUseCase: blockUserUseCase
         )
         let socialViewController = SocialListViewController(viewModel: socialViewModel)
         socialViewController.coordinator = self

@@ -90,6 +90,18 @@ extension SocialListViewController: UICollectionViewDelegate {
 // MARK: Input
 
 extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
+    func didTapBlock(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        let controller = SocialBlockViewController()
+        controller.onBlock = { [weak self] in
+            guard let user = self?.viewModel.posts[indexPath.item].user else { return }
+            self?.input.send(.blockUser(to: user))
+        }
+        presentPopup(with: controller)
+    }
+    
     func didTapReport(_ cell: SocialFeedCollectionViewCell) {
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return

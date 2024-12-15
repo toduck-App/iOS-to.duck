@@ -10,6 +10,7 @@ protocol SocialFeedCollectionViewCellDelegate: AnyObject {
     func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
     func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
     func didTapReport(_ cell: SocialFeedCollectionViewCell)
+    func didTapBlock(_ cell: SocialFeedCollectionViewCell)
 }
 
 final class SocialFeedCollectionViewCell: UICollectionViewCell {
@@ -181,7 +182,7 @@ extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineV
     }
 
     func didTapBlock(_ view: UIView) {
-        print("didTapBlock")
+        socialFeedCellDelegate?.didTapBlock(self)
     }
 
     func didTapRoutine(_ view: SocialRoutineView) {

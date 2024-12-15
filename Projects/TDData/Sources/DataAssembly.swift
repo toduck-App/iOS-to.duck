@@ -23,5 +23,10 @@ public struct DataAssembly: Assembly {
         container.register(ScheduleRepository.self) { _ in
             return ScheduleRepositoryImpl()
         }
+            
+        container.register(UserRepository.self) { _ in
+            return UserRepositoryImpl()
+        }
     }
+        
 }

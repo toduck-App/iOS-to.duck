@@ -8,9 +8,9 @@
 import Foundation
 
 public final class FetchUserShareUrlUseCase {
-    private let repostiory: UserRepositoryProtocol
+    private let repostiory: UserRepository
 
-    public init(repostiory: UserRepositoryProtocol) {
+    public init(repostiory: UserRepository) {
         self.repostiory = repostiory
     }
 
