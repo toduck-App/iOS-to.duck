@@ -24,6 +24,24 @@ final class DiaryCoordinator: Coordinator {
 
     func start() {
         let diaryViewController = DiaryViewController()
+        diaryViewController.coordinator = self
         navigationController.pushViewController(diaryViewController, animated: false)
+    }
+}
+
+// MARK: - Coordinator Finish Delegate
+extension DiaryCoordinator: CoordinatorFinishDelegate {
+    func didFinish(childCoordinator: Coordinator) {
+        childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+// MARK: - Navigation Delegate
+extension DiaryCoordinator: NavigationDelegate {
+    func didTapCalendarButton() {
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        toduckCalendarCoordinator.finishDelegate = self
+        childCoordinators.append(toduckCalendarCoordinator)
+        toduckCalendarCoordinator.start()
     }
 }
