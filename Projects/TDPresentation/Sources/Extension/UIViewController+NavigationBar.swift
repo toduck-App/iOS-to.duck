@@ -31,7 +31,7 @@ extension UIViewController {
         let button = UIButton(type: .custom)
         
         switch style {
-        case .home, .diary, .info:
+        case .home, .diary, .mypage:
             // 알림 버튼
             button.setImage(TDImage.Bell.topOffMedium, for: .normal)
             button.addAction(UIAction { _ in
