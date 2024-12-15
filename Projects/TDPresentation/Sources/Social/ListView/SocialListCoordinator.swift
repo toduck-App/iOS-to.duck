@@ -64,7 +64,6 @@ extension SocialListCoordinator: SocialListDelegate {
         childCoordinators.append(socialReportCoordinator)
         socialReportCoordinator.start()
     }
-
     func didTapPost(id: Post.ID) {
         let socialDetailCoordinator = SocialDetailCoordinator(
             navigationController: navigationController,
