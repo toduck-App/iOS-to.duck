@@ -18,6 +18,7 @@ public enum TDImage {
     public static let clockMedium = TDDesignAsset.Images.clockMedium.image
     public static let filterMedium = TDDesignAsset.Images.filterMedium.image
     public static let goodMedium = TDDesignAsset.Images.goodMedium.image
+    public static let searchMedium = TDDesignAsset.Images.searchMedium.image
     public static let hamburgerMedium = TDDesignAsset.Images.hamburgerMedium.image
     public static let imageMedium = TDDesignAsset.Images.imageMedium.image
     public static let listMedium = TDDesignAsset.Images.listMedium.image
