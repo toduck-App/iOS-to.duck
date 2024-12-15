@@ -106,7 +106,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 case .fetchedScheduleList:
                     self?.selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
-                    print(errorMessage)
+                    self?.showErrorAlert(with: errorMessage)
                 }
             }.store(in: &cancellables)
     }
