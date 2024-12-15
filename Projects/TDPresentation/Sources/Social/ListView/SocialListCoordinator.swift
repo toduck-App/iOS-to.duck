@@ -10,12 +10,14 @@ final class SocialListCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
-    var injector: DependencyResolvable = DIContainer.shared
+    var injector: DependencyResolvable
 
     init(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        injector: DependencyResolvable
     ) {
         self.navigationController = navigationController
+        self.injector = injector
     }
 
     func start() {

@@ -36,23 +36,24 @@ final class TabBarCoordinator: Coordinator {
         return navigationController
     }
 
+    private func configureCoordinator(for item: TabbarItem, navigationController: UINavigationController) {
+        let injector = DIContainer.shared
+        let coordinator: Coordinator
+
         switch item {
         case .home:
-            let coordinator = HomeCoordinator(navigationController: navigationController)
-            addCoordinator(coordinator: coordinator)
+            coordinator = HomeCoordinator(navigationController: navigationController, injector: injector)
         case .timer:
-            let coordinator = TimerCoordinator(navigationController: navigationController)
-            addCoordinator(coordinator: coordinator)
+            coordinator = TimerCoordinator(navigationController: navigationController, injector: injector)
         case .diary:
-            let coordinator = DiaryCoordinator(navigationController: navigationController)
-            addCoordinator(coordinator: coordinator)
+            coordinator = DiaryCoordinator(navigationController: navigationController, injector: injector)
         case .social:
-            let coordinator = SocialListCoordinator(navigationController: navigationController)
-            addCoordinator(coordinator: coordinator)
+            coordinator = SocialListCoordinator(navigationController: navigationController, injector: injector)
         case .mypage:
-            let coordinator = MyPageCoordinator(navigationController: navigationController)
-            addCoordinator(coordinator: coordinator)
+            coordinator = MyPageCoordinator(navigationController: navigationController, injector: injector)
         }
+
+        addCoordinator(coordinator)
     }
 
     private func addCoordinator(_ coordinator: Coordinator) {

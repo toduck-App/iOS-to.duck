@@ -6,14 +6,20 @@
 //
 
 import UIKit
+import TDCore
 
 final class MyPageCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
+    var injector: DependencyResolvable
 
-    init(navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController,
+        injector: DependencyResolvable
+    ) {
         self.navigationController = navigationController
+        self.injector = injector
     }
 
     func start() {
