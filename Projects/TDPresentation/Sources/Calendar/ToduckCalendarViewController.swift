@@ -9,8 +9,8 @@ import FSCalendar
 import SnapKit
 import TDDesign
 import UIKit
+import Combine
 
-// TODO: FSCalendarCell의 높이에 따라 Label 투명도 조절
 // FIXME: 실 기기에서 빌드할 경우 캘린더 깨짐 현상 발생
 final class ToduckCalendarViewController: BaseViewController<BaseView> {
     // MARK: Nested Types
@@ -26,7 +26,9 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private let selectedDayScheduleView = SelectedDayScheduleView()
     
     // MARK: - Properties
-    private let viewModel = ToduckCalendarViewModel()
+    private let viewModel: ToduckCalendarViewModel!
+    private let input = PassthroughSubject<ToduckCalendarViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     private var calendarHeightConstraint: Constraint?
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
@@ -36,12 +38,15 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
+    weak var coordinator: ToduckCalendarCoordinator?
     
-    override init() {
+    init(viewModel: ToduckCalendarViewModel) {
+        self.viewModel = viewModel
         super.init()
     }
     
     required init?(coder: NSCoder) {
+        viewModel = nil
         super.init(coder: coder)
     }
     
@@ -51,6 +56,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         view.backgroundColor = .white
         
         setup()
+        binding()
+        input.send(.fetchScheduleList)
         addSubviews()
         setupCalendar()
         setupConstraints()
@@ -87,6 +94,21 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         selectedDayScheduleView.scheduleTableView.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedScheduleList:
+                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                case .failure(let errorMessage):
+                    print(errorMessage)
+                }
+            }.store(in: &cancellables)
     }
     
     private func addSubviews() {
@@ -307,11 +329,10 @@ extension ToduckCalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: nil,
-            handler: { _, _, _ in
-                // TODO: 삭제 액션
-            }
-        )
+            title: nil
+        ) { _, _, _ in
+            
+        }
         deleteAction.image = TDImage.trashWhiteMedium
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
@@ -321,7 +342,7 @@ extension ToduckCalendarViewController: UITableViewDelegate {
 // MARK: - UITableViewDataSource
 extension ToduckCalendarViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        30
+        return viewModel.scheduleList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -330,15 +351,17 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             for: indexPath
         ) as? ScheduleDetailCell else { return UITableViewCell() }
         
-        let dummyData = viewModel.dummyData[indexPath.row]
-        let dummyImage = indexPath.row % 2 == 0 ? TDImage.Profile.medium : nil
-        let dummyText = indexPath.row % 3 == 0 ? nil : dummyData.date
-        cell.configure(
+        let dummyData = viewModel.scheduleList[indexPath.row]
+        cell.configureCell(
             title: dummyData.title,
-            time: dummyText,
-            category: dummyImage,
-            isFinish: dummyData.isFinished
+            time: nil,
+            category: nil,
+            isFinish: dummyData.isFinish,
+            place: dummyData.place
         )
+        cell.configureButtonAction {
+            print("체크박스 클릭") // input.send
+        }
         
         return cell
     }

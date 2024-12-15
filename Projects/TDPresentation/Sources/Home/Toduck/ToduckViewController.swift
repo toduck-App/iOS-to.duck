@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Then
+import TDCore
+import TDDomain
 
 final class ToduckViewController: UIViewController {
     override func viewDidLoad() {
@@ -31,7 +33,9 @@ final class ToduckViewController: UIViewController {
     }
     
     @objc private func didTapButton() {
-        let calendarViewController = ToduckCalendarViewController()
+        let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+        let viewModel = ToduckCalendarViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
+        let calendarViewController = ToduckCalendarViewController(viewModel: viewModel)
         navigationController?.pushViewController(calendarViewController, animated: true)
     }
 }
