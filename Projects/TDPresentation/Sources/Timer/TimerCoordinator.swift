@@ -10,7 +10,7 @@ import TDCore
 
 final class TimerCoordinator: Coordinator {
     var navigationController: UINavigationController
-    var childCoordinators = [any Coordinator]()
+    var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
 

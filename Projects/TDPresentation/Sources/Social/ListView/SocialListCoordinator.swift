@@ -8,7 +8,7 @@ protocol SocialListDelegate: AnyObject {
 
 final class SocialListCoordinator: Coordinator {
     var navigationController: UINavigationController
-    var childCoordinators = [any Coordinator]()
+    var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
 
@@ -34,7 +34,7 @@ final class SocialListCoordinator: Coordinator {
 }
 
 extension SocialListCoordinator: CoordinatorFinishDelegate {
-    func didFinish(childCoordinator: any Coordinator) {
+    func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }

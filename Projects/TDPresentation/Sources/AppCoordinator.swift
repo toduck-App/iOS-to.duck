@@ -10,7 +10,7 @@ import TDCore
 
 public final class AppCoordinator: Coordinator {
     public var navigationController: UINavigationController
-    public var childCoordinators: [any Coordinator] = []
+    public var childCoordinators: [Coordinator] = []
     public var finishDelegate: CoordinatorFinishDelegate?
     public var injector: DependencyResolvable
     

@@ -4,7 +4,7 @@ import TDCore
 final class TabBarCoordinator: Coordinator {
     // MARK: - Properties
     var navigationController: UINavigationController
-    var childCoordinators: [any Coordinator] = []
+    var childCoordinators: [Coordinator] = []
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
 
@@ -69,7 +69,7 @@ final class TabBarCoordinator: Coordinator {
 
 // MARK: - CoordinatorFinishDelegate
 extension TabBarCoordinator: CoordinatorFinishDelegate {
-    func didFinish(childCoordinator: any Coordinator) {
+    func didFinish(childCoordinator: Coordinator) {
         if let index = childCoordinators.firstIndex(where: { $0 === childCoordinator }) {
             childCoordinators.remove(at: index)
         }
