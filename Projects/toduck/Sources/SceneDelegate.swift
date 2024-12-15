@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
-    func assembleDependencies() {
+    private func assembleDependencies() {
         DIContainer.shared.assemble([DataAssembly(), DomainAssembly()])
     }
 }
