@@ -1,5 +1,5 @@
-import UIKit
 import SnapKit
+import UIKit
 
 public final class TDCheckbox: UIButton {
     private var backgroundTocukColor: UIColor
@@ -33,7 +33,6 @@ public final class TDCheckbox: UIButton {
                 backgroundColor = backgroundTocukColor
                 tintColor = foregroundTocukColor
 
-
                 setImage(TDImage.checkMedium, for: .normal)
             } else {
                 layer.borderColor = TDColor.Neutral.neutral400.cgColor
@@ -47,7 +46,6 @@ public final class TDCheckbox: UIButton {
         imageView?.tintColor = foregroundTocukColor
 
         addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
-        isSelected = false
 
         layer.borderColor = TDColor.Neutral.neutral400.cgColor
         backgroundColor = .white

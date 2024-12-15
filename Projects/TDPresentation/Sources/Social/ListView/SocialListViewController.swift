@@ -3,7 +3,7 @@ import TDDesign
 import TDDomain
 import UIKit
 
-final class SocialListViewController: BaseViewController<SocialListView> {
+final class SocialListViewController: BaseViewController<SocialListView>, TDPopupPresentable {
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
     private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
@@ -90,16 +90,19 @@ extension SocialListViewController: UICollectionViewDelegate {
 // MARK: Input
 
 extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
+    func didTapReport(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        coordinator?.didTapReport(id: viewModel.posts[indexPath.item].id)
+    }
+    
     func didTapRoutineView(_ cell: SocialFeedCollectionViewCell) {
         // TODO: Routine 공유 View
     }
     
     func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
         // TODO: 프로필 view로 이동
-    }
-    
-    func didTapMoreButton(_ cell: SocialFeedCollectionViewCell) {
-        // TODO: 신고하기/차단하기 && 내꺼라면 삭제하기
     }
     
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {

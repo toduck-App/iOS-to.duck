@@ -25,6 +25,7 @@ public enum TDImage {
     public static let locationMedium = TDDesignAsset.Images.locationMedium.image
     public static let penMedium = TDDesignAsset.Images.penMedium.image
     public static let reportMedium = TDDesignAsset.Images.reportMedium.image
+    public static let reportFillMedium = TDDesignAsset.Images.reportFillMedium.image
     public static let shareMedium = TDDesignAsset.Images.shareMedium.image
     public static let sortMedium = TDDesignAsset.Images.sortMedium.image
     public static let trashMedium = TDDesignAsset.Images.trashMedium.image

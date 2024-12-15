@@ -155,10 +155,6 @@ extension SocialListView {
     
     func showErrorView() {}
     
-    func hideDropdown() {
-        dropDownHoverView.hideDropDown()
-    }
-    
     func updateLayoutForSegmentedControl(index: Int) {
         chipCollectionView.isHidden = false
         let animationIndex = index
