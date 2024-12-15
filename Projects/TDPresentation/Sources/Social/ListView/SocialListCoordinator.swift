@@ -39,6 +39,7 @@ final class SocialListCoordinator: Coordinator {
 }
 
 // MARK: - Coordinator Finish Delegate
+
 extension SocialListCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
@@ -46,6 +47,7 @@ extension SocialListCoordinator: CoordinatorFinishDelegate {
 }
 
 // MARK: - Social List Delegate
+
 extension SocialListCoordinator: SocialListDelegate {
     func didTapUserProfile(id: User.ID) {
         let socialProfileViewCoordinator = SocialProfileCoordinator(
@@ -55,7 +57,7 @@ extension SocialListCoordinator: SocialListDelegate {
         childCoordinators.append(socialProfileViewCoordinator)
         socialProfileViewCoordinator.start()
     }
-    
+
     func didTapReport(id: Post.ID) {
         let socialReportCoordinator = SocialReportCoordinator(
             navigationController: navigationController,
@@ -64,7 +66,7 @@ extension SocialListCoordinator: SocialListDelegate {
         childCoordinators.append(socialReportCoordinator)
         socialReportCoordinator.start()
     }
-    
+
     func didTapPost(id: Post.ID) {
         let socialDetailCoordinator = SocialDetailCoordinator(
             navigationController: navigationController,
@@ -79,13 +81,13 @@ extension SocialListCoordinator: SocialListDelegate {
         let createCoordinator = SocialCreateCoordinator(
             navigationController: navigationController
         )
-        createCoordinator.finishDelegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
     }
 }
 
 // MARK: - Navigation Delegate
+
 extension SocialListCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
         let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
