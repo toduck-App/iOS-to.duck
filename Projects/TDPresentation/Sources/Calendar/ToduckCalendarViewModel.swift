@@ -1,45 +1,49 @@
+import Combine
 import Foundation
 
-struct MockScheduleData {
-    let title: String
-    let date: String
-    let isFinished: Bool
-}
+import TDDomain
 
 final class ToduckCalendarViewModel {
-    let dummyData = [
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "토익 공부", date: "16:20", isFinished: true),
-        MockScheduleData(title: "운동하기", date: "18:00", isFinished: false),
-        MockScheduleData(title: "책 읽기", date: "20:00", isFinished: false),
-        MockScheduleData(title: "영화 보기", date: "22:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "토익 공부", date: "16:20", isFinished: true),
-        MockScheduleData(title: "운동하기", date: "18:00", isFinished: false),
-        MockScheduleData(title: "책 읽기", date: "20:00", isFinished: false),
-        MockScheduleData(title: "영화 보기", date: "22:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "토익 공부", date: "16:20", isFinished: true),
-        MockScheduleData(title: "운동하기", date: "18:00", isFinished: false),
-        MockScheduleData(title: "책 읽기", date: "20:00", isFinished: false),
-        MockScheduleData(title: "영화 보기", date: "22:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "토익 공부", date: "16:20", isFinished: true),
-        MockScheduleData(title: "운동하기", date: "18:00", isFinished: false),
-        MockScheduleData(title: "책 읽기", date: "20:00", isFinished: false),
-        MockScheduleData(title: "영화 보기", date: "22:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "토익 공부", date: "16:20", isFinished: true),
-        MockScheduleData(title: "운동하기", date: "18:00", isFinished: false),
-        MockScheduleData(title: "책 읽기", date: "20:00", isFinished: false),
-        MockScheduleData(title: "영화 보기", date: "22:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-        MockScheduleData(title: "토익 공부", date: "16:20", isFinished: true),
-        MockScheduleData(title: "운동하기", date: "18:00", isFinished: false),
-        MockScheduleData(title: "책 읽기", date: "20:00", isFinished: false),
-        MockScheduleData(title: "영화 보기", date: "22:00", isFinished: false),
-        MockScheduleData(title: "캐릭터 디자인 작업", date: "14:00", isFinished: false),
-    ]
+    enum Input {
+        case fetchScheduleList
+    }
+    
+    enum Output {
+        case fetchedScheduleList
+        case failure(error: String)
+    }
+    
+    // MARK: - Properties
+    private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let output = PassthroughSubject<Output, Never>()
+    private(set) var scheduleList: [Schedule] = []
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(
+        fetchScheduleListUseCase: FetchScheduleListUseCase
+    ) {
+        self.fetchScheduleListUseCase = fetchScheduleListUseCase
+    }
+    
+    
+    func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
+        input.sink { [weak self] event in
+            switch event {
+            case .fetchScheduleList:
+                Task { await self?.fetchScheduleList() }
+            }
+        }.store(in: &cancellables)
+        
+        return output.eraseToAnyPublisher()
+    }
+    
+    private func fetchScheduleList() async {
+        do {
+            let scheduleList = try await fetchScheduleListUseCase.execute()
+            self.scheduleList = scheduleList
+            output.send(.fetchedScheduleList)
+        } catch {
+            output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
+        }
+    }
 }

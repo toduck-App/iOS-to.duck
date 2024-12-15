@@ -29,20 +29,37 @@ public final class ScheduleDetailCell: UITableViewCell {
         $0.alignment = .leading
         $0.spacing = 4
     }
+    private let locationImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.image = TDImage.locationMedium
+    }
+    private let placeLabel = TDLabel(
+        toduckFont: TDFont.regularBody2,
+        alignment: .left,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    private let placeHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .leading
+        $0.spacing = 4
+    }
     private let scheduleVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .leading
         $0.spacing = 4
     }
-    private let checkBoxImageView = UIImageView().then {
+    private let checkBoxButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.CheckBox.empty
+        $0.setImage(TDImage.CheckBox.empty, for: .normal)
     }
     private let containerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 10
         $0.alignment = .center
     }
+    
+    // MARK: - Properties
+    private var isFinish: Bool = false
     
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -65,19 +82,43 @@ public final class ScheduleDetailCell: UITableViewCell {
         categoryImageView.image = nil
         titleLabel.text = nil
         timeLabel.text = nil
-        checkBoxImageView.image = nil
+        placeLabel.text = nil
     }
     
     // MARK: - Setup & Configuration
-    public func configure(title: String, time: String?, category: UIImage?, isFinish: Bool) {
+    // MARK: - Configuration
+    public func configureCell(
+        title: String,
+        time: String?,
+        category: UIImage?,
+        isFinish: Bool,
+        place: String?
+    ) {
+        self.isFinish = isFinish
         titleLabel.text = title
-        categoryImageView.image = category != nil ? category : nil
-        categoryImageView.isHidden = category == nil
-
-        timeLabel.text = time != nil ? time : nil
-        timeDetailHorizontalStackView.isHidden = time == nil
+        categoryImageView.image = category
+        categoryImageView.isHidden = (category == nil)
         
-        checkBoxImageView.image = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+        timeLabel.text = time
+        timeDetailHorizontalStackView.isHidden = (time == nil)
+        placeLabel.text = place
+        placeHorizontalStackView.isHidden = (place == nil)
+        
+        changeCheckBoxButtonImage(isFinish: isFinish)
+    }
+
+    public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
+        checkBoxButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            checkBoxAction()
+            self.isFinish.toggle()
+            self.changeCheckBoxButtonImage(isFinish: self.isFinish)
+        }, for: .touchUpInside)
+    }
+
+    private func changeCheckBoxButtonImage(isFinish: Bool) {
+        let checkBoxImage = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+        checkBoxButton.setImage(checkBoxImage, for: .normal)
     }
     
     private func setup() {
@@ -91,10 +132,14 @@ public final class ScheduleDetailCell: UITableViewCell {
         
         scheduleVerticalStackView.addArrangedSubview(titleLabel)
         scheduleVerticalStackView.addArrangedSubview(timeDetailHorizontalStackView)
+        scheduleVerticalStackView.addArrangedSubview(placeHorizontalStackView)
         
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
-        contentView.addSubview(checkBoxImageView)
+        contentView.addSubview(checkBoxButton)
+        
+        placeHorizontalStackView.addArrangedSubview(locationImageView)
+        placeHorizontalStackView.addArrangedSubview(placeLabel)
     }
     
     private func setupLayout() {
@@ -108,7 +153,7 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.top.bottom.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(scheduleIdentyColorView.snp.trailing).offset(16)
-            $0.trailing.equalTo(checkBoxImageView.snp.leading).offset(-16)
+            $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
         }
         
         categoryImageView.snp.makeConstraints {
@@ -119,10 +164,18 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.centerY.equalTo(containerHorizontalStackView.snp.centerY)
         }
         
-        checkBoxImageView.snp.makeConstraints {
+        checkBoxButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(22)
+        }
+        
+        timeLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+        }
+        
+        placeLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
         }
     }
 }
