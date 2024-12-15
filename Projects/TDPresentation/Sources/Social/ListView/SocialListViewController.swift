@@ -114,7 +114,11 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
     }
     
     func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
-        // TODO: 프로필 view로 이동
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        let user = viewModel.posts[indexPath.item].user
+        coordinator?.didTapUserProfile(id: user.id)
     }
     
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {

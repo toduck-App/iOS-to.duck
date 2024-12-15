@@ -2,30 +2,27 @@ import Foundation
 import TDDomain
 
 public final class UserRepositoryImpl: UserRepository {
-    private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
+    private let dummyUserDetail = UserDetail(
+        isFollowing: false,
+        followingCount: 12,
+        followerCount: 261,
+        totalPostCount: 1,
+        whofollow: [],
+        routineShareCount: 1
+    )
 
     public init() {}
 
-    public func fetchUser(userId: Int) async throws -> User? {
-        dummyUser
+    public func fetchUser(userId: Int) async throws -> User {
+        User.dummy.filter { $0.id == userId }.first!
     }
 
     public func fetchUserDetail(userId: Int) async throws -> UserDetail {
-        UserDetail(
-            isFollowing: false,
-            follwingCount: 0,
-            followerCount: 0,
-            totalPostNReply: 0,
-            profileURL: "String",
-            whofollow: [],
-            routines: [],
-            routineShareCount: 0,
-            posts: []
-        )
+        dummyUserDetail
     }
 
     public func fetchUserPostList(userId: Int) async throws -> [Post]? {
-        []
+        Post.dummy.filter { $0.user.id == userId }
     }
 
     public func fetchUserRoutineList(userId: Int) async throws -> [Routine]? {

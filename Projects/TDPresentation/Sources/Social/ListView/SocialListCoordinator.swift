@@ -6,6 +6,7 @@ protocol SocialListDelegate: AnyObject {
     func didTapPost(id: Post.ID)
     func didTapCreateButton()
     func didTapReport(id: Post.ID)
+    func didTapUserProfile(id: User.ID)
 }
 
 final class SocialListCoordinator: Coordinator {
@@ -46,6 +47,15 @@ extension SocialListCoordinator: CoordinatorFinishDelegate {
 
 // MARK: - Social List Delegate
 extension SocialListCoordinator: SocialListDelegate {
+    func didTapUserProfile(id: User.ID) {
+        let socialProfileViewCoordinator = SocialProfileCoordinator(
+            navigationController: navigationController,
+            id: id
+        )
+        childCoordinators.append(socialProfileViewCoordinator)
+        socialProfileViewCoordinator.start()
+    }
+    
     func didTapReport(id: Post.ID) {
         let socialReportCoordinator = SocialReportCoordinator(
             navigationController: navigationController,

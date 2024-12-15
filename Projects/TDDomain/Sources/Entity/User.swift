@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct User {
+public struct User: Identifiable {
     public let id: Int
     public let name: String
     public let icon: String?
@@ -31,36 +31,35 @@ public struct User {
 
 public struct UserDetail {
     public let isFollowing: Bool
-    public let follwingCount: Int
+    public let followingCount: Int
     public let followerCount: Int
-    
-    public let totalPostNReply: Int
-    public let profileURL: String
-
+    public let totalPostCount: Int
     public let whofollow: [String]?
-    public let routines: [Routine]?
     public let routineShareCount: Int
-    public let posts: [Post]?
     
     public init(
         isFollowing: Bool,
-        follwingCount: Int,
+        followingCount: Int,
         followerCount: Int,
-        totalPostNReply: Int,
-        profileURL: String,
+        totalPostCount: Int,
         whofollow: [String]? = nil,
-        routines: [Routine]? = nil,
-        routineShareCount: Int,
-        posts: [Post]? = nil
+        routineShareCount: Int
     ) {
         self.isFollowing = isFollowing
-        self.follwingCount = follwingCount
+        self.followingCount = followingCount
         self.followerCount = followerCount
-        self.totalPostNReply = totalPostNReply
-        self.profileURL = profileURL
+        self.totalPostCount = totalPostCount
         self.whofollow = whofollow
-        self.routines = routines
         self.routineShareCount = routineShareCount
-        self.posts = posts
     }
+}
+
+public extension User {
+    static let dummy: [User] = [
+        .init(id: 1, name: "오리발", icon: "https://avatars.githubusercontent.com/u/46300191?v=4", title: "작심삼일", isblock: false),
+        .init(id: 2, name: "꽉꽉", icon: "https://avatars.githubusercontent.com/u/129862357?v=4", title: "작심삼일", isblock: false),
+        .init(id: 3, name: "오리궁뎅이", icon: "https://avatars.githubusercontent.com/u/57449485?v=4", title: "작심삼일", isblock: false),
+        .init(id: 76, name: "꽉꽉", icon: nil, title: "작심삼일", isblock: false),
+        .init(id: 33, name: "오리궁뎅이", icon: nil, title: "작심삼일", isblock: false),
+    ]
 }

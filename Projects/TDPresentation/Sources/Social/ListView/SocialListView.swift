@@ -114,7 +114,7 @@ final class SocialListView: BaseView {
     }
     
     override func configure() {
-        backgroundColor = .white
+        backgroundColor = TDColor.baseWhite
         socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
@@ -123,8 +123,6 @@ final class SocialListView: BaseView {
             addSubview($0)
         }
     }
-    
-    override func binding() {}
 }
 
 // MARK: External Method

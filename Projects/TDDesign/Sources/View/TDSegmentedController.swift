@@ -5,16 +5,40 @@
 //  Created by 박효준 on 7/28/24.
 //
 
-import UIKit
 import SnapKit
 import Then
+import UIKit
 
 public final class TDSegmentedController: UISegmentedControl {
+    public var indicatorColor: UIColor = TDColor.Neutral.neutral800 {
+        didSet {
+            underLineView.backgroundColor = indicatorColor
+        }
+    }
+    
+    public var selectedSegmentTextColor: UIColor = TDColor.Neutral.neutral800 {
+        didSet {
+            setSegmentedFont()
+        }
+    }
+    
+    public var normalSegmentTextColor: UIColor = TDColor.Neutral.neutral500 {
+        didSet {
+            setSegmentedFont()
+        }
+    }
+    
+    public var titleFont: UIFont = TDFont.boldHeader5.font {
+        didSet {
+            setSegmentedFont()
+        }
+    }
+    
     private var underLineView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral800
     }
     
-    public override init(items: [Any]?) {
+    override public init(items: [Any]?) {
         super.init(items: items)
         setSegmentedControl()
     }
@@ -35,6 +59,7 @@ public final class TDSegmentedController: UISegmentedControl {
     }
     
     // MARK: 세그먼트 컨트롤 외형 커스터마이징 (투명 설정)
+    
     private func setSegmentedImage() {
         setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
@@ -42,21 +67,23 @@ public final class TDSegmentedController: UISegmentedControl {
     }
     
     // MARK: 폰트 & 색상 설정
+    
     private func setSegmentedFont() {
         let selectedAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: TDColor.Neutral.neutral800,
-            .font: TDFont.boldHeader5.font
+            .foregroundColor: selectedSegmentTextColor,
+            .font: titleFont
         ]
         setTitleTextAttributes(selectedAttributes, for: .selected)
         
         let normalAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: TDColor.Neutral.neutral500,
-            .font: TDFont.boldHeader5.font
+            .foregroundColor: normalSegmentTextColor,
+            .font: titleFont
         ]
         setTitleTextAttributes(normalAttributes, for: .normal)
     }
     
     // MARK: indicatorView 설정
+
     private func layout() {
         underLineView.snp.makeConstraints {
             $0.top.equalTo(self.snp.bottom).offset(-1)

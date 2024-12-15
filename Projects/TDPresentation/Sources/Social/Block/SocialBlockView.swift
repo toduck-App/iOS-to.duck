@@ -17,7 +17,7 @@ final class SocialBlockView: BaseView {
     
     private let titleLabel = TDLabel(labelText: "작성자 차단", toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
     
-    private let descriptionLabel = TDLabel(labelText: "차단한 사용자의 글이. 더이상 보이지 않아요.", toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800)
+    private let descriptionLabel = TDLabel(labelText: "차단한 사용자의 글이 더이상 보이지 않아요.", toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800)
     
     private(set) var cancelButton = TDBaseButton(
         title: "취소",
