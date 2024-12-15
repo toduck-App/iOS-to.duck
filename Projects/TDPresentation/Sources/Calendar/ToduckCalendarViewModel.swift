@@ -3,7 +3,7 @@ import Foundation
 
 import TDDomain
 
-final class ToduckCalendarViewModel {
+final class ToduckCalendarViewModel: BaseViewModel {
     enum Input {
         case fetchScheduleList
     }
@@ -24,7 +24,6 @@ final class ToduckCalendarViewModel {
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
     }
-    
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
