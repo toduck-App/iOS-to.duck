@@ -6,6 +6,7 @@ import UIKit
 final class SocialListViewController: BaseViewController<SocialListView> {
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
+    private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     
@@ -21,7 +22,8 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.action(.fetchPosts)
+        
+        input.send(.fetchPosts)
         setupNavigationBar(style: .social, navigationDelegate: coordinator!)
     }
     
@@ -36,62 +38,30 @@ final class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.segmentedControl.addTarget(self, action: #selector(didTapSegmentedControl), for: .valueChanged)
     }
     
-    override func addView() {
-        
-    }
-    
-    override func layout() {
-        
-    }
-    
     override func binding() {
-        viewModel.fetchState.sink { [weak self] state in
-            switch state {
-            case .loading:
-                self?.layoutView.showLoadingView()
-            case .finish(let posts):
-                DispatchQueue.main.async {
-                    self?.applySnapshot(posts)
-                }
-                self?.layoutView.showFinishView()
-            case .empty:
-                self?.layoutView.showEmptyView()
-            case .error:
-                self?.layoutView.showErrorView()
-            }
-        }.store(in: &cancellables)
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
         
-        viewModel.refreshState.sink { [weak self] state in
-            switch state {
-            case .finish(let posts):
-                DispatchQueue.main.async {
-                    self?.applySnapshot(posts)
-                    self?.layoutView.showEndRefreshControl()
-                }
-            case .empty:
-                self?.layoutView.showEmptyView()
-            case .error:
-                self?.layoutView.showErrorView()
-            }
-        }.store(in: &cancellables)
-        
-        viewModel.likeState.sink { [weak self] state in
-            switch state {
-            case .finish(let post):
-                DispatchQueue.main.async {
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] output in
+                switch output {
+                case .fetchPosts:
+                    self?.layoutView.showFinishView()
+                    self?.applySnapshot(self?.viewModel.posts ?? [])
+                case .likePost(let post):
                     self?.updateSnapshot(post)
+                case .failure(let message):
+                    // TODO: Error Alert
+                    self?.layoutView.showErrorView()
                 }
-            case .error:
-                self?.layoutView.showErrorView()
-            }
-        }.store(in: &cancellables)
+            }.store(in: &cancellables)
     }
 }
 
 
 extension SocialListViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
-        viewModel.action(.chipSelect(at: index))
+        input.send(.chipSelect(at: index))
     }
 }
 
@@ -110,7 +80,7 @@ extension SocialListViewController: UICollectionViewDelegate {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.count
+        return viewModel.posts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -137,22 +107,22 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
-        viewModel.action(.likePost(at: indexPath.item))
+        input.send(.likePost(at: indexPath.item))
     }
     
     @objc func didTapSegmentedControl(sender: UISegmentedControl) {
-        viewModel.action(.segmentSelect(at: sender.selectedSegmentIndex))
+        input.send(.segmentSelect(at: sender.selectedSegmentIndex))
         layoutView.updateLayoutForSegmentedControl(index: sender.selectedSegmentIndex)
     }
     
     @objc func didRefresh() {
-        viewModel.action(.refreshPosts)
+        input.send(.refreshPosts)
     }
     
     func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
         let option = SocialSortType.allCases[indexPath.row]
         layoutView.dropDownAnchorView.setTitle(option.rawValue)
-        viewModel.action(.sortPost(by: option))
+        input.send(.sortPost(by: option))
     }
 }
 
