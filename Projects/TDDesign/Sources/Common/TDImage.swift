@@ -8,6 +8,7 @@
 import Foundation
 
 public enum TDImage {
+    public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
     public static let addMedium = TDDesignAsset.Images.addMedium.image
     public static let alarmMedium = TDDesignAsset.Images.alarmMedium.image
     public static let badMedium = TDDesignAsset.Images.badMedium.image
