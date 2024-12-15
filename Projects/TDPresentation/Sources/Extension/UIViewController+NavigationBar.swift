@@ -28,6 +28,15 @@ extension UIViewController {
         let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
         toduckLogoImageView.contentMode = .scaleAspectFit
         
+        // 집중 화면의 경우 TintColor 수정
+        if style == .timer {
+            calendarButton.setImage(TDImage.Calendar.top2Medium.withRenderingMode(.alwaysTemplate), for: .normal)
+            calendarButton.tintColor = TDColor.Primary.primary300
+
+            toduckLogoImageView.image = TDImage.toduckLogo.withRenderingMode(.alwaysTemplate)
+            toduckLogoImageView.tintColor = TDColor.Primary.primary300
+        }
+
         return [
             UIBarButtonItem(customView: calendarButton),
             UIBarButtonItem(customView: toduckLogoImageView)
@@ -46,8 +55,7 @@ extension UIViewController {
                 TDLogger.debug("알림 버튼 클릭")
             }, for: .touchUpInside)
         case .timer:
-            // 점 버튼
-            button.setImage(TDImage.Dot.vertical2Small, for: .normal)
+            button.setImage(TDImage.Dot.verticalMedium.withRenderingMode(.alwaysTemplate), for: .normal)
             button.addAction(UIAction { _ in
                 // TODO: - 점 기능 추가
                 TDLogger.debug("Dot 버튼 클릭")
