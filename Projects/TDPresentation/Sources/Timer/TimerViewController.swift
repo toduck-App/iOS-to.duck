@@ -1,9 +1,12 @@
 import UIKit
 
 final class TimerViewController: BaseViewController<TimerView> {
-
+    weak var coordinator: TimerCoordinator?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupNavigationBar(style: .timer, navigationDelegate: coordinator!)
         layoutView.button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
     }
     

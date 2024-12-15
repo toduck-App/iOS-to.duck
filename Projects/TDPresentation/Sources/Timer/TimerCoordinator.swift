@@ -24,6 +24,24 @@ final class TimerCoordinator: Coordinator {
 
     func start() {
         let timerViewController = TimerViewController()
+        timerViewController.coordinator = self
         navigationController.pushViewController(timerViewController, animated: false)
+    }
+}
+
+// MARK: - Coordinator Finish Delegate
+extension TimerCoordinator: CoordinatorFinishDelegate {
+    func didFinish(childCoordinator: Coordinator) {
+        childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+// MARK: - Navigation Delegate
+extension TimerCoordinator: NavigationDelegate {
+    func didTapCalendarButton() {
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        toduckCalendarCoordinator.finishDelegate = self
+        childCoordinators.append(toduckCalendarCoordinator)
+        toduckCalendarCoordinator.start()
     }
 }
