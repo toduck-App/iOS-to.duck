@@ -40,6 +40,7 @@ extension SocialListCoordinator: CoordinatorFinishDelegate {
     }
 }
 
+// MARK: - Social List Delegate
 extension SocialListCoordinator: SocialListDelegate {
     func didTapPost(id: Int) {
         let socialDetailCoordinator = SocialDetailCoordinator(
