@@ -6,14 +6,19 @@ final class TabBarCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [any Coordinator] = []
     var finishDelegate: CoordinatorFinishDelegate?
+    var injector: DependencyResolvable
 
     private lazy var tabBarController: MainTabBarController = {
         MainTabBarController(coordinator: self)
     }()
 
     // MARK: - Initializer
-    init(navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController,
+        injector: DependencyResolvable
+    ) {
         self.navigationController = navigationController
+        self.injector = injector
     }
 
     func start() {
@@ -37,7 +42,6 @@ final class TabBarCoordinator: Coordinator {
     }
 
     private func configureCoordinator(for item: TabbarItem, navigationController: UINavigationController) {
-        let injector = DIContainer.shared
         let coordinator: Coordinator
 
         switch item {

@@ -21,7 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         assembleDependencies()
-        appCoordinator = AppCoordinator(navigationController: navigationController)
+        let injector: DependencyResolvable = DIContainer.shared
+        appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
         appCoordinator?.start()
         
         window?.rootViewController = navigationController
