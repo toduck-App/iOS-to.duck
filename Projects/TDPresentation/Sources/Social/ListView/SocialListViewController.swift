@@ -22,6 +22,7 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.action(.fetchPosts)
+        setupNavigationBar(style: .social, navigationDelegate: coordinator!)
     }
     
     override func configure() {

@@ -33,6 +33,7 @@ final class SocialListCoordinator: Coordinator {
     }
 }
 
+// MARK: - Coordinator Finish Delegate
 extension SocialListCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
@@ -48,5 +49,15 @@ extension SocialListCoordinator: SocialListDelegate {
         socialDetailCoordinator.finishDelegate = self
         childCoordinators.append(socialDetailCoordinator)
         socialDetailCoordinator.start()
+    }
+}
+
+// MARK: - Navigation Delegate
+extension SocialListCoordinator: NavigationDelegate {
+    func didTapCalendarButton() {
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        toduckCalendarCoordinator.finishDelegate = self
+        childCoordinators.append(toduckCalendarCoordinator)
+        toduckCalendarCoordinator.start()
     }
 }
