@@ -1,4 +1,5 @@
 import UIKit
+import TDCore
 import TDDesign
 
 extension UIViewController {
@@ -6,24 +7,31 @@ extension UIViewController {
         style: TDNavigationBarStyle,
         navigationDelegate: NavigationDelegate
     ) {
-        // 좌측 캘린더 버튼
+        // 좌측 버튼 설정 (캘린더 + 로고)
+        navigationItem.leftBarButtonItems = createLeftBarButtons(style: style, navigationDelegate: navigationDelegate)
+        
+        // 우측 버튼 설정 (Style에 따라 다름)
+        navigationItem.rightBarButtonItem = createRightBarButton(style: style)
+    }
+    
+    // MARK: - 좌측 네비게이션 바 버튼 생성
+    private func createLeftBarButtons(
+        style: TDNavigationBarStyle,
+        navigationDelegate: NavigationDelegate
+    ) -> [UIBarButtonItem] {
         let calendarButton = UIButton(type: .custom)
         calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
         calendarButton.addAction(UIAction { _ in
             navigationDelegate.didTapCalendarButton()
         }, for: .touchUpInside)
-
-        // 로고 이미지
+        
         let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
         toduckLogoImageView.contentMode = .scaleAspectFit
         
-        navigationItem.leftBarButtonItems = [
+        return [
             UIBarButtonItem(customView: calendarButton),
             UIBarButtonItem(customView: toduckLogoImageView)
         ]
-        
-        // 우측 버튼
-        navigationItem.rightBarButtonItem = createRightBarButton(style: style)
     }
     
     // MARK: - 오른쪽 네비게이션 바 버튼 생성
@@ -32,23 +40,29 @@ extension UIViewController {
         
         switch style {
         case .home, .diary, .mypage:
-            // 알림 버튼
             button.setImage(TDImage.Bell.topOffMedium, for: .normal)
             button.addAction(UIAction { _ in
-                print("알림 버튼 클릭")
+                // TODO: - 알림 기능 추가
+                TDLogger.debug("알림 버튼 클릭")
             }, for: .touchUpInside)
         case .timer:
             // 점 버튼
             button.setImage(TDImage.Dot.vertical2Small, for: .normal)
             button.addAction(UIAction { _ in
-                print("점 버튼 클릭")
+                // TODO: - 점 기능 추가
+                TDLogger.debug("Dot 버튼 클릭")
             }, for: .touchUpInside)
         case .social:
-            // 검색 버튼
             button.setImage(TDImage.searchMedium, for: .normal)
             button.addAction(UIAction { _ in
-                print("검색 버튼 클릭")
+                // TODO: - 검색 기능 추가
+                TDLogger.debug("검색 버튼 클릭")
             }, for: .touchUpInside)
+        }
+        
+        // Timer 스타일일 경우 TintColor 적용
+        if style == .timer {
+            button.tintColor = TDColor.Primary.primary300
         }
         
         return UIBarButtonItem(customView: button)
