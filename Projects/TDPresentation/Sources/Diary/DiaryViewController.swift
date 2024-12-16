@@ -9,10 +9,12 @@ import TDDesign
 import UIKit
 
 class DiaryViewController: UIViewController {
+    weak var coordinator: DiaryCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupNavigationBar(style: .diary, navigationDelegate: coordinator!)
         self.view.backgroundColor = .systemGray
     }
     

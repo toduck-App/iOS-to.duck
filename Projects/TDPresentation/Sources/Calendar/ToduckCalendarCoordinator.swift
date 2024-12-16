@@ -4,7 +4,7 @@ import UIKit
 
 final class ToduckCalendarCoordinator: Coordinator {
     var navigationController: UINavigationController
-    var childCoordinators = [any Coordinator]()
+    var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable = DIContainer.shared
 
@@ -24,7 +24,7 @@ final class ToduckCalendarCoordinator: Coordinator {
 }
 
 extension ToduckCalendarCoordinator: CoordinatorFinishDelegate {
-    func didFinish(childCoordinator: any Coordinator) {
+    func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }

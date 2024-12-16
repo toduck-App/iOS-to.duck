@@ -13,7 +13,7 @@ public protocol CoordinatorFinishDelegate: AnyObject {
 
 public protocol Coordinator: AnyObject {
     var navigationController : UINavigationController { get set }
-    var childCoordinators: [any Coordinator] { get set }
+    var childCoordinators: [Coordinator] { get set }
     var finishDelegate: CoordinatorFinishDelegate? { get set }
     
     func start()

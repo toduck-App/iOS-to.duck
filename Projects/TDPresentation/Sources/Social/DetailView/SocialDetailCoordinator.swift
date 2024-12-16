@@ -4,7 +4,7 @@ import UIKit
 
 final class SocialDetailCoordinator: Coordinator {
     var navigationController: UINavigationController
-    var childCoordinators = [any Coordinator]()
+    var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable = DIContainer.shared
 

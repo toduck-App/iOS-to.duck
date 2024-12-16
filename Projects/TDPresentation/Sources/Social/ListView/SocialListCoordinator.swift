@@ -8,14 +8,16 @@ protocol SocialListDelegate: AnyObject {
 
 final class SocialListCoordinator: Coordinator {
     var navigationController: UINavigationController
-    var childCoordinators = [any Coordinator]()
+    var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
-    var injector: DependencyResolvable = DIContainer.shared
+    var injector: DependencyResolvable
 
     init(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        injector: DependencyResolvable
     ) {
         self.navigationController = navigationController
+        self.injector = injector
     }
 
     func start() {
@@ -31,12 +33,14 @@ final class SocialListCoordinator: Coordinator {
     }
 }
 
+// MARK: - Coordinator Finish Delegate
 extension SocialListCoordinator: CoordinatorFinishDelegate {
-    func didFinish(childCoordinator: any Coordinator) {
+    func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }
 
+// MARK: - Social List Delegate
 extension SocialListCoordinator: SocialListDelegate {
     func didTapPost(id: Int) {
         let socialDetailCoordinator = SocialDetailCoordinator(
@@ -46,5 +50,15 @@ extension SocialListCoordinator: SocialListDelegate {
         socialDetailCoordinator.finishDelegate = self
         childCoordinators.append(socialDetailCoordinator)
         socialDetailCoordinator.start()
+    }
+}
+
+// MARK: - Navigation Delegate
+extension SocialListCoordinator: NavigationDelegate {
+    func didTapCalendarButton() {
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        toduckCalendarCoordinator.finishDelegate = self
+        childCoordinators.append(toduckCalendarCoordinator)
+        toduckCalendarCoordinator.start()
     }
 }

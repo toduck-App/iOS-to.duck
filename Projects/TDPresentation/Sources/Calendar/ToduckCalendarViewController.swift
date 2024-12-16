@@ -90,7 +90,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     
     // MARK: - Setup
     private func setup() {
-        navigationController?.navigationBar.isHidden = true
         selectedDayScheduleView.scheduleTableView.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
@@ -106,7 +105,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 case .fetchedScheduleList:
                     self?.selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
-                    print(errorMessage)
+                    self?.showErrorAlert(with: errorMessage)
                 }
             }.store(in: &cancellables)
     }
@@ -119,8 +118,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     
     private func setupConstraints() {
         calendarHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
-            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(15)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
         }
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
