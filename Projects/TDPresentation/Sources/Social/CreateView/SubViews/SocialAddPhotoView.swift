@@ -53,6 +53,7 @@ final class SocialAddPhotoView: UIView {
     
     public func addPhoto(imageData: Data) {
         guard let image = UIImage(data: imageData) else {
+            // TODO: Error Handling
             return
         }
         

@@ -19,9 +19,9 @@ final class SocialListViewModel: BaseViewModel {
         case likePost(Post)
         case failure(String)
     }
-
-    private(set) var posts: [Post] = []
+    
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
+    private(set) var posts: [Post] = []
     
     private let output = PassthroughSubject<Output, Never>()
     private var currentCategory: PostCategory?
@@ -48,18 +48,18 @@ final class SocialListViewModel: BaseViewModel {
         input.sink { [weak self] event in
             switch event {
             case .fetchPosts, .refreshPosts:
-                self?.fetchPosts()
+                Task { await self?.fetchPosts() }
             case .likePost(let index):
-                self?.likePost(at: index)
+                Task { await self?.likePost(at: index) }
             case .sortPost(let option):
                 self?.sortPost(by: option)
             case .chipSelect(let index):
                 self?.selectChips(at: index)
             case .segmentSelect(let index):
                 self?.currentSegment = index
-                self?.fetchPosts()
+                Task { await self?.fetchPosts() }
             case .blockUser(let user):
-                self?.blockUser(to: user)
+                Task { await self?.blockUser(to: user) }
             }
         }.store(in: &cancellables)
         
@@ -68,32 +68,27 @@ final class SocialListViewModel: BaseViewModel {
 }
 
 extension SocialListViewModel {
-    private func fetchPosts() {
-        Task {
-            do {
-                let category = currentSegment == 0 ? nil : currentCategory
-                
-                guard let items = try await fetchPostUseCase.execute(category: category) else { return }
-                posts = items
-                output.send(.fetchPosts)
-            } catch {
-                posts = []
-                output.send(.failure("게시글을 불러오는데 실패했습니다."))
-            }
+    private func fetchPosts() async {
+        do {
+            let category = currentSegment == 0 ? nil : currentCategory
+            guard let items = try await fetchPostUseCase.execute(category: category) else { return }
+            posts = items
+            output.send(.fetchPosts)
+        } catch {
+            posts = []
+            output.send(.failure("게시글을 불러오는데 실패했습니다."))
         }
     }
     
-    private func likePost(at index: Int) {
-        Task {
-            do {
-                let result = try await togglePostLikeUseCase.execute(post: posts[index])
-                guard let likeCount = posts[index].likeCount else { return }
-                posts[index].isLike.toggle()
-                posts[index].likeCount = posts[index].isLike ? likeCount + 1 : likeCount - 1
-                output.send(.likePost(posts[index]))
-            } catch {
-                output.send(.failure("게시글 좋아요를 실패했습니다."))
-            }
+    private func likePost(at index: Int) async {
+        do {
+            let result = try await togglePostLikeUseCase.execute(post: posts[index])
+            guard let likeCount = posts[index].likeCount else { return }
+            posts[index].isLike.toggle()
+            posts[index].likeCount = posts[index].isLike ? likeCount + 1 : likeCount - 1
+            output.send(.likePost(posts[index]))
+        } catch {
+            output.send(.failure("게시글 좋아요를 실패했습니다."))
         }
     }
     
@@ -110,18 +105,16 @@ extension SocialListViewModel {
     }
     
     private func selectChips(at index: Int) {
-        currentCategory = PostCategory(rawValue: chips[index].title)
-        fetchPosts()
+        currentCategory = PostCategory.allCases[index]
+        Task { await fetchPosts() }
     }
     
-    private func blockUser(to user: User) {
-        Task {
-            do {
-                let result = try await blockUserUseCase.execute(user: user)
-                // TODO: ALERT OUTPUT 필요
-            } catch {
-                output.send(.failure("사용자 차단에 실패했습니다."))
-            }
+    private func blockUser(to user: User) async {
+        do {
+            let result = try await blockUserUseCase.execute(user: user)
+            // TODO: ALERT OUTPUT 필요
+        } catch {
+            output.send(.failure("사용자 차단에 실패했습니다."))
         }
     }
 }

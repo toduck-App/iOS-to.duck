@@ -2,8 +2,17 @@ import SnapKit
 import UIKit
 
 public final class TDRequiredTitle: UIView {
-    private let label = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800)
-    private let requiredLabel = TDLabel(labelText: "*", toduckFont: .boldBody1, alignment: .left, toduckColor: TDColor.Primary.primary500)
+    private let label = TDLabel(
+        toduckFont: .boldBody1,
+        toduckColor: TDColor.Neutral.neutral800
+    )
+    
+    private let requiredLabel = TDLabel(
+        labelText: "*",
+        toduckFont: .boldBody1,
+        alignment: .left,
+        toduckColor: TDColor.Primary.primary500
+    )
 
     public init() {
         super.init(frame: .zero)
@@ -15,7 +24,7 @@ public final class TDRequiredTitle: UIView {
     }
     
     public func setTitleLabel(_ title: String) {
-        label.setText("\(title)")
+        label.setText(title)
         addSubview(label)
         
         label.snp.makeConstraints { make in
