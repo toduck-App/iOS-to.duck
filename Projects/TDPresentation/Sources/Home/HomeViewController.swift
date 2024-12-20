@@ -22,7 +22,9 @@ final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupSegmentedControl()
+        setupNavigationBar(style: .home, navigationDelegate: coordinator!)
         updateView()
     }
 
