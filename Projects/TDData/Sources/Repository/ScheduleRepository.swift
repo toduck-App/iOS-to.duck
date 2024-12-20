@@ -15,6 +15,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
         return Schedule(
             title: "캐릭터 디자인 작업",
             category: TDCategory(color: .back1, imageType: .computer),
+            isAllDay: false,
             date: nil,
             time: nil,
             repeatDays: nil,
@@ -30,6 +31,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
             Schedule(
                 title: "캐릭터 디자인 작업",
                 category: TDCategory(color: .back1, imageType: .computer),
+                isAllDay: false,
                 date: nil,
                 time: nil,
                 repeatDays: nil,
@@ -41,6 +43,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
             Schedule(
                 title: "토익 공부",
                 category: TDCategory(color: .back2, imageType: .food),
+                isAllDay: false,
                 date: nil,
                 time: nil,
                 repeatDays: nil,
@@ -52,6 +55,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
             Schedule(
                 title: "영화 보기",
                 category: TDCategory(color: .back3, imageType: .medicine),
+                isAllDay: true,
                 date: nil,
                 time: nil,
                 repeatDays: nil,
