@@ -11,19 +11,23 @@ import Then
 import FSCalendar
 
 public final class ToduckCalendar: BaseCalendar {
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
+        
         setup()
     }
     
-    @available(*, unavailable)
-    public required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder)
+        
         setup()
     }
     
     private func setup() {
-        self.register(SheetCalendarSelectDateCell.self, forCellReuseIdentifier: SheetCalendarSelectDateCell.identifier)
+        self.register(
+            SheetCalendarSelectDateCell.self,
+            forCellReuseIdentifier: SheetCalendarSelectDateCell.identifier
+        )
         self.appearance.selectionColor = TDColor.Primary.primary100
         self.appearance.titleSelectionColor = .black
         self.appearance.todayColor = TDColor.Primary.primary500
