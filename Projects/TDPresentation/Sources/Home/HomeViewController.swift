@@ -22,6 +22,7 @@ final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = TDColor.baseWhite
         
         setupSegmentedControl()
         setupNavigationBar(style: .home, navigationDelegate: coordinator!)
@@ -78,7 +79,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         view.addSubview(newViewController.view)
 
         newViewController.view.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom).offset(20)
+            make.top.equalTo(segmentedControl.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
 
