@@ -352,6 +352,7 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         
         let dummyData = viewModel.scheduleList[indexPath.row]
         cell.configureCell(
+            color: .black,
             title: dummyData.title,
             time: nil,
             category: nil,
