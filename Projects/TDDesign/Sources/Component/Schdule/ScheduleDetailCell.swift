@@ -88,6 +88,7 @@ public final class ScheduleDetailCell: UITableViewCell {
     // MARK: - Setup & Configuration
     // MARK: - Configuration
     public func configureCell(
+        color: UIColor,
         title: String,
         time: String?,
         category: UIImage?,
@@ -95,6 +96,7 @@ public final class ScheduleDetailCell: UITableViewCell {
         place: String?
     ) {
         self.isFinish = isFinish
+        scheduleIdentyColorView.backgroundColor = color
         titleLabel.text = title
         categoryImageView.image = category
         categoryImageView.isHidden = (category == nil)
