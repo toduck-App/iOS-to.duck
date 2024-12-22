@@ -9,7 +9,7 @@ import TDDomain
 import Foundation
 
 public final class PostRepositoryImpl: PostRepository {
-    private let dummyRoutine = Routine(id: 0, title: "", isPublic: false, isRepeating: false, isRepeatAllDay: false, alarm: false, isFinish: false)
+    private let dummyRoutine = Routine(id: UUID(), title: "123", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: true, date: Date(), time: nil, repeatDays: nil, alarmTimes: nil, memo: nil, recommendedRoutines: nil, isFinish: false)
     private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
 
     public init() { }

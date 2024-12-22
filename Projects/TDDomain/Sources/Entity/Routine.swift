@@ -13,45 +13,42 @@ struct RecommendedRoutine: Hashable {
     let memo: String?
 }
 
-public struct Routine: Hashable {
-    public let id: Int
+public struct Routine: Eventable {
+    public let id: UUID
     public let title: String
-    public let category: String? // 일정의 이모티콘 아님
+    public let category: TDCategory
+    public let isAllDay: Bool
     public let isPublic: Bool
-    public let dateAndTime: Date?
-    public let isRepeating: Bool
-    public let isRepeatAllDay: Bool // 반복이 종일인지
+    public let date: Date?
+    public let time: Date?
     public let repeatDays: [TDWeekDay]?
-    public let alarm: Bool
     public let alarmTimes: [AlarmType]?
     public let memo: String?
     public let recommendedRoutines: [String]?
     public let isFinish: Bool
     
     public init(
-        id: Int,
+        id: UUID,
         title: String,
-        category: String? = nil,
+        category: TDCategory,
+        isAllDay: Bool,
         isPublic: Bool,
-        dateAndTime: Date? = nil,
-        isRepeating: Bool,
-        isRepeatAllDay: Bool,
-        repeatDays: [TDWeekDay]? = nil,
-        alarm: Bool,
-        alarmTimes: [AlarmType]? = nil,
-        memo: String? = nil,
-        recommendedRoutines: [String]? = nil,
+        date: Date?,
+        time: Date?,
+        repeatDays: [TDWeekDay]?,
+        alarmTimes: [AlarmType]?,
+        memo: String?,
+        recommendedRoutines: [String]?,
         isFinish: Bool
     ) {
         self.id = id
         self.title = title
         self.category = category
+        self.isAllDay = isAllDay
         self.isPublic = isPublic
-        self.dateAndTime = dateAndTime
-        self.isRepeating = isRepeating
-        self.isRepeatAllDay = isRepeatAllDay
+        self.date = date
+        self.time = time
         self.repeatDays = repeatDays
-        self.alarm = alarm
         self.alarmTimes = alarmTimes
         self.memo = memo
         self.recommendedRoutines = recommendedRoutines

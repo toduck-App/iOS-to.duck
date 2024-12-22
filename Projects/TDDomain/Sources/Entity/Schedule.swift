@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Schedule {
+public struct Schedule: Eventable {
     public let id: UUID
     public let title: String
     public let category: TDCategory
