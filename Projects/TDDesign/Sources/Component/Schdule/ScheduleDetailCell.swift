@@ -96,6 +96,8 @@ public final class ScheduleDetailCell: UITableViewCell {
         place: String?
     ) {
         self.isFinish = isFinish
+        contentView.backgroundColor = TDColor.baseWhite
+        
         scheduleIdentyColorView.backgroundColor = color
         titleLabel.text = title
         categoryImageView.image = category
