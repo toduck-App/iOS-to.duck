@@ -12,8 +12,6 @@ final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
     let segmentedControl = TDSegmentedController(items: ["토덕", "일정", "루틴"])
     let todoViewController = ToduckViewController()
-    let scheduleViewController = ScheduleAndRoutineViewController(mode: .schedule)
-    let routineViewController = ScheduleAndRoutineViewController(mode: .routine)
     
     // MARK: - Properties
     private var currentViewController: UIViewController?
@@ -60,9 +58,17 @@ final class HomeViewController: BaseViewController<BaseView> {
         case 0:
             newViewController = todoViewController
         case 1:
-            newViewController = scheduleViewController
+            let viewModel = ScheduleViewModel()
+            newViewController = ScheduleAndRoutineViewController(
+                scheduleViewModel: viewModel,
+                mode: .schedule
+            )
         case 2:
-            newViewController = routineViewController
+            let viewModel = RoutineViewModel()
+            newViewController = ScheduleAndRoutineViewController(
+                routineViewModel: viewModel,
+                mode: .routine
+            )
         default:
             return
         }
