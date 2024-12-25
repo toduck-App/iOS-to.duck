@@ -66,6 +66,13 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         weekCalendarView.delegate = self
         scheduleAndRoutineCollectionView.delegate = self
         scheduleAndRoutineCollectionView.dataSource = self
+        
+        scheduleAndRoutineCollectionView.contentInset = UIEdgeInsets(
+            top: 12,
+            left: 0,
+            bottom: 0,
+            right: 0
+        )
     }
     
     override func addView() {
