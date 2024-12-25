@@ -8,20 +8,35 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
         toduckColor: TDColor.Neutral.neutral800
     )
     private let eventDetailView = EventDetailView()
+    private var didSetCornerRadius = false
     
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         configureAddSubview()
         configureLayout()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        
         configureAddSubview()
         configureLayout()
+    }
+    
+    // MARK: - Life Cycle
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        timeLabel.text = ""
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // bounds가 설정된 후에만 CornerRadius 설정
+        if !didSetCornerRadius && eventDetailView.bounds != .zero {
+            configureCornerRadius()
+            didSetCornerRadius = true
+        }
     }
     
     func configure(
@@ -32,8 +47,6 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
             timeLabel.isHidden = false
             timeLabel.text = text
         } else {
-            // 두 번째(이후) 일정인 경우, 시간 라벨 숨김
-            // timeLabel.isHidden = true
             timeLabel.text = ""
         }
         
@@ -66,5 +79,24 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
             make.trailing.equalToSuperview().offset(-16)
             make.bottom.equalToSuperview()
         }
+    }
+    
+    private func configureCornerRadius() {
+        eventDetailView.layer.cornerRadius = 8
+        eventDetailView.layer.maskedCorners = [
+            .layerMaxXMinYCorner, // 오른쪽 위
+            .layerMaxXMaxYCorner  // 오른쪽 아래
+        ]
+        eventDetailView.clipsToBounds = true
+        
+        // 왼쪽 위와 왼쪽 아래는 따로 설정
+        let path = UIBezierPath(
+            roundedRect: eventDetailView.bounds,
+            byRoundingCorners: [.topLeft, .bottomLeft],
+            cornerRadii: CGSize(width: 2, height: 2)
+        )
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        eventDetailView.layer.mask = mask
     }
 }
