@@ -80,7 +80,16 @@ public final class EventDetailView: UIView {
         setupLayout()
     }
     
-    // MARK: - Configuration
+    // MARK: - Public Methods
+    public func resetForReuse() {
+        titleLabel.text = nil
+        timeLabel.text = nil
+        placeLabel.text = nil
+        categoryImageView.image = nil
+        isFinish = false
+        changeCheckBoxButtonImage(isFinish: isFinish)
+    }
+    
     public func configureCell(
         color: UIColor,
         title: String,
@@ -104,7 +113,7 @@ public final class EventDetailView: UIView {
         
         changeCheckBoxButtonImage(isFinish: isFinish)
     }
-
+    
     public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
         checkBoxButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
@@ -113,7 +122,8 @@ public final class EventDetailView: UIView {
             self.changeCheckBoxButtonImage(isFinish: self.isFinish)
         }, for: .touchUpInside)
     }
-
+    
+    // MARK: - Private Methods
     private func changeCheckBoxButtonImage(isFinish: Bool) {
         let checkBoxImage = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
         checkBoxButton.setImage(checkBoxImage, for: .normal)

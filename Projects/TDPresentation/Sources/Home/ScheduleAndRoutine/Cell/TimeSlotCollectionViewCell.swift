@@ -27,6 +27,7 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         timeLabel.text = ""
+        eventDetailView.resetForReuse()
     }
     
     override func layoutSubviews() {
