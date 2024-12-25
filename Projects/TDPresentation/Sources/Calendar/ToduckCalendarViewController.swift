@@ -345,13 +345,17 @@ extension ToduckCalendarViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ScheduleDetailCell.identifier,
-            for: indexPath
-        ) as? ScheduleDetailCell else { return UITableViewCell() }
+        let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+        
+        let detailView = EventDetailView()
+        cell.contentView.addSubview(detailView)
+        
+        detailView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
         let dummyData = viewModel.scheduleList[indexPath.row]
-        cell.configureCell(
+        detailView.configureCell(
             color: .black,
             title: dummyData.title,
             time: nil,
@@ -359,11 +363,10 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             isFinish: dummyData.isFinish,
             place: dummyData.place
         )
-        cell.configureButtonAction {
-            print("체크박스 클릭") // input.send
+        detailView.configureButtonAction {
+            print("체크박스 클릭")
         }
         
         return cell
     }
 }
-

@@ -4,10 +4,10 @@ import TDDesign
 final class TimeSlotCollectionViewCell: UICollectionViewCell {
     // MARK: - UI Components
     private let timeLabel = TDLabel(
-        toduckFont: TDFont.boldBody2,
+        toduckFont: TDFont.mediumBody2,
         toduckColor: TDColor.Neutral.neutral800
     )
-    private let eventDetailView = ScheduleDetailCell()
+    private let eventDetailView = EventDetailView()
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -55,14 +55,15 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
     
     private func configureLayout() {
         timeLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(8)
-            make.leading.equalToSuperview().offset(8)
+            make.leading.equalToSuperview().offset(24)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(50)
         }
         
         eventDetailView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(8)
-            make.leading.equalTo(timeLabel.snp.trailing).offset(8)
-            make.trailing.equalToSuperview().offset(-8)
+            make.top.equalToSuperview().offset(6)
+            make.leading.equalTo(timeLabel.snp.trailing).offset(16)
+            make.trailing.equalToSuperview().offset(-16)
             make.bottom.equalToSuperview()
         }
     }

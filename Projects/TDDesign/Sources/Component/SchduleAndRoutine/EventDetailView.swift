@@ -2,7 +2,7 @@ import SnapKit
 import Then
 import UIKit
 
-public final class ScheduleDetailCell: UITableViewCell {
+public final class EventDetailView: UIView {
     // MARK: - UI Components
     private let scheduleIdentyColorView = UIView().then {
         $0.backgroundColor = TDColor.Schedule.text3
@@ -62,30 +62,24 @@ public final class ScheduleDetailCell: UITableViewCell {
     private var isFinish: Bool = false
     
     // MARK: - Initializer
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
         setupLayout()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        
         setup()
         setupLayout()
     }
     
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        categoryImageView.image = nil
-        titleLabel.text = nil
-        timeLabel.text = nil
-        placeLabel.text = nil
+    public override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        setup()
+        setupLayout()
     }
     
-    // MARK: - Setup & Configuration
     // MARK: - Configuration
     public func configureCell(
         color: UIColor,
@@ -96,7 +90,7 @@ public final class ScheduleDetailCell: UITableViewCell {
         place: String?
     ) {
         self.isFinish = isFinish
-        contentView.backgroundColor = TDColor.baseWhite
+        backgroundColor = TDColor.baseWhite
         
         scheduleIdentyColorView.backgroundColor = color
         titleLabel.text = title
@@ -126,10 +120,10 @@ public final class ScheduleDetailCell: UITableViewCell {
     }
     
     private func setup() {
-        contentView.layer.cornerRadius = 4
-        contentView.clipsToBounds = true
-        contentView.addSubview(scheduleIdentyColorView)
-        contentView.addSubview(containerHorizontalStackView)
+        layer.cornerRadius = 4
+        clipsToBounds = true
+        addSubview(scheduleIdentyColorView)
+        addSubview(containerHorizontalStackView)
         
         containerHorizontalStackView.addArrangedSubview(categoryImageView)
         containerHorizontalStackView.addArrangedSubview(scheduleVerticalStackView)
@@ -140,7 +134,8 @@ public final class ScheduleDetailCell: UITableViewCell {
         
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
-        contentView.addSubview(checkBoxButton)
+        
+        addSubview(checkBoxButton)
         
         placeHorizontalStackView.addArrangedSubview(locationImageView)
         placeHorizontalStackView.addArrangedSubview(placeLabel)
@@ -149,13 +144,12 @@ public final class ScheduleDetailCell: UITableViewCell {
     private func setupLayout() {
         scheduleIdentyColorView.snp.makeConstraints {
             $0.leading.equalToSuperview()
-            $0.top.bottom.equalToSuperview().inset(8)
+            $0.top.bottom.equalToSuperview()
             $0.width.equalTo(4)
         }
         
         containerHorizontalStackView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
-            $0.centerY.equalToSuperview()
             $0.leading.equalTo(scheduleIdentyColorView.snp.trailing).offset(16)
             $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
         }
@@ -164,22 +158,10 @@ public final class ScheduleDetailCell: UITableViewCell {
             $0.width.height.equalTo(32)
         }
         
-        scheduleVerticalStackView.snp.makeConstraints {
-            $0.centerY.equalTo(containerHorizontalStackView.snp.centerY)
-        }
-        
         checkBoxButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(22)
-        }
-        
-        timeLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-        }
-        
-        placeLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
         }
     }
 }
