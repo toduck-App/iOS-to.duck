@@ -61,6 +61,12 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
         )
     }
     
+    func configureButtonAction(
+        checkBoxAction: @escaping () -> Void
+    ) {
+        eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
+    }
+    
     // MARK: - Setup & Configuration
     private func configureAddSubview() {
         contentView.addSubview(timeLabel)

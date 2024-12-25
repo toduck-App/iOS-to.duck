@@ -1,4 +1,5 @@
 import FSCalendar
+import TDCore
 import Combine
 import UIKit
 import TDDesign
@@ -153,6 +154,10 @@ extension ScheduleAndRoutineViewController: UICollectionViewDataSource {
                     timeText: timeText,
                     event: event
                 )
+                cell.configureButtonAction {
+                    // TODO: Input 처리
+                    TDLogger.debug("체크박스 버튼눌림")
+                }
                 break
             }
             cumulative += count
