@@ -8,6 +8,8 @@ final class TimeSlotTableViewCell: UITableViewCell {
         toduckColor: TDColor.Neutral.neutral800
     )
     private let eventDetailView = EventDetailView()
+    
+    // MARK: - Properties
     private var didSetCornerRadius = false
     
     // MARK: - Initializer
@@ -45,23 +47,40 @@ final class TimeSlotTableViewCell: UITableViewCell {
     
     func configure(
         timeText: String?,
-        event: EventPresentable
+        event: EventPresentable?
     ) {
+        contentView.backgroundColor = TDColor.Neutral.neutral50
+        
         if let text = timeText, !text.isEmpty {
             timeLabel.isHidden = false
             timeLabel.text = text
-        } else {
-            timeLabel.text = ""
         }
         
-        eventDetailView.configureCell(
-            color: event.categoryColor,
-            title: event.title,
-            time: event.time,
-            category: event.categoryIcon,
-            isFinish: event.isFinish,
-            place: nil
-        )
+        if let event = event {
+            eventDetailView.configureCell(
+                color: event.categoryColor,
+                title: event.title,
+                time: event.time,
+                category: event.categoryIcon,
+                isFinish: event.isFinish,
+                place: nil
+            )
+        } else {
+            eventDetailView.isHidden = true
+            timeLabel.setColor(TDColor.Neutral.neutral500)
+            timeLabel.setFont(TDFont.boldButton)
+        }
+        
+        if let text = timeText, text == "8 AM", let event = event {
+            eventDetailView.configureCell(
+                color: event.categoryColor,
+                title: event.title,
+                time: event.time,
+                category: event.categoryIcon,
+                isFinish: event.isFinish,
+                place: "ㅁㄴㅇㅁㄴㅇ"
+            )
+        }
     }
     
     func configureButtonAction(
@@ -86,7 +105,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         eventDetailView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(6)
             make.leading.equalTo(timeLabel.snp.trailing).offset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
     }
