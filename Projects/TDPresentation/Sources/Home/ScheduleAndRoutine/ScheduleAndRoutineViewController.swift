@@ -76,8 +76,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         
         scheduleAndRoutineTableView.snp.makeConstraints {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(20)
-            $0.leading.bottom.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
 }
