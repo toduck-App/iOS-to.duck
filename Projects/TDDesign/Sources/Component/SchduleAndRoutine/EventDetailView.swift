@@ -4,7 +4,7 @@ import UIKit
 
 public final class EventDetailView: UIView {
     // MARK: - UI Components
-    private let scheduleIdentyColorView = UIView().then {
+    private var scheduleIdentyColorView = UIView().then {
         $0.backgroundColor = TDColor.Schedule.text3
     }
     
@@ -113,14 +113,17 @@ public final class EventDetailView: UIView {
         title: String,
         time: String?,
         category: UIImage?,
+        isNone: Bool = false,
         isFinish: Bool,
         place: String?
     ) {
         self.isFinish = isFinish
         backgroundColor = TDColor.baseWhite
         
-        scheduleIdentyColorView.backgroundColor = color
         categoryImageContainerView.backgroundColor = color
+        scheduleIdentyColorView.backgroundColor = isNone
+        ? TDColor.baseWhite
+        : color
         
         titleLabel.text = title
         categoryImageView.image = category
@@ -199,13 +202,27 @@ public final class EventDetailView: UIView {
             $0.height.equalTo(32)
         }
         categoryImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(6)
+            $0.edges.equalToSuperview().inset(8)
         }
         
         checkBoxButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(22)
+        }
+        
+        eventTopSpacer.snp.makeConstraints {
+            $0.height.equalTo(8)
+        }
+        eventBottomSpacer.snp.makeConstraints {
+            $0.height.equalTo(8)
+        }
+        
+        timeLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+        }
+        placeLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
         }
     }
 }

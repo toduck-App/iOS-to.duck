@@ -60,11 +60,13 @@ final class TimeSlotTableViewCell: UITableViewCell {
         }
         
         if let event = event {
+            let isNone = event.categoryIcon == TDImage.Category.none
             eventDetailView.configureCell(
                 color: event.categoryColor,
                 title: event.title,
                 time: event.time,
                 category: event.categoryIcon,
+                isNone: isNone,
                 isFinish: event.isFinish,
                 place: nil
             )
