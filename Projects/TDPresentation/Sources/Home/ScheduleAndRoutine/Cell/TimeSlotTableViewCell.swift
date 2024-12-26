@@ -21,12 +21,14 @@ final class TimeSlotTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureAddSubview()
         configureLayout()
+        configureShadow()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         configureAddSubview()
         configureLayout()
+        configureShadow()
     }
     
     // MARK: - Life Cycle
@@ -42,7 +44,6 @@ final class TimeSlotTableViewCell: UITableViewCell {
         // bounds가 설정된 후에만 CornerRadius 설정
         if !didSetCornerRadius && eventDetailView.bounds != .zero {
             configureCornerRadius()
-            configureShadow()
             didSetCornerRadius = true
         }
     }
