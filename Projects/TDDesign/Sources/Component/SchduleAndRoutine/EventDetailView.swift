@@ -120,10 +120,13 @@ public final class EventDetailView: UIView {
         self.isFinish = isFinish
         backgroundColor = TDColor.baseWhite
         
-        categoryImageContainerView.backgroundColor = color
-        scheduleIdentyColorView.backgroundColor = isNone
-        ? TDColor.baseWhite
-        : color
+        if isNone {
+            categoryImageContainerView.backgroundColor = TDColor.baseWhite
+            scheduleIdentyColorView.backgroundColor = TDColor.baseWhite
+        } else {
+            categoryImageContainerView.backgroundColor = color
+            scheduleIdentyColorView.backgroundColor = color
+        }
         
         titleLabel.text = title
         categoryImageView.image = category

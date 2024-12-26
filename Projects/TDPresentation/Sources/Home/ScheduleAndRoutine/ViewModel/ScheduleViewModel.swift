@@ -74,7 +74,7 @@ extension ScheduleViewModel: TimeSlotProvider {
             ),
             Schedule(
                 title: "영화 보기",
-                category: TDCategory(colorType: .back3, imageType: .sleep),
+                category: TDCategory(colorType: .back14, imageType: .sleep),
                 isAllDay: true,
                 date: nil,
                 time: nil,
