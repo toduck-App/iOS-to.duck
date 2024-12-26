@@ -7,9 +7,26 @@ public final class EventDetailView: UIView {
     private let scheduleIdentyColorView = UIView().then {
         $0.backgroundColor = TDColor.Schedule.text3
     }
+    
+    /// 카테고리 이미지
+    private let categoryVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .center
+        $0.spacing = 8
+    }
+    private let categoryTopSpacer = UIView()
+    private let categoryBottomSpacer = UIView()
+    private let categoryImageContainerView = UIView().then {
+        $0.layer.cornerRadius = 16
+        $0.clipsToBounds = true
+    }
     private let categoryImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
     }
+    
+    /// 일정 제목, 시간, 장소
+    private let eventTopSpacer = UIView()
+    private let eventBottomSpacer = UIView()
     private let titleLabel = TDLabel(
         toduckFont: TDFont.mediumBody2,
         alignment: .left,
@@ -85,6 +102,7 @@ public final class EventDetailView: UIView {
         titleLabel.text = nil
         timeLabel.text = nil
         placeLabel.text = nil
+        categoryImageContainerView.backgroundColor = nil
         categoryImageView.image = nil
         isFinish = false
         changeCheckBoxButtonImage(isFinish: isFinish)
@@ -102,6 +120,8 @@ public final class EventDetailView: UIView {
         backgroundColor = TDColor.baseWhite
         
         scheduleIdentyColorView.backgroundColor = color
+        categoryImageContainerView.backgroundColor = color
+        
         titleLabel.text = title
         categoryImageView.image = category
         categoryImageView.isHidden = (category == nil)
@@ -134,13 +154,20 @@ public final class EventDetailView: UIView {
         clipsToBounds = true
         addSubview(scheduleIdentyColorView)
         addSubview(containerHorizontalStackView)
+        categoryImageContainerView.addSubview(categoryImageView)
         
-        containerHorizontalStackView.addArrangedSubview(categoryImageView)
+        categoryVerticalStackView.addArrangedSubview(categoryTopSpacer)
+        categoryVerticalStackView.addArrangedSubview(categoryImageContainerView)
+        categoryVerticalStackView.addArrangedSubview(categoryBottomSpacer)
+        
+        containerHorizontalStackView.addArrangedSubview(categoryVerticalStackView)
         containerHorizontalStackView.addArrangedSubview(scheduleVerticalStackView)
         
+        scheduleVerticalStackView.addArrangedSubview(eventTopSpacer)
         scheduleVerticalStackView.addArrangedSubview(titleLabel)
         scheduleVerticalStackView.addArrangedSubview(timeDetailHorizontalStackView)
         scheduleVerticalStackView.addArrangedSubview(placeHorizontalStackView)
+        scheduleVerticalStackView.addArrangedSubview(eventBottomSpacer)
         
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
@@ -164,8 +191,15 @@ public final class EventDetailView: UIView {
             $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
         }
         
+        categoryVerticalStackView.snp.makeConstraints {
+            $0.width.equalTo(32)
+        }
+        categoryImageContainerView.snp.makeConstraints {
+            $0.width.equalTo(32)
+            $0.height.equalTo(32)
+        }
         categoryImageView.snp.makeConstraints {
-            $0.width.height.equalTo(32)
+            $0.edges.equalToSuperview().inset(6)
         }
         
         checkBoxButton.snp.makeConstraints {

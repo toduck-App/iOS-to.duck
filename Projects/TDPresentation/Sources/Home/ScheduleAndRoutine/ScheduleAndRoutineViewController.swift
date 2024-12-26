@@ -173,11 +173,4 @@ extension ScheduleAndRoutineViewController: UITableViewDelegate {
         
         return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
-    
-    func tableView(
-        _ tableView: UITableView,
-        heightForRowAt indexPath: IndexPath
-    ) -> CGFloat {
-        return 100
-    }
 }
