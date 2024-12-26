@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 import TDDomain
 
 final class RoutineViewModel: BaseViewModel {
@@ -22,12 +23,6 @@ final class RoutineViewModel: BaseViewModel {
 
 extension RoutineViewModel: TimeSlotProvider {
     var timeSlots: [TimeSlot] {
-        return routines.reduce(into: [String: [Routine]]()) { result, routine in
-            let key = routine.time ?? "All Day"
-            result[key, default: []].append(routine)
-        }
-        .map { key, events in
-            TimeSlot(timeText: key, events: events)
-        }
+        return [TimeSlot(timeText: "9 AM", events: [Routine(id: UUID(), title: "루틴 1", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: true, date: Date(), time: nil, repeatDays: nil, alarmTimes: nil, memo: nil, recommendedRoutines: nil, isFinish: false)])]
     }
 }

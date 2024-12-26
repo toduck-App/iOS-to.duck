@@ -58,6 +58,57 @@ extension ScheduleViewModel: TimeSlotProvider {
                 memo: nil,
                 isFinish: false
             )
-        ])]
+        ]),
+        TimeSlot(timeText: "12 AM", events: [
+            Schedule(
+                title: "점심",
+                category: TDCategory(colorType: .back1, imageType: .computer),
+                isAllDay: false,
+                date: nil,
+                time: nil,
+                repeatDays: nil,
+                alarmTimes: nil,
+                place: nil,
+                memo: nil,
+                isFinish: false
+            ),
+            Schedule(
+                title: "영화 보기",
+                category: TDCategory(colorType: .back3, imageType: .sleep),
+                isAllDay: true,
+                date: nil,
+                time: nil,
+                repeatDays: nil,
+                alarmTimes: nil,
+                place: "경북 구미시",
+                memo: nil,
+                isFinish: false
+            )]),
+                TimeSlot(timeText: "3 PM", events: [
+                    Schedule(
+                        title: "가나다라마바",
+                        category: TDCategory(colorType: .back4, imageType: .none),
+                        isAllDay: false,
+                        date: nil,
+                        time: nil,
+                        repeatDays: nil,
+                        alarmTimes: nil,
+                        place: nil,
+                        memo: nil,
+                        isFinish: false
+                    ),
+                    Schedule(
+                        title: "영화 보기",
+                        category: TDCategory(colorType: .back6, imageType: .redBook),
+                        isAllDay: true,
+                        date: nil,
+                        time: nil,
+                        repeatDays: nil,
+                        alarmTimes: nil,
+                        place: "경북 구미시",
+                        memo: nil,
+                        isFinish: false
+                    )])
+        ]
     }
 }
