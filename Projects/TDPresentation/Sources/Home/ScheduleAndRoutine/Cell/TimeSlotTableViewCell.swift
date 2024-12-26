@@ -1,7 +1,7 @@
 import UIKit
 import TDDesign
 
-final class TimeSlotCollectionViewCell: UICollectionViewCell {
+final class TimeSlotTableViewCell: UITableViewCell {
     // MARK: - UI Components
     private let timeLabel = TDLabel(
         toduckFont: TDFont.mediumBody2,
@@ -11,8 +11,11 @@ final class TimeSlotCollectionViewCell: UICollectionViewCell {
     private var didSetCornerRadius = false
     
     // MARK: - Initializer
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?
+    ) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureAddSubview()
         configureLayout()
     }

@@ -12,21 +12,10 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     
     // MARK: - UI Components
     private let weekCalendarView = HomeCalendar()
-    private lazy var scheduleAndRoutineCollectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.scrollDirection = .vertical
-        flowLayout.minimumLineSpacing = 0
-        flowLayout.minimumInteritemSpacing = 0
-        flowLayout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 100)
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.backgroundColor = TDColor.Neutral.neutral50
-        collectionView.register(
-            TimeSlotCollectionViewCell.self,
-            forCellWithReuseIdentifier: TimeSlotCollectionViewCell.identifier
-        )
-        return collectionView
-    }()
+    private let scheduleAndRoutineTableView = UITableView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral50
+        $0.separatorStyle = .none
+    }
     
     // MARK: - Properties
     private let mode: Mode
@@ -55,20 +44,17 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         super.init(coder: coder)
     }
     
-    // MARK: - View Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-    }
-    
     // MARK: Base Method
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
-        scheduleAndRoutineCollectionView.delegate = self
-        scheduleAndRoutineCollectionView.dataSource = self
-        
-        scheduleAndRoutineCollectionView.contentInset = UIEdgeInsets(
+        scheduleAndRoutineTableView.delegate = self
+        scheduleAndRoutineTableView.dataSource = self
+        scheduleAndRoutineTableView.register(
+            TimeSlotTableViewCell.self,
+            forCellReuseIdentifier: TimeSlotTableViewCell.identifier
+        )
+        scheduleAndRoutineTableView.contentInset = UIEdgeInsets(
             top: 12,
             left: 0,
             bottom: 0,
@@ -78,7 +64,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     
     override func addView() {
         view.addSubview(weekCalendarView)
-        view.addSubview(scheduleAndRoutineCollectionView)
+        view.addSubview(scheduleAndRoutineTableView)
     }
     
     override func layout() {
@@ -88,7 +74,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
             $0.height.equalTo(220)
         }
         
-        scheduleAndRoutineCollectionView.snp.makeConstraints {
+        scheduleAndRoutineTableView.snp.makeConstraints {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(20)
             $0.leading.trailing.bottom.equalToSuperview()
         }
@@ -109,11 +95,11 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegate {
     }
 }
 
-// MARK: - UICollectionViewDataSource
-extension ScheduleAndRoutineViewController: UICollectionViewDataSource {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
+// MARK: - UITableViewDataSource
+extension ScheduleAndRoutineViewController: UITableViewDataSource {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
     ) -> Int {
         switch mode {
         case .schedule:
@@ -123,23 +109,19 @@ extension ScheduleAndRoutineViewController: UICollectionViewDataSource {
         }
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: TimeSlotCollectionViewCell.identifier,
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: TimeSlotTableViewCell.identifier,
             for: indexPath
-        ) as? TimeSlotCollectionViewCell else {
-            return UICollectionViewCell()
-        }
+        ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
-        // 모드에 따라 뷰모델 선택
         let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
         
         guard let timeSlots = provider?.timeSlots else { return cell }
         
-        // cumulativeCount로 indexPath.row가 속한 TimeSlot 찾기
         var cumulative = 0
         for slot in timeSlots {
             let count = slot.events.count
@@ -147,7 +129,6 @@ extension ScheduleAndRoutineViewController: UICollectionViewDataSource {
                 let eventIndexInSlot = indexPath.row - cumulative
                 let event = slot.events[eventIndexInSlot]
                 
-                // 첫 번째 이벤트인 경우 시간 레이블 표시
                 let timeText: String? = (eventIndexInSlot == 0) ? slot.timeText : nil
                 
                 cell.configure(
@@ -155,7 +136,6 @@ extension ScheduleAndRoutineViewController: UICollectionViewDataSource {
                     event: event
                 )
                 cell.configureButtonAction {
-                    // TODO: Input 처리
                     TDLogger.debug("체크박스 버튼눌림")
                 }
                 break
@@ -167,22 +147,37 @@ extension ScheduleAndRoutineViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
-extension ScheduleAndRoutineViewController: UICollectionViewDelegate {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        trailingSwipeActionsConfigurationForItemAt indexPath: IndexPath
+// MARK: - UITableViewDelegate
+extension ScheduleAndRoutineViewController: UITableViewDelegate {
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        
-        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { (_, _, completion) in
-            // indexPath.row에 해당하는 이벤트 삭제 로직
-            // dataSource에서 events를 제거 후 collectionView.reloadData() (or performBatchUpdates)
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: "삭제"
+        ) { _, _, completion in
+            print("삭제 액션 실행됨")
             completion(true)
         }
+        deleteAction.backgroundColor = .systemRed
         
-        let swipeConfig = UISwipeActionsConfiguration(actions: [deleteAction])
-        // 스와이프 후에도 배경 고정 여부
-        swipeConfig.performsFirstActionWithFullSwipe = false
-        return swipeConfig
+        let editAction = UIContextualAction(
+            style: .normal,
+            title: "수정"
+        ) { _, _, completion in
+            print("수정 액션 실행됨")
+            completion(true)
+        }
+        editAction.backgroundColor = .systemBlue
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
+        return 100
     }
 }
