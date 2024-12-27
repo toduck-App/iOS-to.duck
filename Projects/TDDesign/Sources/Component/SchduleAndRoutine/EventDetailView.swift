@@ -124,8 +124,8 @@ public final class EventDetailView: UIView {
             categoryImageContainerView.backgroundColor = TDColor.baseWhite
             scheduleIdentyColorView.backgroundColor = TDColor.baseWhite
         } else {
+            scheduleIdentyColorView.backgroundColor = TDColor.reversedPair[color] ?? color
             categoryImageContainerView.backgroundColor = color
-            scheduleIdentyColorView.backgroundColor = color
         }
         
         titleLabel.text = title
