@@ -29,23 +29,6 @@ final class SelectedDayScheduleView: BaseView {
         $0.backgroundColor = .white
     }
     
-    // MARK: - Initializer
-    init() {
-        super.init(frame: .zero)
-        
-        setup()
-        configureAddSubview()
-        configureLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        
-        setup()
-        configureAddSubview()
-        configureLayout()
-    }
-    
     func updateDateLabel(date: Date) {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
@@ -54,14 +37,14 @@ final class SelectedDayScheduleView: BaseView {
     }
     
     // MARK: - Setup & Configuration
-    private func setup() {
+    override func configure() {
         scheduleTableView.register(
-            ScheduleDetailCell.self,
-            forCellReuseIdentifier: ScheduleDetailCell.identifier
+            UITableViewCell.self,
+            forCellReuseIdentifier: UITableViewCell.identifier
         )
     }
     
-    private func configureAddSubview() {
+    override func addview() {
         addSubview(headerView)
         addSubview(scheduleTableView)
         headerView.addSubview(calendarImageView)
@@ -69,7 +52,7 @@ final class SelectedDayScheduleView: BaseView {
         headerView.addSubview(downDirectionImageView)
     }
     
-    private func configureLayout() {
+    override func layout() {
         headerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(48).priority(.high)

@@ -238,4 +238,20 @@ public enum TDImage {
         public static let percent90 = TDDesignAsset.Images.percent90.image
         public static let percent100 = TDDesignAsset.Images.percent100.image
     }
+    
+    public enum Category {
+        public static let food = TDDesignAsset.Images.categoryFood.image
+        public static let none = TDDesignAsset.Images.categoryNone.image
+        public static let talk = TDDesignAsset.Images.categoryTalk.image
+        public static let heart = TDDesignAsset.Images.categoryHeart.image
+        public static let power = TDDesignAsset.Images.categoryPower.image
+        public static let sleep = TDDesignAsset.Images.categorySleep.image
+        public static let pencil = TDDesignAsset.Images.categoryPencil.image
+        public static let people = TDDesignAsset.Images.categoryPeople.image
+        public static let redBook = TDDesignAsset.Images.categoryRedbook.image
+        public static let vehicle = TDDesignAsset.Images.categoryVehicle.image
+        public static let computer = TDDesignAsset.Images.categoryComputer.image
+        public static let medicine = TDDesignAsset.Images.categoryMedicine.image
+        public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.image
+    }
 }

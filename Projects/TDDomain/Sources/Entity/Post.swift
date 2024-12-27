@@ -50,19 +50,19 @@ public struct Post: Identifiable {
         self.type = type
         self.category = category
     }
-
+    
     public let id: Int
     public let user: User
     public let contentText: String
     public let imageList: [String]?
     public let timestamp: Date
-
+    
     public var likeCount: Int?
     public var isLike: Bool
     public let commentCount: Int?
     public let shareCount: Int?
     public let routine: Routine?
-
+    
     // 보이지 않는 property
     public let type: PostType
     public let category: [PostCategory]?
@@ -93,9 +93,9 @@ public extension Post {
                                      isLike: false,
                                      commentCount: 3,
                                      shareCount: 12,
-                                     routine: Routine(id: 1, title: "✌️ 나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: "일", isPublic: true, dateAndTime: .now, isRepeating: true, isRepeatAllDay: false, repeatDays: [.monday, .friday], alarm: true, alarmTimes: [.oneHourBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
+                                     routine: Routine(id: UUID(), title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: false, date: nil, time: nil, repeatDays: [.friday, .saturday], alarmTimes: [.oneDayBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
                                      type: .communication,
-                                     category: [.anxiety, .concentration, .impulse]),
+                                     category: [.anxiety, .impulse]),
                                 Post(id: 3,
                                      user: .init(id: 3, name: "오리궁뎅이", icon: "https://avatars.githubusercontent.com/u/57449485?v=4", title: "작심삼일", isblock: false),
                                      contentText: "오늘은 피곤해서 진짜 일찍 자고싶은데 ㅠㅠ 잠이 안와서 괴로워요ㅠㅠㅠㅠㅠ",
@@ -117,7 +117,7 @@ public extension Post {
                                      isLike: false,
                                      commentCount: 7,
                                      shareCount: 12,
-                                     routine: Routine(id: 12, title: "✌️ 나가기 전 잊지 말고 챙기자", category: "일", isPublic: true, dateAndTime: .now, isRepeating: true, isRepeatAllDay: false, repeatDays: [.monday, .friday], alarm: true, alarmTimes: [.oneHourBefore], memo: "지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
+                                     routine: Routine(id: UUID(), title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: false, date: nil, time: nil, repeatDays: [.friday, .saturday], alarmTimes: [.oneDayBefore], memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산", recommendedRoutines: nil, isFinish: false),
                                      type: .communication,
                                      category: [.anxiety, .impulse, .anxiety]),
                                 Post(id: 5,

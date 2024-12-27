@@ -11,14 +11,16 @@ import Then
 import UIKit
 
 public class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate {
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
+        
         setupHeader()
         setupCalendar()
     }
     
-    public required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder)
+        
         setupHeader()
         setupCalendar()
     }
@@ -36,7 +38,7 @@ public class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate 
         self.appearance.weekdayTextColor = TDColor.Neutral.neutral600
     }
     
-    // HeaderStackView는 각각의 Calendar에서 커스텀하게 해뒀습니다 (stackView 내용이 다 다름)
+    // calendarHeaderView는 CalendarHeaderStackView를 사용합니다.
     private func setupHeader() {
         self.calendarHeaderView.isHidden = true
         self.headerHeight = 0
