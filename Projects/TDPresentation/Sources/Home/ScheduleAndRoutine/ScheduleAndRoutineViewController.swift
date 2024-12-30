@@ -30,6 +30,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     private let createInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
     private let modifyInput = PassthroughSubject<RoutineViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    weak var coordinator: EventMakorDelegate?
     
     // MARK: - Initialize
     init(
@@ -54,16 +55,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
-        
-        eventMakorFloattingButton.layer.cornerRadius = 24
-        eventMakorFloattingButton.setImage(
-            TDImage.addLarge,
-            for: .normal
-        )
-        eventMakorFloattingButton.setTitle(
-            mode == .schedule ? " 일정 추가" : " 루틴 추가",
-            for: .normal
-        )
+        configureEventMakorButton()
         
         scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
@@ -103,6 +95,21 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
             $0.width.equalTo(116)
             $0.height.equalTo(48)
         }
+    }
+    
+    private func configureEventMakorButton() {
+        eventMakorFloattingButton.layer.cornerRadius = 24
+        eventMakorFloattingButton.setImage(
+            TDImage.addLarge,
+            for: .normal
+        )
+        eventMakorFloattingButton.setTitle(
+            mode == .schedule ? " 일정 추가" : " 루틴 추가",
+            for: .normal
+        )
+        eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapEventMakor()
+        }, for: .touchUpInside)
     }
 }
 
