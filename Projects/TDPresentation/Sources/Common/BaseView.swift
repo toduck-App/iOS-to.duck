@@ -6,7 +6,6 @@ class BaseView: UIView {
         self.addview()
         self.configure()
         self.layout()
-        self.binding()
     }
     
     required init?(coder: NSCoder) {
@@ -18,8 +17,7 @@ class BaseView: UIView {
     }
     
     // MARK: - Common Method
-    func layout() {}
-    func configure() {}
     func addview() {}
-    func binding() {}
+    func configure() {}
+    func layout() {}
 }

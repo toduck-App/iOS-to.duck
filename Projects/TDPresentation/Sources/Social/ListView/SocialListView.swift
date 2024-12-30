@@ -105,10 +105,6 @@ final class SocialListView: BaseView {
             addSubview($0)
         }
     }
-    
-    override func binding() {
-        
-    }
 }
 
 // MARK: External Method
