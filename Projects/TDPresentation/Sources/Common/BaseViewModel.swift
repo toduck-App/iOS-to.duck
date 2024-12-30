@@ -1,5 +1,8 @@
+import Combine
+
 protocol BaseViewModel {
-  associatedtype Action
-  
-  func action(_ action: Action)
+    associatedtype Input
+    associatedtype Output
+
+    func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never>
 }

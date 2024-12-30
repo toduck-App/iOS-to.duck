@@ -14,14 +14,16 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    var appCoordinator: (any Coordinator)?
+    var appCoordinator: (Coordinator)?
     let navigationController = UINavigationController()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
+        
+        let injector: DependencyResolvable = DIContainer.shared
         assembleDependencies()
-        appCoordinator = AppCoordinator(navigationController: navigationController)
+        appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
         appCoordinator?.start()
         
         window?.rootViewController = navigationController
@@ -29,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
-    func assembleDependencies() {
+    private func assembleDependencies() {
         DIContainer.shared.assemble([DataAssembly(), DomainAssembly()])
     }
 }

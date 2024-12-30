@@ -8,9 +8,12 @@
 import UIKit
 
 class MyPageViewController: UIViewController {
+    weak var coordinator: MyPageCoordinator?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.view.backgroundColor = .systemRed
+        setupNavigationBar(style: .mypage, navigationDelegate: coordinator!)
     }
 }

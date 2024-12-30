@@ -2,19 +2,24 @@ import TDDesign
 import UIKit
 
 class BaseViewController<LayoutView: BaseView>: UIViewController {
-
+    // MARK: - Properties
     var layoutView = LayoutView()
-    func layout() {}
-    func configure() {}
-    func addView() {}
-    func binding() {}
     
+    // MARK: - Initialize
     init() {
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    // MARK: - View Life Cycle
+    override func loadView() {
+        if layoutView.backgroundColor == nil {
+            layoutView.backgroundColor = TDColor.Neutral.neutral50
+        }
+        view = layoutView
     }
     
     override func viewDidLoad() {
@@ -25,14 +30,9 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         self.binding()
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //self.endEditing(true)
-    }
-    
-    override func loadView() {
-        if layoutView.backgroundColor == nil {
-            layoutView.backgroundColor = TDColor.Neutral.neutral50
-        }
-        view = layoutView
-    }
+    // MARK: - Common Method
+    func layout() { }
+    func configure() { }
+    func addView() { }
+    func binding() { }
 }

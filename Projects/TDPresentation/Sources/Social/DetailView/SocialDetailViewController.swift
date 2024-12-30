@@ -15,6 +15,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     
     weak var coordinator: SocialDetailCoordinator?
     
+    private let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
     private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
     private let viewModel: SocialDetailViewModel!
     private var cancellables = Set<AnyCancellable>()
@@ -30,8 +31,8 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.action(.fetchPost)
-        viewModel.action(.fetchComments)
+        input.send(.fetchPost)
+        input.send(.fetchComments)
     }
     
     override func configure() {
@@ -59,24 +60,19 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     }
     
     override func binding() {
-        viewModel.$post
-            .sink { [weak self] post in
-                guard let self = self, let post = post else { return }
-                DispatchQueue.main.async {
-                    self.applySnapshot(items: [.post(post.id)], to: .post)
-                }
-            }
-            .store(in: &cancellables)
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
         
-        viewModel.$comments
-            .sink { [weak self] comments in
-                guard let self = self else { return }
+        output.sink { [weak self] output in
+            switch output {
+            case .post(let post):
+                self?.applySnapshot(items: [.post(post.id)], to: .post)
+            case .comments(let comments):
                 let items = comments.map { Item.comment($0.id) }
-                DispatchQueue.main.async {
-                    self.applySnapshot(items: items, to: .comments)
-                }
+                self?.applySnapshot(items: items, to: .comments)
+            default:
+                break
             }
-            .store(in: &cancellables)
+        }.store(in: &cancellables)
     }
 }
 

@@ -47,5 +47,11 @@ public struct DomainAssembly: Assembly {
             return ReportPostUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchScheduleListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchScheduleListUseCaseImpl(repository: repository)
+        }
     }
 }

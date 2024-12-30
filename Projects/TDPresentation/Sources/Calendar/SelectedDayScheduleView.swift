@@ -9,9 +9,7 @@ import TDDesign
 import UIKit
 
 final class SelectedDayScheduleView: BaseView {
-    private let headerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral50
-    }
+    // MARK: - UI Components
     private let calendarImageView = UIImageView().then {
         $0.image = TDImage.Calendar.top3Medium
         $0.contentMode = .scaleAspectFill
@@ -24,20 +22,11 @@ final class SelectedDayScheduleView: BaseView {
     private let downDirectionImageView = UIImageView().then {
         $0.image = TDImage.Direction.downMedium
     }
-    
-    private let scheduleTableView = UITableView().then {
-        $0.backgroundColor = .blue
-        $0.separatorStyle = .none
+    let headerView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral50
     }
-    
-    init() {
-        super.init(frame: .zero)
-        setConstraints()
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    let scheduleTableView = UITableView().then {
+        $0.backgroundColor = .white
     }
     
     func updateDateLabel(date: Date) {
@@ -46,19 +35,27 @@ final class SelectedDayScheduleView: BaseView {
         dateFormatter.dateFormat = "M월 d일 (E)"
         dateLabel.text = dateFormatter.string(from: date)
     }
-}
-
-private extension SelectedDayScheduleView {
-    func setConstraints() {
+    
+    // MARK: - Setup & Configuration
+    override func configure() {
+        scheduleTableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: UITableViewCell.identifier
+        )
+    }
+    
+    override func addview() {
         addSubview(headerView)
         addSubview(scheduleTableView)
-        [calendarImageView, dateLabel, downDirectionImageView].forEach {
-            headerView.addSubview($0)
-        }
-        
+        headerView.addSubview(calendarImageView)
+        headerView.addSubview(dateLabel)
+        headerView.addSubview(downDirectionImageView)
+    }
+    
+    override func layout() {
         headerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(48)
+            $0.height.equalTo(48).priority(.high)
         }
         
         calendarImageView.snp.makeConstraints {
@@ -80,7 +77,9 @@ private extension SelectedDayScheduleView {
         
         scheduleTableView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.equalTo(22)
+            $0.trailing.equalTo(-16)
+            $0.bottom.equalToSuperview()
         }
     }
 }

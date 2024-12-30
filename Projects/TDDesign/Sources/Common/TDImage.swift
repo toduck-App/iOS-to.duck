@@ -8,6 +8,7 @@
 import Foundation
 
 public enum TDImage {
+    public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
     public static let addMedium = TDDesignAsset.Images.addMedium.image
     public static let alarmMedium = TDDesignAsset.Images.alarmMedium.image
     public static let badMedium = TDDesignAsset.Images.badMedium.image
@@ -17,6 +18,7 @@ public enum TDImage {
     public static let clockMedium = TDDesignAsset.Images.clockMedium.image
     public static let filterMedium = TDDesignAsset.Images.filterMedium.image
     public static let goodMedium = TDDesignAsset.Images.goodMedium.image
+    public static let searchMedium = TDDesignAsset.Images.searchMedium.image
     public static let hamburgerMedium = TDDesignAsset.Images.hamburgerMedium.image
     public static let imageMedium = TDDesignAsset.Images.imageMedium.image
     public static let listMedium = TDDesignAsset.Images.listMedium.image
@@ -26,6 +28,7 @@ public enum TDImage {
     public static let shareMedium = TDDesignAsset.Images.shareMedium.image
     public static let sortMedium = TDDesignAsset.Images.sortMedium.image
     public static let trashMedium = TDDesignAsset.Images.trashMedium.image
+    public static let trashWhiteMedium = TDDesignAsset.Images.trashWhiteMedium.image
     public static let downMedium = TDDesignAsset.Images.downMedium.image
     public static let addSmall = TDDesignAsset.Images.addSmall.image
     public static let alarmSmall = TDDesignAsset.Images.alarmSmall.image
@@ -41,6 +44,25 @@ public enum TDImage {
     public static let timeSmall = TDDesignAsset.Images.timeSmall.image
     public static let tomatoTerm = TDDesignAsset.Images.tomatoTerm.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
+    
+    public enum CheckBox {
+        public static let empty = TDDesignAsset.Images.emptyCheckBox.image
+        public static let filled = TDDesignAsset.Images.back1CheckBox.image
+        public static let back2 = TDDesignAsset.Images.back2CheckBox.image
+        public static let back3 = TDDesignAsset.Images.back3CheckBox.image
+        public static let back4 = TDDesignAsset.Images.back4CheckBox.image
+        public static let back5 = TDDesignAsset.Images.back5CheckBox.image
+        public static let back6 = TDDesignAsset.Images.back6CheckBox.image
+        public static let back7 = TDDesignAsset.Images.back7CheckBox.image
+        public static let back8 = TDDesignAsset.Images.back8CheckBox.image
+        public static let back9 = TDDesignAsset.Images.back9CheckBox.image
+        public static let back10 = TDDesignAsset.Images.back10CheckBox.image
+        public static let back11 = TDDesignAsset.Images.back11CheckBox.image
+        public static let back12 = TDDesignAsset.Images.back12CheckBox.image
+        public static let back13 = TDDesignAsset.Images.back13CheckBox.image
+        public static let back14 = TDDesignAsset.Images.back14CheckBox.image
+        public static let back15 = TDDesignAsset.Images.back15CheckBox.image
+    }
     
     public enum Like {
         public static let small = TDDesignAsset.Images.likeSmall.image
@@ -215,5 +237,21 @@ public enum TDImage {
         public static let percent80 = TDDesignAsset.Images.percent80.image
         public static let percent90 = TDDesignAsset.Images.percent90.image
         public static let percent100 = TDDesignAsset.Images.percent100.image
+    }
+    
+    public enum Category {
+        public static let food = TDDesignAsset.Images.categoryFood.image
+        public static let none = TDDesignAsset.Images.categoryNone.image
+        public static let talk = TDDesignAsset.Images.categoryTalk.image
+        public static let heart = TDDesignAsset.Images.categoryHeart.image
+        public static let power = TDDesignAsset.Images.categoryPower.image
+        public static let sleep = TDDesignAsset.Images.categorySleep.image
+        public static let pencil = TDDesignAsset.Images.categoryPencil.image
+        public static let people = TDDesignAsset.Images.categoryPeople.image
+        public static let redBook = TDDesignAsset.Images.categoryRedbook.image
+        public static let vehicle = TDDesignAsset.Images.categoryVehicle.image
+        public static let computer = TDDesignAsset.Images.categoryComputer.image
+        public static let medicine = TDDesignAsset.Images.categoryMedicine.image
+        public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.image
     }
 }
