@@ -16,6 +16,12 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
+    private let eventMakorFloattingButton = TDButton(
+        title: "일정 추가",
+        size: .large,
+        foregroundColor: TDColor.baseWhite,
+        backgroundColor: TDColor.Primary.primary500
+    )
     
     // MARK: - Properties
     private let mode: Mode
@@ -48,6 +54,17 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
+        
+        eventMakorFloattingButton.layer.cornerRadius = 24
+        eventMakorFloattingButton.setImage(
+            TDImage.addLarge,
+            for: .normal
+        )
+        eventMakorFloattingButton.setTitle(
+            mode == .schedule ? " 일정 추가" : " 루틴 추가",
+            for: .normal
+        )
+        
         scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
         scheduleAndRoutineTableView.register(
@@ -65,6 +82,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     override func addView() {
         view.addSubview(weekCalendarView)
         view.addSubview(scheduleAndRoutineTableView)
+        view.addSubview(eventMakorFloattingButton)
     }
     
     override func layout() {
@@ -77,6 +95,13 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         scheduleAndRoutineTableView.snp.makeConstraints {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(20)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        eventMakorFloattingButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+            $0.width.equalTo(116)
+            $0.height.equalTo(48)
         }
     }
 }
