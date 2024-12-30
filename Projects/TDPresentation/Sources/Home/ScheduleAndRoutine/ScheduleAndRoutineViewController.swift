@@ -108,7 +108,8 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
             for: .normal
         )
         eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.didTapEventMakor()
+            guard let self else { return }
+            self.coordinator?.didTapEventMakor(mode: self.mode)
         }, for: .touchUpInside)
     }
 }

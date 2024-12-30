@@ -2,7 +2,7 @@ import UIKit
 import TDCore
 
 protocol EventMakorDelegate: AnyObject {
-    func didTapEventMakor()
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode)
 }
 
 final class HomeCoordinator: Coordinator {
@@ -44,10 +44,10 @@ extension HomeCoordinator: NavigationDelegate {
 }
 
 extension HomeCoordinator: EventMakorDelegate {
-    func didTapEventMakor() {
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
         let eventMakorCoordinator = EventMakorCoordinator(navigationController: navigationController, injector: injector)
         eventMakorCoordinator.finishDelegate = self
         childCoordinators.append(eventMakorCoordinator)
-        eventMakorCoordinator.start()
+        eventMakorCoordinator.start(mode: mode)
     }
 }

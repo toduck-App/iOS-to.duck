@@ -101,7 +101,7 @@ final class HomeViewController: BaseViewController<BaseView> {
 }
 
 extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor() {
-        coordinator?.didTapEventMakor()
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
+        coordinator?.didTapEventMakor(mode: mode)
     }
 }

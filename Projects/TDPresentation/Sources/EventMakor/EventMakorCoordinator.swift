@@ -15,12 +15,14 @@ final class EventMakorCoordinator: Coordinator {
         self.injector = injector
     }
 
-    func start() {
+    func start(mode: ScheduleAndRoutineViewController.Mode) {
         let viewModel = EventMakorViewModel()
-        let eventMakorViewController = EventMakorViewController(viewModel: viewModel)
+        let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         navigationController.pushViewController(eventMakorViewController, animated: true)
     }
+    
+    func start() { }
 }
 
 // MARK: - Coordinator Finish Delegate
