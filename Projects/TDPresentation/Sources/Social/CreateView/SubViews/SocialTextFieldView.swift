@@ -17,6 +17,7 @@ final class SocialTextFieldView: UIView {
         $0.isScrollEnabled = true
         $0.textContainerInset = UIEdgeInsets(top: 14, left: 12, bottom: 14, right: 12)
         $0.delegate = self
+        $0.backgroundColor = TDColor.baseWhite
     }
     
     private let placeholderLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500).then {

@@ -32,6 +32,7 @@ public enum TDImage {
     public static let trashWhiteMedium = TDDesignAsset.Images.trashWhiteMedium.image
     public static let downMedium = TDDesignAsset.Images.downMedium.image
     public static let warningMedium = TDDesignAsset.Images.warningMedium.image
+    public static let warningCheckMedium = TDDesignAsset.Images.warningCheckMedium.image
     public static let addSmall = TDDesignAsset.Images.addSmall.image
     public static let alarmSmall = TDDesignAsset.Images.alarmSmall.image
     public static let badSmall = TDDesignAsset.Images.badSmall.image

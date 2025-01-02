@@ -3,16 +3,28 @@ import TDDesign
 import Then
 import UIKit
 
+protocol SocialAddPhotoViewDelegate: AnyObject {
+    func didTapAddPhotoButton(_ view: SocialAddPhotoView?)
+}
+
 final class SocialAddPhotoView: UIView {
+    weak var delegate: SocialAddPhotoViewDelegate?
+    
     private let title = TDRequiredTitle().then {
         $0.setTitleLabel("사진 첨부")
     }
     
-    private let currentCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private let currentCounterLabel = TDLabel(
+        toduckFont: .regularBody2,
+        toduckColor: TDColor.Neutral.neutral800
+    ).then {
         $0.setText("0")
     }
     
-    private let maxCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600).then {
+    private let maxCounterLabel = TDLabel(
+        toduckFont: .regularBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    ).then {
         $0.setText("/ 5")
     }
     
@@ -44,6 +56,7 @@ final class SocialAddPhotoView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
+        setAction()
     }
     
     @available(*, unavailable)
@@ -134,5 +147,13 @@ extension SocialAddPhotoView {
             make.top.equalTo(addPhotoButton.snp.bottom).offset(12)
             make.leading.trailing.bottom.equalToSuperview()
         }
+    }
+}
+
+extension SocialAddPhotoView {
+    private func setAction() {
+        addPhotoButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.didTapAddPhotoButton(self)
+        }, for: .touchUpInside)
     }
 }

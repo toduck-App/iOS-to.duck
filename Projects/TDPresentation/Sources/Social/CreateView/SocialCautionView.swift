@@ -4,9 +4,12 @@ import Then
 import UIKit
 
 final class SocialCautionView: UIView {
-    private let cautionImageView = UIImageView().then {
-        $0.image = TDImage.warningMedium
+    enum SocialCautionStyle {
+        case warning
+        case notice
     }
+    
+    private let cautionImageView = UIImageView()
     
     private let titleLabel = TDLabel(toduckFont: .boldBody2, toduckColor: TDColor.Primary.primary500).then {
         $0.numberOfLines = 1
@@ -19,10 +22,10 @@ final class SocialCautionView: UIView {
         $0.distribution = .fillProportionally
     }
     
-    init(title: String) {
-        titleLabel.setText(title)
+    init(style: SocialCautionStyle, title: String) {
         super.init(frame: .zero)
-        self.setupUI()
+        setupStyle(style: style, title: title)
+        setupUI()
     }
     
     @available(*, unavailable)
@@ -31,8 +34,9 @@ final class SocialCautionView: UIView {
     }
     
     public func addDescription(_ description: String) {
-        let descriptionLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral700).then {
+        let descriptionLabel = TDLabel(toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral700).then {
             $0.setText("­­­ㆍ \(description)")
+            $0.numberOfLines = 0
         }
         stackView.addArrangedSubview(descriptionLabel)
     }
@@ -41,8 +45,22 @@ final class SocialCautionView: UIView {
 // MARK: Layout
 
 private extension SocialCautionView {
+    func setupStyle(style: SocialCautionStyle, title: String) {
+        titleLabel.setText(title)
+        switch style {
+        case .warning:
+            titleLabel.setColor(TDColor.Neutral.neutral600)
+            cautionImageView.image = TDImage.warningMedium.withRenderingMode(.alwaysTemplate)
+            cautionImageView.tintColor = TDColor.Neutral.neutral500
+            backgroundColor = TDColor.Neutral.neutral50
+        case .notice:
+            titleLabel.setColor(TDColor.Primary.primary500)
+            cautionImageView.image = TDImage.warningCheckMedium
+            backgroundColor = TDColor.Primary.primary25
+        }
+    }
+    
     func setupUI() {
-        backgroundColor = TDColor.Primary.primary25
         layer.cornerRadius = 10
         setupLayout()
         setupConstraints()
@@ -56,17 +74,18 @@ private extension SocialCautionView {
 
     func setupConstraints() {
         cautionImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(10)
+            make.leading.equalToSuperview().inset(16)
             make.top.equalToSuperview().inset(16)
             make.size.equalTo(24)
         }
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(cautionImageView.snp.trailing).offset(1.5)
+            make.leading.equalTo(cautionImageView.snp.trailing)
             make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalTo(cautionImageView)
         }
         stackView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(6)
-            make.leading.equalTo(cautionImageView).offset(21)
+            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.leading.equalTo(cautionImageView)
             make.trailing.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().inset(16)
         }

@@ -16,6 +16,6 @@ final class SocialCreateCoordinator: Coordinator {
         let socialAddViewModel = SocialCreateViewModel()
         let socialAddViewController = SocialCreateViewController(viewModel: socialAddViewModel)
         socialAddViewController.coordinator = self
-        navigationController.pushViewController(socialAddViewController, animated: true)
+        navigationController.pushTDViewController(socialAddViewController, animated: true)
     }
 }

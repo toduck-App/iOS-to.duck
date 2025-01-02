@@ -14,7 +14,11 @@ final class SocialSelectRoutineView: UIView {
         $0.layer.borderWidth = 1
     }
     
-    private let routineSelectLabel = TDLabel(labelText: "공유할 루틴을 선택해주세요", toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private let routineSelectLabel = TDLabel(
+        labelText: "공유할 루틴을 선택해주세요",
+        toduckFont: .regularBody2,
+        toduckColor: TDColor.Neutral.neutral800
+    ).then {
         $0.numberOfLines = 1
     }
     
