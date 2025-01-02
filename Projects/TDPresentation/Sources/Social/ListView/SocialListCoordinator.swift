@@ -75,8 +75,10 @@ extension SocialListCoordinator: SocialListDelegate {
 
     func didTapCreateButton() {
         let createCoordinator = SocialCreateCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            injector: injector
         )
+        createCoordinator.finishDelegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
     }

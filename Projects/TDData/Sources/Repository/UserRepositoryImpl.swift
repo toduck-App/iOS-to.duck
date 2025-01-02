@@ -26,7 +26,7 @@ public final class UserRepositoryImpl: UserRepository {
     }
 
     public func fetchUserRoutineList(userId: Int) async throws -> [Routine]? {
-        []
+        Routine.dummy
     }
 
     public func fetchUserShareUrl(userId: Int) async throws -> String {

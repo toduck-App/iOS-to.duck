@@ -6,16 +6,26 @@ final class SocialCreateCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
-    var injector: DependencyResolvable = DIContainer.shared
+    var injector: DependencyResolvable
     
-    init(navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController,
+        injector: DependencyResolvable
+    ) {
         self.navigationController = navigationController
+        self.injector = injector
     }
 
     func start() {
-        let socialAddViewModel = SocialCreateViewModel()
+        let fetchRoutineListUseCase = injector.resolve(FetchRoutineListUseCase.self)
+        let socialAddViewModel = SocialCreateViewModel(fetchRoutineListUseCase: fetchRoutineListUseCase)
         let socialAddViewController = SocialCreateViewController(viewModel: socialAddViewModel)
         socialAddViewController.coordinator = self
         navigationController.pushTDViewController(socialAddViewController, animated: true)
+    }
+    
+    func didCreateSocial() {
+        navigationController.popViewController(animated: true)
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }

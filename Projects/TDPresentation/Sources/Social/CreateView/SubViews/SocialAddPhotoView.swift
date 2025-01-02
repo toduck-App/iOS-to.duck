@@ -31,7 +31,8 @@ final class SocialAddPhotoView: UIView {
     private let addPhotoButton = UIButton().then {
         $0.layer.cornerRadius = 12
         $0.backgroundColor = TDColor.Neutral.neutral100
-        let image = TDImage.cameraMedium.withRenderingMode(.alwaysOriginal).withTintColor(TDColor.Neutral.neutral600)
+        let image = TDImage.cameraMedium.withRenderingMode(.alwaysOriginal)
+            .withTintColor(TDColor.Neutral.neutral600)
         $0.setImage(image, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
     }
@@ -64,37 +65,43 @@ final class SocialAddPhotoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func addPhoto(imageData: Data) {
-        guard let image = UIImage(data: imageData) else {
-            // TODO: Error Handling
-            return
-        }
+    // MARK: - [Data]를 받는 함수로 변경 & 기존 이미지 제거
+    public func addPhotos(_ imagesData: [Data]) {
+        photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        let imageView = UIImageView(image: image).then {
-            $0.layer.cornerRadius = 8
-            $0.contentMode = .scaleAspectFill
-            $0.clipsToBounds = true
+        for data in imagesData {
+            guard let image = UIImage(data: data) else {
+                // TODO: Error Handling (유효하지 않은 이미지 데이터일 경우)
+                continue
+            }
+            
+            let imageView = UIImageView(image: image).then {
+                $0.layer.cornerRadius = 8
+                $0.contentMode = .scaleAspectFill
+                $0.clipsToBounds = true
+            }
+            
+            let containerView = UIView().then {
+                $0.layer.cornerRadius = 8
+                $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                $0.layer.borderWidth = 1
+            }
+            
+            containerView.addSubview(imageView)
+            imageView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+                make.size.equalTo(CGSize(width: 88, height: 88))
+            }
+            
+            photoStackView.addArrangedSubview(containerView)
         }
-        
-        let containerView = UIView().then {
-            $0.layer.cornerRadius = 8
-            $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-            $0.layer.borderWidth = 1
-        }
-        containerView.addSubview(imageView)
-        
-        imageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.size.equalTo(CGSize(width: 88, height: 88))
-        }
-        
-        photoStackView.addArrangedSubview(containerView)
         
         let currentCount = photoStackView.arrangedSubviews.count
         currentCounterLabel.setText("\(currentCount)")
     }
 }
 
+// MARK: - Layout
 extension SocialAddPhotoView {
     private func setLayout() {
         addSubviews()
@@ -150,6 +157,7 @@ extension SocialAddPhotoView {
     }
 }
 
+// MARK: - Actions
 extension SocialAddPhotoView {
     private func setAction() {
         addPhotoButton.addAction(UIAction { [weak self] _ in

@@ -55,16 +55,19 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
+                guard let self else { return }
                 switch event {
-                    
                 case .success:
-                    <#code#>
+                    self.coordinator?.didCreateSocial()
+                case .setImage:
+                    self.layoutView.socialAddPhotoView.addPhotos(self.viewModel.images)
                 case .notSelectCategory:
-                    <#code#>
+                    break
                 case .failure(_):
-                    <#code#>
+                    break
                 }
             }
+            .store(in: &cancellables)
     }
 
 }

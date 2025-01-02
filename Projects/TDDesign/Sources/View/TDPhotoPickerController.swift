@@ -141,7 +141,6 @@ public final class TDPhotoPickerController: UIViewController, UICollectionViewDe
             }
             return imageData
         }
-
         pickerDelegate?.didSelectPhotos(self, photos: selectedPhotoData)
         navigationController?.popViewController(animated: true)
     }
