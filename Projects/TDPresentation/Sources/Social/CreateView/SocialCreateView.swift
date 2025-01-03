@@ -6,8 +6,9 @@ final class SocialCreateView: BaseView {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     private(set) var socialSelectCategoryView = SocialSelectCategoryView()
-    private(set) var socialSelectRoutineView = SocialSelectRoutineView()
-    private(set) var socialTextFieldView = SocialTextFieldView(title: "내용", isRequired: true, maxCharacter: 500)
+    private(set) var socialSelectRoutineView = SocialRoutineInputView()
+    private(set) var titleTextFieldView = SocialTextFieldView(title: "제목", isRequired: true, maxCharacter: 16)
+    private(set) var descriptionTextFieldView = SocialTextFieldView(title: "내용", isRequired: true, maxCharacter: 500)
     private(set) var socialAddPhotoView = SocialAddPhotoView()
     
     
@@ -27,7 +28,7 @@ final class SocialCreateView: BaseView {
         scrollView.addSubview(contentView)
         contentView.addSubview(socialSelectCategoryView)
         contentView.addSubview(socialSelectRoutineView)
-        contentView.addSubview(socialTextFieldView)
+        contentView.addSubview(descriptionTextFieldView)
         contentView.addSubview(socialAddPhotoView)
         contentView.addSubview(noticeView)
         contentView.addSubview(warningView)
@@ -61,7 +62,7 @@ final class SocialCreateView: BaseView {
             make.height.equalTo(80)
         }
         
-        socialTextFieldView.snp.makeConstraints { make in
+        descriptionTextFieldView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
             make.top.equalTo(socialSelectRoutineView.snp.bottom).offset(20)
@@ -71,7 +72,7 @@ final class SocialCreateView: BaseView {
         socialAddPhotoView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
-            make.top.equalTo(socialTextFieldView.snp.bottom).offset(20)
+            make.top.equalTo(descriptionTextFieldView.snp.bottom).offset(20)
             make.height.equalTo(160)
         }
         

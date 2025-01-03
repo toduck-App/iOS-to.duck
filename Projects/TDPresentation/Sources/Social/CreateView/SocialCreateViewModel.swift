@@ -5,7 +5,6 @@ import TDDomain
 
 final class SocialCreateViewModel: BaseViewModel {
     enum Input {
-        case fetchRoutines
         case chipSelect(at: Int)
         case setRoutine(Routine)
         case setContent(String)
@@ -13,42 +12,35 @@ final class SocialCreateViewModel: BaseViewModel {
     }
     
     enum Output {
-        case success
+        case createPost
+        case setRoutine
         case setImage
-        case notSelectCategory
         case failure(String)
     }
     
-    private let fetchRoutineListUseCase: FetchRoutineListUseCase
-    
-    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
     private(set) var routines: [Routine] = []
+    private(set) var selectedCategory: PostCategory?
+    private(set) var selectedRoutine: Routine?
+    private(set) var images: [Data] = []
+    private(set) var title: String = ""
+    private(set) var content: String = ""
     
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var category: PostCategory?
-    private var selectedRoutine: Routine?
-    private var content: String = ""
-    private(set) var images: [Data] = []
-    
-    init(fetchRoutineListUseCase: FetchRoutineListUseCase) {
-        self.fetchRoutineListUseCase = fetchRoutineListUseCase
-    }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             guard let self else { return }
             switch event {
             case .chipSelect(let index):
-                self.setCategory(at: index)
-            case .setRoutine:
-                break
+                setCategory(at: index)
+            case .setRoutine(let routine):
+                setRoutine(routine)
             case .setContent:
                 break
             case .setImages(let data):
-                self.setImages(data)
-            case .fetchRoutines:
-                Task { await self.fetchRoutines() }
+                setImages(data)
             }
         }.store(in: &cancellables)
         
@@ -57,24 +49,14 @@ final class SocialCreateViewModel: BaseViewModel {
 }
 
 extension SocialCreateViewModel {
-    private func fetchRoutines() async {
-        do {
-            let routines = try await fetchRoutineListUseCase.execute()
-            self.routines = routines
-            output.send(.success)
-        } catch {
-            output.send(.failure("루틴을 불러오는데 실패했습니다."))
-        }
-        
-    }
-    
     private func setCategory(at index: Int) {
-        guard let category = PostCategory(rawValue: chips[index].title) else { return }
+        let category = PostCategory.allCases[safe: index]
         self.category = category
     }
     
     private func setRoutine(_ routine: Routine) {
-        self.selectedRoutine = routine
+        selectedRoutine = routine
+        output.send(.setRoutine)
     }
     
     private func setContent(_ content: String) {

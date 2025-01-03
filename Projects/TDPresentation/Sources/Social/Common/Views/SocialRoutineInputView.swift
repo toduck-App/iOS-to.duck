@@ -3,7 +3,15 @@ import TDDesign
 import Then
 import UIKit
 
-final class SocialSelectRoutineView: UIView {
+protocol SocialRoutineInputDelegate: AnyObject {
+    func didTapRoutineInputView(_ view: SocialRoutineInputView?)
+}
+
+final class SocialRoutineInputView: UIView {
+    // MARK: - Properties
+
+    weak var delegate: SocialRoutineInputDelegate?
+
     private let title = TDRequiredTitle().then {
         $0.setTitleLabel("루틴 공유하기")
     }
@@ -26,18 +34,30 @@ final class SocialSelectRoutineView: UIView {
         $0.image = TDImage.downMedium
     }
     
+    // MARK: - Initializers
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
+        setActions()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        setLayout()
+        setActions()
+    }
+    
+    // MARK: - Public Method
+    
+    public func setRoutine(string: String) {
+        routineSelectLabel.setText(string)
     }
 }
 
-extension SocialSelectRoutineView {
+extension SocialRoutineInputView {
+    // MARK: - Private Methods
+
     private func setLayout() {
         addSubviews()
         setConstraints()
@@ -72,5 +92,15 @@ extension SocialSelectRoutineView {
             make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
         }
+    }
+    
+    private func setActions() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapRoutineSelectView))
+        routineSelectView.isUserInteractionEnabled = true
+        routineSelectView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func didTapRoutineSelectView() {
+        delegate?.didTapRoutineInputView(self)
     }
 }

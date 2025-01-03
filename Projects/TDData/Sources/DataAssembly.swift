@@ -27,6 +27,10 @@ public struct DataAssembly: Assembly {
         container.register(UserRepository.self) { _ in
             return UserRepositoryImpl()
         }
+        
+        container.register(RoutineRepository.self) { _ in
+            return RoutineRepositoryImpl()
+        }
     }
         
 }

@@ -12,13 +12,13 @@ public protocol FetchRoutineListUseCase {
 }
 
 public final class FetchRoutineListUseCaseImpl: FetchRoutineListUseCase {
-    private let routineListRepository: RoutineRepositoryProtocol
+    private let repository: RoutineRepository
     
-    public init(routineListRepository: RoutineRepositoryProtocol) {
-        self.routineListRepository = routineListRepository
+    public init(repository: RoutineRepository) {
+        self.repository = repository
     }
     
     public func execute() async throws -> [Routine] {
-        return try await routineListRepository.fetchRoutineList()
+        return try await repository.fetchRoutineList()
     }
 }

@@ -81,5 +81,12 @@ public struct DomainAssembly: Assembly {
             }
             return FetchUserPostUseCaseImpl(repository: repository)
         }
+        
+        container.register(FetchRoutineListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchRoutineListUseCaseImpl(repository: repository)
+        }
     }
 }

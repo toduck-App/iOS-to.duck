@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public enum TDImage {
     public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
@@ -196,6 +197,7 @@ public enum TDImage {
         public static let downMedium = TDDesignAsset.Images.downMedium.image
         public static let upSmall = TDDesignAsset.Images.upSmall.image
         public static let downSmall = TDDesignAsset.Images.downSmall.image
+        public static let curvedArrowMedium = TDDesignAsset.Images.curvedArrowMedium.image
     }
     
     public enum Logo {

@@ -7,7 +7,7 @@ final class SocialCreateCoordinator: Coordinator {
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
-    
+
     init(
         navigationController: UINavigationController,
         injector: DependencyResolvable
@@ -17,15 +17,33 @@ final class SocialCreateCoordinator: Coordinator {
     }
 
     func start() {
-        let fetchRoutineListUseCase = injector.resolve(FetchRoutineListUseCase.self)
-        let socialAddViewModel = SocialCreateViewModel(fetchRoutineListUseCase: fetchRoutineListUseCase)
-        let socialAddViewController = SocialCreateViewController(viewModel: socialAddViewModel)
-        socialAddViewController.coordinator = self
-        navigationController.pushTDViewController(socialAddViewController, animated: true)
+        let socialCreateViewModel = SocialCreateViewModel()
+        let socialCreateViewController = SocialCreateViewController(
+            viewModel: socialCreateViewModel
+        )
+        socialCreateViewController.coordinator = self
+        navigationController.pushTDViewController(socialCreateViewController, animated: true)
     }
-    
-    func didCreateSocial() {
+
+    func didTapDoneButton() {
         navigationController.popViewController(animated: true)
         finishDelegate?.didFinish(childCoordinator: self)
+    }
+
+    func didTapSelectRoutineButton() {
+        let coordinator = SocialSelectRoutineCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        coordinator.delegate = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
+}
+
+extension SocialCreateCoordinator: SocialSelectRoutineDelegate {
+    func didTapRoutine(_ routine: Routine) {
+        guard let socialCreateViewController = navigationController.viewControllers.last as? SocialCreateViewController else { return }
+        socialCreateViewController.setRoutine(routine)
     }
 }
