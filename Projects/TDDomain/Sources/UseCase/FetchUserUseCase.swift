@@ -7,14 +7,18 @@
 
 import Foundation
 
-public final class FetchUserUseCase {
-    private let repostiory: UserRepositoryProtocol
+public protocol FetchUserUseCase {
+    func execute(id: User.ID) async throws -> User
+}
 
-    public init(repostiory: UserRepositoryProtocol) {
-        self.repostiory = repostiory
+public final class FetchUserUseCaseImpl: FetchUserUseCase {
+    private let repostiory: UserRepository
+
+    public init(repository: UserRepository) {
+        self.repostiory = repository
     }
 
-    public func execute(user: User) async throws -> User? {
-        return try await repostiory.fetchUser(userId: user.id)
+    public func execute(id: User.ID) async throws -> User {
+        return try await repostiory.fetchUser(userId: id)
     }
 }

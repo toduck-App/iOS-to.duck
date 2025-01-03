@@ -1,13 +1,7 @@
 import UIKit
 import SnapKit
 
-final class DropDownCell: UITableViewCell {    
-    override var isSelected: Bool {
-        didSet {
-            contentView.backgroundColor = isSelected ? TDColor.Neutral.neutral300 : TDColor.baseWhite
-        }
-    }
-    
+final class DropDownCell: UITableViewCell {
     private let stackView = UIStackView().then {
         $0.spacing = 1.5
         $0.axis = .horizontal
@@ -64,6 +58,7 @@ final class DropDownCell: UITableViewCell {
 // MARK: - UI Methods
 private extension DropDownCell {
     func setupUI() {
+        backgroundColor = TDColor.baseWhite
         self.selectionStyle = .none
         setViewHierarchy()
         setConstraints()

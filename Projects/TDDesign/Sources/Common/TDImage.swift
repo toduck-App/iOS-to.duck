@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public enum TDImage {
     public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
@@ -25,11 +26,14 @@ public enum TDImage {
     public static let locationMedium = TDDesignAsset.Images.locationMedium.image
     public static let penMedium = TDDesignAsset.Images.penMedium.image
     public static let reportMedium = TDDesignAsset.Images.reportMedium.image
+    public static let reportFillMedium = TDDesignAsset.Images.reportFillMedium.image
     public static let shareMedium = TDDesignAsset.Images.shareMedium.image
     public static let sortMedium = TDDesignAsset.Images.sortMedium.image
     public static let trashMedium = TDDesignAsset.Images.trashMedium.image
     public static let trashWhiteMedium = TDDesignAsset.Images.trashWhiteMedium.image
     public static let downMedium = TDDesignAsset.Images.downMedium.image
+    public static let warningMedium = TDDesignAsset.Images.warningMedium.image
+    public static let warningCheckMedium = TDDesignAsset.Images.warningCheckMedium.image
     public static let addSmall = TDDesignAsset.Images.addSmall.image
     public static let alarmSmall = TDDesignAsset.Images.alarmSmall.image
     public static let badSmall = TDDesignAsset.Images.badSmall.image
@@ -167,7 +171,6 @@ public enum TDImage {
         public static let medium = TDDesignAsset.Images.socialMedium.image
     }
     
-    
     public enum Timer {
         public static let colorMedium = TDDesignAsset.Images.timerColorMedium.image
         public static let medium = TDDesignAsset.Images.timerMedium.image
@@ -194,6 +197,7 @@ public enum TDImage {
         public static let downMedium = TDDesignAsset.Images.downMedium.image
         public static let upSmall = TDDesignAsset.Images.upSmall.image
         public static let downSmall = TDDesignAsset.Images.downSmall.image
+        public static let curvedArrowMedium = TDDesignAsset.Images.curvedArrowMedium.image
     }
     
     public enum Logo {
@@ -226,6 +230,7 @@ public enum TDImage {
             public static let percent90 = TDDesignAsset.Images.percentDot90.image
             public static let percent100 = TDDesignAsset.Images.percentDot100.image
         }
+
         public static let percent0 = TDDesignAsset.Images.percent0.image
         public static let percent10 = TDDesignAsset.Images.percent10.image
         public static let percent20 = TDDesignAsset.Images.percent20.image
