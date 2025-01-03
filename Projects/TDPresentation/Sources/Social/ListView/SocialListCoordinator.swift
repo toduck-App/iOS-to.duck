@@ -94,13 +94,3 @@ extension SocialListCoordinator: NavigationDelegate {
         toduckCalendarCoordinator.start()
     }
 }
-
-// MARK: - Navigation Delegate
-extension SocialListCoordinator: NavigationDelegate {
-    func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
-        toduckCalendarCoordinator.finishDelegate = self
-        childCoordinators.append(toduckCalendarCoordinator)
-        toduckCalendarCoordinator.start()
-    }
-}
