@@ -14,14 +14,14 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     ) {
         self.mode = mode
         self.viewModel = viewModel
-        self.eventMakorView = EventMakorView(mode: mode)
+        self.eventMakorView = EventMakorView()
         super.init()
     }
     
     required init?(coder: NSCoder) {
         self.mode = .schedule
         self.viewModel = EventMakorViewModel()
-        self.eventMakorView = EventMakorView(mode: mode)
+        self.eventMakorView = EventMakorView()
         super.init(coder: coder)
     }
     
