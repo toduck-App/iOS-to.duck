@@ -8,13 +8,13 @@
 import Foundation
 
 public final class CreateRoutineUseCase {
-    private let routineRepository: RoutineRepositoryProtocol
+    private let repository: RoutineRepository
     
-    public init(routineRepository: RoutineRepositoryProtocol) {
-        self.routineRepository = routineRepository
+    public init(repository: RoutineRepository) {
+        self.repository = repository
     }
     
     public func execute(routine: Routine) async throws -> Bool {
-        return try await routineRepository.createRoutine(routine: routine)
+        return try await repository.createRoutine(routine: routine)
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: 루틴 하나 상세 불러오기
-public protocol RoutineRepositoryProtocol {
+public protocol RoutineRepository {
     func fetchRoutine() async throws -> Routine
     func fetchRoutineList() async throws -> [Routine]
     func updateRoutine(routineId: Int) async throws -> Bool

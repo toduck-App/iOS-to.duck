@@ -3,7 +3,7 @@ import TDDesign
 import TDDomain
 import UIKit
 
-final class SocialListViewController: BaseViewController<SocialListView> {
+final class SocialListViewController: BaseViewController<SocialListView>, TDPopupPresentable {
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
     private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
@@ -34,6 +34,7 @@ final class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.chipCollectionView.setChips(viewModel.chips)
         setupDataSource()
         layoutView.dropDownHoverView.delegate = self
+        layoutView.addPostButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
         layoutView.segmentedControl.addTarget(self, action: #selector(didTapSegmentedControl), for: .valueChanged)
     }
@@ -58,7 +59,6 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     }
 }
 
-
 extension SocialListViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
         input.send(.chipSelect(at: index))
@@ -66,7 +66,6 @@ extension SocialListViewController: TDChipCollectionViewDelegate {
 }
 
 extension SocialListViewController: UICollectionViewDelegate {
-    
     private func setupDataSource() {
         datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, postID in
             guard let post = self.viewModel.posts.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
@@ -78,9 +77,8 @@ extension SocialListViewController: UICollectionViewDelegate {
         })
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.posts.count
+        viewModel.posts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -89,18 +87,38 @@ extension SocialListViewController: UICollectionViewDelegate {
     }
 }
 
-//MARK: Input
+// MARK: Input
+
 extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
+    func didTapBlock(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        let controller = SocialBlockViewController()
+        controller.onBlock = { [weak self] in
+            guard let user = self?.viewModel.posts[indexPath.item].user else { return }
+            self?.input.send(.blockUser(to: user))
+        }
+        presentPopup(with: controller)
+    }
+    
+    func didTapReport(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        coordinator?.didTapReport(id: viewModel.posts[indexPath.item].id)
+    }
+    
     func didTapRoutineView(_ cell: SocialFeedCollectionViewCell) {
         // TODO: Routine 공유 View
     }
     
     func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
-        // TODO: 프로필 view로 이동
-    }
-    
-    func didTapMoreButton(_ cell: SocialFeedCollectionViewCell) {
-        // TODO: 신고하기/차단하기 && 내꺼라면 삭제하기
+        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
+            return
+        }
+        let user = viewModel.posts[indexPath.item].user
+        coordinator?.didTapUserProfile(id: user.id)
     }
     
     func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {
@@ -119,6 +137,10 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
         input.send(.refreshPosts)
     }
     
+    @objc func didTapCreateButton() {
+        coordinator?.didTapCreateButton()
+    }
+    
     func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
         let option = SocialSortType.allCases[indexPath.row]
         layoutView.dropDownAnchorView.setTitle(option.rawValue)
@@ -127,11 +149,12 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
 }
 
 // MARK: Collection View Datasource Apply
+
 extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
         snapshot.appendSections([0])
-        snapshot.appendItems(posts.map { $0.id })
+        snapshot.appendItems(posts.map(\.id))
         datasource?.apply(snapshot, animatingDifferences: false)
     }
     

@@ -1,6 +1,6 @@
 import UIKit
 
-typealias TDColorPair = (text: UIColor, back: UIColor)
+public typealias TDColorPair = (text: UIColor, back: UIColor)
 
 extension TDColor {
     static let pair: [UIColor: UIColor] = [

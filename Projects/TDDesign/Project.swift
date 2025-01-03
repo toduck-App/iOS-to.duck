@@ -15,6 +15,6 @@ let project = Project.project(
                 .external(name: "SnapKit"),
                 .external(name: "Then"),
             ]
-        )
+        ),
     ]
 )

@@ -38,6 +38,6 @@ let project = Project(
                 .external(name: "Kingfisher"),
                 .external(name: "FittedSheets"),
             ]
-        )
+        ),
     ]
 )

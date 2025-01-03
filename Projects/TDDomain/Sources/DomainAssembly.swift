@@ -8,7 +8,7 @@
 import Swinject
 
 public struct DomainAssembly: Assembly {
-    public init() { }
+    public init() {}
     
     public func assemble(container: Container) {
         container.register(FetchPostUseCase.self) { resolver in
@@ -52,6 +52,41 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
             }
             return FetchScheduleListUseCaseImpl(repository: repository)
+        }
+        
+        container.register(BlockUserUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return BlockUserUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchUserUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchUserDetailUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserDetailUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchUserPostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserPostUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchRoutineListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchRoutineListUseCaseImpl(repository: repository)
         }
     }
 }
