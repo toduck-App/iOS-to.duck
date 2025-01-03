@@ -100,7 +100,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     private func configureEventMakorButton() {
         eventMakorFloattingButton.layer.cornerRadius = 24
         eventMakorFloattingButton.setImage(
-            TDImage.addLarge,
+            TDImage.addSmall,
             for: .normal
         )
         eventMakorFloattingButton.setTitle(
