@@ -89,13 +89,12 @@ extension TDFormTextField {
         addSubview(maxCounterLabel)
         
         titleLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
         }
         
         textField.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(56)
         }
         
         maxCounterLabel.snp.makeConstraints { make in

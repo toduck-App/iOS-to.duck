@@ -111,7 +111,7 @@ extension TDFormTextView {
     
     private func setConstraints() {
         titleLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
         }
         
         textView.snp.makeConstraints { make in

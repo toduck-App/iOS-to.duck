@@ -156,7 +156,7 @@ extension TDFormPhotoView {
     
     private func setConstraints() {
         title.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
         }
         
         maxCounterLabel.snp.makeConstraints { make in
