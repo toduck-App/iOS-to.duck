@@ -8,7 +8,7 @@
 import TDDomain
 import Foundation
 
-public final class DiaryRepositoryDummy: DiaryRepositoryProtocol {
+public final class DiaryRepositoryImpl: DiaryRepository {
     private var diaries: [Diary] = []
     private var nextId = 1
     

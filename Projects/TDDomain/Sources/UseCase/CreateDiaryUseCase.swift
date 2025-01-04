@@ -8,9 +8,9 @@
 import Foundation
 
 public final class CreateDiaryUseCase {
-    private let repository: DiaryRepositoryProtocol
+    private let repository: DiaryRepository
     
-    public init(repository: DiaryRepositoryProtocol) {
+    public init(repository: DiaryRepository) {
         self.repository = repository
     }
     

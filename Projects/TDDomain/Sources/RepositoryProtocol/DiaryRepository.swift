@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol DiaryRepositoryProtocol {
+public protocol DiaryRepository {
     func fetchDiary(id: Int) async throws -> Diary
     func fetchDiaryList(from startDate: Date, to endDate: Date) async throws -> [Diary]
     func addDiary(diary: Diary) async throws -> Diary
