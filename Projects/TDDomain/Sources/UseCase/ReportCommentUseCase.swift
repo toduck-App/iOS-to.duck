@@ -1,20 +1,17 @@
-//
-//  ReportCommentUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class ReportCommentUseCase {
+public protocol ReportCommentUseCase {
+    func execute(commentID: Comment.ID) async throws -> Bool
+}
+
+public final class ReportCommentUseCaseImpl: ReportCommentUseCase {
     private let repository: CommentRepository
     
     public init(repository: CommentRepository) {
         self.repository = repository
     }
     
-    public func execute(comment: Comment) async throws -> Bool {
-        return try await repository.reportComment(commentId: comment.id)
+    public func execute(commentID: Comment.ID) async throws -> Bool {
+        return try await repository.reportComment(commentID: commentID)
     }
 }

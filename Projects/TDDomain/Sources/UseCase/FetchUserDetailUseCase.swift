@@ -1,10 +1,3 @@
-//
-//  FetchUserDetailUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
 public protocol FetchUserDetailUseCase {
@@ -19,6 +12,6 @@ public final class FetchUserDetailUseCaseImpl: FetchUserDetailUseCase {
     }
 
     public func execute(id: User.ID) async throws -> UserDetail {
-        try await repostiory.fetchUserDetail(userId: id)
+        try await repostiory.fetchUserDetail(userID: id)
     }
 }

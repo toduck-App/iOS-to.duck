@@ -1,13 +1,10 @@
-//
-//  UpdateCommentUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class UpdateCommentUseCase {
+public protocol UpdateCommentUseCase {
+    func execute(comment: Comment) async throws -> Bool
+}
+
+public final class UpdateCommentUseCaseImpl: UpdateCommentUseCase {
     private let repository: CommentRepository
     
     public init(repository: CommentRepository) {

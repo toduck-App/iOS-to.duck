@@ -50,6 +50,7 @@ extension SocialListCoordinator: SocialListDelegate {
     func didTapUserProfile(id: User.ID) {
         let socialProfileViewCoordinator = SocialProfileCoordinator(
             navigationController: navigationController,
+            injector: injector,
             id: id
         )
         childCoordinators.append(socialProfileViewCoordinator)
@@ -58,6 +59,7 @@ extension SocialListCoordinator: SocialListDelegate {
     func didTapReport(id: Post.ID) {
         let socialReportCoordinator = SocialReportCoordinator(
             navigationController: navigationController,
+            injector: injector,
             id: id
         )
         childCoordinators.append(socialReportCoordinator)
@@ -66,6 +68,7 @@ extension SocialListCoordinator: SocialListDelegate {
     func didTapPost(id: Post.ID) {
         let socialDetailCoordinator = SocialDetailCoordinator(
             navigationController: navigationController,
+            injector: injector,
             id: id
         )
         socialDetailCoordinator.finishDelegate = self

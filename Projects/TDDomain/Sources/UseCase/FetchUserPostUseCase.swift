@@ -1,10 +1,3 @@
-//
-//  FetchUserPostUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
 public protocol FetchUserPostUseCase {
@@ -19,6 +12,6 @@ public final class FetchUserPostUseCaseImpl: FetchUserPostUseCase {
     }
 
     public func execute(id: User.ID) async throws -> [Post]? {
-        return try await repostiory.fetchUserPostList(userId: id)
+        return try await repostiory.fetchUserPostList(userID: id)
     }
 }

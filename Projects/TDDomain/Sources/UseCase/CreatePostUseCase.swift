@@ -1,13 +1,10 @@
-//
-//  CreatePostUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class CreatePostUseCase {
+public protocol CreatePostUseCase {
+    func execute(post: Post) async throws -> Bool
+}
+
+public final class CreatePostUseCaseImpl: CreatePostUseCase {
     private let repository: PostRepository
     
     public init(repository: PostRepository) {

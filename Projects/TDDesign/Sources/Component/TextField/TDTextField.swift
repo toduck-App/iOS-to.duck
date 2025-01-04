@@ -37,14 +37,15 @@ public final class TDTextField: UIView {
     }
 
     private var hasError: Bool {
-        return !(error == "")
+        !(error == "")
     }
 
     private var existLabel: Bool {
-        return !(labelText == "")
+        !(labelText == "")
     }
 
     // MARK: - Initialize
+
     public init(
         frame: CGRect = .zero,
         placeholder: String = "",
@@ -125,9 +126,7 @@ public final class TDTextField: UIView {
     }
 }
 
-
-
-fileprivate final class TDTextFieldCore: UITextField, UITextFieldDelegate {
+private final class TDTextFieldCore: UITextField, UITextFieldDelegate {
     public var error: Bool {
         didSet {
             layer.borderColor = error ? TDColor.Semantic.error.cgColor : TDColor.Neutral.neutral300.cgColor
@@ -159,7 +158,7 @@ fileprivate final class TDTextFieldCore: UITextField, UITextFieldDelegate {
         layer.cornerRadius = 12
         layer.borderWidth = 1
         layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        backgroundColor = TDColor.Neutral.neutral50
+        backgroundColor = TDColor.baseWhite
         font = TDFont.mediumBody2.font
         clearButtonMode = .whileEditing
 
@@ -177,11 +176,11 @@ fileprivate final class TDTextFieldCore: UITextField, UITextFieldDelegate {
     }
 
     override public func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16))
+        bounds.inset(by: UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16))
     }
 
     override public func editingRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 48))
+        bounds.inset(by: UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 48))
     }
 
     override public func clearButtonRect(forBounds bounds: CGRect) -> CGRect {
@@ -198,5 +197,20 @@ fileprivate final class TDTextFieldCore: UITextField, UITextFieldDelegate {
 
     public func textFieldDidEndEditing(_: UITextField) {
         layer.borderColor = error ? TDColor.Semantic.error.cgColor : TDColor.Neutral.neutral300.cgColor
+    }
+}
+
+extension TDTextField {
+    /// 내부의 `TDTextFieldCore`(UITextField) 인스턴스 delegate를 변경하는 메서드
+    public func setTextFieldDelegate(_ delegate: UITextFieldDelegate) {
+        // textField는 private var textField: TDTextFieldCore 형태이므로
+        // setter 메서드를 통해 교체
+        textField.delegate = delegate
+    }
+    
+    /// 내부 `TDTextFieldCore`를 직접 반환하는 메서드 (optional)
+    /// 필요하다면 사용, 안전하지 않다고 생각되면 사용 안 해도 됨
+    public func getCoreTextField() -> UITextField? {
+        return textField
     }
 }

@@ -12,10 +12,11 @@ final class SocialReportDetailView: BaseView {
     
     private let descriptionLabel = TDLabel(labelText: "해당 댓글 작성자 차단하기", toduckFont: .boldBody2, toduckColor: TDColor.Neutral.neutral600)
     
-    private let socialTextField = SocialTextFieldView(
+    private let socialTextField = TDFormTextView(
         title: "신고 내용",
         isRequired: false,
-        maxCharacter: 300
+        maxCharacter: 300,
+        placeholder: "신고 내용을 입력해주세요. (최대 300자)"
     )
     
     private let subDescriptionLabel = TDLabel(

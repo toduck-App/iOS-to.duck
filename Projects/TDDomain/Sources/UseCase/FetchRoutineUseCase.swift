@@ -1,13 +1,10 @@
-//
-//  FetchRoutineUseCase.swift
-//  toduck
-//
-//  Created by 박효준 on 6/6/24.
-//
-
 import Foundation
 
-public final class FetchRoutineUseCase {
+public protocol FetchRoutineUseCase {
+    func execute() async throws -> Routine
+}
+
+public final class FetchRoutineUseCaseImpl: FetchRoutineUseCase {
     private let repository: RoutineRepository
     
     public init(repository: RoutineRepository) {

@@ -5,7 +5,7 @@ import UIKit
 
 final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     weak var coordinator: SocialCreateCoordinator?
-    
+
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
     private lazy var registerButton = UIBarButtonItem(
         title: "등록",
@@ -45,8 +45,10 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     }
 
     override func configure() {
-        layoutView.socialAddPhotoView.delegate = self
+        layoutView.formPhotoView.delegate = self
         layoutView.socialSelectRoutineView.delegate = self
+        layoutView.titleTextFieldView.delegate = self
+        layoutView.descriptionTextFieldView.delegate = self
         navigationItem.rightBarButtonItem = registerButton
         layoutView.socialSelectCategoryView.categorySelectView.chipDelegate = self
         layoutView.socialSelectCategoryView.categorySelectView.setChips(chips)
@@ -63,9 +65,9 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                 case .createPost:
                     coordinator?.didTapDoneButton()
                 case .setRoutine:
-                    layoutView.socialSelectRoutineView.setRoutine(string: self.viewModel.selectedRoutine?.title ?? "")
+                    layoutView.socialSelectRoutineView.setRoutine(string: viewModel.selectedRoutine?.title ?? "")
                 case .setImage:
-                    layoutView.socialAddPhotoView.addPhotos(viewModel.images)
+                    layoutView.formPhotoView.addPhotos(viewModel.images)
                 case .failure:
                     break
                 }
@@ -73,7 +75,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
             }
             .store(in: &cancellables)
     }
-    
+
     private func updateNavigationBar() {
         let isEnabled = viewModel.selectedCategory != nil && !viewModel.title.isEmpty && !viewModel.content.isEmpty
         registerButton.isEnabled = isEnabled
@@ -102,7 +104,7 @@ extension SocialCreateViewController: TDChipCollectionViewDelegate {
 
 // MARK: - SocialAddPhotoViewDelegate
 
-extension SocialCreateViewController: SocialAddPhotoViewDelegate, TDPhotoPickerDelegate {
+extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
         input.send(.setImages(photos))
     }
@@ -111,10 +113,26 @@ extension SocialCreateViewController: SocialAddPhotoViewDelegate, TDPhotoPickerD
         // TODO: 권한 없을때 ? ALERT 필요
     }
 
-    func didTapAddPhotoButton(_ view: SocialAddPhotoView?) {
+    func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
         let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: 5)
         photoPickerController.pickerDelegate = self
         navigationController?.pushTDViewController(photoPickerController, animated: true)
+    }
+}
+
+// MARK: - TextFieldDelegate
+
+extension SocialCreateViewController: TDFormTextFieldDelegate {
+    func tdTextField(_ textField: TDDesign.TDFormTextField, didChangeText text: String) {
+        input.send(.setContent(text))
+    }
+}
+
+// MARK: - TextViewDelegate
+
+extension SocialCreateViewController: TDFormTextViewDelegate {
+    func tdTextView(_ textView: TDDesign.TDFormTextView, didChangeText text: String) {
+        input.send(.setContent(text))
     }
 }
 

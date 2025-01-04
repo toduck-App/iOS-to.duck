@@ -1,22 +1,15 @@
-//
-//  Diary.swift
-//  toduck
-//
-//  Created by 승재 on 6/3/24.
-//
-
 import Foundation
 import UIKit
 
-public struct Diary: Hashable {
-    public let id: Int
+public struct Diary: Hashable, Identifiable {
+    public let id: UUID
     public let focus: Focus
     public let emotion: Emotion
     public let contentText: String
     public let date: Date
     
     public init(
-        id: Int,
+        id: UUID,
         focus: Focus,
         emotion: Emotion,
         contentText: String,

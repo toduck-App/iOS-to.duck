@@ -1,13 +1,10 @@
-//
-//  CreateRoutine.swift
-//  toduck
-//
-//  Created by 박효준 on 6/7/24.
-//
-
 import Foundation
 
-public final class CreateRoutineUseCase {
+public protocol CreateRoutineUseCase {
+    func execute(routine: Routine) async throws -> Bool
+}
+
+public final class CreateRoutineUseCaseImpl: CreateRoutineUseCase {
     private let repository: RoutineRepository
     
     public init(repository: RoutineRepository) {

@@ -132,12 +132,12 @@ public final class EventDetailView: UIView {
             categoryImageView.configure(backgroundColor: color, category: category ?? TDImage.Category.none)
         }
         
-        titleLabel.text = title
+        titleLabel.setText(title)
         categoryImageView.isHidden = (category == nil)
         
-        timeLabel.text = time
+        timeLabel.setText(time ?? "")
         timeDetailHorizontalStackView.isHidden = (time == nil)
-        placeLabel.text = place
+        placeLabel.setText(place ?? "")
         placeHorizontalStackView.isHidden = (place == nil)
         
         changeCheckBoxButtonImage(isFinish: isFinish)

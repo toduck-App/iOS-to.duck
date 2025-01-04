@@ -1,20 +1,17 @@
-//
-//  UpdateDiaryUseCase.swift
-//  toduck
-//
-//  Created by 승재 on 6/10/24.
-//
-
 import Foundation
 
-public final class UpdateDiaryUseCase {
-    private let repository: DiaryRepositoryProtocol
-    
-    public init(repository: DiaryRepositoryProtocol) {
+public protocol UpdateDiaryUseCase {
+    func execute(diary: Diary) async throws -> Diary
+}
+
+public final class UpdateDiaryUseCaseImpl: UpdateDiaryUseCase {
+    private let repository: DiaryRepository
+
+    public init(repository: DiaryRepository) {
         self.repository = repository
     }
-    
+
     public func execute(diary: Diary) async throws -> Diary {
-        return try await repository.updateDiary(diary: diary)
+        try await repository.updateDiary(diary: diary)
     }
 }

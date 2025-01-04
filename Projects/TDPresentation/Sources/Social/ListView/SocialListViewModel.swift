@@ -82,7 +82,7 @@ extension SocialListViewModel {
     
     private func likePost(at index: Int) async {
         do {
-            let result = try await togglePostLikeUseCase.execute(post: posts[index])
+            let result = try await togglePostLikeUseCase.execute(postID: posts[index].id)
             guard let likeCount = posts[index].likeCount else { return }
             posts[index].isLike.toggle()
             posts[index].likeCount = posts[index].isLike ? likeCount + 1 : likeCount - 1
@@ -111,7 +111,7 @@ extension SocialListViewModel {
     
     private func blockUser(to user: User) async {
         do {
-            let result = try await blockUserUseCase.execute(user: user)
+            let result = try await blockUserUseCase.execute(userID: user.id)
             // TODO: ALERT OUTPUT 필요
         } catch {
             output.send(.failure("사용자 차단에 실패했습니다."))

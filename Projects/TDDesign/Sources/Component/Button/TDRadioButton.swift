@@ -1,4 +1,3 @@
-import SnapKit
 import UIKit
 
 public final class TDRadioButton: UIButton {
@@ -8,7 +7,6 @@ public final class TDRadioButton: UIButton {
     override public init(frame: CGRect = .zero) {
         super.init(frame: frame)
         setupRadioButton()
-        layout()
     }
 
     @available(*, unavailable)
@@ -43,7 +41,8 @@ public final class TDRadioButton: UIButton {
         innerCircleLayer.path = innerCirclePath.cgPath
     }
 
-    @objc private func buttonTapped() {
+    @objc
+    private func buttonTapped() {
         isSelected.toggle()
     }
 
@@ -67,12 +66,6 @@ public final class TDRadioButton: UIButton {
         } else {
             outerCircleLayer.strokeColor = TDColor.Neutral.neutral300.cgColor
             innerCircleLayer.fillColor = isSelected ? TDColor.Neutral.neutral300.cgColor : UIColor.clear.cgColor
-        }
-    }
-
-    private func layout() {
-        snp.makeConstraints {
-            $0.width.height.equalTo(20)
         }
     }
 }

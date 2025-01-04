@@ -11,19 +11,19 @@ import Foundation
 public final class CommentRepositoryImpl: CommentRepository {
     public init() { }
     
-    public func toggleCommentLike(commentId: Int) async throws -> Bool {
+    public func toggleCommentLike(commentID: Comment.ID) async throws -> Bool {
         return false
     }
     
-    public func fetchCommentList(postId: Int) async throws -> [Comment]? {
+    public func fetchCommentList(postID: Post.ID) async throws -> [Comment]? {
         return Comment.dummy
     }
     
-    public func fetchCommentList(commentId: Int) async throws -> [Comment]? {
+    public func fetchCommentList(commentID: Comment.ID) async throws -> [Comment]? {
         return []
     }
     
-    public func fetchUserCommentList(userId: Int) async throws -> [Comment]? {
+    public func fetchUserCommentList(userID: User.ID) async throws -> [Comment]? {
         return []
     }
     
@@ -35,15 +35,15 @@ public final class CommentRepositoryImpl: CommentRepository {
         return false
     }
     
-    public func deleteComment(commentId: Int) async throws -> Bool {
+    public func deleteComment(commentID: Comment.ID) async throws -> Bool {
         return false
     }
     
-    public func reportComment(commentId: Int) async throws -> Bool {
+    public func reportComment(commentID: Comment.ID) async throws -> Bool {
         return false
     }
     
-    public func blockComment(commentId: Int) async throws -> Bool {
+    public func blockComment(commentID: Comment.ID) async throws -> Bool {
         return false
     }
 }

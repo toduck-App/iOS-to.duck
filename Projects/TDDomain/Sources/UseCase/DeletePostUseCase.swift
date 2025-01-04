@@ -1,20 +1,17 @@
-//
-//  DeletePostUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class DeletePostUseCase {
+public protocol DeletePostUseCase {
+    func execute(postID: Post.ID) async throws -> Bool
+}
+
+public final class DeletePostUseCaseImpl: DeletePostUseCase {
     private let repository: PostRepository
     
     public init(repository: PostRepository) {
         self.repository = repository
     }
     
-    public func execute(post: Post) async throws -> Bool {
-        return try await repository.deletePost(postId: post.id)
+    public func execute(postID: Post.ID) async throws -> Bool {
+        return try await repository.deletePost(postID: postID)
     }
 }
