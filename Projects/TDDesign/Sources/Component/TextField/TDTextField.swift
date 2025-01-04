@@ -44,7 +44,12 @@ public final class TDTextField: UIView {
         return !(labelText == "")
     }
 
-    init(frame: CGRect = .zero, placeholder: String = "", labelText: String = "") {
+    // MARK: - Initialize
+    public init(
+        frame: CGRect = .zero,
+        placeholder: String = "",
+        labelText: String = ""
+    ) {
         self.placeholder = placeholder
         self.labelText = labelText
         error = ""
