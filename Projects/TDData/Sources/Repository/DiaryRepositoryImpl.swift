@@ -14,7 +14,7 @@ public final class DiaryRepositoryImpl: DiaryRepository {
     
     public init() { }
     
-    public func fetchDiary(id: Int) async throws -> Diary {
+    public func fetchDiary(id: Diary.ID) async throws -> Diary {
         guard let diary = diaries.first(where: { $0.id == id }) else {
             throw NSError(domain: "DiaryNotFound", code: 404, userInfo: nil)
         }
@@ -25,7 +25,7 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         return diaries.filter { $0.date >= startDate && $0.date <= endDate }
     }
     
-    public func addDiary(diary: Diary) async throws -> Diary {
+    public func createDiary(diary: Diary) async throws -> Diary {
         let newDiary = diary
         diaries.append(newDiary)
         return newDiary
@@ -39,7 +39,7 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         return diary
     }
     
-    public func deleteDiary(id: Int) async throws -> Bool {
+    public func deleteDiary(id: Diary.ID) async throws -> Bool {
         guard let index = diaries.firstIndex(where: { $0.id == id }) else {
             throw NSError(domain: "DiaryNotFound", code: 404, userInfo: nil)
         }

@@ -10,11 +10,16 @@ final class SocialProfileCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
-    var injector: DependencyResolvable = DIContainer.shared
+    var injector: DependencyResolvable
     let userID: User.ID
 
-    init(navigationController: UINavigationController, id: TDDomain.User.ID) {
+    init(
+        navigationController: UINavigationController,
+        injector: DependencyResolvable,
+        id: TDDomain.User.ID
+    ) {
         self.navigationController = navigationController
+        self.injector = injector
         self.userID = id
     }
 
@@ -36,7 +41,11 @@ final class SocialProfileCoordinator: Coordinator {
 
 extension SocialProfileCoordinator: SocialProfileCoordinatorDelegate {
     func didTapPost(id: Post.ID) {
-        let coordinator = SocialDetailCoordinator(navigationController: navigationController, id: id)
+        let coordinator = SocialDetailCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: id
+        )
         childCoordinators.append(coordinator)
         coordinator.start()
     }

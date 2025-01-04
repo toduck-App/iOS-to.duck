@@ -2,7 +2,7 @@ import Foundation
 
 public protocol FetchPostUseCase {
     func execute(category: PostCategory?) async throws -> [Post]?
-    func execute(postId: Int) async throws -> Post?
+    func execute(postID: Post.ID) async throws -> Post?
 }
 
 public final class FetchPostUseCaseImpl: FetchPostUseCase {
@@ -16,7 +16,7 @@ public final class FetchPostUseCaseImpl: FetchPostUseCase {
         return try await repository.fetchPostList(category: category)
     }
     
-    public func execute(postId: Int) async throws -> Post? {
-        return try await repository.fetchPost(postId: postId)
+    public func execute(postID: Post.ID) async throws -> Post? {
+        return try await repository.fetchPost(postID: postID)
     }
 }

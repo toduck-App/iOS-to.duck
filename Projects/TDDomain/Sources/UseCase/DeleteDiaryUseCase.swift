@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DeleteDiaryUseCase {
-    func execute(id: Int) async throws -> Bool
+    func execute(id: Diary.ID) async throws -> Bool
 }
 
 public final class DeleteDiaryUseCaseImpl: DeleteDiaryUseCase {
@@ -11,7 +11,7 @@ public final class DeleteDiaryUseCaseImpl: DeleteDiaryUseCase {
         self.repository = repository
     }
     
-    public func execute(id: Int) async throws -> Bool {
+    public func execute(id: Diary.ID) async throws -> Bool {
         return try await repository.deleteDiary(id: id)
     }
 }

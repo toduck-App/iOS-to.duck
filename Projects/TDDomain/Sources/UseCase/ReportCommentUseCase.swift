@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol ReportCommentUseCase {
-    func execute(comment: Comment) async throws -> Bool
+    func execute(commentID: Comment.ID) async throws -> Bool
 }
 
 public final class ReportCommentUseCaseImpl: ReportCommentUseCase {
@@ -11,7 +11,7 @@ public final class ReportCommentUseCaseImpl: ReportCommentUseCase {
         self.repository = repository
     }
     
-    public func execute(comment: Comment) async throws -> Bool {
-        return try await repository.reportComment(commentId: comment.id)
+    public func execute(commentID: Comment.ID) async throws -> Bool {
+        return try await repository.reportComment(commentID: commentID)
     }
 }

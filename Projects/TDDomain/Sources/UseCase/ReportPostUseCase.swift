@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol ReportPostUseCase {
-    func execute(post: Post) async throws -> Bool
+    func execute(postID: Post.ID) async throws -> Bool
 }
 
 public final class ReportPostUseCaseImpl: ReportPostUseCase {
@@ -11,7 +11,7 @@ public final class ReportPostUseCaseImpl: ReportPostUseCase {
         self.repository = repository
     }
     
-    public func execute(post: Post) async throws -> Bool {
-        return try await repository.reportPost(postId: post.id)
+    public func execute(postID: Post.ID) async throws -> Bool {
+        return try await repository.reportPost(postID: postID)
     }
 }

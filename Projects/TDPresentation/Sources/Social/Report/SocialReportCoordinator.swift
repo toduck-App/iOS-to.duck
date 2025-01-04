@@ -12,12 +12,16 @@ final class SocialReportCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
-    var injector: DependencyResolvable = DIContainer.shared
+    var injector: DependencyResolvable
+    let postID: Post.ID
 
-    let postID: Int
-
-    init(navigationController: UINavigationController, id: Int) {
+    init(
+        navigationController: UINavigationController,
+        injector: DependencyResolvable,
+        id: Post.ID
+    ) {
         self.navigationController = navigationController
+        self.injector = injector
         self.postID = id
     }
 

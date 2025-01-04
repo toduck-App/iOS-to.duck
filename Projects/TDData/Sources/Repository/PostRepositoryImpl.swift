@@ -10,7 +10,7 @@ import Foundation
 
 public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(id: UUID(), title: "123", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: true, date: Date(), time: nil, repeatDays: nil, alarmTimes: nil, memo: nil, recommendedRoutines: nil, isFinish: false)
-    private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
+    private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
 
     public init() { }
 
@@ -27,7 +27,7 @@ public final class PostRepositoryImpl: PostRepository {
         return []
     }
 
-    public func togglePostLike(postId: Int) async throws -> Bool {
+    public func togglePostLike(postID: Post.ID) async throws -> Bool {
         return false;
     }
 
@@ -43,23 +43,23 @@ public final class PostRepositoryImpl: PostRepository {
         return false;
     }
 
-    public func deletePost(postId: Int) async throws -> Bool {
+    public func deletePost(postID: Post.ID) async throws -> Bool {
         return false;
     }
 
-    public func fetchPost(postId: Int) async throws -> Post {
-        guard let post = Post.dummy.filter({ $0.id == postId }).first else {
+    public func fetchPost(postID: Post.ID) async throws -> Post {
+        guard let post = Post.dummy.filter({ $0.id == postID }).first else {
             // 에러 정의가 없어서 임시로 구현
             return Post.dummy[0]
         }
         return post
     }
 
-    public func reportPost(postId: Int) async throws -> Bool {
+    public func reportPost(postID: Post.ID) async throws -> Bool {
         return false;
     }
 
-    public func blockPost(postId: Int) async throws -> Bool {
+    public func blockPost(postID: Post.ID) async throws -> Bool {
         return false;
     }
 }

@@ -7,37 +7,37 @@ public final class UserRepositoryImpl: UserRepository {
         followingCount: 12,
         followerCount: 261,
         totalPostCount: 1,
-        whofollow: [],
+        whoFollow: [],
         routineShareCount: 1
     )
 
     public init() {}
 
-    public func fetchUser(userId: Int) async throws -> User {
-        User.dummy.filter { $0.id == userId }.first!
+    public func fetchUser(userID: User.ID) async throws -> User {
+        User.dummy.filter { $0.id == userID }.first!
     }
 
-    public func fetchUserDetail(userId: Int) async throws -> UserDetail {
+    public func fetchUserDetail(userID: User.ID) async throws -> UserDetail {
         dummyUserDetail
     }
 
-    public func fetchUserPostList(userId: Int) async throws -> [Post]? {
-        Post.dummy.filter { $0.user.id == userId }
+    public func fetchUserPostList(userID: User.ID) async throws -> [Post]? {
+        Post.dummy.filter { $0.user.id == userID }
     }
 
-    public func fetchUserRoutineList(userId: Int) async throws -> [Routine]? {
+    public func fetchUserRoutineList(userID: User.ID) async throws -> [Routine]? {
         Routine.dummy
     }
 
-    public func fetchUserShareUrl(userId: Int) async throws -> String {
+    public func fetchUserShareUrl(userID: User.ID) async throws -> String {
         ""
     }
 
-    public func toggleUserFollow(userId: Int, targetUserId: Int) async throws -> Bool {
+    public func toggleUserFollow(userID: User.ID, targetUserID: User.ID) async throws -> Bool {
         false
     }
 
-    public func blockUser(userId: Int) async throws -> Bool {
+    public func blockUser(userID: User.ID) async throws -> Bool {
         true
     }
 }

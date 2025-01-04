@@ -12,6 +12,6 @@ public final class CreateDiaryUseCaseImpl: CreateDiaryUseCase {
     }
     
     public func execute(diary: Diary) async throws -> Diary {
-        return try await repository.addDiary(diary: diary)
+        return try await repository.createDiary(diary: diary)
     }
 }
