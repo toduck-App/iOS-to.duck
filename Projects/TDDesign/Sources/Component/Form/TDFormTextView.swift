@@ -20,6 +20,11 @@ public protocol TDFormTextViewDelegate: AnyObject {
     func tdTextViewDidEndEditing(_ textView: TDFormTextView)
 }
 
+public extension TDFormTextViewDelegate {
+    func tdTextViewDidBeginEditing(_ textView: TDFormTextView) {}
+    func tdTextViewDidEndEditing(_ textView: TDFormTextView) {}
+}
+
 /// 여러 줄을 입력할 수 있는 TextView 컴포넌트
 /// - title: 상단에 들어가는 제목
 /// - isRequired: 필수 항목 여부

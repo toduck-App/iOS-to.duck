@@ -20,6 +20,11 @@ public protocol TDFormTextFieldDelegate: AnyObject {
     func tdTextFieldDidEndEditing(_ textField: TDFormTextField)
 }
 
+public extension TDFormTextFieldDelegate {
+    func tdTextFieldDidBeginEditing(_ textField: TDFormTextField) {}
+    func tdTextFieldDidEndEditing(_ textField: TDFormTextField) {}
+}
+
 /// 여러 속성을 가진 싱글 라인 TextField 컴포넌트
 /// - title: 상단에 들어가는 제목
 /// - isRequired: 필수 항목 여부

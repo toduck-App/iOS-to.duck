@@ -1,18 +1,25 @@
 import SnapKit
-import TDDesign
 import Then
 import UIKit
 
-protocol SocialAddPhotoViewDelegate: AnyObject {
-    func didTapAddPhotoButton(_ view: SocialAddPhotoView?)
+public protocol TDFormPhotoDelegate: AnyObject {
+    func didTapAddPhotoButton(_ view: TDFormPhotoView?)
 }
 
-final class SocialAddPhotoView: UIView {
-    weak var delegate: SocialAddPhotoViewDelegate?
+public final class TDFormPhotoView: UIView {
+    // MARK: - Properties
     
-    private let title = TDRequiredTitle().then {
-        $0.setTitleLabel("사진 첨부")
-    }
+    public weak var delegate: TDFormPhotoDelegate?
+    
+    /// 최대 사진 개수
+    private let maxCount: Int
+    
+    /// 필수 항목 여부
+    private let isRequired: Bool
+    
+    // MARK: - UI Components
+    
+    private let title = TDRequiredTitle()
     
     private let currentCounterLabel = TDLabel(
         toduckFont: .regularBody2,
@@ -24,9 +31,7 @@ final class SocialAddPhotoView: UIView {
     private let maxCounterLabel = TDLabel(
         toduckFont: .regularBody2,
         toduckColor: TDColor.Neutral.neutral600
-    ).then {
-        $0.setText("/ 5")
-    }
+    )
     
     private let addPhotoButton = UIButton().then {
         $0.layer.cornerRadius = 12
@@ -54,8 +59,33 @@ final class SocialAddPhotoView: UIView {
         toduckColor: TDColor.Neutral.neutral500
     )
 
-    override init(frame: CGRect) {
+    // MARK: - Initializer
+    
+    /// - Parameters:
+    ///   - titleText: 제목(예: "사진 첨부")
+    ///   - isRequired: 필수 항목 여부 (true 시 별표 표시)
+    ///   - maxCount: 최대 사진 개수 (기본값 5)
+    public init(
+        frame: CGRect = .zero,
+        titleText: String = "사진 첨부",
+        isRequired: Bool = false,
+        maxCount: Int = 5
+    ) {
+        self.isRequired = isRequired
+        self.maxCount = maxCount
         super.init(frame: frame)
+        
+        // 타이틀 설정
+        title.setTitleLabel(titleText)
+        
+        // 필수 항목 여부
+        if isRequired {
+            title.setRequiredLabel() // 빨간 별(*) 표시 등
+        }
+        
+        // 최대 개수 표시
+        maxCounterLabel.setText("/ \(maxCount)")
+        
         setLayout()
         setAction()
     }
@@ -65,10 +95,14 @@ final class SocialAddPhotoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - [Data]를 받는 함수로 변경 & 기존 이미지 제거
+    // MARK: - [Data]를 받는 함수 & 기존 이미지 제거
+    
+    /// 외부에서 선택된 `Data` 배열을 받아 스택뷰에 썸네일 이미지를 표시
     public func addPhotos(_ imagesData: [Data]) {
+        // 기존 이미지 뷰 제거
         photoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
+        // 새로 추가
         for data in imagesData {
             guard let image = UIImage(data: data) else {
                 // TODO: Error Handling (유효하지 않은 이미지 데이터일 경우)
@@ -96,13 +130,15 @@ final class SocialAddPhotoView: UIView {
             photoStackView.addArrangedSubview(containerView)
         }
         
+        // 현재 개수 갱신
         let currentCount = photoStackView.arrangedSubviews.count
         currentCounterLabel.setText("\(currentCount)")
     }
 }
 
 // MARK: - Layout
-extension SocialAddPhotoView {
+
+extension TDFormPhotoView {
     private func setLayout() {
         addSubviews()
         setConstraints()
@@ -158,7 +194,8 @@ extension SocialAddPhotoView {
 }
 
 // MARK: - Actions
-extension SocialAddPhotoView {
+
+extension TDFormPhotoView {
     private func setAction() {
         addPhotoButton.addAction(UIAction { [weak self] _ in
             self?.delegate?.didTapAddPhotoButton(self)

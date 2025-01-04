@@ -29,7 +29,11 @@ final class SocialCreateView: BaseView {
         maxCharacter: 500,
         placeholder: "자유롭게 내용을 작성해 주세요."
     )
-    private(set) var socialAddPhotoView = SocialAddPhotoView()
+    private(set) var formPhotoView = TDFormPhotoView(
+        titleText: "사진 첨부",
+        isRequired: false,
+        maxCount: 5
+    )
     
     private let noticeView = SocialCautionView(style: .notice, title: "확인해주세요!").then {
         $0.addDescription("공유한 루틴은 이후 삭제/비공개 처리에도 영향을 받지 않아요.")
@@ -53,7 +57,7 @@ final class SocialCreateView: BaseView {
         stackView.addArrangedSubview(socialSelectRoutineView)
         stackView.addArrangedSubview(titleTextFieldView)
         stackView.addArrangedSubview(descriptionTextFieldView)
-        stackView.addArrangedSubview(socialAddPhotoView)
+        stackView.addArrangedSubview(formPhotoView)
         stackView.addArrangedSubview(noticeView)
         stackView.addArrangedSubview(warningView)
     }
@@ -84,7 +88,7 @@ final class SocialCreateView: BaseView {
         descriptionTextFieldView.snp.makeConstraints { make in
             make.height.equalTo(140)
         }
-        socialAddPhotoView.snp.makeConstraints { make in
+        formPhotoView.snp.makeConstraints { make in
             make.height.equalTo(160)
         }
         noticeView.snp.makeConstraints { make in

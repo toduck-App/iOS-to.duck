@@ -7,6 +7,7 @@ final class SocialCreateViewModel: BaseViewModel {
     enum Input {
         case chipSelect(at: Int)
         case setRoutine(Routine)
+        case setTitle(String)
         case setContent(String)
         case setImages([Data])
     }
@@ -37,10 +38,12 @@ final class SocialCreateViewModel: BaseViewModel {
                 setCategory(at: index)
             case .setRoutine(let routine):
                 setRoutine(routine)
-            case .setContent:
+            case .setContent(let content):
                 break
             case .setImages(let data):
                 setImages(data)
+            case .setTitle(let title):
+                break
             }
         }.store(in: &cancellables)
         
