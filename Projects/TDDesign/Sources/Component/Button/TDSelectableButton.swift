@@ -1,4 +1,3 @@
-import SnapKit
 import UIKit
 
 /// 선택 상태를 가진 버튼을 나타내는 `TDSelectableButton` 클래스입니다.
@@ -42,13 +41,6 @@ public final class TDSelectableButton: TDBaseButton {
         layer.borderWidth = 0
     }
     
-    /// 버튼의 레이아웃을 설정합니다.
-    public override func layout() {
-        snp.updateConstraints { make in
-            make.height.equalTo(56)
-        }
-    }
-    
     /// 선택 상태에 따라 배경 색상과 제목 색상을 업데이트합니다.
     public override var isSelected: Bool {
         didSet {
@@ -65,7 +57,8 @@ public final class TDSelectableButton: TDBaseButton {
     // MARK: - Actions
     
     /// 버튼이 탭되었을 때 호출되는 메서드입니다.
-    @objc func buttonTapped() {
+    @objc
+    private func buttonTapped() {
         isSelected.toggle()
     }
 }
