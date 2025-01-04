@@ -18,26 +18,6 @@ public final class TDLabel: UILabel {
     
     // MARK: - Initialization
     
-    /// `TDLabel`의 Convenience 이니셜라이저입니다.
-    /// frame, labelText가 기본값(.zero, "")으로 설정되며,
-    /// 필요한 경우 alignment, toduckColor만 따로 지정할 수 있습니다.
-    ///
-    /// - Parameters:
-    ///   - toduckFont: 커스텀 폰트 (TDFont)
-    ///   - toduckColor: 텍스트 컬러 (기본값: TDColor.Neutral.neutral800)
-    public convenience init(
-        toduckFont: TDFont,
-        toduckColor: UIColor = TDColor.Neutral.neutral800
-    ) {
-        self.init(
-            frame: .zero,
-            labelText: "",
-            toduckFont: toduckFont,
-            alignment: .justified,
-            toduckColor: toduckColor
-        )
-    }
-    
     /// `TDLabel`의 지정(Designated) 이니셜라이저입니다.
     ///
     /// - Parameters:
@@ -60,6 +40,26 @@ public final class TDLabel: UILabel {
         
         super.init(frame: frame)
         applyAttributes()
+    }
+    
+    /// `TDLabel`의 Convenience 이니셜라이저입니다.
+    /// frame, labelText가 기본값(.zero, "")으로 설정되며,
+    /// 필요한 경우 alignment, toduckColor만 따로 지정할 수 있습니다.
+    ///
+    /// - Parameters:
+    ///   - toduckFont: 커스텀 폰트 (TDFont)
+    ///   - toduckColor: 텍스트 컬러 (기본값: TDColor.Neutral.neutral800)
+    public convenience init(
+        toduckFont: TDFont,
+        toduckColor: UIColor = TDColor.Neutral.neutral800
+    ) {
+        self.init(
+            frame: .zero,
+            labelText: "",
+            toduckFont: toduckFont,
+            alignment: .justified,
+            toduckColor: toduckColor
+        )
     }
     
     public required init?(coder: NSCoder) {

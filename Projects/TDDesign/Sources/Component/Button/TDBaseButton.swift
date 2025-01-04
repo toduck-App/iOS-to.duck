@@ -109,3 +109,61 @@ public class TDBaseButton: UIButton {
         layer.shadowOffset = CGSize(width: 0, height: 0)
     }
 }
+
+extension TDBaseButton {
+    // MARK: - Convenience Initializers
+    
+    /// 텍스트 전용 버튼
+    public convenience init(
+        title: String,
+        backgroundColor: UIColor = TDColor.Primary.primary500,
+        foregroundColor: UIColor = .white,
+        font: UIFont = TDFont.boldHeader3.font,
+        radius: CGFloat = 12
+    ) {
+        self.init(
+            title: title,
+            image: nil,
+            backgroundColor: backgroundColor,
+            foregroundColor: foregroundColor,
+            radius: radius,
+            font: font
+        )
+    }
+    
+    /// 이미지 전용 버튼
+    public convenience init(
+        image: UIImage,
+        backgroundColor: UIColor = TDColor.Primary.primary500,
+        radius: CGFloat = 12
+    ) {
+        self.init(
+            title: "",
+            image: image,
+            backgroundColor: backgroundColor,
+            foregroundColor: .white,
+            radius: radius,
+            font: UIFont.systemFont(ofSize: 12)
+        )
+    }
+    
+    /// 텍스트 + 이미지 버튼
+    public convenience init(
+        title: String,
+        image: UIImage,
+        backgroundColor: UIColor = TDColor.Primary.primary500,
+        foregroundColor: UIColor = .white,
+        radius: CGFloat = 12,
+        font: UIFont = TDFont.boldHeader3.font
+    ) {
+        self.init(
+            frame: .zero,
+            title: title,
+            image: image,
+            backgroundColor: backgroundColor,
+            foregroundColor: foregroundColor,
+            radius: radius,
+            font: font
+        )
+    }
+}
