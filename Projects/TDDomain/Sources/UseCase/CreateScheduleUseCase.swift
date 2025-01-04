@@ -7,8 +7,8 @@ public protocol CreateScheduleUseCase {
 public final class CreateScheduleUseCaseImpl: CreateScheduleUseCase {
     private let scheduleRepository: ScheduleRepository
     
-    public init(scheduleRepository: ScheduleRepository) {
-        self.scheduleRepository = scheduleRepository
+    public init(repository: ScheduleRepository) {
+        self.scheduleRepository = repository
     }
     
     public func execute(schedule: Schedule) async throws -> Bool {

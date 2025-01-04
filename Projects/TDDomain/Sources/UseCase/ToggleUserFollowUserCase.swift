@@ -1,17 +1,17 @@
 import Foundation
 
-public protocol ToggleUserFollowUserCaseImpl {
-    func toggleUserFollow(userId: Int, targetUserId: Int) async throws -> Bool
+public protocol ToggleUserFollowUseCase {
+    func execute(userId: Int, targetUserId: Int) async throws -> Bool
 }
 
-public final class ToggleUserFollowUserCase {
-    private let repostiory: UserRepository
+public final class ToggleUserFollowUseCaseImpl: ToggleUserFollowUseCase {
+    private let repository: UserRepository
 
-    public init(repostiory: UserRepository) {
-        self.repostiory = repostiory
+    public init(repository: UserRepository) {
+        self.repository = repository
     }
 
-    public func execute(user: User, targetUser: User) async throws -> Bool {
-        return try await repostiory.toggleUserFollow(userId: user.id, targetUserId: targetUser.id)
+    public func execute(userId: Int, targetUserId: Int) async throws -> Bool {
+        return try await repository.toggleUserFollow(userId: userId, targetUserId: targetUserId)
     }
 }

@@ -7,8 +7,8 @@ public protocol FetchUserRoutineUseCase {
 public final class FetchUserRoutineUseCaseImpl: FetchUserRoutineUseCase {
     private let repostiory: UserRepository
 
-    public init(repostiory: UserRepository) {
-        self.repostiory = repostiory
+    public init(repository: UserRepository) {
+        self.repostiory = repository
     }
 
     public func execute(user: User) async throws -> [Routine]? {
