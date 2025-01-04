@@ -1,9 +1,4 @@
-//
-//  TDTimerButton.swift
-//  TDDesign
-//
-//  Created by 승재 on 10/20/24.
-//
+import SnapKit
 import UIKit
 
 public final class TDTimerButton: TDBaseButton {
@@ -16,7 +11,7 @@ public final class TDTimerButton: TDBaseButton {
         super.init(image: icon,backgroundColor: state.backgroundColor, foregroundColor: state.foregroundColor,radius: 40)
     }
 
-    public override func layout() {
+    public func layout() {
         snp.makeConstraints {
             $0.width.height.equalTo(80)
         }
@@ -28,5 +23,3 @@ public final class TDTimerButton: TDBaseButton {
         super.setupButton()
     }
 }
-
-

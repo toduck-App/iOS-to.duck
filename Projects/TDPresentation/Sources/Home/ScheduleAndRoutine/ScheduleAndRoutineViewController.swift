@@ -16,13 +16,14 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
-    private let eventMakorFloattingButton = TDButton(
-        title: "일정 추가",
-        size: .large,
+    private let eventMakorFloattingButton = TDBaseButton(
+        title: "일정추가",
+        image: TDImage.addSmall,
+        backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
-        backgroundColor: TDColor.Primary.primary500
+        radius: 24,
+        font: TDFont.boldHeader4.font
     )
-    
     // MARK: - Properties
     private let mode: Mode
     private let scheduleViewModel: ScheduleViewModel?
@@ -92,19 +93,14 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         eventMakorFloattingButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-20)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
-            $0.width.equalTo(116)
+            $0.width.equalTo(120)
             $0.height.equalTo(48)
         }
     }
     
     private func configureEventMakorButton() {
-        eventMakorFloattingButton.layer.cornerRadius = 24
-        eventMakorFloattingButton.setImage(
-            TDImage.addSmall,
-            for: .normal
-        )
         eventMakorFloattingButton.setTitle(
-            mode == .schedule ? " 일정 추가" : " 루틴 추가",
+            mode == .schedule ? "일정추가" : "루틴추가",
             for: .normal
         )
         eventMakorFloattingButton.addAction(UIAction { [weak self] _ in

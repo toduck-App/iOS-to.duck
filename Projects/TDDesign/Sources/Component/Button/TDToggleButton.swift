@@ -5,7 +5,7 @@ import UIKit
 
 public final class TDToggleButton: TDBaseButton {
     public init(frame: CGRect = .zero, title: String) {
-        super.init(frame: frame,
+        super.init(
                    title: title,
                    backgroundColor: TDColor.Primary.primary50,
                    foregroundColor: TDColor.Primary.primary500)
@@ -28,7 +28,7 @@ public final class TDToggleButton: TDBaseButton {
         layer.borderWidth = 0
     }
 
-    public override func layout() {
+    public func layout() {
         snp.updateConstraints {
             $0.height.equalTo(56)
         }

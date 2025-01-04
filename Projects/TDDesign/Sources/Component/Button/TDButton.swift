@@ -1,4 +1,3 @@
-import Foundation
 import SnapKit
 import UIKit
 
@@ -15,19 +14,11 @@ public final class TDButton: TDBaseButton {
         self.size = size
 
         super.init(
-            frame: frame,
             title: title,
             backgroundColor: backgroundColor,
             foregroundColor: foregroundColor,
             radius: size.radius,
             font: size.font
         )
-    }
-
-
-    public override func layout() {
-        snp.updateConstraints {
-            $0.height.equalTo(size.height)
-        }
     }
 }

@@ -56,9 +56,7 @@ final class SocialListView: BaseView {
         foregroundColor: TDColor.baseWhite,
         radius: 25,
         font: TDFont.boldHeader4.font
-    ).then {
-        $0.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
-    }
+    )
     
     private(set) lazy var refreshControl = UIRefreshControl().then {
         $0.tintColor = .systemGray
@@ -102,10 +100,10 @@ final class SocialListView: BaseView {
         }
         
         addPostButton.snp.makeConstraints { make in
-            make.width.equalTo(100)
+            make.width.equalTo(104)
             make.height.equalTo(50)
-            make.trailing.equalToSuperview().inset(10)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(24)
+            make.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(20)
         }
 
         loadingView.snp.makeConstraints { make in
