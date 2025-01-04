@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FetchUserShareUrlUseCase {
-    func execute(user: User) async throws -> String
+    func execute(userID: User.ID) async throws -> String
 }
 
 public final class FetchUserShareUrlUseCaseImpl: FetchUserShareUrlUseCase {
@@ -11,7 +11,7 @@ public final class FetchUserShareUrlUseCaseImpl: FetchUserShareUrlUseCase {
         self.repository = repository
     }
 
-    public func execute(user: User) async throws -> String {
-        return try await repository.fetchUserShareUrl(userId: user.id)
+    public func execute(userID: User.ID) async throws -> String {
+        return try await repository.fetchUserShareUrl(userID: userID)
     }
 }

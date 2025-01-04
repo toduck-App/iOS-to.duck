@@ -12,6 +12,6 @@ public final class FetchUserPostUseCaseImpl: FetchUserPostUseCase {
     }
 
     public func execute(id: User.ID) async throws -> [Post]? {
-        return try await repostiory.fetchUserPostList(userId: id)
+        return try await repostiory.fetchUserPostList(userID: id)
     }
 }

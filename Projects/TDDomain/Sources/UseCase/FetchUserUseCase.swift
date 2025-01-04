@@ -12,6 +12,6 @@ public final class FetchUserUseCaseImpl: FetchUserUseCase {
     }
 
     public func execute(id: User.ID) async throws -> User {
-        return try await repostiory.fetchUser(userId: id)
+        return try await repostiory.fetchUser(userID: id)
     }
 }

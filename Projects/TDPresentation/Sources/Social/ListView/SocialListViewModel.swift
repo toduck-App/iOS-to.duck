@@ -111,7 +111,7 @@ extension SocialListViewModel {
     
     private func blockUser(to user: User) async {
         do {
-            let result = try await blockUserUseCase.execute(user: user)
+            let result = try await blockUserUseCase.execute(userID: user.id)
             // TODO: ALERT OUTPUT 필요
         } catch {
             output.send(.failure("사용자 차단에 실패했습니다."))

@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FetchUserRoutineUseCase {
-    func execute(user: User) async throws -> [Routine]?
+    func execute(userID: User.ID) async throws -> [Routine]?
 }
 
 public final class FetchUserRoutineUseCaseImpl: FetchUserRoutineUseCase {
@@ -11,7 +11,7 @@ public final class FetchUserRoutineUseCaseImpl: FetchUserRoutineUseCase {
         self.repostiory = repository
     }
 
-    public func execute(user: User) async throws -> [Routine]? {
-        return try await repostiory.fetchUserRoutineList(userId: user.id)
+    public func execute(userID: User.ID) async throws -> [Routine]? {
+        return try await repostiory.fetchUserRoutineList(userID: userID)
     }
 }

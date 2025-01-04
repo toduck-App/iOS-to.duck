@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol ToggleUserFollowUseCase {
-    func execute(userId: UUID, targetUserId: UUID) async throws -> Bool
+    func execute(userID: User.ID, targetUserID: User.ID) async throws -> Bool
 }
 
 public final class ToggleUserFollowUseCaseImpl: ToggleUserFollowUseCase {
@@ -11,7 +11,7 @@ public final class ToggleUserFollowUseCaseImpl: ToggleUserFollowUseCase {
         self.repository = repository
     }
 
-    public func execute(userId: UUID, targetUserId: UUID) async throws -> Bool {
-        return try await repository.toggleUserFollow(userId: userId, targetUserId: targetUserId)
+    public func execute(userID: User.ID, targetUserID: User.ID) async throws -> Bool {
+        return try await repository.toggleUserFollow(userID: userID, targetUserID: targetUserID)
     }
 }
