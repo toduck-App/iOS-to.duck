@@ -1,13 +1,10 @@
-//
-//  BlockCommentUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class BlockCommentUseCase {
+public protocol BlockCommentUseCase {
+    func execute(comment: Comment) async throws -> Bool
+}
+
+public final class BlockCommentUseCaseImpl: BlockCommentUseCase {
     private let repository: CommentRepository
     
     public init(repository: CommentRepository) {

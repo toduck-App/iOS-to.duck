@@ -1,13 +1,10 @@
-//
-//  CreateSchedule.swift
-//  toduck
-//
-//  Created by 박효준 on 6/7/24.
-//
-
 import Foundation
 
-public final class CreateScheduleUseCase {
+public protocol CreateScheduleUseCase {
+    func execute(schedule: Schedule) async throws -> Bool
+}
+
+public final class CreateScheduleUseCaseImpl: CreateScheduleUseCase {
     private let scheduleRepository: ScheduleRepository
     
     public init(scheduleRepository: ScheduleRepository) {

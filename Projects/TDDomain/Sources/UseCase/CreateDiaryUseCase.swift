@@ -1,13 +1,10 @@
-//
-//  CreateDiaryUseCase.swift
-//  toduck
-//
-//  Created by 승재 on 6/10/24.
-//
-
 import Foundation
 
-public final class CreateDiaryUseCase {
+public protocol CreateDiaryUseCase {
+    func execute(diary: Diary) async throws -> Diary
+}
+
+public final class CreateDiaryUseCaseImpl: CreateDiaryUseCase {
     private let repository: DiaryRepository
     
     public init(repository: DiaryRepository) {

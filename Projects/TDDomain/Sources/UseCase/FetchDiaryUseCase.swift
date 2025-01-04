@@ -1,13 +1,11 @@
-//
-//  FetchDiaryUseCase.swift
-//  toduck
-//
-//  Created by 승재 on 6/10/24.
-//
-
 import Foundation
 
-public final class FetchDiaryUseCase {
+public protocol FetchDiaryUseCase {
+    func execute(id: Int) async throws -> Diary
+    func execute(from startDate: Date, to endDate: Date) async throws -> [Diary]
+}
+
+public final class FetchDiaryUseCaseImpl: FetchDiaryUseCase {
     private let repository: DiaryRepository
     
     public init(repository: DiaryRepository) {

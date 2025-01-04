@@ -1,10 +1,3 @@
-//
-//  FetchScheduleListUseCase.swift
-//  toduck
-//
-//  Created by 박효준 on 6/6/24.
-//
-
 import Foundation
 
 public protocol FetchScheduleListUseCase {

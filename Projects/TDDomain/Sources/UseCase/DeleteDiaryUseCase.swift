@@ -1,13 +1,10 @@
-//
-//  DeleteDiaryUseCase.swift
-//  toduck
-//
-//  Created by 승재 on 6/10/24.
-//
-
 import Foundation
 
-public final class DeleteDiaryUseCase {
+public protocol DeleteDiaryUseCase {
+    func execute(id: Int) async throws -> Bool
+}
+
+public final class DeleteDiaryUseCaseImpl: DeleteDiaryUseCase {
     private let repository: DiaryRepository
     
     public init(repository: DiaryRepository) {

@@ -1,10 +1,3 @@
-//
-//  FetchUserPostUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
 public protocol FetchUserPostUseCase {
