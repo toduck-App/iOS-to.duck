@@ -34,7 +34,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
     // MARK: - Life Cycle
     override func prepareForReuse() {
         super.prepareForReuse()
-        timeLabel.text = ""
+        timeLabel.setText("")
         eventDetailView.resetForReuse()
     }
     
@@ -56,7 +56,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         
         if let text = timeText, !text.isEmpty {
             timeLabel.isHidden = false
-            timeLabel.text = text
+            timeLabel.setText(text)
         }
         
         if let event = event {
