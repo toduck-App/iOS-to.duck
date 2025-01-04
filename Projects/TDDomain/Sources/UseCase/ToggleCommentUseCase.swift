@@ -1,13 +1,10 @@
-//
-//  ToggleCommentUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class ToggleCommentUseCase {
+public protocol ToggleCommentUseCase {
+    func execute(comment: Comment) async throws -> Bool
+}
+
+public final class ToggleCommentUseCaseImpl: ToggleCommentUseCase {
     private let repository: CommentRepository
     
     public init(repository: CommentRepository) {
