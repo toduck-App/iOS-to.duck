@@ -19,7 +19,7 @@ final class EventMakorCoordinator: Coordinator {
         let viewModel = EventMakorViewModel()
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
-        navigationController.pushViewController(eventMakorViewController, animated: true)
+        navigationController.pushTDViewController(eventMakorViewController, animated: true)
     }
     
     func start() { }
