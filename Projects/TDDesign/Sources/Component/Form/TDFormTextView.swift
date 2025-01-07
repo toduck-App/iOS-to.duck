@@ -39,7 +39,12 @@ public final class TDFormTextView: UIView {
     private let maxCharacter: Int
     
     // MARK: - UI Properties
-
+    
+    private let titleHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+    }
+    private let titleImageView = UIImageView()
     private let titleLabel = TDRequiredTitle()
     private let currentCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800)
     private let maxCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600)
@@ -60,15 +65,19 @@ public final class TDFormTextView: UIView {
     
     // MARK: - Initializers
 
-    public init(title: String,
-                isRequired: Bool,
-                maxCharacter: Int,
-                placeholder: String)
-    {
+    public init(
+        image: UIImage? = nil,
+        title: String,
+        isRequired: Bool,
+        maxCharacter: Int,
+        placeholder: String
+    ) {
+        self.titleImageView.image = image
         self.maxCharacter = maxCharacter
         super.init(frame: .zero)
         
         // Title 설정
+        titleImageView.contentMode = .scaleAspectFit
         titleLabel.setTitleLabel(title)
         
         // 필수 항목 표시
@@ -102,7 +111,9 @@ extension TDFormTextView {
     }
     
     private func addSubviews() {
-        addSubview(titleLabel)
+        addSubview(titleHorizontalStackView)
+        titleHorizontalStackView.addArrangedSubview(titleImageView)
+        titleHorizontalStackView.addArrangedSubview(titleLabel)
         addSubview(textView)
         addSubview(currentCounterLabel)
         addSubview(maxCounterLabel)
@@ -110,7 +121,7 @@ extension TDFormTextView {
     }
     
     private func setConstraints() {
-        titleLabel.snp.makeConstraints { make in
+        titleHorizontalStackView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
         }
         
