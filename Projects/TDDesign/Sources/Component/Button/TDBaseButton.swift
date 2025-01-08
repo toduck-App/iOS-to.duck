@@ -1,7 +1,6 @@
 import UIKit
 
 public class TDBaseButton: UIButton {
-    
     // MARK: - Properties
     private var title: String = ""
     private var image: UIImage? = nil
@@ -13,7 +12,6 @@ public class TDBaseButton: UIButton {
     
     // MARK: - Initializer
     public init(
-        frame: CGRect = .zero,
         title: String = "",
         image: UIImage? = nil,
         backgroundColor: UIColor = TDColor.Primary.primary500,
@@ -27,7 +25,7 @@ public class TDBaseButton: UIButton {
         self.foregroundToduckColor = foregroundColor
         self.radius = radius
         self.font = font
-        super.init(frame: frame)
+        super.init(frame: .zero)
         
         setupButton()
     }
