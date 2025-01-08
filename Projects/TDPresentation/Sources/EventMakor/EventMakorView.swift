@@ -75,6 +75,9 @@ final class EventMakorView: BaseView {
         placeholder: "메모를 작성해 주세요."
     )
     
+    // 추천 루틴
+    private let recommendRoutineForm = TDFormRecommendRoutine()
+    
     // MARK: - Properties
     private let mode: ScheduleAndRoutineViewController.Mode
     
@@ -148,6 +151,11 @@ final class EventMakorView: BaseView {
             
         // 메모
         stackView.addArrangedSubview(memoTextView)
+        
+        // 추천루틴
+        if mode == .routine {
+            stackView.addArrangedSubview(recommendRoutineForm)
+        }
     }
     
     override func configure() {
@@ -211,6 +219,13 @@ final class EventMakorView: BaseView {
         // 메모
         memoTextView.snp.makeConstraints { make in
             make.height.equalTo(140)
+        }
+        
+        // 추천루틴
+        if mode == .routine {
+            recommendRoutineForm.snp.makeConstraints { make in
+                make.height.equalTo(100)
+            }
         }
     }
 }
