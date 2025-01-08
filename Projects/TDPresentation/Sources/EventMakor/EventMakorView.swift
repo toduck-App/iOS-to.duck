@@ -45,16 +45,11 @@ final class EventMakorView: BaseView {
     private let dividedLine2 = UIView.dividedLine()
     
     // 공개여부 (루틴에서만 사용됨)
-    private let lockStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 8
-        $0.alignment = .center
+    private let lockVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
     }
-    private let lockImageView = UIImageView(image: TDImage.Lock.medium)
-    private let lockLabel = TDLabel(labelText: "공개여부", toduckFont: TDFont.mediumHeader5)
-    private let lockSegmentedControl = UISegmentedControl(items: ["공개", "비공개"]).then {
-        $0.selectedSegmentIndex = 0
-    }
+    private let lockForm = TDFormSegmentView()
     private let dividedLine3 = UIView.dividedLine()
     
     private let repeatDayForm = TDFormButtonsView(type: .repeatDay)
@@ -123,9 +118,11 @@ final class EventMakorView: BaseView {
         categoryVerticalStackView.addArrangedSubview(categoryViewsForm)
         
         // 날짜
-        stackView.addArrangedSubview(dataVerticalStackView)
-        dataVerticalStackView.addArrangedSubview(dateForm)
-        dataVerticalStackView.addArrangedSubview(dividedLine1)
+        if mode == .schedule {
+            stackView.addArrangedSubview(dataVerticalStackView)
+            dataVerticalStackView.addArrangedSubview(dateForm)
+            dataVerticalStackView.addArrangedSubview(dividedLine1)
+        }
         
         // 시간
         stackView.addArrangedSubview(timeVerticalStackView)
@@ -134,11 +131,9 @@ final class EventMakorView: BaseView {
         
         // 공개 여부 (Routine 모드에서만 표시)
         if mode == .routine {
-            stackView.addArrangedSubview(lockStackView)
-            lockStackView.addArrangedSubview(lockImageView)
-            lockStackView.addArrangedSubview(lockLabel)
-            lockStackView.addArrangedSubview(lockSegmentedControl)
-            stackView.addArrangedSubview(dividedLine3)
+            stackView.addArrangedSubview(lockVerticalStackView)
+            lockVerticalStackView.addArrangedSubview(lockForm)
+            lockVerticalStackView.addArrangedSubview(dividedLine3)
         }
         
         stackView.addArrangedSubview(repeatDayForm)
@@ -147,8 +142,10 @@ final class EventMakorView: BaseView {
         stackView.addArrangedSubview(dividedLine5)
         
         // 장소
-        stackView.addArrangedSubview(locationForm)
-        
+        if mode == .schedule {
+            stackView.addArrangedSubview(locationForm)
+        }
+            
         // 메모
         stackView.addArrangedSubview(memoTextView)
     }
@@ -177,21 +174,22 @@ final class EventMakorView: BaseView {
             make.height.equalTo(100)
         }
         
-        // 날짜 & 시간
-        dateForm.snp.makeConstraints { make in
-            make.height.equalTo(24)
+        // 날짜
+        if mode == .schedule {
+            dateForm.snp.makeConstraints { make in
+                make.height.equalTo(24)
+            }
         }
+        
+        // 시간
         timeForm.snp.makeConstraints { make in
             make.height.equalTo(24)
         }
         
         // 공개여부
         if mode == .routine {
-            lockStackView.snp.makeConstraints { make in
-                make.height.equalTo(56)
-            }
-            lockSegmentedControl.snp.makeConstraints { make in
-                make.width.equalTo(120)
+            lockForm.snp.makeConstraints { make in
+                make.height.equalTo(24)
             }
         }
         
@@ -204,8 +202,10 @@ final class EventMakorView: BaseView {
         }
         
         // 장소
-        locationForm.snp.makeConstraints { make in
-            make.height.equalTo(84)
+        if mode == .schedule {
+            locationForm.snp.makeConstraints { make in
+                make.height.equalTo(84)
+            }
         }
         
         // 메모
