@@ -3,6 +3,7 @@ import UIKit
 
 /// 카테고리 아이콘을 표시하는 뷰
 public final class TDCategoryCircleView: UIView {
+    // MARK: - UI Components
     private let categoryImageContainerView = UIView().then {
         $0.layer.cornerRadius = 16
         $0.clipsToBounds = true
@@ -12,13 +13,14 @@ public final class TDCategoryCircleView: UIView {
         $0.contentMode = .scaleAspectFit
     }
     
+    // MARK: - Initialize
     public init() {
         super.init(frame: .zero)
         setupView()
         setupLayout()
     }
     
-    public required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
         setupLayout()
@@ -28,7 +30,12 @@ public final class TDCategoryCircleView: UIView {
     /// - Parameters:
     ///   - color: 백그라운드 색상
     ///   - category: 카테고리 이미지
-    public func configure(backgroundColor: UIColor, category: UIImage) {
+    public func configure(
+        radius: CGFloat = 16,
+        backgroundColor: UIColor,
+        category: UIImage
+    ) {
+        categoryImageContainerView.layer.cornerRadius = radius
         categoryImageContainerView.backgroundColor = backgroundColor
         categoryImageView.image = category
     }
