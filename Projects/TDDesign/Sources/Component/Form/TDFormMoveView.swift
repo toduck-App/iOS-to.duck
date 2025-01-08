@@ -14,19 +14,30 @@ public final class TDFormMoveView: UIView {
         $0.axis = .horizontal
         $0.spacing = 8
     }
+    // Title
     private let titleHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
     }
     private var titleImageView: UIImageView?
-    private let titleLabel = UILabel()
+    private let titleLabel = TDLabel(toduckFont: TDFont.mediumBody1)
     
+    // Description
     private let descriptionHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
     }
-    private let descriptionLabel = UILabel()
-    private let descriptionImageView = UIImageView(image: TDImage.Direction.right2Medium)
+    private let descriptionLabel = TDLabel(
+        toduckFont: TDFont.mediumBody1,
+        alignment: .right
+    ).then {
+        $0.textAlignment = .right
+        $0.textColor = TDColor.Neutral.neutral600
+    }
+    private let descriptionImageView = UIImageView().then {
+        $0.image = TDImage.Direction.right2Medium
+        $0.contentMode = .scaleAspectFit
+    }
     
     // MARK: - Properties
     private let type: TDFormMoveViewType
@@ -54,16 +65,18 @@ public final class TDFormMoveView: UIView {
     private func setupView() {
         switch type {
         case .category:
-            titleLabel.text = "카테고리"
-            descriptionLabel.text = "색상 수정"
+            titleLabel.setText("카테고리")
+            descriptionLabel.setText("색상 수정")
         case .date:
             titleImageView = UIImageView(image: TDImage.Calendar.medium)
-            titleLabel.text = "날짜"
-            descriptionLabel.text = "없음"
+            titleImageView?.contentMode = .scaleAspectFit
+            titleLabel.setText("날짜")
+            descriptionLabel.setText("없음")
         case .time:
             titleImageView = UIImageView(image: TDImage.timeSmall)
-            titleLabel.text = "시간"
-            descriptionLabel.text = "없음"
+            titleImageView?.contentMode = .scaleAspectFit
+            titleLabel.setText("시간")
+            descriptionLabel.setText("없음")
         }
     }
     
@@ -88,7 +101,7 @@ public final class TDFormMoveView: UIView {
         }
         titleHorizontalStackView.addArrangedSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.width.equalTo(44)
+            $0.width.equalTo(60)
         }
         
         descriptionHorizontalStackView.addArrangedSubview(descriptionLabel)
