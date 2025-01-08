@@ -1,4 +1,5 @@
 import UIKit
+import TDDesign
 import TDCore
 
 final class EventMakorCoordinator: Coordinator {
@@ -29,5 +30,22 @@ final class EventMakorCoordinator: Coordinator {
 extension EventMakorCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+extension EventMakorCoordinator: TDFormMoveViewDelegate {
+    func didTapMoveView(_ view: TDDesign.TDFormMoveView, type: TDDesign.TDFormMoveViewType) {
+        switch type {
+        case .category:
+            TDLogger.debug("category SheetCalendarCoordinator")
+        case .date:
+            let dateCoordinator = SheetCalendarCoordinator(
+                navigationController: navigationController,
+                injector: injector
+            )
+            dateCoordinator.start()
+        case .time:
+            TDLogger.debug("time SheetCalendarCoordinator")
+        }
     }
 }
