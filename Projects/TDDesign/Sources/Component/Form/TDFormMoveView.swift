@@ -20,7 +20,7 @@ public final class TDFormMoveView: UIView {
         $0.spacing = 8
     }
     private var titleImageView: UIImageView?
-    private let titleLabel = TDLabel(toduckFont: TDFont.mediumBody1)
+    private let titleLabel = TDLabel(toduckFont: .mediumBody1)
     
     // Description
     private let descriptionHorizontalStackView = UIStackView().then {
@@ -28,15 +28,16 @@ public final class TDFormMoveView: UIView {
         $0.spacing = 8
     }
     private let descriptionLabel = TDLabel(
-        toduckFont: TDFont.mediumBody1,
+        toduckFont: .mediumBody1,
         alignment: .right
     ).then {
         $0.textAlignment = .right
         $0.textColor = TDColor.Neutral.neutral600
     }
     private let descriptionImageView = UIImageView().then {
-        $0.image = TDImage.Direction.right2Medium
+        $0.image = TDImage.Direction.right2Medium.withRenderingMode(.alwaysTemplate)
         $0.contentMode = .scaleAspectFit
+        $0.tintColor = TDColor.Neutral.neutral600
     }
     
     // MARK: - Properties
@@ -78,6 +79,7 @@ public final class TDFormMoveView: UIView {
             titleLabel.setText("시간")
             descriptionLabel.setText("없음")
         }
+        descriptionLabel.setColor(TDColor.Neutral.neutral600)
     }
     
     private func setupLayout() {
@@ -121,7 +123,6 @@ public final class TDFormMoveView: UIView {
     
     @objc
     private func didTapView() {
-        print(123)
         action?()
     }
 }
