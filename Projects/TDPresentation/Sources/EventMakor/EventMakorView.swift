@@ -10,11 +10,9 @@ final class EventMakorView: BaseView {
     private let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 24
-        $0.alignment = .fill
-        $0.distribution = .fill
     }
     
-    // 📝 제목
+    // 제목
     private let titleForm = TDFormTextField(
         title: "일정",
         isRequired: true,
@@ -22,7 +20,7 @@ final class EventMakorView: BaseView {
         placeholder: "일정을 입력해주세요"
     )
     
-    // 📝 카테고리
+    // 카테고리
     private let categoryVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
@@ -30,13 +28,23 @@ final class EventMakorView: BaseView {
     private let categoryTitleForm = TDFormMoveView(type: .category)
     private let categoryViewsForm = TDFormCategoryView()
     
-    // 📝 날짜 & 시간
+    // 날짜 (일정에서만 사용됨)
+    private let dataVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
+    }
     private let dateForm = TDFormMoveView(type: .date)
     private let dividedLine1 = UIView.dividedLine()
+    
+    // 시간
+    private let timeVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
+    }
     private let timeForm = TDFormMoveView(type: .time)
     private let dividedLine2 = UIView.dividedLine()
     
-    // 📝 공개여부
+    // 공개여부 (루틴에서만 사용됨)
     private let lockStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
@@ -54,7 +62,7 @@ final class EventMakorView: BaseView {
     private let alarmForm = TDFormButtonsView(type: .alarm)
     private let dividedLine5 = UIView.dividedLine()
     
-    // 📝 장소
+    // 장소 (일정에서만 사용됨)
     private let locationForm = TDFormTextField(
         image: TDImage.locationMedium,
         title: "장소",
@@ -63,7 +71,7 @@ final class EventMakorView: BaseView {
         placeholder: "장소를 입력해주세요"
     )
     
-    // 📝 메모
+    // 메모
     private let memoTextView = TDFormTextView(
         image: TDImage.Memo.lineMedium,
         title: "메모",
@@ -79,6 +87,21 @@ final class EventMakorView: BaseView {
     init(mode: ScheduleAndRoutineViewController.Mode) {
         self.mode = mode
         super.init(frame: .zero)
+        
+        categoryViewsForm.setupCategoryView(
+            categories: [
+                (TDColor.Schedule.back2, TDImage.Category.food),
+                (TDColor.Schedule.back3, TDImage.Category.heart),
+                (TDColor.Schedule.back1, TDImage.Category.medicine),
+                (TDColor.Schedule.back4, TDImage.Category.none),
+                (TDColor.Schedule.back5, TDImage.Category.pencil),
+                (TDColor.Schedule.back6, TDImage.Category.people),
+                (TDColor.Schedule.back7, TDImage.Category.power),
+                (TDColor.Schedule.back8, TDImage.Category.sleep),
+                (TDColor.Schedule.back9, TDImage.Category.redBook),
+                (TDColor.Schedule.back10, TDImage.Category.yellowBook)
+            ]
+        )
     }
     
     required init?(coder: NSCoder) {
@@ -98,43 +121,16 @@ final class EventMakorView: BaseView {
         stackView.addArrangedSubview(categoryVerticalStackView)
         categoryVerticalStackView.addArrangedSubview(categoryTitleForm)
         categoryVerticalStackView.addArrangedSubview(categoryViewsForm)
-        categoryViewsForm.setupCategoryView(categories: [(
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        ), (
-            TDColor.baseBlack,
-            TDImage.Category.computer
-        )])
         
-        // 날짜와 시간
-        stackView.addArrangedSubview(dateForm)
-        stackView.addArrangedSubview(dividedLine1)
-        stackView.addArrangedSubview(timeForm)
-        stackView.addArrangedSubview(dividedLine2)
+        // 날짜
+        stackView.addArrangedSubview(dataVerticalStackView)
+        dataVerticalStackView.addArrangedSubview(dateForm)
+        dataVerticalStackView.addArrangedSubview(dividedLine1)
+        
+        // 시간
+        stackView.addArrangedSubview(timeVerticalStackView)
+        timeVerticalStackView.addArrangedSubview(timeForm)
+        timeVerticalStackView.addArrangedSubview(dividedLine2)
         
         // 공개 여부 (Routine 모드에서만 표시)
         if mode == .routine {
@@ -178,7 +174,7 @@ final class EventMakorView: BaseView {
         
         // 카테고리
         categoryVerticalStackView.snp.makeConstraints { make in
-            make.height.equalTo(90)
+            make.height.equalTo(100)
         }
         
         // 날짜 & 시간
