@@ -4,8 +4,7 @@ import Then
 import TDDesign
 
 final class EventMakorView: BaseView {
-    // MARK: - UI Properties
-    
+    // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let stackView = UIStackView().then {
         $0.axis = .vertical
@@ -25,7 +24,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    private let categoryTitleForm = TDFormMoveView(type: .category)
+    let categoryTitleForm = TDFormMoveView(type: .category)
     private let categoryViewsForm = TDFormCategoryView()
     
     // 날짜 (일정에서만 사용됨)
@@ -33,7 +32,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    private let dateForm = TDFormMoveView(type: .date)
+    let dateForm = TDFormMoveView(type: .date)
     private let dividedLine1 = UIView.dividedLine()
     
     // 시간
@@ -41,7 +40,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    private let timeForm = TDFormMoveView(type: .time)
+    let timeForm = TDFormMoveView(type: .time)
     private let dividedLine2 = UIView.dividedLine()
     
     // 공개여부 (루틴에서만 사용됨)
@@ -75,7 +74,7 @@ final class EventMakorView: BaseView {
         placeholder: "메모를 작성해 주세요."
     )
     
-    // 추천 루틴
+    // 추천 루틴 (루틴에서만 사용됨)
     private let recommendRoutineForm = TDFormRecommendRoutine()
     
     // MARK: - Properties
@@ -160,6 +159,7 @@ final class EventMakorView: BaseView {
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
+        scrollView.showsVerticalScrollIndicator = false
     }
     
     override func layout() {

@@ -8,6 +8,10 @@ public enum TDFormMoveViewType {
     case time
 }
 
+public protocol TDFormMoveViewDelegate: AnyObject {
+    func didTapMoveView(_ view: TDFormMoveView, type: TDFormMoveViewType)
+}
+
 public final class TDFormMoveView: UIView {
     // MARK: - UI Properties
     private let containerHorizontalStackView = UIStackView().then {
@@ -42,15 +46,11 @@ public final class TDFormMoveView: UIView {
     
     // MARK: - Properties
     private let type: TDFormMoveViewType
-    private let action: (() -> Void)?
+    public weak var delegate: TDFormMoveViewDelegate?
     
     // MARK: - Initializer
-    public init(
-        type: TDFormMoveViewType,
-        action: (() -> Void)? = nil
-    ) {
+    public init(type: TDFormMoveViewType) {
         self.type = type
-        self.action = action
         super.init(frame: .zero)
         
         setupView()
@@ -123,6 +123,6 @@ public final class TDFormMoveView: UIView {
     
     @objc
     private func didTapView() {
-        action?()
+        delegate?.didTapMoveView(self, type: type)
     }
 }
