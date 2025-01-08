@@ -22,7 +22,7 @@ final class SheetCalendarCoordinator: Coordinator {
         sheetViewController.coordinator = self
         let sheetController = SheetViewController(
             controller: sheetViewController,
-            sizes: [.fixed(680)],
+            sizes: [.fixed(550)],
             options: .init(
                 pullBarHeight: 0,
                 shouldExtendBackground: false,

@@ -11,51 +11,103 @@ import TDDesign
 import Then
 
 final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalendarConfigurable {
-    private var firstDate: Date?
-    private var lastDate: Date?
-    private var datesRange: [Date] = []
+    // MARK: - UI Components
+    private let cancelButton = UIButton(type: .system).then {
+        $0.setImage(TDImage.X.x1Medium, for: .normal)
+        $0.tintColor = TDColor.Neutral.neutral700
+    }
+    private let titleLabel = TDLabel(
+        labelText: "날짜 선택",
+        toduckFont: TDFont.boldHeader4,
+        toduckColor: TDColor.Neutral.neutral800
+    )
     
-    let headerDateFormatter = DateFormatter().then { $0.dateFormat = "yyyy년 M월" }
-    let dateFormatter = DateFormatter().then { $0.dateFormat = "yyyy-MM-dd" }
-    let dayFormatter = DateFormatter().then { $0.dateFormat = "d일" }
     var calendarHeader = CalendarHeaderStackView(type: .sheet)
     var calendar = SheetCalendar()
     
-    var selectDates = TDLabel(toduckFont: TDFont.mediumHeader5,
-                              toduckColor: TDColor.Neutral.neutral600)
-    var saveButton = TDButton(title: "저장", size: .large)
+    private let selectDates = TDLabel(
+        toduckFont: TDFont.mediumHeader5,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    private let buttonHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+    }
+    private let resetButton = TDBaseButton(
+        title: "재설정",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    private let saveButton = TDBaseButton(
+        title: "설정",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
     
+    // MARK: - Properties
+    private let headerDateFormatter = DateFormatter().then { $0.dateFormat = "yyyy년 M월" }
+    private let dateFormatter = DateFormatter().then { $0.dateFormat = "yyyy-MM-dd" }
+    private let dayFormatter = DateFormatter().then { $0.dateFormat = "d일" }
+    private var firstDate: Date?
+    private var lastDate: Date?
+    private var datesRange: [Date] = []
+    weak var coordinator: SheetCalendarCoordinator?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // MARK: - Common Methods
+    override func configure() {
         view.backgroundColor = .white
+        resetButton.layer.borderWidth = 1
+        resetButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         
         setupCalendar()
-        calendarHeader.snp.makeConstraints {
+    }
+    
+    override func addView() {
+        view.addSubview(cancelButton)
+        view.addSubview(titleLabel)
+        view.addSubview(selectDates)
+        view.addSubview(buttonHorizontalStackView)
+        buttonHorizontalStackView.addArrangedSubview(resetButton)
+        buttonHorizontalStackView.addArrangedSubview(saveButton)
+    }
+    
+    override func layout() {
+        cancelButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(24)
-            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(15)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
         }
         
-        view.addSubview(saveButton)
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(24)
+            $0.centerX.equalTo(view)
+        }
+        
+        calendarHeader.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(28)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
+        }
+        
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.top).offset(44)
             $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.9)
             $0.height.equalTo(300)
-            $0.bottom.equalTo(saveButton.snp.top).offset(-20)
         }
         
-        view.addSubview(selectDates)
         selectDates.snp.makeConstraints {
-            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-21)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-20)
             $0.centerY.equalTo(calendarHeader.snp.centerY)
         }
         
-        saveButton.snp.makeConstraints {
-            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(20)
-            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-20)
-            $0.centerX.equalTo(view)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+        buttonHorizontalStackView.snp.makeConstraints {
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-16)
+            $0.height.equalTo(56)
         }
     }
 }
