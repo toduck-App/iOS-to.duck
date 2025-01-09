@@ -16,6 +16,10 @@ public struct DataAssembly: Assembly {
             return CommentRepositoryImpl()
         }
         
+        container.register(CategoryRepository.self) { _ in
+            return CategoryRepositoryImpl()
+        }
+        
         container.register(DiaryRepository.self) { _ in
             return DiaryRepositoryImpl()
         }
