@@ -1,13 +1,7 @@
-//
-//  SheetsCalendarViewController.swift
-//  toduck
-//
-//  Created by 박효준 on 9/1/24.
-//
-
+import UIKit
+import TDDesign
 import FSCalendar
 import SnapKit
-import TDDesign
 import Then
 
 final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalendarConfigurable {
@@ -59,11 +53,15 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     
     // MARK: - Common Methods
     override func configure() {
-        view.backgroundColor = .white
+        view.backgroundColor = TDColor.baseWhite
         resetButton.layer.borderWidth = 1
         resetButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         
         setupCalendar()
+        cancelButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
     }
     
     override func addView() {
