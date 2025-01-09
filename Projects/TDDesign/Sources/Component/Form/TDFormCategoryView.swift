@@ -1,7 +1,6 @@
 import SnapKit
 import Then
 import UIKit
-import TDCore
 
 public final class TDFormCategoryView: UIView {
     private let scrollView = UIScrollView().then {
