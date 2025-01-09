@@ -8,7 +8,6 @@ public final class TDCategoryCircleView: UIView {
         $0.layer.cornerRadius = 16
         $0.clipsToBounds = true
     }
-
     private let categoryImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
     }
@@ -57,6 +56,12 @@ public final class TDCategoryCircleView: UIView {
         }
         categoryImageView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(8)
+        }
+    }
+    
+    func setCategoryImageInsets(_ insets: Int) {
+        categoryImageView.snp.updateConstraints {
+            $0.edges.equalToSuperview().inset(insets)
         }
     }
 }

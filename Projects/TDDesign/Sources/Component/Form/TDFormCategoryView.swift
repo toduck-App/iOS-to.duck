@@ -57,6 +57,7 @@ public final class TDFormCategoryView: UIView {
         for (index, color) in colors.enumerated() {
             let categoryView = TDCategoryCircleView()
             categoryView.snp.makeConstraints { $0.width.height.equalTo(50) }
+            categoryView.setCategoryImageInsets(12)
             categoryView.configure(
                 radius: 25,
                 backgroundColor: color,
