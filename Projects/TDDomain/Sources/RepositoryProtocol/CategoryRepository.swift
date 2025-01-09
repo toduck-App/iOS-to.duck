@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol CategoryRepository {
-    func fetchCategories() async throws -> [TDCategory]
+    func fetchCategories() async throws -> [String]
 }

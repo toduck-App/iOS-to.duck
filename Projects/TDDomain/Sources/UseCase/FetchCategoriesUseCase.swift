@@ -1,5 +1,5 @@
 public protocol FetchCategoriesUseCase {
-    func execute() async throws -> [TDCategory]
+    func execute() async throws -> [String]
 }
 
 public final class FetchCategoriesUseCaseImpl: FetchCategoriesUseCase {
@@ -9,7 +9,7 @@ public final class FetchCategoriesUseCaseImpl: FetchCategoriesUseCase {
         self.repository = repository
     }
     
-    public func execute() async throws -> [TDCategory] {
+    public func execute() async throws -> [String] {
         return try await repository.fetchCategories()
     }
 }
