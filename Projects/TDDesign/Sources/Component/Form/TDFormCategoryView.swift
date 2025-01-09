@@ -11,6 +11,23 @@ public final class TDFormCategoryView: UIView {
         $0.spacing = 8
     }
     
+    // 고정된 이미지 배열
+    private let categoryImages: [UIImage] = [
+        TDImage.Category.computer,  // 컴퓨터
+        TDImage.Category.food,      // 밥
+        TDImage.Category.pencil,    // 연필
+        TDImage.Category.redBook,   // 빨간책
+        TDImage.Category.yellowBook,// 노란책
+        TDImage.Category.sleep,     // 물
+        TDImage.Category.power,     // 운동
+        TDImage.Category.people,    // 사람
+        TDImage.Category.medicine,  // 약
+        TDImage.Category.talk,      // 채팅
+        TDImage.Category.heart,     // 하트
+        TDImage.Category.vehicle,   // 차
+        TDImage.Category.none       // None
+    ]
+    
     public init() {
         super.init(frame: .zero)
         setupStackView()
@@ -35,11 +52,16 @@ public final class TDFormCategoryView: UIView {
         }
     }
     
-    public func setupCategoryView(categories: [(UIColor, UIImage)]) {
-        categories.forEach { color, image  in
+    // 색상 배열만 받도록 변경
+    public func setupCategoryView(colors: [UIColor]) {
+        for (index, color) in colors.enumerated() {
             let categoryView = TDCategoryCircleView()
             categoryView.snp.makeConstraints { $0.width.height.equalTo(50) }
-            categoryView.configure(radius: 25, backgroundColor: color, category: image)
+            categoryView.configure(
+                radius: 25,
+                backgroundColor: color,
+                category: categoryImages[index]
+            )
             categoryHorizontalStackView.addArrangedSubview(categoryView)
         }
     }

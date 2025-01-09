@@ -86,17 +86,20 @@ final class EventMakorView: BaseView {
         super.init(frame: .zero)
         
         categoryViewsForm.setupCategoryView(
-            categories: [
-                (TDColor.Schedule.back2, TDImage.Category.food),
-                (TDColor.Schedule.back3, TDImage.Category.heart),
-                (TDColor.Schedule.back1, TDImage.Category.medicine),
-                (TDColor.Schedule.back4, TDImage.Category.none),
-                (TDColor.Schedule.back5, TDImage.Category.pencil),
-                (TDColor.Schedule.back6, TDImage.Category.people),
-                (TDColor.Schedule.back7, TDImage.Category.power),
-                (TDColor.Schedule.back8, TDImage.Category.sleep),
-                (TDColor.Schedule.back9, TDImage.Category.redBook),
-                (TDColor.Schedule.back10, TDImage.Category.yellowBook)
+            colors: [
+                TDColor.Schedule.back2,
+                TDColor.Schedule.back3,
+                TDColor.Schedule.back1,
+                TDColor.Schedule.back4,
+                TDColor.Schedule.back5,
+                TDColor.Schedule.back6,
+                TDColor.Schedule.back7,
+                TDColor.Schedule.back8,
+                TDColor.Schedule.back9,
+                TDColor.Schedule.back10,
+                TDColor.Schedule.back11,
+                TDColor.Schedule.back12,
+                .clear
             ]
         )
     }
