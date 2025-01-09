@@ -25,7 +25,7 @@ final class EventMakorView: BaseView {
         $0.spacing = 16
     }
     let categoryTitleForm = TDFormMoveView(type: .category)
-    private let categoryViewsForm = TDFormCategoryView()
+    let categoryViewsForm = TDFormCategoryView()
     
     // 날짜 (일정에서만 사용됨)
     private let dataVerticalStackView = UIStackView().then {
@@ -84,24 +84,6 @@ final class EventMakorView: BaseView {
     init(mode: ScheduleAndRoutineViewController.Mode) {
         self.mode = mode
         super.init(frame: .zero)
-        
-        categoryViewsForm.setupCategoryView(
-            colors: [
-                TDColor.Schedule.back2,
-                TDColor.Schedule.back3,
-                TDColor.Schedule.back1,
-                TDColor.Schedule.back4,
-                TDColor.Schedule.back5,
-                TDColor.Schedule.back6,
-                TDColor.Schedule.back7,
-                TDColor.Schedule.back8,
-                TDColor.Schedule.back9,
-                TDColor.Schedule.back10,
-                TDColor.Schedule.back11,
-                TDColor.Schedule.back12,
-                .clear
-            ]
-        )
     }
     
     required init?(coder: NSCoder) {

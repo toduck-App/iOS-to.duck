@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import TDDesign
 import TDCore
 
@@ -17,7 +18,8 @@ final class EventMakorCoordinator: Coordinator {
     }
 
     func start(mode: ScheduleAndRoutineViewController.Mode) {
-        let viewModel = EventMakorViewModel()
+        let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
+        let viewModel = EventMakorViewModel(fetchCategoriesUseCase: fetchRoutineListUseCase)
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
@@ -33,6 +35,7 @@ extension EventMakorCoordinator: CoordinatorFinishDelegate {
     }
 }
 
+// MARK: - TDFormMoveView Delegate
 extension EventMakorCoordinator: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDDesign.TDFormMoveView, type: TDDesign.TDFormMoveViewType) {
         switch type {
@@ -43,6 +46,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
                 navigationController: navigationController,
                 injector: injector
             )
+            dateCoordinator.finishDelegate = self
             dateCoordinator.start()
         case .time:
             TDLogger.debug("time SheetCalendarCoordinator")

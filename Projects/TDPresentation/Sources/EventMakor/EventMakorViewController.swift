@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 import TDDesign
 import TDCore
 
@@ -7,6 +8,8 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     private let mode: ScheduleAndRoutineViewController.Mode
     private let viewModel: EventMakorViewModel
     private let eventMakorView: EventMakorView
+    private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     weak var coordinator: EventMakorCoordinator?
     
     // MARK: - UI Components
@@ -30,17 +33,21 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         super.init()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        self.mode = .schedule
-        self.viewModel = EventMakorViewModel()
-        self.eventMakorView = EventMakorView(mode: mode)
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Life Cycle
     override func loadView() {
         super.loadView()
         view = eventMakorView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        input.send(.fetchCategories)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,6 +65,22 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         eventMakorView.categoryTitleForm.delegate = self
         eventMakorView.dateForm.delegate = self
         eventMakorView.timeForm.delegate = self
+        
+        let categoryColors = viewModel.categories.compactMap { $0.convertToUIColor() }
+        eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedCategories: break
+                }
+            }.store(in: &cancellables)
+
     }
     
     private func didTapRegisterButton() {
