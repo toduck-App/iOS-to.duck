@@ -34,6 +34,7 @@ public final class TDCategoryCollectionView: UIView {
         TDImage.Category.none       // None
     ]
     private var categoryColors: [UIColor] = []
+    private var selectedIndex: Int?
     public weak var delegate: TDCategoryCellDelegate?
     
     // MARK: - Initialization
@@ -55,6 +56,7 @@ public final class TDCategoryCollectionView: UIView {
             $0.edges.equalToSuperview()
         }
         
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(
@@ -86,6 +88,8 @@ extension TDCategoryCollectionView: UICollectionViewDataSource {
         let color = indexPath.row < categoryColors.count ? categoryColors[indexPath.row] : UIColor.clear
         
         cell.configure(image: image, backgroundColor: color)
+        cell.alpha = (indexPath.row == selectedIndex) ? 1.0 : 0.3
+        
         return cell
     }
 }
@@ -93,10 +97,15 @@ extension TDCategoryCollectionView: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension TDCategoryCollectionView: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.row
+        
         for cell in collectionView.visibleCells {
-            cell.alpha = 0.3
+            if let index = collectionView.indexPath(for: cell)?.row {
+                cell.alpha = (index == selectedIndex) ? 1.0 : 0.3
+            }
         }
-        collectionView.cellForItem(at: indexPath)?.alpha = 1.0
+        
+        // Delegate 호출
         delegate?.didTapCategoryCell(categoryColors[indexPath.row], categoryImages[indexPath.row])
     }
 }
