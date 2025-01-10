@@ -11,7 +11,7 @@ extension UIViewController {
         navigationItem.leftBarButtonItems = createLeftBarButtons(style: style, navigationDelegate: navigationDelegate)
         
         // 우측 버튼 설정 (Style에 따라 다름)
-        navigationItem.rightBarButtonItem = createRightBarButton(style: style)
+//        navigationItem.rightBarButtonItem = createRightBarButton(style: style)
     }
     
     // MARK: - 좌측 네비게이션 바 버튼 생성
