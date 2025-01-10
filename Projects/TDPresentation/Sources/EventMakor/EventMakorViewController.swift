@@ -107,6 +107,6 @@ extension EventMakorViewController: TDFormMoveViewDelegate {
 
 extension EventMakorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ index: Int) {
-        input.send(.selectCategory(color.convertToHexString() ?? ""))
+        input.send(.selectCategory(color.convertToHexString() ?? "", index))
     }
 }

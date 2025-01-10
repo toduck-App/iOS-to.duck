@@ -17,8 +17,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var cancellables = Set<AnyCancellable>()
     
     private(set) var categories: [String] = []
-    private var selectedCategory: String?
-    private var selectedCategoryIndex: Int?
+    private var selectedCategory: TDCategory?
     
     init(fetchCategoriesUseCase: FetchCategoriesUseCase) {
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
@@ -29,9 +28,9 @@ final class EventMakorViewModel: BaseViewModel {
             switch event {
             case .fetchCategories:
                 Task { await self?.fetchCategories() }
-            case .selectCategory(let category, let index):
-                self?.selectedCategory = category
-                self?.selectedCategoryIndex = index
+            case .selectCategory(let colorHex, let index):
+                self?.selectedCategory = TDCategory(colorHex: colorHex, imageIndex: index)
+                print(self?.selectedCategory)
             }
         }.store(in: &cancellables)
         

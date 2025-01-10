@@ -71,7 +71,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "하루 물 1L 이상 마시기",
-            category: TDCategory(colorHex: "#123456", imageType: .medicine),
+            category: TDCategory(colorHex: "#123456", imageIndex: 0),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -85,7 +85,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "자기 전 감정기록 작성하기",
-            category: TDCategory(colorHex: "#123456", imageType: .sleep),
+            category: TDCategory(colorHex: "#123456", imageIndex: 3),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -99,7 +99,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "기상 후 이부자리 정리",
-            category: TDCategory(colorHex: "#123456", imageType: .sleep),
+            category: TDCategory(colorHex: "#123456", imageIndex: 1),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -113,7 +113,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "모닝 스트레칭 하기",
-            category: TDCategory(colorHex: "#123456", imageType: .power),
+            category: TDCategory(colorHex: "#123456", imageIndex: 2),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -127,7 +127,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "나가기 전 잊지 말고 챙기자",
-            category: TDCategory(colorHex: "#123456", imageType: .talk),
+            category: TDCategory(colorHex: "#123456", imageIndex: 4),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -141,7 +141,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "디자인 아티클 읽고 공부하기",
-            category: TDCategory(colorHex: "#123456", imageType: .redBook),
+            category: TDCategory(colorHex: "#123456", imageIndex: 6),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -155,7 +155,7 @@ extension Routine {
         Routine(
             id: UUID(),
             title: "헬스장 가기! 빠샤!",
-            category: TDCategory(colorHex: "#123456", imageType: .power),
+            category: TDCategory(colorHex: "#123456", imageIndex: 5),
             isAllDay: false,
             isPublic: true,
             date: Date(),

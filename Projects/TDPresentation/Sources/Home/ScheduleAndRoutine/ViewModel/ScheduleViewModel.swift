@@ -24,7 +24,7 @@ extension ScheduleViewModel: TimeSlotProvider {
         return [TimeSlot(timeText: "8 AM", events: [
             Schedule(
                 title: "캐릭터 디자인 작업",
-                category: TDCategory(colorHex: "#123456", imageType: .computer),
+                category: TDCategory(colorHex: "#123456", imageIndex: 3),
                 isAllDay: false,
                 date: nil,
                 time: nil,
@@ -36,7 +36,7 @@ extension ScheduleViewModel: TimeSlotProvider {
             ),
             Schedule(
                 title: "토익 공부",
-                category: TDCategory(colorHex: "#123456", imageType: .food),
+                category: TDCategory(colorHex: "#123456", imageIndex: 1),
                 isAllDay: false,
                 date: nil,
                 time: nil,
@@ -48,7 +48,7 @@ extension ScheduleViewModel: TimeSlotProvider {
             ),
             Schedule(
                 title: "영화 보기",
-                category: TDCategory(colorHex: "#123456", imageType: .medicine),
+                category: TDCategory(colorHex: "#123456", imageIndex: 2),
                 isAllDay: true,
                 date: nil,
                 time: nil,
@@ -63,7 +63,7 @@ extension ScheduleViewModel: TimeSlotProvider {
                 TimeSlot(timeText: "3 PM", events: [
                     Schedule(
                         title: "가나다라마바",
-                        category: TDCategory(colorHex: "#123456", imageType: .none),
+                        category: TDCategory(colorHex: "#123456", imageIndex: 6),
                         isAllDay: false,
                         date: nil,
                         time: nil,
@@ -75,7 +75,7 @@ extension ScheduleViewModel: TimeSlotProvider {
                     ),
                     Schedule(
                         title: "영화 보기",
-                        category: TDCategory(colorHex: "#123456", imageType: .redBook),
+                        category: TDCategory(colorHex: "#123456", imageIndex: 19),
                         isAllDay: true,
                         date: nil,
                         time: nil,

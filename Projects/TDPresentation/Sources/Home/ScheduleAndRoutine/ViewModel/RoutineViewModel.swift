@@ -30,7 +30,7 @@ extension RoutineViewModel: TimeSlotProvider {
                 title: "루틴 1",
                 category: TDCategory(
                     colorHex: "#123456",
-                    imageType: .computer
+                    imageIndex: 0
                 ),
                 isAllDay: false,
                 isPublic: true,

@@ -14,7 +14,7 @@ public final class PostRepositoryImpl: PostRepository {
         title: "123",
         category: TDCategory(
             colorHex: "#123456",
-            imageType: .computer
+            imageIndex: 2
         ),
         isAllDay: false,
         isPublic: true,
