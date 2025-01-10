@@ -13,7 +13,7 @@ protocol EventPresentable {
 
 extension Eventable {
     var categoryColor: UIColor {
-        return category.colorType.color
+        return category.colorHex.convertToUIColor() ?? .clear
     }
     
     var categoryIcon: UIImage? {
