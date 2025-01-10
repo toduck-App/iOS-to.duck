@@ -15,7 +15,6 @@ extension UINavigationController {
 
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = TDColor.baseWhite
         appearance.titleTextAttributes = [.foregroundColor: TDColor.baseBlack]
 
         topViewController.navigationController?.navigationBar.standardAppearance = appearance
