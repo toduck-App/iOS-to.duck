@@ -7,7 +7,7 @@ public final class CategoryRepositoryImpl: CategoryRepository {
         self.storage = storage
     }
     
-    public func fetchCategories() async throws -> [String] {
-        try await storage.fetchCategoryColors()
+    public func fetchCategories() async throws -> [TDCategory] {
+        try await storage.fetchCategoryColors().map { $0.convertToTDCategory() }
     }
 }

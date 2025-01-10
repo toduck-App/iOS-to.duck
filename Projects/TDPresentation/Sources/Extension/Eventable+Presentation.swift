@@ -17,7 +17,7 @@ extension Eventable {
     }
     
     var categoryIcon: UIImage? {
-        return UIImage.categoryDictionary[category.imageIndex]
+        return UIImage.categoryDictionary[category.imageName]
     }
     
     var time: String? {

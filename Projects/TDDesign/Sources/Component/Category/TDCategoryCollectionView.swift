@@ -3,7 +3,7 @@ import SnapKit
 import Then
 
 public protocol TDCategoryCellDelegate: AnyObject {
-    func didTapCategoryCell(_ color: UIColor, _ index: Int)
+    func didTapCategoryCell(_ color: UIColor, _ image: UIImage)
 }
 
 public final class TDCategoryCollectionView: UIView {
@@ -97,6 +97,6 @@ extension TDCategoryCollectionView: UICollectionViewDelegateFlowLayout {
             cell.alpha = 0.3
         }
         collectionView.cellForItem(at: indexPath)?.alpha = 1.0
-        delegate?.didTapCategoryCell(categoryColors[indexPath.row], indexPath.row)
+        delegate?.didTapCategoryCell(categoryColors[indexPath.row], categoryImages[indexPath.row])
     }
 }

@@ -5,7 +5,7 @@ import TDDomain
 final class EventMakorViewModel: BaseViewModel {
     enum Input {
         case fetchCategories
-        case selectCategory(String, Int)
+        case selectCategory(String, String)
     }
     
     enum Output {
@@ -16,7 +16,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
     private var cancellables = Set<AnyCancellable>()
     
-    private(set) var categories: [String] = []
+    private(set) var categories: [TDCategory] = []
     private var selectedCategory: TDCategory?
     
     init(fetchCategoriesUseCase: FetchCategoriesUseCase) {
@@ -28,9 +28,8 @@ final class EventMakorViewModel: BaseViewModel {
             switch event {
             case .fetchCategories:
                 Task { await self?.fetchCategories() }
-            case .selectCategory(let colorHex, let index):
-                self?.selectedCategory = TDCategory(colorHex: colorHex, imageIndex: index)
-                print(self?.selectedCategory)
+            case .selectCategory(let colorHex, let imageName):
+                self?.selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
             }
         }.store(in: &cancellables)
         

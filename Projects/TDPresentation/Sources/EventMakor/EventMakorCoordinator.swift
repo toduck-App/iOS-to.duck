@@ -40,7 +40,12 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDDesign.TDFormMoveView, type: TDDesign.TDFormMoveViewType) {
         switch type {
         case .category:
-            TDLogger.debug("category SheetCalendarCoordinator")
+            let categoryCoordinator = SheetColorCoordinator(
+                navigationController: navigationController,
+                injector: injector
+            )
+            categoryCoordinator.finishDelegate = self
+            categoryCoordinator.start()
         case .date:
             let dateCoordinator = SheetCalendarCoordinator(
                 navigationController: navigationController,

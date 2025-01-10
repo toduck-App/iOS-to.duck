@@ -67,7 +67,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         eventMakorView.dateForm.delegate = self
         eventMakorView.timeForm.delegate = self
         
-        let categoryColors = viewModel.categories.compactMap { $0.convertToUIColor() }
+        let categoryColors = viewModel.categories.compactMap { $0.colorHex.convertToUIColor() }
         eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
     }
     
@@ -80,7 +80,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedCategories:
                     self?.eventMakorView.categoryViewsForm.setupCategoryView(
-                        colors: self?.viewModel.categories.compactMap { $0.convertToUIColor()
+                        colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                     } ?? [])
                 }
             }.store(in: &cancellables)
@@ -94,19 +94,14 @@ final class EventMakorViewController: BaseViewController<BaseView> {
 
 extension EventMakorViewController: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDFormMoveView, type: TDFormMoveViewType) {
-        switch type {
-        case .category:
-            TDLogger.debug("카테고리 색상수정 클릭")
-        case .date:
-            coordinator?.didTapMoveView(view, type: type)
-        case .time:
-            TDLogger.debug("시간 클릭")
-        }
+        coordinator?.didTapMoveView(view, type: type)
     }
 }
 
 extension EventMakorViewController: TDCategoryCellDelegate {
-    func didTapCategoryCell(_ color: UIColor, _ index: Int) {
-        input.send(.selectCategory(color.convertToHexString() ?? "", index))
+    func didTapCategoryCell(_ color: UIColor, _ image: UIImage) {
+        input.send(
+            .selectCategory(color.convertToHexString() ?? "", UIImage.reverseCategoryDictionary[image] ?? "none")
+        )
     }
 }

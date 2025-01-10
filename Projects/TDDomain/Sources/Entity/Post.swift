@@ -73,7 +73,7 @@ public extension Post {
                                         title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자",
                                         category: TDCategory(
                                             colorHex: "#123456",
-                                            imageIndex: 0
+                                            imageName: "computer"
                                         ),
                                         isAllDay: false,
                                         isPublic: false,
@@ -111,7 +111,7 @@ public extension Post {
                                     routine: Routine(
                                         id: UUID(),
                                         title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자",
-                                        category: TDCategory(colorHex: "#123456", imageIndex: 0),
+                                        category: TDCategory(colorHex: "#123456", imageName: "computer"),
                                         isAllDay: false,
                                         isPublic: false,
                                         date: nil,
