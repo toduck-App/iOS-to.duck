@@ -2,6 +2,10 @@ import UIKit
 import SnapKit
 import Then
 
+public protocol TDCategoryCellDelegate: AnyObject {
+    func didTapCategoryCell(_ color: UIColor)
+}
+
 public final class TDCategoryCollectionView: UIView {
     // MARK: - UI Components
     private let collectionView: UICollectionView = {
@@ -30,6 +34,7 @@ public final class TDCategoryCollectionView: UIView {
         TDImage.Category.none       // None
     ]
     private var categoryColors: [UIColor] = []
+    public weak var delegate: TDCategoryCellDelegate?
     
     // MARK: - Initialization
     public init() {
@@ -86,4 +91,12 @@ extension TDCategoryCollectionView: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension TDCategoryCollectionView: UICollectionViewDelegateFlowLayout { }
+extension TDCategoryCollectionView: UICollectionViewDelegateFlowLayout {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        for cell in collectionView.visibleCells {
+            cell.alpha = 0.3
+        }
+        collectionView.cellForItem(at: indexPath)?.alpha = 1.0
+        delegate?.didTapCategoryCell(categoryColors[indexPath.row])
+    }
+}

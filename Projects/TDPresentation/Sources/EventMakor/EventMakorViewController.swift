@@ -63,6 +63,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     override func configure() {
         navigationItem.rightBarButtonItem = registerButton
         eventMakorView.categoryTitleForm.delegate = self
+        eventMakorView.categoryViewsForm.delegate = self
         eventMakorView.dateForm.delegate = self
         eventMakorView.timeForm.delegate = self
         
@@ -101,5 +102,11 @@ extension EventMakorViewController: TDFormMoveViewDelegate {
         case .time:
             TDLogger.debug("시간 클릭")
         }
+    }
+}
+
+extension EventMakorViewController: TDCategoryCellDelegate {
+    func didTapCategoryCell(_ color: UIColor) {
+        input.send(.selectCategory(color.convertToHexString() ?? ""))
     }
 }

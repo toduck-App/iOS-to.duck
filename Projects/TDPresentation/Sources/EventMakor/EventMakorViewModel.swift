@@ -5,6 +5,7 @@ import TDDomain
 final class EventMakorViewModel: BaseViewModel {
     enum Input {
         case fetchCategories
+        case selectCategory(String)
     }
     
     enum Output {
@@ -16,6 +17,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var cancellables = Set<AnyCancellable>()
     
     private(set) var categories: [String] = []
+    private var selectedCategory: String?
     
     init(fetchCategoriesUseCase: FetchCategoriesUseCase) {
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
@@ -26,6 +28,8 @@ final class EventMakorViewModel: BaseViewModel {
             switch event {
             case .fetchCategories:
                 Task { await self?.fetchCategories() }
+            case .selectCategory(let category):
+                self?.selectedCategory = category
             }
         }.store(in: &cancellables)
         
