@@ -77,7 +77,10 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .fetchedCategories: break
+                case .fetchedCategories:
+                    self?.eventMakorView.categoryViewsForm.setupCategoryView(
+                        colors: self?.viewModel.categories.compactMap { $0.convertToUIColor()
+                    } ?? [])
                 }
             }.store(in: &cancellables)
 

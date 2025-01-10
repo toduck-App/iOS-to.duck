@@ -9,7 +9,21 @@ final class CategoryStorageImpl: CategoryStorage {
     }
     
     func fetchCategoryColors() async throws -> [String] {
-        return ["#123456", "#345676", "#FF5733", "#33FF57"]
+        userDefaults.stringArray(forKey: "categoryColors")
+        ?? [
+            "#FFD6E2",
+            "#FFE3CC",
+            "#FFF7D9",
+            "#DAF9DD",
+            "#DEEEFC",
+            "#EAECFF",
+            "#F3E6D6",
+            "#F9D6CF",
+            "#F3D9FF",
+            "#D6D6D6",
+            "#FFD6E2",
+            "#FFE3CC"
+        ]
     }
     
     func updateCategoryColors(colors: [String]) async throws {
