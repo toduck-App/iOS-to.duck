@@ -8,7 +8,8 @@ final class SocialSearchViewModel: BaseViewModel {
     }
     
     enum Output {
-        case searchResult(posts: [Post])
+        case searchResult
+        case selectPost
         case failure(String)
     }
     
@@ -41,7 +42,7 @@ final class SocialSearchViewModel: BaseViewModel {
         do {
             let posts = try await searchPostUseCase.execute(keyword: term)
             searchResult = posts ?? []
-            output.send(.searchResult(posts: searchResult))
+            output.send(.searchResult)
         } catch {
             output.send(.failure(error.localizedDescription))
         }
@@ -49,5 +50,6 @@ final class SocialSearchViewModel: BaseViewModel {
     
     func selectPost(postID: Post.ID) {
         selectedPostID = postID
+        output.send(.selectPost)
     }
 }
