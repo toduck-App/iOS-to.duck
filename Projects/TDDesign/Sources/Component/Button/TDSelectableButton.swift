@@ -16,12 +16,14 @@ public final class TDSelectableButton: TDBaseButton {
         title: String,
         backgroundColor: UIColor,
         foregroundColor: UIColor,
+        radius: CGFloat = 12,
         font: UIFont
     ) {
         super.init(
             title: title,
             backgroundColor: backgroundColor,
             foregroundColor: foregroundColor,
+            radius: radius,
             font: font
         )
         
