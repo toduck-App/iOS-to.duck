@@ -17,7 +17,10 @@ public struct DataAssembly: Assembly {
         }
         
         container.register(CategoryRepository.self) { _ in
-            return CategoryRepositoryImpl()
+            guard let storage = container.resolve(CategoryStorage.self) else {
+                fatalError("Storage is not registered")
+            }
+            return CategoryRepositoryImpl(storage: storage)
         }
         
         container.register(DiaryRepository.self) { _ in
