@@ -35,7 +35,7 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         font: TDFont.boldHeader3.font
     )
     private let saveButton = TDBaseButton(
-        title: "설정",
+        title: "저장",
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
         radius: 12,
