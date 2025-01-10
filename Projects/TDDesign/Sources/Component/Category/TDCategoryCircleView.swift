@@ -1,5 +1,6 @@
-import Then
 import UIKit
+import SnapKit
+import Then
 
 /// 카테고리 아이콘을 표시하는 뷰
 public final class TDCategoryCircleView: UIView {

@@ -25,7 +25,7 @@ final class EventMakorView: BaseView {
         $0.spacing = 16
     }
     let categoryTitleForm = TDFormMoveView(type: .category)
-    let categoryViewsForm = TDFormCategoryView()
+    let categoryViewsForm = TDCategoryCollectionView()
     
     // 날짜 (일정에서만 사용됨)
     private let dataVerticalStackView = UIStackView().then {
