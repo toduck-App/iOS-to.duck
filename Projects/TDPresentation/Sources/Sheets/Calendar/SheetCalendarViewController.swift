@@ -58,6 +58,8 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         resetButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         
         setupCalendar()
+        updateSaveButtonState()
+        
         cancelButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
             self?.dismiss(animated: true)
@@ -107,6 +109,17 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-16)
             $0.height.equalTo(56)
         }
+    }
+    
+    private func updateSaveButtonState() {
+        if datesRange.isEmpty {
+            saveButton.isEnabled = false
+            saveButton.backgroundColor = TDColor.Neutral.neutral100
+        } else {
+            saveButton.isEnabled = true
+            saveButton.backgroundColor = TDColor.Primary.primary500
+        }
+        saveButton.layer.borderWidth = 0
     }
 }
 
@@ -180,6 +193,7 @@ extension SheetCalendarViewController {
             datesRange = [firstDate!]
             
             updateSelectedDatesLabel()
+            updateSaveButtonState()
             calendar.reloadData()
             return
         }
@@ -193,6 +207,7 @@ extension SheetCalendarViewController {
                 datesRange = [firstDate!]
                 
                 updateSelectedDatesLabel()
+                updateSaveButtonState()
                 calendar.reloadData()
                 return
             }
@@ -215,6 +230,7 @@ extension SheetCalendarViewController {
                 datesRange = range
                 
                 updateSelectedDatesLabel()
+                updateSaveButtonState()
                 calendar.reloadData()
                 return
             }
@@ -232,6 +248,7 @@ extension SheetCalendarViewController {
             datesRange = [firstDate!]
             
             updateSelectedDatesLabel()
+            updateSaveButtonState()
             calendar.reloadData()
             return
         }
@@ -254,6 +271,7 @@ extension SheetCalendarViewController {
         datesRange = []
         
         updateSelectedDatesLabel()
+        updateSaveButtonState()
         calendar.reloadData()
     }
     
