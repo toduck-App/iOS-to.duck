@@ -70,6 +70,10 @@ public final class TDCategoryCollectionView: UIView {
         self.categoryColors = colors
         collectionView.reloadData()
     }
+    
+    public func isCategorySelected() -> Bool {
+        return selectedIndex != nil
+    }
 }
 
 // MARK: - UICollectionViewDataSource
