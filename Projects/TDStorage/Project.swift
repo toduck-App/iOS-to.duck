@@ -17,7 +17,9 @@ let project = Project.project(
             bundleId: Project.bundleID + ".storage",
             sources: .sources,
             dependencies: [
-                .core()
+                .core(),
+                .domain(),
+                .data()
             ]
         ),
         Target.target(
