@@ -39,8 +39,8 @@ public final class PostRepositoryImpl: PostRepository {
             .sorted { $0.timestamp > $1.timestamp }
     }
 
-    public func searchPost(keyword: String, category: PostCategory) async throws -> [Post]? {
-        return []
+    public func searchPost(keyword: String) async throws -> [Post]? {
+        return Post.dummy
     }
 
     public func togglePostLike(postID: Post.ID) async throws -> Bool {

@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol SearchPostUseCase {
-    func execute(keyword: String, category: PostCategory) async throws -> [Post]?
+    func execute(keyword: String) async throws -> [Post]?
 }
 
 public final class SearchPostUseCaseImpl: SearchPostUseCase {
@@ -11,7 +11,7 @@ public final class SearchPostUseCaseImpl: SearchPostUseCase {
         self.repository = repository
     }
 
-    public func execute(keyword: String, category: PostCategory) async throws -> [Post]? {
-        try await repository.searchPost(keyword: keyword, category: category)
+    public func execute(keyword: String) async throws -> [Post]? {
+        try await repository.searchPost(keyword: keyword)
     }
 }
