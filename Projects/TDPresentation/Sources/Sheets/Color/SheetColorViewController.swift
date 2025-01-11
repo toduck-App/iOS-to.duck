@@ -68,9 +68,10 @@ extension SheetColorViewController: TDCategoryColorPaletteViewDelegate {
 extension SheetColorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         selectedCategoryIndex = index
+        print("didTapCategoryCell: \(color)")
         
+        layoutView.colorPaletteView.setSelectedColor(color)
         layoutView.colorPaletteView.isUserInteractionEnabled = true
         layoutView.updateSaveButtonState()
-        layoutView.colorPaletteView.reloadPaletteView()
     }
 }

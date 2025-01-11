@@ -32,8 +32,10 @@ public final class TDCategoryColorPaletteView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func reloadPaletteView() {
+    public func setSelectedColor(_ color: UIColor) {
+        selectedIndex = categoryColors.firstIndex(where: { $0.back.isEqualToColor(color) })
         collectionView.reloadData()
+        print("setSelectedColor: \(color)")
     }
     
     // MARK: - Setup
@@ -101,5 +103,17 @@ extension TDCategoryColorPaletteView: UICollectionViewDelegate {
         // 선택된 색상 정보를 Delegate에 전달
         let selectedColor = categoryColors[indexPath.row].back
         delegate?.didSelectColor(selectedColor)
+    }
+}
+
+extension UIColor {
+    func isEqualToColor(_ color: UIColor) -> Bool {
+        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
+        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
+        
+        self.getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
+        color.getRed(&r2, green: &g2, blue: &b2, alpha: &a2)
+        
+        return r1 == r2 && g1 == g2 && b1 == b2 && a1 == a2
     }
 }
