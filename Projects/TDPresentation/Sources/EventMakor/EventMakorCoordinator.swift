@@ -54,7 +54,12 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
             dateCoordinator.finishDelegate = self
             dateCoordinator.start()
         case .time:
-            TDLogger.debug("time SheetCalendarCoordinator")
+            let timeCoordinator = SheetTimeCoordinator(
+                navigationController: navigationController,
+                injector: injector
+            )
+            timeCoordinator.finishDelegate = self
+            timeCoordinator.start()
         }
     }
 }
