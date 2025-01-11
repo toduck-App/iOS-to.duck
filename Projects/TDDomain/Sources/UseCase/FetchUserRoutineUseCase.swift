@@ -1,20 +1,17 @@
-//
-//  FetchUserRoutine.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class FetchUserRoutineUseCase {
-    private let repostiory: UserRepositoryProtocol
+public protocol FetchUserRoutineUseCase {
+    func execute(userID: User.ID) async throws -> [Routine]?
+}
 
-    public init(repostiory: UserRepositoryProtocol) {
-        self.repostiory = repostiory
+public final class FetchUserRoutineUseCaseImpl: FetchUserRoutineUseCase {
+    private let repostiory: UserRepository
+
+    public init(repository: UserRepository) {
+        self.repostiory = repository
     }
 
-    public func execute(user: User) async throws -> [Routine]? {
-        return try await repostiory.fetchUserRoutineList(userId: user.id)
+    public func execute(userID: User.ID) async throws -> [Routine]? {
+        return try await repostiory.fetchUserRoutineList(userID: userID)
     }
 }

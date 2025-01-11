@@ -1,5 +1,5 @@
-import UIKit
 import SnapKit
+import UIKit
 
 public protocol TDDropDownDelegate: AnyObject {
     func dropDown(_ dropDownView: TDDropdownHoverView, didSelectRowAt indexPath: IndexPath)
@@ -31,11 +31,11 @@ public final class TDDropdownHoverView: UIView {
     private lazy var overlayView = UIView().then {
         $0.backgroundColor = UIColor.clear
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleOverlayTap(_:)))
-        tapGesture.cancelsTouchesInView = false 
+        tapGesture.cancelsTouchesInView = false
         $0.addGestureRecognizer(tapGesture)
     }
 
-    public override var canBecomeFirstResponder: Bool { true }
+    override public var canBecomeFirstResponder: Bool { true }
     public var dataSource = [TDDropdownItem]() {
         didSet { dropDownTableView.reloadData() }
     }
@@ -56,32 +56,44 @@ public final class TDDropdownHoverView: UIView {
         setupUI()
     }
 
+    @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard window != nil else { return }
+
         if dropDownMode == .display {
-            resignFirstResponder()
+            hideDropDown()
         } else {
-            becomeFirstResponder()
+            showDropDown()
         }
     }
 
-    @discardableResult
-    public override func becomeFirstResponder() -> Bool {
-        super.becomeFirstResponder()
+    // MARK: - Show/Hide Methods
+
+    private func showDropDown() {
+        guard let window else { return }
         dropDownMode = .display
-        displayDropDown(with: dropDownConstraints)
-        return true
+
+        window.addSubview(overlayView)
+        overlayView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        overlayView.addSubview(containerView)
+        if let constraints = dropDownConstraints {
+            containerView.snp.makeConstraints(constraints)
+        }
     }
 
-    @discardableResult
-    public override func resignFirstResponder() -> Bool {
-        super.resignFirstResponder()
+    private func hideDropDown() {
         dropDownMode = .hide
+        containerView.removeFromSuperview()
+        overlayView.removeFromSuperview()
+    }
+
+    @objc private func handleOverlayTap(_ sender: UITapGestureRecognizer) {
         hideDropDown()
-        return true
     }
 }
 
@@ -101,9 +113,9 @@ private extension TDDropdownHoverView {
             $0.edges.equalToSuperview()
         }
 
-        self.addSubview(anchorView)
+        addSubview(anchorView)
 
-        self.snp.makeConstraints {
+        snp.makeConstraints {
             $0.edges.equalTo(anchorView)
         }
 
@@ -121,20 +133,14 @@ private extension TDDropdownHoverView {
             }
         }
     }
-
-    @objc func handleOverlayTap(_ sender: UITapGestureRecognizer) {
-        let location = sender.location(in: containerView)
-        if !containerView.bounds.contains(location) {
-            resignFirstResponder()
-        }
-    }
 }
 
 // MARK: - DropDown Logic
+
 public extension TDDropdownHoverView {
     func displayDropDown(with constraints: ((ConstraintMaker) -> Void)?) {
-        guard let constraints = constraints else { return }
-        if let window = window {
+        guard let constraints else { return }
+        if let window {
             window.addSubview(overlayView)
             overlayView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
@@ -143,24 +149,19 @@ public extension TDDropdownHoverView {
         }
     }
 
-    func hideDropDown() {
-        containerView.removeFromSuperview()
-        overlayView.removeFromSuperview()
-    }
-
     func setConstraints(_ closure: @escaping (_ make: ConstraintMaker) -> Void) {
-        self.dropDownConstraints = closure
+        dropDownConstraints = closure
     }
 }
 
 // MARK: - UITableViewDataSource
+
 extension TDDropdownHoverView: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.count
+        dataSource.count
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: DropDownCell.identifier,
             for: indexPath
@@ -168,7 +169,7 @@ extension TDDropdownHoverView: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        if let selectedOption = self.selectedOption, selectedOption == dataSource[indexPath.row].title {
+        if let selectedOption, selectedOption == dataSource[indexPath.row].title {
             cell.isSelected = true
         }
 
@@ -178,6 +179,7 @@ extension TDDropdownHoverView: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
+
 extension TDDropdownHoverView: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedOption = dataSource[indexPath.row].title

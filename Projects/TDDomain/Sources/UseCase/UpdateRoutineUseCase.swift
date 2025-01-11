@@ -1,20 +1,17 @@
-//
-//  UpdateRoutineUseCase.swift
-//  toduck
-//
-//  Created by 박효준 on 6/6/24.
-//
-
 import Foundation
 
-public final class UpdateRoutineUseCase {
-    private let routineRepository: RoutineRepositoryProtocol
+public protocol UpdateRoutineUseCase {
+    func execute(routineId: Int) async throws -> Bool
+}
+
+public final class UpdateRoutineUseCaseImpl: UpdateRoutineUseCase {
+    private let repository: RoutineRepository
     
-    public init(routineRepository: RoutineRepositoryProtocol) {
-        self.routineRepository = routineRepository
+    public init(repository: RoutineRepository) {
+        self.repository = repository
     }
     
     public func execute(routineId: Int) async throws -> Bool {
-        return try await routineRepository.updateRoutine(routineId: routineId)
+        return try await repository.updateRoutine(routineId: routineId)
     }
 }

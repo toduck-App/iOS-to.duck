@@ -26,16 +26,14 @@ public final class SocialDetailViewModel: BaseViewModel {
         case failure(String)
     }
     
-    private let postID: Int
+    private let postID: UUID
     private let fetchPostUsecase: FetchPostUseCase
     private let fetchCommentUsecase: FetchCommentUseCase
     private let likePostUseCase: TogglePostLikeUseCase
     private let createCommentUseCase: CreateCommentUseCase
     private let reportPostUseCase: ReportPostUseCase
-    private var cancellables = Set<AnyCancellable>()
-    
     private let output = PassthroughSubject<Output, Never>()
-    
+    private var cancellables = Set<AnyCancellable>()
     
     private(set) var post: Post?
     private(set) var comments: [Comment] = []
@@ -46,7 +44,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         likePostUseCase: TogglePostLikeUseCase,
         createCommentUseCase: CreateCommentUseCase,
         reportPostUseCase: ReportPostUseCase,
-        at postID: Int
+        at postID: Post.ID
     ) {
         self.fetchPostUsecase = fetchPostUsecase
         self.fetchCommentUsecase = fetchCommentUsecase
@@ -86,7 +84,7 @@ private extension SocialDetailViewModel {
     func fetchPost() {
         Task {
             do {
-                guard let post = try await fetchPostUsecase.execute(postId: postID) else { return }
+                guard let post = try await fetchPostUsecase.execute(postID: postID) else { return }
                 self.post = post
                 output.send(.post(post))
             } catch {
@@ -108,8 +106,4 @@ private extension SocialDetailViewModel {
             }
         }
     }
-}
-
-extension SocialDetailViewModel {
-    enum Action {}
 }

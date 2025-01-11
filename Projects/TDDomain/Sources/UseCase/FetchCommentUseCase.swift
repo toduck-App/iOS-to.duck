@@ -1,16 +1,9 @@
-//
-//  FetchCommentUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
 public protocol FetchCommentUseCase {
-    func execute(postID: Int) async throws -> [Comment]?
-    func execute(comment: Comment) async throws -> [Comment]?
-    func execute(user: User) async throws -> [Comment]?
+    func execute(postID: Post.ID) async throws -> [Comment]?
+    func execute(commentID: Comment.ID) async throws -> [Comment]?
+    func execute(userID: User.ID) async throws -> [Comment]?
 }
 
 public final class FetchCommentUseCaseImpl: FetchCommentUseCase {
@@ -20,14 +13,14 @@ public final class FetchCommentUseCaseImpl: FetchCommentUseCase {
         self.repository = repository
     }
     
-    public func execute(postID: Int) async throws -> [Comment]? {
-        return try await repository.fetchCommentList(postId: postID)
+    public func execute(postID: Post.ID) async throws -> [Comment]? {
+        return try await repository.fetchCommentList(postID: postID)
     }
     
-    public func execute(comment: Comment) async throws -> [Comment]? {
-        return try await repository.fetchCommentList(commentId: comment.id)
+    public func execute(commentID: Comment.ID) async throws -> [Comment]? {
+        return try await repository.fetchCommentList(commentID: commentID)
     }
-    public func execute(user: User) async throws -> [Comment]? {
-        return try await repository.fetchUserCommentList(userId: user.id)
+    public func execute(userID: User.ID) async throws -> [Comment]? {
+        return try await repository.fetchUserCommentList(userID: userID)
     }
 }

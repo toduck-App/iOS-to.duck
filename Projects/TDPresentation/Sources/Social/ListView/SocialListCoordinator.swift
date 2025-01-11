@@ -3,7 +3,10 @@ import TDDomain
 import UIKit
 
 protocol SocialListDelegate: AnyObject {
-    func didTapPost(id: Int)
+    func didTapPost(id: Post.ID)
+    func didTapCreateButton()
+    func didTapReport(id: Post.ID)
+    func didTapUserProfile(id: User.ID)
 }
 
 final class SocialListCoordinator: Coordinator {
@@ -23,9 +26,11 @@ final class SocialListCoordinator: Coordinator {
     func start() {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
+        let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
         let socialViewModel = SocialListViewModel(
             fetchPostUseCase: fetchPostUseCase,
-            togglePostLikeUseCase: togglePostLikeUseCase
+            togglePostLikeUseCase: togglePostLikeUseCase,
+            blockUserUseCase: blockUserUseCase
         )
         let socialViewController = SocialListViewController(viewModel: socialViewModel)
         socialViewController.coordinator = self
@@ -42,18 +47,48 @@ extension SocialListCoordinator: CoordinatorFinishDelegate {
 
 // MARK: - Social List Delegate
 extension SocialListCoordinator: SocialListDelegate {
-    func didTapPost(id: Int) {
+    func didTapUserProfile(id: User.ID) {
+        let socialProfileViewCoordinator = SocialProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: id
+        )
+        childCoordinators.append(socialProfileViewCoordinator)
+        socialProfileViewCoordinator.start()
+    }
+    func didTapReport(id: Post.ID) {
+        let socialReportCoordinator = SocialReportCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: id
+        )
+        childCoordinators.append(socialReportCoordinator)
+        socialReportCoordinator.start()
+    }
+    func didTapPost(id: Post.ID) {
         let socialDetailCoordinator = SocialDetailCoordinator(
             navigationController: navigationController,
+            injector: injector,
             id: id
         )
         socialDetailCoordinator.finishDelegate = self
         childCoordinators.append(socialDetailCoordinator)
         socialDetailCoordinator.start()
     }
+
+    func didTapCreateButton() {
+        let createCoordinator = SocialCreateCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        createCoordinator.finishDelegate = self
+        childCoordinators.append(createCoordinator)
+        createCoordinator.start()
+    }
 }
 
 // MARK: - Navigation Delegate
+
 extension SocialListCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
         let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)

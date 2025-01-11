@@ -4,6 +4,7 @@ import UIKit
 
 public final class EventDetailView: UIView {
     // MARK: - UI Components
+
     private var scheduleIdentyColorView = UIView().then {
         $0.backgroundColor = TDColor.Schedule.text3
     }
@@ -14,15 +15,10 @@ public final class EventDetailView: UIView {
         $0.alignment = .center
         $0.spacing = 8
     }
+
     private let categoryTopSpacer = UIView()
     private let categoryBottomSpacer = UIView()
-    private let categoryImageContainerView = UIView().then {
-        $0.layer.cornerRadius = 16
-        $0.clipsToBounds = true
-    }
-    private let categoryImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
-    }
+    private let categoryImageView = TDCategoryCircleView()
     
     /// 일정 제목, 시간, 장소
     private let eventTopSpacer = UIView()
@@ -36,6 +32,7 @@ public final class EventDetailView: UIView {
         $0.contentMode = .scaleAspectFit
         $0.image = TDImage.clockMedium
     }
+
     private let timeLabel = TDLabel(
         toduckFont: TDFont.mediumCaption1,
         alignment: .left,
@@ -46,10 +43,12 @@ public final class EventDetailView: UIView {
         $0.alignment = .leading
         $0.spacing = 4
     }
+
     private let locationImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = TDImage.locationMedium
     }
+
     private let placeLabel = TDLabel(
         toduckFont: TDFont.regularBody2,
         alignment: .left,
@@ -60,15 +59,18 @@ public final class EventDetailView: UIView {
         $0.alignment = .leading
         $0.spacing = 4
     }
+
     private let scheduleVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .leading
         $0.spacing = 4
     }
+
     private let checkBoxButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
         $0.setImage(TDImage.CheckBox.empty, for: .normal)
     }
+
     private let containerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 10
@@ -76,10 +78,12 @@ public final class EventDetailView: UIView {
     }
     
     // MARK: - Properties
+
     private var isFinish: Bool = false
     
     // MARK: - Initializer
-    public override init(frame: CGRect) {
+
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setup()
         setupLayout()
@@ -91,19 +95,19 @@ public final class EventDetailView: UIView {
         setupLayout()
     }
     
-    public override func prepareForInterfaceBuilder() {
+    override public func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
         setup()
         setupLayout()
     }
     
     // MARK: - Public Methods
+
     public func resetForReuse() {
         titleLabel.text = nil
         timeLabel.text = nil
         placeLabel.text = nil
-        categoryImageContainerView.backgroundColor = nil
-        categoryImageView.image = nil
+        categoryImageView.resetForReuse()
         isFinish = false
         changeCheckBoxButtonImage(isFinish: isFinish)
     }
@@ -121,20 +125,19 @@ public final class EventDetailView: UIView {
         backgroundColor = TDColor.baseWhite
         
         if isNone {
-            categoryImageContainerView.backgroundColor = TDColor.baseWhite
+            categoryImageView.configure(backgroundColor: TDColor.baseWhite, category: category ?? TDImage.Category.none)
             scheduleIdentyColorView.backgroundColor = TDColor.baseWhite
         } else {
             scheduleIdentyColorView.backgroundColor = TDColor.reversedPair[color] ?? color
-            categoryImageContainerView.backgroundColor = color
+            categoryImageView.configure(backgroundColor: color, category: category ?? TDImage.Category.none)
         }
         
-        titleLabel.text = title
-        categoryImageView.image = category
+        titleLabel.setText(title)
         categoryImageView.isHidden = (category == nil)
         
-        timeLabel.text = time
+        timeLabel.setText(time ?? "")
         timeDetailHorizontalStackView.isHidden = (time == nil)
-        placeLabel.text = place
+        placeLabel.setText(place ?? "")
         placeHorizontalStackView.isHidden = (place == nil)
         
         changeCheckBoxButtonImage(isFinish: isFinish)
@@ -144,12 +147,13 @@ public final class EventDetailView: UIView {
         checkBoxButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             checkBoxAction()
-            self.isFinish.toggle()
-            self.changeCheckBoxButtonImage(isFinish: self.isFinish)
+            isFinish.toggle()
+            changeCheckBoxButtonImage(isFinish: isFinish)
         }, for: .touchUpInside)
     }
     
     // MARK: - Private Methods
+
     private func changeCheckBoxButtonImage(isFinish: Bool) {
         let checkBoxImage = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
         checkBoxButton.setImage(checkBoxImage, for: .normal)
@@ -160,10 +164,9 @@ public final class EventDetailView: UIView {
         clipsToBounds = true
         addSubview(scheduleIdentyColorView)
         addSubview(containerHorizontalStackView)
-        categoryImageContainerView.addSubview(categoryImageView)
         
         categoryVerticalStackView.addArrangedSubview(categoryTopSpacer)
-        categoryVerticalStackView.addArrangedSubview(categoryImageContainerView)
+        categoryVerticalStackView.addArrangedSubview(categoryImageView)
         categoryVerticalStackView.addArrangedSubview(categoryBottomSpacer)
         
         containerHorizontalStackView.addArrangedSubview(categoryVerticalStackView)
@@ -200,12 +203,9 @@ public final class EventDetailView: UIView {
         categoryVerticalStackView.snp.makeConstraints {
             $0.width.equalTo(32)
         }
-        categoryImageContainerView.snp.makeConstraints {
-            $0.width.equalTo(32)
-            $0.height.equalTo(32)
-        }
+        
         categoryImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(8)
+            $0.width.height.equalTo(32)
         }
         
         checkBoxButton.snp.makeConstraints {

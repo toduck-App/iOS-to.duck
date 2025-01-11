@@ -1,14 +1,7 @@
-//
-//  Comment.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public struct Comment {
-    public let id: Int
+public struct Comment: Identifiable {
+    public let id: UUID
     public let user: User
     public let content: String
     public let timestamp: Date
@@ -16,7 +9,7 @@ public struct Comment {
     public let like: Int?
 
     public init(
-        id: Int,
+        id: UUID,
         user: User,
         content: String,
         timestamp: Date,
@@ -35,9 +28,9 @@ public struct Comment {
 extension Comment {
     public static let dummy: [Comment] = [
         Comment(
-            id: 1,
+            id: UUID(),
             user: .init(
-                id: 2,
+                id: UUID(),
                 name: "꽉꽉",
                 icon: "https://avatars.githubusercontent.com/u/129862357?v=4",
                 title: "작심삼일",
@@ -63,9 +56,9 @@ extension Comment {
             like: 1
         ),
         Comment(
-            id: 2,
+            id: UUID(),
             user: .init(
-                id: 1,
+                id: UUID(),
                 name: "오리발",
                 icon: "https://avatars.githubusercontent.com/u/46300191?v=4",
                 title: "작심삼일",
@@ -93,8 +86,6 @@ extension Comment {
     ]
 }
 
-extension Comment: Identifiable {}
-
 extension Comment: Hashable {
     public static func == (
         lhs: Comment,
@@ -106,9 +97,6 @@ extension Comment: Hashable {
     public func hash(
         into hasher: inout Hasher
     ) {
-        hasher
-            .combine(
-                id
-            )
+        hasher.combine(id)
     }
 }

@@ -1,14 +1,7 @@
-//
-//  TogglePostLikeUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
 public protocol TogglePostLikeUseCase {
-    func execute(post: Post) async throws -> Bool
+    func execute(postID: Post.ID) async throws -> Bool
 }
 
 public final class TogglePostLikeUseCaseImpl: TogglePostLikeUseCase {
@@ -18,7 +11,7 @@ public final class TogglePostLikeUseCaseImpl: TogglePostLikeUseCase {
         self.repository = repository
     }
     
-    public func execute(post: Post) async throws -> Bool {
-        return try await repository.togglePostLike(postId: post.id)
+    public func execute(postID: Post.ID) async throws -> Bool {
+        try await repository.togglePostLike(postID: postID)
     }
 }   

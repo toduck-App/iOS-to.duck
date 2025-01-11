@@ -1,20 +1,17 @@
-//
-//  FetchUserDetailUseCase.swift
-//  toduck
-//
-//  Created by 신효성 on 6/22/24.
-//
-
 import Foundation
 
-public final class FetchUserDetailUseCase {
-    private let repostiory: UserRepositoryProtocol
+public protocol FetchUserDetailUseCase {
+    func execute(id: User.ID) async throws -> UserDetail
+}
 
-    public init(repostiory: UserRepositoryProtocol) {
-        self.repostiory = repostiory
+public final class FetchUserDetailUseCaseImpl: FetchUserDetailUseCase {
+    private let repostiory: UserRepository
+
+    public init(repository: UserRepository) {
+        self.repostiory = repository
     }
 
-    public func execute(user: User) async throws -> UserDetail {
-        return try await repostiory.fetchUserDetail(userId: user.id)
+    public func execute(id: User.ID) async throws -> UserDetail {
+        try await repostiory.fetchUserDetail(userID: id)
     }
 }

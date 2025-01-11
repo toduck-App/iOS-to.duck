@@ -4,7 +4,7 @@ import Then
 import UIKit
 
 final class SocialListView: BaseView {
-    private let chipType: TDChipType = TDChipType(
+    private let chipType: TDChipType = .init(
         backgroundColor: .init(
             activeColor: TDColor.Primary.primary500,
             inActiveColor: TDColor.baseWhite
@@ -46,12 +46,22 @@ final class SocialListView: BaseView {
         layout: .trailing,
         width: 100
     ).then {
-        $0.dataSource = dropDownDataSource.map { $0.dropdownItem }
+        $0.dataSource = dropDownDataSource.map(\.dropdownItem)
     }
+    
+    private(set) lazy var addPostButton = TDBaseButton(
+        title: "글쓰기",
+        image: TDImage.addSmall.withRenderingMode(.alwaysTemplate).withTintColor(.white),
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 25,
+        font: TDFont.boldHeader4.font
+    )
     
     private(set) lazy var refreshControl = UIRefreshControl().then {
         $0.tintColor = .systemGray
     }
+
     private let loadingView = UIView().then {
         $0.backgroundColor = TDColor.baseWhite
     }
@@ -88,30 +98,33 @@ final class SocialListView: BaseView {
             make.bottom.equalToSuperview()
             socialFeedCollectionViewTopConstraint = make.top.equalTo(chipCollectionView.snp.bottom).offset(0).constraint
         }
+        
+        addPostButton.snp.makeConstraints { make in
+            make.width.equalTo(104)
+            make.height.equalTo(50)
+            make.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(20)
+        }
 
         loadingView.snp.makeConstraints { make in
             make.edges.equalTo(socialFeedCollectionView)
         }
-
     }
     
     override func configure() {
-        backgroundColor = .white
+        backgroundColor = TDColor.baseWhite
         socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
     override func addview() {
-        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, loadingView].forEach {
+        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, addPostButton, loadingView].forEach {
             addSubview($0)
         }
-    }
-    
-    override func binding() {
-        
     }
 }
 
 // MARK: External Method
+
 extension SocialListView {
     func showEndRefreshControl() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -134,20 +147,12 @@ extension SocialListView {
         }
     }
     
-    func showEmptyView() {
-        
-    }
+    func showEmptyView() {}
     
-    func showErrorView() {
-        
-    }
-    
-    func hideDropdown() {
-        dropDownHoverView.hideDropDown()
-    }
+    func showErrorView() {}
     
     func updateLayoutForSegmentedControl(index: Int) {
-        self.chipCollectionView.isHidden = false
+        chipCollectionView.isHidden = false
         let animationIndex = index
         let animator = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) {
             if animationIndex == 0 {
@@ -163,7 +168,7 @@ extension SocialListView {
             }
             self.layoutIfNeeded()
         }
-        animator.addCompletion { position in
+        animator.addCompletion { _ in
             if animationIndex == 0 {
                 self.chipCollectionView.isHidden = true
             } else {
@@ -177,7 +182,6 @@ extension SocialListView {
 // MARK: Layout
 
 private extension SocialListView {
-    
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 10
         let groupPadding: CGFloat = 16

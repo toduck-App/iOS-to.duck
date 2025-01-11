@@ -1,31 +1,32 @@
-//
-//  DomainAssembly.swift
-//  TDDomain
-//
-//  Created by 박효준 on 10/21/24.
-//
-
 import Swinject
 
 public struct DomainAssembly: Assembly {
-    public init() { }
+    public init() {}
     
     public func assemble(container: Container) {
-        container.register(FetchPostUseCase.self) { resolver in
+        // MARK: - Block UseCases
+        container.register(BlockCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
+            return BlockCommentUseCaseImpl(repository: repository)
+        }
+        
+        container.register(BlockPostUseCase.self) { resolver in
             guard let repository = resolver.resolve(PostRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
-            
-            return FetchPostUseCaseImpl(repository: repository)
+            return BlockPostUseCaseImpl(repository: repository)
         }
         
-        container.register(TogglePostLikeUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
-                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+        container.register(BlockUserUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
             }
-            return TogglePostLikeUseCaseImpl(repository: repository)
+            return BlockUserUseCaseImpl(repository: repository)
         }
         
+        // MARK: - Create UseCases
         container.register(CreateCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {
                 fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
@@ -33,11 +34,167 @@ public struct DomainAssembly: Assembly {
             return CreateCommentUseCaseImpl(repository: repository)
         }
         
+        container.register(CreateDiaryUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return CreateDiaryUseCaseImpl(repository: repository)
+        }
+        
+        container.register(CreatePostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            return CreatePostUseCaseImpl(repository: repository)
+        }
+        
+        container.register(CreateRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return CreateRoutineUseCaseImpl(repository: repository)
+        }
+        
+        container.register(CreateScheduleUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return CreateScheduleUseCaseImpl(repository: repository)
+        }
+        
+        // MARK: - Delete UseCases
+        container.register(DeleteCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteCommentUseCaseImpl(repository: repository)
+        }
+        
+        container.register(DeleteDiaryUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteDiaryUseCaseImpl(repository: repository)
+        }
+        
+        container.register(DeletePostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            return DeletePostUseCaseImpl(repository: repository)
+        }
+        
+        container.register(DeleteRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteRoutineUseCaseImpl(repository: repository)
+        }
+        
+        container.register(DeleteScheduleUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteScheduleUseCaseImpl(repository: repository)
+        }
+        
+        // MARK: - Fetch UseCases
         container.register(FetchCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {
                 fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
             }
             return FetchCommentUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchDiaryUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchDiaryUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchPostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchPostUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchRoutineListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchRoutineListUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchRoutineUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchScheduleListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchScheduleListUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchScheduleUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchScheduleUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchUserDetailUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserDetailUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchUserPostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserPostUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchUserRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserRoutineUseCaseImpl(repository: repository)
+        }
+
+        container.register(FetchUserShareUrlUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserShareUrlUseCaseImpl(repository: repository)
+        }
+
+        container.register(FetchUserUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserUseCaseImpl(repository: repository)
+        }
+        
+        container.register(MoveTomorrowScheduleUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return MoveTomorrowScheduleUseCaseImpl(repository: repository)
+        }
+        
+        container.register(ReportCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
+            return ReportCommentUseCaseImpl(repository: repository)
         }
         
         container.register(ReportPostUseCase.self) { resolver in
@@ -46,12 +203,68 @@ public struct DomainAssembly: Assembly {
             }
             return ReportPostUseCaseImpl(repository: repository)
         }
-        
-        container.register(FetchScheduleListUseCase.self) { resolver in
+
+        container.register(SearchPostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            return SearchPostUseCaseImpl(repository: repository)
+        }
+
+        container.register(ToggleCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
+            return ToggleCommentUseCaseImpl(repository: repository)
+        }
+
+        container.register(TogglePostLikeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            return TogglePostLikeUseCaseImpl(repository: repository)
+        }
+
+        container.register(ToggleUserFollowUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return ToggleUserFollowUseCaseImpl(repository: repository)
+        }
+
+        container.register(UpdateCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CommentRepository.self) else {
+                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateCommentUseCaseImpl(repository: repository)
+        }
+
+        container.register(UpdateDiaryUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateDiaryUseCaseImpl(repository: repository)
+        }
+
+        container.register(UpdatePostUseCase.self) { resolver in
+            guard let repository = resolver.resolve(PostRepository.self) else {
+                fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdatePostUseCaseImpl(repository: repository)
+        }
+
+        container.register(UpdateRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateRoutineUseCaseImpl(repository: repository)
+        }
+
+        container.register(UpdateScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
             }
-            return FetchScheduleListUseCaseImpl(repository: repository)
+            return UpdateScheduleUseCaseImpl(repository: repository)
         }
     }
 }

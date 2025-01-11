@@ -1,17 +1,14 @@
-//
-//  DeleteScheduleUseCase.swift
-//  toduck
-//
-//  Created by 박효준 on 6/6/24.
-//
-
 import Foundation
 
-public final class DeleteScheduleUseCase {
+public protocol DeleteScheduleUseCase {
+    func execute(scheduleId: Int) async throws -> Bool
+}
+
+public final class DeleteScheduleUseCaseImpl: DeleteScheduleUseCase {
     private let scheduleRepository: ScheduleRepository
     
-    public init(scheduleRepository: ScheduleRepository) {
-        self.scheduleRepository = scheduleRepository
+    public init(repository: ScheduleRepository) {
+        self.scheduleRepository = repository
     }
     
     public func execute(scheduleId: Int) async throws -> Bool {

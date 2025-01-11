@@ -4,6 +4,7 @@ import TDDomain
 protocol EventPresentable {
     var id: UUID { get }
     var title: String { get }
+    var memo: String? { get }
     var categoryIcon: UIImage? { get }
     var categoryColor: UIColor { get }
     var time: String? { get }

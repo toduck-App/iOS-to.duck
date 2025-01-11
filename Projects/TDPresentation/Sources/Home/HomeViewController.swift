@@ -63,12 +63,18 @@ final class HomeViewController: BaseViewController<BaseView> {
                 scheduleViewModel: viewModel,
                 mode: .schedule
             )
+            if let viewController = newViewController as? ScheduleAndRoutineViewController {
+                viewController.coordinator = self
+            }
         case 2:
             let viewModel = RoutineViewModel()
             newViewController = ScheduleAndRoutineViewController(
                 routineViewModel: viewModel,
                 mode: .routine
             )
+            if let viewController = newViewController as? ScheduleAndRoutineViewController {
+                viewController.coordinator = self
+            }
         default:
             return
         }
@@ -91,5 +97,11 @@ final class HomeViewController: BaseViewController<BaseView> {
 
         newViewController.didMove(toParent: self)
         currentViewController = newViewController
+    }
+}
+
+extension HomeViewController: EventMakorDelegate {
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
+        coordinator?.didTapEventMakor(mode: mode)
     }
 }

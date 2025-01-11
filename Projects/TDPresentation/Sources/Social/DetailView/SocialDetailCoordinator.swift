@@ -6,14 +6,17 @@ final class SocialDetailCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
-    var injector: DependencyResolvable = DIContainer.shared
-
-    let postID: Int
+    var injector: DependencyResolvable
+    let postID: Post.ID
     
-    init(navigationController: UINavigationController, id: Int) {
+    init(
+        navigationController: UINavigationController,
+        injector: DependencyResolvable,
+        id: Post.ID
+    ) {
         self.navigationController = navigationController
+        self.injector = injector
         self.postID = id
-        setNavigationBar()
     }
 
     func start() {
@@ -36,17 +39,6 @@ final class SocialDetailCoordinator: Coordinator {
             viewModel: socialDetailViewModel
         )
         socialDetailViewController.coordinator = self
-        navigationController.pushViewController(socialDetailViewController, animated: true)
-    }
-    
-    private func setNavigationBar() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        appearance.shadowColor = nil
-        
-        navigationController.navigationBar.standardAppearance = appearance
-        navigationController.navigationBar.scrollEdgeAppearance = appearance
-        navigationController.navigationBar.compactAppearance = appearance
+        navigationController.pushTDViewController(socialDetailViewController, animated: true)
     }
 }

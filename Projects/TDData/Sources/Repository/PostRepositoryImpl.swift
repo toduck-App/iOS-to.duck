@@ -10,26 +10,24 @@ import Foundation
 
 public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(id: UUID(), title: "123", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: true, date: Date(), time: nil, repeatDays: nil, alarmTimes: nil, memo: nil, recommendedRoutines: nil, isFinish: false)
-    private let dummyUser = User(id: 0, name: "", icon: "", title: "", isblock: false)
+    private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
 
     public init() { }
 
-    public func fetchPostList(type: PostType, category: PostCategory) async throws -> [Post] {
-        if category == .all {
-            return Post.dummy
-                .filter { $0.type == type }
-                .sorted { $0.timestamp > $1.timestamp }
+    public func fetchPostList(category: PostCategory?) async throws -> [Post] {
+        guard let category = category else {
+            return Post.dummy.sorted { $0.timestamp > $1.timestamp }
         }
         return Post.dummy
-            .filter { $0.type == type && $0.category?.contains(category) ?? false }
+            .filter { $0.category?.contains(category) ?? false }
             .sorted { $0.timestamp > $1.timestamp }
     }
 
-    public func searchPost(keyword: String, type: PostType, category: PostCategory) async throws -> [Post]? {
+    public func searchPost(keyword: String, category: PostCategory) async throws -> [Post]? {
         return []
     }
 
-    public func togglePostLike(postId: Int) async throws -> Bool {
+    public func togglePostLike(postID: Post.ID) async throws -> Bool {
         return false;
     }
 
@@ -45,23 +43,23 @@ public final class PostRepositoryImpl: PostRepository {
         return false;
     }
 
-    public func deletePost(postId: Int) async throws -> Bool {
+    public func deletePost(postID: Post.ID) async throws -> Bool {
         return false;
     }
 
-    public func fetchPost(postId: Int) async throws -> Post {
-        guard let post = Post.dummy.filter({ $0.id == postId }).first else {
+    public func fetchPost(postID: Post.ID) async throws -> Post {
+        guard let post = Post.dummy.filter({ $0.id == postID }).first else {
             // 에러 정의가 없어서 임시로 구현
             return Post.dummy[0]
         }
         return post
     }
 
-    public func reportPost(postId: Int) async throws -> Bool {
+    public func reportPost(postID: Post.ID) async throws -> Bool {
         return false;
     }
 
-    public func blockPost(postId: Int) async throws -> Bool {
+    public func blockPost(postID: Post.ID) async throws -> Bool {
         return false;
     }
 }

@@ -16,7 +16,14 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
-    
+    private let eventMakorFloattingButton = TDBaseButton(
+        title: "일정추가",
+        image: TDImage.addSmall,
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 24,
+        font: TDFont.boldHeader4.font
+    )
     // MARK: - Properties
     private let mode: Mode
     private let scheduleViewModel: ScheduleViewModel?
@@ -24,6 +31,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     private let createInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
     private let modifyInput = PassthroughSubject<RoutineViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    weak var coordinator: EventMakorDelegate?
     
     // MARK: - Initialize
     init(
@@ -48,6 +56,8 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
+        configureEventMakorButton()
+        
         scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
         scheduleAndRoutineTableView.register(
@@ -65,6 +75,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     override func addView() {
         view.addSubview(weekCalendarView)
         view.addSubview(scheduleAndRoutineTableView)
+        view.addSubview(eventMakorFloattingButton)
     }
     
     override func layout() {
@@ -78,6 +89,24 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(20)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+        
+        eventMakorFloattingButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+            $0.width.equalTo(120)
+            $0.height.equalTo(48)
+        }
+    }
+    
+    private func configureEventMakorButton() {
+        eventMakorFloattingButton.setTitle(
+            mode == .schedule ? "일정추가" : "루틴추가",
+            for: .normal
+        )
+        eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.coordinator?.didTapEventMakor(mode: self.mode)
+        }, for: .touchUpInside)
     }
 }
 

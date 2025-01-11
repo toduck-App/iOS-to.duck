@@ -1,6 +1,10 @@
 import UIKit
 import TDCore
 
+protocol EventMakorDelegate: AnyObject {
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode)
+}
+
 final class HomeCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
@@ -36,5 +40,14 @@ extension HomeCoordinator: NavigationDelegate {
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
+    }
+}
+
+extension HomeCoordinator: EventMakorDelegate {
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
+        let eventMakorCoordinator = EventMakorCoordinator(navigationController: navigationController, injector: injector)
+        eventMakorCoordinator.finishDelegate = self
+        childCoordinators.append(eventMakorCoordinator)
+        eventMakorCoordinator.start(mode: mode)
     }
 }
