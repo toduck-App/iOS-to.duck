@@ -1,27 +1,33 @@
 import Combine
+import Foundation
 import TDDomain
 
 final class SocialSearchViewModel: BaseViewModel {
     enum Input {
-        case loadInitialData
+        case loadKeywords
         case deleteRecentKeyword(index: Int)
+        case deleteRecentAllKeywords
         case search(query: String)
         case selectPost(post: Post.ID)
     }
     
     enum Output {
-        case updateRecentKeywords
-        case updatePopularKeywords
+        case updateKeywords
         case searchResult
         case selectPost
         case failure(String)
     }
     
+    struct Keyword: Identifiable, Hashable {
+        var id = UUID()
+        var word: String
+    }
+    
     private let searchPostUseCase: SearchPostUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables: Set<AnyCancellable> = []
-    private(set) var recentKeywords: [String] = []
-    private(set) var popularKeywords: [String] = []
+    private(set) var recentKeywords: [Keyword] = ["콘서타", "루틴", "불면증"].map { Keyword(word: $0) }
+    private(set) var popularKeywords: [Keyword] = ["루틴", "집중", "뽀모도로", "꿀팁", "시간관리", "ADHD", "일기"].map { Keyword(word: $0) }
     private(set) var searchResult: [Post] = []
     private(set) var selectedPostID: Post.ID?
     
@@ -33,10 +39,12 @@ final class SocialSearchViewModel: BaseViewModel {
         input.sink { [weak self] event in
             guard let self else { return }
             switch event {
-            case .loadInitialData:
+            case .loadKeywords:
                 Task { await self.loadKeywords() }
-            case .deleteRecentKeyword(index: let index):
-                deleteRecentKeyword(index: index)
+            case .deleteRecentKeyword(let index):
+                Task { await self.deleteRecentKeyword(index: index) }
+            case .deleteRecentAllKeywords:
+                Task { await self.deleteAllRecentKeywords() }
             case .search(let term):
                 Task { await self.searchPost(term: term) }
             case .selectPost(let post):
@@ -49,12 +57,11 @@ final class SocialSearchViewModel: BaseViewModel {
     }
     
     func searchPost(term: String) async {
+        await saveKeywords(term: term)
         do {
-            saveKeywords(term: term)
             let posts = try await searchPostUseCase.execute(keyword: term)
             searchResult = posts ?? []
             output.send(.searchResult)
-            
         } catch {
             output.send(.failure(error.localizedDescription))
         }
@@ -66,20 +73,30 @@ final class SocialSearchViewModel: BaseViewModel {
     }
     
     private func loadKeywords() async {
-        recentKeywords = ["콘서타", "루틴", "불면증"]
-        popularKeywords = ["루틴", "집중", "뽀모도로", "꿀팁", "시간관리", "ADHD", "일기"]
-        output.send(.updateRecentKeywords)
-        output.send(.updatePopularKeywords)
+        // TODO: UserDefault에서 가져오기
+        output.send(.updateKeywords)
     }
     
-    private func deleteRecentKeyword(index: Int) {
+    @MainActor
+    private func deleteRecentKeyword(index: Int) async {
+        // TODO: UserDefult에 삭제
         recentKeywords.remove(at: index)
-        output.send(.updateRecentKeywords)
+        output.send(.updateKeywords)
     }
     
-    private func saveKeywords(term: String) {
-        // UserDefaults에 저장, 중복 검사와 최대 치를 넘어가면 최근 검색어 삭제하는 로직이 Repository나 UseCase에서 처리되어야 할 것 같음.
-        self.recentKeywords.append(term)
-        output.send(.updateRecentKeywords)
+    @MainActor
+    private func saveKeywords(term: String) async {
+        if let index = recentKeywords.firstIndex(where: { $0.word == term }) {
+            let keyword = recentKeywords.remove(at: index)
+            recentKeywords.insert(keyword, at: 0)
+        } else {
+            recentKeywords.insert(Keyword(word: term), at: 0)
+        }
+    }
+    
+    @MainActor
+    private func deleteAllRecentKeywords() async {
+        recentKeywords.removeAll()
+        output.send(.updateKeywords)
     }
 }
