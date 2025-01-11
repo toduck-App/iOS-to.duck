@@ -35,7 +35,6 @@ public final class TDCategoryColorPaletteView: UIView {
     public func setSelectedColor(_ color: UIColor) {
         selectedIndex = categoryColors.firstIndex(where: { $0.back.isEqualToColor(color) })
         collectionView.reloadData()
-        print("setSelectedColor: \(color)")
     }
     
     // MARK: - Setup

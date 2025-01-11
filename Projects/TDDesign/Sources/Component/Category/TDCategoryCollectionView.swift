@@ -33,7 +33,7 @@ public final class TDCategoryCollectionView: UIView {
         TDImage.Category.vehicle,   // 차
         TDImage.Category.none       // None
     ]
-    private var categoryColors: [UIColor] = []
+    private var categoryColors = [UIColor]()
     private var selectedIndex: Int?
     public weak var delegate: TDCategoryCellDelegate?
     
@@ -78,7 +78,13 @@ public final class TDCategoryCollectionView: UIView {
     public func updateColor(at index: Int, with color: UIColor) {
         guard index >= 0 && index < categoryColors.count else { return }
         categoryColors[index] = color
-        collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
+        // 2) "이미 표시 중인" 셀을 직접 찾아서, 컬러만 갱신
+        if let cell = collectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? TDCategoryCell {
+            cell.configure(
+                image: categoryImages[index],
+                backgroundColor: color
+            )
+        }
     }
 
     // 특정 색상 가져오기 메서드 추가
@@ -105,13 +111,13 @@ extension TDCategoryCollectionView: UICollectionViewDataSource {
             withReuseIdentifier: TDCategoryCell.identifier,
             for: indexPath
         ) as? TDCategoryCell else { return UICollectionViewCell() }
-        
+
         let image = categoryImages[indexPath.row]
         let color = indexPath.row < categoryColors.count ? categoryColors[indexPath.row] : UIColor.clear
-        
+
         cell.configure(image: image, backgroundColor: color)
         cell.alpha = (indexPath.row == selectedIndex) ? 1.0 : 0.3
-        
+
         return cell
     }
 }
@@ -122,16 +128,13 @@ extension TDCategoryCollectionView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let previousIndex = selectedIndex
         selectedIndex = indexPath.row
-
-        // 이전 셀과 선택된 셀을 모두 업데이트
-        var itemsToReload = [IndexPath(row: indexPath.row, section: 0)]
-        if let previousIndex = previousIndex, previousIndex != selectedIndex {
-            itemsToReload.append(IndexPath(row: previousIndex, section: 0))
+        
+        for cell in collectionView.visibleCells {
+            if let index = collectionView.indexPath(for: cell)?.row {
+                cell.alpha = (index == selectedIndex) ? 1.0 : 0.3
+            }
         }
-
-        collectionView.reloadItems(at: itemsToReload)
         
         delegate?.didTapCategoryCell(
             categoryColors[indexPath.row],
