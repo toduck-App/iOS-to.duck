@@ -37,6 +37,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
             self?.dismiss(animated: true)
         }, for: .touchUpInside)
         
+        layoutView.colorPaletteView.isUserInteractionEnabled = false
         layoutView.categoryCollectionView.delegate = self
         layoutView.colorPaletteView.delegate = self
     }
@@ -68,6 +69,7 @@ extension SheetColorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         selectedCategoryIndex = index
         
+        layoutView.colorPaletteView.isUserInteractionEnabled = true
         layoutView.updateSaveButtonState()
         layoutView.colorPaletteView.reloadPaletteView()
     }
