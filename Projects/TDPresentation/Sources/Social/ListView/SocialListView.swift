@@ -4,6 +4,10 @@ import Then
 import UIKit
 
 final class SocialListView: BaseView {
+    private(set) var searchButton = UIButton(type: .custom).then {
+        $0.setImage(TDImage.searchMedium, for: .normal)
+    }
+    
     private let chipType: TDChipType = .init(
         backgroundColor: .init(
             activeColor: TDColor.Primary.primary500,

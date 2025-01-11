@@ -22,12 +22,16 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         input.send(.fetchPosts)
         setupNavigationBar(style: .social, navigationDelegate: coordinator!)
     }
     
     override func configure() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView:  layoutView.searchButton)
+        layoutView.searchButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapSearch()
+        }, for: .touchUpInside)
+        
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self

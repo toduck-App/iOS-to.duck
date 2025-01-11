@@ -7,6 +7,7 @@ protocol SocialListDelegate: AnyObject {
     func didTapCreateButton()
     func didTapReport(id: Post.ID)
     func didTapUserProfile(id: User.ID)
+    func didTapSearch()
 }
 
 final class SocialListCoordinator: Coordinator {
@@ -88,6 +89,16 @@ extension SocialListCoordinator: SocialListDelegate {
         createCoordinator.finishDelegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
+    }
+    
+    func didTapSearch() {
+        let searchCoordinator = SocialSearchCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        searchCoordinator.finishDelegate = self
+        childCoordinators.append(searchCoordinator)
+        searchCoordinator.start()
     }
 }
 
