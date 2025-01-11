@@ -32,6 +32,10 @@ public final class TDCategoryColorPaletteView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func reloadPaletteView() {
+        collectionView.reloadData()
+    }
+    
     // MARK: - Setup
     private func setupCollectionView() {
         addSubview(collectionView)

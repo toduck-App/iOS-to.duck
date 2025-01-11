@@ -89,20 +89,13 @@ final class SheetColorView: BaseView {
         cancelButton.layer.borderWidth = 1
         cancelButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         
-        categoryCollectionView.delegate = self
         updateSaveButtonState()
     }
     
-    private func updateSaveButtonState() {
+    func updateSaveButtonState() {
         let isEnabled = categoryCollectionView.isCategorySelected()
         saveButton.isEnabled = isEnabled
         saveButton.backgroundColor = isEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral100
         saveButton.layer.borderWidth = 0
-    }
-}
-
-extension SheetColorView: TDCategoryCellDelegate {
-    func didTapCategoryCell(_ color: UIColor, _ image: UIImage) {
-        updateSaveButtonState()
     }
 }

@@ -20,7 +20,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             self?.didTapRegisterButton()
         }).then {
             $0.tintColor = TDColor.Neutral.neutral700
-    }
+        }
     
     // MARK: - Initializer
     init(
@@ -54,7 +54,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
@@ -81,10 +81,10 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                 case .fetchedCategories:
                     self?.eventMakorView.categoryViewsForm.setupCategoryView(
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
-                    } ?? [])
+                        } ?? [])
                 }
             }.store(in: &cancellables)
-
+        
     }
     
     private func didTapRegisterButton() {
@@ -99,9 +99,10 @@ extension EventMakorViewController: TDFormMoveViewDelegate {
 }
 
 extension EventMakorViewController: TDCategoryCellDelegate {
-    func didTapCategoryCell(_ color: UIColor, _ image: UIImage) {
-        input.send(
-            .selectCategory(color.convertToHexString() ?? "", UIImage.reverseCategoryDictionary[image] ?? "none")
-        )
+    func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
+        input.send(.selectCategory(
+            color.convertToHexString() ?? "",
+            UIImage.reverseCategoryDictionary[image] ?? "none"
+        ))
     }
 }

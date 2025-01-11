@@ -5,12 +5,13 @@ import TDDesign
 import Then
 
 final class SheetColorViewController: BaseViewController<SheetColorView> {
+    
     // MARK: - Properties
     private let viewModel: SheetColorViewModel
     private let input = PassthroughSubject<SheetColorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: SheetColorCoordinator?
-    
+    private var selectedCategoryIndex: Int?
     
     // MARK: - Initializers
     init(viewModel: SheetColorViewModel) {
@@ -25,7 +26,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         input.send(.fetchCategories)
     }
     
@@ -36,6 +37,8 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
             self?.dismiss(animated: true)
         }, for: .touchUpInside)
         
+        layoutView.categoryCollectionView.delegate = self
+        layoutView.colorPaletteView.delegate = self
     }
     
     override func binding() {
@@ -44,12 +47,28 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
-            switch event {
-            case .fetchedCategories:
-                self?.layoutView.categoryCollectionView.setupCategoryView(
-                    colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
-                } ?? [])
-            }
-        }.store(in: &cancellables)
+                switch event {
+                case .fetchedCategories:
+                    self?.layoutView.categoryCollectionView.setupCategoryView(
+                        colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
+                        } ?? [])
+                }
+            }.store(in: &cancellables)
+    }
+}
+
+extension SheetColorViewController: TDCategoryColorPaletteViewDelegate {
+    func didSelectColor(_ color: UIColor) {
+        guard let index = selectedCategoryIndex else { return }
+        layoutView.categoryCollectionView.updateColor(at: index, with: color)
+    }
+}
+
+extension SheetColorViewController: TDCategoryCellDelegate {
+    func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
+        selectedCategoryIndex = index
+        
+        layoutView.updateSaveButtonState()
+        layoutView.colorPaletteView.reloadPaletteView()
     }
 }
