@@ -27,7 +27,9 @@ public final class TDRadioButton: UIButton {
         layer.addSublayer(innerCircleLayer)
 
         // 버튼 클릭 이벤트 연결
-        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        addAction(UIAction { [weak self] _ in
+            self?.buttonTapped()
+        }, for: .touchUpInside)
     }
 
     override public func layoutSubviews() {
@@ -41,7 +43,6 @@ public final class TDRadioButton: UIButton {
         innerCircleLayer.path = innerCirclePath.cgPath
     }
 
-    @objc
     private func buttonTapped() {
         isSelected.toggle()
     }

@@ -27,7 +27,9 @@ public final class TDSelectableButton: TDBaseButton {
             font: font
         )
         
-        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        addAction(UIAction { [weak self] _ in
+            self?.buttonTapped()
+        }, for: .touchUpInside)
     }
     
     @available(*, unavailable)
@@ -36,7 +38,7 @@ public final class TDSelectableButton: TDBaseButton {
     }
     
     // MARK: - Setup Methods
-    @objc private func buttonTapped() {
+    private func buttonTapped() {
         isSelected.toggle()
         updateConfiguration()
     }
