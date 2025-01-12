@@ -22,11 +22,13 @@ enum KeywordSection: Int, CaseIterable {
 }
 
 final class SocialSearchViewController: BaseViewController<SocialSearchView> {
+    
     weak var coordinator: SocialSearchCoordinator?
     private let input = PassthroughSubject<SocialSearchViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private let viewModel: SocialSearchViewModel!
     private var keywordDataSource: UICollectionViewDiffableDataSource<KeywordSection, SocialSearchViewModel.Keyword>!
+    private var resultDataSource: UICollectionViewDiffableDataSource<Int, Post.ID>?
 
     init(viewModel: SocialSearchViewModel) {
         self.viewModel = viewModel
@@ -48,6 +50,7 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
         configureDataSource()
         layoutView.keywordCollectionView.delegate = self
         layoutView.keywordCollectionView.dataSource = keywordDataSource
+        layoutView.postCollectionView.delegate = self
     }
 
     override func binding() {
@@ -60,11 +63,15 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
                 switch event {
                 case .searchResult:
                     layoutView.showResultView()
+                    applyResultSnapshot()
                 case .updateKeywords:
                     layoutView.showRecommendView()
-                    applySnapshot()
+                    applyKeywordSnapshot()
                 case .selectPost:
-                    break
+                    guard let postID = self.viewModel.selectedPostID else { return }
+                    coordinator?.didTapPost(id: postID)
+                case .likePost(let post):
+                    updateResultSnapshot(post)
                 case .failure(let message):
                     break
                 }
@@ -74,6 +81,7 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
     private func setupNavigationBar() {
         layoutView.cancleButton.addAction(UIAction { [weak self] _ in
             self?.layoutView.searchBar.text = ""
+            self?.layoutView.showKeyboard()
             self?.input.send(.loadKeywords)
 //            self?.coordinator?.finish()
         }, for: .touchUpInside)
@@ -89,7 +97,7 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
             collectionView: layoutView.keywordCollectionView
         ) { [weak self] collectionView, indexPath, keyword in
             guard let section = KeywordSection(rawValue: indexPath.section) else { return UICollectionViewCell() }
-
+            
             switch section {
             case .recent:
                 guard let cell = collectionView.dequeueReusableCell(
@@ -101,7 +109,7 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
                 cell.configure(tag: keyword.word)
                 cell.delegate = self
                 return cell
-
+                
             case .popular:
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: TagCell.identifier,
@@ -113,26 +121,35 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
                 return cell
             }
         }
-
+        
         keywordDataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
             guard kind == UICollectionView.elementKindSectionHeader,
                   let section = KeywordSection(rawValue: indexPath.section),
                   let header = collectionView.dequeueReusableSupplementaryView(
-                      ofKind: kind,
-                      withReuseIdentifier: KeywordSectionHeaderView.identifier,
-                      for: indexPath
+                    ofKind: kind,
+                    withReuseIdentifier: KeywordSectionHeaderView.identifier,
+                    for: indexPath
                   ) as? KeywordSectionHeaderView
             else {
                 return UICollectionReusableView()
             }
             header.configure(section: section)
-
+            
             header.delegate = self
             return header
         }
+        
+        resultDataSource = .init(collectionView: layoutView.postCollectionView, cellProvider: { collectionView, indexPath, postID in
+            guard let post = self.viewModel.searchResult.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
+            let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+            cell.socialFeedCellDelegate = self
+            cell.configure(with: post)
+            
+            return cell
+        })
     }
 
-    private func applySnapshot() {
+    private func applyKeywordSnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<KeywordSection, SocialSearchViewModel.Keyword>()
         snapshot.appendSections(KeywordSection.allCases)
         snapshot.appendItems(viewModel.recentKeywords, toSection: .recent)
@@ -140,12 +157,34 @@ final class SocialSearchViewController: BaseViewController<SocialSearchView> {
 
         keywordDataSource.apply(snapshot, animatingDifferences: true)
     }
+    
+    private func applyResultSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(viewModel.searchResult.map { $0.id })
+
+        resultDataSource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func updateResultSnapshot(_ post: Post) {
+        var snapshot = resultDataSource?.snapshot()
+        snapshot?.reloadItems([post.id])
+        resultDataSource?.apply(snapshot!, animatingDifferences: false)
+    }
 }
 
 // MARK: - UICollectionViewDelegate
 
 extension SocialSearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == layoutView.keywordCollectionView {
+            didSelectKeyword(at: indexPath)
+        } else if collectionView == layoutView.postCollectionView {
+            didSelectPost(at: indexPath)
+        }
+    }
+    
+    private func didSelectKeyword(at indexPath: IndexPath) {
         guard let section = KeywordSection(rawValue: indexPath.section) else { return }
         switch section {
         case .recent:
@@ -157,6 +196,12 @@ extension SocialSearchViewController: UICollectionViewDelegate {
             input.send(.search(query: keyword))
             layoutView.searchBar.text = keyword
         }
+        layoutView.hideKeyboard()
+    }
+    
+    private func didSelectPost(at indexPath: IndexPath) {
+        let postID = viewModel.searchResult[indexPath.item].id
+        input.send(.selectPost(post: postID))
     }
 }
 
@@ -191,5 +236,45 @@ extension SocialSearchViewController: UISearchBarDelegate {
         if searchText.isEmpty {
             input.send(.loadKeywords)
         }
+    }
+}
+
+extension SocialSearchViewController: SocialFeedCollectionViewCellDelegate, TDPopupPresentable {
+    func didTapBlock(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.postCollectionView.indexPath(for: cell) else {
+            return
+        }
+        let controller = SocialBlockViewController()
+        controller.onBlock = { [weak self] in
+            guard let user = self?.viewModel.searchResult[indexPath.item].user else { return }
+            self?.input.send(.blockUser(to: user))
+        }
+        presentPopup(with: controller)
+    }
+    
+    func didTapReport(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.postCollectionView.indexPath(for: cell) else {
+            return
+        }
+        coordinator?.didTapReport(id: viewModel.searchResult[indexPath.item].id)
+    }
+    
+    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell) {
+        // TODO: Routine 공유 View
+    }
+    
+    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.postCollectionView.indexPath(for: cell) else {
+            return
+        }
+        let user = viewModel.searchResult[indexPath.item].user
+        coordinator?.didTapUserProfile(id: user.id)
+    }
+    
+    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {
+        guard let indexPath = layoutView.postCollectionView.indexPath(for: cell) else {
+            return
+        }
+        input.send(.likePost(at: indexPath.item))
     }
 }

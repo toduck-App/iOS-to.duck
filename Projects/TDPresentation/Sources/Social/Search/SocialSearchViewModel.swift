@@ -9,12 +9,15 @@ final class SocialSearchViewModel: BaseViewModel {
         case deleteRecentAllKeywords
         case search(query: String)
         case selectPost(post: Post.ID)
+        case likePost(at: Int)
+        case blockUser(to: User)
     }
     
     enum Output {
         case updateKeywords
         case searchResult
         case selectPost
+        case likePost(Post)
         case failure(String)
     }
     
@@ -24,6 +27,8 @@ final class SocialSearchViewModel: BaseViewModel {
     }
     
     private let searchPostUseCase: SearchPostUseCase
+    private let togglePostLikeUseCase: TogglePostLikeUseCase
+    private let blockUserUseCase: BlockUserUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables: Set<AnyCancellable> = []
     private(set) var recentKeywords: [Keyword] = ["콘서타", "루틴", "불면증"].map { Keyword(word: $0) }
@@ -31,8 +36,13 @@ final class SocialSearchViewModel: BaseViewModel {
     private(set) var searchResult: [Post] = []
     private(set) var selectedPostID: Post.ID?
     
-    init(searchPostUseCase: SearchPostUseCase) {
+    init(searchPostUseCase: SearchPostUseCase,
+         togglePostLikeUseCase: TogglePostLikeUseCase,
+         blockUserUseCase: BlockUserUseCase)
+    {
         self.searchPostUseCase = searchPostUseCase
+        self.togglePostLikeUseCase = togglePostLikeUseCase
+        self.blockUserUseCase = blockUserUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -49,6 +59,10 @@ final class SocialSearchViewModel: BaseViewModel {
                 Task { await self.searchPost(term: term) }
             case .selectPost(let post):
                 selectPost(postID: post)
+            case .likePost(let index):
+                Task { await self.likePost(at: index) }
+            case .blockUser(let user):
+                Task { await self.blockUser(to: user) }
             }
         }
         .store(in: &cancellables)
@@ -98,5 +112,26 @@ final class SocialSearchViewModel: BaseViewModel {
     private func deleteAllRecentKeywords() async {
         recentKeywords.removeAll()
         output.send(.updateKeywords)
+    }
+    
+    private func likePost(at index: Int) async {
+        do {
+            let result = try await togglePostLikeUseCase.execute(postID: searchResult[index].id)
+            guard let likeCount = searchResult[index].likeCount else { return }
+            searchResult[index].isLike.toggle()
+            searchResult[index].likeCount = searchResult[index].isLike ? likeCount + 1 : likeCount - 1
+            output.send(.likePost(searchResult[index]))
+        } catch {
+            output.send(.failure("게시글 좋아요를 실패했습니다."))
+        }
+    }
+    
+    private func blockUser(to user: User) async {
+        do {
+            let result = try await blockUserUseCase.execute(userID: user.id)
+            // TODO: ALERT OUTPUT 필요
+        } catch {
+            output.send(.failure("사용자 차단에 실패했습니다."))
+        }
     }
 }

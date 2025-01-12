@@ -1,6 +1,6 @@
+import SnapKit
 import TDDesign
 import Then
-import SnapKit
 import UIKit
 
 // MARK: - SearchView
@@ -29,17 +29,26 @@ final class SocialSearchView: BaseView {
     ).then {
         $0.backgroundColor = TDColor.baseWhite
         $0.isScrollEnabled = false
-        
         $0.register(with: CancleTagCell.self)
         $0.register(with: TagCell.self)
-        
         $0.register(
             KeywordSectionHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: KeywordSectionHeaderView.identifier
         )
     }
-
+    
+    private(set) lazy var postCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeCompositionLayout()
+    ).then {
+        $0.backgroundColor = TDColor.baseWhite
+        $0.isHidden = true
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+        $0.register(with: SocialFeedCollectionViewCell.self)
+    }
+    
     override func configure() {
         super.configure()
         backgroundColor = TDColor.baseWhite
@@ -48,11 +57,18 @@ final class SocialSearchView: BaseView {
     override func addview() {
         super.addview()
         addSubview(keywordCollectionView)
+        addSubview(postCollectionView)
     }
     
     override func layout() {
         super.layout()
         keywordCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
+        }
+        
+        postCollectionView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
@@ -69,13 +85,15 @@ final class SocialSearchView: BaseView {
     
     func showRecommendView() {
         keywordCollectionView.isHidden = false
+        postCollectionView.isHidden = true
     }
     
     func showResultView() {
         keywordCollectionView.isHidden = true
+        postCollectionView.isHidden = false
     }
     
-    func makeFlowLayout() -> UICollectionViewFlowLayout {
+    private func makeFlowLayout() -> UICollectionViewFlowLayout {
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 20)
@@ -88,5 +106,30 @@ final class SocialSearchView: BaseView {
             right: 0
         )
         return layout
+    }
+    
+    private func makeCompositionLayout() -> UICollectionViewLayout {
+        let itemPadding: CGFloat = 10
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(500)
+        )
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(500)
+        )
+        
+        let edgeSpacing = NSCollectionLayoutEdgeSpacing(
+            leading: .fixed(0),
+            top: .fixed(0),
+            trailing: .fixed(0),
+            bottom: .fixed(itemPadding)
+        )
+        
+        return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
+            itemSize: itemSize,
+            itemEdgeSpacing: edgeSpacing,
+            groupSize: groupSize
+        )
     }
 }

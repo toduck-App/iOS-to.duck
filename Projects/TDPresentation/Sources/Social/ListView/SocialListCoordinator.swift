@@ -10,7 +10,7 @@ protocol SocialListDelegate: AnyObject {
     func didTapSearch()
 }
 
-final class SocialListCoordinator: Coordinator {
+final class SocialListCoordinator: Coordinator, SocialSearchDelegate {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -97,6 +97,7 @@ extension SocialListCoordinator: SocialListDelegate {
             injector: injector
         )
         searchCoordinator.finishDelegate = self
+        searchCoordinator.delegate = self
         childCoordinators.append(searchCoordinator)
         searchCoordinator.start()
     }

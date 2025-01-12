@@ -2,7 +2,14 @@ import TDCore
 import TDDomain
 import UIKit
 
+protocol SocialSearchDelegate: AnyObject {
+    func didTapPost(id: Post.ID)
+    func didTapReport(id: Post.ID)
+    func didTapUserProfile(id: User.ID)
+}
+
 final class SocialSearchCoordinator: Coordinator {
+    weak var delegate: SocialSearchDelegate?
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -18,7 +25,13 @@ final class SocialSearchCoordinator: Coordinator {
 
     func start() {
         let searchPostUseCase = injector.resolve(SearchPostUseCase.self)
-        let searchViewModel = SocialSearchViewModel(searchPostUseCase: searchPostUseCase)
+        let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
+        let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
+        let searchViewModel = SocialSearchViewModel(
+            searchPostUseCase: searchPostUseCase,
+            togglePostLikeUseCase: togglePostLikeUseCase,
+            blockUserUseCase: blockUserUseCase
+        )
         let searchViewController = SocialSearchViewController(viewModel: searchViewModel)
         searchViewController.coordinator = self
         searchViewController.modalPresentationStyle = .fullScreen
@@ -31,14 +44,15 @@ final class SocialSearchCoordinator: Coordinator {
     }
 
     func didTapPost(id: Post.ID) {
-        let socialDetailCoordinator = SocialDetailCoordinator(
-            navigationController: navigationController,
-            injector: injector,
-            id: id
-        )
-        socialDetailCoordinator.finishDelegate = self
-        childCoordinators.append(socialDetailCoordinator)
-        socialDetailCoordinator.start()
+        delegate?.didTapPost(id: id)
+    }
+
+    func didTapReport(id: Post.ID) {
+        delegate?.didTapReport(id: id)
+    }
+
+    func didTapUserProfile(id: User.ID) {
+        delegate?.didTapUserProfile(id: id)
     }
 }
 
