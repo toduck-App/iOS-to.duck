@@ -36,6 +36,10 @@ final class TagCell: UICollectionViewCell {
     }
     
     func configure(tag: String) {
-        tagLabel.setText(tag)
+        if tag.count > 10 {
+            tagLabel.setText(tag.prefix(10) + "...")
+        } else {
+            tagLabel.setText(tag)
+        }
     }
 }
