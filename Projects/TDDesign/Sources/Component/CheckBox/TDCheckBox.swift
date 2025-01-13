@@ -5,10 +5,13 @@ public final class TDCheckbox: UIButton {
     private var backgroundTocukColor: UIColor
     private var foregroundTocukColor: UIColor
     private var checkImage: UIImage
-    public init(frame: CGRect = .zero,
-                backgroundColor: UIColor = TDColor.Primary.primary200,
-                foregroundColor: UIColor = TDColor.Primary.primary500)
-    {
+    
+    // MARK: - Initialization
+    public init(
+        frame: CGRect = .zero,
+        backgroundColor: UIColor = TDColor.Primary.primary200,
+        foregroundColor: UIColor = TDColor.Primary.primary500
+    ) {
         backgroundTocukColor = backgroundColor
         foregroundTocukColor = foregroundColor
         checkImage = TDImage.checkMedium
@@ -20,10 +23,6 @@ public final class TDCheckbox: UIButton {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    @objc func buttonClicked() {
-        isSelected.toggle()
     }
 
     override public var isSelected: Bool {
@@ -42,10 +41,12 @@ public final class TDCheckbox: UIButton {
         }
     }
 
-    func setupCheckBox() {
+    private func setupCheckBox() {
         imageView?.tintColor = foregroundTocukColor
-
-        addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
+        
+        addAction(UIAction { [weak self] _ in
+            self?.buttonClicked()
+        }, for: .touchUpInside)
 
         layer.borderColor = TDColor.Neutral.neutral400.cgColor
         backgroundColor = .white
@@ -54,9 +55,13 @@ public final class TDCheckbox: UIButton {
         layer.cornerRadius = 8
     }
 
-    func layout() {
+    private func layout() {
         snp.makeConstraints { make in
             make.width.height.equalTo(22)
         }
+    }
+    
+    private func buttonClicked() {
+        isSelected.toggle()
     }
 }

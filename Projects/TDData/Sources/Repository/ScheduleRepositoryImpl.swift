@@ -14,7 +14,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
     public func fetchSchedule() async throws -> Schedule {
         return Schedule(
             title: "캐릭터 디자인 작업",
-            category: TDCategory(colorType: .back1, imageType: .computer),
+            category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
             date: nil,
             time: nil,
@@ -30,37 +30,13 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
         return [
             Schedule(
                 title: "캐릭터 디자인 작업",
-                category: TDCategory(colorType: .back1, imageType: .computer),
+                category: TDCategory(colorHex: "#123456", imageName: "computer"),
                 isAllDay: false,
                 date: nil,
                 time: nil,
                 repeatDays: nil,
                 alarmTimes: nil,
                 place: nil,
-                memo: nil,
-                isFinish: false
-            ),
-            Schedule(
-                title: "토익 공부",
-                category: TDCategory(colorType: .back2, imageType: .food),
-                isAllDay: false,
-                date: nil,
-                time: nil,
-                repeatDays: nil,
-                alarmTimes: nil,
-                place: nil,
-                memo: nil,
-                isFinish: true
-            ),
-            Schedule(
-                title: "영화 보기",
-                category: TDCategory(colorType: .back3, imageType: .medicine),
-                isAllDay: true,
-                date: nil,
-                time: nil,
-                repeatDays: nil,
-                alarmTimes: nil,
-                place: "경북 구미시",
                 memo: nil,
                 isFinish: false
             )

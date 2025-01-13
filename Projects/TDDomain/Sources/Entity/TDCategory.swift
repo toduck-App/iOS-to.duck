@@ -1,12 +1,12 @@
 public struct TDCategory {
-    public let colorType: TDCategoryColor
-    public let imageType: TDCategoryImageType
+    public let colorHex: String
+    public let imageName: String
     
     public init(
-        colorType: TDCategoryColor,
-        imageType: TDCategoryImageType
+        colorHex: String,
+        imageName: String
     ) {
-        self.colorType = colorType
-        self.imageType = imageType
+        self.colorHex = colorHex
+        self.imageName = imageName
     }
 }

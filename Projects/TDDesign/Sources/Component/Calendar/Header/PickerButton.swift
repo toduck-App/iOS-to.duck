@@ -28,7 +28,9 @@ final class PickerButton: UIButton {
     }
     
     private func setupButton() {
-        self.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
+        addAction(UIAction { [weak self] _ in
+            self?.showDatePicker()
+        }, for: .touchUpInside)
     }
     
     // [임시코드] UIDatePicker가 아닌, UIPickerView로 커스텀해야 할듯

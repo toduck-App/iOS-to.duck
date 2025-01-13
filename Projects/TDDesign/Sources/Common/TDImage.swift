@@ -47,6 +47,7 @@ public enum TDImage {
     public static let timeSmall = TDDesignAsset.Images.timeSmall.image
     public static let tomatoTerm = TDDesignAsset.Images.tomatoTerm.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
+    public static let slashMedium = TDDesignAsset.Images.slashMedium.image
     
     public enum CheckBox {
         public static let empty = TDDesignAsset.Images.emptyCheckBox.image
