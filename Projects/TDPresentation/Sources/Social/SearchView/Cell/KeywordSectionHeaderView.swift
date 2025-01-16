@@ -55,7 +55,7 @@ final class KeywordSectionHeaderView: UICollectionReusableView {
         }
     }
     
-    func configure(section: KeywordSection) {
+    func configure(section: SocialSearchView.KeywordSection) {
         titleLabel.setText(section.title)
         removeButton.isHidden = !section.showRemoveButton
     }

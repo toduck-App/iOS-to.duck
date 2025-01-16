@@ -21,6 +21,7 @@ final class SocialSearchView: BaseView {
         $0.searchTextField.autocapitalizationType = .none
         $0.searchTextField.autocorrectionType = .yes
         $0.searchTextField.returnKeyType = .search
+        $0.sizeToFit()
     }
     
     private(set) lazy var keywordCollectionView = UICollectionView(
@@ -38,17 +39,6 @@ final class SocialSearchView: BaseView {
         )
     }
     
-    private(set) lazy var postCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: makeCompositionLayout()
-    ).then {
-        $0.backgroundColor = TDColor.baseWhite
-        $0.isHidden = true
-        $0.showsVerticalScrollIndicator = false
-        $0.showsHorizontalScrollIndicator = false
-        $0.register(with: SocialFeedCollectionViewCell.self)
-    }
-    
     override func configure() {
         super.configure()
         backgroundColor = TDColor.baseWhite
@@ -57,21 +47,13 @@ final class SocialSearchView: BaseView {
     override func addview() {
         super.addview()
         addSubview(keywordCollectionView)
-        addSubview(postCollectionView)
     }
     
     override func layout() {
-        super.layout()
         keywordCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
+            make.top.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
-        }
-        
-        postCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20)
+            make.bottom.equalToSuperview()
         }
     }
     
@@ -81,16 +63,6 @@ final class SocialSearchView: BaseView {
     
     func showKeyboard() {
         searchBar.becomeFirstResponder()
-    }
-    
-    func showRecommendView() {
-        keywordCollectionView.isHidden = false
-        postCollectionView.isHidden = true
-    }
-    
-    func showResultView() {
-        keywordCollectionView.isHidden = true
-        postCollectionView.isHidden = false
     }
     
     private func makeFlowLayout() -> UICollectionViewFlowLayout {
@@ -107,29 +79,24 @@ final class SocialSearchView: BaseView {
         )
         return layout
     }
-    
-    private func makeCompositionLayout() -> UICollectionViewLayout {
-        let itemPadding: CGFloat = 10
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(500)
-        )
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(500)
-        )
-        
-        let edgeSpacing = NSCollectionLayoutEdgeSpacing(
-            leading: .fixed(0),
-            top: .fixed(0),
-            trailing: .fixed(0),
-            bottom: .fixed(itemPadding)
-        )
-        
-        return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
-            itemSize: itemSize,
-            itemEdgeSpacing: edgeSpacing,
-            groupSize: groupSize
-        )
+}
+
+extension SocialSearchView {
+    enum KeywordSection: Int, CaseIterable {
+        case recent
+        case popular
+
+        var title: String {
+            switch self {
+            case .recent:
+                "최근 검색어"
+            case .popular:
+                "인기 검색어"
+            }
+        }
+
+        var showRemoveButton: Bool {
+            self == .recent
+        }
     }
 }
