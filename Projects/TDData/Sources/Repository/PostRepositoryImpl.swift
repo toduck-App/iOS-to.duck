@@ -32,11 +32,10 @@ public final class PostRepositoryImpl: PostRepository {
 
     public func fetchPostList(category: PostCategory?) async throws -> [Post] {
         guard let category = category else {
-            return Post.dummy.sorted { $0.timestamp > $1.timestamp }
+            return Post.dummy
         }
         return Post.dummy
             .filter { $0.category?.contains(category) ?? false }
-            .sorted { $0.timestamp > $1.timestamp }
     }
 
     public func searchPost(keyword: String) async throws -> [Post]? {
