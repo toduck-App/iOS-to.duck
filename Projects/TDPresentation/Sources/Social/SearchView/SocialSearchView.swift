@@ -18,8 +18,8 @@ final class SocialSearchView: BaseView {
         $0.searchTextField.backgroundColor = TDColor.Neutral.neutral50
         $0.searchTextField.font = TDFont.boldBody2.font
         $0.searchTextField.clearButtonMode = .never
-        $0.searchTextField.autocapitalizationType = .none
-        $0.searchTextField.autocorrectionType = .yes
+        $0.searchTextField.autocorrectionType = .no
+        $0.searchTextField.spellCheckingType = .no
         $0.searchTextField.returnKeyType = .search
         $0.sizeToFit()
     }
