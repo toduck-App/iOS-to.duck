@@ -27,23 +27,33 @@ public final class PostRepositoryImpl: PostRepository {
         isFinish: false
     )
     private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
+    private var dummyPost = Post.dummy
 
     public init() { }
 
     public func fetchPostList(category: PostCategory?) async throws -> [Post] {
         guard let category = category else {
-            return Post.dummy
+            return dummyPost
         }
-        return Post.dummy
+        return dummyPost
             .filter { $0.category?.contains(category) ?? false }
     }
 
-    public func searchPost(keyword: String) async throws -> [Post]? {
-        return Post.dummy
+    public func searchPost(keyword: String, category: PostCategory?) async throws -> [Post]? {
+        guard let category = category else {
+            return dummyPost
+                .filter { $0.contentText.contains(keyword) }
+        }
+        return dummyPost
+            .filter { $0.contentText.contains(keyword) && $0.category?.contains(category) ?? false }
     }
 
     public func togglePostLike(postID: Post.ID) async throws -> Bool {
-        return false;
+        guard var post = dummyPost.filter({ $0.id == postID }).first else {
+            return false
+        }
+        post.likeCount = (post.likeCount ?? 0) + 1
+        return true;
     }
 
     public func bringUserRoutine(routine: Routine) async throws -> Routine {
@@ -63,7 +73,7 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postID: Post.ID) async throws -> Post {
-        guard let post = Post.dummy.filter({ $0.id == postID }).first else {
+        guard let post = dummyPost.filter({ $0.id == postID }).first else {
             // 에러 정의가 없어서 임시로 구현
             return Post.dummy[0]
         }

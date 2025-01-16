@@ -2,7 +2,7 @@ import Foundation
 
 public protocol PostRepository {
     func fetchPostList(category: PostCategory?) async throws -> [Post]
-    func searchPost(keyword: String) async throws -> [Post]?
+    func searchPost(keyword: String, category: PostCategory?) async throws -> [Post]?
     func togglePostLike(postID: Post.ID) async throws -> Bool
     func bringUserRoutine(routine: Routine) async throws -> Routine
 
