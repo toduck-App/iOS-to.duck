@@ -1,8 +1,9 @@
 import XCTest
 import Combine
+
+import TDCore
+import TDDomain
 @testable import TDPresentation
-@testable import TDCore
-@testable import TDDomain
 
 final class SheetColorViewModelTests: XCTestCase {
     private var mockFetchCategoriesUseCase: MockFetchCategoriesUseCase!

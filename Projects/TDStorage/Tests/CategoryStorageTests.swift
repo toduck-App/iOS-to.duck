@@ -1,8 +1,8 @@
 import XCTest
-@testable import TDStorage
-@testable import TDData
+import TDData
 import TDCore
 import TDDomain
+@testable import TDStorage
 
 final class CategoryStorageTests: XCTestCase {
     private var userDefaults: UserDefaults!

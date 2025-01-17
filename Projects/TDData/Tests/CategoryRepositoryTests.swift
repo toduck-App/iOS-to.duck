@@ -1,7 +1,7 @@
 import XCTest
 import TDData
-@testable import TDCore
-@testable import TDDomain
+import TDCore
+import TDDomain
 
 final class CategoryRepositoryTests: XCTestCase {
     private var mockStorage: MockCategoryStorage!

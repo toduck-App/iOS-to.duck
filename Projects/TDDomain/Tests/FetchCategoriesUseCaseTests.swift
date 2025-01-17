@@ -1,6 +1,6 @@
 import XCTest
 import TDDomain
-@testable import TDCore
+import TDCore
 
 final class FetchCategoriesUseCaseTests: XCTestCase {
     private var mockRepository: MockCategoryRepository!
