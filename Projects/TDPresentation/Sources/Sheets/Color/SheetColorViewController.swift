@@ -5,7 +5,6 @@ import TDDesign
 import Then
 
 final class SheetColorViewController: BaseViewController<SheetColorView> {
-    
     // MARK: - Properties
     private let viewModel: SheetColorViewModel
     private let input = PassthroughSubject<SheetColorViewModel.Input, Never>()
@@ -37,6 +36,12 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
             self?.dismiss(animated: true)
         }, for: .touchUpInside)
         
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.saveCategory)
+            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
+        
         layoutView.colorPaletteView.isUserInteractionEnabled = false
         layoutView.categoryCollectionView.delegate = self
         layoutView.colorPaletteView.delegate = self
@@ -52,7 +57,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
                 case .fetchedCategories:
                     self?.layoutView.categoryCollectionView.setupCategoryView(
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
-                        } ?? [])
+                        } ?? [])                    
                 }
             }.store(in: &cancellables)
     }
@@ -61,6 +66,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
 extension SheetColorViewController: TDCategoryColorPaletteViewDelegate {
     func didSelectColor(_ color: UIColor) {
         guard let index = selectedCategoryIndex else { return }
+        input.send(.updateCategoryColor(index, color.convertToHexString() ?? ""))
         layoutView.categoryCollectionView.updateColor(at: index, with: color)
     }
 }
