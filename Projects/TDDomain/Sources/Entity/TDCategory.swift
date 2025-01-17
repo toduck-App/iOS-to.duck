@@ -10,3 +10,9 @@ public struct TDCategory {
         self.imageName = imageName
     }
 }
+
+extension TDCategory: Equatable {
+    public static func == (lhs: TDCategory, rhs: TDCategory) -> Bool {
+        return lhs.colorHex == rhs.colorHex && lhs.imageName == rhs.imageName
+    }
+}
