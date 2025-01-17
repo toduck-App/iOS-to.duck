@@ -1,5 +1,3 @@
-import TDCore
-
 public protocol UpdateCategoriesUseCase {
     func execute(categories: [TDCategory]) async throws
 }
