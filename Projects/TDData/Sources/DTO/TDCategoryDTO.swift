@@ -12,6 +12,11 @@ public struct TDCategoryDTO: Codable {
         self.colorHex = colorHex
         self.imageName = imageName
     }
+    
+    public init(from category: TDCategory) {
+        self.colorHex = category.colorHex
+        self.imageName = category.imageName
+    }
 }
 
 extension TDCategoryDTO {

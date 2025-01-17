@@ -1,4 +1,5 @@
 import Foundation
+import TDCore
 import TDData
 
 final class CategoryStorageImpl: CategoryStorage {
@@ -9,7 +10,7 @@ final class CategoryStorageImpl: CategoryStorage {
         self.userDefaults = userDefaults
     }
 
-    func fetchCategoryColors() async throws -> [TDCategoryDTO] {
+    func fetchCategories() async throws -> [TDCategoryDTO] {
         guard let data = userDefaults.data(forKey: key) else {
             // 기본값을 반환
             return [
@@ -32,9 +33,11 @@ final class CategoryStorageImpl: CategoryStorage {
         return try decoder.decode([TDCategoryDTO].self, from: data)
     }
 
-    func updateCategoryColors(colors: [TDCategoryDTO]) async throws {
+    func updateCategories(categories: [TDCategoryDTO]) async throws -> Result<Void, TDDataError> {
         let encoder = JSONEncoder()
-        let data = try encoder.encode(colors)
+        let data = try encoder.encode(categories)
         userDefaults.set(data, forKey: key)
+        
+        return .success(())
     }
 }

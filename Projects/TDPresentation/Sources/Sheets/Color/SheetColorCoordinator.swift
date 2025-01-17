@@ -19,7 +19,11 @@ final class SheetColorCoordinator: Coordinator {
 
     func start() {
         let fetchCategoriesUseCase = injector.resolve(FetchCategoriesUseCase.self)
-        let viewModel = SheetColorViewModel(fetchCategoriesUseCase: fetchCategoriesUseCase)
+        let updateCategoriesUseCase = injector.resolve(UpdateCategoriesUseCase.self)
+        let viewModel = SheetColorViewModel(
+            fetchCategoriesUseCase: fetchCategoriesUseCase,
+            updateCategoriesUseCase: updateCategoriesUseCase
+        )
         let sheetViewController = SheetColorViewController(viewModel: viewModel)
         sheetViewController.coordinator = self
         let sheetController = SheetViewController(
