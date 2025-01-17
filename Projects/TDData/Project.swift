@@ -28,6 +28,8 @@ let project = Project(
             bundleId: Project.bundleID + ".datatest",
             sources: .tests,
             dependencies: [
+                .domain(),
+                .core(),
             ]
         )
     ]
