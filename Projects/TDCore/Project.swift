@@ -12,14 +12,6 @@ let project = Project(
             dependencies: [
                 .external(name: "Swinject")
             ]
-        ),
-        Target.target(
-            name: "\(TDModule.TDCore.rawValue)Test",
-            product: .unitTests,
-            sources: .tests,
-            dependencies: [
-                .external(name: "Swinject")
-            ]
         )
     ]
 )

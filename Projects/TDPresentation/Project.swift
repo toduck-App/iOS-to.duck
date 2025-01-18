@@ -14,6 +14,7 @@ let project = Project(
                 .domain(),
                 .design(),
                 .core(),
+                
                 // External
                 .external(name: "Then"),
                 .external(name: "SnapKit"),
@@ -31,6 +32,8 @@ let project = Project(
                 // Module
                 .domain(),
                 .design(),
+                .core(),
+                
                 // External
                 .external(name: "Then"),
                 .external(name: "SnapKit"),

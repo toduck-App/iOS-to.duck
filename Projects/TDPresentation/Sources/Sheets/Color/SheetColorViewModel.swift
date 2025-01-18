@@ -5,6 +5,8 @@ import TDDomain
 final class SheetColorViewModel: BaseViewModel {
     enum Input {
         case fetchCategories
+        case updateCategoryColor(Int, String)
+        case saveCategory
     }
     
     enum Output {
@@ -13,13 +15,17 @@ final class SheetColorViewModel: BaseViewModel {
     
     private let output = PassthroughSubject<Output, Never>()
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
+    private let updateCategoriesUseCase: UpdateCategoriesUseCase
     private var cancellables = Set<AnyCancellable>()
     
     private(set) var categories: [TDCategory] = []
-    private var selectedCategory: TDCategory?
     
-    init(fetchCategoriesUseCase: FetchCategoriesUseCase) {
+    init(
+        fetchCategoriesUseCase: FetchCategoriesUseCase,
+        updateCategoriesUseCase: UpdateCategoriesUseCase
+    ) {
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.updateCategoriesUseCase = updateCategoriesUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -27,6 +33,10 @@ final class SheetColorViewModel: BaseViewModel {
             switch event {
             case .fetchCategories:
                 Task { await self?.fetchCategories() }
+            case .updateCategoryColor(let index, let color):
+                self?.handleUpdateCategoryColor(index: index, color: color)
+            case .saveCategory:
+                Task { await self?.updateCategory(categories: self?.categories ?? []) }
             }
         }.store(in: &cancellables)
         
@@ -39,7 +49,24 @@ final class SheetColorViewModel: BaseViewModel {
             self.categories = categories
             output.send(.fetchedCategories)
         } catch {
-            // TODO: Handle error
+            TDLogger.error(error)
+        }
+    }
+    
+    private func handleUpdateCategoryColor(index: Int, color: String) {
+        guard index >= 0 && index < categories.count else { return }
+        categories[index] = createUpdatedCategory(at: index, with: color)
+    }
+    
+    private func createUpdatedCategory(at index: Int, with color: String) -> TDCategory {
+        let currentCategory = categories[index]
+        return TDCategory(colorHex: color, imageName: currentCategory.imageName)
+    }
+    
+    private func updateCategory(categories: [TDCategory]) async {
+        do {
+            try await updateCategoriesUseCase.execute(categories: categories)
+        } catch {
             TDLogger.error(error)
         }
     }

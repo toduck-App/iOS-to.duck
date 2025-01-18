@@ -238,6 +238,13 @@ public struct DomainAssembly: Assembly {
             }
             return ToggleUserFollowUseCaseImpl(repository: repository)
         }
+        
+        container.register(UpdateCategoriesUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CategoryRepository.self) else {
+                fatalError("컨테이너에 CategoryRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateCategoriesUseCaseImpl(repository: repository)
+        }
 
         container.register(UpdateCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {
