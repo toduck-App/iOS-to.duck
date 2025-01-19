@@ -87,6 +87,10 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         
     }
     
+    func reloadCategoryView() {
+        input.send(.fetchCategories)
+    }
+    
     private func didTapRegisterButton() {
         // TODO: - 저장 버튼 클릭
     }

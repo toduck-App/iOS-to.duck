@@ -45,6 +45,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
                 injector: injector
             )
             categoryCoordinator.finishDelegate = self
+            categoryCoordinator.delegate = self
             categoryCoordinator.start()
         case .date:
             let dateCoordinator = SheetCalendarCoordinator(
@@ -61,5 +62,13 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
             timeCoordinator.finishDelegate = self
             timeCoordinator.start()
         }
+    }
+}
+
+extension EventMakorCoordinator: SheetColorDelegate {
+    func didSaveCategory() {
+        print("EventMakorCoordinator didSaveCategory \(String(describing: navigationController.viewControllers.last))")
+        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        eventMakorViewController.reloadCategoryView()
     }
 }
