@@ -19,6 +19,7 @@ let project = Project.project(
             bundleId: Project.bundleID + ".domaintest",
             sources: .tests,
             dependencies: [
+                .domain()
             ]
         )
     ]
