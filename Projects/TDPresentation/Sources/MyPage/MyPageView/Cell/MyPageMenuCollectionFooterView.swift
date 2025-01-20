@@ -12,7 +12,7 @@ import TDDesign
 
 final class MyPageMenuCollectionFooterView: UICollectionReusableView {
     private let separatorView: UIView = {
-        let view = UIView()
+        let view = UIView.dividedLine()
         view.backgroundColor = TDColor.Neutral.neutral300
         return view
     }()
@@ -23,7 +23,6 @@ final class MyPageMenuCollectionFooterView: UICollectionReusableView {
         separatorView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.separatorPadding)
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(LayoutConstants.separatorHeight)
         }
     }
     
@@ -36,7 +35,6 @@ final class MyPageMenuCollectionFooterView: UICollectionReusableView {
 // MARK: - Constants
 private extension MyPageMenuCollectionFooterView {
     enum LayoutConstants {
-        static let separatorHeight: CGFloat = 1
         static let separatorPadding: CGFloat = 16
     }
 }
