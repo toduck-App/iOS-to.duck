@@ -253,7 +253,7 @@ public final class TDPhotoPickerController: UIViewController, UICollectionViewDe
 
 final class CameraCell: UICollectionViewCell {
     private let cameraIcon = UIImageView().then {
-        $0.image = TDImage.cameraMedium.withRenderingMode(.alwaysTemplate)
+        $0.image = TDImage.Camera.cameraMedium.withRenderingMode(.alwaysTemplate)
         $0.tintColor = TDColor.Neutral.neutral600
         $0.contentMode = .scaleAspectFit
     }

@@ -12,7 +12,6 @@ public enum TDImage {
     public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
     public static let alarmMedium = TDDesignAsset.Images.alarmMedium.image
     public static let badMedium = TDDesignAsset.Images.badMedium.image
-    public static let cameraMedium = TDDesignAsset.Images.cameraMedium.image
     public static let chartMedium = TDDesignAsset.Images.chartMedium.image
     public static let checkMedium = TDDesignAsset.Images.checkMedium.image
     public static let clockMedium = TDDesignAsset.Images.clockMedium.image
@@ -23,7 +22,6 @@ public enum TDImage {
     public static let imageMedium = TDDesignAsset.Images.imageMedium.image
     public static let listMedium = TDDesignAsset.Images.listMedium.image
     public static let locationMedium = TDDesignAsset.Images.locationMedium.image
-    public static let penMedium = TDDesignAsset.Images.penMedium.image
     public static let reportMedium = TDDesignAsset.Images.reportMedium.image
     public static let reportFillMedium = TDDesignAsset.Images.reportFillMedium.image
     public static let shareMedium = TDDesignAsset.Images.shareMedium.image
@@ -36,7 +34,6 @@ public enum TDImage {
     public static let addSmall = TDDesignAsset.Images.addSmall.image
     public static let alarmSmall = TDDesignAsset.Images.alarmSmall.image
     public static let badSmall = TDDesignAsset.Images.badSmall.image
-    public static let cameraSmall = TDDesignAsset.Images.cameraSmall.image
     public static let chartSmall = TDDesignAsset.Images.chartSmall.image
     public static let goodSmall = TDDesignAsset.Images.goodSmall.image
     public static let hamburgerSmall = TDDesignAsset.Images.hamburgerSmall.image
@@ -72,6 +69,12 @@ public enum TDImage {
         public static let small = TDDesignAsset.Images.likeSmall.image
         public static let emptyMedium = TDDesignAsset.Images.likeEmptyMedium.image
         public static let filledMedium = TDDesignAsset.Images.likeFilledMedium.image
+    }
+    
+    public enum Camera {
+        public static let cameraMedium = TDDesignAsset.Images.cameraMedium.image
+        public static let cameraMediumColor = TDDesignAsset.Images.cameraMediumColor.image
+        public static let cameraSmall = TDDesignAsset.Images.cameraSmall.image
     }
     
     public enum Comment {
@@ -258,5 +261,10 @@ public enum TDImage {
         public static let computer = TDDesignAsset.Images.categoryComputer.image
         public static let medicine = TDDesignAsset.Images.categoryMedicine.image
         public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.image
+    }
+    
+    public enum Pen {
+        public static let penMedium = TDDesignAsset.Images.penMedium.image
+        public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
     }
 }
