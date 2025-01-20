@@ -26,5 +26,6 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         tabBar.backgroundColor = TDColor.baseWhite
         tabBar.tintColor = TDColor.Primary.primary400
         tabBar.unselectedItemTintColor = TDColor.Neutral.neutral600
+        tabBar.isTranslucent = false
     }
 }

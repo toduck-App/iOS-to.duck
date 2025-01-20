@@ -45,7 +45,7 @@ public final class TDFormPhotoView: UIView {
     private let addPhotoButton = UIButton().then {
         $0.layer.cornerRadius = 12
         $0.backgroundColor = TDColor.Neutral.neutral100
-        let image = TDImage.cameraMedium.withRenderingMode(.alwaysOriginal)
+        let image = TDImage.Camera.cameraMedium.withRenderingMode(.alwaysOriginal)
             .withTintColor(TDColor.Neutral.neutral600)
         $0.setImage(image, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit

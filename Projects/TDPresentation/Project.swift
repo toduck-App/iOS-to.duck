@@ -29,17 +29,7 @@ let project = Project(
             bundleId: Project.bundleID + ".presentationtest",
             sources: .tests,
             dependencies: [
-                // Module
-                .domain(),
-                .design(),
-                .core(),
-                
-                // External
-                .external(name: "Then"),
-                .external(name: "SnapKit"),
-                .external(name: "FSCalendar"),
-                .external(name: "Kingfisher"),
-                .external(name: "FittedSheets"),
+                .presentation()
             ]
         ),
     ]
