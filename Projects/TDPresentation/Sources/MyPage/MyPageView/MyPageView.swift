@@ -191,8 +191,8 @@ extension MyPageView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentHeight = menuView.contentSize.height
         if contentHeight > 0 {
-            menuView.snp.updateConstraints { make in
-                make.height.equalTo(contentHeight + LayoutConstants.footerPadding)
+            menuView.snp.updateConstraints {
+                $0.height.equalTo(contentHeight)
             }
         }
     }
