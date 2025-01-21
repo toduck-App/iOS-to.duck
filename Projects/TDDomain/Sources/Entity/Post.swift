@@ -7,7 +7,7 @@ public struct Post: Identifiable {
     public let imageList: [String]?
     public let timestamp: Date
     
-    public var likeCount: Int?
+    public var likeCount: Int
     public var isLike: Bool
     public let commentCount: Int?
     public let shareCount: Int?
@@ -22,7 +22,7 @@ public struct Post: Identifiable {
         contentText: String,
         imageList: [String]?,
         timestamp: Date,
-        likeCount: Int?,
+        likeCount: Int,
         isLike: Bool,
         commentCount: Int?,
         shareCount: Int?,
@@ -40,6 +40,15 @@ public struct Post: Identifiable {
         self.shareCount = shareCount
         self.routine = routine
         self.category = category
+    }
+    
+    public mutating func toggleLike(){
+        if isLike && likeCount > 0 {
+            likeCount -= 1
+        } else {
+            likeCount += 1
+        }
+        isLike.toggle()
     }
 }
 

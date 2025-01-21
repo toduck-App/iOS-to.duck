@@ -8,6 +8,10 @@ final class SocialListView: BaseView {
         $0.setImage(TDImage.searchMedium, for: .normal)
     }
     
+    private(set) var searchView = SocialSearchView().then {
+        $0.isHidden = true
+    }
+    
     private let chipType: TDChipType = .init(
         backgroundColor: .init(
             activeColor: TDColor.Primary.primary500,
@@ -113,6 +117,10 @@ final class SocialListView: BaseView {
         loadingView.snp.makeConstraints { make in
             make.edges.equalTo(socialFeedCollectionView)
         }
+        
+        searchView.snp.makeConstraints { make in
+            make.edges.equalTo(safeAreaLayoutGuide)
+        }
     }
     
     override func configure() {
@@ -121,7 +129,7 @@ final class SocialListView: BaseView {
     }
     
     override func addview() {
-        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, addPostButton, loadingView].forEach {
+        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, addPostButton, loadingView, searchView].forEach {
             addSubview($0)
         }
     }
@@ -149,6 +157,19 @@ extension SocialListView {
                 self.loadingView.alpha = 0
             }
         }
+    }
+    
+    func showSearchView() {
+        searchView.isHidden = false        
+    }
+    
+    func hideSearchView() {
+        searchView.isHidden = true
+        searchView.hideKeyboard()
+    }
+    
+    func clearSearchText() {
+        searchView.searchBar.text = nil
     }
     
     func showEmptyView() {}

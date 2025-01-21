@@ -9,6 +9,7 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
     private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
+    private var keywordDataSource: UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, SocialListViewModel.Keyword>!
     
     init(viewModel: SocialListViewModel) {
         self.viewModel = viewModel
@@ -23,19 +24,43 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
     override func viewDidLoad() {
         super.viewDidLoad()
         input.send(.fetchPosts)
+        setupDefaultNavigationBar()
+    }
+    
+    private func setupDefaultNavigationBar() {
         setupNavigationBar(style: .social, navigationDelegate: coordinator!)
+        navigationItem.titleView = nil
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchButton)
+    }
+    
+    private func setupNavigationSearchBar() {
+        navigationItem.leftBarButtonItems = nil
+        navigationItem.titleView = layoutView.searchView.searchBar
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchView.cancleButton)
     }
     
     override func configure() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView:  layoutView.searchButton)
         layoutView.searchButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.didTapSearch()
+            self?.layoutView.showSearchView()
+            self?.setupNavigationSearchBar()
+            self?.input.send(.loadKeywords)
         }, for: .touchUpInside)
         
+        layoutView.searchView.cancleButton.addAction(UIAction {
+            [weak self] _ in
+            self?.layoutView.hideSearchView()
+            self?.layoutView.clearSearchText()
+            self?.setupDefaultNavigationBar()
+            self?.input.send(.clearSearch)
+        }, for: .touchUpInside)
+        
+        layoutView.searchView.searchBar.delegate = self
+        layoutView.searchView.keywordCollectionView.delegate = self
+        layoutView.searchView.keywordCollectionView.dataSource = keywordDataSource
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(viewModel.chips)
+        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.rawValue)})
         setupDataSource()
         layoutView.dropDownHoverView.delegate = self
         layoutView.addPostButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
@@ -50,14 +75,21 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
             .receive(on: DispatchQueue.main)
             .sink { [weak self] output in
                 switch output {
-                case .fetchPosts:
+                case .fetchPosts(let posts):
                     self?.layoutView.showFinishView()
-                    self?.applySnapshot(self?.viewModel.posts ?? [])
+                    self?.applySnapshot(posts)
                 case .likePost(let post):
                     self?.updateSnapshot(post)
                 case .failure(let message):
                     // TODO: Error Alert
                     self?.layoutView.showErrorView()
+                case .searchPosts(let posts):
+                    // TODO: Search
+                    self?.layoutView.showFinishView()
+                    self?.layoutView.hideSearchView()
+                    self?.applySnapshot(posts)
+                case .updateKeywords:
+                    self?.applyKeywordSnapshot()
                 }
             }.store(in: &cancellables)
     }
@@ -79,6 +111,52 @@ extension SocialListViewController: UICollectionViewDelegate {
             
             return cell
         })
+        
+        keywordDataSource = UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, SocialListViewModel.Keyword>(
+            collectionView: layoutView.searchView.keywordCollectionView
+        ) { [weak self] collectionView, indexPath, keyword in
+            guard let section = SocialSearchView.KeywordSection(rawValue: indexPath.section) else { return UICollectionViewCell() }
+            
+            switch section {
+            case .recent:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: CancleTagCell.identifier,
+                    for: indexPath
+                ) as? CancleTagCell else {
+                    return UICollectionViewCell()
+                }
+                cell.configure(tag: keyword.word)
+                cell.delegate = self
+                return cell
+                
+            case .popular:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: TagCell.identifier,
+                    for: indexPath
+                ) as? TagCell else {
+                    return UICollectionViewCell()
+                }
+                cell.configure(tag: keyword.word)
+                return cell
+            }
+        }
+        
+        keywordDataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            guard kind == UICollectionView.elementKindSectionHeader,
+                  let section = SocialSearchView.KeywordSection(rawValue: indexPath.section),
+                  let header = collectionView.dequeueReusableSupplementaryView(
+                      ofKind: kind,
+                      withReuseIdentifier: KeywordSectionHeaderView.identifier,
+                      for: indexPath
+                  ) as? KeywordSectionHeaderView
+            else {
+                return UICollectionReusableView()
+            }
+            header.configure(section: section)
+            
+            header.delegate = self
+            return header
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -86,6 +164,29 @@ extension SocialListViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == layoutView.socialFeedCollectionView {
+            didTapPost(at: indexPath)
+        } else if collectionView == layoutView.searchView.keywordCollectionView {
+            didTapKeyword(at: indexPath)
+        }
+    }
+    
+    private func didTapKeyword(at indexPath: IndexPath) {
+        guard let section = SocialSearchView.KeywordSection(rawValue: indexPath.section) else { return }
+        switch section {
+        case .recent:
+            let keyword = viewModel.recentKeywords[indexPath.item].word
+            input.send(.search(term: keyword))
+            layoutView.searchView.searchBar.text = keyword
+        case .popular:
+            let keyword = viewModel.popularKeywords[indexPath.item].word
+            input.send(.search(term: keyword))
+            layoutView.searchView.searchBar.text = keyword
+        }
+        layoutView.hideSearchView()
+    }
+    
+    private func didTapPost(at indexPath: IndexPath) {
         let postId = viewModel.posts[indexPath.item].id
         coordinator?.didTapPost(id: postId)
     }
@@ -152,11 +253,42 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
     }
 }
 
+// MARK: - 검색 및 삭제버튼 처리
+
+extension SocialListViewController: UISearchBarDelegate, CancleTagCellDelegate, KeywordHeaderCellDelegate {
+    func didTapAllDeleteButton(cell: KeywordSectionHeaderView) {
+        input.send(.deleteRecentAllKeywords)
+    }
+
+    func didTapCancleButton(cell: CancleTagCell) {
+        guard let indexPath = layoutView.searchView.keywordCollectionView.indexPath(for: cell),
+              let section = SocialSearchView.KeywordSection(rawValue: indexPath.section)
+        else { return }
+
+        if section == .recent {
+            input.send(.deleteRecentKeyword(index: indexPath.item))
+        }
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchText = searchBar.text, !searchText.isEmpty else { return }
+        layoutView.hideSearchView()
+        input.send(.search(term: searchText))
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            input.send(.loadKeywords)
+        }
+    }
+}
+
 // MARK: Collection View Datasource Apply
 
 extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
+        snapshot.deleteAllItems()
         snapshot.appendSections([0])
         snapshot.appendItems(posts.map(\.id))
         datasource?.apply(snapshot, animatingDifferences: false)
@@ -166,5 +298,14 @@ extension SocialListViewController {
         var snapshot = datasource?.snapshot()
         snapshot?.reloadItems([post.id])
         datasource?.apply(snapshot!, animatingDifferences: false)
+    }
+    
+    private func applyKeywordSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<SocialSearchView.KeywordSection, SocialListViewModel.Keyword>()
+        snapshot.appendSections(SocialSearchView.KeywordSection.allCases)
+        snapshot.appendItems(viewModel.recentKeywords, toSection: .recent)
+        snapshot.appendItems(viewModel.popularKeywords, toSection: .popular)
+
+        keywordDataSource.apply(snapshot, animatingDifferences: false)
     }
 }

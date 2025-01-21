@@ -48,12 +48,13 @@ public final class PostRepositoryImpl: PostRepository {
             .filter { $0.contentText.contains(keyword) && $0.category?.contains(category) ?? false }
     }
 
-    public func togglePostLike(postID: Post.ID) async throws -> Bool {
-        guard var post = dummyPost.filter({ $0.id == postID }).first else {
-            return false
+    public func togglePostLike(postID: Post.ID) async throws -> Result<Post, Error> {
+        if let index = dummyPost.firstIndex(where: { $0.id == postID }) {
+            dummyPost[index].toggleLike()
+            return .success(dummyPost[index])
         }
-        post.likeCount = (post.likeCount ?? 0) + 1
-        return true;
+        //TODO: 실제 리소스에 반영 후 적절한 Error 처리 필요
+        return .failure(NSError(domain: "PostRepositoryImpl", code: 0, userInfo: nil))
     }
 
     public func bringUserRoutine(routine: Routine) async throws -> Routine {

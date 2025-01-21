@@ -7,10 +7,9 @@ protocol SocialListDelegate: AnyObject {
     func didTapCreateButton()
     func didTapReport(id: Post.ID)
     func didTapUserProfile(id: User.ID)
-    func didTapSearch()
 }
 
-final class SocialListCoordinator: Coordinator, SocialSearchDelegate {
+final class SocialListCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -28,10 +27,12 @@ final class SocialListCoordinator: Coordinator, SocialSearchDelegate {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
         let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
+        let searchPostUseCase = injector.resolve(SearchPostUseCase.self)
         let socialViewModel = SocialListViewModel(
             fetchPostUseCase: fetchPostUseCase,
             togglePostLikeUseCase: togglePostLikeUseCase,
-            blockUserUseCase: blockUserUseCase
+            blockUserUseCase: blockUserUseCase,
+            searchPostUseCase: searchPostUseCase
         )
         let socialViewController = SocialListViewController(viewModel: socialViewModel)
         socialViewController.coordinator = self
@@ -89,17 +90,6 @@ extension SocialListCoordinator: SocialListDelegate {
         createCoordinator.finishDelegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
-    }
-    
-    func didTapSearch() {
-        let searchCoordinator = SocialSearchCoordinator(
-            navigationController: navigationController,
-            injector: injector
-        )
-        searchCoordinator.finishDelegate = self
-        searchCoordinator.delegate = self
-        childCoordinators.append(searchCoordinator)
-        searchCoordinator.start()
     }
 }
 
