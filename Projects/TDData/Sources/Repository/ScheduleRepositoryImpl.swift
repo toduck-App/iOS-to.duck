@@ -13,10 +13,12 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
     
     public func fetchSchedule() async throws -> Schedule {
         return Schedule(
-            title: "캐릭터 디자인 작업",
-            category: TDCategory(colorHex: "#123456", imageName: "computer"),
-            isAllDay: false,
-            date: nil,
+            id: nil,
+            title: "임시 일정",
+            category: TDCategory(colorHex: "#123456", imageName: "car"),
+            startDate: Date(),
+            endDate: Date(),
+            isAllDay: true,
             time: nil,
             repeatDays: nil,
             alarmTimes: nil,
@@ -29,10 +31,12 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
     public func fetchScheduleList() async throws -> [Schedule] {
         return [
             Schedule(
-                title: "캐릭터 디자인 작업",
-                category: TDCategory(colorHex: "#123456", imageName: "computer"),
-                isAllDay: false,
-                date: nil,
+                id: nil,
+                title: "임시 일정",
+                category: TDCategory(colorHex: "#123456", imageName: "car"),
+                startDate: Date(),
+                endDate: Date(),
+                isAllDay: true,
                 time: nil,
                 repeatDays: nil,
                 alarmTimes: nil,

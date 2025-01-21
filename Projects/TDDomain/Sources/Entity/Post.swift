@@ -69,7 +69,7 @@ public extension Post {
                                     commentCount: 3,
                                     shareCount: 12,
                                     routine: Routine(
-                                        id: UUID(),
+                                        id: nil,
                                         title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자",
                                         category: TDCategory(
                                             colorHex: "#123456",
@@ -109,7 +109,7 @@ public extension Post {
                                     commentCount: 7,
                                     shareCount: 12,
                                     routine: Routine(
-                                        id: UUID(),
+                                        id: nil,
                                         title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자",
                                         category: TDCategory(colorHex: "#123456", imageName: "computer"),
                                         isAllDay: false,

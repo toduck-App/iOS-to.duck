@@ -1,14 +1,7 @@
-//
-//  Eventable.swift
-//  TDDomain
-//
-//  Created by 박효준 on 12/23/24.
-//
-
 import Foundation
 
 public protocol Eventable {
-    var id: UUID { get }
+    var id: Int? { get }
     var title: String { get }
     var memo: String? { get} 
     var category: TDCategory { get }
