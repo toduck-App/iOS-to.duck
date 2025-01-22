@@ -29,9 +29,9 @@ final class EditProfileMenuViewController: UICollectionViewController {
         setupCollectionView()
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "프로필",
-            leftButtonAction: UIAction(handler: { _ in
+            leftButtonAction: UIAction { _ in
                 self.coordinator?.popViewController()
-            })
+            }
         )
     }
     
