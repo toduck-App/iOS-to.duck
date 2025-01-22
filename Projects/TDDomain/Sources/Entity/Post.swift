@@ -80,7 +80,7 @@ public extension Post {
                                         date: nil,
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
-                                        alarmTimes: [.oneDayBefore],
+                                        alarmTimes: [.tenMinutesBefore],
                                         memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산",
                                         recommendedRoutines: nil,
                                         isFinish: false
@@ -117,7 +117,7 @@ public extension Post {
                                         date: nil,
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
-                                        alarmTimes: [.oneDayBefore],
+                                        alarmTimes: [.tenMinutesBefore],
                                         memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산",
                                         recommendedRoutines: nil,
                                         isFinish: false

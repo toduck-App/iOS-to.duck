@@ -4,8 +4,8 @@ public struct Schedule: Eventable {
     public let id: Int? // 서버의 일정 PK
     public let title: String
     public let category: TDCategory
-    public let startDate: Date
-    public let endDate: Date // 단일 날짜 선택 시 startDate와 동일한 값 설정
+    public let startDate: String
+    public let endDate: String // 단일 날짜 선택 시 startDate와 동일한 값 설정
     public let isAllDay: Bool
     public let time: Date?
     public let repeatDays: [TDWeekDay]?
@@ -18,8 +18,8 @@ public struct Schedule: Eventable {
         id: Int?,
         title: String,
         category: TDCategory,
-        startDate: Date,
-        endDate: Date,
+        startDate: String,
+        endDate: String,
         isAllDay: Bool,
         time: Date?,
         repeatDays: [TDWeekDay]?,
