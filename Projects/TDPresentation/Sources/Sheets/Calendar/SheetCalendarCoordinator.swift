@@ -8,6 +8,7 @@ final class SheetCalendarCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    weak var delegate: SheetCalendarDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -19,6 +20,7 @@ final class SheetCalendarCoordinator: Coordinator {
 
     func start() {
         let sheetViewController = SheetCalendarViewController()
+        sheetViewController.delegate = delegate
         sheetViewController.coordinator = self
         let sheetController = SheetViewController(
             controller: sheetViewController,

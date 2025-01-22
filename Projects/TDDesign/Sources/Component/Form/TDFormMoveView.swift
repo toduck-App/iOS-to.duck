@@ -63,6 +63,10 @@ public final class TDFormMoveView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func updateDescription(_ text: String) {
+        descriptionLabel.setText(text)
+    }
+    
     private func setupView() {
         switch type {
         case .category:

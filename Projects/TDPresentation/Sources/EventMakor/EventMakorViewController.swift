@@ -91,6 +91,30 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         input.send(.fetchCategories)
     }
     
+    func updateSelectedDate(startDate: Date, endDate: Date?) {
+        let backendFormatter = DateFormatter() // ViewModel 전달용 포맷터
+        backendFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let displayFormatter = DateFormatter() // 화면 표시용 포맷터
+        displayFormatter.dateFormat = "M월 d일"
+        
+        let startDateForBackend = backendFormatter.string(from: startDate)
+        let startDateForDisplay = displayFormatter.string(from: startDate)
+        
+        if let endDate {
+            let endDateForBackend = backendFormatter.string(from: endDate)
+            let endDateForDisplay = displayFormatter.string(from: endDate)
+            
+            // 여러 기간 선택 시
+            eventMakorView.dateForm.updateDescription("\(startDateForDisplay) - \(endDateForDisplay)")
+            input.send(.selectDate(startDateForBackend, endDateForBackend))
+        } else {
+            // 단일 날짜 선택 시
+            eventMakorView.dateForm.updateDescription(startDateForDisplay)
+            input.send(.selectDate(startDateForBackend, startDateForBackend))
+        }
+    }
+    
     private func didTapRegisterButton() {
         // TODO: - 저장 버튼 클릭
     }

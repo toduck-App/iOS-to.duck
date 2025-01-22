@@ -18,8 +18,12 @@ final class EventMakorCoordinator: Coordinator {
     }
 
     func start(mode: ScheduleAndRoutineViewController.Mode) {
+        let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
-        let viewModel = EventMakorViewModel(fetchCategoriesUseCase: fetchRoutineListUseCase)
+        let viewModel = EventMakorViewModel(
+            createScheduleUseCase: createScheduleUseCase,
+            fetchCategoriesUseCase: fetchRoutineListUseCase
+        )
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
@@ -53,6 +57,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
                 injector: injector
             )
             dateCoordinator.finishDelegate = self
+            dateCoordinator.delegate = self
             dateCoordinator.start()
         case .time:
             let timeCoordinator = SheetTimeCoordinator(
@@ -70,5 +75,12 @@ extension EventMakorCoordinator: SheetColorDelegate {
         print("EventMakorCoordinator didSaveCategory \(String(describing: navigationController.viewControllers.last))")
         guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
         eventMakorViewController.reloadCategoryView()
+    }
+}
+
+extension EventMakorCoordinator: SheetCalendarDelegate {
+    func didTapSaveButton(startDate: Date, endDate: Date?) {
+        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        eventMakorViewController.updateSelectedDate(startDate: startDate, endDate: endDate)
     }
 }
