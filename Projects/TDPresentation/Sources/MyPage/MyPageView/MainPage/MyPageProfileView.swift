@@ -93,6 +93,8 @@ final class MyPageProfileView: UIView {
         } else {
             prepareTouchEvent(.unknown, touches: touches, event: event)
         }
+        
+        isProfileImageTapped = false
     }
 }
 
