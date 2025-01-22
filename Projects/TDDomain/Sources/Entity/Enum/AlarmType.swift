@@ -1,5 +1,5 @@
 public enum AlarmType: String {
-    case oneDayBefore = "1일 전"
-    case oneHourBefore = "1시간 전"
-    case tenMinutesBefore = "10분 전"
+    case tenMinutesBefore = "TEN_MINUTE"
+    case thirtyMinutesBefore = "THIRTY_MINUTE"
+    case oneHourBefore = "ONE_HOUR"
 }
