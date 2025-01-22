@@ -23,6 +23,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         
         if let responderEvent = event as? CustomEventWrapper {
             if responderEvent.customType == .profileImageTapped {
+                coordinator?.didTapProfileButton()
             }
         }
     }
