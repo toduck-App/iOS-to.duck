@@ -24,7 +24,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let categoryTitleForm = TDFormMoveView(type: .category)
+    let categoryTitleForm = TDFormMoveView(type: .category, isRequired: true)
     let categoryViewsForm = TDCategoryCollectionView()
     
     // 날짜 (일정에서만 사용됨)
@@ -32,7 +32,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let dateForm = TDFormMoveView(type: .date)
+    let dateForm = TDFormMoveView(type: .date, isRequired: true)
     private let dividedLine1 = UIView.dividedLine()
     
     // 시간
@@ -40,7 +40,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let timeForm = TDFormMoveView(type: .time)
+    let timeForm = TDFormMoveView(type: .time, isRequired: true)
     private let dividedLine2 = UIView.dividedLine()
     
     // 공개여부 (루틴에서만 사용됨)

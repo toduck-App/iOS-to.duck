@@ -10,7 +10,7 @@ public final class TDFormSegmentView: UIView {
     }
     private let titleLabel = TDLabel(
         labelText: "공개여부",
-        toduckFont: .mediumBody1
+        toduckFont: .boldBody1
     )
     
     private let lockSegmentedControl = UISegmentedControl(items: ["공개", "비공개"]).then {

@@ -21,7 +21,7 @@ public final class TDFormButtonsView: UIView {
         $0.alignment = .center
     }
     private var titleImageView: UIImageView?
-    private let titleLabel = TDLabel(toduckFont: .mediumBody1)
+    private let titleLabel = TDLabel(toduckFont: .boldBody1)
     
     private let buttonHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal

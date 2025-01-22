@@ -24,7 +24,7 @@ public final class TDFormMoveView: UIView {
         $0.spacing = 8
     }
     private var titleImageView: UIImageView?
-    private let titleLabel = TDLabel(toduckFont: .mediumBody1)
+    private let titleLabel = TDRequiredTitle()
     
     // Description
     private let descriptionHorizontalStackView = UIStackView().then {
@@ -46,11 +46,16 @@ public final class TDFormMoveView: UIView {
     
     // MARK: - Properties
     private let type: TDFormMoveViewType
+    private let isRequired: Bool
     public weak var delegate: TDFormMoveViewDelegate?
     
     // MARK: - Initializer
-    public init(type: TDFormMoveViewType) {
+    public init(
+        type: TDFormMoveViewType,
+        isRequired: Bool
+    ) {
         self.type = type
+        self.isRequired = isRequired
         super.init(frame: .zero)
         
         setupView()
@@ -70,18 +75,21 @@ public final class TDFormMoveView: UIView {
     private func setupView() {
         switch type {
         case .category:
-            titleLabel.setText("카테고리")
+            titleLabel.setTitleLabel("카테고리")
             descriptionLabel.setText("색상 수정")
         case .date:
             titleImageView = UIImageView(image: TDImage.Calendar.medium)
             titleImageView?.contentMode = .scaleAspectFit
-            titleLabel.setText("날짜")
+            titleLabel.setTitleLabel("날짜")
             descriptionLabel.setText("없음")
         case .time:
             titleImageView = UIImageView(image: TDImage.timeSmall)
             titleImageView?.contentMode = .scaleAspectFit
-            titleLabel.setText("시간")
+            titleLabel.setTitleLabel("시간")
             descriptionLabel.setText("없음")
+        }
+        if isRequired {
+            titleLabel.setRequiredLabel()
         }
         descriptionLabel.setColor(TDColor.Neutral.neutral600)
     }
