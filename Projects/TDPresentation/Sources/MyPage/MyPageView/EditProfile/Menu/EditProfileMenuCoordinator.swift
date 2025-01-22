@@ -1,5 +1,5 @@
 //
-//  EditProfileCoordinator.swift
+//  EditProfileMenuCoordinator.swift
 //  TDPresentation
 //
 //  Created by 정지용 on 1/20/25.
@@ -9,7 +9,7 @@ import UIKit
 
 import TDCore
 
-final class EditProfileCoordinator: Coordinator {
+final class EditProfileMenuCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -24,9 +24,9 @@ final class EditProfileCoordinator: Coordinator {
     }
     
     func start() {
-        let editProfileViewController = EditProfileViewController()
-        editProfileViewController.coordinator = self
-        navigationController.pushViewController(editProfileViewController, animated: true)
+        let editProfileMenuViewController = EditProfileMenuViewController()
+        editProfileMenuViewController.coordinator = self
+        navigationController.pushViewController(editProfileMenuViewController, animated: true)
     }
     
     func popViewController() {
@@ -36,7 +36,7 @@ final class EditProfileCoordinator: Coordinator {
 }
 
 // MARK: - Coordinator Finish Delegate
-extension EditProfileCoordinator: CoordinatorFinishDelegate {
+extension EditProfileMenuCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }

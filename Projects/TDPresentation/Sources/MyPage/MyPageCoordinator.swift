@@ -46,12 +46,12 @@ extension MyPageCoordinator: NavigationDelegate {
     }
     
     func didTapProfileButton() {
-        let editProfileCoordinator = EditProfileCoordinator(
+        let editProfileMenuCoordinator = EditProfileMenuCoordinator(
             navigationController: navigationController,
             injector: injector
         )
-        editProfileCoordinator.finishDelegate = self
-        childCoordinators.append(editProfileCoordinator)
-        editProfileCoordinator.start()
+        editProfileMenuCoordinator.finishDelegate = self
+        childCoordinators.append(editProfileMenuCoordinator)
+        editProfileMenuCoordinator.start()
     }
 }

@@ -1,5 +1,5 @@
 //
-//  EditProfileViewController.swift
+//  EditProfileMenuViewController.swift
 //  TDPresentation
 //
 //  Created by 정지용 on 1/15/25.
@@ -8,8 +8,8 @@
 import UIKit
 import SnapKit
 
-final class EditProfileViewController: UICollectionViewController {
-    weak var coordinator: EditProfileCoordinator?
+final class EditProfileMenuViewController: UICollectionViewController {
+    weak var coordinator: EditProfileMenuCoordinator?
     
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -42,7 +42,7 @@ final class EditProfileViewController: UICollectionViewController {
 }
 
 // MARK: - Private Methods
-private extension EditProfileViewController {
+private extension EditProfileMenuViewController {
     func setupCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -57,7 +57,7 @@ private extension EditProfileViewController {
 }
 
 // MARK: - UICollectionViewDataSource
-extension EditProfileViewController {
+extension EditProfileMenuViewController {
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -87,7 +87,7 @@ extension EditProfileViewController {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension EditProfileViewController: UICollectionViewDelegateFlowLayout {
+extension EditProfileMenuViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -102,7 +102,7 @@ extension EditProfileViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - Constants
-private extension EditProfileViewController {
+private extension EditProfileMenuViewController {
     enum LayoutConstants {
         static let cellSpacing: CGFloat = 12
         static let cellHeight: CGFloat = 41
