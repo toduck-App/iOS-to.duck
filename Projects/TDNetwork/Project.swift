@@ -19,17 +19,13 @@ let project = Project.project(
             dependencies: [
                 .core(),
                 .domain(), // TODO: Domain 의존성 제거
-                .external(name: "Moya")
             ]
         ),
         Target.target(
             name: "\(TDModule.TDNetwork.rawValue)Test",
             product: .unitTests,
             bundleId: Project.bundleID + ".networktest",
-            sources: .tests,
-            dependencies: [
-                .external(name: "Moya")
-            ]
+            sources: .tests
         )
     ]
 )
