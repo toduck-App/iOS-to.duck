@@ -35,5 +35,9 @@ public struct DataAssembly: Assembly {
         container.register(UserRepository.self) { _ in
             return UserRepositoryImpl()
         }
+
+        container.register(TimerRepository.self) { _ in
+            TimerRepositoryImpl()
+        }
     }
 }
