@@ -45,6 +45,10 @@ public enum TDImage {
     public static let tomatoTerm = TDDesignAsset.Images.tomatoTerm.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
     public static let slashMedium = TDDesignAsset.Images.slashMedium.image
+    public static let banEmptySmall = TDDesignAsset.Images.banEmptySmall.image
+    public static let banFillSmall = TDDesignAsset.Images.banFillSmall.image
+    public static let reportEmptySmall = TDDesignAsset.Images.reportEmptySmall.image
+    public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     
     public enum CheckBox {
         public static let empty = TDDesignAsset.Images.emptyCheckBox.image
@@ -81,6 +85,7 @@ public enum TDImage {
         public static let small = TDDesignAsset.Images.commentSmall.image
         public static let rightMedium = TDDesignAsset.Images.commentRightMedium.image
         public static let leftMedium = TDDesignAsset.Images.commentLeftMedium.image
+        public static let fillMedium = TDDesignAsset.Images.commentFillMedium.image
     }
     
     public enum Profile {
