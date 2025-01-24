@@ -2,95 +2,104 @@ import TDDesign
 import UIKit
 
 final class TimerView: BaseView {
+	let remainedFocusTimeLabel = TDLabel(labelText: "00:00", toduckFont: .boldHeader1)
 
-    //TODO: 이름 다시 생각
-    let dailyChargedLabel = TDLabel(labelText: "Today 00H 00M", toduckFont: .regularBody2)
+	let controlStack = UIStackView().then {
+		$0.axis = .horizontal
+		$0.alignment = .center
+		$0.distribution = .fillProportionally
+		$0.spacing = 22
+	}
 
-    let timerLabel = TDLabel(labelText: "00:00", toduckFont: .boldHeader1)
+	let backdropView = UIView().then {
+		$0.backgroundColor = UIColor(red: 1.00, green: 0.75, blue: 0.58, alpha: 1.00)
+	}
 
-    let timerStack = UIStackView().then {
-        $0.spacing = 0
-        $0.axis = .vertical
-        $0.alignment = .center
-    }
+	let focusCountStackView = TDFocusCountStack()
 
-    let timerItem: TimerItemView = TimerItemView(currentCount: 1)
+	//views
+	let bboduckView = BboduckTimerView()
+	let simpleView = SimpleTimerView()
 
-    
-    let toast = TDToast(foregroundColor: TDColor.Semantic.success, titleText: "집중 타임 종료  🙌🏻",contentText: "잘했어요 ! 이대로 집중하는 습관을 천천히 길러봐요 !")
-    let toast2 = TDToast(foregroundColor: TDColor.Primary.primary500, titleText: "휴식 시간 끝 💡️", contentText: "집중할 시간이에요 ! 자리에 앉아볼까요?")
+	// Buttons
 
-    let playBtn = TDTimerButton(.play)
-    let resetBtn = TDTimerButton(.reset)
-    let stopBtn = TDTimerButton(.stop)
+	let playButton = TDBaseButton(
+		image: TDImage.Timer.play,
+		backgroundColor: TDColor.Primary.primary200,
+		foregroundColor: TDColor.Neutral.neutral400
+	)
 
-    let button = TDButton(title: "테스트",size: .large)
+	let resetButton = TDBaseButton(
+		image: TDImage.Timer.stop,
+		backgroundColor: .clear,
+		foregroundColor: TDColor.Neutral.neutral400
+	)
 
+	let pauseButton = TDBaseButton(
+		image: TDImage.Timer.pause,
+		backgroundColor: TDColor.Primary.primary200,
+		foregroundColor: TDColor.Neutral.neutral400
+	)
 
-    override func addview() {
-        addSubview(timerStack)
-        
-        addSubview(playBtn)
-        addSubview(resetBtn)
-        addSubview(stopBtn)
+	let restartButton = TDBaseButton(
+		image: TDImage.Timer.reset,
+		backgroundColor: .clear,
+		foregroundColor: TDColor.Neutral.neutral400
+	)
 
-        addSubview(toast)
-        addSubview(toast2)
+	override func addview() {
+		addSubview(remainedFocusTimeLabel)
+		addSubview(backdropView)
+		addSubview(focusCountStackView)
 
-        addSubview(timerItem)
-        timerStack.addArrangedSubview(dailyChargedLabel)
-        timerStack.addArrangedSubview(timerLabel)
-        
-        addSubview(button)
+		controlStack.addArrangedSubview(playButton)
+		addSubview(controlStack)
 
-        timerItem.setCurrentCount(3)
-    }
+		addSubview(simpleView)
+		addSubview(bboduckView)
+	}
 
-    override func configure() {
-        backgroundColor = .white
+	override func configure() {
+		simpleView.layer.transform = CATransform3DMakeRotation(.pi, 0, 1, 0)
+		simpleView.isHidden = true
+		backgroundColor = TDColor.Primary.primary100
+	}
 
-    }
+	override func layout() {
+		[playButton, resetButton, pauseButton, resetButton].forEach { button in
+			button.snp.makeConstraints {
+				$0.size.equalTo(72)
+			}
+		}
 
-    override func layout() {
-        timerStack.snp.makeConstraints { 
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(100)
-        }
+		//TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
+		remainedFocusTimeLabel.snp.makeConstraints {
+			$0.top.equalTo(safeAreaLayoutGuide).offset(36)
+			$0.centerX.equalToSuperview()
+		}
 
-        timerItem.snp.makeConstraints { 
-            $0.top.equalTo(timerStack.snp.bottom).offset(12)
-            $0.centerX.equalToSuperview()
-        }
+		focusCountStackView.snp.makeConstraints {
+			$0.top.equalTo(remainedFocusTimeLabel.snp.bottom).offset(12)
+			$0.centerX.equalToSuperview()
+		}
 
-        resetBtn.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-140)
-        }
+		simpleView.snp.makeConstraints { make in
+			make.bottom.equalTo(controlStack.snp.top).inset(-44)
+			make.height.equalTo(simpleView.snp.width)
+			make.leading.trailing.equalToSuperview().inset(40)
+		}
 
-        playBtn.snp.makeConstraints {
-            $0.trailing.equalTo(resetBtn.snp.leading).offset(-20)
-            $0.centerY.equalTo(resetBtn)
-        }
+		controlStack.snp.makeConstraints {
+			$0.bottom.equalTo(safeAreaLayoutGuide).inset(55)
+			$0.centerX.equalToSuperview()
+			$0.height.equalTo(72)
+		}
 
-        stopBtn.snp.makeConstraints {
-            $0.leading.equalTo(resetBtn.snp.trailing).offset(20)
-            $0.centerY.equalTo(resetBtn)
-        }
-        
-        toast.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.equalToSuperview().inset(20)
-        }
-
-        toast2.snp.makeConstraints {
-            $0.top.equalTo(toast.snp.bottom).offset(20)
-            $0.centerX.equalToSuperview()
-            $0.width.equalToSuperview().inset(20)
-        }
-
-        button.snp.makeConstraints { 
-            $0.bottom.equalTo(resetBtn.snp.top).offset(-20)
-            $0.centerX.equalToSuperview()
-        }   
-    }
+		//임시 뷰
+		backdropView.snp.makeConstraints {
+			$0.leading.trailing.equalToSuperview()
+			$0.height.equalToSuperview().multipliedBy(0.4)
+			$0.bottom.equalToSuperview()
+		}
+	}
 }
