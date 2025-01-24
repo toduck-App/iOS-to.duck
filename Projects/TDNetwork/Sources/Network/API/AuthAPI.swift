@@ -1,14 +1,13 @@
 //
-//  Moya.swift
-//  toduck
+//  AuthAPI.swift
+//  TDNetwork
 //
-//  Created by 박효준 on 5/24/24.
+//  Created by 디해 on 1/22/25.
 //
 
 import Foundation
-import Moya
 
-public enum AuthTarget {
+public enum AuthAPI {
     case requestPhoneVerification(phoneNumber: String) // 휴대폰 본인 인증 요청
     case checkPhoneVerification(code: String) // 휴대폰 본인 인증 확인
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
@@ -24,11 +23,11 @@ public enum AuthTarget {
     case deleteUser(userId: Int) // 유저 삭제
 }
 
-extension AuthTarget: TargetType {
+extension AuthAPI: MFTarget {
     public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
-
+    
     public var path: String {
         switch self {
         case .requestPhoneVerification:
@@ -59,8 +58,8 @@ extension AuthTarget: TargetType {
             return "/users/\(userId)"
         }
     }
-
-    public var method: Moya.Method {
+    
+    public var method: MFHTTPMethod {
         switch self {
         case .refreshToken:
             return .get
@@ -80,34 +79,76 @@ extension AuthTarget: TargetType {
             return .delete
         }
     }
-
-    public var task: Moya.Task {
+    
+    public var queries: Parameters? {
+        switch self {
+        case .refreshToken(let refreshToken):
+            return ["refreshToken": refreshToken]
+        case .requestPhoneVerification,
+             .checkPhoneVerification,
+             .checkUsernameDuplication,
+             .registerUser,
+             .login,
+             .loginApple,
+             .loginKakao,
+             .loginNaver,
+             .loginGoogle,
+             .findIdPassword,
+             .saveFCMToken:
+            return nil
+        case .deleteUser(let userId):
+            // TODO: - 나중 결정?
+            return [:]
+        }
+    }
+    
+    public var task: MFTask {
         switch self {
         case .requestPhoneVerification(let phoneNumber):
-            return .requestParameters(parameters: ["phoneNumber": phoneNumber], encoding: URLEncoding.default)
+            return .requestParameters(
+                parameters: ["phoneNumber": phoneNumber]
+            )
+            
         case .checkPhoneVerification(let code):
-            return .requestParameters(parameters: ["code": code], encoding: URLEncoding.default)
+            return .requestParameters(
+                parameters: ["code": code]
+            )
+            
         case .checkUsernameDuplication(let username):
-            return .requestParameters(parameters: ["username": username], encoding: URLEncoding.default)
+            return .requestParameters(
+                parameters: ["username": username]
+            )
+            
         case .registerUser(let userDetails):
-            return .requestParameters(parameters: userDetails, encoding: JSONEncoding.default)
+            return .requestParameters(parameters: userDetails)
+            
         case .login(let username, let password):
-            return .requestParameters(parameters: ["username": username, "password": password], encoding: JSONEncoding.default)
+            return .requestParameters(
+                parameters: ["username": username,
+                             "password": password]
+            )
+            
         case .loginApple(let token), .loginKakao(let token), .loginNaver(let token), .loginGoogle(let token):
-            return .requestParameters(parameters: ["token": token], encoding: JSONEncoding.default)
+            return .requestParameters(
+                parameters: ["token": token]
+            )
+            
         case .findIdPassword(let phoneNumber):
-            return .requestParameters(parameters: ["phoneNumber": phoneNumber], encoding: URLEncoding.default)
-        case .refreshToken(let refreshToken):
-            return .requestParameters(parameters: ["refreshToken": refreshToken], encoding: URLEncoding.default)
+            return .requestParameters(
+                parameters: ["phoneNumber": phoneNumber]
+            )
+            
         case .saveFCMToken(_, let fcmToken):
-            return .requestParameters(parameters: ["fcmToken": fcmToken], encoding: JSONEncoding.default)
-        case .deleteUser:
+            return .requestParameters(
+                parameters: ["fcmToken": fcmToken]
+            )
+            
+        case .deleteUser, .refreshToken:
             return .requestPlain
         }
     }
-
-    public var headers: [String : String]? {
-        var headers: [String: String] = ["Content-Type": "application/json"]
+    
+    public var headers: MFHeaders? {
         switch self {
         case .requestPhoneVerification,
              .checkPhoneVerification,
@@ -119,16 +160,14 @@ extension AuthTarget: TargetType {
              .loginNaver,
              .loginGoogle,
              .findIdPassword:
-            break
+            let jsonHeaders: MFHeaders = [.contentType("application/json")]
+            return jsonHeaders
+            
         case .refreshToken,
              .saveFCMToken,
              .deleteUser:
-// MARK: 나중에 토큰 관리 회의 후 결정
-//            if let accessToken = TokenManager.shared.accessToken {
-//                headers["Authorization"] = "Bearer \(accessToken)"
-//            }
-            break
+            // TODO: - saveFCMToken도 Content-Type을 지정해야 할 것 같습니다.
+            return nil
         }
-        return headers
     }
 }

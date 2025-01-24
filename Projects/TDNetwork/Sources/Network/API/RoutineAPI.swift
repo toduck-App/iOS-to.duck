@@ -1,15 +1,14 @@
 //
-//  RoutineTarget.swift
-//  toduck
+//  RoutineAPI.swift
+//  TDNetwork
 //
-//  Created by 승재 on 7/9/24.
+//  Created by 디해 on 1/22/25.
 //
 
 import TDDomain
 import Foundation
-import Moya
 
-public enum RoutineTarget {
+public enum RoutineAPI {
     case fetchRoutineList // 모든 루틴 조회
     case createRoutine(routine: Routine) // 루틴 생성
     case fetchRoutine(routineId: Int) // 특정 루틴 조회
@@ -17,7 +16,7 @@ public enum RoutineTarget {
     case deleteRoutine(routineId: Int) // 루틴 삭제
 }
 
-extension RoutineTarget: TargetType {
+extension RoutineAPI: MFTarget {
     public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
@@ -37,7 +36,7 @@ extension RoutineTarget: TargetType {
         }
     }
     
-    public var method: Moya.Method {
+    public var method: MFHTTPMethod {
         switch self {
         case .fetchRoutineList, .fetchRoutine:
             return .get
@@ -50,26 +49,34 @@ extension RoutineTarget: TargetType {
         }
     }
     
-    public var task: Moya.Task {
+    public var queries: Parameters? {
+        // TODO: - API에 따라 이 부분도 구현되어야 합니다.
+        return nil
+    }
+    
+    public var task: MFTask {
         switch self {
         case .fetchRoutineList,
-                .fetchRoutine,
-                .deleteRoutine:
+             .fetchRoutine,
+             .deleteRoutine:
             return .requestPlain
-        case .createRoutine(let routine), .updateRoutine(_, let routine):
+        case .createRoutine(let routine),
+             .updateRoutine(_, let routine):
+            // TODO: - 아직 구현 전?
             return .requestPlain
         }
     }
     
-    public var headers: [String: String]? {
-        var headers: [String: String] = ["Content-Type": "application/json"]
-        // MARK: 나중에 토큰 관리 회의 후 결정
-        //        if let accessToken = TokenManager.shared.accessToken {
-        //            headers["Authorization"] = "Bearer \(accessToken)"
-        //        }
-        return headers
+    public var headers: MFHeaders? {
+        let jsonHeaders: MFHeaders = [
+            .contentType("application/json")
+        ]
+        // TODO: - 나중에 회의 후 결정
+        return jsonHeaders
     }
-    
+}
+
+extension RoutineAPI {
     public var sampleData: Data {
         switch self {
         case .fetchRoutineList:
