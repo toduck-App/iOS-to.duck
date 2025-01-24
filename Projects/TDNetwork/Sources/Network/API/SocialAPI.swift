@@ -1,15 +1,14 @@
 //
-//  SocialTarget.swift
-//  toduck
+//  SocialAPI.swift
+//  TDNetwork
 //
-//  Created by 승재 on 7/9/24.
+//  Created by 디해 on 1/22/25.
 //
 
 import TDDomain
 import Foundation
-import Moya
 
-public enum SocialTarget {
+public enum SocialAPI {
     case fetchPostList(category: PostCategory)
     case searchPost(keyword: String, category: PostCategory)
     case togglePostLike(postId: String)
@@ -38,7 +37,7 @@ public enum SocialTarget {
     case toggleUserFollow(userId: String, targetUserId: String)
 }
 
-extension SocialTarget: TargetType {
+extension SocialAPI: MFTarget {
     public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
@@ -98,7 +97,7 @@ extension SocialTarget: TargetType {
         }
     }
     
-    public var method: Moya.Method {
+    public var method: MFHTTPMethod {
         switch self {
         case .fetchPostList,
                 .searchPost,
@@ -129,30 +128,61 @@ extension SocialTarget: TargetType {
         }
     }
     
-    public var task: Moya.Task {
+    public var queries: Parameters? {
         switch self {
         case .fetchPostList(let category):
-            return .requestParameters(parameters: ["category": category.rawValue], encoding: URLEncoding.queryString)
+            return ["category": category.rawValue]
         case .searchPost(let keyword, let category):
-            return .requestParameters(parameters: ["keyword": keyword, "category": category.rawValue], encoding: URLEncoding.queryString)
+            return ["keyword": keyword, "category": category.rawValue]
         case .togglePostLike,
-                .fetchPost,
-                .reportPost,
-                .blockPost,
-                .toggleCommentLike,
-                .fetchCommentList,
-                .fetchUserCommentList,
-                .fetchUser,
-                .fetchUserDetail,
-                .fetchUserPostList,
-                .fetchUserRoutineList,
-                .fetchUserShareUrl,
-                .bringUserRoutine,
-                .deletePost,
-                .deleteComment:
+             .fetchPost,
+             .reportPost,
+             .blockPost,
+             .toggleCommentLike,
+             .fetchCommentList,
+             .fetchUserCommentList,
+             .fetchUser,
+             .fetchUserDetail,
+             .fetchUserPostList,
+             .fetchUserRoutineList,
+             .fetchUserShareUrl,
+             .bringUserRoutine,
+             .deletePost,
+             .deleteComment,
+             .createPost,
+             .updatePost,
+             .createComment,
+             .updateComment,
+             .toggleUserFollow,
+             .reportComment,
+             .blockComment:
+            // TODO: - API에 따라 이 부분도 구현되어야 합니다.
+            return nil
+        }
+    }
+    
+    public var task: MFTask {
+        switch self {
+        case .fetchPostList,
+             .searchPost,
+             .togglePostLike,
+             .fetchPost,
+             .reportPost,
+             .blockPost,
+             .toggleCommentLike,
+             .fetchCommentList,
+             .fetchUserCommentList,
+             .fetchUser,
+             .fetchUserDetail,
+             .fetchUserPostList,
+             .fetchUserRoutineList,
+             .fetchUserShareUrl,
+             .bringUserRoutine,
+             .deletePost,
+             .deleteComment:
             return .requestPlain
         case .createPost(let post), .updatePost(let post):
-            // 수정 필요
+            // TODO: - 수정 필요
             return .requestPlain
         case .createComment(let comment), .updateComment(let comment):
             return .requestPlain
@@ -165,14 +195,18 @@ extension SocialTarget: TargetType {
         }
     }
     
-    public var headers: [String: String]? {
-        var headers: [String: String] = ["Content-Type": "application/json"]
-        //        if let accessToken = TokenManager.shared.accessToken {
-        //            headers["Authorization"] = "Bearer \(accessToken)"
-        //        }
-        return headers
+    public var headers: MFHeaders? {
+        let jsonHeader: MFHeaders = [
+            .contentType("application/json")
+        ]
+        
+        // TODO: - 논의 후 결정?
+        
+        return jsonHeader
     }
-    
+}
+
+extension SocialAPI {
     public var sampleData: Data {
         switch self {
         case .fetchPostList:
@@ -394,4 +428,3 @@ extension SocialTarget: TargetType {
         }
     }
 }
-

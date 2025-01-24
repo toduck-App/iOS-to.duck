@@ -1,15 +1,14 @@
 //
-//  ScheduleTarget.swift
-//  toduck
+//  ScheduleAPI.swift
+//  TDNetwork
 //
-//  Created by 승재 on 7/9/24.
+//  Created by 디해 on 1/22/25.
 //
 
 import TDDomain
 import Foundation
-import Moya
 
-public enum ScheduleTarget {
+public enum ScheduleAPI {
     case fetchSchedule(scheduleId: Int) // 특정 일정 조회
     case fetchScheduleList // 모든 일정 조회
     case moveTomorrowSchedule(scheduleId: Int) // 일정 내일로 이동
@@ -18,11 +17,11 @@ public enum ScheduleTarget {
     case deleteSchedule(scheduleId: Int) // 일정 삭제
 }
 
-extension ScheduleTarget: TargetType {
+extension ScheduleAPI: MFTarget {
     public var baseURL: URL {
         return URL(string: APIConstants.baseURL)!
     }
-
+    
     public var path: String {
         switch self {
         case .fetchSchedule(let scheduleId):
@@ -39,13 +38,13 @@ extension ScheduleTarget: TargetType {
             return "/schedules/\(scheduleId)"
         }
     }
-
-    public var method: Moya.Method {
+    
+    public var method: MFHTTPMethod {
         switch self {
         case .fetchSchedule,
              .fetchScheduleList:
             return .get
-        case .moveTomorrowSchedule, 
+        case .moveTomorrowSchedule,
              .createSchedule,
              .updateSchedule:
             return .post
@@ -53,30 +52,39 @@ extension ScheduleTarget: TargetType {
             return .delete
         }
     }
-
-    public var task: Moya.Task {
+    
+    public var queries: Parameters? {
+        // TODO: - API에 따라 이 부분도 구현되어야 합니다.
+        return nil
+    }
+    
+    public var task: MFTask {
+        // TODO: - 아직 구현 전?
         switch self {
         case .fetchSchedule,
              .fetchScheduleList:
             return .requestPlain
+            
         case .moveTomorrowSchedule,
              .deleteSchedule:
             return .requestPlain
-        case .createSchedule(let schedule), 
+            
+        case .createSchedule(let schedule),
              .updateSchedule(_, let schedule):
             return .requestPlain
         }
     }
-
-    public var headers: [String: String]? {
-        var headers: [String: String] = ["Content-Type": "application/json"]
-// MARK: 나중에 토큰 관리 회의 후 결정
-//        if let accessToken = TokenManager.shared.accessToken {
-//            headers["Authorization"] = "Bearer \(accessToken)"
-//        }
-        return headers
-    }
     
+    public var headers: MFHeaders? {
+        let jsonHeaders: MFHeaders = [
+            .contentType("application/json")
+        ]
+        // TODO: - 나중에 회의 후 결정
+        return jsonHeaders
+    }
+}
+
+extension ScheduleAPI {
     public var sampleData: Data {
         switch self {
         case .fetchSchedule:

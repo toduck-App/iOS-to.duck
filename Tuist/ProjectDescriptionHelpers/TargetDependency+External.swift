@@ -8,7 +8,6 @@
 import ProjectDescription
 
 public enum External: String {
-    case Moya
     case Then
     case FSCalendar
     case Kingfisher
