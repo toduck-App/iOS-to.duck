@@ -9,7 +9,7 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
     private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
-    private var keywordDataSource: UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, SocialListViewModel.Keyword>!
+    private var keywordDataSource: UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, Keyword>!
     
     init(viewModel: SocialListViewModel) {
         self.viewModel = viewModel
@@ -112,7 +112,7 @@ extension SocialListViewController: UICollectionViewDelegate {
             return cell
         })
         
-        keywordDataSource = UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, SocialListViewModel.Keyword>(
+        keywordDataSource = UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, Keyword>(
             collectionView: layoutView.searchView.keywordCollectionView
         ) { [weak self] collectionView, indexPath, keyword in
             guard let section = SocialSearchView.KeywordSection(rawValue: indexPath.section) else { return UICollectionViewCell() }
@@ -301,7 +301,7 @@ extension SocialListViewController {
     }
     
     private func applyKeywordSnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<SocialSearchView.KeywordSection, SocialListViewModel.Keyword>()
+        var snapshot = NSDiffableDataSourceSnapshot<SocialSearchView.KeywordSection, Keyword>()
         snapshot.appendSections(SocialSearchView.KeywordSection.allCases)
         snapshot.appendItems(viewModel.recentKeywords, toSection: .recent)
         snapshot.appendItems(viewModel.popularKeywords, toSection: .popular)

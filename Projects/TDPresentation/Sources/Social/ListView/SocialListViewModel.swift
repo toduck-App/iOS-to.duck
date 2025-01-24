@@ -27,11 +27,6 @@ final class SocialListViewModel: BaseViewModel {
         case failure(String)
     }
     
-    struct Keyword: Identifiable, Hashable {
-        var id = UUID()
-        var word: String
-    }
-    
     // MARK: - Properties
     
     // 선택 상태
@@ -42,21 +37,23 @@ final class SocialListViewModel: BaseViewModel {
     private var searchTerm: String = ""
     private var isSearching: Bool { !searchTerm.isEmpty }
     
-    var posts: [Post] {
-        get { isSearching ? searchPosts : defaultPosts }
-    }
+    var posts: [Post] { isSearching ? searchPosts : defaultPosts }
+
     private var defaultPosts: [Post] = []
     private var searchPosts: [Post] = []
     
     // 검색어 히스토리
-    private(set) var recentKeywords: [Keyword] = ["콘서타", "루틴", "불면증"].map { Keyword(word: $0) }
-    private(set) var popularKeywords: [Keyword] = ["루틴", "집중", "뽀모도로", "꿀팁", "시간관리", "ADHD", "일기"].map { Keyword(word: $0) }
+    private(set) var recentKeywords: [Keyword] = []
+    private(set) var popularKeywords: [Keyword] = ["루틴", "집중", "뽀모도로", "꿀팁", "시간관리", "ADHD", "일기"].map { Keyword(date: Date(), word: $0) }
     
     // UseCase
     private let fetchPostUseCase: FetchPostUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
     private let blockUserUseCase: BlockUserUseCase
     private let searchPostUseCase: SearchPostUseCase
+    private let updateRecentKeywordUseCase: UpdateKeywordUseCase
+    private let fetchRecentKeywordUseCase: FetchKeywordUseCase
+    private let deleteRecentKeywordUseCase: DeleteKeywordUseCase
 
     // Combine
     private var cancellables = Set<AnyCancellable>()
@@ -68,12 +65,18 @@ final class SocialListViewModel: BaseViewModel {
         fetchPostUseCase: FetchPostUseCase,
         togglePostLikeUseCase: TogglePostLikeUseCase,
         blockUserUseCase: BlockUserUseCase,
-        searchPostUseCase: SearchPostUseCase
+        searchPostUseCase: SearchPostUseCase,
+        updateRecentKeywordUseCase: UpdateKeywordUseCase,
+        fetchRecentKeywordUseCase: FetchKeywordUseCase,
+        deleteRecentKeywordUseCase: DeleteKeywordUseCase
     ) {
         self.fetchPostUseCase = fetchPostUseCase
         self.togglePostLikeUseCase = togglePostLikeUseCase
         self.blockUserUseCase = blockUserUseCase
         self.searchPostUseCase = searchPostUseCase
+        self.updateRecentKeywordUseCase = updateRecentKeywordUseCase
+        self.fetchRecentKeywordUseCase = fetchRecentKeywordUseCase
+        self.deleteRecentKeywordUseCase = deleteRecentKeywordUseCase
     }
     
     // MARK: - Transform
@@ -98,11 +101,11 @@ final class SocialListViewModel: BaseViewModel {
                 case .blockUser(let user):
                     Task { await self.blockUser(to: user) }
                 case .loadKeywords:
-                    Task { await self.loadKeywords() }
+                    loadKeywords()
                 case .deleteRecentKeyword(let index):
-                    Task { await self.deleteRecentKeyword(index: index) }
+                    deleteRecentKeyword(index: index)
                 case .deleteRecentAllKeywords:
-                    Task { await self.deleteAllRecentKeywords() }
+                    deleteAllRecentKeywords()
                 case .search(let term):
                     searchTerm = term
                     Task { await self.loadPosts() }
@@ -124,7 +127,7 @@ extension SocialListViewModel {
         let category = (currentSegment == 0) ? nil : currentCategory
         do {
             if isSearching {
-                try await saveKeywords(term: searchTerm)
+                saveKeywords(term: searchTerm)
                 let results = try await searchPostUseCase.execute(keyword: searchTerm, category: category) ?? []
                 searchPosts = results
                 
@@ -191,7 +194,6 @@ extension SocialListViewModel {
         }
     }
 
-    
     // MARK: - Category 설정
 
     private func selectChips(at index: Int) {
@@ -213,31 +215,33 @@ extension SocialListViewModel {
     
     // MARK: - Keywords
 
-    private func loadKeywords() async {
-        // TODO: UserDefault 등에서 가져오는 로직
+    private func loadKeywords() {
+        recentKeywords = fetchRecentKeywordUseCase.execute()
         output.send(.updateKeywords)
     }
     
-    private func deleteRecentKeyword(index: Int) async {
+    private func deleteRecentKeyword(index: Int) {
         guard index >= 0, index < recentKeywords.count else { return }
-        // TODO: UserDefault에서 삭제
-        recentKeywords.remove(at: index)
-        output.send(.updateKeywords)
+        let keyword = recentKeywords[index]
+        do {
+            try deleteRecentKeywordUseCase.execute(keyword: keyword)
+            loadKeywords()
+        } catch {
+            output.send(.failure("최근 검색어 삭제에 실패했습니다."))
+        }
     }
     
-    private func deleteAllRecentKeywords() async {
-        // TODO: UserDefault에서 전체 삭제
-        recentKeywords.removeAll()
-        output.send(.updateKeywords)
+    private func deleteAllRecentKeywords() {
+        deleteRecentKeywordUseCase.execute()
+        loadKeywords()
     }
     
-    /// 검색어 저장 (이미 존재하면 맨 앞으로 이동)
-    private func saveKeywords(term: String) async throws {
-        if let index = recentKeywords.firstIndex(where: { $0.word == term }) {
-            let keyword = recentKeywords.remove(at: index)
-            recentKeywords.insert(keyword, at: 0)
-        } else {
-            recentKeywords.insert(Keyword(word: term), at: 0)
+    private func saveKeywords(term: String) {
+        do {
+            try updateRecentKeywordUseCase.execute(keyword: Keyword(date: Date(), word: term))
+            loadKeywords()
+        } catch {
+            output.send(.failure("검색어 저장에 실패했습니다."))
         }
     }
 }

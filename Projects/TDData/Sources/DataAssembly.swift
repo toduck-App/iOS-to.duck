@@ -42,5 +42,12 @@ public struct DataAssembly: Assembly {
         container.register(UserRepository.self) { _ in
             return UserRepositoryImpl()
         }.inObjectScope(.container)
+        
+        container.register(RecentKeywordRepository.self) { _ in
+            guard let storage = container.resolve(RecentKeywordStorage.self) else {
+                fatalError("Storage is not registered")
+            }
+            return RecentKeywordRepositoryImpl(storage: storage)
+        }
     }
 }

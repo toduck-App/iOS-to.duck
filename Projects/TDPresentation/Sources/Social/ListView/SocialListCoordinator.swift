@@ -28,11 +28,17 @@ final class SocialListCoordinator: Coordinator {
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
         let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
         let searchPostUseCase = injector.resolve(SearchPostUseCase.self)
+        let updateRecentKeywordUseCase = injector.resolve(UpdateKeywordUseCase.self)
+        let fetchRecentKeywordUseCase = injector.resolve(FetchKeywordUseCase.self)
+        let deleteRecentKeywordUseCase = injector.resolve(DeleteKeywordUseCase.self)
         let socialViewModel = SocialListViewModel(
             fetchPostUseCase: fetchPostUseCase,
             togglePostLikeUseCase: togglePostLikeUseCase,
             blockUserUseCase: blockUserUseCase,
-            searchPostUseCase: searchPostUseCase
+            searchPostUseCase: searchPostUseCase,
+            updateRecentKeywordUseCase: updateRecentKeywordUseCase,
+            fetchRecentKeywordUseCase: fetchRecentKeywordUseCase,
+            deleteRecentKeywordUseCase: deleteRecentKeywordUseCase
         )
         let socialViewController = SocialListViewController(viewModel: socialViewModel)
         socialViewController.coordinator = self
@@ -41,6 +47,7 @@ final class SocialListCoordinator: Coordinator {
 }
 
 // MARK: - Coordinator Finish Delegate
+
 extension SocialListCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
@@ -48,6 +55,7 @@ extension SocialListCoordinator: CoordinatorFinishDelegate {
 }
 
 // MARK: - Social List Delegate
+
 extension SocialListCoordinator: SocialListDelegate {
     func didTapUserProfile(id: User.ID) {
         let socialProfileViewCoordinator = SocialProfileCoordinator(
@@ -59,7 +67,7 @@ extension SocialListCoordinator: SocialListDelegate {
         socialProfileViewCoordinator.finishDelegate = self
         socialProfileViewCoordinator.start()
     }
-    
+
     func didTapReport(id: Post.ID) {
         let socialReportCoordinator = SocialReportCoordinator(
             navigationController: navigationController,
@@ -70,7 +78,7 @@ extension SocialListCoordinator: SocialListDelegate {
         socialReportCoordinator.finishDelegate = self
         socialReportCoordinator.start()
     }
-    
+
     func didTapPost(id: Post.ID) {
         let socialDetailCoordinator = SocialDetailCoordinator(
             navigationController: navigationController,
