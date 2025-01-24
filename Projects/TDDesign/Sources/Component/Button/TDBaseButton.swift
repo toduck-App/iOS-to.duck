@@ -1,21 +1,17 @@
 import UIKit
 
 public class TDBaseButton: UIButton {
-    
     // MARK: - Properties
-    
-    public var title: String = ""
-    public var image: UIImage? = nil
-    public var foregroundToduckColor: UIColor = .white
-    public var backgroundToduckColor: UIColor = TDColor.Primary.primary500
-    public var radius: CGFloat = 12
-    public var inset: NSDirectionalEdgeInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
-    public var font: UIFont = TDFont.boldHeader3.font
+    private var title: String = ""
+    private var image: UIImage? = nil
+    private var radius: CGFloat = 12
+    private var inset: NSDirectionalEdgeInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+    private var font: UIFont = TDFont.boldHeader3.font
+    var foregroundToduckColor: UIColor = TDColor.baseWhite
+    var backgroundToduckColor: UIColor = TDColor.Primary.primary500
     
     // MARK: - Initializer
-    
     public init(
-        frame: CGRect = .zero,
         title: String = "",
         image: UIImage? = nil,
         backgroundColor: UIColor = TDColor.Primary.primary500,
@@ -29,7 +25,7 @@ public class TDBaseButton: UIButton {
         self.foregroundToduckColor = foregroundColor
         self.radius = radius
         self.font = font
-        super.init(frame: frame)
+        super.init(frame: .zero)
         
         setupButton()
     }
@@ -40,8 +36,7 @@ public class TDBaseButton: UIButton {
     }
     
     // MARK: - Setup Button
-    
-    public func setupButton() {
+    func setupButton() {
         var config = UIButton.Configuration.filled()
         config.title = title
         config.baseBackgroundColor = backgroundToduckColor
@@ -66,8 +61,8 @@ public class TDBaseButton: UIButton {
     }
     
     // MARK: - State Management
-    
-    override public var isEnabled: Bool {
+    override
+    public var isEnabled: Bool {
         didSet {
             if isEnabled {
                 configuration?.baseBackgroundColor = backgroundToduckColor
@@ -81,27 +76,28 @@ public class TDBaseButton: UIButton {
         }
     }
     
+    
     // MARK: - Public Methods
     
+    /// 버튼의 `cornerRadius`를 설정합니다.
     public func setRadius(_ radius: CGFloat) {
         self.radius = radius
         layer.cornerRadius = radius
     }
     
+    /// 버튼의 `font`를 설정합니다.
     public func setFont(_ font: UIFont) {
         self.font = font
         setupButton()
     }
     
-    public func setFont(toduckFont: TDFont) {
-        setFont(toduckFont.font)
-    }
-    
+    /// 버튼의 `inset`을 설정합니다.
     public func setInset(top: CGFloat = 0, leading: CGFloat = 0, bottom: CGFloat = 0, trailing: CGFloat = 0) {
         inset = NSDirectionalEdgeInsets(top: top, leading: leading, bottom: bottom, trailing: trailing)
         setupButton()
     }
     
+    /// 버튼에 그림자를 추가합니다.
     public func setShadow() {
         layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
         layer.shadowOpacity = 1
@@ -112,7 +108,7 @@ public class TDBaseButton: UIButton {
 
 extension TDBaseButton {
     // MARK: - Convenience Initializers
-    
+
     /// 텍스트 전용 버튼
     public convenience init(
         title: String,
@@ -130,7 +126,7 @@ extension TDBaseButton {
             font: font
         )
     }
-    
+
     /// 이미지 전용 버튼
     public convenience init(
         image: UIImage,
@@ -144,26 +140,6 @@ extension TDBaseButton {
             foregroundColor: .white,
             radius: radius,
             font: UIFont.systemFont(ofSize: 12)
-        )
-    }
-    
-    /// 텍스트 + 이미지 버튼
-    public convenience init(
-        title: String,
-        image: UIImage,
-        backgroundColor: UIColor = TDColor.Primary.primary500,
-        foregroundColor: UIColor = .white,
-        radius: CGFloat = 12,
-        font: UIFont = TDFont.boldHeader3.font
-    ) {
-        self.init(
-            frame: .zero,
-            title: title,
-            image: image,
-            backgroundColor: backgroundColor,
-            foregroundColor: foregroundColor,
-            radius: radius,
-            font: font
         )
     }
 }

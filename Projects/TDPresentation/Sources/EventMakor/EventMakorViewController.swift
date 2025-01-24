@@ -1,11 +1,26 @@
 import UIKit
+import Combine
+import TDDesign
+import TDCore
 
 final class EventMakorViewController: BaseViewController<BaseView> {
     // MARK: - Properties
     private let mode: ScheduleAndRoutineViewController.Mode
     private let viewModel: EventMakorViewModel
     private let eventMakorView: EventMakorView
+    private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     weak var coordinator: EventMakorCoordinator?
+    
+    // MARK: - UI Components
+    private lazy var registerButton = UIBarButtonItem(
+        title: "저장",
+        primaryAction: UIAction {
+            [weak self] _ in
+            self?.didTapRegisterButton()
+        }).then {
+            $0.tintColor = TDColor.Neutral.neutral700
+        }
     
     // MARK: - Initializer
     init(
@@ -14,20 +29,80 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     ) {
         self.mode = mode
         self.viewModel = viewModel
-        self.eventMakorView = EventMakorView()
+        self.eventMakorView = EventMakorView(mode: mode)
         super.init()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        self.mode = .schedule
-        self.viewModel = EventMakorViewModel()
-        self.eventMakorView = EventMakorView()
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Life Cycle
+    override func loadView() {
+        super.loadView()
+        view = eventMakorView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        input.send(.fetchCategories)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
+    
+    override func configure() {
+        navigationItem.rightBarButtonItem = registerButton
+        eventMakorView.categoryTitleForm.delegate = self
+        eventMakorView.categoryViewsForm.delegate = self
+        eventMakorView.dateForm.delegate = self
+        eventMakorView.timeForm.delegate = self
+        
+        let categoryColors = viewModel.categories.compactMap { $0.colorHex.convertToUIColor() }
+        eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedCategories:
+                    self?.eventMakorView.categoryViewsForm.setupCategoryView(
+                        colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
+                        } ?? [])
+                }
+            }.store(in: &cancellables)
+        
+    }
+    
+    private func didTapRegisterButton() {
+        // TODO: - 저장 버튼 클릭
+    }
+}
+
+extension EventMakorViewController: TDFormMoveViewDelegate {
+    func didTapMoveView(_ view: TDFormMoveView, type: TDFormMoveViewType) {
+        coordinator?.didTapMoveView(view, type: type)
+    }
+}
+
+extension EventMakorViewController: TDCategoryCellDelegate {
+    func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
+        input.send(.selectCategory(
+            color.convertToHexString() ?? "",
+            UIImage.reverseCategoryDictionary[image] ?? "none"
+        ))
     }
 }

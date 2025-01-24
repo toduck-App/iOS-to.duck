@@ -23,6 +23,25 @@ final class RoutineViewModel: BaseViewModel {
 
 extension RoutineViewModel: TimeSlotProvider {
     var timeSlots: [TimeSlot] {
-        return [TimeSlot(timeText: "9 AM", events: [Routine(id: UUID(), title: "루틴 1", category: TDCategory(colorType: .back1, imageType: .computer), isAllDay: false, isPublic: true, date: Date(), time: nil, repeatDays: nil, alarmTimes: nil, memo: nil, recommendedRoutines: nil, isFinish: false)])]
+        return [TimeSlot(
+            timeText: "9 AM",
+            events: [Routine(
+                id: UUID(),
+                title: "루틴 1",
+                category: TDCategory(
+                    colorHex: "#123456",
+                    imageName: "computer"
+                ),
+                isAllDay: false,
+                isPublic: true,
+                date: Date(),
+                time: nil,
+                repeatDays: nil,
+                alarmTimes: nil,
+                memo: nil,
+                recommendedRoutines: nil,
+                isFinish: false
+            )]
+        )]
     }
 }

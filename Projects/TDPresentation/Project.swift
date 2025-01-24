@@ -14,6 +14,7 @@ let project = Project(
                 .domain(),
                 .design(),
                 .core(),
+                
                 // External
                 .external(name: "Then"),
                 .external(name: "SnapKit"),
@@ -28,15 +29,7 @@ let project = Project(
             bundleId: Project.bundleID + ".presentationtest",
             sources: .tests,
             dependencies: [
-                // Module
-                .domain(),
-                .design(),
-                // External
-                .external(name: "Then"),
-                .external(name: "SnapKit"),
-                .external(name: "FSCalendar"),
-                .external(name: "Kingfisher"),
-                .external(name: "FittedSheets"),
+                .presentation()
             ]
         ),
     ]

@@ -1,12 +1,18 @@
 public struct TDCategory {
-    public let colorType: TDCategoryColor
-    public let imageType: TDCategoryImageType
+    public let colorHex: String
+    public let imageName: String
     
     public init(
-        colorType: TDCategoryColor,
-        imageType: TDCategoryImageType
+        colorHex: String,
+        imageName: String
     ) {
-        self.colorType = colorType
-        self.imageType = imageType
+        self.colorHex = colorHex
+        self.imageName = imageName
+    }
+}
+
+extension TDCategory: Equatable {
+    public static func == (lhs: TDCategory, rhs: TDCategory) -> Bool {
+        return lhs.colorHex == rhs.colorHex && lhs.imageName == rhs.imageName
     }
 }

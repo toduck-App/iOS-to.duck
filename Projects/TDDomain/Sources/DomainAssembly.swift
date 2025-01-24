@@ -106,6 +106,13 @@ public struct DomainAssembly: Assembly {
             return FetchCommentUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchCategoriesUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CategoryRepository.self) else {
+                fatalError("컨테이너에 CategoryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchCategoriesUseCaseImpl(repository: repository)
+        }
+        
         container.register(FetchDiaryUseCase.self) { resolver in
             guard let repository = resolver.resolve(DiaryRepository.self) else {
                 fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
@@ -230,6 +237,13 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
             }
             return ToggleUserFollowUseCaseImpl(repository: repository)
+        }
+        
+        container.register(UpdateCategoriesUseCase.self) { resolver in
+            guard let repository = resolver.resolve(CategoryRepository.self) else {
+                fatalError("컨테이너에 CategoryRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateCategoriesUseCaseImpl(repository: repository)
         }
 
         container.register(UpdateCommentUseCase.self) { resolver in
