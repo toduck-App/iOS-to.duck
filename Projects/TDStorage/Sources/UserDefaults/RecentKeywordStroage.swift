@@ -14,7 +14,8 @@ final class RecentKeywordStorageImpl: RecentKeywordStorage {
     /// - Returns: [TDRecentKeywordDTO] 형태의 배열
     func fetchRecentKeywords() -> [TDData.TDRecentKeywordDTO] {
         guard let data = userDefaults.data(forKey: key),
-              let decoded = try? JSONDecoder().decode([TDData.TDRecentKeywordDTO].self, from: data) else {
+              let decoded = try? JSONDecoder().decode([TDData.TDRecentKeywordDTO].self, from: data)
+        else {
             return []
         }
         return decoded.sorted { $0.date > $1.date }
@@ -27,17 +28,17 @@ final class RecentKeywordStorageImpl: RecentKeywordStorage {
     /// - Returns: 저장 성공/실패 Result
     func saveRecentKeyword(_ keyword: TDData.TDRecentKeywordDTO) -> Result<Void, TDCore.TDDataError> {
         var recentKeywords = fetchRecentKeywords()
-        
+
         if let existingIndex = recentKeywords.firstIndex(where: { $0.keyword == keyword.keyword }) {
             recentKeywords.remove(at: existingIndex)
         }
-        
+
         recentKeywords.insert(keyword, at: 0)
-        
+
         if recentKeywords.count > 10 {
             recentKeywords.removeLast()
         }
-        
+
         do {
             let encodedData = try JSONEncoder().encode(recentKeywords)
             userDefaults.set(encodedData, forKey: key)
@@ -53,7 +54,7 @@ final class RecentKeywordStorageImpl: RecentKeywordStorage {
     func deleteRecentKeyword(_ keyword: TDData.TDRecentKeywordDTO) -> Result<Void, TDCore.TDDataError> {
         var recentKeywords = fetchRecentKeywords()
         recentKeywords.removeAll { $0.keyword == keyword.keyword }
-        
+
         do {
             let encodedData = try JSONEncoder().encode(recentKeywords)
             userDefaults.set(encodedData, forKey: key)
