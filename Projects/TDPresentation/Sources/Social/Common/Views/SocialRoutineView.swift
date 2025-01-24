@@ -1,7 +1,7 @@
-import TDDomain
-import TDDesign
-import UIKit
 import SnapKit
+import TDDesign
+import TDDomain
+import UIKit
 
 protocol SocialRoutineViewDelegate: AnyObject {
     func didTapRoutine(_ view: SocialRoutineView)
@@ -10,11 +10,15 @@ protocol SocialRoutineViewDelegate: AnyObject {
 final class SocialRoutineView: UIView {
     weak var delegate: SocialRoutineViewDelegate?
     
+    private let categoryImage = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
+    
     private var routineTitleLabel = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 2
     }
     
-    private var routineContentLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then{
+    private var routineContentLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
     }
     
@@ -27,8 +31,9 @@ final class SocialRoutineView: UIView {
     // TODO: Presentation Model
     convenience init(with routine: Routine) {
         self.init()
-        self.routineTitleLabel.setText(routine.title)
-        self.routineContentLabel.setText(routine.memo ?? "")
+        categoryImage.image = routine.categoryIcon
+        routineTitleLabel.setText(routine.title)
+        routineContentLabel.setText(routine.memo ?? "")
         if let routineDate = routine.date {
             routineDateLabel.setText(routineDate.convertToString(formatType: .time12HourEnglish))
         }
@@ -44,8 +49,8 @@ final class SocialRoutineView: UIView {
 }
 
 // MARK: Layout
+
 private extension SocialRoutineView {
-    
     func setupUI() {
         backgroundColor = TDColor.Neutral.neutral100
         layer.cornerRadius = 8
@@ -53,27 +58,36 @@ private extension SocialRoutineView {
     }
     
     func setupLayout() {
-        [routineTitleLabel, routineContentLabel, routineDateLabel].forEach {
-            addSubview($0)
+        addSubview(categoryImage)
+        addSubview(routineTitleLabel)
+        addSubview(routineContentLabel)
+        addSubview(routineDateLabel)
+        
+        categoryImage.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(14)
+            make.leading.equalToSuperview().inset(20)
+            make.size.equalTo(24)
         }
         
         routineTitleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(14)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.equalTo(categoryImage.snp.trailing).offset(10)
+            make.trailing.equalToSuperview().inset(20)
             make.height.equalTo(24)
         }
         
         routineContentLabel.snp.makeConstraints { make in
             make.top.equalTo(routineTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(routineTitleLabel)
+            make.leading.equalTo(categoryImage)
+            make.trailing.equalTo(routineTitleLabel)
         }
         
         routineDateLabel.snp.makeConstraints { make in
             make.top.equalTo(routineContentLabel.snp.bottom).offset(18)
-            make.trailing.leading.equalTo(routineTitleLabel)
+            make.trailing.leading.equalTo(routineContentLabel)
             make.bottom.equalToSuperview().inset(14)
             make.height.equalTo(24)
-         }
+        }
     }
     
     func setupRecognizer() {

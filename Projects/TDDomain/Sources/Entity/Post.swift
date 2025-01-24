@@ -86,7 +86,7 @@ public extension Post {
                                         ),
                                         isAllDay: false,
                                         isPublic: false,
-                                        date: nil,
+                                        date: Date(),
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
                                         alarmTimes: [.oneDayBefore],
