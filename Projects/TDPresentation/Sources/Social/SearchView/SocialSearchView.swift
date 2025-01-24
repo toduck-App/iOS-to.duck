@@ -11,19 +11,32 @@ final class SocialSearchView: BaseView {
         $0.setTitleColor(TDColor.Neutral.neutral800, for: .normal)
         $0.titleLabel?.font = TDFont.mediumBody2.font
     }
-    
+
     private(set) var searchBar = UISearchBar().then {
-        $0.placeholder = "제목이나 키워드를 검색해보세요."
         $0.searchTextField.textColor = TDColor.Neutral.neutral800
         $0.searchTextField.backgroundColor = TDColor.Neutral.neutral50
-        $0.searchTextField.font = TDFont.boldBody2.font
         $0.searchTextField.clearButtonMode = .never
         $0.searchTextField.autocorrectionType = .no
         $0.searchTextField.spellCheckingType = .no
         $0.searchTextField.returnKeyType = .search
-        $0.sizeToFit()
+        let placeholderText = "제목이나 키워드를 검색해보세요."
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.boldBody2.font
+
+        $0.searchTextField.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
+        if let leftImageView = $0.searchTextField.leftView as? UIImageView {
+            let image = leftImageView.image?.withRenderingMode(.alwaysTemplate)
+            leftImageView.image = image
+            leftImageView.tintColor = TDColor.Neutral.neutral400
+        }
     }
-    
+
     private(set) lazy var keywordCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeFlowLayout()
@@ -38,17 +51,17 @@ final class SocialSearchView: BaseView {
             withReuseIdentifier: KeywordSectionHeaderView.identifier
         )
     }
-    
+
     override func configure() {
         super.configure()
         backgroundColor = TDColor.baseWhite
     }
-    
+
     override func addview() {
         super.addview()
         addSubview(keywordCollectionView)
     }
-    
+
     override func layout() {
         keywordCollectionView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
@@ -56,15 +69,15 @@ final class SocialSearchView: BaseView {
             make.bottom.equalToSuperview()
         }
     }
-    
+
     func hideKeyboard() {
         searchBar.resignFirstResponder()
     }
-    
+
     func showKeyboard() {
         searchBar.becomeFirstResponder()
     }
-    
+
     private func makeFlowLayout() -> UICollectionViewFlowLayout {
         let layout = LeftAlignedCollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
