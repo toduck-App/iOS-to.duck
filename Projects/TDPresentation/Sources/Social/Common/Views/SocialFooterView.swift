@@ -10,6 +10,7 @@ final class SocialFooterView: UIView {
     
     lazy var likeButton = UIButton().then {
         $0.tintColor = TDColor.Neutral.neutral500
+        $0.setImage(TDImage.Like.filledMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(didSelectLikeButton), for: .touchUpInside)
     }
@@ -17,7 +18,7 @@ final class SocialFooterView: UIView {
     lazy var commentIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Comment.leftMedium.withRenderingMode(.alwaysTemplate)
+        $0.image = TDImage.Comment.fillMedium
     }
     
     lazy var shareIconView = UIImageView().then {
@@ -47,9 +48,7 @@ final class SocialFooterView: UIView {
     }
     
     func configure(isLike: Bool, likeCount: Int?, commentCount: Int?, shareCount: Int?) {
-        likeButton.setImage(isLike ?
-            TDImage.Like.filledMedium.withRenderingMode(.alwaysOriginal) :
-            TDImage.Like.emptyMedium.withRenderingMode(.alwaysTemplate), for: .normal)
+        likeButton.tintColor = isLike ? TDColor.Primary.primary400 : TDColor.Neutral.neutral400
         likeLabel.setText("\(likeCount ?? 0)")
         configureCommentCount(with: commentCount)
         configureShareCount(with: shareCount)
@@ -60,8 +59,8 @@ final class SocialFooterView: UIView {
 
 private extension SocialFooterView {
     func setupConstraints() {
-        [likeButton, likeLabel, commentIconView, commentLabel, shareIconView,   shareLabel].forEach {
-            addSubview($0)
+        for item in [likeButton, likeLabel, commentIconView, commentLabel, shareIconView, shareLabel] {
+            addSubview(item)
         }
         likeButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
@@ -98,7 +97,7 @@ private extension SocialFooterView {
     }
     
     private func configureCommentCount(with commentCount: Int?) {
-        if let commentCount = commentCount, commentCount > 0 {
+        if let commentCount, commentCount > 0 {
             commentLabel.setText("\(commentCount)")
             commentIconView.isHidden = false
             commentLabel.isHidden = false
@@ -109,7 +108,7 @@ private extension SocialFooterView {
     }
     
     private func configureShareCount(with shareCount: Int?) {
-        if let shareCount = shareCount, shareCount > 0 {
+        if let shareCount, shareCount > 0 {
             shareLabel.setText("\(shareCount)")
             shareIconView.isHidden = false
             shareLabel.isHidden = false
