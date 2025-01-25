@@ -1,33 +1,41 @@
-//
-//  RoutineRepository.swift
-//  toduck
-//
-//  Created by 박효준 on 6/7/24.
-//
-
+import TDCore
 import TDDomain
-import Foundation
 
 public final class RoutineRepositoryImpl: RoutineRepository {
     public init() { }
     
-    public func fetchRoutineList() async throws -> [Routine] {
-        return Routine.dummy
+    public func fetchRoutine() async -> Result<Routine, TDDataError> {
+        return .success(
+            Routine(
+                id: nil,
+                title: "",
+                category: TDCategory(colorHex: "", imageName: ""),
+                isAllDay: false,
+                isPublic: false,
+                date: nil,
+                time: nil,
+                repeatDays: nil,
+                alarmTimes: nil,
+                memo: nil,
+                recommendedRoutines: nil,
+                isFinish: false
+            )
+        )
     }
     
-    public func createRoutine(routine: Routine) async throws -> Bool {
-        return false
+    public func fetchRoutineList() async -> Result<[Routine], TDDataError> {
+        .success([])
     }
     
-    public func fetchRoutine() async throws -> Routine {
-        return Routine.dummy.first!
+    public func updateRoutine(routineId: Int) async -> Result<Void, TDDataError> {
+        .success(())
     }
     
-    public func updateRoutine(routineId: Int) async throws -> Bool {
-        return false
+    public func deleteRoutine(routineId: Int) async -> Result<Void, TDDataError> {
+        .success(())
     }
     
-    public func deleteRoutine(routineId: Int) async throws -> Bool {
-        return false
+    public func createRoutine(routine: Routine) async -> Result<Void, TDDataError> {
+        .success(())
     }
 }

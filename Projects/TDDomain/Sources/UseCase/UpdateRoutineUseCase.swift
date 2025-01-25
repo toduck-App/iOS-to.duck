@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol UpdateRoutineUseCase {
-    func execute(routineId: Int) async throws -> Bool
+    func execute(routineId: Int) async throws
 }
 
 public final class UpdateRoutineUseCaseImpl: UpdateRoutineUseCase {
@@ -11,7 +11,7 @@ public final class UpdateRoutineUseCaseImpl: UpdateRoutineUseCase {
         self.repository = repository
     }
     
-    public func execute(routineId: Int) async throws -> Bool {
-        return try await repository.updateRoutine(routineId: routineId)
+    public func execute(routineId: Int) async throws {
+        try await repository.updateRoutine(routineId: routineId).get()
     }
 }
