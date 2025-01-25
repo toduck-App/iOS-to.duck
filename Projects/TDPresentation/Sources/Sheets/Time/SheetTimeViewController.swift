@@ -121,12 +121,22 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         layoutView.minuteCollectionView.isUserInteractionEnabled = !isOn
         layoutView.hourCollectionView.alpha = isOn ? 0.5 : 1.0
         layoutView.minuteCollectionView.alpha = isOn ? 0.5 : 1.0
+        
+        if isOn {
+            selectedHour = nil
+            selectedMinute = nil
+            deselectAllItems(in: layoutView.hourCollectionView)
+            deselectAllItems(in: layoutView.minuteCollectionView)
+        }
     }
     
     private func deselectAllItems(in collectionView: UICollectionView) {
+        layoutView.amButton.isSelected = false
+        layoutView.pmButton.isSelected = false
         for indexPath in collectionView.indexPathsForSelectedItems ?? [] {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
+        collectionView.reloadData()
     }
 }
 
