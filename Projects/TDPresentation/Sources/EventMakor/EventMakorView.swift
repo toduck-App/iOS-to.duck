@@ -48,7 +48,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    private let lockForm = TDFormSegmentView()
+    let lockForm = TDFormSegmentView()
     private let dividedLine3 = UIView.dividedLine()
     
     private let repeatDayForm = TDFormButtonsView(type: .repeatDay)

@@ -19,9 +19,12 @@ final class EventMakorCoordinator: Coordinator {
 
     func start(mode: ScheduleAndRoutineViewController.Mode) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
+        let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
         let viewModel = EventMakorViewModel(
+            mode: mode,
             createScheduleUseCase: createScheduleUseCase,
+            createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase
         )
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)

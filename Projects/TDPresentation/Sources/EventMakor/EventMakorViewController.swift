@@ -68,6 +68,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         eventMakorView.categoryViewsForm.delegate = self
         eventMakorView.dateForm.delegate = self
         eventMakorView.timeForm.delegate = self
+        eventMakorView.lockForm.delegate = self
         
         let categoryColors = viewModel.categories.compactMap { $0.colorHex.convertToUIColor() }
         eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
@@ -180,5 +181,13 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
 extension EventMakorViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
         input.send(.updateTextView(text))
+    }
+}
+
+// MARK: - SegmentViewDelegate
+extension EventMakorViewController: TDFormSegmentViewDelegate {
+    func segmentView(_ segmentView: TDFormSegmentView, didChangeToPublic isPublic: Bool) {
+        print("공개여부 변경: \(isPublic)")
+        input.send(.selectLockType(isPublic))
     }
 }

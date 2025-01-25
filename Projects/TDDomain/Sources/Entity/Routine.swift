@@ -1,10 +1,3 @@
-//
-//  Routine.swift
-//  toduck
-//
-//  Created by 박효준 on 5/31/24.
-//
-
 import Foundation
 
 struct RecommendedRoutine: Hashable {
