@@ -60,6 +60,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         tabBarController?.tabBar.isHidden = false
     }
     
+    // MARK: - Common Method
     override func configure() {
         navigationItem.rightBarButtonItem = registerButton
         eventMakorView.categoryTitleForm.delegate = self
@@ -84,9 +85,9 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                         } ?? [])
                 }
             }.store(in: &cancellables)
-        
     }
     
+    // MARK: Delegate Method
     func reloadCategoryView() {
         input.send(.fetchCategories)
     }
@@ -148,12 +149,14 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
 }
 
+// MARK: - EventMakorViewDelegate
 extension EventMakorViewController: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDFormMoveView, type: TDFormMoveViewType) {
         coordinator?.didTapMoveView(view, type: type)
     }
 }
 
+// MARK: - TDCategoryCellDelegate
 extension EventMakorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         input.send(.selectCategory(

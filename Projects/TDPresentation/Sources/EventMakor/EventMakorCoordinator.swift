@@ -71,6 +71,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
     }
 }
 
+// MARK: - Sheet Delegate
 extension EventMakorCoordinator: SheetColorDelegate {
     func didSaveCategory() {
         guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
