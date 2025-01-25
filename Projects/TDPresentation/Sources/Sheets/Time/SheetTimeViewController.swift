@@ -14,22 +14,33 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         didSet {
             layoutView.allDaySwitch.isOn = isAllDay
             handleAllDaySwitch(isOn: isAllDay)
+            updateSaveButtonState()
         }
     }
     private var isAM: Bool = true {
         didSet {
             layoutView.amButton.isSelected = isAM
             layoutView.pmButton.isSelected = !isAM
+            updateSaveButtonState()
         }
     }
-    private var selectedHour: Int?
-    private var selectedMinute: Int?
+    private var selectedHour: Int? {
+        didSet {
+            updateSaveButtonState()
+        }
+    }
+    private var selectedMinute: Int? {
+        didSet {
+            updateSaveButtonState()
+        }
+    }
     weak var coordinator: SheetTimeCoordinator?
     weak var delegate: SheetTimeDelegate?
     
     // MARK: - Setup & Configuration
     override func configure() {
         layoutView.backgroundColor = TDColor.baseWhite
+        layoutView.saveButton.isUserInteractionEnabled = false
         setupActions()
         setupCollectionView()
     }
@@ -50,6 +61,21 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         )
     }
     
+    private func updateSaveButtonState() {
+        // 저장 버튼 활성화 조건: 종일이 눌러져 있거나, 오전/오후, 시간, 분이 모두 선택된 경우
+        let isSaveEnabled = isAllDay || (selectedHour != nil && selectedMinute != nil && layoutView.amButton.isSelected != layoutView.pmButton.isSelected)
+        
+        layoutView.saveButton.isUserInteractionEnabled = isSaveEnabled
+        layoutView.saveButton.layer.borderWidth = 0
+        
+        var configuration = layoutView.saveButton.configuration ?? UIButton.Configuration.filled()
+        configuration.title = isSaveEnabled ? "저장" : "취소"
+        configuration.baseBackgroundColor = isSaveEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral200
+        configuration.baseForegroundColor = isSaveEnabled ? TDColor.baseWhite : TDColor.Neutral.neutral600
+        layoutView.saveButton.configuration = configuration
+    }
+    
+    // MARK: - Setup Actions
     private func setupActions() {
         /// 종일 설정
         layoutView.allDaySwitch.addAction(UIAction { [weak self] action in
@@ -59,34 +85,28 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         
         /// 오전/오후 설정
         layoutView.amButton.addAction(UIAction { [weak self] _ in
-            if (self?.layoutView.pmButton.isSelected) != nil {
-                self?.layoutView.pmButton.isSelected = false
-            }
-            self?.isAM = true
+            guard let self = self else { return }
+            self.isAM = true
         }, for: .touchUpInside)
         
         layoutView.pmButton.addAction(UIAction { [weak self] _ in
-            if (self?.layoutView.amButton.isSelected) != nil {
-                self?.layoutView.amButton.isSelected = false
-            }
-            self?.isAM = false
+            guard let self = self else { return }
+            self.isAM = false
         }, for: .touchUpInside)
         
         /// 취소/저장 버튼
-        layoutView.cancelButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
-            self?.dismiss(animated: true)
-        }, for: .touchUpInside)
-        
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
-            self?.delegate?.didTapSaveButton(
-                isAllDay: self?.isAllDay ?? false,
-                isAM: self?.isAM ?? true,
-                hour: self?.selectedHour ?? 0,
-                minute: self?.selectedMinute ?? 0
-            )
-            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
-            self?.dismiss(animated: true)
+            guard let self = self else { return }
+            if self.layoutView.saveButton.isEnabled {
+                self.delegate?.didTapSaveButton(
+                    isAllDay: self.isAllDay,
+                    isAM: self.isAM,
+                    hour: self.selectedHour ?? 0,
+                    minute: self.selectedMinute ?? 0
+                )
+            }
+            self.coordinator?.finishDelegate?.didFinish(childCoordinator: self.coordinator!)
+            self.dismiss(animated: true)
         }, for: .touchUpInside)
     }
     

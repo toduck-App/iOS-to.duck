@@ -84,9 +84,9 @@ final class SheetTimeView: BaseView {
     }()
     
     let saveButton = TDBaseButton(
-        title: "저장",
-        backgroundColor: TDColor.Primary.primary500,
-        foregroundColor: TDColor.baseWhite,
+        title: "취소",
+        backgroundColor: TDColor.Neutral.neutral100,
+        foregroundColor: TDColor.Neutral.neutral700,
         radius: 12,
         font: TDFont.boldHeader3.font
     )
