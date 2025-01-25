@@ -14,6 +14,8 @@ final class EventMakorViewModel: BaseViewModel {
         case updateLocationTextField(String)
         case updateTextView(String)
         case selectLockType(Bool)
+        case selectRepeatDay(index: Int)
+        case selectAlarm(index: Int)
     }
     
     enum Output {
@@ -37,8 +39,8 @@ final class EventMakorViewModel: BaseViewModel {
     private var isAllDay: Bool = false
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
-    private var repeatType: [TDWeekDay]?
-    private var alarm: [AlarmType]?
+    private var repeatDays: [TDWeekDay]?
+    private var alarms: [AlarmType]?
     private var location: String?
     private var memo: String?
     
@@ -56,35 +58,46 @@ final class EventMakorViewModel: BaseViewModel {
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
-            switch event {
-            case .fetchCategories:
-                Task { await self?.fetchCategories() }
-            case .selectCategory(let colorHex, let imageName):
-                self?.selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
-            case .selectDate(let startDay, let endDay):
-                self?.startDate = startDay
-                self?.endDate = endDay
-            case .selectTime(let isAllDay, let time):
-                self?.isAllDay = isAllDay
-                self?.time = time
-            case .selectLockType(let isPublic):
-                self?.isPublic = isPublic
-            case .saveEvent:
-                if self?.mode == .schedule {
-                    Task { await self?.saveSchedule() }
-                } else {
-                    Task { await self?.saveRoutine() }
-                }
-            case .updateTitleTextField(let title):
-                self?.title = title
-            case .updateLocationTextField(let location):
-                self?.location = location
-            case .updateTextView(let memo):
-                self?.memo = memo
-            }
+            self?.handleInput(event)
         }.store(in: &cancellables)
-        
         return output.eraseToAnyPublisher()
+    }
+
+    private func handleInput(_ event: Input) {
+        switch event {
+        case .fetchCategories:
+            Task { await fetchCategories() }
+        case .selectCategory(let colorHex, let imageName):
+            selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
+        case .selectDate(let startDay, let endDay):
+            startDate = startDay
+            endDate = endDay
+        case .selectTime(let isAllDay, let time):
+            self.isAllDay = isAllDay
+            self.time = time
+        case .selectLockType(let isPublic):
+            self.isPublic = isPublic
+        case .saveEvent:
+            saveEvent()
+        case .updateTitleTextField(let title):
+            self.title = title
+        case .updateLocationTextField(let location):
+            self.location = location
+        case .updateTextView(let memo):
+            self.memo = memo
+        case .selectRepeatDay(let index):
+            handleRepeatDaySelection(at: index)
+        case .selectAlarm(let index):
+            handleAlarmSelection(at: index)
+        }
+    }
+    
+    private func saveEvent() {
+        if mode == .schedule {
+            Task { await saveSchedule() }
+        } else {
+            Task { await saveRoutine() }
+        }
     }
     
     private func fetchCategories() async {
@@ -123,8 +136,8 @@ final class EventMakorViewModel: BaseViewModel {
                 endDate: endDate,
                 isAllDay: isAllDay,
                 time: time,
-                repeatDays: repeatType,
-                alarmTimes: alarm,
+                repeatDays: repeatDays,
+                alarmTimes: alarms,
                 place: location,
                 memo: memo,
                 isFinish: false
@@ -159,8 +172,8 @@ final class EventMakorViewModel: BaseViewModel {
                 isPublic: isPublic,
                 date: nil, // 루틴은 특정 날짜와 관계없으므로 nil
                 time: time,
-                repeatDays: repeatType,
-                alarmTimes: alarm,
+                repeatDays: repeatDays,
+                alarmTimes: alarms,
                 memo: memo,
                 recommendedRoutines: nil,
                 isFinish: false
@@ -173,5 +186,49 @@ final class EventMakorViewModel: BaseViewModel {
         } catch {
             TDLogger.error("루틴 생성 실패: \(error)")
         }
+    }
+    
+    private func handleRepeatDaySelection(at index: Int) {
+        let repeatDaysArray: [TDWeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+        
+        guard index >= 0, index < repeatDaysArray.count else {
+            TDLogger.error("Invalid repeat day index: \(index)")
+            return
+        }
+        
+        let selectedDay = repeatDaysArray[index]
+        if repeatDays == nil {
+            repeatDays = []
+        }
+        
+        if let existingIndex = repeatDays?.firstIndex(of: selectedDay) {
+            repeatDays?.remove(at: existingIndex) // 이미 선택된 경우 제거 (토글 기능)
+        } else {
+            repeatDays?.append(selectedDay) // 선택 추가
+        }
+        
+        TDLogger.info("현재 반복 요일: \(repeatDays ?? [])")
+    }
+
+    private func handleAlarmSelection(at index: Int) {
+        let alarmTypesArray: [AlarmType] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
+        
+        guard index >= 0, index < alarmTypesArray.count else {
+            TDLogger.error("Invalid alarm index: \(index)")
+            return
+        }
+        
+        let selectedAlarm = alarmTypesArray[index]
+        if alarms == nil {
+            alarms = []
+        }
+        
+        if let existingIndex = alarms?.firstIndex(of: selectedAlarm) {
+            alarms?.remove(at: existingIndex) // 이미 선택된 경우 제거 (토글 기능)
+        } else {
+            alarms?.append(selectedAlarm) // 선택 추가
+        }
+        
+        TDLogger.info("현재 알람: \(alarms ?? [])")
     }
 }

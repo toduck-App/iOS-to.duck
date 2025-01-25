@@ -51,9 +51,10 @@ final class EventMakorView: BaseView {
     let lockForm = TDFormSegmentView()
     private let dividedLine3 = UIView.dividedLine()
     
-    private let repeatDayForm = TDFormButtonsView(type: .repeatDay)
+    // 반복일, 알람
+    let repeatDayForm = TDFormButtonsView(type: .repeatDay)
     private let dividedLine4 = UIView.dividedLine()
-    private let alarmForm = TDFormButtonsView(type: .alarm)
+    let alarmForm = TDFormButtonsView(type: .alarm)
     private let dividedLine5 = UIView.dividedLine()
     
     // 장소 (일정에서만 사용됨)

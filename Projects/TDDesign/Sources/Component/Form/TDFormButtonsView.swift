@@ -2,6 +2,19 @@ import SnapKit
 import Then
 import UIKit
 
+public protocol TDFormButtonsViewDelegate: AnyObject {
+    /// 버튼이 눌렸을 때 호출됩니다.
+    /// - Parameters:
+    ///   - formButtonsView: 현재 `TDFormButtonsView` 인스턴스
+    ///   - type: 버튼 뷰의 타입 (`repeatDay` 또는 `alarm`)
+    ///   - selectedIndex: 눌린 버튼의 인덱스
+    func formButtonsView(
+        _ formButtonsView: TDFormButtonsView,
+        type: TDFormButtonsViewType,
+        didSelectIndex selectedIndex: Int
+    )
+}
+
 public enum TDFormButtonsViewType {
     case repeatDay
     case alarm
@@ -33,13 +46,16 @@ public final class TDFormButtonsView: UIView {
     
     // MARK: - Properties
     private let type: TDFormButtonsViewType
+    public weak var delegate: TDFormButtonsViewDelegate?
     
     // MARK: - Initialize
     public init(type: TDFormButtonsViewType) {
         self.type = type
         super.init(frame: .zero)
+        
         setupView()
         setupLayout()
+        setupActions()
     }
     
     @available(*, unavailable)
@@ -77,13 +93,15 @@ public final class TDFormButtonsView: UIView {
             }
         }()
         
-        buttons = buttonTitles.map {
-            TDSelectableButton(
-                title: $0,
+        buttons = buttonTitles.enumerated().map { index, title in
+            let button = TDSelectableButton(
+                title: title,
                 backgroundColor: TDColor.Neutral.neutral50,
                 foregroundColor: TDColor.Neutral.neutral800,
                 font: TDFont.mediumBody2.font
             )
+            button.tag = index
+            return button
         }
     }
     
@@ -119,5 +137,22 @@ public final class TDFormButtonsView: UIView {
         
         // 버튼 추가
         buttons.forEach { buttonHorizontalStackView.addArrangedSubview($0) }
+    }
+    
+    private func setupActions() {
+        buttons.forEach { button in
+            button.addTarget(
+                self,
+                action: #selector(buttonTapped(_:)),
+                for: .touchUpInside
+            )
+        }
+    }
+
+    @objc
+    private func buttonTapped(_ sender: UIButton) {
+        print("buttonTapped")
+        guard let index = buttons.firstIndex(of: sender as! TDSelectableButton) else { return }
+        delegate?.formButtonsView(self, type: type, didSelectIndex: index)
     }
 }
