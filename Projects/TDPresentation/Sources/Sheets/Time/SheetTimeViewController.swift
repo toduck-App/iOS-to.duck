@@ -11,9 +11,21 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: SheetTimeCoordinator?
     
+    private var isAllDay: Bool = false {
+        didSet {
+            layoutView.allDaySwitch.isOn = isAllDay
+            handleAllDaySwitch(isOn: isAllDay)
+        }
+    }
+    private var isAM: Bool = true {
+        didSet {
+            layoutView.amButton.isSelected = isAM
+            layoutView.pmButton.isSelected = !isAM
+        }
+    }
     private var selectedHour: Int?
     private var selectedMinute: Int?
-
+    
     // MARK: - Initializers
     init(viewModel: SheetTimeViewModel) {
         self.viewModel = viewModel
@@ -35,11 +47,8 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     private func setupCollectionView() {
         layoutView.hourCollectionView.delegate = self
         layoutView.hourCollectionView.dataSource = self
-        layoutView.hourCollectionView.allowsMultipleSelection = false
-
         layoutView.minuteCollectionView.delegate = self
         layoutView.minuteCollectionView.dataSource = self
-        layoutView.minuteCollectionView.allowsMultipleSelection = false
         
         layoutView.hourCollectionView.register(
             UICollectionViewCell.self,
@@ -55,21 +64,22 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         /// 종일 설정
         layoutView.allDaySwitch.addAction(UIAction { [weak self] action in
             guard let self = self, let switchControl = action.sender as? UISwitch else { return }
-            self.handleAllDaySwitch(isOn: switchControl.isOn)
+            self.isAllDay = switchControl.isOn
         }, for: .valueChanged)
         
         /// 오전/오후 설정
         layoutView.amButton.addAction(UIAction { [weak self] _ in
-            if ((self?.layoutView.pmButton.isSelected) != nil) {
+            if (self?.layoutView.pmButton.isSelected) != nil {
                 self?.layoutView.pmButton.isSelected = false
             }
-            print("Selected Time: AM")
+            self?.isAM = true
         }, for: .touchUpInside)
         
         layoutView.pmButton.addAction(UIAction { [weak self] _ in
             if (self?.layoutView.amButton.isSelected) != nil {
                 self?.layoutView.amButton.isSelected = false
             }
+            self?.isAM = false
         }, for: .touchUpInside)
         
         /// 취소/저장 버튼
@@ -126,11 +136,15 @@ extension SheetTimeViewController: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
+        print("Selected: \(indexPath.row)")
         if collectionView == layoutView.hourCollectionView {
             selectedHour = indexPath.row + 1
         } else {
             selectedMinute = indexPath.row * 5
         }
+        // 선택한 셀의 배경색 변경
+        collectionView.reloadData()
+        
         print("Selected Time: \(selectedHour ?? 0):\(selectedMinute ?? 0)")
     }
 }
@@ -140,42 +154,55 @@ extension SheetTimeViewController: UICollectionViewDelegate {
 
 // MARK: - UICollectionViewDataSource
 extension SheetTimeViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == layoutView.hourCollectionView {
-            return 12 // 1 ~ 12
-        } else {
-            return 12 // 00, 05, ..., 55
-        }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        12
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let reuseIdentifier = collectionView == layoutView.hourCollectionView ? "HourCell" : "MinuteCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
         let text = collectionView == layoutView.hourCollectionView
-            ? "\(indexPath.row + 1)"
-            : String(format: "%02d", indexPath.row * 5)
+        ? "\(indexPath.row + 1)"
+        : String(format: "%02d", indexPath.row * 5)
         
-        let isSelected = (collectionView == layoutView.hourCollectionView && indexPath.row + 1 == selectedHour) ||
-                         (collectionView == layoutView.minuteCollectionView && indexPath.row * 5 == selectedMinute)
+        // 기존 서브뷰 제거
+        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
         
-        let backgroundColor = isSelected ? TDColor.Primary.primary500 : TDColor.Neutral.neutral50
-        let textColor = isSelected ? TDColor.baseWhite : TDColor.Neutral.neutral500
-        
-        let selectableButton = TDSelectableButton(
-            title: text,
-            backgroundColor: backgroundColor,
-            foregroundColor: textColor,
-            radius: 8,
-            font: TDFont.mediumBody2.font
-        )
-        
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() } // 기존 뷰 제거
-        cell.contentView.addSubview(selectableButton)
-        selectableButton.snp.makeConstraints { make in
+        let containerView = UIView()
+        containerView.layer.cornerRadius = 8
+        containerView.layer.masksToBounds = true
+        cell.contentView.addSubview(containerView)
+        containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        let label = UILabel()
+        label.text = text
+        label.font = TDFont.mediumBody2.font
+        label.textAlignment = .center
+        containerView.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        // 선택 상태에 따라 UI 업데이트
+        if (collectionView == layoutView.hourCollectionView && indexPath.row + 1 == selectedHour) ||
+            (collectionView == layoutView.minuteCollectionView && indexPath.row * 5 == selectedMinute) {
+            containerView.backgroundColor = TDColor.Primary.primary100
+            label.textColor = TDColor.Primary.primary500
+        } else {
+            containerView.backgroundColor = TDColor.Neutral.neutral50
+            label.textColor = TDColor.Neutral.neutral500
         }
         
         return cell
     }
+    
 }
