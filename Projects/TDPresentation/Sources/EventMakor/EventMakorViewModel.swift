@@ -8,6 +8,7 @@ final class EventMakorViewModel: BaseViewModel {
         case fetchCategories
         case selectCategory(String, String)
         case selectDate(String, String)
+        case selectTime(Bool, Date?)
     }
     
     enum Output {
@@ -50,6 +51,9 @@ final class EventMakorViewModel: BaseViewModel {
             case .selectDate(let startDay, let endDay):
                 self?.startDate = startDay
                 self?.endDate = endDay
+            case .selectTime(let isAllDay, let time):
+                self?.isAllDay = isAllDay
+                self?.time = time
             }
         }.store(in: &cancellables)
         

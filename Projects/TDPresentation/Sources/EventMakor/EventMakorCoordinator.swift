@@ -65,6 +65,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
                 injector: injector
             )
             timeCoordinator.finishDelegate = self
+            timeCoordinator.delegate = self
             timeCoordinator.start()
         }
     }
@@ -81,5 +82,22 @@ extension EventMakorCoordinator: SheetCalendarDelegate {
     func didTapSaveButton(startDate: Date, endDate: Date?) {
         guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
         eventMakorViewController.updateSelectedDate(startDate: startDate, endDate: endDate)
+    }
+}
+
+extension EventMakorCoordinator: SheetTimeDelegate {
+    func didTapSaveButton(
+        isAllDay: Bool,
+        isAM: Bool,
+        hour: Int,
+        minute: Int
+    ) {
+        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        eventMakorViewController.updateSelectedTime(
+            isAllDay: isAllDay,
+            isAM: isAM,
+            hour: hour,
+            minute: minute
+        )
     }
 }

@@ -4,13 +4,12 @@ import SnapKit
 import TDDesign
 import Then
 
+protocol SheetTimeDelegate: AnyObject {
+    func didTapSaveButton(isAllDay: Bool, isAM: Bool, hour: Int, minute: Int)
+}
+
 final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     // MARK: - Properties
-    private let viewModel: SheetTimeViewModel
-    private let input = PassthroughSubject<SheetTimeViewModel.Input, Never>()
-    private var cancellables = Set<AnyCancellable>()
-    weak var coordinator: SheetTimeCoordinator?
-    
     private var isAllDay: Bool = false {
         didSet {
             layoutView.allDaySwitch.isOn = isAllDay
@@ -25,17 +24,8 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     }
     private var selectedHour: Int?
     private var selectedMinute: Int?
-    
-    // MARK: - Initializers
-    init(viewModel: SheetTimeViewModel) {
-        self.viewModel = viewModel
-        super.init()
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    weak var coordinator: SheetTimeCoordinator?
+    weak var delegate: SheetTimeDelegate?
     
     // MARK: - Setup & Configuration
     override func configure() {
@@ -89,23 +79,15 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         }, for: .touchUpInside)
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
-            guard let hour = self?.selectedHour, let minute = self?.selectedMinute else { return }
-            print("Selected Time: \(hour):\(minute)")
-            self?.input.send(.saveButtonTapped)
+            self?.delegate?.didTapSaveButton(
+                isAllDay: self?.isAllDay ?? false,
+                isAM: self?.isAM ?? true,
+                hour: self?.selectedHour ?? 0,
+                minute: self?.selectedMinute ?? 0
+            )
+            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
+            self?.dismiss(animated: true)
         }, for: .touchUpInside)
-    }
-    
-    override func binding() {
-        let output = viewModel.transform(input: input.eraseToAnyPublisher())
-        
-        output
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] event in
-                switch event {
-                case .saved:
-                    print("Saved successfully")
-                }
-            }.store(in: &cancellables)
     }
     
     // MARK: - Action Handlers
@@ -146,21 +128,14 @@ extension SheetTimeViewController: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        print("Selected: \(indexPath.row)")
         if collectionView == layoutView.hourCollectionView {
             selectedHour = indexPath.row + 1
         } else {
             selectedMinute = indexPath.row * 5
         }
-        // 선택한 셀의 배경색 변경
         collectionView.reloadData()
-        
-        print("Selected Time: \(selectedHour ?? 0):\(selectedMinute ?? 0)")
     }
 }
-
-
-
 
 // MARK: - UICollectionViewDataSource
 extension SheetTimeViewController: UICollectionViewDataSource {
@@ -214,5 +189,4 @@ extension SheetTimeViewController: UICollectionViewDataSource {
         
         return cell
     }
-    
 }

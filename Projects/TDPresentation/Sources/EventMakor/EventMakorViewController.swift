@@ -115,6 +115,34 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         }
     }
     
+    func updateSelectedTime(isAllDay: Bool, isAM: Bool, hour: Int, minute: Int) {
+        let backendFormatter = DateFormatter() // ViewModel 전달용 포맷터
+        backendFormatter.dateFormat = "HH:mm"
+        
+        let displayFormatter = DateFormatter() // 화면 표시용 포맷터
+        displayFormatter.locale = Locale(identifier: "ko_KR")
+        displayFormatter.dateFormat = "a h:mm"
+        
+        if isAllDay {
+            // "종일"로 표시 및 입력 이벤트 전송
+            eventMakorView.timeForm.updateDescription("종일")
+            input.send(.selectTime(isAllDay, nil))
+        } else {
+            // 선택된 Date 생성
+            let selectedDate: Date = {
+                var dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+                dateComponents.hour = isAM ? hour : (hour % 12) + 12 // 12시 예외 처리 포함
+                dateComponents.minute = minute
+                return Calendar.current.date(from: dateComponents) ?? Date()
+            }()
+            
+            let displayTime = displayFormatter.string(from: selectedDate)
+            eventMakorView.timeForm.updateDescription(displayTime)
+            input.send(.selectTime(isAllDay, selectedDate))
+            print("\(selectedDate) 선택된 시간: \(displayTime)")
+        }
+    }
+    
     private func didTapRegisterButton() {
         // TODO: - 저장 버튼 클릭
     }
