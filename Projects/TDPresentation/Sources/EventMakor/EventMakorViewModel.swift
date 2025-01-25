@@ -100,6 +100,83 @@ final class EventMakorViewModel: BaseViewModel {
         }
     }
     
+    private func saveSchedule() async {
+        guard validateScheduleInputs() else { return }
+        do {
+            let schedule = createSchedule()
+            try await createScheduleUseCase.execute(schedule: schedule)
+            TDLogger.info("일정 생성 성공: \(schedule)")
+            output.send(.savedEvent)
+        } catch {
+            TDLogger.error("일정 생성 실패: \(error)")
+        }
+    }
+    
+    // MARK: - Create Schedule & Routine
+    private func saveRoutine() async {
+        guard validateRoutineInputs() else { return }
+        do {
+            let routine = createRoutine()
+            try await createRoutineUseCase.execute(routine: routine)
+            TDLogger.info("루틴 생성 성공: \(routine)")
+            output.send(.savedEvent)
+        } catch {
+            TDLogger.error("루틴 생성 실패: \(error)")
+        }
+    }
+
+    private func validateScheduleInputs() -> Bool {
+        guard let title, let selectedCategory, let startDate, let endDate else {
+            TDLogger.error("필수 값 누락: \(title), \(selectedCategory), \(startDate), \(endDate)")
+            return false
+        }
+        return true
+    }
+
+    private func validateRoutineInputs() -> Bool {
+        guard let title, let selectedCategory else {
+            TDLogger.error("필수 값 누락: \(title), \(selectedCategory)")
+            return false
+        }
+        return true
+    }
+
+    // MARK: - Object Creation
+    private func createSchedule() -> Schedule {
+        Schedule(
+            id: nil,
+            title: title!,
+            category: selectedCategory!,
+            startDate: startDate!,
+            endDate: endDate!,
+            isAllDay: isAllDay,
+            time: time,
+            repeatDays: repeatDays,
+            alarmTimes: alarms,
+            place: location,
+            memo: memo,
+            isFinish: false
+        )
+    }
+
+    private func createRoutine() -> Routine {
+        Routine(
+            id: nil,
+            title: title!,
+            category: selectedCategory!,
+            isAllDay: isAllDay,
+            isPublic: isPublic,
+            date: nil,
+            time: time,
+            repeatDays: repeatDays,
+            alarmTimes: alarms,
+            memo: memo,
+            recommendedRoutines: nil,
+            isFinish: false
+        )
+    }
+    
+    // MARK: - Fetch 카테고리 목록
     private func fetchCategories() async {
         do {
             let categories = try await fetchCategoriesUseCase.execute()
@@ -111,83 +188,7 @@ final class EventMakorViewModel: BaseViewModel {
         }
     }
     
-    private func saveSchedule() async {
-        guard let title = title,
-              let selectedCategory = selectedCategory,
-              let startDate = startDate,
-              let endDate = endDate else {
-            TDLogger.error(
-                """
-                필수 값 누락: title: \(String(describing: title)),
-                selectedCategory: \(String(describing: selectedCategory)),
-                startDate: \(String(describing: startDate)),
-                endDate: \(String(describing: endDate))는 필수입니다.
-                """
-            )
-            return
-        }
-        
-        do {
-            let schedule = Schedule(
-                id: nil,
-                title: title,
-                category: selectedCategory,
-                startDate: startDate,
-                endDate: endDate,
-                isAllDay: isAllDay,
-                time: time,
-                repeatDays: repeatDays,
-                alarmTimes: alarms,
-                place: location,
-                memo: memo,
-                isFinish: false
-            )
-            
-            try await createScheduleUseCase.execute(schedule: schedule)
-            TDLogger.info("일정 생성 성공: \(schedule)")
-            output.send(.savedEvent)
-        } catch {
-            TDLogger.error("일정 생성 실패: \(error)")
-        }
-    }
-    
-    private func saveRoutine() async {
-        guard let title = title,
-              let selectedCategory = selectedCategory else {
-            TDLogger.error(
-                """
-                필수 값 누락: title: \(String(describing: title)),
-                selectedCategory: \(String(describing: selectedCategory))는 필수입니다.
-                """
-            )
-            return
-        }
-        
-        do {
-            let routine = Routine(
-                id: nil, // 새로 생성된 루틴이므로 ID는 nil
-                title: title,
-                category: selectedCategory,
-                isAllDay: isAllDay,
-                isPublic: isPublic,
-                date: nil, // 루틴은 특정 날짜와 관계없으므로 nil
-                time: time,
-                repeatDays: repeatDays,
-                alarmTimes: alarms,
-                memo: memo,
-                recommendedRoutines: nil,
-                isFinish: false
-            )
-            
-            // Create 요청 실행
-            try await createRoutineUseCase.execute(routine: routine)
-            TDLogger.info("루틴 생성 성공: \(routine)")
-            output.send(.savedEvent) // 이벤트 생성 성공 알림 전송
-        } catch {
-            TDLogger.error("루틴 생성 실패: \(error)")
-        }
-    }
-    
+    // MARK: - 반복 날짜와 알람에 대한 설정
     private func handleRepeatDaySelection(at index: Int) {
         let repeatDaysArray: [TDWeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
         
