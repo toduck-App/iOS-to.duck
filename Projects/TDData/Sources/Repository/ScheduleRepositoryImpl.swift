@@ -1,42 +1,27 @@
-//
-//  ScheduleRepository.swift
-//  toduck
-//
-//  Created by 박효준 on 6/7/24.
-//
-
+import TDCore
 import TDDomain
 import Foundation
 
 public final class ScheduleRepositoryImpl: ScheduleRepository {
     public init() { }
     
-    public func fetchSchedule() async throws -> Schedule {
-        return Schedule(
-            id: nil,
-            title: "임시 일정",
-            category: TDCategory(colorHex: "#123456", imageName: "car"),
-            startDate: "",
-            endDate: "",
-            isAllDay: true,
-            time: nil,
-            repeatDays: nil,
-            alarmTimes: nil,
-            place: nil,
-            memo: nil,
-            isFinish: false
-        )
+    public func createSchedule(schedule: Schedule) async -> Result<Void, TDDataError> {
+        return .success(())
     }
     
-    public func fetchScheduleList() async throws -> [Schedule] {
-        return [
+    public func fetchScheduleList() async -> Result<[Schedule], TDDataError> {
+        return .success([])
+    }
+    
+    public func fetchSchedule() async -> Result<Schedule, TDDataError> {
+        return .success(
             Schedule(
-                id: nil,
-                title: "임시 일정",
-                category: TDCategory(colorHex: "#123456", imageName: "car"),
+                id: 0,
+                title: "title",
+                category: TDCategory(colorHex: "", imageName: ""),
                 startDate: "",
                 endDate: "",
-                isAllDay: true,
+                isAllDay: false,
                 time: nil,
                 repeatDays: nil,
                 alarmTimes: nil,
@@ -44,23 +29,18 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
                 memo: nil,
                 isFinish: false
             )
-        ]
+        )
     }
     
-    public func moveTomorrowSchedule(scheduleId: Int) async throws -> Bool {
-        return false
+    public func updateSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
+        return .success(())
     }
     
-    public func createSchedule(schedule: Schedule) async throws -> Bool {
-        return false
+    public func deleteSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
+        return .success(())
     }
     
-    
-    public func updateSchedule(scheduleId: Int) async throws -> Bool {
-        return false
-    }
-    
-    public func deleteSchedule(scheduleId: Int) async throws -> Bool {
-        return false
+    public func moveTomorrowSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
+        return .success(())
     }
 }

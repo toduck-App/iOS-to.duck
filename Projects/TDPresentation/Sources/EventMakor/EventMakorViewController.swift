@@ -17,7 +17,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         title: "저장",
         primaryAction: UIAction {
             [weak self] _ in
-            self?.didTapRegisterButton()
+            self?.input.send(.saveEvent)
         }).then {
             $0.tintColor = TDColor.Neutral.neutral700
         }
@@ -63,6 +63,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     // MARK: - Common Method
     override func configure() {
         navigationItem.rightBarButtonItem = registerButton
+        eventMakorView.titleForm.delegate = self
         eventMakorView.categoryTitleForm.delegate = self
         eventMakorView.categoryViewsForm.delegate = self
         eventMakorView.dateForm.delegate = self
@@ -83,6 +84,8 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                     self?.eventMakorView.categoryViewsForm.setupCategoryView(
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                         } ?? [])
+                case .savedEvent:
+                    self?.navigationController?.popViewController(animated: true)
                 }
             }.store(in: &cancellables)
     }
@@ -143,10 +146,6 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             print("\(selectedDate) 선택된 시간: \(displayTime)")
         }
     }
-    
-    private func didTapRegisterButton() {
-        // TODO: - 저장 버튼 클릭
-    }
 }
 
 // MARK: - EventMakorViewDelegate
@@ -163,5 +162,23 @@ extension EventMakorViewController: TDCategoryCellDelegate {
             color.convertToHexString() ?? "",
             UIImage.reverseCategoryDictionary[image] ?? "none"
         ))
+    }
+}
+
+// MARK: - TextFieldDelegate
+extension EventMakorViewController: TDFormTextFieldDelegate {
+    func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
+        if textField == eventMakorView.titleForm {
+            input.send(.updateTitleTextField(text))
+        } else {
+            input.send(.updateLocationTextField(text))
+        }
+    }
+}
+
+// MARK: - TextViewDelegate
+extension EventMakorViewController: TDFormTextViewDelegate {
+    func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
+        input.send(.updateTextView(text))
     }
 }

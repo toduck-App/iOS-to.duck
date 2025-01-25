@@ -12,7 +12,7 @@ final class EventMakorView: BaseView {
     }
     
     // 제목
-    private let titleForm = TDFormTextField(
+    let titleForm = TDFormTextField(
         title: "일정",
         isRequired: true,
         maxCharacter: 20,
@@ -57,7 +57,7 @@ final class EventMakorView: BaseView {
     private let dividedLine5 = UIView.dividedLine()
     
     // 장소 (일정에서만 사용됨)
-    private let locationForm = TDFormTextField(
+    let locationForm = TDFormTextField(
         image: TDImage.locationMedium,
         title: "장소",
         isRequired: false,
@@ -66,7 +66,7 @@ final class EventMakorView: BaseView {
     )
     
     // 메모
-    private let memoTextView = TDFormTextView(
+    let memoTextView = TDFormTextView(
         image: TDImage.Memo.lineMedium,
         title: "메모",
         isRequired: false,
