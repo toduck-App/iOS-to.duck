@@ -98,12 +98,13 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
 		//save button
 		layoutView.saveButton.addAction(
-			UIAction { _ in
+			UIAction { _ in                
 				self.input.send(
 					.updateTimerSetting(
                         setting: TDTimerSetting(
 							focusDuration: self.focusTime,
 							foucsCount: self.focusCount,
+                            maxFocusCount: self.viewModel.timerSetting?.maxFocusCount ?? 4,
 							restDuration: self.restTime)))
                 
 				self.close()

@@ -8,12 +8,14 @@
 public struct TDTimerSetting {
     public var focusDuration: Int
     public var foucsCount: Int
+    public var maxFocusCount: Int
     public var restDuration: Int
         
-    public init(focusDuration: Int, foucsCount: Int, restDuration: Int) {
+    public init(focusDuration: Int, foucsCount: Int, maxFocusCount: Int, restDuration: Int) {
         self.focusDuration = focusDuration
         self.foucsCount = foucsCount
         self.restDuration = restDuration
+        self.maxFocusCount = maxFocusCount
     }
     
     public func toMiniutes() -> Int {
@@ -26,7 +28,7 @@ public struct TDTimerSetting {
 //MARK: - Dummy Extension
 extension TDTimerSetting {
     public static func dummy() -> TDTimerSetting {
-        return TDTimerSetting(focusDuration: 30,foucsCount: 1,restDuration: 10)
+        return TDTimerSetting(focusDuration: 30,foucsCount: 1,maxFocusCount: 4,restDuration: 10)
     }
 }
 
