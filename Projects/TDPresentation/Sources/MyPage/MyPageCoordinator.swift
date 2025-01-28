@@ -44,4 +44,14 @@ extension MyPageCoordinator: NavigationDelegate {
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
     }
+    
+    func didTapProfileButton() {
+        let editProfileCoordinator = EditProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        editProfileCoordinator.finishDelegate = self
+        childCoordinators.append(editProfileCoordinator)
+        editProfileCoordinator.start()
+    }
 }

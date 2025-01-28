@@ -18,12 +18,12 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         self.view.backgroundColor = .white
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
         
         if let responderEvent = event as? CustomEventWrapper {
             if responderEvent.customType == .profileImageTapped {
-                // TODO: coordinator로 화면 전환
+                coordinator?.didTapProfileButton()
             }
         }
     }

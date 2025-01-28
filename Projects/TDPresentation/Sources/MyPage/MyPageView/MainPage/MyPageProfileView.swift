@@ -49,6 +49,8 @@ final class MyPageProfileView: UIView {
         stackView.spacing = LayoutConstants.followInfoStackViewSpacing
         return stackView
     }()
+    
+    private var isProfileImageTapped = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,11 +73,28 @@ final class MyPageProfileView: UIView {
         let touchLocation = touch.location(in: self)
         let profileFrame = profileImageView.convert(profileImageView.bounds, to: self)
         
-        if profileFrame.contains(touchLocation) {
+        isProfileImageTapped = profileFrame.contains(touchLocation)
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        prepareTouchEvent(.unknown, touches: touches, event: event)
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        
+        guard let touch = touches.first else { return }
+        let touchLocation = touch.location(in: self)
+        let profileFrame = profileImageView.convert(profileImageView.bounds, to: self)
+        
+        if isProfileImageTapped && profileFrame.contains(touchLocation) {
             prepareTouchEvent(.profileImageTapped, touches: touches, event: event)
         } else {
             prepareTouchEvent(.unknown, touches: touches, event: event)
         }
+        
+        isProfileImageTapped = false
     }
 }
 
@@ -121,7 +140,7 @@ private extension MyPageProfileView {
     }
     
     func prepareTouchEvent(_ type: ResponderEventType, touches: Set<UITouch>, event: UIEvent?) {
-        next?.touchesBegan(touches, with: CustomEventWrapper(event: event, type: type))
+        next?.touchesEnded(touches, with: CustomEventWrapper(event: event, type: type))
     }
 }
 
