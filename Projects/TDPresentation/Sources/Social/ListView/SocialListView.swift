@@ -52,7 +52,7 @@ final class SocialListView: BaseView {
         anchorView: dropDownAnchorView,
         selectedOption: dropDownDataSource[0].rawValue,
         layout: .trailing,
-        width: 100
+        width: 110
     ).then {
         $0.dataSource = dropDownDataSource.map(\.dropdownItem)
     }
