@@ -8,11 +8,11 @@ enum SocialSortType: String, CaseIterable {
     var image: TDDropdownItem.SelectableImage? {
         switch self {
         case .recent:
-            return (TDImage.Sort.recent, nil)
+            return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
         case .comment:
-            return (TDImage.Sort.comment, nil)
+            return (TDImage.Sort.commentEmpty, TDImage.Sort.commentFill)
         case .sympathy:
-            return (TDImage.Sort.sympathy, nil)
+            return (TDImage.Sort.sympathyEmpty, TDImage.Sort.sympathyFill)
         }
     }
     
@@ -20,7 +20,7 @@ enum SocialSortType: String, CaseIterable {
         return TDDropdownItem(
             title: rawValue,
             leftImage: nil,
-            rightImage: nil
+            rightImage: image
         )
     }
 }

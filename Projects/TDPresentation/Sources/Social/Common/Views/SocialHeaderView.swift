@@ -26,7 +26,7 @@ final class SocialHeaderView: UIView {
     private(set) lazy var dropDownHoverView = TDDropdownHoverView(
         anchorView: dotIconView,
         layout: .trailing,
-        width: 100
+        width: 110
     ).then{
         $0.dataSource = SocialFeedMoreType.allCases.map { $0.dropdownItem }
         $0.delegate = self

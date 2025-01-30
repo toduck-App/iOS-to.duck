@@ -85,7 +85,7 @@ public enum TDImage {
         public static let small = TDDesignAsset.Images.commentSmall.image
         public static let rightMedium = TDDesignAsset.Images.commentRightMedium.image
         public static let leftMedium = TDDesignAsset.Images.commentLeftMedium.image
-        public static let fillMedium = TDDesignAsset.Images.commentFillMedium.image
+        public static let emptyMedium = TDDesignAsset.Images.commentEmptyMedium.image
     }
     
     public enum Profile {
@@ -271,5 +271,14 @@ public enum TDImage {
     public enum Pen {
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
+    }
+    
+    public enum Sort{
+        public static let commentEmpty = TDDesignAsset.Images.commentEmptySmall.image
+        public static let recentEmpty = TDDesignAsset.Images.timeEmptySmall.image
+        public static let sympathyEmpty = TDDesignAsset.Images.likeEmptySmall.image
+        public static let commentFill = TDDesignAsset.Images.commentFillSmall.image
+        public static let recentFill = TDDesignAsset.Images.timeFillSmall.image
+        public static let sympathyFill = TDDesignAsset.Images.likeFillSmall.image
     }
 }

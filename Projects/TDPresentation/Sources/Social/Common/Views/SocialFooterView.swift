@@ -18,7 +18,7 @@ final class SocialFooterView: UIView {
     lazy var commentIconView = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Comment.fillMedium
+        $0.image = TDImage.Comment.emptyMedium
     }
     
     lazy var shareIconView = UIImageView().then {
