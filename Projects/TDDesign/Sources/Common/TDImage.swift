@@ -25,6 +25,7 @@ public enum TDImage {
     public static let reportMedium = TDDesignAsset.Images.reportMedium.image
     public static let reportFillMedium = TDDesignAsset.Images.reportFillMedium.image
     public static let shareMedium = TDDesignAsset.Images.shareMedium.image
+    public static let share2Medium = TDDesignAsset.Images.share2Medium.image
     public static let sortMedium = TDDesignAsset.Images.sortMedium.image
     public static let trashMedium = TDDesignAsset.Images.trashMedium.image
     public static let trashWhiteMedium = TDDesignAsset.Images.trashWhiteMedium.image
@@ -273,12 +274,17 @@ public enum TDImage {
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
     }
     
-    public enum Sort{
+    public enum Sort {
         public static let commentEmpty = TDDesignAsset.Images.commentEmptySmall.image
         public static let recentEmpty = TDDesignAsset.Images.timeEmptySmall.image
         public static let sympathyEmpty = TDDesignAsset.Images.likeEmptySmall.image
         public static let commentFill = TDDesignAsset.Images.commentFillSmall.image
         public static let recentFill = TDDesignAsset.Images.timeFillSmall.image
         public static let sympathyFill = TDDesignAsset.Images.likeFillSmall.image
+    }
+    
+    public enum Scrap {
+        public static let emptyMedium = TDDesignAsset.Images.scrapEmptyMedium.image
+        public static let filledMedium = TDDesignAsset.Images.scrapFillMedium.image
     }
 }
