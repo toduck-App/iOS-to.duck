@@ -50,11 +50,11 @@ final class TimerUseCaseImpl: TimerUseCase {
 	func updateRemainTime() {
 		guard let remainTime = remainTime else { return }
 		if remainTime > 1 {
-			TDLogger.debug("remainTime: \(remainTime)")
+			TDLogger.debug("[TimerUseCase] remainTime: \(remainTime)")
 			self.remainTime = remainTime - 1
 		} else {
 			reset()
-			TDLogger.debug("reset Timer")
+			TDLogger.debug("[TimerUseCase] reset Timer")
 		}
 	}
 
