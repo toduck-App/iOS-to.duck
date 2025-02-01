@@ -46,6 +46,7 @@ final class SocialHeaderView: UIView {
             break
         case .detail:
             dotIconView.isHidden = true
+            dropDownHoverView.isHidden = true
         }
     }
     
