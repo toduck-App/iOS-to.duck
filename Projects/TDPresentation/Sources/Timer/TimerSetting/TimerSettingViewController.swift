@@ -54,10 +54,10 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
 		//Debug
 		TDLogger.debug(
-			"setting: \(setting.focusDuration) \(setting.foucsCount) \(setting.restDuration)"
+			"[TimerSettingViewController] setting: \(setting.focusDuration) \(setting.focusCount) \(setting.restDuration)"
 		)
 		self.focusTime = setting.focusDuration
-		self.focusCount = setting.foucsCount
+		self.focusCount = setting.focusCount
 		self.restTime = setting.restDuration
 
 	}
@@ -104,7 +104,6 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                         setting: TDTimerSetting(
 							focusDuration: self.focusTime,
 							foucsCount: self.focusCount,
-                            maxFocusCount: self.viewModel.timerSetting?.maxFocusCount ?? 4,
 							restDuration: self.restTime)))
                 
 				self.close()
