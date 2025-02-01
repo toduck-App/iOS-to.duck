@@ -15,9 +15,12 @@ final class TimerView: BaseView {
 		$0.backgroundColor = UIColor(red: 1.00, green: 0.75, blue: 0.58, alpha: 1.00)
 	}
 
-	let focusCountStackView = TDFocusCountStack()
-
-	//views
+    let focusCountStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.distribution = .fillEqually
+    }
+    
 	let bboduckView = BboduckTimerView()
 	let simpleView = SimpleTimerView()
 
@@ -58,7 +61,7 @@ final class TimerView: BaseView {
 		addSubview(simpleView)
 		addSubview(bboduckView)
 	}
-
+    
 	override func configure() {
 		simpleView.layer.transform = CATransform3DMakeRotation(.pi, 0, 1, 0)
 		simpleView.isHidden = true
@@ -72,7 +75,7 @@ final class TimerView: BaseView {
 			}
 		}
 
-		//TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
+		//TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
 		remainedFocusTimeLabel.snp.makeConstraints {
 			$0.top.equalTo(safeAreaLayoutGuide).offset(36)
 			$0.centerX.equalToSuperview()

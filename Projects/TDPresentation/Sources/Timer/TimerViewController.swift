@@ -9,112 +9,203 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 	weak var coordinator: TimerCoordinator?
 	private let viewModel: TimerViewModel!
 	private let input = PassthroughSubject<TimerViewModel.Input, Never>()
-	private let imageStep = 5
 
 	private var cancellables = Set<AnyCancellable>()
 	private var theme: TDTimerTheme?
 
-	//MARK: - Initializer
+	// MARK: - Initializer
+
 	init(viewModel: TimerViewModel) {
 		self.viewModel = viewModel
 		super.init()
 	}
 
 	required init?(coder: NSCoder) {
-		self.viewModel = nil
+		viewModel = nil
 		super.init(coder: coder)
 	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
+		//아래의 함수들 configure에 넣으면 작동이 안함
+
+		input.send(.fetchFocusCount)
 		input.send(.fetchTimerSetting)
 		input.send(.fetchTimerInitialStatus)
+		updateMaxFocusCount()
+		updateFocusCount()
 	}
 
 	override func configure() {
-		//navigation bar 여기다 넣기
 		setupNavigation()
-		//timer buttons
+
+		// timer buttons
 		layoutView.playButton.addAction(
 			UIAction { _ in
 				self.input.send(.startTimer)
-			}, for: .touchUpInside)
+			}, for: .touchUpInside
+		)
 
 		layoutView.pauseButton.addAction(
 			UIAction { _ in
 				self.input.send(.stopTimer)
-			}, for: .touchUpInside)
+			}, for: .touchUpInside
+		)
 
 		layoutView.resetButton.addAction(
 			UIAction { _ in
 				self.input.send(.resetTimer)
-			}, for: .touchUpInside)
+			}, for: .touchUpInside
+		)
 
 		layoutView.restartButton.addAction(
 			UIAction { _ in
 				self.input.send(.restartTimer)
-			}, for: .touchUpInside)
-
+			}, for: .touchUpInside
+		)
 	}
 
 	override func binding() {
 		let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
+		// TODO: 각 케이스 함수로 빼기
 		output.sink { [weak self] event in
+			TDLogger.debug("[TimerViewController] revice event: \(event)")
 			DispatchQueue.main.async {
 				switch event {
-				case .updateTimer(let remainedTime):
-					self?.updateImage(remainedTime: remainedTime)
-					self?.updateTimerLabel(remainedTime: remainedTime)
-				case .requestToast(let type, let title, let message):
-					self?.showToast(type: type, title: title, message: message)
-				case .receiveTimerRunningStatus(let isRunning):
-					//초기 로드시 00분으로 표시 ?? 나중에 다시 바꿔야할듯;;
-					guard let isRunning = isRunning else {
-						self?.handleControlStack(.initilize)
-						return
-					}
-					if isRunning {
-						self?.handleControlStack(.playing)
-					} else {
-						self?.handleControlStack(.pause)
-					}
-				case .finishTimer:
-					self?.handleControlStack(.pause)
-					self?.layoutView.focusCountStackView.count += 1
+				case let .updatedTimer(remainedTime):
+					self?.updateTimer(remainedTime)
+				case let .updatedTimerRunning(isRunning):
+					self?.updateTimerRunning(isRunning)
+				case .finishedTimer:
+					self?.finishedTimer()
+				case .increasedFocusCount, .resetedFocusCount, .fetchedFocusCount:
+					self?.updateFocusCount()
+					self?.updateMaxFocusCount()
+				case .increasedMaxFocusCount, .decreasedMaxFocusCount:
+					self?.updateMaxFocusCount()
 				}
 			}
 		}.store(in: &cancellables)
 	}
 
-    func setupNavigation() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: TDImage.Calendar.top2Medium)
+	func setupNavigation() {
+		navigationItem.leftBarButtonItem = UIBarButtonItem(
+			image: TDImage.Calendar.top2Medium)
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: TDImage.Dot.verticalMedium,
-            primaryAction: UIAction { _ in
-                let timerSettingViewController = TimerSettingViewController(
-                    viewModel: self.viewModel)
+		navigationItem.rightBarButtonItem = UIBarButtonItem(
+			image: TDImage.Dot.verticalMedium,
+			primaryAction: UIAction { _ in
+				let timerSettingViewController = TimerSettingViewController(
+					viewModel: self.viewModel)
 
-                let sheetController = SheetViewController(
-                    controller: timerSettingViewController, sizes: [.intrinsic],
-                    options: SheetOptions(
-                        shrinkPresentingViewController: false
-                    ))
-                sheetController.cornerCurve = .circular
-                sheetController.gripSize = .zero
-                sheetController.allowPullingPastMaxHeight = false
-                self.present(sheetController, animated: true, completion: nil)
-            })
+				let sheetController = SheetViewController(
+					controller: timerSettingViewController, sizes: [.intrinsic],
+					options: SheetOptions(
+						shrinkPresentingViewController: false
+					)
+				)
+				sheetController.cornerCurve = .circular
+				sheetController.gripSize = .zero
+				sheetController.allowPullingPastMaxHeight = false
+				self.present(sheetController, animated: true, completion: nil)
+			}
+		)
 
-        navigationItem.leftBarButtonItem?.tintColor = TDColor.Primary.primary300
-        navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
-    }
+		navigationItem.leftBarButtonItem?.tintColor = TDColor.Primary.primary300
+		navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
+	}
 
-    
-	//MARK: - private methods
+}
+
+extension TimerViewController {
+	private func finishedTimer() {
+		handleControlStack(.pause)
+		showToast(type: .orange, title: "휴식 시간 끝 💡️", message: "집중할 시간이에요 ! 자리에 앉아볼까요?")
+
+		input.send(.increaseFocusCount)
+	}
+
+	private func updateTimer(_ remainedTime: Int) {
+		guard let setting = viewModel.timerSetting else { return }
+		let imageStep = 5
+
+		// 이미지 업데이트
+		let timePerImage = setting.focusDuration / imageStep
+		let elapsedTime = setting.focusDuration - remainedTime
+		let imageIndex = min(elapsedTime / timePerImage, imageStep - 1)
+
+		let _ = "focus_0\(imageIndex + 1)"  // 임시 코드
+
+		// Label 업데이트
+		let second = remainedTime % 60
+		let minute = (remainedTime / 60) % 60
+		let hour = minute / 60
+
+		layoutView.remainedFocusTimeLabel.text =
+			hour >= 1
+			? String(format: "%d:%02d:%02d", hour, minute, second)
+			: String(format: "%02d:%02d", minute, second)
+	}
+
+	private func updateTimerRunning(_ isRunning: Bool?) {
+		guard let isRunning = isRunning else {
+            handleControlStack(.initilize); return
+		}
+		if isRunning {
+			handleControlStack(.playing)
+		} else {
+			handleControlStack(.pause)
+		}
+	}
+
+	// TODO: Theme 설정
+	private func updateTheme(_: TDTimerTheme) {}
+
+	private func updateFocusCount() {
+		guard let setting = viewModel.timerSetting else { return }
+		TDLogger.debug(
+			"[TimerViewController] \(viewModel.focusCount)/\(setting.focusCount)")
+
+		layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+		for i in 1...setting.focusCount {
+			if i <= viewModel.focusCount {
+				layoutView.focusCountStackView.addArrangedSubview(
+					createFocusCountTomatoView())
+			} else {
+				layoutView.focusCountStackView.addArrangedSubview(
+					createFocusCountEmptyView())
+			}
+		}
+	}
+
+	private func updateMaxFocusCount() {
+		guard let setting = viewModel.timerSetting else { return }
+
+		layoutView.focusCountStackView.arrangedSubviews.forEach { view in
+			layoutView.focusCountStackView.removeArrangedSubview(view)
+			view.removeFromSuperview()
+		}
+
+		// 1부터 setting.focusCount까지 반복하면서,
+		// 현재 포커스 카운트(viewModel.focusCount) 이하이면 토마토뷰, 아니면 empty 뷰 추가
+		for i in 1...setting.focusCount {
+			if i <= viewModel.focusCount {
+				layoutView.focusCountStackView.addArrangedSubview(
+					createFocusCountTomatoView())
+			} else {
+				layoutView.focusCountStackView.addArrangedSubview(
+					createFocusCountEmptyView())
+			}
+		}
+
+	}
+}
+
+extension TimerViewController {
+	// MARK: - private methods
 
 	private func handleControlStack(_ state: TimerControlStackState) {
 		let initStack = [layoutView.playButton]
@@ -137,40 +228,40 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 		}
 		layoutView.layoutIfNeeded()
 	}
-	private func updateImage(remainedTime: Int) {
-		guard let setting = self.viewModel.timerSetting else { return }
-		let focusTime = setting.focusDuration
 
-		let dividedTime: Int = focusTime / imageStep
-		let index: Int = (focusTime - remainedTime) / dividedTime
-		_ =
-			["focus_01", "focus_02", "focus_03", "focus_04", "focus_05"][
-				index < imageStep ? index : imageStep - 1]
-		TDLogger.debug("image index: \(index)")
-	}
+	// MARK: - create views
 
-	private func updateTimerLabel(remainedTime: Int) {
-		let second = remainedTime % 60
-		let minute = (remainedTime / 60) % 60
-		let hour = minute / 60
-		if hour >= 1 {
-			self.layoutView.remainedFocusTimeLabel.text = String(
-				format: "%d:%02d:%02d", hour, minute, second
-			)
-		} else {
-			self.layoutView.remainedFocusTimeLabel.text = String(
-				format: "%02d:%02d", minute, second)
+	private func createFocusCountTomatoView() -> UIImageView {
+		let size = 16
+		return UIImageView().then {
+			$0.image = TDImage.Tomato.tomato
+
+			$0.snp.makeConstraints {
+				$0.size.equalTo(size)
+			}
 		}
 	}
 
-	//TODO: 나중에 고치기
-	private func updateTheme(_ theme: TDTimerTheme) {
+	private func createFocusCountEmptyView() -> UIView {
+		let size = 16
+		return UIView().then {
+			$0.layer.borderColor = TDColor.Primary.primary200.cgColor
+			$0.layer.borderWidth = 1
+			$0.layer.cornerRadius = CGFloat(size / 2)
+			$0.backgroundColor = TDColor.Primary.primary25
 
+			$0.snp.makeConstraints {
+				$0.size.equalTo(size)
+			}
+		}
 	}
+
 }
 
-enum TimerControlStackState {
-	case initilize
-	case playing
-	case pause
+extension TimerViewController {
+	enum TimerControlStackState {
+		case initilize
+		case playing
+		case pause
+	}
 }
