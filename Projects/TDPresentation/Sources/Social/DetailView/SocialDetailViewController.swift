@@ -15,7 +15,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     
     weak var coordinator: SocialDetailCoordinator?
     
-    private let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
+    let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
     private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
     private let viewModel: SocialDetailViewModel!
     private var cancellables = Set<AnyCancellable>()
@@ -23,21 +23,12 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     public init(viewModel: SocialDetailViewModel) {
         self.viewModel = viewModel
         super.init()
+        hidesBottomBarWhenPushed = true
     }
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        tabBarController?.tabBar.isHidden = false
     }
     
     override func viewDidLoad() {

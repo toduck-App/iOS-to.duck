@@ -7,7 +7,10 @@ final class SocialDetailView: BaseView, UITextViewDelegate {
         frame: .zero,
         collectionViewLayout: makeCollectionViewLayout()
     ).then {
-        $0.backgroundColor = TDColor.baseWhite
+        $0.backgroundColor = TDColor.Neutral.neutral200
+        $0.bounces = false
+        $0.isUserInteractionEnabled = true
+        $0.contentInsetAdjustmentBehavior = .never
     }
 
     private let bottomContainerView = UIView().then {
@@ -62,25 +65,25 @@ final class SocialDetailView: BaseView, UITextViewDelegate {
         detailCollectionView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(bottomContainerView.snp.top)
+            make.bottom.equalToSuperview()
         }
 
         bottomContainerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.height.equalTo(56)
+            make.height.equalTo(76)
         }
 
         profileImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
+            make.top.equalToSuperview().inset(10)
             make.width.height.equalTo(36)
         }
 
         commentTextView.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing)
+            make.top.equalToSuperview().inset(10)
             make.trailing.equalToSuperview().inset(8)
-            make.centerY.equalToSuperview()
         }
 
         placeholderLabel.snp.makeConstraints { make in

@@ -5,18 +5,8 @@ import TDDomain
 import Then
 import UIKit
 
-protocol SocialFeedCollectionViewCellDelegate: AnyObject {
-    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
-    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
-    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
-    func didTapReport(_ cell: SocialFeedCollectionViewCell)
-    func didTapBlock(_ cell: SocialFeedCollectionViewCell)
-}
-
 final class SocialFeedCollectionViewCell: UICollectionViewCell {
-    weak var socialFeedCellDelegate: SocialFeedCollectionViewCellDelegate?
-    
-    private let containerView = UIView()
+    weak var socialFeedCellDelegate: SocialPostDelegate?
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -24,7 +14,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private lazy var headerView = SocialHeaderView().then {
+    private lazy var headerView = SocialHeaderView(style: .list).then {
         $0.delegate = self
     }
     
@@ -42,11 +32,11 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var contentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private var contentLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
     }
     
-    private lazy var footerView = SocialFooterView(isLike: false, likeCount: nil, commentCount: nil, shareCount: nil).then {
+    private lazy var footerView = SocialFooterView(style: .compact).then {
         $0.delegate = self
     }
     
@@ -97,19 +87,17 @@ private extension SocialFeedCollectionViewCell {
     }
     
     func setupLayout() {
-        addSubview(containerView)
-        for item in [avatarView, verticalStackView, separatorView] {
-            containerView.addSubview(item)
-        }
+        contentView.addSubview(avatarView)
+        contentView.addSubview(verticalStackView)
+        contentView.addSubview(separatorView)
         bodyStackView.addArrangedSubview(contentLabel)
-        
-        for item in [headerView, bodyStackView, footerView] {
-            verticalStackView.addArrangedSubview(item)
-        }
+        verticalStackView.addArrangedSubview(headerView)
+        verticalStackView.addArrangedSubview(bodyStackView)
+        verticalStackView.addArrangedSubview(footerView)
     }
     
     func setupConstraints() {
-        containerView.snp.makeConstraints { make in
+        contentView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
             make.leading.trailing.equalToSuperview()
@@ -151,26 +139,25 @@ private extension SocialFeedCollectionViewCell {
 
 extension SocialFeedCollectionViewCell {
     private func configureUserImage(with image: String?) {
-        if let image {
-            avatarView.kf.setImage(with: URL(string: image))
-        } else {
+        guard let image else {
             avatarView.image = TDImage.Profile.medium
+            return
         }
+        avatarView.kf.setImage(with: URL(string: image))
     }
     
     private func configureRoutine(with routine: Routine?) {
-        if let routine {
-            let routineView = SocialRoutineView(with: routine).then {
-                $0.delegate = self
-            }
-            bodyStackView.addArrangedSubview(routineView)
+        guard let routine else { return }
+        
+        let routineView = SocialRoutineView(with: routine).then {
+            $0.delegate = self
         }
+        bodyStackView.addArrangedSubview(routineView)
     }
     
     private func configureImageList(with imageList: [String]?) {
-        if let imageList {
-            bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
-        }
+        guard let imageList else { return }
+        bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
     }
 }
 

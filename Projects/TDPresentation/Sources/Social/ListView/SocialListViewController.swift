@@ -1,6 +1,7 @@
 import Combine
 import TDDesign
 import TDDomain
+import TDCore
 import UIKit
 
 final class SocialListViewController: BaseViewController<SocialListView>, TDPopupPresentable {
@@ -194,8 +195,8 @@ extension SocialListViewController: UICollectionViewDelegate {
 
 // MARK: Input
 
-extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDropDownDelegate {
-    func didTapBlock(_ cell: SocialFeedCollectionViewCell) {
+extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
+    func didTapBlock(_ cell: UICollectionViewCell) {
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
@@ -207,18 +208,19 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
         presentPopup(with: controller)
     }
     
-    func didTapReport(_ cell: SocialFeedCollectionViewCell) {
+    func didTapReport(_ cell: UICollectionViewCell) {
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
         coordinator?.didTapReport(id: viewModel.posts[indexPath.item].id)
     }
     
-    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell) {
+    func didTapRoutineView(_ cell: UICollectionViewCell) {
         // TODO: Routine 공유 View
+        TDLogger.debug("Routine Tap!")
     }
     
-    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell) {
+    func didTapNicknameLabel(_ cell: UICollectionViewCell) {
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }
@@ -226,7 +228,7 @@ extension SocialListViewController: SocialFeedCollectionViewCellDelegate, TDDrop
         coordinator?.didTapUserProfile(id: user.id)
     }
     
-    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell) {
+    func didTapLikeButton(_ cell: UICollectionViewCell) {
         guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
             return
         }

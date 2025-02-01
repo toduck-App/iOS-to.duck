@@ -1,16 +1,18 @@
+import Kingfisher
+import SnapKit
 import TDDesign
 import TDDomain
 import UIKit
 
-protocol SocialDetailCommentCellDelegate: AnyObject {
-    func didTapLikeButton(_ cell: SocialDetailCommentCell)
-    func didTapNicknameLabel(_ cell: SocialDetailCommentCell)
-}
+// MARK: - SocialDetailCommentCell
 
 final class SocialDetailCommentCell: UICollectionViewCell {
-    weak var commentDelegate: SocialDetailCommentCellDelegate?
+    weak var commentDelegate: SocialPostDelegate?
     
-    private let containerView = UIView()
+    private let containerView = UIView().then {
+        $0.backgroundColor = TDColor.baseWhite
+        $0.layer.cornerRadius = 12
+    }
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -18,11 +20,11 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    lazy private var headerView = SocialHeaderView().then{
+    private lazy var headerView = SocialHeaderView().then {
         $0.delegate = self
     }
     
-    private var bodyStackView = UIStackView().then{
+    private var bodyStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 14
         $0.alignment = .fill
@@ -36,16 +38,24 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var contentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private var contentLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
     }
     
-    lazy private var footerView = SocialFooterView(isLike: false, likeCount: nil, commentCount: nil, shareCount: nil).then {
+    private lazy var footerView = SocialFooterView(style: .compact).then {
         $0.delegate = self
     }
     
+    private let replyStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 14
+        $0.alignment = .fill
+        $0.distribution = .fill
+        $0.isLayoutMarginsRelativeArrangement = true
+    }
+    
     // MARK: - Init
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -56,55 +66,65 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         setupUI()
     }
     
+    // MARK: - Configure
+    
     func configure(with item: Comment) {
-        headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
+        headerView.configure(
+            titleBadge: item.user.title,
+            nickname: item.user.name,
+            date: item.timestamp
+        )
         contentLabel.setText(item.content)
-        footerView.configure(isLike: item.isLike, likeCount: item.like, commentCount: nil, shareCount: nil)
+        footerView.configure(
+            isLike: item.isLike,
+            likeCount: item.like,
+            commentCount: item.reply.count,
+            shareCount: nil
+        )
         configureUserImage(with: item.user.icon)
+        configureReplies(item.reply)
     }
+    
+    // MARK: - 재사용 처리
     
     override func prepareForReuse() {
         super.prepareForReuse()
         contentLabel.setText("")
         avatarView.image = TDImage.Profile.medium
-        bodyStackView.arrangedSubviews.forEach {
-            if $0 is SocialRoutineView || $0 is SocialImageListView {
-                $0.removeFromSuperview()
-            }
-        }
+        bodyStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        replyStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
     }
 }
 
-// MARK: Layout
+// MARK: - Layout
 
 private extension SocialDetailCommentCell {
     func setupUI() {
-        backgroundColor = TDColor.baseWhite
         setupLayout()
         setupConstraints()
     }
     
     func setupLayout() {
         addSubview(containerView)
-        [avatarView, verticalStackView].forEach{
-            containerView.addSubview($0)
-        }
+        containerView.addSubview(avatarView)
+        containerView.addSubview(verticalStackView)
         bodyStackView.addArrangedSubview(contentLabel)
-        
-        [headerView, bodyStackView, footerView].forEach{
-            verticalStackView.addArrangedSubview($0)
-        }
+        verticalStackView.addArrangedSubview(headerView)
+        verticalStackView.addArrangedSubview(bodyStackView)
+        verticalStackView.addArrangedSubview(footerView)
+        verticalStackView.addArrangedSubview(replyStackView)
     }
     
     func setupConstraints() {
         containerView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(12)
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(10)
         }
         
         avatarView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(12)
+            make.top.equalToSuperview().inset(16)
             make.size.equalTo(36)
         }
         
@@ -123,33 +143,142 @@ private extension SocialDetailCommentCell {
         verticalStackView.snp.makeConstraints { make in
             make.leading.equalTo(avatarView.snp.trailing).offset(10)
             make.trailing.equalToSuperview().offset(-16)
-            make.top.equalToSuperview()
+            make.top.equalTo(avatarView)
+            make.bottom.equalToSuperview().inset(16)
+        }
+    }
+}
+
+// MARK: - Private Methods
+
+private extension SocialDetailCommentCell {
+    // MARK: 댓글 이미지 설정
+    
+    func configureUserImage(with image: String?) {
+        if let image, let url = URL(string: image) {
+            avatarView.kf.setImage(with: url)
+        } else {
+            avatarView.image = TDImage.Profile.medium
+        }
+    }
+    
+    // MARK: 대댓글
+    
+    func configureReplies(_ replies: [Comment]) {
+        for replyItem in replies {
+            let replyView = createReplyView(replyItem)
+            replyStackView.addArrangedSubview(replyView)
+        }
+    }
+    
+    func createReplyView(_ comment: Comment) -> UIView {
+        let replyContainer = UIView()
+        let replyAvatar = buildReplyAvatar(comment)
+        let replyHeader = buildReplyHeader(comment)
+        let replyContent = buildReplyContentLabel(comment)
+        let replyFooter = buildReplyFooter(comment)
+        
+        let stackView = UIStackView().then {
+            $0.axis = .vertical
+            $0.spacing = 14
+            $0.addArrangedSubview(replyHeader)
+            $0.addArrangedSubview(replyContent)
+            $0.addArrangedSubview(replyFooter)
+        }
+        
+        replyContainer.addSubview(replyAvatar)
+        replyContainer.addSubview(stackView)
+        
+        makeReplyAvatarConstraints(replyAvatar, in: replyContainer)
+        makeReplyStackConstraints(stackView, replyAvatar: replyAvatar, in: replyContainer)
+        
+        return replyContainer
+    }
+    
+    // MARK: 대댓글 - Subview 생성 함수들
+    
+    func buildReplyAvatar(_ comment: Comment) -> UIImageView {
+        let avatar = UIImageView().then {
+            $0.contentMode = .scaleAspectFill
+            $0.layer.cornerRadius = 18
+            $0.clipsToBounds = true
+            $0.backgroundColor = TDColor.Neutral.neutral100
+        }
+        // TODO: 이거 어떻게 처리할지 고민해보기
+        if let icon = comment.user.icon, let url = URL(string: icon) {
+            avatar.kf.setImage(with: url)
+        } else {
+            avatar.image = TDImage.Profile.medium
+        }
+        return avatar
+    }
+    
+    func buildReplyHeader(_ comment: Comment) -> SocialHeaderView {
+        let header = SocialHeaderView(style: .list).then {
+            $0.configure(titleBadge: comment.user.title,
+                         nickname: comment.user.name,
+                         date: comment.timestamp)
+            $0.delegate = self
+        }
+        header.snp.makeConstraints { $0.height.equalTo(24) }
+        return header
+    }
+    
+    func buildReplyContentLabel(_ comment: Comment) -> TDLabel {
+        let label = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral800).then {
+            $0.numberOfLines = 0
+            $0.setText(comment.content)
+        }
+        return label
+    }
+    
+    func buildReplyFooter(_ comment: Comment) -> SocialFooterView {
+        let footer = SocialFooterView(style: .compact).then {
+            $0.configure(isLike: comment.isLike,
+                         likeCount: comment.like,
+                         commentCount: nil,
+                         shareCount: nil)
+        }.then {
+            $0.delegate = self
+        }
+        footer.snp.makeConstraints { $0.height.equalTo(24) }
+        return footer
+    }
+    
+    // MARK: 대댓글 - 오토레이아웃
+    
+    func makeReplyAvatarConstraints(_ replyAvatar: UIImageView, in container: UIView) {
+        replyAvatar.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(8)
+            make.leading.equalToSuperview()
+            make.size.equalTo(36)
+        }
+    }
+    
+    func makeReplyStackConstraints(_ stackView: UIStackView,
+                                   replyAvatar: UIImageView,
+                                   in container: UIView)
+    {
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(replyAvatar)
+            make.leading.equalTo(replyAvatar.snp.trailing).offset(10)
+            make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
     }
 }
 
-// MARK: Private Method
-
-private extension SocialDetailCommentCell {
-    func configureUserImage(with image: String?) {
-        if let image = image {
-            avatarView.kf.setImage(with: URL(string: image))
-        } else {
-            avatarView.image = TDImage.Profile.medium
-        }
-    }
-}
+// MARK: - Delegate Extensions
 
 extension SocialDetailCommentCell: SocialHeaderViewDelegate, SocialFooterDelegate {
     func didTapReport(_ view: UIView) {
         print("didTapReport")
     }
-
+    
     func didTapBlock(_ view: UIView) {
         print("didTapBlock")
     }
-
+    
     func didTapNickname(_ view: UIView) {
         commentDelegate?.didTapNicknameLabel(self)
     }

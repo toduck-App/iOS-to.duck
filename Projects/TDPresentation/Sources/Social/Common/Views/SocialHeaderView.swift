@@ -10,6 +10,7 @@ protocol SocialHeaderViewDelegate: AnyObject {
 }
 
 final class SocialHeaderView: UIView {
+    
     weak var delegate: SocialHeaderViewDelegate?
 
     private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
@@ -38,6 +39,16 @@ final class SocialHeaderView: UIView {
         setupRecognizer()
     }
     
+    convenience init(style: SocialPostStyle) {
+        self.init(frame: .zero)
+        switch style {
+        case .list:
+            break
+        case .detail:
+            dotIconView.isHidden = true
+        }
+    }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
@@ -60,24 +71,26 @@ private extension SocialHeaderView {
     }
     
     func setupLayout() {
-        [titleBagde, nicknameLabel, dateLabel, dropDownHoverView].forEach {
-            addSubview($0)
-        }
+        addSubview(titleBagde)
+        addSubview(nicknameLabel)
+        addSubview(dateLabel)
+        addSubview(dropDownHoverView)
     }
     
     func setupConstraints() {
-        titleBagde.snp.makeConstraints { make in
+        nicknameLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
             make.top.leading.equalToSuperview()
         }
         
-        nicknameLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(titleBagde)
-            make.leading.equalTo(titleBagde.snp.trailing).offset(10)
+        titleBagde.snp.makeConstraints { make in
+            make.centerY.equalTo(nicknameLabel)
+            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
         }
         
         dateLabel.snp.makeConstraints { make in
             make.centerY.equalTo(titleBagde)
-            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
+            make.leading.equalTo(titleBagde.snp.trailing).offset(10)
         }
         
         dotIconView.snp.makeConstraints { make in

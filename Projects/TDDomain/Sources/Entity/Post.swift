@@ -3,6 +3,7 @@ import Foundation
 public struct Post: Identifiable {
     public let id: UUID
     public let user: User
+    public let titleText: String?
     public let contentText: String
     public let imageList: [String]?
     public let timestamp: Date
@@ -19,6 +20,7 @@ public struct Post: Identifiable {
     public init(
         id: UUID,
         user: User,
+        titleText: String? = nil,
         contentText: String,
         imageList: [String]?,
         timestamp: Date,
@@ -31,6 +33,7 @@ public struct Post: Identifiable {
     ) {
         self.id = id
         self.user = user
+        self.titleText = titleText
         self.contentText = contentText
         self.imageList = imageList
         self.timestamp = timestamp
@@ -143,7 +146,21 @@ public extension Post {
                                      commentCount: 7,
                                      shareCount: 12,
                                      routine: nil,
-                                     category: [.anxiety, .concentration, .memory])]
+                                     category: [.anxiety, .concentration, .memory]),
+                                Post(
+                                    id: UUID(),
+                                    user: .init(id: UUID(), name: "오리발", icon: nil, title: "작심삼일", isblock: false),
+                                    titleText: "수면 관련 질문..",
+                                    contentText: "최근들어 부쩍 수면의 질이 낮아져 너무 힘든데 도움되는 방법이 있을까요?",
+                                    imageList: nil,
+                                    timestamp: .now.addingTimeInterval(-1000),
+                                    likeCount: 555,
+                                    isLike: false,
+                                    commentCount: 2,
+                                    shareCount: nil,
+                                    routine: nil,
+                                    category: [.sleep])
+                                ]
 }
 
 extension Post: Equatable {
