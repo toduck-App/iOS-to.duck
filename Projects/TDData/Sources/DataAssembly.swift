@@ -44,7 +44,7 @@ public struct DataAssembly: Assembly {
         }
 
         container.register(TimerRepository.self) { _ in
-            TimerRepositoryImpl()
+            return TimerRepositoryImpl()
         }
     }
 }
