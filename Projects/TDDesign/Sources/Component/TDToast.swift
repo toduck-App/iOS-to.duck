@@ -8,7 +8,7 @@
 import UIKit
 
 public final class TDToast: UIView {
-	let toastView: TDToastView
+	fileprivate let toastView: TDToastView
 
 	public convenience init(toastType: TDToastType, titleText: String, contentText: String) {
 		self.init(
@@ -52,7 +52,7 @@ public final class TDToast: UIView {
 	}
 }
 
-final class TDToastView: UIView {
+fileprivate final class TDToastView: UIView {
 
 	// MARK: - Properties
 	private let foregroundColor: UIColor
