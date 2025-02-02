@@ -11,12 +11,12 @@ public protocol FetchFocusCountUseCase {
 
 final class FetchFocusCountImpl: FetchFocusCountUseCase {
     private let repository: TimerRepository
-    
+
     public init(repository: TimerRepository) {
         self.repository = repository
     }
-    
+
     public func execute() -> Int {
-        return self.repository.fetchFocusCount()
+        return repository.fetchFocusCount()
     }
 }

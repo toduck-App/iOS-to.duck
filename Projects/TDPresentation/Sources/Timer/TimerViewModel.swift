@@ -230,5 +230,4 @@ extension TimerViewModel {
         focusCount = fetchFocusCountUseCase.execute()
         output.send(.fetchedFocusCount)
     }
-
 }

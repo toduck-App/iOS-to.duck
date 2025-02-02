@@ -11,11 +11,12 @@ public protocol UpdateTimerSettingUseCase {
 
 final class UpdateTimerSettingUseCaseImpl: UpdateTimerSettingUseCase {
     private let repository: TimerRepository
-    
+
     public init(repository: TimerRepository) {
         self.repository = repository
     }
+
     public func execute(setting: TDTimerSetting) {
-        self.repository.updateTimerSetting(setting: setting)
+        repository.updateTimerSetting(setting: setting)
     }
 }

@@ -12,14 +12,14 @@ public protocol UpdateFocusCountUseCase {
 final class UpdateFocusCountUseCaseImpl: UpdateFocusCountUseCase {
     private let repository: TimerRepository
     private let maxCount: Int = 5
-    
+
     public init(repository: TimerRepository) {
         self.repository = repository
     }
-    
+
     public func execute(_ count: Int) {
         if count > 0 && count <= maxCount {
-            self.repository.updateFocusCount(count: count)
+            repository.updateFocusCount(count: count)
         }
     }
 }

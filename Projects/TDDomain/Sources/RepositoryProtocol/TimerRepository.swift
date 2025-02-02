@@ -6,15 +6,16 @@
 //
 
 public protocol TimerRepository {
-    
-    //MARK: - User Defualt
+    // MARK: - User Defualt
+
     func fetchTimerSetting() -> TDTimerSetting
     func updateTimerSetting(setting: TDTimerSetting)
-    
+
     func fetchTimerTheme() -> TDTimerTheme
     func updateTimerTheme(theme: TDTimerTheme)
-    
-    //MARK: - Need Server
+
+    // MARK: - Need Server
+
     func fetchFocusCount() -> Int
     func updateFocusCount(count: Int)
 }

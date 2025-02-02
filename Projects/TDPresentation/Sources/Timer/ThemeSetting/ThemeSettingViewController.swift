@@ -4,9 +4,10 @@
 //
 //  Created by 신효성 on 1/6/25.
 //
-import UIKit
 import Combine
 import TDCore
+import UIKit
+
 final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
     private let viewModel: TimerViewModel!
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
@@ -16,12 +17,12 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
         self.viewModel = viewModel
         super.init()
     }
-    
+
     required init?(coder: NSCoder) {
-        self.viewModel = nil
+        viewModel = nil
         super.init(coder: coder)
     }
-    
+
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
@@ -33,5 +34,4 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
 
         }.store(in: &cancellables)
     }
-
 }
