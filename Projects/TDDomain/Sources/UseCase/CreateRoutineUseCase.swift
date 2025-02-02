@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol CreateRoutineUseCase {
-    func execute(routine: Routine) async throws -> Bool
+    func execute(routine: Routine) async throws
 }
 
 public final class CreateRoutineUseCaseImpl: CreateRoutineUseCase {
@@ -11,7 +11,7 @@ public final class CreateRoutineUseCaseImpl: CreateRoutineUseCase {
         self.repository = repository
     }
     
-    public func execute(routine: Routine) async throws -> Bool {
-        return try await repository.createRoutine(routine: routine)
+    public func execute(routine: Routine) async throws {
+        try await repository.createRoutine(routine: routine).get()
     }
 }

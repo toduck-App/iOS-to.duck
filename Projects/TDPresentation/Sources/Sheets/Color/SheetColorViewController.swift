@@ -4,13 +4,18 @@ import SnapKit
 import TDDesign
 import Then
 
+protocol SheetColorDelegate: AnyObject {
+    func didSaveCategory()
+}
+
 final class SheetColorViewController: BaseViewController<SheetColorView> {
     // MARK: - Properties
     private let viewModel: SheetColorViewModel
     private let input = PassthroughSubject<SheetColorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-    weak var coordinator: SheetColorCoordinator?
     private var selectedCategoryIndex: Int?
+    weak var coordinator: SheetColorCoordinator?
+    weak var delegate: SheetColorDelegate?
     
     // MARK: - Initializers
     init(viewModel: SheetColorViewModel) {
@@ -38,6 +43,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.saveCategory)
+            self?.delegate?.didSaveCategory()
             self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
             self?.dismiss(animated: true)
         }, for: .touchUpInside)

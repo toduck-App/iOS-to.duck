@@ -12,7 +12,7 @@ final class EventMakorView: BaseView {
     }
     
     // 제목
-    private let titleForm = TDFormTextField(
+    let titleForm = TDFormTextField(
         title: "일정",
         isRequired: true,
         maxCharacter: 20,
@@ -24,7 +24,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let categoryTitleForm = TDFormMoveView(type: .category)
+    let categoryTitleForm = TDFormMoveView(type: .category, isRequired: true)
     let categoryViewsForm = TDCategoryCollectionView()
     
     // 날짜 (일정에서만 사용됨)
@@ -32,7 +32,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let dateForm = TDFormMoveView(type: .date)
+    let dateForm = TDFormMoveView(type: .date, isRequired: true)
     private let dividedLine1 = UIView.dividedLine()
     
     // 시간
@@ -40,7 +40,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let timeForm = TDFormMoveView(type: .time)
+    let timeForm = TDFormMoveView(type: .time, isRequired: true)
     private let dividedLine2 = UIView.dividedLine()
     
     // 공개여부 (루틴에서만 사용됨)
@@ -48,16 +48,17 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    private let lockForm = TDFormSegmentView()
+    let lockForm = TDFormSegmentView()
     private let dividedLine3 = UIView.dividedLine()
     
-    private let repeatDayForm = TDFormButtonsView(type: .repeatDay)
+    // 반복일, 알람
+    let repeatDayForm = TDFormButtonsView(type: .repeatDay)
     private let dividedLine4 = UIView.dividedLine()
-    private let alarmForm = TDFormButtonsView(type: .alarm)
+    let alarmForm = TDFormButtonsView(type: .alarm)
     private let dividedLine5 = UIView.dividedLine()
     
     // 장소 (일정에서만 사용됨)
-    private let locationForm = TDFormTextField(
+    let locationForm = TDFormTextField(
         image: TDImage.locationMedium,
         title: "장소",
         isRequired: false,
@@ -66,7 +67,7 @@ final class EventMakorView: BaseView {
     )
     
     // 메모
-    private let memoTextView = TDFormTextView(
+    let memoTextView = TDFormTextView(
         image: TDImage.Memo.lineMedium,
         title: "메모",
         isRequired: false,

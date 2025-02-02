@@ -1,7 +1,8 @@
 import Foundation
+import TDCore
 
 public protocol DeleteScheduleUseCase {
-    func execute(scheduleId: Int) async throws -> Bool
+    func execute(scheduleId: Int) async throws
 }
 
 public final class DeleteScheduleUseCaseImpl: DeleteScheduleUseCase {
@@ -11,7 +12,7 @@ public final class DeleteScheduleUseCaseImpl: DeleteScheduleUseCase {
         self.scheduleRepository = repository
     }
     
-    public func execute(scheduleId: Int) async throws -> Bool {
-        return try await scheduleRepository.deleteSchedule(scheduleId: scheduleId)
+    public func execute(scheduleId: Int) async throws {
+        try await scheduleRepository.deleteSchedule(scheduleId: scheduleId)
     }
 }

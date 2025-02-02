@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol CreateScheduleUseCase {
-    func execute(schedule: Schedule) async throws -> Bool
+    func execute(schedule: Schedule) async throws
 }
 
 public final class CreateScheduleUseCaseImpl: CreateScheduleUseCase {
@@ -11,7 +11,7 @@ public final class CreateScheduleUseCaseImpl: CreateScheduleUseCase {
         self.scheduleRepository = repository
     }
     
-    public func execute(schedule: Schedule) async throws -> Bool {
-        return try await scheduleRepository.createSchedule(schedule: schedule)
+    public func execute(schedule: Schedule) async throws {
+        try await scheduleRepository.createSchedule(schedule: schedule)
     }
 }

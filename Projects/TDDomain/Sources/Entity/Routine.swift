@@ -1,10 +1,3 @@
-//
-//  Routine.swift
-//  toduck
-//
-//  Created by 박효준 on 5/31/24.
-//
-
 import Foundation
 
 struct RecommendedRoutine: Hashable {
@@ -14,7 +7,7 @@ struct RecommendedRoutine: Hashable {
 }
 
 public struct Routine: Eventable, Identifiable {
-    public let id: UUID
+    public let id: Int?
     public let title: String
     public let category: TDCategory
     public let isAllDay: Bool
@@ -28,7 +21,7 @@ public struct Routine: Eventable, Identifiable {
     public let isFinish: Bool
     
     public init(
-        id: UUID,
+        id: Int?,
         title: String,
         category: TDCategory,
         isAllDay: Bool,
@@ -69,7 +62,7 @@ extension Routine: Hashable {
 extension Routine {
     public static let dummy: [Routine] = [
         Routine(
-            id: UUID(),
+            id: nil,
             title: "하루 물 1L 이상 마시기",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
@@ -83,7 +76,7 @@ extension Routine {
             isFinish: false
         ),
         Routine(
-            id: UUID(),
+            id: nil,
             title: "자기 전 감정기록 작성하기",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
@@ -97,7 +90,7 @@ extension Routine {
             isFinish: false
         ),
         Routine(
-            id: UUID(),
+            id: nil,
             title: "기상 후 이부자리 정리",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
@@ -111,7 +104,7 @@ extension Routine {
             isFinish: false
         ),
         Routine(
-            id: UUID(),
+            id: nil,
             title: "모닝 스트레칭 하기",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
@@ -125,7 +118,7 @@ extension Routine {
             isFinish: false
         ),
         Routine(
-            id: UUID(),
+            id: nil,
             title: "나가기 전 잊지 말고 챙기자",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
@@ -139,7 +132,7 @@ extension Routine {
             isFinish: false
         ),
         Routine(
-            id: UUID(),
+            id: nil,
             title: "디자인 아티클 읽고 공부하기",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,
@@ -153,7 +146,7 @@ extension Routine {
             isFinish: false
         ),
         Routine(
-            id: UUID(),
+            id: nil,
             title: "헬스장 가기! 빠샤!",
             category: TDCategory(colorHex: "#123456", imageName: "computer"),
             isAllDay: false,

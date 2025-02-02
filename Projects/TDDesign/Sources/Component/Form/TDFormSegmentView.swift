@@ -2,6 +2,12 @@ import SnapKit
 import Then
 import UIKit
 
+public protocol TDFormSegmentViewDelegate: AnyObject {
+    /// 공개/비공개 상태가 변경되었을 때 호출됩니다.
+    /// - Parameter isPublic: 공개 상태(`true`: 공개, `false`: 비공개)
+    func segmentView(_ segmentView: TDFormSegmentView, didChangeToPublic isPublic: Bool)
+}
+
 public final class TDFormSegmentView: UIView {
     // MARK: - UI Properties
     private var titleImageView = UIImageView().then {
@@ -10,7 +16,7 @@ public final class TDFormSegmentView: UIView {
     }
     private let titleLabel = TDLabel(
         labelText: "공개여부",
-        toduckFont: .mediumBody1
+        toduckFont: .boldBody1
     )
     
     private let lockSegmentedControl = UISegmentedControl(items: ["공개", "비공개"]).then {
@@ -31,12 +37,14 @@ public final class TDFormSegmentView: UIView {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.selectedSegmentTintColor = TDColor.baseWhite
     }
-    
+    public weak var delegate: TDFormSegmentViewDelegate?
+
     // MARK: - Initializer
     public init() {
         super.init(frame: .zero)
         
         setupLayout()
+        setupActions()
     }
     
     @available(*, unavailable)
@@ -65,5 +73,13 @@ public final class TDFormSegmentView: UIView {
             $0.trailing.equalToSuperview()
             $0.centerY.equalTo(titleLabel.snp.centerY)
         }
+    }
+    
+    private func setupActions() {
+        lockSegmentedControl.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            let isPublic = lockSegmentedControl.selectedSegmentIndex == 0
+            delegate?.segmentView(self, didChangeToPublic: isPublic)
+        }, for: .valueChanged)
     }
 }

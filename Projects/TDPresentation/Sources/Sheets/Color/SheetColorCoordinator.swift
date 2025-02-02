@@ -8,6 +8,7 @@ final class SheetColorCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    var delegate: SheetColorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -26,6 +27,7 @@ final class SheetColorCoordinator: Coordinator {
         )
         let sheetViewController = SheetColorViewController(viewModel: viewModel)
         sheetViewController.coordinator = self
+        sheetViewController.delegate = delegate
         let sheetController = SheetViewController(
             controller: sheetViewController,
             sizes: [.fixed(650)],
@@ -47,5 +49,11 @@ final class SheetColorCoordinator: Coordinator {
 extension SheetColorCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+extension SheetColorCoordinator: SheetColorDelegate {
+    func didSaveCategory() {
+        delegate?.didSaveCategory()
     }
 }

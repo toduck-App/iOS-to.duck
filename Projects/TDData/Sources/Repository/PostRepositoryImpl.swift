@@ -10,7 +10,7 @@ import Foundation
 
 public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(
-        id: UUID(),
+        id: nil,
         title: "123",
         category: TDCategory(
             colorHex: "#123456",

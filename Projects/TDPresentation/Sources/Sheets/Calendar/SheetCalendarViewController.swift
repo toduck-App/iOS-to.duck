@@ -4,6 +4,10 @@ import FSCalendar
 import SnapKit
 import Then
 
+protocol SheetCalendarDelegate: AnyObject {
+    func didTapSaveButton(startDate: Date, endDate: Date?)
+}
+
 final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalendarConfigurable {
     // MARK: - UI Components
     private let cancelButton = UIButton(type: .system).then {
@@ -46,10 +50,11 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     private let headerDateFormatter = DateFormatter().then { $0.dateFormat = "yyyy년 M월" }
     private let dateFormatter = DateFormatter().then { $0.dateFormat = "yyyy-MM-dd" }
     private let dayFormatter = DateFormatter().then { $0.dateFormat = "d일" }
-    private var firstDate: Date?
-    private var lastDate: Date?
+    private var startDate: Date?
+    private var endDate: Date?
     private var datesRange: [Date] = []
     weak var coordinator: SheetCalendarCoordinator?
+    weak var delegate: SheetCalendarDelegate?
     
     // MARK: - Common Methods
     override func configure() {
@@ -61,6 +66,23 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         updateSaveButtonState()
         
         cancelButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
+        
+        resetButton.addAction(UIAction { [weak self] _ in
+            self?.calendar.reloadData()
+            self?.startDate = nil
+            self?.endDate = nil
+            self?.datesRange = []
+            self?.updateSelectedDatesLabel()
+            self?.updateSaveButtonState()
+        }, for: .touchUpInside)
+        
+        saveButton.addAction(UIAction { [weak self] _ in
+            guard let startDate = self?.startDate else { return }
+            
+            self?.delegate?.didTapSaveButton(startDate: startDate, endDate: self?.endDate)
             self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
             self?.dismiss(animated: true)
         }, for: .touchUpInside)
@@ -126,20 +148,20 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
 // MARK: 선택된 날짜를 업데이트 (우측 상단 Label)
 extension SheetCalendarViewController {
     private func updateSelectedDatesLabel() {
-        guard let firstDate = firstDate else {
+        guard let firstDate = startDate else {
             selectDates.text = ""
             return
         }
 
         // firstDate와 lastDate가 모두 존재하고, 서로 다른 날짜일 경우
-        if let lastDate = lastDate, firstDate != lastDate {
+        if let lastDate = endDate, firstDate != lastDate {
             let firstMonth = Calendar.current.component(.month, from: firstDate)
             let lastMonth = Calendar.current.component(.month, from: lastDate)
 
-            // 같은 달일 경우 "M월 d - d일" 형식으로 표시
+            // 같은 달일 경우 "M월 d일 - d일" 형식으로 표시
             if firstMonth == lastMonth {
                 let monthDayFormatter = DateFormatter()
-                monthDayFormatter.dateFormat = "M월 d"
+                monthDayFormatter.dateFormat = "M월 d일"
                 selectDates.text = "\(monthDayFormatter.string(from: firstDate)) - \(dayFormatter.string(from: lastDate))"
             } else {
                 // 다른 달일 경우 "M월 d일 - M월 d일" 형식으로 표시
@@ -184,13 +206,10 @@ extension SheetCalendarViewController {
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {
-        let dateString = dateFormatter.string(from: date)
-        print("선택된 날짜: \(dateString)")
-        
         // case 1. 달력에 아무 날짜도 선택되지 않은 경우
-        if firstDate == nil {
-            firstDate = date
-            datesRange = [firstDate!]
+        if startDate == nil {
+            startDate = date
+            datesRange = [startDate!]
             
             updateSelectedDatesLabel()
             updateSaveButtonState()
@@ -199,12 +218,12 @@ extension SheetCalendarViewController {
         }
         
         // case 2. firstDate 단일선택 되어 있는 경우
-        if firstDate != nil && lastDate == nil {
+        if startDate != nil && endDate == nil {
             // case 2-1. firstDate보다 이전 날짜 클릭 시, 단일 선택 날짜를 바꿔줌
-            if date < firstDate! {
-                calendar.deselect(firstDate!)
-                firstDate = date
-                datesRange = [firstDate!]
+            if date < startDate! {
+                calendar.deselect(startDate!)
+                startDate = date
+                datesRange = [startDate!]
                 
                 updateSelectedDatesLabel()
                 updateSaveButtonState()
@@ -215,7 +234,7 @@ extension SheetCalendarViewController {
             // case 2-2. 종료일이 선택된 경우
             else {
                 var range: [Date] = []
-                var currentDate = firstDate!
+                var currentDate = startDate!
                 
                 while currentDate <= date {
                     range.append(currentDate)
@@ -226,7 +245,7 @@ extension SheetCalendarViewController {
                     calendar.select(day)
                 }
                 
-                lastDate = range.last
+                endDate = range.last
                 datesRange = range
                 
                 updateSelectedDatesLabel()
@@ -237,15 +256,15 @@ extension SheetCalendarViewController {
         }
         
         // case 3. 시작일-종료일 선택된 상태에서 다른 날짜를 클릭하면, 해당 날짜를 firstDate로
-        if firstDate != nil && lastDate != nil {
+        if startDate != nil && endDate != nil {
             for day in calendar.selectedDates {
                 calendar.deselect(day)
             }
             
-            lastDate = nil
-            firstDate = date
+            endDate = nil
+            startDate = date
             calendar.select(date)
-            datesRange = [firstDate!]
+            datesRange = [startDate!]
             
             updateSelectedDatesLabel()
             updateSaveButtonState()
@@ -266,8 +285,8 @@ extension SheetCalendarViewController {
             }
         }
         
-        firstDate = nil
-        lastDate = nil
+        startDate = nil
+        endDate = nil
         datesRange = []
         
         updateSelectedDatesLabel()
@@ -305,9 +324,9 @@ extension SheetCalendarViewController {
         let arr = datesRange
         
         if !arr.contains(date) { return .notSelected }
-        if arr.count == 1 && date == firstDate { return .singleDate }
-        if date == firstDate { return .firstDate }
-        if date == lastDate { return .lastDate }
+        if arr.count == 1 && date == startDate { return .singleDate }
+        if date == startDate { return .firstDate }
+        if date == endDate { return .lastDate }
         else { return .middleDate }
     }
 }

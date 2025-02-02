@@ -2,7 +2,7 @@ import UIKit
 import TDDomain
 
 protocol EventPresentable {
-    var id: UUID { get }
+    var id: Int? { get }
     var title: String { get }
     var memo: String? { get }
     var categoryIcon: UIImage? { get }
