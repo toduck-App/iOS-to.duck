@@ -151,7 +151,8 @@ extension TimerViewController {
 
 	private func updateTimerRunning(_ isRunning: Bool?) {
 		guard let isRunning = isRunning else {
-            handleControlStack(.initilize); return
+			handleControlStack(.initilize)
+			return
 		}
 		if isRunning {
 			handleControlStack(.playing)
