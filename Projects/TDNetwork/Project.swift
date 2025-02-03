@@ -18,7 +18,10 @@ let project = Project.project(
             name: "\(TDModule.TDNetwork.rawValue)Test",
             product: .unitTests,
             bundleId: Project.bundleID + ".networktest",
-            sources: .tests
+            sources: .tests,
+            dependencies: [
+                .network()
+            ]
         )
     ]
 )
