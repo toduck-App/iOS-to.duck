@@ -1,10 +1,3 @@
-//
-//  Project.swift
-//  Packages
-//
-//  Created by 박효준 on 10/19/24.
-//
-
 import ProjectDescription
 import ProjectDescriptionHelpers
 
