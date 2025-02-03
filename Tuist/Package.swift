@@ -14,6 +14,7 @@ import ProjectDescription
 let packageSettings = PackageSettings(
     productTypes: [
         "SnapKit": .framework,
+        "Lottie": .framework,
         "Kingfisher": .framework,
         "Then": .framework,
         "FSCalendar": .framework,
@@ -27,6 +28,7 @@ let package = Package(
     name: "toduck",
     dependencies: [
         .package(url: "https://github.com/SnapKit/SnapKit", from: "5.7.1"),
+        .package(url: "https://github.com/airbnb/lottie-ios", from: "4.5.1"),
         .package(url: "https://github.com/onevcat/Kingfisher", from: "7.11.0"),
         .package(url: "https://github.com/devxoul/Then", from: "3.0.0"),
         .package(url: "https://github.com/WenchaoD/FSCalendar", from: "2.8.4"),

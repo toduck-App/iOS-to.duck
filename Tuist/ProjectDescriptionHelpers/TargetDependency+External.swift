@@ -9,6 +9,7 @@ import ProjectDescription
 
 public enum External: String {
     case Then
+    case Lottie
     case FSCalendar
     case Kingfisher
     case SnapKit
