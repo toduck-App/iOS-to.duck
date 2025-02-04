@@ -1,10 +1,3 @@
-//
-//  TDSegmentedController.swift
-//  toduck
-//
-//  Created by 박효준 on 7/28/24.
-//
-
 import SnapKit
 import Then
 import UIKit
@@ -38,7 +31,7 @@ public final class TDSegmentedControl: UISegmentedControl {
         $0.backgroundColor = TDColor.Neutral.neutral800
     }
     
-    override public init(items: [Any]?) {
+    public override init(items: [Any]?) {
         super.init(items: items)
         setSegmentedControl()
     }
