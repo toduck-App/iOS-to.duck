@@ -9,7 +9,7 @@ import SnapKit
 import Then
 import UIKit
 
-public final class TDSegmentedController: UISegmentedControl {
+public final class TDSegmentedControl: UISegmentedControl {
     public var indicatorColor: UIColor = TDColor.Neutral.neutral800 {
         didSet {
             underLineView.backgroundColor = indicatorColor

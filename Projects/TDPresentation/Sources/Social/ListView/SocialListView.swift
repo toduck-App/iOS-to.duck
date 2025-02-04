@@ -17,7 +17,7 @@ final class SocialListView: BaseView {
         height: 33
     )
     
-    private(set) var segmentedControl = TDSegmentedController(
+    private(set) var segmentedControl = TDSegmentedControl(
         items: ["전체", "주제별"]
     )
     
