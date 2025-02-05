@@ -5,18 +5,8 @@ import TDDomain
 import Then
 import UIKit
 
-protocol SocialFeedCollectionViewCellDelegate: AnyObject {
-    func didTapLikeButton(_ cell: SocialFeedCollectionViewCell)
-    func didTapNicknameLabel(_ cell: SocialFeedCollectionViewCell)
-    func didTapRoutineView(_ cell: SocialFeedCollectionViewCell)
-    func didTapReport(_ cell: SocialFeedCollectionViewCell)
-    func didTapBlock(_ cell: SocialFeedCollectionViewCell)
-}
-
 final class SocialFeedCollectionViewCell: UICollectionViewCell {
-    weak var socialFeedCellDelegate: SocialFeedCollectionViewCellDelegate?
-    
-    private let containerView = UIView()
+    weak var socialFeedCellDelegate: SocialPostDelegate?
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -24,9 +14,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private lazy var headerView = SocialHeaderView().then {
-        $0.delegate = self
-    }
+    private lazy var headerView = SocialHeaderView(style: .list)
     
     private var bodyStackView = UIStackView().then {
         $0.axis = .vertical
@@ -42,13 +30,11 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var contentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private var contentLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
     }
     
-    private lazy var footerView = SocialFooterView(isLike: false, likeCount: nil, commentCount: nil, shareCount: nil).then {
-        $0.delegate = self
-    }
+    private lazy var footerView = SocialFooterView(style: .compact)
     
     private let separatorView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral100
@@ -70,7 +56,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
         contentLabel.setText(item.contentText)
         footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
-        
+        configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)
         configureImageList(with: item.imageList)
@@ -97,19 +83,17 @@ private extension SocialFeedCollectionViewCell {
     }
     
     func setupLayout() {
-        addSubview(containerView)
-        for item in [avatarView, verticalStackView, separatorView] {
-            containerView.addSubview(item)
-        }
+        contentView.addSubview(avatarView)
+        contentView.addSubview(verticalStackView)
+        contentView.addSubview(separatorView)
         bodyStackView.addArrangedSubview(contentLabel)
-        
-        for item in [headerView, bodyStackView, footerView] {
-            verticalStackView.addArrangedSubview(item)
-        }
+        verticalStackView.addArrangedSubview(headerView)
+        verticalStackView.addArrangedSubview(bodyStackView)
+        verticalStackView.addArrangedSubview(footerView)
     }
     
     func setupConstraints() {
-        containerView.snp.makeConstraints { make in
+        contentView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
             make.leading.trailing.equalToSuperview()
@@ -151,49 +135,52 @@ private extension SocialFeedCollectionViewCell {
 
 extension SocialFeedCollectionViewCell {
     private func configureUserImage(with image: String?) {
-        if let image {
-            avatarView.kf.setImage(with: URL(string: image))
-        } else {
+        guard let image else {
             avatarView.image = TDImage.Profile.medium
+            return
         }
+        avatarView.kf.setImage(with: URL(string: image))
     }
     
     private func configureRoutine(with routine: Routine?) {
-        if let routine {
-            let routineView = SocialRoutineView(with: routine).then {
-                $0.delegate = self
-            }
-            bodyStackView.addArrangedSubview(routineView)
+        guard let routine else { return }
+        
+        let routineView = SocialRoutineView(with: routine)
+        routineView.onTapperRoutine = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapRoutineView(self, routine.id)
         }
+        bodyStackView.addArrangedSubview(routineView)
     }
     
     private func configureImageList(with imageList: [String]?) {
-        if let imageList {
-            bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
-        }
+        guard let imageList else { return }
+        bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
     }
 }
 
 // MARK: Delegate
 
-extension SocialFeedCollectionViewCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
-    func didTapReport(_ view: UIView) {
-        socialFeedCellDelegate?.didTapReport(self)
-    }
-
-    func didTapBlock(_ view: UIView) {
-        socialFeedCellDelegate?.didTapBlock(self)
-    }
-
-    func didTapRoutine(_ view: SocialRoutineView) {
-        socialFeedCellDelegate?.didTapRoutineView(self)
-    }
-
-    func didTapNickname(_ view: UIView) {
-        socialFeedCellDelegate?.didTapNicknameLabel(self)
-    }
-
-    @objc func didTapLikeButton(_ view: SocialFooterView) {
-        socialFeedCellDelegate?.didTapLikeButton(self)
+extension SocialFeedCollectionViewCell {
+    func configureAction(_ item: Post) {
+        headerView.onNicknameTapped = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapNicknameLabel(self, item.user.id)
+        }
+        
+        headerView.onBlockTapped = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapBlock(self, item.user.id)
+        }
+        
+        headerView.onReportTapped = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapReport(self, item.id)
+        }
+        
+        footerView.onLikeButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapLikeButton(self, item.id)
+        }
     }
 }

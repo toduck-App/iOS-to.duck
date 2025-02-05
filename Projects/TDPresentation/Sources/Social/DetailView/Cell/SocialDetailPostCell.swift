@@ -1,27 +1,12 @@
-//
-//  SocialDetailPostCell.swift
-//  TDPresentation
-//
-//  Created by 승재 on 11/6/24.
-//
-
+import Kingfisher
 import SnapKit
 import TDDesign
 import TDDomain
 import Then
-import Kingfisher
 import UIKit
 
-protocol SocialDetailPostCellDelegate: AnyObject {
-    func didTapLikeButton(_ cell: SocialDetailPostCell)
-    func didTapNicknameLabel(_ cell: SocialDetailPostCell)
-    func didTapRoutineView(_ cell: SocialDetailPostCell)
-}
-
 final class SocialDetailPostCell: UICollectionViewCell {
-    weak var socialDetailPostCellDelegate: SocialDetailPostCellDelegate?
-    
-    private let containerView = UIView()
+    weak var socialDetailPostCellDelegate: SocialPostDelegate?
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -29,11 +14,9 @@ final class SocialDetailPostCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    lazy private var headerView = SocialHeaderView().then{
-        $0.delegate = self
-    }
+    private lazy var headerView = SocialHeaderView(style: .detail)
     
-    private var bodyStackView = UIStackView().then{
+    private var bodyStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 14
         $0.alignment = .fill
@@ -47,19 +30,20 @@ final class SocialDetailPostCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private var contentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private var titleLabel = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
     }
     
-    lazy private var footerView = SocialFooterView(isLike: false, likeCount: nil, commentCount: nil, shareCount: nil).then {
-        $0.delegate = self
+    private var contentLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral800).then {
+        $0.numberOfLines = 0
     }
     
-    private let separatorView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
-    }
+    private let seperatorView = UIView.dividedLine()
+    
+    private lazy var footerView = SocialFooterView(style: .regular)
     
     // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -72,9 +56,14 @@ final class SocialDetailPostCell: UICollectionViewCell {
     
     func configure(with item: Post) {
         headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
+        if let title = item.titleText {
+            titleLabel.setText(title)
+        } else {
+            titleLabel.isHidden = true
+        }
         contentLabel.setText(item.contentText)
         footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
-        
+        configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)
         configureImageList(with: item.imageList)
@@ -84,42 +73,41 @@ final class SocialDetailPostCell: UICollectionViewCell {
         super.prepareForReuse()
         contentLabel.setText("")
         avatarView.image = TDImage.Profile.medium
-        bodyStackView.arrangedSubviews.forEach {
-            if $0 is SocialRoutineView || $0 is SocialImageListView {
-                $0.removeFromSuperview()
+        for arrangedSubview in bodyStackView.arrangedSubviews {
+            if arrangedSubview is SocialRoutineView || arrangedSubview is SocialImageListView {
+                arrangedSubview.removeFromSuperview()
             }
         }
     }
 }
+
 // MARK: Layout
+
 private extension SocialDetailPostCell {
-    
     func setupUI() {
+        backgroundColor = TDColor.baseWhite
+        clipsToBounds = true
+        layer.cornerRadius = 12
         setupLayout()
         setupConstraints()
     }
     
     func setupLayout() {
-        [containerView, separatorView].forEach{
-            addSubview($0)
-        }
-        
-        [avatarView, verticalStackView].forEach{
-            containerView.addSubview($0)
-        }
-        
+        contentView.addSubview(avatarView)
+        contentView.addSubview(headerView)
+        contentView.addSubview(verticalStackView)
+        verticalStackView.addArrangedSubview(bodyStackView)
+        verticalStackView.addArrangedSubview(seperatorView)
+        verticalStackView.addArrangedSubview(footerView)
+        bodyStackView.addArrangedSubview(titleLabel)
         bodyStackView.addArrangedSubview(contentLabel)
-        
-        [headerView, bodyStackView, footerView].forEach{
-            verticalStackView.addArrangedSubview($0)
-        }
     }
     
     func setupConstraints() {
-        containerView.snp.makeConstraints { make in
+        contentView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(24)
         }
         
         avatarView.snp.makeConstraints { make in
@@ -128,7 +116,10 @@ private extension SocialDetailPostCell {
         }
         
         headerView.snp.makeConstraints { make in
-            make.height.equalTo(24)
+            make.leading.equalTo(avatarView.snp.trailing).offset(10)
+            make.trailing.equalToSuperview()
+            make.centerY.equalTo(avatarView)
+            make.height.equalTo(36)
         }
         
         bodyStackView.snp.makeConstraints { make in
@@ -140,24 +131,18 @@ private extension SocialDetailPostCell {
         }
         
         verticalStackView.snp.makeConstraints { make in
-            make.leading.equalTo(avatarView.snp.trailing).offset(10)
-            make.trailing.equalToSuperview().offset(-16)
-            make.top.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
-        
-        separatorView.snp.makeConstraints { make in
-            make.top.equalTo(verticalStackView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(12)
+            make.top.equalTo(avatarView.snp.bottom).offset(10)
+            make.bottom.equalToSuperview()
         }
     }
 }
 
-//MARK: Priavte Method
+// MARK: Priavte Method
+
 extension SocialDetailPostCell {
     private func configureUserImage(with image: String?) {
-        if let image = image {
+        if let image {
             avatarView.kf.setImage(with: URL(string: image))
         } else {
             avatarView.image = TDImage.Profile.medium
@@ -165,41 +150,55 @@ extension SocialDetailPostCell {
     }
     
     private func configureRoutine(with routine: Routine?) {
-        if let routine = routine {
-            let routineView = SocialRoutineView(with: routine).then {
-                $0.delegate = self
+        if let routine {
+            let routineView = SocialRoutineView(with: routine)
+            routineView.onTapperRoutine = { [weak self] in
+                guard let self else { return }
+                socialDetailPostCellDelegate?.didTapRoutineView(self, routine.id)
             }
             bodyStackView.addArrangedSubview(routineView)
         }
     }
     
     private func configureImageList(with imageList: [String]?) {
-        if let imageList = imageList {
+        if let imageList {
             bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
         }
     }
 }
 
-// MARK: Delegate
+// MARK: Configure Action
 
-extension SocialDetailPostCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
-    func didTapReport(_ view: UIView) {
-        print("didTapReport")
-    }
-
-    func didTapBlock(_ view: UIView) {
-        print("didTapBlock")
-    }
-
-    func didTapRoutine(_ view: SocialRoutineView) {
-        socialDetailPostCellDelegate?.didTapRoutineView(self)
-    }
-
-    func didTapNickname(_ view: UIView) {
-        socialDetailPostCellDelegate?.didTapNicknameLabel(self)
-    }
-
-    @objc func didTapLikeButton(_ view: SocialFooterView) {
-        socialDetailPostCellDelegate?.didTapLikeButton(self)
+extension SocialDetailPostCell {
+    func configureAction(_ item: Post) {
+        headerView.onNicknameTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapNicknameLabel(self, item.user.id)
+        }
+        
+        headerView.onBlockTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapBlock(self, item.user.id)
+        }
+        
+        headerView.onReportTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapReport(self, item.id)
+        }
+        
+        footerView.onLikeButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapLikeButton(self, item.id)
+        }
+        
+        footerView.onScrapButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapScrapPost(self, item.id)
+        }
+        
+        footerView.onShareButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapSharePost(self, item.id)
+        }
     }
 }

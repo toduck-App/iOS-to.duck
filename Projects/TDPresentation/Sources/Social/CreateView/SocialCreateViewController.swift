@@ -23,21 +23,12 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     init(viewModel: SocialCreateViewModel) {
         self.viewModel = viewModel
         super.init()
+        hidesBottomBarWhenPushed = true
     }
 
     required init?(coder: NSCoder) {
         self.viewModel = nil
         super.init(coder: coder)
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        tabBarController?.tabBar.isHidden = false
     }
 
     override func viewDidLoad() {

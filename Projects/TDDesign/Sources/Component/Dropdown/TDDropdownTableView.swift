@@ -1,7 +1,7 @@
 import UIKit
 
 final class DropDownTableView: UITableView {
-    private let itemHeight: CGFloat = 40
+    private let itemHeight: CGFloat = 44
 
     // MARK: - Initializers
 
@@ -11,8 +11,8 @@ final class DropDownTableView: UITableView {
         layer.cornerRadius = 12
         layer.masksToBounds = true
         isScrollEnabled = false
-        separatorInset = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
-        separatorColor = TDColor.Neutral.neutral200
+//        separatorInset = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
+        separatorColor = .clear
         register(DropDownCell.self, forCellReuseIdentifier: DropDownCell.identifier)
     }
 
