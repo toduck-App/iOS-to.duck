@@ -5,8 +5,10 @@
 //  Created by 박효준 on 7/16/24.
 //
 
-import UIKit
 import TDCore
+import TDDesign
+import TDDomain
+import UIKit
 
 final class TimerCoordinator: Coordinator {
     var navigationController: UINavigationController
@@ -23,13 +25,32 @@ final class TimerCoordinator: Coordinator {
     }
 
     func start() {
-        let timerViewController = TimerViewController()
+        let timerUseCase = injector.resolve(TimerUseCase.self)
+
+        let fetchTimerSettingUseCase = injector.resolve(FetchTimerSettingUseCase.self)
+        let updateTimerSettingUseCase = injector.resolve(UpdateTimerSettingUseCase.self)
+
+        let fetchFocusCountUseCase = injector.resolve(FetchFocusCountUseCase.self)
+        let updateFocusCountUseCase = injector.resolve(UpdateFocusCountUseCase.self)
+        let timerViewModel = TimerViewModel(
+            timerUseCase: timerUseCase,
+            fetchTimerSettingUseCase: fetchTimerSettingUseCase,
+            updateTimerSettingUseCase: updateTimerSettingUseCase,
+            fetchFocusCountUseCase: fetchFocusCountUseCase,
+            updateFocusCountUseCase: updateFocusCountUseCase
+        )
+
+        let timerViewController = TimerViewController(viewModel: timerViewModel)
+
         timerViewController.coordinator = self
-        navigationController.pushViewController(timerViewController, animated: false)
+        navigationController.pushViewController(
+            timerViewController, animated: false
+        )
     }
 }
 
 // MARK: - Coordinator Finish Delegate
+
 extension TimerCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
@@ -37,9 +58,11 @@ extension TimerCoordinator: CoordinatorFinishDelegate {
 }
 
 // MARK: - Navigation Delegate
+
 extension TimerCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(
+            navigationController: navigationController)
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
