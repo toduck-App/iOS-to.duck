@@ -10,10 +10,11 @@ final class ScheduleCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.addSubview(eventDetailView)
         eventDetailView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(16)
+            make.edges.equalToSuperview()
         }
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

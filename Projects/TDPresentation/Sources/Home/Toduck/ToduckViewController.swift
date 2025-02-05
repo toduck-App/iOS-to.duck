@@ -1,11 +1,16 @@
+import Combine
 import UIKit
 import TDDesign
 import SnapKit
 import Then
 
 final class ToduckViewController: BaseViewController<ToduckView> {
-    private let events = ["A", "B", "C", "D"]
+    // MARK: - Properties
+    private let viewModel = ToduckViewModel()
+    private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     
+    // MARK: Common Methods
     override func configure() {
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
@@ -22,7 +27,7 @@ extension ToduckViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return events.count
+        viewModel.todaySchedules.count
     }
     
     func collectionView(
@@ -34,13 +39,14 @@ extension ToduckViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
         
+        let currentSchedule = viewModel.todaySchedules[indexPath.row]
         cell.eventDetailView.configureCell(
-            color: .blue,
-            title: events[indexPath.row],
-            time: "10:00",
-            category: .actions,
-            isFinish: false,
-            place: "asd"
+            color: currentSchedule.categoryColor,
+            title: currentSchedule.title,
+            time: currentSchedule.time,
+            category: viewModel.categoryImages[indexPath.row].image,
+            isFinish: currentSchedule.isFinish,
+            place: currentSchedule.place
         )
         return cell
     }
