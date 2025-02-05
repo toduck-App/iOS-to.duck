@@ -3,16 +3,11 @@ import SnapKit
 import TDDesign
 import UIKit
 
-protocol SocialHeaderViewDelegate: AnyObject {
-    func didTapNickname(_ view: UIView)
-    func didTapReport(_ view: UIView)
-    func didTapBlock(_ view: UIView)
-}
-
 final class SocialHeaderView: UIView {
+    var onNicknameTapped: (() -> Void)?
+    var onReportTapped: (() -> Void)?
+    var onBlockTapped: (() -> Void)?
     
-    weak var delegate: SocialHeaderViewDelegate?
-
     private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
     
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
@@ -28,8 +23,8 @@ final class SocialHeaderView: UIView {
         anchorView: dotIconView,
         layout: .trailing,
         width: 110
-    ).then{
-        $0.dataSource = SocialFeedMoreType.allCases.map { $0.dropdownItem }
+    ).then {
+        $0.dataSource = SocialFeedMoreType.allCases.map(\.dropdownItem)
         $0.delegate = self
     }
     
@@ -115,13 +110,13 @@ extension SocialHeaderView: TDDropDownDelegate {
         let type = SocialFeedMoreType.allCases[indexPath.row]
         switch type {
         case .report:
-            delegate?.didTapReport(self)
+            onReportTapped?()
         case .block:
-            delegate?.didTapBlock(self)
+            onBlockTapped?()
         }
     }
     
     @objc private func didTapNickname() {
-        delegate?.didTapNickname(self)
+        onNicknameTapped?()
     }
 }

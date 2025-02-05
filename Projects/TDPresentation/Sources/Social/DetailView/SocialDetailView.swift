@@ -65,7 +65,7 @@ final class SocialDetailView: BaseView, UITextViewDelegate {
         detailCollectionView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(bottomContainerView.snp.top)
         }
 
         bottomContainerView.snp.makeConstraints { make in

@@ -20,9 +20,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private lazy var headerView = SocialHeaderView().then {
-        $0.delegate = self
-    }
+    private lazy var headerView = SocialHeaderView()
     
     private var bodyStackView = UIStackView().then {
         $0.axis = .vertical
@@ -42,9 +40,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.numberOfLines = 0
     }
     
-    private lazy var footerView = SocialFooterView(style: .compact).then {
-        $0.delegate = self
-    }
+    private lazy var footerView = SocialFooterView(style: .compact)
     
     private let replyStackView = UIStackView().then {
         $0.axis = .vertical
@@ -77,10 +73,11 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         contentLabel.setText(item.content)
         footerView.configure(
             isLike: item.isLike,
-            likeCount: item.like,
+            likeCount: item.likeCount,
             commentCount: item.reply.count,
             shareCount: nil
         )
+        configureAction(item)
         configureUserImage(with: item.user.icon)
         configureReplies(item.reply)
     }
@@ -145,6 +142,29 @@ private extension SocialDetailCommentCell {
             make.trailing.equalToSuperview().offset(-16)
             make.top.equalTo(avatarView)
             make.bottom.equalToSuperview().inset(16)
+        }
+    }
+}
+
+// MARK: Action
+
+private extension SocialDetailCommentCell {
+    func configureAction(_ item: Comment) {
+        headerView.onNicknameTapped = { [weak self] in
+            guard let self else { return }
+            commentDelegate?.didTapNicknameLabel(self, item.user.id)
+        }
+        headerView.onBlockTapped = { [weak self] in
+            guard let self else { return }
+            commentDelegate?.didTapBlock(self, item.user.id)
+        }
+        headerView.onReportTapped = { [weak self] in
+            guard let self else { return }
+            commentDelegate?.didTapReport(self, item.id)
+        }
+        footerView.onLikeButtonTapped = { [weak self] in
+            guard let self else { return }
+            commentDelegate?.didTapLikeButton(self, item.id)
         }
     }
 }
@@ -218,7 +238,10 @@ private extension SocialDetailCommentCell {
             $0.configure(titleBadge: comment.user.title,
                          nickname: comment.user.name,
                          date: comment.timestamp)
-            $0.delegate = self
+            $0.onNicknameTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapNicknameLabel(self, comment.user.id)
+            }
         }
         header.snp.makeConstraints { $0.height.equalTo(24) }
         return header
@@ -235,11 +258,14 @@ private extension SocialDetailCommentCell {
     func buildReplyFooter(_ comment: Comment) -> SocialFooterView {
         let footer = SocialFooterView(style: .compact).then {
             $0.configure(isLike: comment.isLike,
-                         likeCount: comment.like,
+                         likeCount: comment.likeCount,
                          commentCount: nil,
                          shareCount: nil)
         }.then {
-            $0.delegate = self
+            $0.onLikeButtonTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapReplyLikeButton(self, comment.id)
+            }
         }
         footer.snp.makeConstraints { $0.height.equalTo(24) }
         return footer
@@ -265,25 +291,5 @@ private extension SocialDetailCommentCell {
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
-    }
-}
-
-// MARK: - Delegate Extensions
-
-extension SocialDetailCommentCell: SocialHeaderViewDelegate, SocialFooterDelegate {
-    func didTapReport(_ view: UIView) {
-        print("didTapReport")
-    }
-    
-    func didTapBlock(_ view: UIView) {
-        print("didTapBlock")
-    }
-    
-    func didTapNickname(_ view: UIView) {
-        commentDelegate?.didTapNicknameLabel(self)
-    }
-    
-    func didTapLikeButton(_ view: SocialFooterView) {
-        commentDelegate?.didTapLikeButton(self)
     }
 }

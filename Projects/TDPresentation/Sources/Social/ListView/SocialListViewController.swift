@@ -1,7 +1,7 @@
 import Combine
+import TDCore
 import TDDesign
 import TDDomain
-import TDCore
 import UIKit
 
 final class SocialListViewController: BaseViewController<SocialListView>, TDPopupPresentable {
@@ -61,7 +61,7 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.rawValue)})
+        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.rawValue) })
         setupDataSource()
         layoutView.dropDownHoverView.delegate = self
         layoutView.addPostButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
@@ -196,43 +196,29 @@ extension SocialListViewController: UICollectionViewDelegate {
 // MARK: Input
 
 extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
-    func didTapBlock(_ cell: UICollectionViewCell) {
-        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
-            return
-        }
+    func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
         let controller = SocialBlockViewController()
         controller.onBlock = { [weak self] in
-            guard let user = self?.viewModel.posts[indexPath.item].user else { return }
-            self?.input.send(.blockUser(to: user))
+            self?.input.send(.blockUser(to: userID))
         }
         presentPopup(with: controller)
     }
     
-    func didTapReport(_ cell: UICollectionViewCell) {
-        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
-            return
-        }
-        coordinator?.didTapReport(id: viewModel.posts[indexPath.item].id)
+    func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+        coordinator?.didTapReport(id: postID)
     }
     
-    func didTapRoutineView(_ cell: UICollectionViewCell) {
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID) {
         // TODO: Routine 공유 View
         TDLogger.debug("Routine Tap!")
     }
     
-    func didTapNicknameLabel(_ cell: UICollectionViewCell) {
-        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
-            return
-        }
-        let user = viewModel.posts[indexPath.item].user
-        coordinator?.didTapUserProfile(id: user.id)
+    func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
+        coordinator?.didTapUserProfile(id: userID)
     }
     
-    func didTapLikeButton(_ cell: UICollectionViewCell) {
-        guard let indexPath = layoutView.socialFeedCollectionView.indexPath(for: cell) else {
-            return
-        }
-        input.send(.likePost(at: indexPath.item))
+    func didTapLikeButton(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+        input.send(.likePost(postID))
     }
     
     @objc func didTapSegmentedControl(sender: UISegmentedControl) {

@@ -5,8 +5,8 @@ public struct Comment: Identifiable {
     public let user: User
     public let content: String
     public let timestamp: Date
-    public let isLike: Bool
-    public let like: Int?
+    public var isLike: Bool
+    public var likeCount: Int
     public var reply: [Comment] = []
 
     public init(
@@ -15,7 +15,7 @@ public struct Comment: Identifiable {
         content: String,
         timestamp: Date,
         isLike: Bool,
-        like: Int?,
+        likeCount: Int?,
         comment: [Comment]?
     ) {
         self.id = id
@@ -23,8 +23,17 @@ public struct Comment: Identifiable {
         self.content = content
         self.timestamp = timestamp
         self.isLike = isLike
-        self.like = like
+        self.likeCount = likeCount ?? 0
         self.reply = comment ?? []
+    }
+    
+    public mutating func toggleLike(){
+        if isLike && likeCount > 0 {
+            likeCount -= 1
+        } else {
+            likeCount += 1
+        }
+        isLike.toggle()
     }
 }
 
@@ -44,7 +53,7 @@ public extension Comment {
             """,
             timestamp: Date(),
             isLike: true,
-            like: 1,
+            likeCount: 1,
             comment: [Comment(
                 id: UUID(),
                 user: .init(
@@ -59,7 +68,7 @@ public extension Comment {
                 """,
                 timestamp: Date(),
                 isLike: true,
-                like: 1,
+                likeCount: 1,
                 comment: []
             ),
             Comment(
@@ -76,7 +85,7 @@ public extension Comment {
                 """,
                 timestamp: Date(),
                 isLike: true,
-                like: 1,
+                likeCount: 1,
                 comment: []
             )]
         ),
@@ -106,7 +115,7 @@ public extension Comment {
             """,
             timestamp: Date(),
             isLike: false,
-            like: 0,
+            likeCount: 0,
             comment: []
         ),
     ]

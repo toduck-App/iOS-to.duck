@@ -14,9 +14,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private lazy var headerView = SocialHeaderView(style: .detail).then {
-        $0.delegate = self
-    }
+    private lazy var headerView = SocialHeaderView(style: .detail)
     
     private var bodyStackView = UIStackView().then {
         $0.axis = .vertical
@@ -42,9 +40,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
     
     private let seperatorView = UIView.dividedLine()
     
-    private lazy var footerView = SocialFooterView(style: .regular).then {
-        $0.delegate = self
-    }
+    private lazy var footerView = SocialFooterView(style: .regular)
     
     // MARK: - Init
 
@@ -67,7 +63,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
         }
         contentLabel.setText(item.contentText)
         footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
-        
+        configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)
         configureImageList(with: item.imageList)
@@ -155,8 +151,10 @@ extension SocialDetailPostCell {
     
     private func configureRoutine(with routine: Routine?) {
         if let routine {
-            let routineView = SocialRoutineView(with: routine).then {
-                $0.delegate = self
+            let routineView = SocialRoutineView(with: routine)
+            routineView.onTapperRoutine = { [weak self] in
+                guard let self else { return }
+                socialDetailPostCellDelegate?.didTapRoutineView(self, routine.id)
             }
             bodyStackView.addArrangedSubview(routineView)
         }
@@ -169,26 +167,38 @@ extension SocialDetailPostCell {
     }
 }
 
-// MARK: Delegate
+// MARK: Configure Action
 
-extension SocialDetailPostCell: SocialHeaderViewDelegate, SocialRoutineViewDelegate, SocialFooterDelegate {
-    func didTapReport(_ view: UIView) {
-        print("didTapReport")
-    }
-
-    func didTapBlock(_ view: UIView) {
-        print("didTapBlock")
-    }
-
-    func didTapRoutine(_ view: SocialRoutineView) {
-        socialDetailPostCellDelegate?.didTapRoutineView(self)
-    }
-
-    func didTapNickname(_ view: UIView) {
-        socialDetailPostCellDelegate?.didTapNicknameLabel(self)
-    }
-
-    @objc func didTapLikeButton(_ view: SocialFooterView) {
-        socialDetailPostCellDelegate?.didTapLikeButton(self)
+extension SocialDetailPostCell {
+    func configureAction(_ item: Post) {
+        headerView.onNicknameTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapNicknameLabel(self, item.user.id)
+        }
+        
+        headerView.onBlockTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapBlock(self, item.user.id)
+        }
+        
+        headerView.onReportTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapReport(self, item.id)
+        }
+        
+        footerView.onLikeButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapLikeButton(self, item.id)
+        }
+        
+        footerView.onScrapButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapScrapPost(self, item.id)
+        }
+        
+        footerView.onShareButtonTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapSharePost(self, item.id)
+        }
     }
 }

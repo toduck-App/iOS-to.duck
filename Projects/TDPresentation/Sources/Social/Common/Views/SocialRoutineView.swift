@@ -3,12 +3,8 @@ import TDDesign
 import TDDomain
 import UIKit
 
-protocol SocialRoutineViewDelegate: AnyObject {
-    func didTapRoutine(_ view: SocialRoutineView)
-}
-
 final class SocialRoutineView: UIView {
-    weak var delegate: SocialRoutineViewDelegate?
+    var onTapperRoutine: (() -> Void)?
     
     private let categoryImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -100,6 +96,6 @@ private extension SocialRoutineView {
 
 extension SocialRoutineView {
     @objc private func didTapRoutine() {
-        delegate?.didTapRoutine(self)
+        onTapperRoutine?()
     }
 }

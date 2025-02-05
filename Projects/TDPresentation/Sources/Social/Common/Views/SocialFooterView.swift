@@ -1,30 +1,37 @@
 import TDDesign
 import UIKit
 
-protocol SocialFooterDelegate: AnyObject {
-    func didTapLikeButton(_ view: SocialFooterView)
-    func didTapScrapButton(_ view: SocialFooterView)
-    func didTapShareButton(_ view: SocialFooterView)
-}
-
-extension SocialFooterDelegate {
-    func didTapLikeButton(_ view: SocialFooterView) {}
-    func didTapScrapButton(_ view: SocialFooterView) {}
-    func didTapShareButton(_ view: SocialFooterView) {}
-}
-
 final class SocialFooterView: UIView {
     enum FooterStyle {
         case regular
         case compact
     }
-    weak var delegate: SocialFooterDelegate?
+    var onLikeButtonTapped: (() -> Void)?
+    var onScrapButtonTapped: (() -> Void)?
+    var onShareButtonTapped: (() -> Void)?
     
     private lazy var likeButton = UIButton().then {
         $0.tintColor = TDColor.Neutral.neutral500
         $0.setImage(TDImage.Like.filledMedium.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.contentMode = .scaleAspectFit
-        $0.addTarget(self, action: #selector(didSelectLikeButton), for: .touchUpInside)
+        $0.addAction(UIAction { [weak self] _ in
+            self?.onLikeButtonTapped?()
+        }, for: .touchUpInside)
+    }
+    
+    private lazy var scrapButton = UIButton().then {
+        $0.setImage(TDImage.Scrap.emptyMedium, for: .normal)
+        $0.setImage(TDImage.Scrap.filledMedium, for: .highlighted)
+        $0.addAction(UIAction { [weak self] _ in
+            self?.onScrapButtonTapped?()
+        }, for: .touchUpInside)
+    }
+    
+    private lazy var shareButton = UIButton().then {
+        $0.setImage(TDImage.share2Medium, for: .normal)
+        $0.addAction(UIAction { [weak self] _ in
+            self?.onShareButtonTapped?()
+        }, for: .touchUpInside)
     }
     
     private lazy var commentIconView = UIImageView().then {
@@ -44,17 +51,6 @@ final class SocialFooterView: UIView {
     private var commentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
     
     private var shareLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
-    
-    private lazy var scrapButton = UIButton().then {
-        $0.setImage(TDImage.Scrap.emptyMedium, for: .normal)
-        $0.setImage(TDImage.Scrap.filledMedium, for: .highlighted)
-        $0.addTarget(self, action: #selector(didSelectScrapButton), for: .touchUpInside)
-    }
-    
-    private lazy var shareButton = UIButton().then {
-        $0.setImage(TDImage.share2Medium, for: .normal)
-        $0.addTarget(self, action: #selector(didSelectShareButton), for: .touchUpInside)
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -195,21 +191,5 @@ private extension SocialFooterView {
             shareIconView.isHidden = true
             shareLabel.isHidden = true
         }
-    }
-}
-
-// MARK: Delegate
-
-extension SocialFooterView {
-    @objc func didSelectLikeButton() {
-        delegate?.didTapLikeButton(self)
-    }
-    
-    @objc func didSelectScrapButton() {
-        delegate?.didTapScrapButton(self)
-    }
-    
-    @objc func didSelectShareButton() {
-        delegate?.didTapShareButton(self)
     }
 }

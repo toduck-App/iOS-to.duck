@@ -232,11 +232,11 @@ public struct DomainAssembly: Assembly {
             return SearchPostUseCaseImpl(repository: repository)
         }
 
-        container.register(ToggleCommentUseCase.self) { resolver in
+        container.register(ToggleCommentLikeUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {
                 fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
             }
-            return ToggleCommentUseCaseImpl(repository: repository)
+            return ToggleCommentLikeUseCaseImpl(repository: repository)
         }
 
         container.register(TogglePostLikeUseCase.self) { resolver in

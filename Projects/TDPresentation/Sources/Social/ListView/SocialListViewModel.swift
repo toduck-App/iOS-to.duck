@@ -7,11 +7,11 @@ final class SocialListViewModel: BaseViewModel {
     enum Input {
         case fetchPosts
         case refreshPosts
-        case likePost(at: Int)
+        case likePost(Post.ID)
         case sortPost(by: SocialSortType)
         case chipSelect(at: Int)
         case segmentSelect(at: Int)
-        case blockUser(to: User)
+        case blockUser(to: User.ID)
         case loadKeywords
         case deleteRecentKeyword(index: Int)
         case deleteRecentAllKeywords
@@ -88,8 +88,8 @@ final class SocialListViewModel: BaseViewModel {
                 switch event {
                 case .fetchPosts, .refreshPosts:
                     Task { await self.loadPosts() }
-                case .likePost(let index):
-                    Task { await self.likePost(at: index) }
+                case .likePost(let postID):
+                    Task { await self.likePost(postID: postID) }
                 case .sortPost(let sortType):
                     currentSort = sortType
                     sortCurrentPosts()
@@ -98,8 +98,8 @@ final class SocialListViewModel: BaseViewModel {
                 case .segmentSelect(let index):
                     currentSegment = index
                     Task { await self.loadPosts() }
-                case .blockUser(let user):
-                    Task { await self.blockUser(to: user) }
+                case .blockUser(let userID):
+                    Task { await self.blockUser(to: userID) }
                 case .loadKeywords:
                     loadKeywords()
                 case .deleteRecentKeyword(let index):
@@ -174,9 +174,7 @@ extension SocialListViewModel {
     
     // MARK: - Like
 
-    private func likePost(at index: Int) async {
-        let postID = posts[index].id
-
+    private func likePost(postID: Post.ID) async {
         do {
             let resultPost = try await togglePostLikeUseCase.execute(postID: postID)
             
@@ -204,9 +202,9 @@ extension SocialListViewModel {
     
     // MARK: - Block User 차단
 
-    private func blockUser(to user: User) async {
+    private func blockUser(to userID: User.ID) async {
         do {
-            _ = try await blockUserUseCase.execute(userID: user.id)
+            _ = try await blockUserUseCase.execute(userID: userID)
             // TODO: 차단 기능에 대한 후처리
         } catch {
             output.send(.failure("사용자 차단에 실패했습니다."))
