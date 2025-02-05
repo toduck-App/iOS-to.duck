@@ -3,9 +3,9 @@ import SnapKit
 import Then
 
 public final class ScheduleSegmentedControl: UISegmentedControl {
-    public var selectedSegmentTextColor: UIColor = TDColor.Neutral.neutral800
-    public var normalSegmentTextColor: UIColor = TDColor.Neutral.neutral500
-    public var titleFont: UIFont = TDFont.boldBody3.font
+    private let selectedSegmentTextColor: UIColor = TDColor.Neutral.neutral700
+    private let normalSegmentTextColor: UIColor = TDColor.baseWhite
+    private let titleFont: UIFont = TDFont.boldBody3.font
     
     // MARK: - Initializers
     public override init(items: [Any]?) {
@@ -21,14 +21,7 @@ public final class ScheduleSegmentedControl: UISegmentedControl {
     // MARK: - Setup
     private func setSegmentedControl() {
         selectedSegmentIndex = 0
-        setSegmentedImage()
         setSegmentedFont()
-    }
-    
-    private func setSegmentedImage() {
-        setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
-        setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
-        setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
     }
     
     private func setSegmentedFont() {

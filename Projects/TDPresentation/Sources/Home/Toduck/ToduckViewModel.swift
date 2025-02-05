@@ -16,7 +16,7 @@ final class ToduckViewModel: BaseViewModel {
     private(set) var todaySchedules: [Schedule] = [Schedule(
         id: 0,
         title: "1번 일정",
-        category: TDCategory(colorHex: "#012345", imageName: "power"),
+        category: TDCategory(colorHex: "#648EF8", imageName: "power"),
         startDate: "2021-09-01",
         endDate: "2021-09-01",
         isAllDay: true,
@@ -29,7 +29,7 @@ final class ToduckViewModel: BaseViewModel {
     ), Schedule(
         id: 0,
         title: "2번 일정",
-        category: TDCategory(colorHex: "#234567", imageName: "sleep"),
+        category: TDCategory(colorHex: "#FFD6E2", imageName: "sleep"),
         startDate: "2021-09-01",
         endDate: "2021-09-01",
         isAllDay: true,
@@ -42,7 +42,7 @@ final class ToduckViewModel: BaseViewModel {
     ), Schedule(
         id: 0,
         title: "3번 일정",
-        category: TDCategory(colorHex: "#456789", imageName: "sleep"),
+        category: TDCategory(colorHex: "#FF3872", imageName: "sleep"),
         startDate: "2021-09-01",
         endDate: "2021-09-01",
         isAllDay: true,

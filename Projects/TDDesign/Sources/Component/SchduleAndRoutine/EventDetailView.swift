@@ -13,7 +13,7 @@ public final class EventDetailView: UIView {
     private let categoryVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .center
-        $0.spacing = 8
+        $0.spacing = 4
     }
 
     private let categoryTopSpacer = UIView()
@@ -113,6 +113,7 @@ public final class EventDetailView: UIView {
     }
     
     public func configureCell(
+        isHomeToduck: Bool = false,
         color: UIColor,
         title: String,
         time: String?,
@@ -123,24 +124,56 @@ public final class EventDetailView: UIView {
     ) {
         self.isFinish = isFinish
         backgroundColor = TDColor.baseWhite
+
+        configureCategoryImageView(isNone: isNone, color: color, category: category)
+        configureLayoutForMode(isHomeToduck: isHomeToduck)
         
+        titleLabel.setText(title)
+        timeLabel.setText(time ?? "")
+        placeLabel.setText(place ?? "")
+
+        timeDetailHorizontalStackView.isHidden = (time == nil)
+        placeHorizontalStackView.isHidden = (place == nil)
+
+        changeCheckBoxButtonImage(isFinish: isFinish)
+    }
+
+    // MARK: - Private Methods
+
+    private func configureCategoryImageView(
+        isNone: Bool,
+        color: UIColor,
+        category: UIImage?
+    ) {
         if isNone {
-            categoryImageView.configure(backgroundColor: TDColor.baseWhite, category: category ?? TDImage.Category.none)
+            categoryImageView.configure(
+                backgroundColor: TDColor.baseWhite,
+                category: category ?? TDImage.Category.none
+            )
             scheduleIdentyColorView.backgroundColor = TDColor.baseWhite
         } else {
             scheduleIdentyColorView.backgroundColor = TDColor.reversedPair[color] ?? color
             categoryImageView.configure(backgroundColor: color, category: category ?? TDImage.Category.none)
         }
-        
-        titleLabel.setText(title)
-        categoryImageView.isHidden = (category == nil)
-        
-        timeLabel.setText(time ?? "")
-        timeDetailHorizontalStackView.isHidden = (time == nil)
-        placeLabel.setText(place ?? "")
-        placeHorizontalStackView.isHidden = (place == nil)
-        
-        changeCheckBoxButtonImage(isFinish: isFinish)
+    }
+
+    private func configureLayoutForMode(isHomeToduck: Bool) {
+        if isHomeToduck {
+            titleLabel.setFont(.boldHeader5)
+            timeLabel.setFont(.regularBody2)
+            placeLabel.setFont(.regularBody2)
+
+            categoryVerticalStackView.snp.remakeConstraints { $0.width.equalTo(64) }
+            categoryImageView.snp.remakeConstraints { $0.width.height.equalTo(64) }
+            categoryImageView.layer.cornerRadius = 32
+            categoryImageView.layer.masksToBounds = true
+
+            scheduleIdentyColorView.backgroundColor = TDColor.baseWhite
+            checkBoxButton.isHidden = true
+        } else {
+            categoryVerticalStackView.snp.remakeConstraints { $0.width.equalTo(32) }
+            categoryImageView.snp.remakeConstraints { $0.width.height.equalTo(32) }
+        }
     }
     
     public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
@@ -152,8 +185,6 @@ public final class EventDetailView: UIView {
         }, for: .touchUpInside)
     }
     
-    // MARK: - Private Methods
-
     private func changeCheckBoxButtonImage(isFinish: Bool) {
         let checkBoxImage = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
         checkBoxButton.setImage(checkBoxImage, for: .normal)
