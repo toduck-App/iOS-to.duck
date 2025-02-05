@@ -10,7 +10,7 @@ import Foundation
 
 public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(
-        id: UUID(),
+        id: nil,
         title: "123",
         category: TDCategory(
             colorHex: "#123456",
@@ -27,24 +27,34 @@ public final class PostRepositoryImpl: PostRepository {
         isFinish: false
     )
     private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
+    private var dummyPost = Post.dummy
 
     public init() { }
 
     public func fetchPostList(category: PostCategory?) async throws -> [Post] {
         guard let category = category else {
-            return Post.dummy.sorted { $0.timestamp > $1.timestamp }
+            return dummyPost
         }
-        return Post.dummy
+        return dummyPost
             .filter { $0.category?.contains(category) ?? false }
-            .sorted { $0.timestamp > $1.timestamp }
     }
 
-    public func searchPost(keyword: String, category: PostCategory) async throws -> [Post]? {
-        return []
+    public func searchPost(keyword: String, category: PostCategory?) async throws -> [Post]? {
+        guard let category = category else {
+            return dummyPost
+                .filter { $0.contentText.contains(keyword) }
+        }
+        return dummyPost
+            .filter { $0.contentText.contains(keyword) && $0.category?.contains(category) ?? false }
     }
 
-    public func togglePostLike(postID: Post.ID) async throws -> Bool {
-        return false;
+    public func togglePostLike(postID: Post.ID) async throws -> Result<Post, Error> {
+        if let index = dummyPost.firstIndex(where: { $0.id == postID }) {
+            dummyPost[index].toggleLike()
+            return .success(dummyPost[index])
+        }
+        //TODO: 실제 리소스에 반영 후 적절한 Error 처리 필요
+        return .failure(NSError(domain: "PostRepositoryImpl", code: 0, userInfo: nil))
     }
 
     public func bringUserRoutine(routine: Routine) async throws -> Routine {
@@ -64,7 +74,7 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postID: Post.ID) async throws -> Post {
-        guard let post = Post.dummy.filter({ $0.id == postID }).first else {
+        guard let post = dummyPost.filter({ $0.id == postID }).first else {
             // 에러 정의가 없어서 임시로 구현
             return Post.dummy[0]
         }

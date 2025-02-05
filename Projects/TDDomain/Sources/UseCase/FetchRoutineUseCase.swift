@@ -12,6 +12,6 @@ public final class FetchRoutineUseCaseImpl: FetchRoutineUseCase {
     }
     
     public func execute() async throws -> Routine {
-        return try await repository.fetchRoutine()
+        try await repository.fetchRoutine().get()
     }
 }

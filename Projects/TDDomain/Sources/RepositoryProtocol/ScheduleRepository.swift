@@ -1,18 +1,11 @@
-//
-//  ScheduleRepositoryProtocol.swift
-//  toduck
-//
-//  Created by 박효준 on 6/7/24.
-//
-
 import Foundation
+import TDCore
 
-// MARK: 일정 하나 상세 불러오기
 public protocol ScheduleRepository {
-    func fetchSchedule() async throws -> Schedule
-    func fetchScheduleList() async throws -> [Schedule]
-    func updateSchedule(scheduleId: Int) async throws -> Bool
-    func deleteSchedule(scheduleId: Int) async throws -> Bool
-    func moveTomorrowSchedule(scheduleId: Int) async throws -> Bool
-    func createSchedule(schedule: Schedule) async throws -> Bool
+    func fetchSchedule() async -> Result<Schedule, TDDataError>
+    func fetchScheduleList() async -> Result<[Schedule], TDDataError>
+    func updateSchedule(scheduleId: Int) async -> Result<Void, TDDataError>
+    func deleteSchedule(scheduleId: Int) async -> Result<Void, TDDataError>
+    func moveTomorrowSchedule(scheduleId: Int) async -> Result<Void, TDDataError>
+    func createSchedule(schedule: Schedule) async -> Result<Void, TDDataError>
 }

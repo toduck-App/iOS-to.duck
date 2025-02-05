@@ -25,6 +25,7 @@ public enum TDImage {
     public static let reportMedium = TDDesignAsset.Images.reportMedium.image
     public static let reportFillMedium = TDDesignAsset.Images.reportFillMedium.image
     public static let shareMedium = TDDesignAsset.Images.shareMedium.image
+    public static let share2Medium = TDDesignAsset.Images.share2Medium.image
     public static let sortMedium = TDDesignAsset.Images.sortMedium.image
     public static let trashMedium = TDDesignAsset.Images.trashMedium.image
     public static let trashWhiteMedium = TDDesignAsset.Images.trashWhiteMedium.image
@@ -44,6 +45,10 @@ public enum TDImage {
     public static let timeSmall = TDDesignAsset.Images.timeSmall.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
     public static let slashMedium = TDDesignAsset.Images.slashMedium.image
+    public static let banEmptySmall = TDDesignAsset.Images.banEmptySmall.image
+    public static let banFillSmall = TDDesignAsset.Images.banFillSmall.image
+    public static let reportEmptySmall = TDDesignAsset.Images.reportEmptySmall.image
+    public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     
     public enum CheckBox {
         public static let empty = TDDesignAsset.Images.emptyCheckBox.image
@@ -80,6 +85,7 @@ public enum TDImage {
         public static let small = TDDesignAsset.Images.commentSmall.image
         public static let rightMedium = TDDesignAsset.Images.commentRightMedium.image
         public static let leftMedium = TDDesignAsset.Images.commentLeftMedium.image
+        public static let emptyMedium = TDDesignAsset.Images.commentEmptyMedium.image
     }
     
     public enum Profile {
@@ -272,5 +278,19 @@ public enum TDImage {
     public enum Pen {
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
+    }
+    
+    public enum Sort {
+        public static let commentEmpty = TDDesignAsset.Images.commentEmptySmall.image
+        public static let recentEmpty = TDDesignAsset.Images.timeEmptySmall.image
+        public static let sympathyEmpty = TDDesignAsset.Images.likeEmptySmall.image
+        public static let commentFill = TDDesignAsset.Images.commentFillSmall.image
+        public static let recentFill = TDDesignAsset.Images.timeFillSmall.image
+        public static let sympathyFill = TDDesignAsset.Images.likeFillSmall.image
+    }
+    
+    public enum Scrap {
+        public static let emptyMedium = TDDesignAsset.Images.scrapEmptyMedium.image
+        public static let filledMedium = TDDesignAsset.Images.scrapFillMedium.image
     }
 }

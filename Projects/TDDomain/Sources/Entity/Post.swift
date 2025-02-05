@@ -3,11 +3,12 @@ import Foundation
 public struct Post: Identifiable {
     public let id: UUID
     public let user: User
+    public let titleText: String?
     public let contentText: String
     public let imageList: [String]?
     public let timestamp: Date
     
-    public var likeCount: Int?
+    public var likeCount: Int
     public var isLike: Bool
     public let commentCount: Int?
     public let shareCount: Int?
@@ -19,10 +20,11 @@ public struct Post: Identifiable {
     public init(
         id: UUID,
         user: User,
+        titleText: String? = nil,
         contentText: String,
         imageList: [String]?,
         timestamp: Date,
-        likeCount: Int?,
+        likeCount: Int,
         isLike: Bool,
         commentCount: Int?,
         shareCount: Int?,
@@ -31,6 +33,7 @@ public struct Post: Identifiable {
     ) {
         self.id = id
         self.user = user
+        self.titleText = titleText
         self.contentText = contentText
         self.imageList = imageList
         self.timestamp = timestamp
@@ -40,6 +43,15 @@ public struct Post: Identifiable {
         self.shareCount = shareCount
         self.routine = routine
         self.category = category
+    }
+    
+    public mutating func toggleLike(){
+        if isLike && likeCount > 0 {
+            likeCount -= 1
+        } else {
+            likeCount += 1
+        }
+        isLike.toggle()
     }
 }
 
@@ -69,7 +81,7 @@ public extension Post {
                                     commentCount: 3,
                                     shareCount: 12,
                                     routine: Routine(
-                                        id: UUID(),
+                                        id: nil,
                                         title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자",
                                         category: TDCategory(
                                             colorHex: "#123456",
@@ -77,10 +89,10 @@ public extension Post {
                                         ),
                                         isAllDay: false,
                                         isPublic: false,
-                                        date: nil,
+                                        date: Date(),
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
-                                        alarmTimes: [.oneDayBefore],
+                                        alarmTimes: [.tenMinutesBefore],
                                         memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산",
                                         recommendedRoutines: nil,
                                         isFinish: false
@@ -109,7 +121,7 @@ public extension Post {
                                     commentCount: 7,
                                     shareCount: 12,
                                     routine: Routine(
-                                        id: UUID(),
+                                        id: nil,
                                         title: "나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자나가기 전 잊지 말고 챙기자",
                                         category: TDCategory(colorHex: "#123456", imageName: "computer"),
                                         isAllDay: false,
@@ -117,7 +129,7 @@ public extension Post {
                                         date: nil,
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
-                                        alarmTimes: [.oneDayBefore],
+                                        alarmTimes: [.tenMinutesBefore],
                                         memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산",
                                         recommendedRoutines: nil,
                                         isFinish: false
@@ -134,7 +146,21 @@ public extension Post {
                                      commentCount: 7,
                                      shareCount: 12,
                                      routine: nil,
-                                     category: [.anxiety, .concentration, .memory])]
+                                     category: [.anxiety, .concentration, .memory]),
+                                Post(
+                                    id: UUID(),
+                                    user: .init(id: UUID(), name: "오리발", icon: nil, title: "작심삼일", isblock: false),
+                                    titleText: "수면 관련 질문..",
+                                    contentText: "최근들어 부쩍 수면의 질이 낮아져 너무 힘든데 도움되는 방법이 있을까요?",
+                                    imageList: nil,
+                                    timestamp: .now.addingTimeInterval(-1000),
+                                    likeCount: 555,
+                                    isLike: false,
+                                    commentCount: 2,
+                                    shareCount: nil,
+                                    routine: nil,
+                                    category: [.sleep])
+                                ]
 }
 
 extension Post: Equatable {

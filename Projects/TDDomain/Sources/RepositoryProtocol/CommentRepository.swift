@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol CommentRepository {
-    func toggleCommentLike(commentID: Comment.ID) async throws -> Bool
+    func toggleCommentLike(commentID: Comment.ID) async throws -> Result<Comment, Error> 
     func reportComment(commentID: Comment.ID) async throws -> Bool
     func blockComment(commentID: Comment.ID) async throws -> Bool
     

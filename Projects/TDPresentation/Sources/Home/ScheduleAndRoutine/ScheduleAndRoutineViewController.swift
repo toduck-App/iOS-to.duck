@@ -80,21 +80,21 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     
     override func layout() {
         weekCalendarView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
-            $0.leading.trailing.equalToSuperview().inset(28)
-            $0.height.equalTo(220)
+            $0.top.equalToSuperview().offset(LayoutConstants.calendarTopOffset)
+            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.calendarHorizontalInset)
+            $0.height.equalTo(LayoutConstants.calendarHeight)
         }
         
         scheduleAndRoutineTableView.snp.makeConstraints {
-            $0.top.equalTo(weekCalendarView.snp.bottom).offset(20)
+            $0.top.equalTo(weekCalendarView.snp.bottom).offset(LayoutConstants.tableViewTopOffset)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
         eventMakorFloattingButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
-            $0.width.equalTo(120)
-            $0.height.equalTo(48)
+            $0.trailing.equalToSuperview().offset(LayoutConstants.buttonTrailingInset)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(LayoutConstants.buttonBottomInset)
+            $0.width.equalTo(LayoutConstants.buttonWidth)
+            $0.height.equalTo(LayoutConstants.buttonHeight)
         }
     }
     
@@ -201,5 +201,20 @@ extension ScheduleAndRoutineViewController: UITableViewDelegate {
         editAction.backgroundColor = .systemBlue
         
         return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+    }
+}
+
+// MARK: - Layout Constants
+extension ScheduleAndRoutineViewController {
+    private enum LayoutConstants {
+        static let calendarTopOffset: CGFloat = 20
+        static let calendarHorizontalInset: CGFloat = 16
+        static let calendarHeight: CGFloat = 220
+        static let tableViewTopOffset: CGFloat = 20
+        static let tableViewContentInsetTop: CGFloat = 12
+        static let buttonTrailingInset: CGFloat = -20
+        static let buttonBottomInset: CGFloat = -20
+        static let buttonWidth: CGFloat = 120
+        static let buttonHeight: CGFloat = 48
     }
 }

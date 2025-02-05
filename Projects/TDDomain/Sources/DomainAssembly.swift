@@ -98,6 +98,13 @@ public struct DomainAssembly: Assembly {
             return DeleteScheduleUseCaseImpl(repository: repository)
         }
         
+        container.register(DeleteKeywordUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RecentKeywordRepository.self) else {
+                fatalError("컨테이너에 RecentKeywordRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteKeywordUseCaseImpl(repository: repository)
+        }
+        
         // MARK: - Fetch UseCases
         container.register(FetchCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {
@@ -190,6 +197,13 @@ public struct DomainAssembly: Assembly {
             return FetchUserUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchKeywordUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RecentKeywordRepository.self) else {
+                fatalError("컨테이너에 RecentKeywordRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchKeywordUseCaseImpl(repository: repository)
+        }
+        
         container.register(MoveTomorrowScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
@@ -218,11 +232,11 @@ public struct DomainAssembly: Assembly {
             return SearchPostUseCaseImpl(repository: repository)
         }
 
-        container.register(ToggleCommentUseCase.self) { resolver in
+        container.register(ToggleCommentLikeUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {
                 fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
             }
-            return ToggleCommentUseCaseImpl(repository: repository)
+            return ToggleCommentLikeUseCaseImpl(repository: repository)
         }
 
         container.register(TogglePostLikeUseCase.self) { resolver in
@@ -310,6 +324,13 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
             }
             return UpdateFocusCountUseCaseImpl(repository: repository)
+        }
+        
+        container.register(UpdateKeywordUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RecentKeywordRepository.self) else {
+                fatalError("컨테이너에 RecentKeywordRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateKeywordUseCaseImpl(repository: repository)
         }
     }
 }

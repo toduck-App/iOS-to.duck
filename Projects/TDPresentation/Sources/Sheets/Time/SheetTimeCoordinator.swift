@@ -8,6 +8,7 @@ final class SheetTimeCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    weak var delegate: SheetTimeDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -18,8 +19,8 @@ final class SheetTimeCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = SheetTimeViewModel()
-        let sheetViewController = SheetTimeViewController(viewModel: viewModel)
+        let sheetViewController = SheetTimeViewController()
+        sheetViewController.delegate = delegate
         sheetViewController.coordinator = self
         let sheetController = SheetViewController(
             controller: sheetViewController,

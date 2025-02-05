@@ -4,21 +4,21 @@ import UIKit
 enum SocialFeedMoreType: String, CaseIterable {
     case report = "신고"
     case block = "차단"
-    
-    var leftImage: UIImage? {
+
+    var image: TDDropdownItem.SelectableImage? {
         switch self {
         case .report:
-            return TDImage.reportMedium
+            (TDImage.reportEmptySmall, TDImage.reportFillSmall)
         case .block:
-            return TDImage.X.x2Medium
+            (TDImage.banEmptySmall, TDImage.banFillSmall)
         }
     }
-    
+
     var dropdownItem: TDDropdownItem {
-        return TDDropdownItem(
+        TDDropdownItem(
             title: rawValue,
-            leftImage: leftImage,
-            rightImage: nil
+            leftImage: nil,
+            rightImage: image
         )
     }
 }

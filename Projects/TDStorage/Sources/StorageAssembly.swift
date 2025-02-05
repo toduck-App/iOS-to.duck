@@ -9,5 +9,9 @@ public struct StorageAssembly: Assembly {
         container.register(CategoryStorage.self) { _ in
             CategoryStorageImpl()
         }
+        
+        container.register(RecentKeywordStorage.self) { _ in
+            RecentKeywordStorageImpl()
+        }
     }
 }

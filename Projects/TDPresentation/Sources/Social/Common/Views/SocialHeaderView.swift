@@ -3,15 +3,11 @@ import SnapKit
 import TDDesign
 import UIKit
 
-protocol SocialHeaderViewDelegate: AnyObject {
-    func didTapNickname(_ view: UIView)
-    func didTapReport(_ view: UIView)
-    func didTapBlock(_ view: UIView)
-}
-
 final class SocialHeaderView: UIView {
-    weak var delegate: SocialHeaderViewDelegate?
-
+    var onNicknameTapped: (() -> Void)?
+    var onReportTapped: (() -> Void)?
+    var onBlockTapped: (() -> Void)?
+    
     private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
     
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
@@ -26,9 +22,9 @@ final class SocialHeaderView: UIView {
     private(set) lazy var dropDownHoverView = TDDropdownHoverView(
         anchorView: dotIconView,
         layout: .trailing,
-        width: 100
-    ).then{
-        $0.dataSource = SocialFeedMoreType.allCases.map { $0.dropdownItem }
+        width: 110
+    ).then {
+        $0.dataSource = SocialFeedMoreType.allCases.map(\.dropdownItem)
         $0.delegate = self
     }
     
@@ -36,6 +32,17 @@ final class SocialHeaderView: UIView {
         super.init(frame: frame)
         setupUI()
         setupRecognizer()
+    }
+    
+    convenience init(style: SocialPostStyle) {
+        self.init(frame: .zero)
+        switch style {
+        case .list:
+            break
+        case .detail:
+            dotIconView.isHidden = true
+            dropDownHoverView.isHidden = true
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -60,24 +67,26 @@ private extension SocialHeaderView {
     }
     
     func setupLayout() {
-        [titleBagde, nicknameLabel, dateLabel, dropDownHoverView].forEach {
-            addSubview($0)
-        }
+        addSubview(titleBagde)
+        addSubview(nicknameLabel)
+        addSubview(dateLabel)
+        addSubview(dropDownHoverView)
     }
     
     func setupConstraints() {
-        titleBagde.snp.makeConstraints { make in
+        nicknameLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
             make.top.leading.equalToSuperview()
         }
         
-        nicknameLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(titleBagde)
-            make.leading.equalTo(titleBagde.snp.trailing).offset(10)
+        titleBagde.snp.makeConstraints { make in
+            make.centerY.equalTo(nicknameLabel)
+            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
         }
         
         dateLabel.snp.makeConstraints { make in
             make.centerY.equalTo(titleBagde)
-            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
+            make.leading.equalTo(titleBagde.snp.trailing).offset(10)
         }
         
         dotIconView.snp.makeConstraints { make in
@@ -101,13 +110,13 @@ extension SocialHeaderView: TDDropDownDelegate {
         let type = SocialFeedMoreType.allCases[indexPath.row]
         switch type {
         case .report:
-            delegate?.didTapReport(self)
+            onReportTapped?()
         case .block:
-            delegate?.didTapBlock(self)
+            onBlockTapped?()
         }
     }
     
     @objc private func didTapNickname() {
-        delegate?.didTapNickname(self)
+        onNicknameTapped?()
     }
 }

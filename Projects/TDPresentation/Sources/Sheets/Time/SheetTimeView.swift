@@ -24,7 +24,7 @@ final class SheetTimeView: BaseView {
         labelText: "종일",
         toduckFont: TDFont.mediumBody2
     )
-    private let allDaySwitch = UISwitch().then {
+    let allDaySwitch = UISwitch().then {
         $0.onTintColor = TDColor.Primary.primary500
     }
     
@@ -40,14 +40,14 @@ final class SheetTimeView: BaseView {
         $0.axis = .horizontal
         $0.spacing = 10
     }
-    private let amButton = TDSelectableButton(
+    let amButton = TDSelectableButton(
         title: "오전",
         backgroundColor: TDColor.Neutral.neutral50,
         foregroundColor: TDColor.Neutral.neutral700,
         radius: 8,
         font: TDFont.mediumBody2.font
     )
-    private let pmButton = TDSelectableButton(
+    let pmButton = TDSelectableButton(
         title: "오후",
         backgroundColor: TDColor.Neutral.neutral50,
         foregroundColor: TDColor.Neutral.neutral700,
@@ -84,43 +84,12 @@ final class SheetTimeView: BaseView {
     }()
     
     let saveButton = TDBaseButton(
-        title: "저장",
-        backgroundColor: TDColor.Primary.primary500,
-        foregroundColor: TDColor.baseWhite,
+        title: "취소",
+        backgroundColor: TDColor.Neutral.neutral100,
+        foregroundColor: TDColor.Neutral.neutral700,
         radius: 12,
         font: TDFont.boldHeader3.font
     )
-    
-    // MARK: - Initialization
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupCollectionViews()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupCollectionViews() {
-        hourCollectionView.delegate = self
-        hourCollectionView.dataSource = self
-        minuteCollectionView.delegate = self
-        minuteCollectionView.dataSource = self
-        
-        hourCollectionView.register(
-            UICollectionViewCell.self,
-            forCellWithReuseIdentifier: "HourCell"
-        )
-        minuteCollectionView.register(
-            UICollectionViewCell.self,
-            forCellWithReuseIdentifier: "MinuteCell"
-        )
-    }
-    
-    // MARK: - Common Method
-    override func configure() {
-        backgroundColor = TDColor.baseWhite
-    }
     
     override func addview() {
         addSubview(cancelButton)
@@ -194,7 +163,7 @@ final class SheetTimeView: BaseView {
         
         /// Hour CollectionView
         hourContainerView.snp.makeConstraints {
-            $0.height.equalTo(100)
+            $0.height.equalTo(110)
         }
         hourLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
@@ -207,7 +176,7 @@ final class SheetTimeView: BaseView {
         
         /// Minute CollectionView
         minuteContainerView.snp.makeConstraints {
-            $0.height.equalTo(100)
+            $0.height.equalTo(110)
         }
         minLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
@@ -222,70 +191,6 @@ final class SheetTimeView: BaseView {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16)
             $0.height.equalTo(56)
-        }
-    }
-}
-
-extension SheetTimeView: UICollectionViewDataSource {
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        if collectionView == hourCollectionView {
-            return 12 // Hours: 1 to 12
-        } else {
-            return 12 // Minutes: 00, 05, 10, ..., 55
-        }
-    }
-    
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let reuseIdentifier: String
-        if collectionView == hourCollectionView {
-            reuseIdentifier = "HourCell"
-        } else {
-            reuseIdentifier = "MinuteCell"
-        }
-        
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: reuseIdentifier,
-            for: indexPath
-        )
-        
-        let text: String
-        if collectionView == hourCollectionView {
-            text = "\(indexPath.row + 1)" // 1~12
-        } else {
-            text = String(format: "%02d", indexPath.row * 5) // 00, 05, 10, ...
-        }
-        
-        let selectableButton = TDSelectableButton(
-            title: text,
-            backgroundColor: TDColor.Neutral.neutral50,
-            foregroundColor: TDColor.Neutral.neutral500,
-            radius: 8,
-            font: TDFont.mediumBody2.font
-        )
-
-        cell.contentView.addSubview(selectableButton)
-        selectableButton.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        return cell
-    }
-}
-
-extension SheetTimeView: UICollectionViewDelegateFlowLayout {
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        if collectionView == hourCollectionView {
-            print("Selected Hour: \(indexPath.row + 1)")
-        } else {
-            print("Selected Minute: \(indexPath.row * 5)")
         }
     }
 }

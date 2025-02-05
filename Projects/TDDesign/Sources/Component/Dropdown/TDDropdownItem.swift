@@ -2,13 +2,15 @@ import UIKit
 
 public struct TDDropdownItem {
     public let title: String
-    public let leftImage: UIImage?
-    public let rightImage: UIImage?
+    public let leftImage: SelectableImage?
+    public let rightImage: SelectableImage?
+    
+    public typealias SelectableImage = (defaultImage: UIImage, selectedImage: UIImage?)
     
     public init(
         title: String,
-        leftImage: UIImage? = nil,
-        rightImage: UIImage? = nil
+        leftImage: SelectableImage? = nil,
+        rightImage: SelectableImage? = nil
     ) {
         self.title = title
         self.leftImage = leftImage

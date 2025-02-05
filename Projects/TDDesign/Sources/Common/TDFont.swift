@@ -31,6 +31,8 @@ public enum TDFont {
     case mediumBody3
     case boldBody3
     
+    case regularBody4
+    
     case mediumButton
     case boldButton
     
@@ -85,6 +87,8 @@ extension TDFont {
             return TDDesignFontFamily.Pretendard.medium.font(size: 14.0)
         case .boldBody3:
             return TDDesignFontFamily.Pretendard.semiBold.font(size: 14.0)
+        case .regularBody4:
+            return TDDesignFontFamily.Pretendard.regular.font(size: 15.0)
         case .mediumButton:
             return TDDesignFontFamily.Pretendard.medium.font(size: 12.0)
         case .boldButton:
