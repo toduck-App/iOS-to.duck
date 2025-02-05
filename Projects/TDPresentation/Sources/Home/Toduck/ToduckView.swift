@@ -26,6 +26,7 @@ final class ToduckView: BaseView {
     }().then {
         $0.backgroundColor = .clear
         $0.showsHorizontalScrollIndicator = false
+        $0.decelerationRate = .fast
     }
     
     // MARK: - Common Methods

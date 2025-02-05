@@ -52,6 +52,19 @@ final class ToduckViewModel: BaseViewModel {
         place: "장장소소",
         memo: nil,
         isFinish: true
+    ), Schedule(
+        id: 0,
+        title: "4번 일정",
+        category: TDCategory(colorHex: "#FF3872", imageName: "sleep"),
+        startDate: "2021-09-01",
+        endDate: "2021-09-01",
+        isAllDay: true,
+        time: Date(),
+        repeatDays: nil,
+        alarmTimes: nil,
+        place: "장장소소",
+        memo: nil,
+        isFinish: true
     )]
     var categoryImages: [TDCategoryImageType] {
         todaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
