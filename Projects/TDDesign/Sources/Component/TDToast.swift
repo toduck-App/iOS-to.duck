@@ -60,9 +60,9 @@ private final class TDToastView: UIView {
     private let foregroundColor: UIColor
     private let titleText: String
     private let contentText: String
-    private let sideDumpView: UIView = .init()
+    private let sideDumpView = UIView()
     private let tomato: UIImageView
-    private let sideColor: UIView = .init()
+    private let sideColor = UIView()
     private let title = TDLabel(toduckFont: .boldBody2)
     private let content = TDLabel(
         toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800
@@ -85,7 +85,7 @@ private final class TDToastView: UIView {
         tomato = UIImageView(image: tomatoImage)
         super.init(frame: frame)
         configure()
-        addSubView()
+        addViews()
         layout()
     }
 
@@ -133,7 +133,7 @@ private final class TDToastView: UIView {
         sideColor.backgroundColor = foregroundColor
     }
 
-    private func addSubView() {
+    private func addViews() {
         addSubview(sideDumpView)
         addSubview(tomato)
         addSubview(stackY)
