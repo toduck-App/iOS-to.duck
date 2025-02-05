@@ -49,5 +49,9 @@ public struct DataAssembly: Assembly {
             }
             return RecentKeywordRepositoryImpl(storage: storage)
         }
+
+        container.register(TimerRepository.self) { _ in
+            return TimerRepositoryImpl()
+        }.inObjectScope(.container)
     }
 }

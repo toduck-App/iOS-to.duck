@@ -43,7 +43,6 @@ public enum TDImage {
     public static let penSmall = TDDesignAsset.Images.penSmall.image
     public static let sortSmall = TDDesignAsset.Images.sortSmall.image
     public static let timeSmall = TDDesignAsset.Images.timeSmall.image
-    public static let tomatoTerm = TDDesignAsset.Images.tomatoTerm.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
     public static let slashMedium = TDDesignAsset.Images.slashMedium.image
     public static let banEmptySmall = TDDesignAsset.Images.banEmptySmall.image
@@ -267,6 +266,13 @@ public enum TDImage {
         public static let computer = TDDesignAsset.Images.categoryComputer.image
         public static let medicine = TDDesignAsset.Images.categoryMedicine.image
         public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.image
+    }
+    
+    public enum Tomato {
+        public static let tomato = TDDesignAsset.Images.tomato.image
+        public static let green = TDDesignAsset.Images.greenTomato.image
+        public static let orange = TDDesignAsset.Images.orangeTomato.image
+        public static let timer = TDDesignAsset.Images.timerTomato.image
     }
     
     public enum Pen {
