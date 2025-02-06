@@ -43,9 +43,6 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.saveCategory)
-            self?.delegate?.didSaveCategory()
-            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
-            self?.dismiss(animated: true)
         }, for: .touchUpInside)
         
         layoutView.colorPaletteView.isUserInteractionEnabled = false
@@ -63,7 +60,11 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
                 case .fetchedCategories:
                     self?.layoutView.categoryCollectionView.setupCategoryView(
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
-                        } ?? [])                    
+                        } ?? [])
+                case .updatedCategoryColor:
+                    self?.delegate?.didSaveCategory()
+                    self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
+                    self?.dismiss(animated: true)
                 }
             }.store(in: &cancellables)
     }
