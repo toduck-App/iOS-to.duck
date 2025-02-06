@@ -52,6 +52,16 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         super.init(coder: coder)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let today = Date()
+        let calendar = Calendar.current
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+
+        weekCalendarView.setCurrentPage(startOfWeek, animated: false)
+    }
+    
     // MARK: Base Method
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
@@ -108,6 +118,25 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
             self.coordinator?.didTapEventMakor(mode: self.mode)
         }, for: .touchUpInside)
     }
+    
+    private func colorForDate(_ date: Date) -> UIColor? {
+        let weekday = Calendar.current.component(.weekday, from: date)
+        
+        // 오늘 날짜 확인
+        if Calendar.current.isDate(date, inSameDayAs: Date()) {
+            return TDColor.Primary.primary500
+        }
+        
+        // 요일별 색상 설정
+        switch weekday {
+        case 1:  // 일요일
+            return TDColor.Semantic.error
+        case 7:  // 토요일
+            return TDColor.Schedule.text6
+        default:
+            return TDColor.Neutral.neutral800
+        }
+    }
 }
 
 // MARK: - FSCalendarDelegate
@@ -121,6 +150,28 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegate {
             make.height.equalTo(bounds.height)
         }
         self.view.layoutIfNeeded()
+    }
+}
+
+// MARK: - FSCalendarDelegateAppearance
+extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
+    // MARK: - 날짜 폰트 색상
+    // 기본 폰트 색
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleDefaultColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
+    }
+    
+    // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleSelectionColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
     }
 }
 
