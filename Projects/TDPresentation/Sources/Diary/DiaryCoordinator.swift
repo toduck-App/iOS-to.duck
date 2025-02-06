@@ -38,6 +38,11 @@ extension DiaryCoordinator: CoordinatorFinishDelegate {
 
 // MARK: - Navigation Delegate
 extension DiaryCoordinator: NavigationDelegate {
+    func didTapAlarmButton() {
+        // TODO: 알람 페이지로 이동
+        TDLogger.debug("알람 페이지로 이동")
+    }
+    
     func didTapCalendarButton() {
         let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
         toduckCalendarCoordinator.finishDelegate = self

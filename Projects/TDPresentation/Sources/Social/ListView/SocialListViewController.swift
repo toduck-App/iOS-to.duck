@@ -29,7 +29,7 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
     }
     
     private func setupDefaultNavigationBar() {
-        setupNavigationBar(style: .social, navigationDelegate: coordinator!)
+        navigationItem.leftBarButtonItems = createLeftBarButtons(style: .social, navigationDelegate: coordinator!)
         navigationItem.titleView = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchButton)
     }
