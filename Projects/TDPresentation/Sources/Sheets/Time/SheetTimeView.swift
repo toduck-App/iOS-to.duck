@@ -5,7 +5,7 @@ import Then
 
 final class SheetTimeView: BaseView {
     // MARK: - UI Components
-    let cancelButton = UIButton(type: .system).then {
+    let closeButton = UIButton(type: .system).then {
         $0.setImage(TDImage.X.x1Medium, for: .normal)
         $0.tintColor = TDColor.Neutral.neutral700
     }
@@ -83,8 +83,19 @@ final class SheetTimeView: BaseView {
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
-    let saveButton = TDBaseButton(
+    private let buttonHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+    }
+    let cancelButton = TDBaseButton(
         title: "취소",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    let saveButton = TDBaseButton(
+        title: "저장",
         backgroundColor: TDColor.Neutral.neutral100,
         foregroundColor: TDColor.Neutral.neutral700,
         radius: 12,
@@ -92,10 +103,10 @@ final class SheetTimeView: BaseView {
     )
     
     override func addview() {
-        addSubview(cancelButton)
+        addSubview(closeButton)
         addSubview(titleLabel)
         addSubview(mainStackView)
-        addSubview(saveButton)
+        addSubview(buttonHorizontalStackView)
         
         mainStackView.addArrangedSubview(allDayContainerView)
         allDayContainerView.addSubview(allDayLabel)
@@ -114,16 +125,19 @@ final class SheetTimeView: BaseView {
         mainStackView.addArrangedSubview(minuteContainerView)
         minuteContainerView.addSubview(minLabel)
         minuteContainerView.addSubview(minuteCollectionView)
+        
+        buttonHorizontalStackView.addArrangedSubview(cancelButton)
+        buttonHorizontalStackView.addArrangedSubview(saveButton)
     }
     
     override func layout() {
-        cancelButton.snp.makeConstraints {
+        closeButton.snp.makeConstraints {
             $0.top.equalToSuperview().inset(16)
             $0.leading.equalToSuperview().inset(16)
             $0.width.height.equalTo(24)
         }
         titleLabel.snp.makeConstraints {
-            $0.centerY.equalTo(cancelButton)
+            $0.centerY.equalTo(closeButton)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(24)
         }
@@ -131,7 +145,7 @@ final class SheetTimeView: BaseView {
         mainStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalTo(saveButton.snp.top).offset(-36)
+            $0.bottom.equalTo(buttonHorizontalStackView.snp.top).offset(-36)
         }
         
         /// All Day Switch
@@ -187,10 +201,16 @@ final class SheetTimeView: BaseView {
             $0.leading.equalTo(minLabel.snp.trailing).offset(16)
         }
         
-        saveButton.snp.makeConstraints {
+        buttonHorizontalStackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16)
             $0.height.equalTo(56)
         }
+    }
+    
+    override func configure() {
+        backgroundColor = TDColor.baseWhite
+        cancelButton.layer.borderWidth = 1
+        cancelButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
 }

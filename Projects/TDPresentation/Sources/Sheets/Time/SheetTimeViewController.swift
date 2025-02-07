@@ -39,7 +39,6 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     
     // MARK: - Setup & Configuration
     override func configure() {
-        layoutView.backgroundColor = TDColor.baseWhite
         layoutView.saveButton.isUserInteractionEnabled = false
         setupActions()
         setupCollectionView()
@@ -63,7 +62,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     
     private func setupActions() {
         /// 취소 버튼
-        layoutView.cancelButton.addAction(UIAction { [weak self] _ in
+        layoutView.closeButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
             self?.dismiss(animated: true)
         }, for: .touchUpInside)
@@ -138,9 +137,8 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         layoutView.saveButton.layer.borderWidth = 0
         
         var configuration = layoutView.saveButton.configuration ?? UIButton.Configuration.filled()
-        configuration.title = isSaveEnabled ? "저장" : "취소"
-        configuration.baseBackgroundColor = isSaveEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral200
-        configuration.baseForegroundColor = isSaveEnabled ? TDColor.baseWhite : TDColor.Neutral.neutral600
+        configuration.baseBackgroundColor = isSaveEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral100
+        configuration.baseForegroundColor = isSaveEnabled ? TDColor.baseWhite : TDColor.Neutral.neutral700
         layoutView.saveButton.configuration = configuration
     }
 }
