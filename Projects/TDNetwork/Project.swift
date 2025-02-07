@@ -1,10 +1,3 @@
-//
-//  Project.swift
-//  Packages
-//
-//  Created by 박효준 on 10/19/24.
-//
-
 import ProjectDescription
 import ProjectDescriptionHelpers
 
@@ -18,14 +11,17 @@ let project = Project.project(
             sources: .sources,
             dependencies: [
                 .core(),
-                .domain(), // TODO: Domain 의존성 제거
+                .domain(),
             ]
         ),
         Target.target(
             name: "\(TDModule.TDNetwork.rawValue)Test",
             product: .unitTests,
             bundleId: Project.bundleID + ".networktest",
-            sources: .tests
+            sources: .tests,
+            dependencies: [
+                .network()
+            ]
         )
     ]
 )

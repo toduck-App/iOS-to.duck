@@ -1,10 +1,3 @@
-//
-//  TargetDependency+Module.swift
-//  ProjectDescriptionHelpers
-//
-//  Created by 박천송 on 7/15/24.
-//
-
 import ProjectDescription
 
 // MARK: Core

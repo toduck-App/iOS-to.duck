@@ -1,10 +1,3 @@
-//
-//  Target+Templates.swift
-//  ProjectDescriptionHelpers
-//
-//  Created by 박천송 on 2/22/24.
-//
-
 import ProjectDescription
 
 extension Target {
