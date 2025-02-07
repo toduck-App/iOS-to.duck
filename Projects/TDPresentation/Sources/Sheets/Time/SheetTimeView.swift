@@ -60,26 +60,24 @@ final class SheetTimeView: BaseView {
         labelText: "시",
         toduckFont: TDFont.mediumBody2
     )
-    let hourCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+    lazy var hourCollectionView: UICollectionView = {
+        let layout = DynamicFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
-        layout.itemSize = CGSize(width: 50, height: 50)
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
-    
     private let minuteContainerView = UIView()
     private let minLabel = TDLabel(
         labelText: "분",
         toduckFont: TDFont.mediumBody2
     )
-    let minuteCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+    
+    lazy var minuteCollectionView: UICollectionView = {
+        let layout = DynamicFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 6
-        layout.minimumLineSpacing = 6
-        layout.itemSize = CGSize(width: 50, height: 50)
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
@@ -168,10 +166,11 @@ final class SheetTimeView: BaseView {
         ampmLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview()
+            $0.width.equalTo(68)
         }
         ampmButtonStackView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalTo(ampmLabel.snp.trailing).offset(16)
+            $0.leading.equalTo(ampmLabel.snp.trailing)
             $0.trailing.equalToSuperview()
         }
         
@@ -182,10 +181,11 @@ final class SheetTimeView: BaseView {
         hourLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
+            $0.width.equalTo(68)
         }
         hourCollectionView.snp.makeConstraints {
             $0.top.bottom.trailing.equalToSuperview()
-            $0.leading.equalTo(hourLabel.snp.trailing).offset(16)
+            $0.leading.equalTo(hourLabel.snp.trailing)
         }
         
         /// Minute CollectionView
@@ -195,10 +195,11 @@ final class SheetTimeView: BaseView {
         minLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
+            $0.width.equalTo(68)
         }
         minuteCollectionView.snp.makeConstraints {
             $0.top.bottom.trailing.equalToSuperview()
-            $0.leading.equalTo(minLabel.snp.trailing).offset(16)
+            $0.leading.equalTo(minLabel.snp.trailing)
         }
         
         buttonHorizontalStackView.snp.makeConstraints {
@@ -213,4 +214,5 @@ final class SheetTimeView: BaseView {
         cancelButton.layer.borderWidth = 1
         cancelButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
+
 }
