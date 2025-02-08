@@ -40,9 +40,9 @@ final class SocialFooterView: UIView {
         $0.image = TDImage.Comment.emptyMedium
     }
     
-    private var likeLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
+    private var likeLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral500)
     
-    private var commentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
+    private var commentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral500)
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -68,7 +68,7 @@ final class SocialFooterView: UIView {
     
     func configure(isLike: Bool, likeCount: Int?, commentCount: Int?) {
         likeButton.tintColor = isLike ? TDColor.Primary.primary400 : TDColor.Neutral.neutral400
-        likeLabel.setColor(isLike ? TDColor.Primary.primary400 : TDColor.Neutral.neutral600)
+        likeLabel.setColor(isLike ? TDColor.Primary.primary400 : TDColor.Neutral.neutral500)
         likeLabel.setText("\(likeCount ?? 0)")
         configureCommentCount(with: commentCount)
     }
