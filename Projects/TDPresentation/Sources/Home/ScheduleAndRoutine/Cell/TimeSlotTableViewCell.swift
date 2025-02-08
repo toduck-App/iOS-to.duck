@@ -132,9 +132,9 @@ final class TimeSlotTableViewCell: UITableViewCell {
     
     private func configureShadow() {
         shadowContainerView.layer.shadowColor = UIColor.black.cgColor
-        shadowContainerView.layer.shadowOpacity = 0.1
-        shadowContainerView.layer.shadowOffset = CGSize(width: 4, height: 4)
-        shadowContainerView.layer.shadowRadius = 3
+        shadowContainerView.layer.shadowOpacity = LayoutConstants.shadowOpacity
+        shadowContainerView.layer.shadowOffset = LayoutConstants.shadowOffset
+        shadowContainerView.layer.shadowRadius = LayoutConstants.shadowRadius
         shadowContainerView.layer.masksToBounds = false
     }
     
@@ -150,40 +150,40 @@ final class TimeSlotTableViewCell: UITableViewCell {
     
     private func configureLayout() {
         timeLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(24)
+            make.leading.equalToSuperview().offset(LayoutConstants.timeLabelLeading)
             make.centerY.equalToSuperview()
-            make.width.equalTo(50)
+            make.width.equalTo(LayoutConstants.timeLabelWidth)
         }
         
         shadowContainerView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(6)
-            make.leading.equalTo(timeLabel.snp.trailing).offset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.top.equalToSuperview().offset(LayoutConstants.cellTopPadding)
+            make.leading.equalTo(timeLabel.snp.trailing).offset(LayoutConstants.shadowLeading)
+            make.trailing.equalToSuperview().offset(LayoutConstants.shadowTrailing)
             make.bottom.equalToSuperview()
         }
         
         eventDetailView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(4)
+            make.edges.equalToSuperview().inset(LayoutConstants.eventDetailInset)
         }
         
         buttonsContainerView.snp.makeConstraints { make in
             make.top.bottom.equalTo(shadowContainerView)
-            make.trailing.equalToSuperview().offset(-16)
-            make.width.equalTo(maxButtonWidth)
+            make.trailing.equalToSuperview().offset(LayoutConstants.buttonContainerTrailing)
+            make.width.equalTo(LayoutConstants.buttonContainerWidth)
         }
         
         editButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(4)
+            make.top.equalToSuperview().offset(LayoutConstants.buttonPadding)
             make.trailing.equalTo(deleteButton.snp.leading)
-            make.bottom.equalToSuperview().offset(-4)
-            make.width.equalTo(maxButtonWidth/2 + 4)
+            make.bottom.equalToSuperview().offset(-LayoutConstants.buttonPadding)
+            make.width.equalTo(LayoutConstants.buttonWidth)
         }
         
         deleteButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(4)
-            make.trailing.equalToSuperview().offset(-4)
-            make.bottom.equalToSuperview().offset(-4)
-            make.width.equalTo(maxButtonWidth/2 + 4)
+            make.top.equalToSuperview().offset(LayoutConstants.buttonPadding)
+            make.trailing.equalToSuperview().offset(-LayoutConstants.buttonPadding)
+            make.bottom.equalToSuperview().offset(-LayoutConstants.buttonPadding)
+            make.width.equalTo(LayoutConstants.buttonWidth)
         }
     }
     
@@ -210,9 +210,9 @@ final class TimeSlotTableViewCell: UITableViewCell {
     private func animateButtons(shouldOpen: Bool) {
         let targetOffset = shouldOpen ? -maxButtonWidth : 0
         UIView.animate(
-            withDuration: 0.3,
+            withDuration: AnimationConstants.animationDuration,
             delay: 0,
-            usingSpringWithDamping: 0.8,
+            usingSpringWithDamping: AnimationConstants.springDamping,
             initialSpringVelocity: 0,
             options: .curveEaseOut
         ) {
@@ -268,5 +268,30 @@ final class TimeSlotTableViewCell: UITableViewCell {
         let currentOffset = abs(shadowContainerView.transform.tx)
         let velocityThreshold: CGFloat = 500
         return currentOffset > maxButtonWidth/2 || velocityX < -velocityThreshold
+    }
+}
+
+// MARK: - Constants
+private extension TimeSlotTableViewCell {
+    enum LayoutConstants {
+        static let timeLabelLeading: CGFloat = 24
+        static let timeLabelWidth: CGFloat = 50
+        static let cellTopPadding: CGFloat = 6
+        static let shadowLeading: CGFloat = 16
+        static let shadowTrailing: CGFloat = -16
+        static let shadowOffset = CGSize(width: 4, height: 4)
+        static let shadowRadius: CGFloat = 3
+        static let shadowOpacity: Float = 0.1
+        static let eventDetailInset: CGFloat = 4
+        static let eventDetailCornerRadius: CGFloat = 8
+        static let buttonContainerWidth: CGFloat = 120
+        static let buttonContainerTrailing: CGFloat = -16
+        static let buttonPadding: CGFloat = 4
+        static let buttonWidth: CGFloat = 64
+    }
+    
+    enum AnimationConstants {
+        static let animationDuration: TimeInterval = 0.3
+        static let springDamping: CGFloat = 0.8
     }
 }
