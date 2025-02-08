@@ -68,7 +68,6 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         weekCalendarView.delegate = self
         configureEventMakorButton()
         
-        scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
         scheduleAndRoutineTableView.register(
             TimeSlotTableViewCell.self,
@@ -202,6 +201,15 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
         
         guard let timeSlots = provider?.timeSlots else { return cell }
         
+        cell.configureSwipeActions(
+            editAction: { [weak self] in
+                print("editAction")
+            },
+            deleteAction: { [weak self] in
+                print("deleteAction")
+            }
+        )
+        
         var cumulative = 0
         for slot in timeSlots {
             let count = slot.events.count
@@ -224,34 +232,6 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
         }
         
         return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension ScheduleAndRoutineViewController: UITableViewDelegate {
-    func tableView(
-        _ tableView: UITableView,
-        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
-    ) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(
-            style: .destructive,
-            title: "삭제"
-        ) { _, _, completion in
-            print("삭제 액션 실행됨")
-            completion(true)
-        }
-        deleteAction.backgroundColor = .systemRed
-        
-        let editAction = UIContextualAction(
-            style: .normal,
-            title: "수정"
-        ) { _, _, completion in
-            print("수정 액션 실행됨")
-            completion(true)
-        }
-        editAction.backgroundColor = .systemBlue
-        
-        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
 }
 
