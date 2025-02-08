@@ -210,7 +210,7 @@ public final class EventDetailView: UIView {
         
         checkBoxButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
-            $0.centerY.equalToSuperview()
+            $0.centerY.equalTo(titleLabel)
             $0.width.height.equalTo(22)
         }
         
