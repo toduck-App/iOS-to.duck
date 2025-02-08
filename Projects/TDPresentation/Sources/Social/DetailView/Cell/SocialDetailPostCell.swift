@@ -62,7 +62,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
             titleLabel.isHidden = true
         }
         contentLabel.setText(item.contentText)
-        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
+        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: nil)
         configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)
