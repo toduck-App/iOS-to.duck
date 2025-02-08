@@ -55,7 +55,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     func configure(with item: Post) {
         headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
         contentLabel.setText(item.contentText)
-        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
+        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount)
         configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)

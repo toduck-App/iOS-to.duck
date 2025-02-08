@@ -40,18 +40,9 @@ final class SocialFooterView: UIView {
         $0.image = TDImage.Comment.emptyMedium
     }
     
-    private lazy var shareIconView = UIImageView().then {
-        $0.tintColor = TDColor.Neutral.neutral500
-        $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.Repeat.arrowMedium.withRenderingMode(.alwaysTemplate)
-    }
-    
     private var likeLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
     
     private var commentLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
-    
-    private var shareLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral600)
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -75,11 +66,11 @@ final class SocialFooterView: UIView {
         super.init(coder: coder)
     }
     
-    func configure(isLike: Bool, likeCount: Int?, commentCount: Int?, shareCount: Int?) {
+    func configure(isLike: Bool, likeCount: Int?, commentCount: Int?) {
         likeButton.tintColor = isLike ? TDColor.Primary.primary400 : TDColor.Neutral.neutral400
+        likeLabel.setColor(isLike ? TDColor.Primary.primary400 : TDColor.Neutral.neutral600)
         likeLabel.setText("\(likeCount ?? 0)")
         configureCommentCount(with: commentCount)
-        configureShareCount(with: shareCount)
     }
 }
 
@@ -91,8 +82,6 @@ private extension SocialFooterView {
         addSubview(likeLabel)
         addSubview(commentIconView)
         addSubview(commentLabel)
-        addSubview(shareIconView)
-        addSubview(shareLabel)
     }
     
     func setupRegularConstraints() {
@@ -137,19 +126,8 @@ private extension SocialFooterView {
     
     // 일반적인 Feed와 Comment의 Footer 입니다.
     func setupCompactConstraints() {
-        likeButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.size.equalTo(24)
-        }
-        
-        likeLabel.snp.makeConstraints { make in
-            make.leading.equalTo(likeButton.snp.trailing).offset(2)
-            make.centerY.equalToSuperview()
-        }
-        
         commentIconView.snp.makeConstraints { make in
-            make.leading.equalTo(likeLabel.snp.trailing).offset(10)
+            make.leading.equalToSuperview()
             make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
@@ -159,14 +137,14 @@ private extension SocialFooterView {
             make.centerY.equalToSuperview()
         }
         
-        shareIconView.snp.makeConstraints { make in
+        likeButton.snp.makeConstraints { make in
             make.leading.equalTo(commentLabel.snp.trailing).offset(10)
             make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
-        shareLabel.snp.makeConstraints { make in
-            make.leading.equalTo(shareIconView.snp.trailing).offset(2)
+        likeLabel.snp.makeConstraints { make in
+            make.leading.equalTo(likeButton.snp.trailing).offset(2)
             make.centerY.equalToSuperview()
         }
     }
@@ -179,17 +157,6 @@ private extension SocialFooterView {
         } else {
             commentIconView.isHidden = true
             commentLabel.isHidden = true
-        }
-    }
-    
-    private func configureShareCount(with shareCount: Int?) {
-        if let shareCount, shareCount > 0 {
-            shareLabel.setText("\(shareCount)")
-            shareIconView.isHidden = false
-            shareLabel.isHidden = false
-        } else {
-            shareIconView.isHidden = true
-            shareLabel.isHidden = true
         }
     }
 }

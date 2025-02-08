@@ -74,8 +74,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         footerView.configure(
             isLike: item.isLike,
             likeCount: item.likeCount,
-            commentCount: item.reply.count,
-            shareCount: nil
+            commentCount: item.reply.count
         )
         configureAction(item)
         configureUserImage(with: item.user.icon)
@@ -259,8 +258,7 @@ private extension SocialDetailCommentCell {
         let footer = SocialFooterView(style: .compact).then {
             $0.configure(isLike: comment.isLike,
                          likeCount: comment.likeCount,
-                         commentCount: nil,
-                         shareCount: nil)
+                         commentCount: nil)
         }.then {
             $0.onLikeButtonTapped = { [weak self] in
                 guard let self else { return }
