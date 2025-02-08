@@ -162,7 +162,7 @@ extension SocialDetailPostCell {
     
     private func configureImageList(with imageList: [String]?) {
         if let imageList {
-            bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
+            bodyStackView.addArrangedSubview(SocialImageListView(style: .scroll, images: imageList))
         }
     }
 }

@@ -155,7 +155,7 @@ extension SocialFeedCollectionViewCell {
     
     private func configureImageList(with imageList: [String]?) {
         guard let imageList else { return }
-        bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
+        bodyStackView.addArrangedSubview(SocialImageListView(style: .regular(maxImagesToShow: 3), images: imageList))
     }
 }
 
