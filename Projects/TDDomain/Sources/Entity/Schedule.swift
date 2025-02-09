@@ -12,7 +12,7 @@ public struct Schedule: Eventable {
     public let alarmTimes: [AlarmType]?
     public let place: String?
     public let memo: String?
-    public let isFinish: Bool
+    public let isFinished: Bool
     
     public init(
         id: Int?,
@@ -26,7 +26,7 @@ public struct Schedule: Eventable {
         alarmTimes: [AlarmType]?,
         place: String?,
         memo: String?,
-        isFinish: Bool
+        isFinished: Bool
     ) {
         self.id = id
         self.title = title
@@ -39,6 +39,6 @@ public struct Schedule: Eventable {
         self.alarmTimes = alarmTimes
         self.place = place
         self.memo = memo
-        self.isFinish = isFinish
+        self.isFinished = isFinished
     }
 }

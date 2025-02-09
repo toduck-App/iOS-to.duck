@@ -18,7 +18,7 @@ public struct Routine: Eventable, Identifiable {
     public let alarmTimes: [AlarmType]?
     public let memo: String?
     public let recommendedRoutines: [String]?
-    public let isFinish: Bool
+    public let isFinished: Bool
     
     public init(
         id: Int?,
@@ -32,7 +32,7 @@ public struct Routine: Eventable, Identifiable {
         alarmTimes: [AlarmType]?,
         memo: String?,
         recommendedRoutines: [String]?,
-        isFinish: Bool
+        isFinished: Bool
     ) {
         self.id = id
         self.title = title
@@ -45,7 +45,7 @@ public struct Routine: Eventable, Identifiable {
         self.alarmTimes = alarmTimes
         self.memo = memo
         self.recommendedRoutines = recommendedRoutines
-        self.isFinish = isFinish
+        self.isFinished = isFinished
     }
 }
 
@@ -73,7 +73,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "물만 마셔도 피부가 좋아진다나, 뭐라나,, ~~",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
         Routine(
             id: nil,
@@ -87,7 +87,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "감정 기록으로 오늘 하루를 되돌아보며 마무리",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
         Routine(
             id: nil,
@@ -101,7 +101,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "눈 뜨자마자 이부자리 정리하는 사람은 성공한다더라..",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
         Routine(
             id: nil,
@@ -115,7 +115,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "찌뿌둥한 아침, 스트레칭으로 몸도 정신도 깨우기!",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
         Routine(
             id: nil,
@@ -129,7 +129,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "지갑, 차키, 에어팟, 접이식 우산",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
         Routine(
             id: nil,
@@ -143,7 +143,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "시간 날 때 마다 틈틈히 읽어두기!",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
         Routine(
             id: nil,
@@ -157,7 +157,7 @@ extension Routine {
             alarmTimes: nil,
             memo: "더 이상 미룰 수 없다. 다이어트.",
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         ),
     ]
 }

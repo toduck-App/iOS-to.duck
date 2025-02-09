@@ -47,7 +47,7 @@ extension ToduckViewController: UICollectionViewDataSource {
             title: currentSchedule.title,
             time: currentSchedule.time,
             category: viewModel.categoryImages[indexPath.row].image,
-            isFinish: currentSchedule.isFinish,
+            isFinished: currentSchedule.isFinished,
             place: currentSchedule.place
         )
         return cell

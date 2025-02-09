@@ -18,7 +18,7 @@ public final class RoutineRepositoryImpl: RoutineRepository {
                 alarmTimes: nil,
                 memo: nil,
                 recommendedRoutines: nil,
-                isFinish: false
+                isFinished: false
             )
         )
     }

@@ -7,5 +7,5 @@ protocol EventPresentable {
     var categoryIcon: UIImage? { get }
     var categoryColor: UIColor { get }
     var time: String? { get }
-    var isFinish: Bool { get }
+    var isFinished: Bool { get }
 }

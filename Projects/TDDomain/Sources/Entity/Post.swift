@@ -95,7 +95,7 @@ public extension Post {
                                         alarmTimes: [.tenMinutesBefore],
                                         memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산",
                                         recommendedRoutines: nil,
-                                        isFinish: false
+                                        isFinished: false
                                     ),
                                     category: [.anxiety, .impulse]
                                 ),
@@ -132,7 +132,7 @@ public extension Post {
                                         alarmTimes: [.tenMinutesBefore],
                                         memo: "지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산,지갑, 차키, 에어팟, 접이식우산",
                                         recommendedRoutines: nil,
-                                        isFinish: false
+                                        isFinished: false
                                     ),
                                     category: [.anxiety, .impulse, .anxiety]
                                 ),

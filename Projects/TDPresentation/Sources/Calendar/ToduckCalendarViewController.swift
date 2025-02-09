@@ -360,7 +360,7 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             title: dummyData.title,
             time: nil,
             category: nil,
-            isFinish: dummyData.isFinish,
+            isFinished: dummyData.isFinished,
             place: dummyData.place
         )
         detailView.configureButtonAction {

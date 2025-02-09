@@ -24,7 +24,7 @@ public final class PostRepositoryImpl: PostRepository {
         alarmTimes: nil,
         memo: nil,
         recommendedRoutines: nil,
-        isFinish: false
+        isFinished: false
     )
     private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
     private var dummyPost = Post.dummy

@@ -79,7 +79,7 @@ public final class EventDetailView: UIView {
     
     // MARK: - Properties
 
-    private var isFinish: Bool = false
+    private var isFinished: Bool = false
     
     // MARK: - Initializer
 
@@ -108,8 +108,8 @@ public final class EventDetailView: UIView {
         timeLabel.text = nil
         placeLabel.text = nil
         categoryImageView.resetForReuse()
-        isFinish = false
-        changeCheckBoxButtonImage(isFinish: isFinish)
+        isFinished = false
+        changeCheckBoxButtonImage(isFinished: isFinished)
     }
     
     public func configureCell(
@@ -119,10 +119,10 @@ public final class EventDetailView: UIView {
         time: String?,
         category: UIImage?,
         isNone: Bool = false,
-        isFinish: Bool,
+        isFinished: Bool,
         place: String?
     ) {
-        self.isFinish = isFinish
+        self.isFinished = isFinished
         backgroundColor = TDColor.baseWhite
 
         configureCategoryImageView(isNone: isNone, color: color, category: category)
@@ -135,7 +135,7 @@ public final class EventDetailView: UIView {
         timeDetailHorizontalStackView.isHidden = (time == nil)
         placeHorizontalStackView.isHidden = (place == nil)
 
-        changeCheckBoxButtonImage(isFinish: isFinish)
+        changeCheckBoxButtonImage(isFinished: isFinished)
     }
 
     // MARK: - Private Methods
@@ -180,13 +180,13 @@ public final class EventDetailView: UIView {
         checkBoxButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             checkBoxAction()
-            isFinish.toggle()
-            changeCheckBoxButtonImage(isFinish: isFinish)
+            isFinished.toggle()
+            changeCheckBoxButtonImage(isFinished: isFinished)
         }, for: .touchUpInside)
     }
     
-    private func changeCheckBoxButtonImage(isFinish: Bool) {
-        let checkBoxImage = isFinish ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+    private func changeCheckBoxButtonImage(isFinished: Bool) {
+        let checkBoxImage = isFinished ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
         checkBoxButton.setImage(checkBoxImage, for: .normal)
     }
     

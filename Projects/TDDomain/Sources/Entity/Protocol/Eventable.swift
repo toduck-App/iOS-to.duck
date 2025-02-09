@@ -6,5 +6,5 @@ public protocol Eventable {
     var memo: String? { get} 
     var category: TDCategory { get }
     var time: Date? { get }
-    var isFinish: Bool { get }
+    var isFinished: Bool { get }
 }

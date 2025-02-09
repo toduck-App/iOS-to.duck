@@ -8,7 +8,7 @@ struct EventDisplayItem: EventPresentable {
     let memo: String?
     let categoryIcon: UIImage?
     let categoryColor: UIColor
-    var isFinish: Bool
+    var isFinished: Bool
     let place: String?
     
     init(
@@ -27,7 +27,7 @@ struct EventDisplayItem: EventPresentable {
         self.memo = memo
         self.categoryIcon = categoryIcon
         self.categoryColor = categoryColor
-        self.isFinish = isFinished
+        self.isFinished = isFinished
         self.place = place
     }
     
@@ -38,7 +38,7 @@ struct EventDisplayItem: EventPresentable {
         self.memo = event.memo
         self.categoryIcon = event.categoryIcon
         self.categoryColor = event.categoryColor
-        self.isFinish = event.isFinish
+        self.isFinished = event.isFinished
         self.place = nil
     }
     
@@ -50,7 +50,7 @@ struct EventDisplayItem: EventPresentable {
             memo: memo,
             categoryIcon: categoryIcon,
             categoryColor: categoryColor,
-            isFinished: isFinish,
+            isFinished: isFinished,
             place: place
         )
     }

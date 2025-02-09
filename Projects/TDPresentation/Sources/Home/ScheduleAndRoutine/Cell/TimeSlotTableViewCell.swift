@@ -111,7 +111,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
             time: event.time,
             category: event.categoryIcon,
             isNone: isNone,
-            isFinish: event.isFinish,
+            isFinished: event.isFinished,
             place: event.place
         )
     }

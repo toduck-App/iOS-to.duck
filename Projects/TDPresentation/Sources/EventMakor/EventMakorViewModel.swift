@@ -155,7 +155,7 @@ final class EventMakorViewModel: BaseViewModel {
             alarmTimes: alarms,
             place: location,
             memo: memo,
-            isFinish: false
+            isFinished: false
         )
     }
 
@@ -172,7 +172,7 @@ final class EventMakorViewModel: BaseViewModel {
             alarmTimes: alarms,
             memo: memo,
             recommendedRoutines: nil,
-            isFinish: false
+            isFinished: false
         )
     }
     
