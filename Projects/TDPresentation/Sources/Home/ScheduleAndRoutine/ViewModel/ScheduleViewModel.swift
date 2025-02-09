@@ -20,6 +20,13 @@ final class ScheduleViewModel: BaseViewModel {
 }
 
 extension ScheduleViewModel: TimeSlotProvider {
+    func convertEventToDisplayItem(event: EventPresentable) -> EventDisplayItem {
+        guard let schedule = event as? Schedule,
+              let place = schedule.place else { return EventDisplayItem(from: event) }
+        let eventDisplayItem = EventDisplayItem(from: event)
+        return eventDisplayItem.configurePlace(place)
+    }
+    
     var timeSlots: [TimeSlot] {
         return []
     }

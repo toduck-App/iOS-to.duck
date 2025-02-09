@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import TDDesign
 import SnapKit
 import Then
@@ -70,7 +71,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
     // MARK: - Configuration
     func configure(
         timeText: String?,
-        event: EventPresentable?
+        event: EventDisplayItem?
     ) {
         contentView.backgroundColor = TDColor.Neutral.neutral50
         setupContentVisibility(timeText: timeText, event: event)
@@ -90,7 +91,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         self.deleteAction = deleteAction
     }
     
-    private func setupContentVisibility(timeText: String?, event: EventPresentable?) {
+    private func setupContentVisibility(timeText: String?, event: EventDisplayItem?) {
         if let text = timeText, !text.isEmpty {
             timeLabel.isHidden = false
             timeLabel.setText(text)
@@ -111,7 +112,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
             category: event.categoryIcon,
             isNone: isNone,
             isFinish: event.isFinish,
-            place: nil
+            place: event.place
         )
     }
     

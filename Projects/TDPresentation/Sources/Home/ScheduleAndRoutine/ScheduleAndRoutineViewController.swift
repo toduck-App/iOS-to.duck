@@ -216,12 +216,13 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
             if indexPath.row < cumulative + count {
                 let eventIndexInSlot = indexPath.row - cumulative
                 let event = slot.events[eventIndexInSlot]
+                let eventDisplayItem = provider?.convertEventToDisplayItem(event: event)
                 
                 let timeText: String? = (eventIndexInSlot == 0) ? slot.timeText : nil
                 
                 cell.configure(
                     timeText: timeText,
-                    event: event
+                    event: eventDisplayItem
                 )
                 cell.configureButtonAction {
                     TDLogger.debug("체크박스 버튼눌림")
