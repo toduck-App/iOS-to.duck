@@ -26,7 +26,7 @@ final class SocialProfileView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     
-    private(set) var segmentedControl = TDSegmentedController(
+    private(set) var segmentedControl = TDSegmentedControl(
         items: ["루틴", "작성한 글"]
     ).then {
         $0.indicatorColor = TDColor.Primary.primary500
