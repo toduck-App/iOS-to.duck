@@ -22,11 +22,11 @@ final class RoutineViewModel: BaseViewModel {
 }
 
 extension RoutineViewModel: TimeSlotProvider {
-    func convertEventToDisplayItem(event: EventPresentable) -> EventDisplayItem {
-        return EventDisplayItem(from: event)
+    var timeSlots: [TimeSlot] {
+        return [TimeSlot(timeText: "10:00", events: Routine.dummy)]
     }
     
-    var timeSlots: [TimeSlot] {
-        return []
+    func convertEventToDisplayItem(event: EventPresentable) -> EventDisplayItem {
+        return EventDisplayItem(from: event)
     }
 }
