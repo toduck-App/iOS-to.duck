@@ -184,15 +184,15 @@ final class TimeSlotTableViewCell: UITableViewCell {
             make.top.equalToSuperview().offset(LayoutConstants.buttonPadding)
             make.trailing.equalToSuperview().offset(-LayoutConstants.buttonPadding)
             make.bottom.equalToSuperview().offset(-LayoutConstants.buttonPadding)
-            make.width.equalTo(LayoutConstants.buttonWidth)
+            make.width.equalTo(LayoutConstants.buttonWidth - 4)
         }
     }
     
     private func setupButtons() {
-        editButton.backgroundColor = TDColor.Primary.primary300
+        editButton.backgroundColor = .systemBlue
         deleteButton.backgroundColor = .red
-        editButton.setTitle("수정", for: .normal)
-        deleteButton.setTitle("삭제", for: .normal)
+        editButton.setImage(TDImage.Pen.penMedium.withTintColor(.white), for: .normal)
+        deleteButton.setImage(TDImage.trashMedium.withTintColor(.white), for: .normal)
         deleteButton.layer.cornerRadius = 8
         deleteButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
         deleteButton.clipsToBounds = true
