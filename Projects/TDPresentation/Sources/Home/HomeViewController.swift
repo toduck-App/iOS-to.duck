@@ -10,7 +10,7 @@ import UIKit
 
 final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
-    let segmentedControl = TDSegmentedController(items: ["토덕", "일정", "루틴"])
+    let segmentedControl = TDSegmentedControl(items: ["토덕", "일정", "루틴"])
     let todoViewController = ToduckViewController()
     
     // MARK: - Properties

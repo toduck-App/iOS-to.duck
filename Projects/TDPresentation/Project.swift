@@ -18,6 +18,7 @@ let project = Project(
                 // External
                 .external(name: "Then"),
                 .external(name: "SnapKit"),
+                .external(name: "Lottie"),
                 .external(name: "FSCalendar"),
                 .external(name: "Kingfisher"),
                 .external(name: "FittedSheets"),
