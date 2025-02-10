@@ -1,9 +1,3 @@
-//
-//  Timer.swift
-//  TDDomain
-//
-//  Created by 신효성 on 12/30/24.
-//
 
 public struct TDTimerSetting {
     public var focusDuration: Int
@@ -16,15 +10,26 @@ public struct TDTimerSetting {
         self.restDuration = restDuration
     }
 
-    public func toMiniutes() -> Int {
-        return focusDuration * 60
+    /// 초기값 설정
+    public init() {
+        focusDuration = 25
+        focusCount = 4
+        restDuration = 5
     }
-}
 
-// MARK: - Dummy Extension
+    public func toFocusDurationMinutes() -> Int {
+        #if DEBUG
+            return focusDuration / 10
+        #else
+            return focusDuration * 60
+        #endif
+    }
 
-public extension TDTimerSetting {
-    static func dummy() -> TDTimerSetting {
-        return TDTimerSetting(focusDuration: 30, foucsCount: 4, restDuration: 10)
+    public func toRestDurationMinutes() -> Int {
+        #if DEBUG
+            return restDuration / 10
+        #else
+            return restDuration * 60
+        #endif
     }
 }
