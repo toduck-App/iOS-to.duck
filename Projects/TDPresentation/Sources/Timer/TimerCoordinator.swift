@@ -32,12 +32,15 @@ final class TimerCoordinator: Coordinator {
 
         let fetchFocusCountUseCase = injector.resolve(FetchFocusCountUseCase.self)
         let updateFocusCountUseCase = injector.resolve(UpdateFocusCountUseCase.self)
+        let resetFocusCountUseCase = injector.resolve(ResetFocusCountUseCase.self)
+
         let timerViewModel = TimerViewModel(
             timerUseCase: timerUseCase,
             fetchTimerSettingUseCase: fetchTimerSettingUseCase,
             updateTimerSettingUseCase: updateTimerSettingUseCase,
             fetchFocusCountUseCase: fetchFocusCountUseCase,
-            updateFocusCountUseCase: updateFocusCountUseCase
+            updateFocusCountUseCase: updateFocusCountUseCase,
+            resetFocusCountUseCase: resetFocusCountUseCase
         )
 
         let timerViewController = TimerViewController(viewModel: timerViewModel)
