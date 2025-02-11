@@ -4,36 +4,56 @@
 //
 //  Created by 신효성 on 12/30/24.
 //
+import TDCore
 import TDDomain
 
 final class TimerRepositoryImpl: TimerRepository {
-    // MARK: 임시
+    private let storage: TimerStorage
 
-    private var theme: TDTimerTheme = .Bboduck
-    private var setting: TDTimerSetting = .dummy()
-    private var count: Int = 0
-
-    func fetchTimerTheme() -> TDTimerTheme {
-        return theme
+    init(storage: TimerStorage) {
+        self.storage = storage
     }
 
-    func updateTimerTheme(theme: TDTimerTheme) {
-        self.theme = theme
+    func fetchTimerSetting() -> TDDomain.TDTimerSetting {
+        guard let dto = storage.fetchTimerSetting() else {
+            return TDTimerSetting()
+        }
+        return dto.convertToTDTimerSetting()
+    }
+
+    func updateTimerSetting(setting: TDDomain.TDTimerSetting) -> Result<Void, TDCore.TDDataError> {
+        return storage.updateTimerSetting(
+            TDTimerSettingDTO(
+                focusCount: setting.focusCount,
+                restDuration: setting.restDuration,
+                focusDuration: setting.focusDuration
+            ))
+    }
+
+    func fetchTimerTheme() -> TDDomain.TDTimerTheme {
+        guard let dto = storage.fetchTheme() else {
+            return .Bboduck
+        }
+        return dto.convertToTDTimerTheme()
+    }
+
+    func updateTimerTheme(theme: TDDomain.TDTimerTheme) -> Result<Void, TDCore.TDDataError> {
+         return storage.updateTheme(TDTimerThemeDTO(timerTheme: theme.rawValue))
     }
 
     func fetchFocusCount() -> Int {
+        guard let count = storage.fetchFocusCount() else {
+            TDLogger.debug("[TimerRepository#fetchFocusCount] Focus count is nil")
+            return 0
+        }
         return count
     }
 
-    func updateFocusCount(count: Int) {
-        self.count = count
+    func updateFocusCount(count: Int) -> Result<Void, TDCore.TDDataError> {
+        return storage.updateFocusCount(count)
     }
 
-    func fetchTimerSetting() -> TDTimerSetting {
-        return setting
-    }
-
-    func updateTimerSetting(setting: TDTimerSetting) {
-        self.setting = setting
+    func resetFocusCount() -> Result<Void, TDCore.TDDataError> {
+        return storage.updateFocusCount(0)
     }
 }
