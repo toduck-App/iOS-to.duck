@@ -26,8 +26,7 @@ extension ScheduleViewModel: TimeSlotProvider {
     ) -> EventDisplayItem {
         guard let schedule = event as? Schedule,
               let place = schedule.place else { return EventDisplayItem(from: event) }
-        let eventDisplayItem = EventDisplayItem(from: event)
-        return eventDisplayItem.configurePlace(place)
+        return EventDisplayItem(from: event, place: place)
     }
     
     var timeSlots: [TimeSlot] {
