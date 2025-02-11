@@ -1,8 +1,8 @@
 import TDDomain
 public struct TDTimerThemeDTO: Codable {
-    public let timerTheme: Int
+    private let timerTheme: Int
 
-    public init(timerTheme: Int) {
+    init(timerTheme: Int) {
         self.timerTheme = timerTheme
     }
 }
