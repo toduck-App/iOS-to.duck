@@ -1,18 +1,18 @@
 public struct TDTimerSetting {
     public var focusDuration: Int
-    public var focusCount: Int
+    public var maxFocusCount: Int
     public var restDuration: Int
 
-    public init(focusDuration: Int, foucsCount: Int, restDuration: Int) {
+    public init(focusDuration: Int, maxFocusCount: Int, restDuration: Int) {
         self.focusDuration = focusDuration
-        focusCount = foucsCount
+        self.maxFocusCount = maxFocusCount
         self.restDuration = restDuration
     }
 
     /// 초기값 설정
     public init() {
         focusDuration = 25
-        focusCount = 4
+        maxFocusCount = 4
         restDuration = 5
     }
 
