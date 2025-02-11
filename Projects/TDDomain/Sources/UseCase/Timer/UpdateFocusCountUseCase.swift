@@ -1,25 +1,24 @@
-//
-//  UpdateFocusCountUseCase.swift
-//  TDDomain
-//
-//  Created by 신효성 on 1/27/25.
-//
+import TDCore
 
 public protocol UpdateFocusCountUseCase {
-    func execute(_ count: Int)
+    func execute(_ count: Int) -> Result<Void, TDCore.TDDataError>
 }
 
 final class UpdateFocusCountUseCaseImpl: UpdateFocusCountUseCase {
     private let repository: TimerRepository
-    private let maxCount: Int = 5
+    private let min = 1
 
     public init(repository: TimerRepository) {
         self.repository = repository
     }
 
-    public func execute(_ count: Int) {
-        if count > 0 && count <= maxCount {
-            repository.updateFocusCount(count: count)
-        }
+    public func execute(_ count: Int) -> Result<Void, TDCore.TDDataError> {
+        let max = repository.fetchTimerSetting().maxFocusCount
+
+        guard count >= min, count <= max else { 
+            return .failure(.updateEntityFailure)
+         }
+
+        return repository.updateFocusCount(count: count)
     }
 }
