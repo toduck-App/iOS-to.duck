@@ -10,7 +10,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
 
-    private var focusTime: Int {
+    private var focusTime: Int = 25 {
         didSet {
             layoutView.focusTimeField.leftButton.isEnabled = focusTime > 5
             layoutView.focusTimeField.rightButton.isEnabled = focusTime < 60
@@ -18,15 +18,15 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         }
     }
 
-    private var focusCount: Int {
+    private var maxFocusCount: Int = 4 {
         didSet {
-            layoutView.focusCountField.leftButton.isEnabled = focusCount > 1
-            layoutView.focusCountField.rightButton.isEnabled = focusCount < 5
-            layoutView.focusCountField.outputLabel.text = "\(focusCount)회"
+            layoutView.focusCountField.leftButton.isEnabled = maxFocusCount > 1
+            layoutView.focusCountField.rightButton.isEnabled = maxFocusCount < 5
+            layoutView.focusCountField.outputLabel.text = "\(maxFocusCount)회"
         }
     }
 
-    private var restTime: Int {
+    private var restTime: Int = 5 {
         didSet {
             layoutView.restTimeField.leftButton.isEnabled = restTime > 0
             layoutView.restTimeField.rightButton.isEnabled = restTime < 10
@@ -38,10 +38,6 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
     init(viewModel: TimerViewModel) {
         self.viewModel = viewModel
-        focusTime = 25
-        focusCount = 4
-        restTime = 5
-
         super.init()
     }
 
@@ -52,16 +48,12 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         input.send(.fetchTimerSetting)
+
         guard let setting = viewModel.timerSetting else { return }
 
-        // Debug
-        TDLogger.debug(
-            "[TimerSettingViewController] setting: \(setting.focusDuration) \(setting.focusCount) \(setting.restDuration)"
-        )
         focusTime = setting.focusDuration
-        focusCount = setting.focusCount
+        maxFocusCount = setting.maxFocusCount
         restTime = setting.restDuration
     }
 
@@ -82,13 +74,13 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         // focus count field
         layoutView.focusCountField.leftButton.addAction(
             UIAction { _ in
-                self.focusCount -= 1
+                self.maxFocusCount -= 1
             }, for: .touchUpInside
         )
 
         layoutView.focusCountField.rightButton.addAction(
             UIAction { _ in
-                self.focusCount += 1
+                self.maxFocusCount += 1
             }, for: .touchUpInside
         )
 
@@ -104,7 +96,12 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                 self.restTime += 1
             }, for: .touchUpInside
         )
-
+        #if DEBUG
+        // reset button
+        layoutView.resetButton.addAction(UIAction { _ in
+            self.input.send(.resetFocusCount)
+        }, for: .touchUpInside)
+        #endif
         // save button
         layoutView.saveButton.addAction(
             UIAction { _ in
@@ -112,21 +109,22 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                     .updateTimerSetting(
                         setting: TDTimerSetting(
                             focusDuration: self.focusTime,
-                            foucsCount: self.focusCount,
+                            maxFocusCount: self.maxFocusCount,
                             restDuration: self.restTime
                         )))
 
-                self.close()
+                self.dismiss(animated: true)
             }, for: .touchUpInside
         )
 
         layoutView.exitButton.addAction(
             UIAction { _ in
-                self.close()
+                self.dismiss(animated: true)
             }, for: .touchUpInside
         )
     }
 
+    //TODO: 추후에도 필요 없다 판단되면 함수 삭제
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
@@ -135,13 +133,6 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
             default:
                 break
             }
-
         }.store(in: &cancellables)
-    }
-
-    // MARK: - Private Mehtods
-
-    private func close() {
-        dismiss(animated: true)
     }
 }
