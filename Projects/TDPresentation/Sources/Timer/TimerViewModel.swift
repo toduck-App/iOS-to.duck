@@ -29,12 +29,14 @@ public final class TimerViewModel: BaseViewModel {
     enum Output {
         case updatedTimer(remainedTime: Int)
         case updatedTimerRunning(isRunning: Bool?)
+        case updatedTimerTheme(theme: TDTimerTheme)
+        case updatedTimerSetting
         case finishedTimer
-        case increasedFocusCount
-        case increasedMaxFocusCount
-        case decreasedMaxFocusCount
-        case fetchedFocusCount
-        case resetedFocusCount
+        case fetchedFocusCount(count: Int)
+        case fetchedTimerSetting
+        case updatedFocusCount(count: Int)
+        case updatedMaxFocusCount(maxCount: Int)
+        case failure(_ code: TimerViewModelError)
     }
 
     // MARK: - UseCase
@@ -44,11 +46,11 @@ public final class TimerViewModel: BaseViewModel {
     private let updateTimerSettingUseCase: UpdateTimerSettingUseCase
     private let fetchFocusCountUseCase: FetchFocusCountUseCase
     private let updateFocusCountUseCase: UpdateFocusCountUseCase
+    private let resetFocusCountUseCase: ResetFocusCountUseCase
 
     // MARK: - Properties
 
     private(set) var timerSetting: TDTimerSetting?
-    private(set) var focusCount: Int = 0
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
 
@@ -59,13 +61,15 @@ public final class TimerViewModel: BaseViewModel {
         fetchTimerSettingUseCase: FetchTimerSettingUseCase,
         updateTimerSettingUseCase: UpdateTimerSettingUseCase,
         fetchFocusCountUseCase: FetchFocusCountUseCase,
-        updateFocusCountUseCase: UpdateFocusCountUseCase
+        updateFocusCountUseCase: UpdateFocusCountUseCase,
+        resetFocusCountUseCase: ResetFocusCountUseCase
     ) {
         self.timerUseCase = timerUseCase
         self.fetchTimerSettingUseCase = fetchTimerSettingUseCase
         self.updateTimerSettingUseCase = updateTimerSettingUseCase
         self.fetchFocusCountUseCase = fetchFocusCountUseCase
         self.updateFocusCountUseCase = updateFocusCountUseCase
+        self.resetFocusCountUseCase = resetFocusCountUseCase
     }
 
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -95,9 +99,9 @@ public final class TimerViewModel: BaseViewModel {
             case .fetchFocusCount:
                 self?.fetchFocusCount()
             case .increaseFocusCount:
-                self?.increasFocusCount()
+                self?.increaseFocusCount()
             case .increaseMaxFocusCount:
-                self?.increasMaxFocusCount()
+                self?.increaseMaxFocusCount()
             case .decreaseMaxFocusCount:
                 self?.decreaseMaxFocusCount()
             case .resetFocusCount:
@@ -110,36 +114,40 @@ public final class TimerViewModel: BaseViewModel {
 }
 
 extension TimerViewModel {
-    func fetchTimerSetting() {
+    private func fetchTimerSetting() {
         timerSetting = fetchTimerSettingUseCase.execute()
+        output.send(.fetchedTimerSetting)
     }
 
-    func updateTimerSetting(setting: TDTimerSetting) {
+    private func updateTimerSetting(setting: TDTimerSetting) {
         timerSetting = setting
-        updateTimerSettingUseCase.execute(setting: timerSetting!)
-
-        output.send(
-            .updatedTimer(remainedTime: timerSetting!.focusDuration)
-        )
+        let result = updateTimerSettingUseCase.execute(setting: setting)
+        switch result {
+            case let .failure(error):
+                if error == .updateEntityFailure {
+                    output.send(.failure(.outOfRange))
+                }
+                output.send(.failure(.updateFailed))
+            case .success():
+                output.send(.updatedTimerSetting)
+                output.send(.updatedTimer(remainedTime: setting.toFocusDurationMinutes()))
+        }
     }
 
-    func fetchTimerTheme() {}
+    private func fetchTimerTheme() {}
 
-    func updateTimerTheme(theme _: TDTimerTheme) {}
+    private func updateTimerTheme(theme _: TDTimerTheme) {}
 
-    // TODO: 딜레이 이유 찾기 -> 아마 스케줄러 작동후 send가 이유로 생각됨 스케줄러 작동전에 한번 보내줘야함
     // TODO: 코드가 딱 봐도 불안불안함 리팩터링 필요
-
-    func startTimer() {
+    private func startTimer() {
         guard let setting = timerSetting else { return }
         timerUseCase.start(setting: setting) { remainedTime in
-            // 타이머 종료시
             if remainedTime > 0 {
                 self.output.send(.updatedTimer(remainedTime: remainedTime))
                 self.output.send(
                     .updatedTimerRunning(
                         isRunning: self.timerUseCase.runningStatus()))
-            } else {
+            } else { // 타이머 종료시
                 self.output.send(.updatedTimer(remainedTime: 0))
                 self.output.send(.finishedTimer)
             }
@@ -148,20 +156,20 @@ extension TimerViewModel {
             .updatedTimerRunning(isRunning: timerUseCase.runningStatus()))
     }
 
-    func stopTimer() {
+    private func stopTimer() {
         timerUseCase.stop()
         output.send(
             .updatedTimerRunning(isRunning: timerUseCase.runningStatus()))
     }
 
-    func resetTimer() {
+    private func resetTimer() {
         guard let setting = timerSetting else { return }
         timerUseCase.reset()
         output.send(.updatedTimer(remainedTime: setting.focusDuration))
         output.send(.updatedTimerRunning(isRunning: timerUseCase.runningStatus()))
     }
 
-    func restartTimer() {
+    private func restartTimer() {
         guard let setting = timerSetting else { return }
         timerUseCase.reset()
         timerUseCase.start(setting: setting) { remainedTime in
@@ -171,63 +179,88 @@ extension TimerViewModel {
             .updatedTimerRunning(isRunning: timerUseCase.runningStatus()))
     }
 
-    func fetchTimerRunningStatus() {
+    private func fetchTimerRunningStatus() {
         output.send(.updatedTimerRunning(isRunning: timerUseCase.runningStatus()))
     }
 
-    func fetchTimerInitialStatus() {
+    private func fetchTimerInitialStatus() {
         output.send(.updatedTimerRunning(isRunning: nil))
-        output.send(.updatedTimer(remainedTime: timerSetting?.focusDuration ?? 30))
+        output.send(.updatedTimer(remainedTime: timerSetting?.toFocusDurationMinutes() ?? 30))
     }
 
-    func increasFocusCount() {
-        guard let setting = timerSetting else { return }
+    private func increaseFocusCount() {
+        var count = fetchFocusCountUseCase.execute()
+        count += 1
+        
+        let result = updateFocusCountUseCase.execute(count)
 
-        let max: Int = setting.focusCount
-
-        guard focusCount + 1 <= max else { return }
-        focusCount += 1
-
-        updateFocusCountUseCase.execute(focusCount)
-        output.send(.increasedFocusCount)
+        switch result {
+        case let .failure(error):
+            if error == .updateEntityFailure {
+                output.send(.failure(.outOfRange))
+            }
+            output.send(.failure(.updateFailed))
+        case .success():
+            output.send(.updatedFocusCount(count: count))
+        }
     }
 
-    func increasMaxFocusCount() {
+    private func increaseMaxFocusCount() {
         guard var setting = timerSetting else { return }
 
-        let max = 5
-        var current: Int = setting.focusCount
+        let current: Int = setting.maxFocusCount + 1
+        setting.maxFocusCount = current
 
-        if setting.focusCount + 1 <= max {
-            current += 1
-            setting.focusCount = current
+        let result = updateTimerSettingUseCase.execute(setting: setting)
+        switch result {
+        case let .failure(error):
+            if error == .updateEntityFailure {
+                output.send(.failure(.outOfRange))
+            }
+            output.send(.failure(.updateFailed))
+        case .success():
+            output.send(.updatedMaxFocusCount(maxCount: setting.maxFocusCount))
         }
-
-        updateTimerSettingUseCase.execute(setting: setting)
-        output.send(.increasedMaxFocusCount)
     }
 
-    func decreaseMaxFocusCount() {
-        guard var setting = timerSetting else { return }
+    private func decreaseMaxFocusCount() {
+        guard var setting: TDTimerSetting = timerSetting else { return }
 
-        let min = 1
-        var current: Int = setting.focusCount
-        if setting.focusCount - 1 >= min {
-            current -= 1
-            setting.focusCount = current
+        let current: Int = setting.maxFocusCount - 1
+        setting.maxFocusCount = current
+
+        let result = updateTimerSettingUseCase.execute(setting: setting)
+        switch result {
+        case let .failure(error):
+            if error == .updateEntityFailure {
+                output.send(.failure(.outOfRange))
+            }
+            output.send(.failure(.updateFailed))
+        case .success():
+            output.send(.updatedMaxFocusCount(maxCount: setting.maxFocusCount))
         }
-
-        updateTimerSettingUseCase.execute(setting: setting)
-        output.send(.decreasedMaxFocusCount)
     }
 
-    func resetFocusCount() {
-        updateFocusCountUseCase.execute(0)
-        output.send(.resetedFocusCount)
+    private func resetFocusCount() {
+        let result = resetFocusCountUseCase.execute()
+        switch result {
+        case .failure:
+            output.send(.failure(.updateFailed))
+        case .success():
+            output.send(.updatedFocusCount(count: .zero))
+        }
     }
 
-    func fetchFocusCount() {
-        focusCount = fetchFocusCountUseCase.execute()
-        output.send(.fetchedFocusCount)
+    private func fetchFocusCount() {
+        let count = fetchFocusCountUseCase.execute()
+        output.send(.fetchedFocusCount(count: count))
+    }
+}
+
+extension TimerViewModel {
+    // 흠....
+    enum TimerViewModelError: Error {
+        case outOfRange
+        case updateFailed
     }
 }
