@@ -1,4 +1,3 @@
-
 public struct TDTimerSetting {
     public var focusDuration: Int
     public var focusCount: Int
