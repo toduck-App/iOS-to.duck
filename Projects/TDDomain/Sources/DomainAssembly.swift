@@ -325,6 +325,13 @@ public struct DomainAssembly: Assembly {
             }
             return UpdateFocusCountUseCaseImpl(repository: repository)
         }
+
+        container.register(ResetFocusCountUseCase.self) { resolver in
+            guard let repository = resolver.resolve(TimerRepository.self) else {
+                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+            }
+            return ResetFocusCountUseCaseImpl(repository: repository)   
+        }
         
         container.register(UpdateKeywordUseCase.self) { resolver in
             guard let repository = resolver.resolve(RecentKeywordRepository.self) else {
