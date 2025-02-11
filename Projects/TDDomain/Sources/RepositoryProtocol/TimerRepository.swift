@@ -1,21 +1,17 @@
-//
-//  TimerRepository.swift
-//  TDDomain
-//
-//  Created by 신효성 on 12/30/24.
-//
+import TDCore
 
 public protocol TimerRepository {
     // MARK: - User Defualt
 
     func fetchTimerSetting() -> TDTimerSetting
-    func updateTimerSetting(setting: TDTimerSetting)
+    func updateTimerSetting(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError>
 
     func fetchTimerTheme() -> TDTimerTheme
-    func updateTimerTheme(theme: TDTimerTheme)
+    func updateTimerTheme(theme: TDTimerTheme) -> Result<Void, TDCore.TDDataError>
 
     // MARK: - Need Server
 
     func fetchFocusCount() -> Int
-    func updateFocusCount(count: Int)
+    func updateFocusCount(count: Int) -> Result<Void, TDCore.TDDataError>
+    func resetFocusCount() -> Result<Void, TDCore.TDDataError>
 }
