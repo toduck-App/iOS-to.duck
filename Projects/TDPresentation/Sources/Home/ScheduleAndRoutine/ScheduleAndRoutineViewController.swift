@@ -52,13 +52,22 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         super.init(coder: coder)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let today = Date()
+        let calendar = Calendar.current
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+
+        weekCalendarView.setCurrentPage(startOfWeek, animated: false)
+    }
+    
     // MARK: Base Method
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
         configureEventMakorButton()
         
-        scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
         scheduleAndRoutineTableView.register(
             TimeSlotTableViewCell.self,
@@ -108,6 +117,25 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
             self.coordinator?.didTapEventMakor(mode: self.mode)
         }, for: .touchUpInside)
     }
+    
+    private func colorForDate(_ date: Date) -> UIColor? {
+        let weekday = Calendar.current.component(.weekday, from: date)
+        
+        // 오늘 날짜 확인
+        if Calendar.current.isDate(date, inSameDayAs: Date()) {
+            return TDColor.Primary.primary500
+        }
+        
+        // 요일별 색상 설정
+        switch weekday {
+        case 1:  // 일요일
+            return TDColor.Semantic.error
+        case 7:  // 토요일
+            return TDColor.Schedule.text6
+        default:
+            return TDColor.Neutral.neutral800
+        }
+    }
 }
 
 // MARK: - FSCalendarDelegate
@@ -121,6 +149,28 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegate {
             make.height.equalTo(bounds.height)
         }
         self.view.layoutIfNeeded()
+    }
+}
+
+// MARK: - FSCalendarDelegateAppearance
+extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
+    // MARK: - 날짜 폰트 색상
+    // 기본 폰트 색
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleDefaultColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
+    }
+    
+    // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleSelectionColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
     }
 }
 
@@ -151,18 +201,28 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
         
         guard let timeSlots = provider?.timeSlots else { return cell }
         
+        cell.configureSwipeActions(
+            editAction: { [weak self] in
+                print("editAction")
+            },
+            deleteAction: { [weak self] in
+                print("deleteAction")
+            }
+        )
+        
         var cumulative = 0
         for slot in timeSlots {
             let count = slot.events.count
             if indexPath.row < cumulative + count {
                 let eventIndexInSlot = indexPath.row - cumulative
                 let event = slot.events[eventIndexInSlot]
+                let eventDisplayItem = provider?.convertEventToDisplayItem(event: event)
                 
                 let timeText: String? = (eventIndexInSlot == 0) ? slot.timeText : nil
                 
                 cell.configure(
                     timeText: timeText,
-                    event: event
+                    event: eventDisplayItem
                 )
                 cell.configureButtonAction {
                     TDLogger.debug("체크박스 버튼눌림")
@@ -173,34 +233,6 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
         }
         
         return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension ScheduleAndRoutineViewController: UITableViewDelegate {
-    func tableView(
-        _ tableView: UITableView,
-        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
-    ) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(
-            style: .destructive,
-            title: "삭제"
-        ) { _, _, completion in
-            print("삭제 액션 실행됨")
-            completion(true)
-        }
-        deleteAction.backgroundColor = .systemRed
-        
-        let editAction = UIContextualAction(
-            style: .normal,
-            title: "수정"
-        ) { _, _, completion in
-            print("수정 액션 실행됨")
-            completion(true)
-        }
-        editAction.backgroundColor = .systemBlue
-        
-        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
 }
 

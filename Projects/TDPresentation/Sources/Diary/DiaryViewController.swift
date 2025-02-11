@@ -1,20 +1,16 @@
-//
-//  DiaryViewController.swift
-//  toduck
-//
-//  Created by 박효준 on 7/15/24.
-//
-
 import TDDesign
 import UIKit
+import TDCore
 
-class DiaryViewController: UIViewController {
+final class DiaryViewController: UIViewController {
     weak var coordinator: DiaryCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupNavigationBar(style: .diary, navigationDelegate: coordinator!)
+        setupNavigationBar(style: .diary, navigationDelegate: coordinator!) {
+            TDLogger.debug("MyPageViewController - setupNavigationBar")
+        }
         self.view.backgroundColor = .systemGray
     }
     

@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 import TDDomain
 
 final class ScheduleViewModel: BaseViewModel {
@@ -20,7 +21,21 @@ final class ScheduleViewModel: BaseViewModel {
 }
 
 extension ScheduleViewModel: TimeSlotProvider {
+    func convertEventToDisplayItem(
+        event: EventPresentable
+    ) -> EventDisplayItem {
+        guard let schedule = event as? Schedule,
+              let place = schedule.place else { return EventDisplayItem(from: event) }
+        return EventDisplayItem(from: event, place: place)
+    }
+    
     var timeSlots: [TimeSlot] {
-        return []
+        return [TimeSlot(
+            timeText: "10:00",
+            events: Schedule.dummy
+        ), TimeSlot(
+            timeText: "12:00",
+            events: Schedule.dummy
+        )]
     }
 }

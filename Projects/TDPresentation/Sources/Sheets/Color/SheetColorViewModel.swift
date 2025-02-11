@@ -11,6 +11,7 @@ final class SheetColorViewModel: BaseViewModel {
     
     enum Output {
         case fetchedCategories
+        case updatedCategoryColor
     }
     
     private let output = PassthroughSubject<Output, Never>()
@@ -66,6 +67,7 @@ final class SheetColorViewModel: BaseViewModel {
     private func updateCategory(categories: [TDCategory]) async {
         do {
             try await updateCategoriesUseCase.execute(categories: categories)
+            output.send(.updatedCategoryColor)
         } catch {
             TDLogger.error(error)
         }

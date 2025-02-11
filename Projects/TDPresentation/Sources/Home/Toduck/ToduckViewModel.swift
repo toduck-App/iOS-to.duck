@@ -25,7 +25,7 @@ final class ToduckViewModel: BaseViewModel {
         alarmTimes: nil,
         place: nil,
         memo: nil,
-        isFinish: false
+        isFinished: false
     ), Schedule(
         id: 0,
         title: "2번 일정",
@@ -38,7 +38,7 @@ final class ToduckViewModel: BaseViewModel {
         alarmTimes: nil,
         place: nil,
         memo: nil,
-        isFinish: false
+        isFinished: false
     ), Schedule(
         id: 0,
         title: "3번 일정",
@@ -51,7 +51,7 @@ final class ToduckViewModel: BaseViewModel {
         alarmTimes: nil,
         place: "장장소소",
         memo: nil,
-        isFinish: true
+        isFinished: true
     ), Schedule(
         id: 0,
         title: "4번 일정",
@@ -64,7 +64,7 @@ final class ToduckViewModel: BaseViewModel {
         alarmTimes: nil,
         place: "장장소소",
         memo: nil,
-        isFinish: true
+        isFinished: true
     )]
     var categoryImages: [TDCategoryImageType] {
         todaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }

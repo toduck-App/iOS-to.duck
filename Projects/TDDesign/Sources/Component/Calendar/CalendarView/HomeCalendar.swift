@@ -18,5 +18,6 @@ public final class HomeCalendar: BaseCalendar {
     
     private func setup() {
         scope = .week
+        appearance.selectionColor = TDColor.Neutral.neutral100
     }
 }

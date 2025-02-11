@@ -39,7 +39,6 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     
     // MARK: - Setup & Configuration
     override func configure() {
-        layoutView.backgroundColor = TDColor.baseWhite
         layoutView.saveButton.isUserInteractionEnabled = false
         setupActions()
         setupCollectionView()
@@ -61,37 +60,26 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         )
     }
     
-    private func updateSaveButtonState() {
-        // 저장 버튼 활성화 조건: 종일이 눌러져 있거나, 오전/오후, 시간, 분이 모두 선택된 경우
-        let isSaveEnabled = isAllDay || (selectedHour != nil && selectedMinute != nil && layoutView.amButton.isSelected != layoutView.pmButton.isSelected)
-        
-        layoutView.saveButton.isUserInteractionEnabled = isSaveEnabled
-        layoutView.saveButton.layer.borderWidth = 0
-        
-        var configuration = layoutView.saveButton.configuration ?? UIButton.Configuration.filled()
-        configuration.title = isSaveEnabled ? "저장" : "취소"
-        configuration.baseBackgroundColor = isSaveEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral200
-        configuration.baseForegroundColor = isSaveEnabled ? TDColor.baseWhite : TDColor.Neutral.neutral600
-        layoutView.saveButton.configuration = configuration
-    }
-    
-    // MARK: - Setup Actions
     private func setupActions() {
+        /// 취소 버튼
+        layoutView.closeButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
+        
         /// 종일 설정
         layoutView.allDaySwitch.addAction(UIAction { [weak self] action in
-            guard let self = self, let switchControl = action.sender as? UISwitch else { return }
-            self.isAllDay = switchControl.isOn
+            guard let switchControl = action.sender as? UISwitch else { return }
+            self?.isAllDay = switchControl.isOn
         }, for: .valueChanged)
         
         /// 오전/오후 설정
         layoutView.amButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            self.isAM = true
+            self?.isAM = true
         }, for: .touchUpInside)
         
         layoutView.pmButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            self.isAM = false
+            self?.isAM = false
         }, for: .touchUpInside)
         
         /// 취소/저장 버튼
@@ -139,6 +127,19 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
         collectionView.reloadData()
+    }
+    
+    private func updateSaveButtonState() {
+        // 저장 버튼 활성화 조건: 종일이 눌러져 있거나, 오전/오후, 시간, 분이 모두 선택된 경우
+        let isSaveEnabled = isAllDay || (selectedHour != nil && selectedMinute != nil && layoutView.amButton.isSelected != layoutView.pmButton.isSelected)
+        
+        layoutView.saveButton.isUserInteractionEnabled = isSaveEnabled
+        layoutView.saveButton.layer.borderWidth = 0
+        
+        var configuration = layoutView.saveButton.configuration ?? UIButton.Configuration.filled()
+        configuration.baseBackgroundColor = isSaveEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral100
+        configuration.baseForegroundColor = isSaveEnabled ? TDColor.baseWhite : TDColor.Neutral.neutral700
+        layoutView.saveButton.configuration = configuration
     }
 }
 

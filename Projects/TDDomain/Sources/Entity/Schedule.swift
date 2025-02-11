@@ -12,7 +12,7 @@ public struct Schedule: Eventable {
     public let alarmTimes: [AlarmType]?
     public let place: String?
     public let memo: String?
-    public let isFinish: Bool
+    public let isFinished: Bool
     
     public init(
         id: Int?,
@@ -26,7 +26,7 @@ public struct Schedule: Eventable {
         alarmTimes: [AlarmType]?,
         place: String?,
         memo: String?,
-        isFinish: Bool
+        isFinished: Bool
     ) {
         self.id = id
         self.title = title
@@ -39,6 +39,38 @@ public struct Schedule: Eventable {
         self.alarmTimes = alarmTimes
         self.place = place
         self.memo = memo
-        self.isFinish = isFinish
+        self.isFinished = isFinished
     }
+}
+
+extension Schedule {
+    public static let dummy: [Schedule] = [
+        Schedule(
+            id: 0,
+            title: "1번 일정",
+            category: TDCategory(colorHex: "#123456", imageName: "power"),
+            startDate: "2021-09-01",
+            endDate: "2022-10-10",
+            isAllDay: false,
+            time: nil,
+            repeatDays: nil,
+            alarmTimes: nil,
+            place: "장소1",
+            memo: "메모1",
+            isFinished: false
+        ), Schedule(
+            id: 0,
+            title: "2번 일정",
+            category: TDCategory(colorHex: "#FFE3CC", imageName: "sleep"),
+            startDate: "2021-09-01",
+            endDate: "2022-10-10",
+            isAllDay: false,
+            time: Date(),
+            repeatDays: nil,
+            alarmTimes: nil,
+            place: "장소2",
+            memo: "메모2",
+            isFinished: false
+        )
+    ]
 }
