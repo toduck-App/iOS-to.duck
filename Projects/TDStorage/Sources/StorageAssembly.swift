@@ -13,5 +13,9 @@ public struct StorageAssembly: Assembly {
         container.register(RecentKeywordStorage.self) { _ in
             RecentKeywordStorageImpl()
         }
+
+        container.register(TimerStorage.self) { _ in
+            TimerStorageImpl()
+        }
     }
 }

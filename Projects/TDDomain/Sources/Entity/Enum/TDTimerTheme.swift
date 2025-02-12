@@ -1,11 +1,12 @@
-//
-//  TDTimerTheme.swift
-//  TDDomain
-//
-//  Created by 신효성 on 1/6/25.
-//
+import TDCore
 
-public enum TDTimerTheme {
+public enum TDTimerTheme: Int {
     case Bboduck
     case Simple
+}
+
+public extension TDTimerTheme {
+    static func parse(value: Int) -> TDTimerTheme {
+        return TDTimerTheme(rawValue: value) ?? .Simple
+    }
 }

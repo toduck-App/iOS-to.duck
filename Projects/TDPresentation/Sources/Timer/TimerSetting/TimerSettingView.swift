@@ -1,6 +1,7 @@
 import TDDesign
 import UIKit
 
+// MARK: - TimerSettingView
 final class TimerSettingView: BaseView {
     let recommandView = TimerRecommandView()
     let exitButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear)
@@ -22,6 +23,10 @@ final class TimerSettingView: BaseView {
 
     let saveButton = TDButton(title: "저장", size: .large)
 
+    #if DEBUG
+        let resetButton = TDButton(title: "집중 횟수 리셋", size: .large)
+    #endif
+
     override func addview() {
         addSubview(exitButton)
         addSubview(timerSettingTitleLabel)
@@ -33,6 +38,10 @@ final class TimerSettingView: BaseView {
 
         addSubview(fieldStack)
         addSubview(saveButton)
+
+        #if DEBUG
+            addSubview(resetButton)
+        #endif
     }
 
     override func layout() {
@@ -60,13 +69,29 @@ final class TimerSettingView: BaseView {
             make.top.equalTo(recommandView.snp.bottom).offset(24)
         }
 
-        saveButton.snp.makeConstraints { make in
-            make.leading.equalTo(recommandView.snp.leading)
-            make.trailing.equalTo(recommandView.snp.trailing)
-            make.height.equalTo(56)
-            make.top.equalTo(fieldStack.snp.bottom).offset(36)
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16).priority(750)
-        }
+        #if DEBUG
+            resetButton.snp.makeConstraints { make in
+                make.leading.equalTo(recommandView.snp.leading)
+                make.trailing.equalTo(recommandView.snp.trailing)
+                make.height.equalTo(56)
+                make.top.equalTo(fieldStack.snp.bottom).offset(36)
+            }
+
+            saveButton.snp.makeConstraints { make in
+                make.leading.equalTo(recommandView.snp.leading)
+                make.trailing.equalTo(recommandView.snp.trailing)
+                make.top.equalTo(resetButton.snp.bottom).offset(36)
+                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16).priority(750)
+            }
+        #else
+            saveButton.snp.makeConstraints { make in
+                make.leading.equalTo(recommandView.snp.leading)
+                make.trailing.equalTo(recommandView.snp.trailing)
+                make.height.equalTo(56)
+                make.top.equalTo(fieldStack.snp.bottom).offset(36)
+                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16).priority(750)
+            }
+        #endif
 
         for field in [focusTimeField, focusCountField, restTimeField] {
             field.snp.makeConstraints { make in
@@ -76,7 +101,8 @@ final class TimerSettingView: BaseView {
     }
 }
 
-enum TimerSettingFieldState {
+// MARK: - TimerSettingFieldState
+fileprivate enum TimerSettingFieldState {
     case focusTime
     case restTime
     case focusCount
@@ -149,7 +175,7 @@ final class TimerSettingField: BaseView {
     }
 
     private let state: TimerSettingFieldState
-    init(state: TimerSettingFieldState) {
+    fileprivate init(state: TimerSettingFieldState) {
         self.state = state
         super.init(frame: .zero)
     }
@@ -196,6 +222,9 @@ final class TimerSettingField: BaseView {
     }
 }
 
+// MARK: - TImerRecommandView
+
+// TODO: 디자인이 옛날 디자인임 추후 수정 필요
 final class TimerRecommandView: BaseView {
     private let fireImageView = UIImageView().then {
         $0.image = TDImage.fireSmall

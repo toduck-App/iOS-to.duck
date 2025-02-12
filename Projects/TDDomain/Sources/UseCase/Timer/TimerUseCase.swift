@@ -25,7 +25,7 @@ final class TimerUseCaseImpl: TimerUseCase {
         if isRunning { return }
 
         isRunning = true
-        remainTime = remainTime ?? setting.focusDuration
+        remainTime = remainTime ?? setting.toFocusDurationMinutes()
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
             [weak self] _ in

@@ -1,22 +1,20 @@
-//
-//  UpdateTimerSettingUseCase.swift
-//  TDDomain
-//
-//  Created by 신효성 on 12/30/24.
-//
-
+import TDCore
 public protocol UpdateTimerSettingUseCase {
-    func execute(setting: TDTimerSetting)
+    func execute(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError>
 }
 
 final class UpdateTimerSettingUseCaseImpl: UpdateTimerSettingUseCase {
     private let repository: TimerRepository
-
+    private let max = 5
+    private let min = 1
     public init(repository: TimerRepository) {
         self.repository = repository
     }
 
-    public func execute(setting: TDTimerSetting) {
-        repository.updateTimerSetting(setting: setting)
+    public func execute(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError> {
+        guard setting.maxFocusCount >= min, setting.maxFocusCount <= max else {
+            return .failure(.updateEntityFailure)
+         }
+        return repository.updateTimerSetting(setting: setting)
     }
 }

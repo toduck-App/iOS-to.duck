@@ -51,7 +51,10 @@ public struct DataAssembly: Assembly {
         }
 
         container.register(TimerRepository.self) { _ in
-            return TimerRepositoryImpl()
+            guard let storage = container.resolve(TimerStorage.self) else {
+                fatalError("Storage is not registered")
+            }
+            return TimerRepositoryImpl(storage: storage)
         }.inObjectScope(.container)
     }
 }

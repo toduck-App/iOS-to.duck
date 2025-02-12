@@ -33,8 +33,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         input.send(.fetchFocusCount)
         input.send(.fetchTimerSetting)
         input.send(.fetchTimerInitialStatus)
-        updateMaxFocusCount()
-        updateFocusCount()
     }
 
     override func configure() {
@@ -69,7 +67,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
-        // TODO: 각 케이스 함수로 빼기
         output.sink { [weak self] event in
             TDLogger.debug("[TimerViewController] revice event: \(event)")
             DispatchQueue.main.async {
@@ -80,11 +77,18 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateTimerRunning(isRunning)
                 case .finishedTimer:
                     self?.finishedTimer()
-                case .increasedFocusCount, .resetedFocusCount, .fetchedFocusCount:
-                    self?.updateFocusCount()
-                    self?.updateMaxFocusCount()
-                case .increasedMaxFocusCount, .decreasedMaxFocusCount:
-                    self?.updateMaxFocusCount()
+                case let .updatedFocusCount(count), let .fetchedFocusCount(count):
+                    self?.updateFocusCount(with: count)
+                case let .updatedMaxFocusCount(maxCount):
+                    self?.updateMaxFocusCount(with: maxCount)
+                case let .updatedTimerTheme(theme):
+                    self?.updateTheme(theme: theme)
+                case let .failure(code):
+                    self?.handleFailure(code)
+                case .updatedTimerSetting:
+                    self?.updatedTimerSetting()
+                case .fetchedTimerSetting:
+                    break 
                 }
             }
         }.store(in: &cancellables)
@@ -119,6 +123,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 }
 
 extension TimerViewController {
+    //TODO: 집중 타이머 횟수를 다채웠으면 어떻게 할지 물어보고 구현하기
     private func finishedTimer() {
         handleControlStack(.pause)
         showToast(type: .orange, title: "휴식 시간 끝 💡️", message: "집중할 시간이에요 ! 자리에 앉아볼까요?")
@@ -161,17 +166,15 @@ extension TimerViewController {
     }
 
     // TODO: Theme 설정
-    private func updateTheme(_: TDTimerTheme) {}
+    private func updateTheme(theme _: TDTimerTheme) {}
 
-    private func updateFocusCount() {
+    private func updateFocusCount(with count: Int) {
         guard let setting = viewModel.timerSetting else { return }
-        TDLogger.debug(
-            "[TimerViewController] \(viewModel.focusCount)/\(setting.focusCount)")
 
         layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        for i in 1 ... setting.focusCount {
-            if i <= viewModel.focusCount {
+        for i in 1 ... setting.maxFocusCount {
+            if i <= count {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
             } else {
@@ -179,20 +182,20 @@ extension TimerViewController {
                     createFocusCountEmptyView())
             }
         }
+
+        layoutView.focusCountStackView.layoutIfNeeded()
     }
 
-    private func updateMaxFocusCount() {
-        guard let setting = viewModel.timerSetting else { return }
+    private func updateMaxFocusCount(with maxCount: Int) {
+        guard let setting: TDTimerSetting = viewModel.timerSetting else { return }
 
         for view in layoutView.focusCountStackView.arrangedSubviews {
             layoutView.focusCountStackView.removeArrangedSubview(view)
             view.removeFromSuperview()
         }
 
-        // 1부터 setting.focusCount까지 반복하면서,
-        // 현재 포커스 카운트(viewModel.focusCount) 이하이면 토마토뷰, 아니면 empty 뷰 추가
-        for i in 1 ... setting.focusCount {
-            if i <= viewModel.focusCount {
+        for i in 1 ... setting.maxFocusCount {
+            if i <= maxCount {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
             } else {
@@ -200,6 +203,24 @@ extension TimerViewController {
                     createFocusCountEmptyView())
             }
         }
+        
+        layoutView.focusCountStackView.layoutIfNeeded()
+    }
+
+    //TODO: 간단한 토스트 구현하면 Implement하기
+    private func handleFailure(_ code: TimerViewModel.TimerViewModelError) {
+        switch code {
+        case .updateFailed:
+            let message: String = "[\(code)]: 알 수 없는 오류가 발생했습니다."
+            TDLogger.error("[TimerViewController]\(message)")
+        case .outOfRange:
+            TDLogger.error("[TimerViewController] outOfRange")
+        }
+    }
+
+    private func updatedTimerSetting() {
+        input.send(.fetchFocusCount)
+        input.send(.fetchTimerSetting)
     }
 }
 
@@ -231,35 +252,38 @@ extension TimerViewController {
     // MARK: - create views
 
     private func createFocusCountTomatoView() -> UIImageView {
-        let size = 16
         return UIImageView().then {
             $0.image = TDImage.Tomato.tomato
 
             $0.snp.makeConstraints {
-                $0.size.equalTo(size)
+                $0.size.equalTo(FocusCountViewLayoutConstant.size)
             }
         }
     }
 
     private func createFocusCountEmptyView() -> UIView {
-        let size = 16
         return UIView().then {
             $0.layer.borderColor = TDColor.Primary.primary200.cgColor
             $0.layer.borderWidth = 1
-            $0.layer.cornerRadius = CGFloat(size / 2)
+            $0.layer.cornerRadius = CGFloat(FocusCountViewLayoutConstant.size / 2)
             $0.backgroundColor = TDColor.Primary.primary25
 
             $0.snp.makeConstraints {
-                $0.size.equalTo(size)
+                $0.size.equalTo(FocusCountViewLayoutConstant.size)
             }
         }
     }
 }
 
+//MARK: - Enum
 extension TimerViewController {
     enum TimerControlStackState {
         case initilize
         case playing
         case pause
+    }
+
+    enum FocusCountViewLayoutConstant {
+        static let size: CGFloat = 16
     }
 }
