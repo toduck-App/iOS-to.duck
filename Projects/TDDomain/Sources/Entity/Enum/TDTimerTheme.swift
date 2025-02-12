@@ -5,15 +5,8 @@ public enum TDTimerTheme: Int {
     case Simple
 }
 
-extension TDTimerTheme {
-    public static func parse(value: Int) -> TDTimerTheme {
-        switch value {
-        case 0:
-            return .Bboduck
-        case 1:
-            return .Simple
-        default:
-            return .Simple
-        }
+public extension TDTimerTheme {
+    static func parse(value: Int) -> TDTimerTheme {
+        return TDTimerTheme(rawValue: value) ?? .Simple
     }
 }
