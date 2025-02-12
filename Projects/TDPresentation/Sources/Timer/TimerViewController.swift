@@ -30,6 +30,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
         // 아래의 함수들 configure에 넣으면 작동이 안함
 
+        input.send(.fetchTimerTheme)
         input.send(.fetchFocusCount)
         input.send(.fetchTimerSetting)
         input.send(.fetchTimerInitialStatus)
@@ -65,7 +66,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
 
     override func binding() {
-        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        let output: AnyPublisher<TimerViewModel.Output, Never> = viewModel.transform(input: input.eraseToAnyPublisher())
 
         output.sink { [weak self] event in
             TDLogger.debug("[TimerViewController] revice event: \(event)")
@@ -95,15 +96,46 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
 
     func setupNavigation() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: TDImage.Calendar.top2Medium)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: UIButton().then { button in
+            let calendarImage = TDImage.Calendar.top2Medium.withRenderingMode(.alwaysTemplate)
+            //calendarImage.withTintColor(TDColor.Primary.primary300)
 
+            let calendarImageView = UIImageView(image: calendarImage)
+            let logoImageView = UIImageView(image: TDImage.toduckLogo.withRenderingMode(.alwaysTemplate))
+
+            calendarImageView.tintColor = TDColor.Primary.primary300
+            logoImageView.tintColor = TDColor.Primary.primary300
+
+            // addviews
+            button.addSubview(calendarImageView)
+            button.addSubview(logoImageView)
+
+            //button action
+            button.addAction(UIAction { _ in
+                TDLogger.debug("calendar button clicked")
+            }, for: .touchUpInside)
+
+            //constraints
+            calendarImageView.snp.makeConstraints {
+                $0.leading.equalToSuperview()
+                $0.centerY.equalToSuperview()
+                $0.size.equalTo(24)
+            }
+
+            logoImageView.snp.makeConstraints {
+                $0.leading.equalTo(calendarImageView.snp.trailing).offset(8)
+                $0.centerY.equalToSuperview()
+            }
+        })
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: TDImage.Dot.verticalMedium,
+            image: TDImage.Dot.verticalMedium.withRenderingMode(.alwaysTemplate).withTintColor(TDColor.Primary.primary300),
             primaryAction: UIAction { _ in
                 let timerSettingViewController = TimerSettingViewController(
                     viewModel: self.viewModel)
 
+                //let dropdown = TDDropdownHoverView()
+            
                 let sheetController = SheetViewController(
                     controller: timerSettingViewController, sizes: [.intrinsic],
                     options: SheetOptions(
@@ -116,9 +148,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                 self.present(sheetController, animated: true, completion: nil)
             }
         )
-
-        navigationItem.leftBarButtonItem?.tintColor = TDColor.Primary.primary300
-        navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
 }
 
