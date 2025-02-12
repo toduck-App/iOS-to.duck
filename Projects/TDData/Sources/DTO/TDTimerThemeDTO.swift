@@ -1,4 +1,5 @@
 import TDDomain
+
 public struct TDTimerThemeDTO: Codable {
     private let timerTheme: Int
 
