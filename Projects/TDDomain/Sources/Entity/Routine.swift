@@ -20,6 +20,10 @@ public struct Routine: Eventable, Identifiable {
     public let recommendedRoutines: [String]?
     public let isFinished: Bool
     
+    public var isRepeating: Bool {
+        repeatDays != nil
+    }
+    
     public init(
         id: Int?,
         title: String,

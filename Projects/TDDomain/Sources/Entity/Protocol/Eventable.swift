@@ -7,4 +7,5 @@ public protocol Eventable {
     var category: TDCategory { get }
     var time: Date? { get }
     var isFinished: Bool { get }
+    var isRepeating: Bool { get }
 }

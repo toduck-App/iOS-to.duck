@@ -10,6 +10,7 @@ struct EventDisplayItem: EventPresentable {
     let categoryColor: UIColor
     let isFinished: Bool
     let place: String?
+    let isRepeating: Bool
     
     init(
         id: Int?,
@@ -19,7 +20,8 @@ struct EventDisplayItem: EventPresentable {
         categoryIcon: UIImage?,
         categoryColor: UIColor,
         isFinished: Bool,
-        place: String?
+        place: String?,
+        isRepeating: Bool
     ) {
         self.id = id
         self.title = title
@@ -29,6 +31,7 @@ struct EventDisplayItem: EventPresentable {
         self.categoryColor = categoryColor
         self.isFinished = isFinished
         self.place = place
+        self.isRepeating = isRepeating
     }
     
     init(
@@ -42,6 +45,7 @@ struct EventDisplayItem: EventPresentable {
         self.categoryIcon = event.categoryIcon
         self.categoryColor = event.categoryColor
         self.isFinished = event.isFinished
+        self.isRepeating = event.isRepeating
         self.place = place
     }
 }

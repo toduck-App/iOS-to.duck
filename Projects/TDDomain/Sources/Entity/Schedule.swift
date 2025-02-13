@@ -14,6 +14,10 @@ public struct Schedule: Eventable {
     public let memo: String?
     public let isFinished: Bool
     
+    public var isRepeating: Bool {
+        repeatDays != nil && startDate != endDate
+    }
+    
     public init(
         id: Int?,
         title: String,

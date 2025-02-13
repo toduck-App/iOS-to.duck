@@ -8,4 +8,5 @@ protocol EventPresentable {
     var categoryColor: UIColor { get }
     var time: String? { get }
     var isFinished: Bool { get }
+    var isRepeating: Bool { get }
 }
