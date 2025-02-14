@@ -50,6 +50,10 @@ public enum TDImage {
     public static let reportEmptySmall = TDDesignAsset.Images.reportEmptySmall.image
     public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     
+    public enum Alert {
+        public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
+    }
+    
     public enum CheckBox {
         public static let empty = TDDesignAsset.Images.emptyCheckBox.image
         public static let filled = TDDesignAsset.Images.back1CheckBox.image
