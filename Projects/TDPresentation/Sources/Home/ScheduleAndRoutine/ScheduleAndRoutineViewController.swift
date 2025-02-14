@@ -208,8 +208,8 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource, TDPopupPresen
             },
             deleteAction: { [weak self] in
                 let deleteEventViewController = DeleteEventViewController(
-                    isScheduleEvent: self?.mode == .schedule,
-                    isRepeating: isRepeating
+                    isRepeating: isRepeating,
+                    isScheduleEvent: self?.mode == .schedule
                 )
                 self?.presentPopup(with: deleteEventViewController)
             }
