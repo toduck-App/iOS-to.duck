@@ -34,7 +34,7 @@ final class DeleteEventView: BaseView {
         font: TDFont.boldBody1.font
     )
     
-    private let afterEventContainer = UIView()
+    let afterEventContainer = UIView()
     let afterEventDeleteButton = TDBaseButton(
         title: "이후 일정 모두 삭제",
         backgroundColor: TDColor.baseWhite,

@@ -15,7 +15,7 @@ public struct Schedule: Eventable {
     public let isFinished: Bool
     
     public var isRepeating: Bool {
-        repeatDays != nil && startDate != endDate
+        repeatDays != nil || startDate != endDate
     }
     
     public init(
@@ -54,7 +54,7 @@ extension Schedule {
             title: "1번 일정",
             category: TDCategory(colorHex: "#123456", imageName: "power"),
             startDate: "2021-09-01",
-            endDate: "2022-10-10",
+            endDate: "2021-09-01",
             isAllDay: false,
             time: nil,
             repeatDays: nil,
