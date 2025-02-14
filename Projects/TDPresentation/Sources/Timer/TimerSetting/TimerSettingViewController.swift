@@ -48,10 +48,10 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         input.send(.fetchTimerSetting)
 
         guard let setting = viewModel.timerSetting else { return }
-
         focusTime = setting.focusDuration
         maxFocusCount = setting.maxFocusCount
         restTime = setting.restDuration
@@ -96,12 +96,6 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                 self.restTime += 1
             }, for: .touchUpInside
         )
-        #if DEBUG
-        // reset button
-        layoutView.resetButton.addAction(UIAction { _ in
-            self.input.send(.resetFocusCount)
-        }, for: .touchUpInside)
-        #endif
         // save button
         layoutView.saveButton.addAction(
             UIAction { _ in

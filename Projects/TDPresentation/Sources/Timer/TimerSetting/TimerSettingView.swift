@@ -2,11 +2,12 @@ import TDDesign
 import UIKit
 
 // MARK: - TimerSettingView
+
 final class TimerSettingView: BaseView {
     let recommandView = TimerRecommandView()
     let exitButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear)
     let timerSettingTitleLabel = TDLabel(
-        labelText: "타이머 설정", toduckFont: .mediumHeader4, alignment: .center,
+        labelText: "타이머 설정", toduckFont: .boldHeader4, alignment: .center,
         toduckColor: TDColor.Neutral.neutral800
     )
 
@@ -21,11 +22,7 @@ final class TimerSettingView: BaseView {
         $0.alignment = .fill
     }
 
-    let saveButton = TDButton(title: "저장", size: .large)
-
-    #if DEBUG
-        let resetButton = TDButton(title: "집중 횟수 리셋", size: .large)
-    #endif
+    let saveButton: TDButton = .init(title: "저장", size: .large)
 
     override func addview() {
         addSubview(exitButton)
@@ -38,10 +35,6 @@ final class TimerSettingView: BaseView {
 
         addSubview(fieldStack)
         addSubview(saveButton)
-
-        #if DEBUG
-            addSubview(resetButton)
-        #endif
     }
 
     override func layout() {
@@ -69,29 +62,13 @@ final class TimerSettingView: BaseView {
             make.top.equalTo(recommandView.snp.bottom).offset(24)
         }
 
-        #if DEBUG
-            resetButton.snp.makeConstraints { make in
-                make.leading.equalTo(recommandView.snp.leading)
-                make.trailing.equalTo(recommandView.snp.trailing)
-                make.height.equalTo(56)
-                make.top.equalTo(fieldStack.snp.bottom).offset(36)
-            }
-
-            saveButton.snp.makeConstraints { make in
-                make.leading.equalTo(recommandView.snp.leading)
-                make.trailing.equalTo(recommandView.snp.trailing)
-                make.top.equalTo(resetButton.snp.bottom).offset(36)
-                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16).priority(750)
-            }
-        #else
-            saveButton.snp.makeConstraints { make in
-                make.leading.equalTo(recommandView.snp.leading)
-                make.trailing.equalTo(recommandView.snp.trailing)
-                make.height.equalTo(56)
-                make.top.equalTo(fieldStack.snp.bottom).offset(36)
-                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16).priority(750)
-            }
-        #endif
+        saveButton.snp.makeConstraints { make in
+            make.leading.equalTo(recommandView.snp.leading)
+            make.trailing.equalTo(recommandView.snp.trailing)
+            make.height.equalTo(56)
+            make.top.equalTo(fieldStack.snp.bottom).offset(36)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(16).priority(750)
+        }
 
         for field in [focusTimeField, focusCountField, restTimeField] {
             field.snp.makeConstraints { make in
@@ -102,7 +79,8 @@ final class TimerSettingView: BaseView {
 }
 
 // MARK: - TimerSettingFieldState
-fileprivate enum TimerSettingFieldState {
+
+private enum TimerSettingFieldState {
     case focusTime
     case restTime
     case focusCount
