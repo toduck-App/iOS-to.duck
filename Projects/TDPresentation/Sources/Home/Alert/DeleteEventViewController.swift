@@ -15,11 +15,11 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     ///   - isScheduleEvent: 일정인지 루틴인지 여부 (`true`: 일정, `false`: 루틴)
     ///   - isRepeating: 반복 여부 (`true`: 반복 이벤트, `false`: 단일 이벤트)
     init(
-        isScheduleEvent: Bool,
-        isRepeating: Bool
+        isRepeating: Bool,
+        isScheduleEvent: Bool
     ) {
-        self.isScheduleEvent = isScheduleEvent
         self.mode = isRepeating ? .repeating : .single
+        self.isScheduleEvent = isScheduleEvent
         super.init()
     }
     
@@ -31,6 +31,7 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     override func configure() {
         super.configure()
         updateButtonTitles()
+        setupRepeatingMode()
         setupButtonAction()
     }
 
@@ -41,6 +42,14 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
 
         popupContentView.currentEventDeleteButton.setTitle(singleTitle, for: .normal)
         popupContentView.afterEventDeleteButton.setTitle(repeatingTitle, for: .normal)
+    }
+    
+    private func setupRepeatingMode() {
+        if mode == .single {
+            popupContentView.afterEventContainer.isHidden = mode == .single
+            popupContentView.currentEventDeleteButton.setTitle("삭제", for: .normal)
+            popupContentView.currentEventDeleteButton.titleLabel?.font = TDFont.boldBody1.font
+        }
     }
 
     private func setupButtonAction() {
