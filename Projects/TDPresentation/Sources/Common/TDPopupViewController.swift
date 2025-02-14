@@ -1,34 +1,49 @@
 import SnapKit
 import UIKit
 
-class TDPopupViewController<LayerView: BaseView>: BaseViewController<BaseView>, UIGestureRecognizerDelegate {
-    let layerView = LayerView()
+/// 팝업을 위한 베이스 뷰 컨트롤러
+class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<BaseView>, UIGestureRecognizerDelegate {
+    let popupContentView = PopupContentView()
+    
     override func configure() {
+        setupBackgroundDim()
+        setupGestureRecognizer()
+    }
+    
+    /// 배경을 어둡게 설정
+    private func setupBackgroundDim() {
+        layoutView.backgroundColor = .black.withAlphaComponent(0.5)
+    }
+    
+    /// 팝업을 닫을 수 있도록 제스처 추가
+    private func setupGestureRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissPopup))
         tapGesture.delegate = self
         layoutView.addGestureRecognizer(tapGesture)
         layoutView.isUserInteractionEnabled = true
-        layoutView.backgroundColor = .black.withAlphaComponent(0.5)
-
-        //layerView.backgroundColor = .white
     }
-
+    
     override func addView() {
-        layoutView.addSubview(layerView)
+        layoutView.addSubview(popupContentView)
     }
-
+    
     override func layout() {
-        layerView.snp.makeConstraints {
+        popupContentView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.left.right.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
-
-    @objc func dismissPopup() {
+    
+    @objc
+    func dismissPopup() {
         dismiss(animated: true, completion: nil)
     }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    
+    /// 팝업 외부 터치 시 닫히도록 설정
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldReceive touch: UITouch
+    ) -> Bool {
         return touch.view == gestureRecognizer.view
     }
 }
