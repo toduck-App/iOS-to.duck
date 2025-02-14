@@ -293,4 +293,9 @@ public enum TDImage {
         public static let emptyMedium = TDDesignAsset.Images.scrapEmptyMedium.image
         public static let filledMedium = TDDesignAsset.Images.scrapFillMedium.image
     }
+    
+    public enum ThemePreview {
+        public static let BboduckPreview = TDDesignAsset.Images.bboduckPreview.image
+        public static let SimplePreview = TDDesignAsset.Images.simplePreview.image
+    }
 }
