@@ -30,6 +30,9 @@ final class TimerCoordinator: Coordinator {
         let fetchTimerSettingUseCase = injector.resolve(FetchTimerSettingUseCase.self)
         let updateTimerSettingUseCase = injector.resolve(UpdateTimerSettingUseCase.self)
 
+        let fetchTimerThemeUseCase = injector.resolve(FetchTimerThemeUseCase.self)
+        let updateTimerThemeUseCase = injector.resolve(UpdateTimerThemeUseCase.self)
+
         let fetchFocusCountUseCase = injector.resolve(FetchFocusCountUseCase.self)
         let updateFocusCountUseCase = injector.resolve(UpdateFocusCountUseCase.self)
         let resetFocusCountUseCase = injector.resolve(ResetFocusCountUseCase.self)
@@ -38,6 +41,8 @@ final class TimerCoordinator: Coordinator {
             timerUseCase: timerUseCase,
             fetchTimerSettingUseCase: fetchTimerSettingUseCase,
             updateTimerSettingUseCase: updateTimerSettingUseCase,
+            fetchTimerThemeUseCase: fetchTimerThemeUseCase,
+            updateTimerThemeUseCase: updateTimerThemeUseCase,
             fetchFocusCountUseCase: fetchFocusCountUseCase,
             updateFocusCountUseCase: updateFocusCountUseCase,
             resetFocusCountUseCase: resetFocusCountUseCase
