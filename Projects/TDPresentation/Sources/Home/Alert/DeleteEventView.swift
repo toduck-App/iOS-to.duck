@@ -75,8 +75,8 @@ final class DeleteEventView: BaseView {
     
     override func layout() {
         containerView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
         }
         
         deleteImageView.snp.makeConstraints {
