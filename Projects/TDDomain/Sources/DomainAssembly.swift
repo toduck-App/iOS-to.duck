@@ -339,5 +339,19 @@ public struct DomainAssembly: Assembly {
             }
             return UpdateKeywordUseCaseImpl(repository: repository)
         }
+
+        container.register(FetchTimerThemeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(TimerRepository.self) else {
+                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchTimerThemeUseCaseImpl(repository: repository)
+        }
+
+        container.register(UpdateTimerThemeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(TimerRepository.self) else {
+                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateTimerThemeUseCaseImpl(repository: repository)
+        }
     }
 }
