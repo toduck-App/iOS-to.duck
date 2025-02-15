@@ -31,13 +31,11 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
         }, for: .touchUpInside)
 
         layoutView.themeBbouckButton.addAction(UIAction { [self] _ in
-            TDLogger.debug("bboduck button clicked")
             themeState = .Bboduck
             updateSelectButtonState()
         }, for: .touchUpInside)
 
         layoutView.themeSimpleButton.addAction(UIAction { [self] _ in
-            TDLogger.debug("simple button clicked")
             themeState = .Simple
             updateSelectButtonState()
         }, for: .touchUpInside)
