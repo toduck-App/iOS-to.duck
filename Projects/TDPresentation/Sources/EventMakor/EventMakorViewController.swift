@@ -46,7 +46,6 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         input.send(.fetchCategories)
     }
     
@@ -60,21 +59,12 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         tabBarController?.tabBar.isHidden = false
     }
     
-    // MARK: - Common Method
+    // MARK: - Base Method
     override func configure() {
         navigationItem.rightBarButtonItem = registerButton
-        eventMakorView.titleForm.delegate = self
-        eventMakorView.categoryTitleForm.delegate = self
-        eventMakorView.categoryViewsForm.delegate = self
-        eventMakorView.dateForm.delegate = self
-        eventMakorView.timeForm.delegate = self
-        eventMakorView.repeatDayForm.delegate = self
-        eventMakorView.alarmForm.delegate = self
-        eventMakorView.lockForm.delegate = self
-        eventMakorView.memoTextView.delegate = self
-        
-        let categoryColors = viewModel.categories.compactMap { $0.colorHex.convertToUIColor() }
-        eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
+        navigationController?.navigationBar.isHidden = false
+        setupDelegate()
+        setupCategory()
     }
     
     override func binding() {
@@ -92,6 +82,23 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                     self?.navigationController?.popViewController(animated: true)
                 }
             }.store(in: &cancellables)
+    }
+    
+    private func setupDelegate() {
+        eventMakorView.titleForm.delegate = self
+        eventMakorView.categoryTitleForm.delegate = self
+        eventMakorView.categoryViewsForm.delegate = self
+        eventMakorView.dateForm.delegate = self
+        eventMakorView.timeForm.delegate = self
+        eventMakorView.repeatDayForm.delegate = self
+        eventMakorView.alarmForm.delegate = self
+        eventMakorView.lockForm.delegate = self
+        eventMakorView.memoTextView.delegate = self
+    }
+    
+    private func setupCategory() {
+        let categoryColors = viewModel.categories.compactMap { $0.colorHex.convertToUIColor() }
+        eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
     }
     
     // MARK: Delegate Method
@@ -190,7 +197,6 @@ extension EventMakorViewController: TDFormTextViewDelegate {
 // MARK: - SegmentViewDelegate
 extension EventMakorViewController: TDFormSegmentViewDelegate {
     func segmentView(_ segmentView: TDFormSegmentView, didChangeToPublic isPublic: Bool) {
-        print("공개여부 변경: \(isPublic)")
         input.send(.selectLockType(isPublic))
     }
 }
