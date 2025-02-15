@@ -29,6 +29,7 @@ final class EventMakorCoordinator: Coordinator {
         )
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
+        eventMakorViewController.hidesBottomBarWhenPushed = true
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
     }
     
