@@ -71,6 +71,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
             timeCoordinator.finishDelegate = self
             timeCoordinator.delegate = self
             timeCoordinator.start()
+        default: break
         }
     }
 }

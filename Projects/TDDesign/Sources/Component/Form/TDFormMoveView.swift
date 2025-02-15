@@ -6,6 +6,8 @@ public enum TDFormMoveViewType {
     case category
     case date
     case time
+    case cycle
+    case location
 }
 
 public protocol TDFormMoveViewDelegate: AnyObject {
@@ -47,20 +49,28 @@ public final class TDFormMoveView: UIView {
     // MARK: - Properties
     private let type: TDFormMoveViewType
     private let isRequired: Bool
+    private let isReadOnlyMode: Bool
     public weak var delegate: TDFormMoveViewDelegate?
     
+    /// - Parameters:
+    ///  - type: TDFormMoveViewType
+    ///  - isRequired: 필수 여부
+    ///  - isEditMode: 일정 추가&수정 혹은 읽기 전용 모드
     // MARK: - Initializer
     public init(
         type: TDFormMoveViewType,
-        isRequired: Bool
+        isRequired: Bool,
+        isReadOnlyMode: Bool = false
     ) {
         self.type = type
         self.isRequired = isRequired
+        self.isReadOnlyMode = isReadOnlyMode
         super.init(frame: .zero)
         
         setupView()
         setupLayout()
         setupAction()
+        setupMode(with: isReadOnlyMode)
     }
     
     @available(*, unavailable)
@@ -87,6 +97,14 @@ public final class TDFormMoveView: UIView {
             titleImageView?.contentMode = .scaleAspectFit
             titleLabel.setTitleLabel("시간")
             descriptionLabel.setText("없음")
+        case .cycle:
+            titleImageView = UIImageView(image: TDImage.Repeat.cycleMedium)
+            titleImageView?.contentMode = .scaleAspectFit
+            titleLabel.setTitleLabel("반복")
+        case .location:
+            titleImageView = UIImageView(image: TDImage.locationMedium)
+            titleImageView?.contentMode = .scaleAspectFit
+            titleLabel.setTitleLabel("장소")
         }
         if isRequired {
             titleLabel.setRequiredLabel()
@@ -136,5 +154,14 @@ public final class TDFormMoveView: UIView {
     @objc
     private func didTapView() {
         delegate?.didTapMoveView(self, type: type)
+    }
+    
+    private func setupMode(with isReadOnlyMode: Bool) {
+        if isReadOnlyMode {
+            descriptionImageView.isHidden = true
+            descriptionHorizontalStackView.isUserInteractionEnabled = false
+            titleLabel.setTitleFont(TDFont.mediumBody2)
+            descriptionLabel.setFont(TDFont.mediumBody2)
+        }
     }
 }
