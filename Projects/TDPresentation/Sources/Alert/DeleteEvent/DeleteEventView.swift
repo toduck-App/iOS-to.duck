@@ -1,5 +1,6 @@
-import UIKit
+import SnapKit
 import TDDesign
+import UIKit
 
 final class DeleteEventView: BaseView {
     private let containerView = UIView().then {
@@ -22,7 +23,7 @@ final class DeleteEventView: BaseView {
     )
     
     /// 버튼 스택뷰
-    private let buttonContainerHorizontalStackView = UIStackView().then {
+    private let buttonContainerVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 12
     }
@@ -63,11 +64,11 @@ final class DeleteEventView: BaseView {
         containerView.addSubview(deleteImageView)
         containerView.addSubview(deleteLabel)
         containerView.addSubview(descriptionLabel)
-        containerView.addSubview(buttonContainerHorizontalStackView)
+        containerView.addSubview(buttonContainerVerticalStackView)
         
-        buttonContainerHorizontalStackView.addArrangedSubview(currentEventDeleteButton)
-        buttonContainerHorizontalStackView.addArrangedSubview(afterEventContainer)
-        buttonContainerHorizontalStackView.addArrangedSubview(cancelButton)
+        buttonContainerVerticalStackView.addArrangedSubview(currentEventDeleteButton)
+        buttonContainerVerticalStackView.addArrangedSubview(afterEventContainer)
+        buttonContainerVerticalStackView.addArrangedSubview(cancelButton)
         
         afterEventContainer.addSubview(afterEventDeleteButton)
         afterEventContainer.addSubview(dummyView)
@@ -95,7 +96,7 @@ final class DeleteEventView: BaseView {
             $0.centerX.equalToSuperview()
         }
         
-        buttonContainerHorizontalStackView.snp.makeConstraints {
+        buttonContainerVerticalStackView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().offset(-16)
