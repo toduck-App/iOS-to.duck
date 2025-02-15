@@ -4,30 +4,33 @@ import UIKit
 struct EventDisplayItem: EventPresentable {
     let id: Int?
     let title: String
-    let time: String?
-    let memo: String?
     let categoryIcon: UIImage?
     let categoryColor: UIColor
+    let time: String?
+    let memo: String?
     let isFinished: Bool
+    let isRepeating: Bool
     let place: String?
     
     init(
         id: Int?,
         title: String,
-        time: String?,
-        memo: String?,
         categoryIcon: UIImage?,
         categoryColor: UIColor,
+        time: String?,
+        memo: String?,
         isFinished: Bool,
+        isRepeating: Bool,
         place: String?
     ) {
         self.id = id
         self.title = title
-        self.time = time
-        self.memo = memo
         self.categoryIcon = categoryIcon
         self.categoryColor = categoryColor
+        self.time = time
+        self.memo = memo
         self.isFinished = isFinished
+        self.isRepeating = isRepeating
         self.place = place
     }
     
@@ -37,11 +40,12 @@ struct EventDisplayItem: EventPresentable {
     ) {
         self.id = event.id
         self.title = event.title
-        self.time = event.time
-        self.memo = event.memo
         self.categoryIcon = event.categoryIcon
         self.categoryColor = event.categoryColor
+        self.time = event.time
+        self.memo = event.memo
         self.isFinished = event.isFinished
+        self.isRepeating = event.isRepeating
         self.place = place
     }
 }

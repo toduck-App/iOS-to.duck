@@ -175,7 +175,7 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
 }
 
 // MARK: - UITableViewDataSource
-extension ScheduleAndRoutineViewController: UITableViewDataSource {
+extension ScheduleAndRoutineViewController: UITableViewDataSource, TDPopupPresentable {
     func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
@@ -198,25 +198,30 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
         ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
         let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
+        guard let provider else { return cell }
         
-        guard let timeSlots = provider?.timeSlots else { return cell }
+        let isRepeating = provider.isEventRepeating(at: indexPath.row)
         
         cell.configureSwipeActions(
             editAction: { [weak self] in
                 print("editAction")
             },
             deleteAction: { [weak self] in
-                print("deleteAction")
+                let deleteEventViewController = DeleteEventViewController(
+                    isRepeating: isRepeating,
+                    isScheduleEvent: self?.mode == .schedule
+                )
+                self?.presentPopup(with: deleteEventViewController)
             }
         )
         
         var cumulative = 0
-        for slot in timeSlots {
+        for slot in provider.timeSlots {
             let count = slot.events.count
             if indexPath.row < cumulative + count {
                 let eventIndexInSlot = indexPath.row - cumulative
                 let event = slot.events[eventIndexInSlot]
-                let eventDisplayItem = provider?.convertEventToDisplayItem(event: event)
+                let eventDisplayItem = provider.convertEventToDisplayItem(event: event)
                 
                 let timeText: String? = (eventIndexInSlot == 0) ? slot.timeText : nil
                 

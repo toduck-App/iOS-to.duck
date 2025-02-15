@@ -189,7 +189,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
     }
     
     private func setupButtons() {
-        editButton.backgroundColor = .systemBlue
+        editButton.backgroundColor = TDColor.Neutral.neutral600
         deleteButton.backgroundColor = .red
         editButton.setImage(TDImage.Pen.penMedium.withTintColor(.white), for: .normal)
         deleteButton.setImage(TDImage.trashMedium.withTintColor(.white), for: .normal)
