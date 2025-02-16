@@ -104,14 +104,8 @@ private extension SocialDetailPostCell {
     }
     
     func setupConstraints() {
-        contentView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview().inset(24)
-        }
-        
         avatarView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.top.leading.equalToSuperview().offset(20)
             make.size.equalTo(36)
         }
         
@@ -131,9 +125,10 @@ private extension SocialDetailPostCell {
         }
         
         verticalStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
+            make.leading.equalTo(avatarView.snp.leading)
+            make.trailing.equalToSuperview().offset(-20)
             make.top.equalTo(avatarView.snp.bottom).offset(10)
-            make.bottom.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
 }

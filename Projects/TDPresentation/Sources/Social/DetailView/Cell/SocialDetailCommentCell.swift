@@ -47,7 +47,6 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.spacing = 14
         $0.alignment = .fill
         $0.distribution = .fill
-        $0.isLayoutMarginsRelativeArrangement = true
     }
     
     // MARK: - Init
@@ -65,6 +64,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
     // MARK: - Configure
     
     func configure(with item: Comment) {
+        setupUI()
         headerView.configure(
             titleBadge: item.user.title,
             nickname: item.user.name,
@@ -101,7 +101,7 @@ private extension SocialDetailCommentCell {
     }
     
     func setupLayout() {
-        addSubview(containerView)
+        contentView.addSubview(containerView)
         containerView.addSubview(avatarView)
         containerView.addSubview(verticalStackView)
         bodyStackView.addArrangedSubview(contentLabel)

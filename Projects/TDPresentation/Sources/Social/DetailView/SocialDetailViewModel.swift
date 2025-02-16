@@ -131,11 +131,8 @@ private extension SocialDetailViewModel {
     private func likeComment(commentID: Comment.ID) async {
         do {
             let updatedComment = try await toggleCommentLikeUseCase.execute(commentID: commentID)
+            comments = comments.map { $0.id == updatedComment.id ? updatedComment : $0 }
             
-            if let index = comments.firstIndex(where: { $0.id == commentID }) {
-                comments[index] = updatedComment
-                return
-            }
             output.send(.likeComment(updatedComment))
         } catch {
             output.send(.failure("댓글 좋아요에 실패했습니다."))

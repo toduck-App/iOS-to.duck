@@ -17,12 +17,13 @@ public final class CommentRepositoryImpl: CommentRepository {
             // 댓글인 경우
             if comments[index].id == commentID {
                 comments[index].toggleLike()
+                return .success(comments[index])
             }
             // 대댓글인 경우
             if let replyIndex = comments[index].reply.firstIndex(where: { $0.id == commentID }) {
                 comments[index].reply[replyIndex].toggleLike()
+                return .success(comments[index])
             }
-            return .success(comments[index])
         }
         // TODO: 해당 ID를 가진 댓글이나 대댓글이 없는 경우
         return .failure(NSError(domain: "CommentRepositoryImpl", code: 0, userInfo: nil))

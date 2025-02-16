@@ -52,7 +52,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
             case .comment(let id):
                 let cell: SocialDetailCommentCell = collectionView.dequeueReusableCell(for: indexPath)
                 if let comment = self.viewModel.comments.first(where: { $0.id == id }) {
-                    TDLogger.debug("Comment: \(comment)")
+                    TDLogger.debug("Comment: \(comment.reply)")
                     cell.configure(with: comment)
                     cell.commentDelegate = self
                     return cell
