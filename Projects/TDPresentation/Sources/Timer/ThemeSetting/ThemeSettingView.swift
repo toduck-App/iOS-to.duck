@@ -22,6 +22,10 @@ final class ThemeSettingView: BaseView {
 
     let saveButton: TDButton = .init(title: "저장", size: .large)
 
+    override func configure() {
+        backgroundColor = .white
+    }
+
     override func addview() {
         addSubview(exitButton)
         addSubview(themeSettingTitleLabel)
