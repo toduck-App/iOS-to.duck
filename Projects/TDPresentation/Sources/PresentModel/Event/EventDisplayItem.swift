@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 
 /// TDDomain의 일정과 루틴을 표현하기 위한 Presentation Model
 struct EventDisplayItem: EventPresentable {
@@ -67,5 +68,37 @@ struct EventDisplayItem: EventPresentable {
         self.memo = event.memo
         self.isFinished = event.isFinished
         self.isRepeating = event.isRepeating
+    }
+    
+    init(routine: Routine) {
+        self.id = routine.id
+        self.title = routine.title
+        self.categoryIcon = UIImage(named: routine.category.imageName)
+        self.categoryColor = routine.category.colorHex.convertToUIColor() ?? .white
+        self.alarmTimes = routine.alarmTimes?.map { $0.rawValue }
+        self.date = nil
+        self.time = routine.time?.convertToString()
+        self.repeatDays = routine.repeatDays?.map { $0.rawValue }.joined(separator: ", ")
+        self.place = nil
+        self.isPublic = routine.isPublic
+        self.memo = routine.memo
+        self.isFinished = routine.isFinished
+        self.isRepeating = routine.isRepeating
+    }
+    
+    init(schedule: Schedule) {
+        self.id = schedule.id
+        self.title = schedule.title
+        self.categoryIcon = UIImage(named: schedule.category.imageName)
+        self.categoryColor = schedule.category.colorHex.convertToUIColor() ?? .white
+        self.alarmTimes = schedule.alarmTimes?.map { $0.rawValue }
+        self.date = nil
+        self.time = schedule.time?.convertToString()
+        self.repeatDays = schedule.repeatDays?.map { $0.rawValue }.joined(separator: ", ")
+        self.place = schedule.place
+        self.isPublic = false
+        self.memo = schedule.memo
+        self.isFinished = schedule.isFinished
+        self.isRepeating = false
     }
 }

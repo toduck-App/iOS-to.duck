@@ -1,4 +1,5 @@
 import TDCore
+import TDDomain
 import TDDesign
 import UIKit
 
@@ -14,6 +15,18 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     ) {
         self.mode = mode
         self.event = event
+        super.init()
+    }
+    
+    init(routine: Routine) {
+        self.mode = .routine
+        self.event = EventDisplayItem(routine: routine)
+        super.init()
+    }
+    
+    init(schedule: Schedule) {
+        self.mode = .schedule
+        self.event = EventDisplayItem(schedule: schedule)
         super.init()
     }
     
