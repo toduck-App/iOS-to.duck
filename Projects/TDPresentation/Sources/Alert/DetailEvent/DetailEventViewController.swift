@@ -64,7 +64,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     
     /// 이벤트 정보 설정
     private func configureEventDetails() {
-        popupContentView.dateLabel.setText(event.date ?? "날짜")
+        popupContentView.dateLabel.setText(event.date ?? "-")
         popupContentView.alarmImageView.image = event.alarmTimes != nil
             ? TDImage.Bell.ringingMedium
             : TDImage.Bell.offMedium
@@ -76,9 +76,9 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         )
         popupContentView.eventTitleLabel.setText(event.title)
         
-        popupContentView.timeDetailView.updateDescription(event.time ?? "시간")
-        popupContentView.repeatDetailView.updateDescription(event.repeatDays ?? "반복")
-        popupContentView.memoContentLabel.setText(event.memo ?? "메모")
+        popupContentView.timeDetailView.updateDescription(event.time ?? "-")
+        popupContentView.repeatDetailView.updateDescription(event.repeatDays ?? "-")
+        popupContentView.memoContentLabel.setText(event.memo ?? "-")
     }
     
     /// 루틴과 일정에 따라 UI를 다르게 설정
@@ -88,7 +88,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
             popupContentView.lockDetailView.updateDescription(event.isPublic ? "공개" : "비공개")
         } else {
             popupContentView.lockDetailView.isHidden = true
-            popupContentView.placeDetailView.updateDescription(event.place ?? "장소")
+            popupContentView.placeDetailView.updateDescription(event.place ?? "-")
         }
     }
 }
