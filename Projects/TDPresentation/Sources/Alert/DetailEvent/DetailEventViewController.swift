@@ -34,12 +34,17 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         ? TDImage.Bell.ringingMedium
         : TDImage.Bell.offMedium
         
-        popupContentView.categoryImageView.backgroundColor = event.categoryColor
+        popupContentView.categoryImageView.configure(
+            radius: 12,
+            backgroundColor: event.categoryColor,
+            category: event.categoryIcon ?? .add
+        )
         popupContentView.eventTitleLabel.setText(event.title)
         
         popupContentView.timeDetailView.updateDescription(event.time ?? "시간")
         popupContentView.repeatDetailView.updateDescription(event.repeatDays ?? "반복")
         popupContentView.locationDetailView.updateDescription(event.place ?? "장소")
+        popupContentView.memoContentLabel.setText(event.memo ?? "메모")
     }
     
     private func setupButtonAction() {

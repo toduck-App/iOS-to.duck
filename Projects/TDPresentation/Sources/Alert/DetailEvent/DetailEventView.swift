@@ -28,6 +28,7 @@ final class DetailEventView: BaseView {
         toduckColor: TDColor.Neutral.neutral600
     )
     let categoryImageView = TDCategoryCircleView()
+    let eventTitleContainerView = UIView()
     let eventTitleLabel = TDLabel(
         toduckFont: TDFont.mediumBody2,
         toduckColor: TDColor.Neutral.neutral800
@@ -35,11 +36,36 @@ final class DetailEventView: BaseView {
     
     private let eventInfoVerticalStackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 12
+        $0.spacing = 16
     }
     let timeDetailView = TDFormMoveView(type: .time, isRequired: false, isReadOnlyMode: true)
     let repeatDetailView = TDFormMoveView(type: .cycle, isRequired: false, isReadOnlyMode: true)
     let locationDetailView = TDFormMoveView(type: .location, isRequired: false, isReadOnlyMode: true)
+    
+    let memoHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+    }
+    let memoImageView = UIImageView().then {
+        $0.image = TDImage.Memo.medium
+        $0.contentMode = .scaleAspectFit
+    }
+    let memoLabel = TDLabel(
+        labelText: "메모",
+        toduckFont: TDFont.mediumBody2,
+        toduckColor: TDColor.Neutral.neutral800
+    )
+    let memoDescriptionLabel = TDLabel(
+        labelText: "(최대 40자)",
+        toduckFont: TDFont.mediumBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    
+    let memoContentContainerView = UIView()
+    let memoContentLabel = TDLabel(
+        toduckFont: TDFont.mediumBody2,
+        toduckColor: TDColor.Neutral.neutral800
+    )
     
     private let buttonContainerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -70,20 +96,34 @@ final class DetailEventView: BaseView {
     
     override func addview() {
         addSubview(containerView)
+        
+        /// 네비게이션
         containerView.addSubview(navigationContainerView)
         navigationContainerView.addSubview(cancelButton)
         navigationContainerView.addSubview(titleLabel)
         navigationContainerView.addSubview(alarmImageView)
         
+        /// 일정 정보 (날짜, 카테고리, 제목)
         containerView.addSubview(dateLabel)
         containerView.addSubview(categoryImageView)
-        containerView.addSubview(eventTitleLabel)
+        containerView.addSubview(eventTitleContainerView)
+        eventTitleContainerView.addSubview(eventTitleLabel)
         
+        /// 일정 내용 (시간, 반복, 장소)
         containerView.addSubview(eventInfoVerticalStackView)
         eventInfoVerticalStackView.addArrangedSubview(timeDetailView)
         eventInfoVerticalStackView.addArrangedSubview(repeatDetailView)
         eventInfoVerticalStackView.addArrangedSubview(locationDetailView)
         
+        /// 메모
+        containerView.addSubview(memoHorizontalStackView)
+        memoHorizontalStackView.addArrangedSubview(memoImageView)
+        memoHorizontalStackView.addArrangedSubview(memoLabel)
+        memoHorizontalStackView.addArrangedSubview(memoDescriptionLabel)
+        containerView.addSubview(memoContentContainerView)
+        memoContentContainerView.addSubview(memoContentLabel)
+        
+        /// 버튼
         containerView.addSubview(buttonContainerHorizontalStackView)
         buttonContainerHorizontalStackView.addArrangedSubview(deleteButton)
         buttonContainerHorizontalStackView.addArrangedSubview(delayToTomorrowButton)
@@ -124,19 +164,35 @@ final class DetailEventView: BaseView {
             $0.leading.equalTo(dateLabel)
             $0.width.height.equalTo(48)
         }
-        eventTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.bottom).offset(10)
+        eventTitleContainerView.snp.makeConstraints {
             $0.leading.equalTo(categoryImageView.snp.trailing).offset(8)
-            $0.trailing.equalToSuperview().inset(18)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.centerY.equalTo(categoryImageView)
+            $0.top.bottom.equalTo(categoryImageView)
+        }
+        eventTitleLabel.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(16)
         }
         
         eventInfoVerticalStackView.snp.makeConstraints {
-            $0.top.equalTo(categoryImageView.snp.bottom).offset(16)
+            $0.top.equalTo(categoryImageView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
         
+        memoHorizontalStackView.snp.makeConstraints {
+            $0.top.equalTo(eventInfoVerticalStackView.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(16)
+        }
+        memoContentContainerView.snp.makeConstraints {
+            $0.top.equalTo(memoHorizontalStackView.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(16)
+        }
+        memoContentLabel.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(16)
+        }
+        
         buttonContainerHorizontalStackView.snp.makeConstraints {
-            $0.top.equalTo(locationDetailView.snp.bottom).offset(12)
+            $0.top.equalTo(memoContentContainerView.snp.bottom).offset(20)
             $0.leading.trailing.bottom.equalToSuperview().inset(16)
             $0.height.equalTo(52)
         }
@@ -144,5 +200,9 @@ final class DetailEventView: BaseView {
     
     override func configure() {
         containerView.layer.cornerRadius = 28
+        eventTitleContainerView.backgroundColor = TDColor.Neutral.neutral50
+        eventTitleContainerView.layer.cornerRadius = 12
+        memoContentContainerView.backgroundColor = TDColor.Neutral.neutral50
+        memoContentContainerView.layer.cornerRadius = 12
     }
 }
