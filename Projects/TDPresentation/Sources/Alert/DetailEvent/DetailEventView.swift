@@ -40,14 +40,15 @@ final class DetailEventView: BaseView {
     }
     let timeDetailView = TDFormMoveView(type: .time, isRequired: false, isReadOnlyMode: true)
     let repeatDetailView = TDFormMoveView(type: .cycle, isRequired: false, isReadOnlyMode: true)
-    let locationDetailView = TDFormMoveView(type: .location, isRequired: false, isReadOnlyMode: true)
+    let placeDetailView = TDFormMoveView(type: .place, isRequired: false, isReadOnlyMode: true)
+    let lockDetailView = TDFormMoveView(type: .lock, isRequired: false, isReadOnlyMode: true)
     
     let memoHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
     }
     let memoImageView = UIImageView().then {
-        $0.image = TDImage.Memo.medium
+        $0.image = TDImage.Memo.lineMedium
         $0.contentMode = .scaleAspectFit
     }
     let memoLabel = TDLabel(
@@ -113,7 +114,8 @@ final class DetailEventView: BaseView {
         containerView.addSubview(eventInfoVerticalStackView)
         eventInfoVerticalStackView.addArrangedSubview(timeDetailView)
         eventInfoVerticalStackView.addArrangedSubview(repeatDetailView)
-        eventInfoVerticalStackView.addArrangedSubview(locationDetailView)
+        eventInfoVerticalStackView.addArrangedSubview(placeDetailView)
+        eventInfoVerticalStackView.addArrangedSubview(lockDetailView)
         
         /// 메모
         containerView.addSubview(memoHorizontalStackView)

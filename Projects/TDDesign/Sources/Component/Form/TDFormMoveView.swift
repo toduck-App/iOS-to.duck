@@ -7,7 +7,8 @@ public enum TDFormMoveViewType {
     case date
     case time
     case cycle
-    case location
+    case place
+    case lock
 }
 
 public protocol TDFormMoveViewDelegate: AnyObject {
@@ -101,10 +102,14 @@ public final class TDFormMoveView: UIView {
             titleImageView = UIImageView(image: TDImage.Repeat.cycleMedium)
             titleImageView?.contentMode = .scaleAspectFit
             titleLabel.setTitleLabel("반복")
-        case .location:
+        case .place:
             titleImageView = UIImageView(image: TDImage.locationMedium)
             titleImageView?.contentMode = .scaleAspectFit
             titleLabel.setTitleLabel("장소")
+        case .lock:
+            titleImageView = UIImageView(image: TDImage.Lock.medium)
+            titleImageView?.contentMode = .scaleAspectFit
+            titleLabel.setTitleLabel("공개여부")
         }
         if isRequired {
             titleLabel.setRequiredLabel()
@@ -118,10 +123,7 @@ public final class TDFormMoveView: UIView {
         containerHorizontalStackView.addArrangedSubview(descriptionHorizontalStackView)
         
         containerHorizontalStackView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
         
         if let titleImageView = titleImageView {

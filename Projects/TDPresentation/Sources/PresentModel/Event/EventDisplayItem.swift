@@ -11,6 +11,7 @@ struct EventDisplayItem: EventPresentable {
     let time: String?
     let repeatDays: String?
     let place: String?
+    let isPublic: Bool
     let memo: String?
     let isFinished: Bool
     let isRepeating: Bool
@@ -25,6 +26,7 @@ struct EventDisplayItem: EventPresentable {
         time: String?,
         repeatDays: String?,
         place: String?,
+        isPublic: Bool = false,
         memo: String?,
         isFinished: Bool,
         isRepeating: Bool
@@ -38,6 +40,7 @@ struct EventDisplayItem: EventPresentable {
         self.time = time
         self.repeatDays = repeatDays
         self.place = place
+        self.isPublic = isPublic
         self.memo = memo
         self.isFinished = isFinished
         self.isRepeating = isRepeating
@@ -48,7 +51,8 @@ struct EventDisplayItem: EventPresentable {
         alarmTimes: [String]? = nil,
         date: String? = nil,
         repeatDays: String? = nil,
-        place: String? = nil
+        place: String? = nil,
+        isPublic: Bool = false
     ) {
         self.id = event.id
         self.title = event.title
@@ -58,8 +62,9 @@ struct EventDisplayItem: EventPresentable {
         self.date = date
         self.time = event.time
         self.repeatDays = repeatDays
-        self.memo = event.memo
         self.place = place
+        self.isPublic = isPublic
+        self.memo = event.memo
         self.isFinished = event.isFinished
         self.isRepeating = event.isRepeating
     }

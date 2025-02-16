@@ -22,12 +22,12 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     
     override func configure() {
         super.configure()
-        updateButtonTitles()
+        configureEvent()
         setupButtonAction()
     }
 
     /// 일정 or 루틴에 맞는 버튼 타이틀을 설정
-    private func updateButtonTitles() {
+    private func configureEvent() {
         popupContentView.titleLabel.setText(mode == .schedule ? "일정 상세보기" : "루틴 상세보기")
         popupContentView.dateLabel.setText(event.date ?? "날짜")
         popupContentView.alarmImageView.image = event.alarmTimes != nil
@@ -41,9 +41,18 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         )
         popupContentView.eventTitleLabel.setText(event.title)
         
+        if mode == .routine {
+            popupContentView.placeDetailView.isHidden = true
+            popupContentView.lockDetailView.updateDescription(event.isPublic ? "공개" : "비공개")
+        }
+        
+        if mode == .schedule {
+            popupContentView.lockDetailView.isHidden = true
+            popupContentView.placeDetailView.updateDescription(event.place ?? "장소")
+        }
+        
         popupContentView.timeDetailView.updateDescription(event.time ?? "시간")
         popupContentView.repeatDetailView.updateDescription(event.repeatDays ?? "반복")
-        popupContentView.locationDetailView.updateDescription(event.place ?? "장소")
         popupContentView.memoContentLabel.setText(event.memo ?? "메모")
     }
     
