@@ -4,9 +4,12 @@ import UIKit
 
 final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     private let mode: ScheduleAndRoutineViewController.Mode
-    private let event: EventPresentable
+    private let event: EventDisplayItem
     
-    init(mode: ScheduleAndRoutineViewController.Mode, event: EventPresentable) {
+    init(
+        mode: ScheduleAndRoutineViewController.Mode,
+        event: EventDisplayItem
+    ) {
         self.mode = mode
         self.event = event
         super.init()
@@ -26,15 +29,17 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     /// 일정 or 루틴에 맞는 버튼 타이틀을 설정
     private func updateButtonTitles() {
         popupContentView.titleLabel.setText(mode == .schedule ? "일정 상세보기" : "루틴 상세보기")
-        popupContentView.cancelButton.setTitle("닫기", for: .normal)
-        popupContentView.dateLabel.setText(event.time ?? "날짜")
+        popupContentView.dateLabel.setText(event.date ?? "날짜")
+        popupContentView.alarmImageView.image = event.alarmTimes != nil
+        ? TDImage.Bell.ringingMedium
+        : TDImage.Bell.offMedium
         
         popupContentView.categoryImageView.backgroundColor = event.categoryColor
         popupContentView.eventTitleLabel.setText(event.title)
         
         popupContentView.timeDetailView.updateDescription(event.time ?? "시간")
-        popupContentView.locationDetailView.updateDescription(event.time ?? "장소")
-        popupContentView.repeatDetailView.updateDescription(event.memo ?? "설명")
+        popupContentView.repeatDetailView.updateDescription(event.repeatDays ?? "반복")
+        popupContentView.locationDetailView.updateDescription(event.place ?? "장소")
     }
     
     private func setupButtonAction() {

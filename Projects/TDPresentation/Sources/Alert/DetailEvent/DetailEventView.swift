@@ -17,7 +17,7 @@ final class DetailEventView: BaseView {
         toduckFont: TDFont.boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
     )
-    private let alarmImageView = UIImageView().then {
+    let alarmImageView = UIImageView().then {
         $0.image = TDImage.Bell.ringingMedium
         $0.contentMode = .scaleAspectFit
     }
@@ -33,6 +33,10 @@ final class DetailEventView: BaseView {
         toduckColor: TDColor.Neutral.neutral800
     )
     
+    private let eventInfoVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+    }
     let timeDetailView = TDFormMoveView(type: .time, isRequired: false, isReadOnlyMode: true)
     let repeatDetailView = TDFormMoveView(type: .cycle, isRequired: false, isReadOnlyMode: true)
     let locationDetailView = TDFormMoveView(type: .location, isRequired: false, isReadOnlyMode: true)
@@ -75,9 +79,10 @@ final class DetailEventView: BaseView {
         containerView.addSubview(categoryImageView)
         containerView.addSubview(eventTitleLabel)
         
-        containerView.addSubview(timeDetailView)
-        containerView.addSubview(repeatDetailView)
-        containerView.addSubview(locationDetailView)
+        containerView.addSubview(eventInfoVerticalStackView)
+        eventInfoVerticalStackView.addArrangedSubview(timeDetailView)
+        eventInfoVerticalStackView.addArrangedSubview(repeatDetailView)
+        eventInfoVerticalStackView.addArrangedSubview(locationDetailView)
         
         containerView.addSubview(buttonContainerHorizontalStackView)
         buttonContainerHorizontalStackView.addArrangedSubview(deleteButton)
@@ -93,6 +98,7 @@ final class DetailEventView: BaseView {
         navigationContainerView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(40)
         }
         cancelButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
@@ -110,7 +116,7 @@ final class DetailEventView: BaseView {
         }
         
         dateLabel.snp.makeConstraints {
-            $0.top.equalTo(navigationContainerView.snp.bottom).offset(10)
+            $0.top.equalTo(navigationContainerView.snp.bottom)
             $0.leading.equalToSuperview().inset(22)
         }
         categoryImageView.snp.makeConstraints {
@@ -124,17 +130,9 @@ final class DetailEventView: BaseView {
             $0.trailing.equalToSuperview().inset(18)
         }
         
-        timeDetailView.snp.makeConstraints {
-            $0.top.equalTo(categoryImageView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-        }
-        repeatDetailView.snp.makeConstraints {
-            $0.top.equalTo(timeDetailView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-        }
-        locationDetailView.snp.makeConstraints {
-            $0.top.equalTo(repeatDetailView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
+        eventInfoVerticalStackView.snp.makeConstraints {
+            $0.top.equalTo(categoryImageView.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         buttonContainerHorizontalStackView.snp.makeConstraints {
