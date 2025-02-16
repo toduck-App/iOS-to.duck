@@ -79,7 +79,5 @@ extension ThemeSettingView {
         static let saveButtonHeight: CGFloat = 56
         static let saveButtonTop: CGFloat = 36
         static let saveButtonBottom: CGFloat = 16
-
-
     }
 }
