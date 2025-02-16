@@ -56,9 +56,9 @@ extension Schedule {
             startDate: "2021-09-01",
             endDate: "2021-09-01",
             isAllDay: false,
-            time: nil,
-            repeatDays: [.friday],
-            alarmTimes: nil,
+            time: Date(),
+            repeatDays: [.friday, .sunday],
+            alarmTimes: [.oneHourBefore],
             place: "장소1",
             memo: "메모1",
             isFinished: false
@@ -70,8 +70,8 @@ extension Schedule {
             endDate: "2022-10-10",
             isAllDay: false,
             time: Date(),
-            repeatDays: nil,
-            alarmTimes: nil,
+            repeatDays: [.monday],
+            alarmTimes: [.oneHourBefore],
             place: "장소2",
             memo: "메모2",
             isFinished: false

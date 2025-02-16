@@ -34,8 +34,15 @@ extension ScheduleViewModel: TimeSlotProvider {
     func convertEventToDisplayItem(
         event: EventPresentable
     ) -> EventDisplayItem {
-        guard let schedule = event as? Schedule,
-              let place = schedule.place else { return EventDisplayItem(from: event) }
-        return EventDisplayItem(from: event, place: place)
+        guard let schedule = event as? Schedule else { return EventDisplayItem(from: event) }
+        
+        return EventDisplayItem(
+            from: event,
+            alarmTimes: schedule.alarmTimes?.map { $0.title },
+            date: nil, // TODO: 일정 등록 날짜 추가
+            repeatDays: schedule.repeatDays?.map { $0.title }.joined(separator: ", "),
+            place: schedule.place,
+            isPublic: false
+        )
     }
 }

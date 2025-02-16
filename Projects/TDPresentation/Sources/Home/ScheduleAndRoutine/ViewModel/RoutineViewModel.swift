@@ -26,7 +26,18 @@ extension RoutineViewModel: TimeSlotProvider {
         return [TimeSlot(timeText: "10:00", events: Routine.dummy)]
     }
     
-    func convertEventToDisplayItem(event: EventPresentable) -> EventDisplayItem {
-        return EventDisplayItem(from: event)
+    func convertEventToDisplayItem(
+        event: EventPresentable
+    ) -> EventDisplayItem {
+        guard let routine = event as? Routine else { return EventDisplayItem(from: event) }
+        
+        return EventDisplayItem(
+            from: event,
+            alarmTimes: routine.alarmTimes?.map { $0.title },
+            date: nil, // TODO: 일정 등록 날짜 추가
+            repeatDays: routine.repeatDays?.map { $0.title }.joined(separator: ", "),
+            place: nil,
+            isPublic: routine.isPublic
+        )
     }
 }

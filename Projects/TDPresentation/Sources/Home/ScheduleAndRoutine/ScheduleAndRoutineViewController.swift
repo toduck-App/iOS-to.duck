@@ -58,7 +58,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
         let today = Date()
         let calendar = Calendar.current
         let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
-
+        
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
     }
     
@@ -247,7 +247,7 @@ extension ScheduleAndRoutineViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
         guard let provider else { return }
-
+        
         var cumulative = 0
         for slot in provider.timeSlots {
             let count = slot.events.count
@@ -255,9 +255,8 @@ extension ScheduleAndRoutineViewController: UITableViewDelegate {
                 let eventIndexInSlot = indexPath.row - cumulative
                 let event = slot.events[eventIndexInSlot]
                 let eventDisplayItem = provider.convertEventToDisplayItem(event: event)
-                
-                let vc = DetailEventViewController(mode: mode, event: eventDisplayItem)
-                presentPopup(with: vc)
+                let detailEventViewController = DetailEventViewController(mode: mode, event: eventDisplayItem)
+                presentPopup(with: detailEventViewController)
                 
                 return
             }
