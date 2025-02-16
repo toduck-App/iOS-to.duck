@@ -4,7 +4,7 @@ import Combine
 import UIKit
 import TDDesign
 
-final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
+final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPopupPresentable {
     enum Mode {
         case schedule
         case routine
@@ -68,6 +68,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         weekCalendarView.delegate = self
         configureEventMakorButton()
         
+        scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
         scheduleAndRoutineTableView.register(
             TimeSlotTableViewCell.self,
@@ -175,7 +176,7 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
 }
 
 // MARK: - UITableViewDataSource
-extension ScheduleAndRoutineViewController: UITableViewDataSource, TDPopupPresentable {
+extension ScheduleAndRoutineViewController: UITableViewDataSource {
     func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
@@ -238,6 +239,30 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource, TDPopupPresen
         }
         
         return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension ScheduleAndRoutineViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
+        guard let provider else { return }
+
+        var cumulative = 0
+        for slot in provider.timeSlots {
+            let count = slot.events.count
+            if indexPath.row < cumulative + count {
+                let eventIndexInSlot = indexPath.row - cumulative
+                let event = slot.events[eventIndexInSlot]
+                let eventDisplayItem = provider.convertEventToDisplayItem(event: event)
+                
+                let vc = DetailEventViewController(mode: mode, event: eventDisplayItem)
+                presentPopup(with: vc)
+                
+                return
+            }
+            cumulative += count
+        }
     }
 }
 
