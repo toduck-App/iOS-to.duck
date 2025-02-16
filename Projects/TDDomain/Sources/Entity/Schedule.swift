@@ -57,7 +57,7 @@ extension Schedule {
             endDate: "2021-09-01",
             isAllDay: false,
             time: nil,
-            repeatDays: nil,
+            repeatDays: [.friday],
             alarmTimes: nil,
             place: "장소1",
             memo: "메모1",
