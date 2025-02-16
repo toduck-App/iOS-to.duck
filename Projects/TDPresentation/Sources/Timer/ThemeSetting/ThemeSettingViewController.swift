@@ -26,8 +26,8 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
     }
 
     override func configure() {
-        layoutView.exitButton.addAction(UIAction { _ in
-            self.dismiss(animated: true)
+        layoutView.exitButton.addAction(UIAction { [self] _ in
+            dismiss(animated: true)
         }, for: .touchUpInside)
 
         layoutView.themeBbouckButton.addAction(UIAction { [self] _ in
