@@ -36,7 +36,7 @@ final class DetailEventView: BaseView {
     
     private let eventInfoVerticalStackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 16
+        $0.spacing = LayoutConstants.eventInfoSpacing
     }
     let timeDetailView = TDFormMoveView(type: .time, isRequired: false, isReadOnlyMode: true)
     let repeatDetailView = TDFormMoveView(type: .cycle, isRequired: false, isReadOnlyMode: true)
@@ -45,7 +45,7 @@ final class DetailEventView: BaseView {
     
     let memoHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.spacing = 8
+        $0.spacing = LayoutConstants.memoHorizontalSpacing
     }
     let memoImageView = UIImageView().then {
         $0.image = TDImage.Memo.lineMedium
@@ -70,14 +70,14 @@ final class DetailEventView: BaseView {
     
     private let buttonContainerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.spacing = 8
+        $0.spacing = LayoutConstants.buttonSpacing
         $0.distribution = .fillEqually
     }
     let deleteButton = TDBaseButton(
         title: "삭제",
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral700,
-        radius: 12,
+        radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.boldBody1.font
     ).then {
         $0.layer.borderWidth = 1
@@ -88,7 +88,7 @@ final class DetailEventView: BaseView {
         title: "내일로 미루기",
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral700,
-        radius: 12,
+        radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.boldBody1.font
     ).then {
         $0.layer.borderWidth = 1
@@ -134,77 +134,129 @@ final class DetailEventView: BaseView {
     override func layout() {
         containerView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.containerHorizontalInset)
         }
         
         navigationContainerView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(24)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(40)
+            $0.top.equalToSuperview().offset(LayoutConstants.navigationTopOffset)
+            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.navigationHorizontalInset)
+            $0.height.equalTo(LayoutConstants.navigationHeight)
         }
         cancelButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
-            $0.width.height.equalTo(24)
+            $0.width.height.equalTo(LayoutConstants.cancelButtonSize)
         }
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalTo(cancelButton)
-            $0.width.equalTo(100)
+            $0.width.equalTo(LayoutConstants.titleLabelWidth)
         }
         alarmImageView.snp.makeConstraints {
             $0.centerY.equalTo(cancelButton)
             $0.trailing.equalToSuperview()
-            $0.width.height.equalTo(24)
+            $0.width.height.equalTo(LayoutConstants.alarmImageSize)
         }
         
         dateLabel.snp.makeConstraints {
             $0.top.equalTo(navigationContainerView.snp.bottom)
-            $0.leading.equalToSuperview().inset(22)
+            $0.leading.equalToSuperview().inset(LayoutConstants.dateLeadingInset)
         }
         categoryImageView.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.bottom).offset(10)
+            $0.top.equalTo(dateLabel.snp.bottom).offset(LayoutConstants.categoryTopOffset)
             $0.leading.equalTo(dateLabel)
-            $0.width.height.equalTo(48)
+            $0.width.height.equalTo(LayoutConstants.categorySize)
         }
         eventTitleContainerView.snp.makeConstraints {
-            $0.leading.equalTo(categoryImageView.snp.trailing).offset(8)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.leading.equalTo(categoryImageView.snp.trailing).offset(LayoutConstants.eventTitleLeadingOffset)
+            $0.trailing.equalToSuperview().inset(LayoutConstants.eventTitleTrailingInset)
             $0.centerY.equalTo(categoryImageView)
             $0.top.bottom.equalTo(categoryImageView)
         }
         eventTitleLabel.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(16)
+            $0.edges.equalToSuperview().inset(LayoutConstants.eventTitleInsets)
         }
         
         eventInfoVerticalStackView.snp.makeConstraints {
-            $0.top.equalTo(categoryImageView.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(categoryImageView.snp.bottom).offset(LayoutConstants.eventInfoTopOffset)
+            $0.trailing.equalToSuperview().inset(LayoutConstants.eventInfoTrailingInset)
+            $0.leading.equalToSuperview().inset(LayoutConstants.eventInfoLeadingInset)
         }
         
         memoHorizontalStackView.snp.makeConstraints {
-            $0.top.equalTo(eventInfoVerticalStackView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(16)
+            $0.top.equalTo(eventInfoVerticalStackView.snp.bottom).offset(LayoutConstants.memoStackTopOffset)
+            $0.leading.equalToSuperview().inset(LayoutConstants.eventInfoLeadingInset)
         }
         memoContentContainerView.snp.makeConstraints {
-            $0.top.equalTo(memoHorizontalStackView.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(memoHorizontalStackView.snp.bottom).offset(LayoutConstants.memoContentTopOffset)
+            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.memoContentHorizontalInset)
         }
         memoContentLabel.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(16)
+            $0.edges.equalToSuperview().inset(LayoutConstants.memoContentInsets)
         }
         
         buttonContainerHorizontalStackView.snp.makeConstraints {
-            $0.top.equalTo(memoContentContainerView.snp.bottom).offset(20)
-            $0.leading.trailing.bottom.equalToSuperview().inset(16)
-            $0.height.equalTo(52)
+            $0.top.equalTo(memoContentContainerView.snp.bottom).offset(LayoutConstants.buttonContainerTopOffset)
+            $0.leading.trailing.bottom.equalToSuperview().inset(LayoutConstants.buttonContainerHorizontalInset)
+            $0.height.equalTo(LayoutConstants.buttonContainerHeight)
         }
     }
     
     override func configure() {
-        containerView.layer.cornerRadius = 28
+        containerView.layer.cornerRadius = LayoutConstants.containerCornerRadius
         eventTitleContainerView.backgroundColor = TDColor.Neutral.neutral50
-        eventTitleContainerView.layer.cornerRadius = 12
+        eventTitleContainerView.layer.cornerRadius = LayoutConstants.eventTitleCornerRadius
         memoContentContainerView.backgroundColor = TDColor.Neutral.neutral50
-        memoContentContainerView.layer.cornerRadius = 12
+        memoContentContainerView.layer.cornerRadius = LayoutConstants.memoContentCornerRadius
+    }
+}
+
+// MARK: - Layout Constants
+extension DetailEventView {
+    private enum LayoutConstants {
+        // Container
+        static let containerHorizontalInset: CGFloat = 16
+        static let containerCornerRadius: CGFloat = 28
+        
+        // Navigation
+        static let navigationTopOffset: CGFloat = 24
+        static let navigationHorizontalInset: CGFloat = 16
+        static let navigationHeight: CGFloat = 40
+        static let cancelButtonSize: CGFloat = 24
+        static let titleLabelWidth: CGFloat = 100
+        static let alarmImageSize: CGFloat = 24
+        
+        // Date Label
+        static let dateLeadingInset: CGFloat = 22
+        
+        // Category
+        static let categoryTopOffset: CGFloat = 10
+        static let categorySize: CGFloat = 48
+        
+        // Event Title
+        static let eventTitleLeadingOffset: CGFloat = 8
+        static let eventTitleTrailingInset: CGFloat = 16
+        static let eventTitleInsets: CGFloat = 16
+        static let eventTitleCornerRadius: CGFloat = 12
+        
+        // Event Info
+        static let eventInfoTopOffset: CGFloat = 24
+        static let eventInfoLeadingInset: CGFloat = 22
+        static let eventInfoTrailingInset: CGFloat = 16
+        static let eventInfoSpacing: CGFloat = 22
+        
+        // Memo
+        static let memoStackTopOffset: CGFloat = 22
+        static let memoHorizontalSpacing: CGFloat = 8
+        static let memoContentTopOffset: CGFloat = 8
+        static let memoContentHorizontalInset: CGFloat = 16
+        static let memoContentInsets: CGFloat = 16
+        static let memoContentCornerRadius: CGFloat = 12
+        
+        // Buttons
+        static let buttonContainerTopOffset: CGFloat = 20
+        static let buttonContainerHorizontalInset: CGFloat = 16
+        static let buttonContainerHeight: CGFloat = 52
+        static let buttonSpacing: CGFloat = 8
+        static let buttonCornerRadius: CGFloat = 12
     }
 }
