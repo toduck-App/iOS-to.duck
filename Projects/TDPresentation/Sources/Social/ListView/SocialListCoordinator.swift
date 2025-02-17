@@ -105,7 +105,7 @@ extension SocialListCoordinator: SocialListDelegate {
 
 extension SocialListCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()

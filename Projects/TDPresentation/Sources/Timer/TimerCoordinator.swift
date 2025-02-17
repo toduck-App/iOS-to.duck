@@ -70,7 +70,7 @@ extension TimerCoordinator: CoordinatorFinishDelegate {
 extension TimerCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
         let toduckCalendarCoordinator = ToduckCalendarCoordinator(
-            navigationController: navigationController)
+            navigationController: navigationController, injector: injector)
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
