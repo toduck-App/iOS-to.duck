@@ -36,6 +36,12 @@ public final class TDRequiredTitle: UIView {
     
     // MARK: - Public Methods
     
+    /// 제목 레이블의 텍스트 폰트를 설정합니다.
+    /// - Parameter font: 폰트로 설정할 `UIFont` 객체.
+    public func setTitleFont(_ font: TDFont) {
+        label.setFont(font)
+    }
+    
     /// 제목 레이블의 텍스트를 설정하고 레이아웃을 구성합니다.
     ///
     /// - Parameter title: 제목으로 표시할 문자열.
