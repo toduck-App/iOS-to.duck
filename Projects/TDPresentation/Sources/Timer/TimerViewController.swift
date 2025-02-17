@@ -11,7 +11,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
 
     private var cancellables = Set<AnyCancellable>()
-    private var theme: TDTimerTheme?
+    private var theme: TDTimerTheme = .Bboduck
 
     // MARK: - Initializer
 
@@ -30,6 +30,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
         // 아래의 함수들 configure에 넣으면 작동이 안함
 
+        input.send(.fetchTimerTheme)
         input.send(.fetchFocusCount)
         input.send(.fetchTimerSetting)
         input.send(.fetchTimerInitialStatus)
@@ -65,7 +66,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
 
     override func binding() {
-        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        let output: AnyPublisher<TimerViewModel.Output, Never> = viewModel.transform(input: input.eraseToAnyPublisher())
 
         output.sink { [weak self] event in
             TDLogger.debug("[TimerViewController] revice event: \(event)")
@@ -87,43 +88,34 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.handleFailure(code)
                 case .updatedTimerSetting:
                     self?.updatedTimerSetting()
-                case .fetchedTimerSetting:
-                    break 
+                default:
+                    break
                 }
             }
         }.store(in: &cancellables)
     }
 
     func setupNavigation() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: TDImage.Calendar.top2Medium)
+        // TODO: 캘린더 이미지 tint 사용 금지
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: layoutView.leftNavigationItem)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: TDImage.Dot.verticalMedium,
-            primaryAction: UIAction { _ in
-                let timerSettingViewController = TimerSettingViewController(
-                    viewModel: self.viewModel)
-
-                let sheetController = SheetViewController(
-                    controller: timerSettingViewController, sizes: [.intrinsic],
-                    options: SheetOptions(
-                        shrinkPresentingViewController: false
-                    )
-                )
-                sheetController.cornerCurve = .circular
-                sheetController.gripSize = .zero
-                sheetController.allowPullingPastMaxHeight = false
-                self.present(sheetController, animated: true, completion: nil)
-            }
+            customView: layoutView.rightNavigationMenuButton
         )
 
-        navigationItem.leftBarButtonItem?.tintColor = TDColor.Primary.primary300
+        layoutView.dropDownView.delegate = self
+        layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
+
+        layoutView.rightNavigationMenuButton.addAction(UIAction { _ in
+            self.layoutView.dropDownView.showDropDown()
+        }, for: .touchUpInside)
+
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
 }
 
 extension TimerViewController {
-    //TODO: 집중 타이머 횟수를 다채웠으면 어떻게 할지 물어보고 구현하기
+    // TODO: 집중 타이머 횟수를 다채웠으면 어떻게 할지 물어보고 구현하기
     private func finishedTimer() {
         handleControlStack(.pause)
         showToast(type: .orange, title: "휴식 시간 끝 💡️", message: "집중할 시간이에요 ! 자리에 앉아볼까요?")
@@ -137,7 +129,7 @@ extension TimerViewController {
 
         // 이미지 업데이트
         let timePerImage = setting.focusDuration / imageStep
-        let elapsedTime = setting.focusDuration - remainedTime
+        let elapsedTime: Int = setting.focusDuration - remainedTime
         let imageIndex = min(elapsedTime / timePerImage, imageStep - 1)
 
         _ = "focus_0\(imageIndex + 1)" // 임시 코드
@@ -203,15 +195,14 @@ extension TimerViewController {
                     createFocusCountEmptyView())
             }
         }
-        
         layoutView.focusCountStackView.layoutIfNeeded()
     }
 
-    //TODO: 간단한 토스트 구현하면 Implement하기
+    // TODO: 간단한 토스트 구현하면 Implement하기
     private func handleFailure(_ code: TimerViewModel.TimerViewModelError) {
         switch code {
         case .updateFailed:
-            let message: String = "[\(code)]: 알 수 없는 오류가 발생했습니다."
+            let message = "[\(code)]: 알 수 없는 오류가 발생했습니다."
             TDLogger.error("[TimerViewController]\(message)")
         case .outOfRange:
             TDLogger.error("[TimerViewController] outOfRange")
@@ -221,6 +212,33 @@ extension TimerViewController {
     private func updatedTimerSetting() {
         input.send(.fetchFocusCount)
         input.send(.fetchTimerSetting)
+    }
+}
+
+// MARK: - TDDropDownDelegate
+
+extension TimerViewController: TDDropDownDelegate {
+    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let item = TimerDropDownMenuItem.allCases[indexPath.row]
+
+        switch item {
+        case .timerSetting:
+            let timerSettingViewController = TimerSettingViewController(
+                viewModel: viewModel)
+
+            presentSheet(viewController: timerSettingViewController)
+        case .themeSetting:
+            let themeSettingViewController = ThemeSettingViewController(
+                viewModel: viewModel)
+
+            presentSheet(viewController: themeSettingViewController)
+        case .whiteNoise:
+            break
+        #if DEBUG
+            case .resetFocusCount:
+                input.send(.resetFocusCount)
+        #endif
+        }
     }
 }
 
@@ -273,9 +291,23 @@ extension TimerViewController {
             }
         }
     }
+
+    private func presentSheet<view: BaseView, vc: BaseViewController<view>>(viewController: vc) {
+        let sheetController = SheetViewController(
+            controller: viewController,
+            sizes: [.intrinsic],
+            options: SheetOptions(shrinkPresentingViewController: false)
+        )
+        sheetController.cornerRadius = 28
+        sheetController.cornerCurve = .circular
+        sheetController.gripSize = .zero
+        sheetController.allowPullingPastMaxHeight = false
+        present(sheetController, animated: true, completion: nil)
+    }
 }
 
-//MARK: - Enum
+// MARK: - Enum
+
 extension TimerViewController {
     enum TimerControlStackState {
         case initilize
@@ -285,5 +317,32 @@ extension TimerViewController {
 
     enum FocusCountViewLayoutConstant {
         static let size: CGFloat = 16
+    }
+
+    enum TimerDropDownMenuItem: String, CaseIterable {
+        case timerSetting = "타이머 설정"
+        case themeSetting = "테마 변경"
+        case whiteNoise = "백색 소음"
+
+        #if DEBUG
+            case resetFocusCount = "집중 횟수 초기화"
+        #endif
+        var dropDownItem: TDDropdownItem {
+            return TDDropdownItem(title: rawValue, rightImage: image)
+        }
+
+        //TODO: 이미지 추가 예정
+        var image: TDDropdownItem.SelectableImage {
+            switch self {
+            case .timerSetting:
+                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+            case .themeSetting:
+                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+            case .whiteNoise:
+                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+            default:
+                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+            }
+        }
     }
 }

@@ -50,6 +50,49 @@ final class TimerView: BaseView {
         foregroundColor: TDColor.Neutral.neutral400
     )
 
+    // Navigation Item
+    lazy var rightNavigationMenuButton = UIButton(type: .custom).then {
+        let dotImageView = UIImageView(image: TDImage.Dot.verticalMedium.withRenderingMode(.alwaysTemplate)).then {
+            $0.tintColor = TDColor.Primary.primary300
+        }
+        // addview
+        $0.addSubview(dotImageView)
+
+        // layout
+        dotImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+    }
+
+    lazy var dropDownView = TDDropdownHoverView(
+        anchorView: rightNavigationMenuButton,
+        layout: .trailing,
+        width: 128
+    )
+
+    let leftNavigationItem = UIButton(type: .custom).then {
+        let logo = UIImageView(image: TDImage.toduckLogo.withRenderingMode(.alwaysTemplate)).then {
+            $0.tintColor = TDColor.Primary.primary300
+        }
+
+        let calendar = UIImageView(image: TDImage.Calendar.top2MediumOrange)
+
+        $0.addSubview(calendar)
+        $0.addSubview(logo)
+
+        calendar.snp.makeConstraints {
+            $0.leading.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+
+        logo.snp.makeConstraints {
+            $0.leading.equalTo(calendar.snp.trailing).offset(8)
+            $0.centerY.equalToSuperview()
+        }
+    }
+
     override func addview() {
         addSubview(remainedFocusTimeLabel)
         addSubview(backdropView)
@@ -75,7 +118,7 @@ final class TimerView: BaseView {
             }
         }
 
-        // TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
+        // TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
         remainedFocusTimeLabel.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(36)
             $0.centerX.equalToSuperview()
