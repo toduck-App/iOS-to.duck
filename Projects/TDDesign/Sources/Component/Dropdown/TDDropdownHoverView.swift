@@ -73,8 +73,10 @@ public final class TDDropdownHoverView: UIView {
 
     // MARK: - Show/Hide Methods
 
-    private func showDropDown() {
-        guard let window else { return }
+    public func showDropDown() {
+        guard let windowScene: UIWindowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window: UIWindow = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+
         dropDownMode = .display
 
         window.addSubview(overlayView)

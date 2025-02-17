@@ -33,7 +33,8 @@ public final class TimerViewModel: BaseViewModel {
         case updatedTimerSetting
         case finishedTimer
         case fetchedFocusCount(count: Int)
-        case fetchedTimerSetting
+        case fetchedTimerSetting //viewmodel에서 변수로 활용됨
+        case fetchedTimerTheme(theme: TDTimerTheme)
         case updatedFocusCount(count: Int)
         case updatedMaxFocusCount(maxCount: Int)
         case failure(_ code: TimerViewModelError)
@@ -44,6 +45,8 @@ public final class TimerViewModel: BaseViewModel {
     private let timerUseCase: TimerUseCase
     private let fetchTimerSettingUseCase: FetchTimerSettingUseCase
     private let updateTimerSettingUseCase: UpdateTimerSettingUseCase
+    private let fetchTimerThemeUseCase: FetchTimerThemeUseCase
+    private let updateTimerThemeUseCase: UpdateTimerThemeUseCase
     private let fetchFocusCountUseCase: FetchFocusCountUseCase
     private let updateFocusCountUseCase: UpdateFocusCountUseCase
     private let resetFocusCountUseCase: ResetFocusCountUseCase
@@ -60,6 +63,8 @@ public final class TimerViewModel: BaseViewModel {
         timerUseCase: TimerUseCase,
         fetchTimerSettingUseCase: FetchTimerSettingUseCase,
         updateTimerSettingUseCase: UpdateTimerSettingUseCase,
+        fetchTimerThemeUseCase: FetchTimerThemeUseCase,
+        updateTimerThemeUseCase: UpdateTimerThemeUseCase,
         fetchFocusCountUseCase: FetchFocusCountUseCase,
         updateFocusCountUseCase: UpdateFocusCountUseCase,
         resetFocusCountUseCase: ResetFocusCountUseCase
@@ -67,6 +72,8 @@ public final class TimerViewModel: BaseViewModel {
         self.timerUseCase = timerUseCase
         self.fetchTimerSettingUseCase = fetchTimerSettingUseCase
         self.updateTimerSettingUseCase = updateTimerSettingUseCase
+        self.fetchTimerThemeUseCase = fetchTimerThemeUseCase
+        self.updateTimerThemeUseCase = updateTimerThemeUseCase
         self.fetchFocusCountUseCase = fetchFocusCountUseCase
         self.updateFocusCountUseCase = updateFocusCountUseCase
         self.resetFocusCountUseCase = resetFocusCountUseCase
@@ -134,9 +141,23 @@ extension TimerViewModel {
         }
     }
 
-    private func fetchTimerTheme() {}
+    private func fetchTimerTheme() {
+        let theme = fetchTimerThemeUseCase.execute()
+        output.send(.fetchedTimerTheme(theme: theme))
+    }
 
-    private func updateTimerTheme(theme _: TDTimerTheme) {}
+    private func updateTimerTheme(theme: TDTimerTheme) {
+        let result = updateTimerThemeUseCase.execute(theme: theme)
+        switch result {
+            case let .failure(error):
+                if error == .updateEntityFailure {
+                    output.send(.failure(.outOfRange))
+                }
+                output.send(.failure(.updateFailed))
+            case .success():
+                output.send(.updatedTimerTheme(theme: theme))
+        }
+    }
 
     // TODO: 코드가 딱 봐도 불안불안함 리팩터링 필요
     private func startTimer() {

@@ -118,6 +118,7 @@ public enum TDImage {
     public enum Calendar {
         public static let medium = TDDesignAsset.Images.calendarMedium.image
         public static let top2Medium = TDDesignAsset.Images.calendarTop2Medium.image
+        public static let top2MediumOrange = TDDesignAsset.Images.calendarTop2MediumOrange.image
         public static let top3Medium = TDDesignAsset.Images.calendarTop3Medium.image
         public static let small = TDDesignAsset.Images.calendarSmall.image
     }
@@ -296,5 +297,10 @@ public enum TDImage {
     public enum Scrap {
         public static let emptyMedium = TDDesignAsset.Images.scrapEmptyMedium.image
         public static let filledMedium = TDDesignAsset.Images.scrapFillMedium.image
+    }
+    
+    public enum ThemePreview {
+        public static let BboduckPreview = TDDesignAsset.Images.bboduckPreview.image
+        public static let SimplePreview = TDDesignAsset.Images.simplePreview.image
     }
 }

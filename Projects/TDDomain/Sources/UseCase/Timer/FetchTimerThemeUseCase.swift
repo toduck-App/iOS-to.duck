@@ -1,7 +1,17 @@
-//
-//  FetchTimerThemeUseCase.swift
-//  TDDomain
-//
-//  Created by 신효성 on 1/6/25.
-//
+import TDCore
 
+public protocol FetchTimerThemeUseCase {
+    func execute() -> TDTimerTheme
+}
+
+final class FetchTimerThemeUseCaseImpl: FetchTimerThemeUseCase {
+    private let repository: TimerRepository
+
+    init(repository: TimerRepository) {
+        self.repository = repository
+    }
+
+    func execute() -> TDTimerTheme {
+        return repository.fetchTimerTheme()
+    }
+}
