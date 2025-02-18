@@ -18,7 +18,7 @@ final class PhoneVerificationCoordinator: Coordinator {
     func start() {
         let phoneVerificationViewController = PhoneVerificationViewController()
         phoneVerificationViewController.coordinator = self
-        navigationController.pushViewController(phoneVerificationViewController, animated: false)
+        navigationController.pushTDViewController(phoneVerificationViewController, animated: true)
     }
 }
 

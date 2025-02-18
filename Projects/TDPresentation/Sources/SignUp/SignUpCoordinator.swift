@@ -39,5 +39,8 @@ extension SignUpCoordinator: SignUpDelegate {
             navigationController: navigationController,
             injector: injector
         )
+        phoneVerificationCoordinator.finishDelegate = self
+        childCoordinators.append(phoneVerificationCoordinator)
+        phoneVerificationCoordinator.start()
     }
 }
