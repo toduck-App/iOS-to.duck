@@ -3,51 +3,73 @@ import TDCore
 import TDDesign
 
 final class PhoneVerificationView: BaseView {
+    
+    // MARK: - UI Components
+    
+    /// 페이지 진행 표시 아이콘
     private let currentPageIcon = UIView().then {
         $0.backgroundColor = TDColor.Primary.primary500
-        $0.layer.cornerRadius = 4
-    }
-    private let nextPageIcon = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral200
-        $0.layer.cornerRadius = 4
+        $0.layer.cornerRadius = LayoutConstants.pageIndicatorCornerRadius
     }
     
+    private let nextPageIcon = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral200
+        $0.layer.cornerRadius = LayoutConstants.pageIndicatorCornerRadius
+    }
+    
+    /// 제목 및 설명
     private let titleLabel = TDLabel(
         labelText: "휴대폰 본인인증",
         toduckFont: .boldHeader2,
         toduckColor: TDColor.Neutral.neutral800
     )
+    
     private let subTitleLabel = TDLabel(
         labelText: "회원여부 확인 및 가입을 진행합니다.",
         toduckFont: .mediumHeader5,
         toduckColor: TDColor.Neutral.neutral600
     )
     
+    /// 휴대폰 인증 입력 관련
     private let phoneLabel = TDLabel(
         labelText: "휴대폰 번호",
         toduckFont: .mediumHeader5,
         toduckColor: TDColor.Neutral.neutral800
     )
     
-    private(set) lazy var dropDownAnchorView = SocialListDropdownView(
-        title: "통신사 선택"
+    private let carrierContainerView = UIView()
+    
+    let carrierLabel = TDLabel(
+        labelText: "통신사 선택",
+        toduckFont: .mediumHeader3,
+        toduckColor: TDColor.Neutral.neutral600
     )
+    
+    private let downImage = UIImageView().then {
+        $0.tintColor = TDColor.Neutral.neutral500
+        $0.contentMode = .scaleAspectFit
+        $0.image = TDImage.downMedium.withRenderingMode(.alwaysTemplate)
+    }
+    
     lazy var carrierDropDownView = TDDropdownHoverView(
-        anchorView: dropDownAnchorView,
+        anchorView: carrierContainerView,
         layout: .center,
-        width: 128
+        width: LayoutConstants.carrierContainerWidth
     )
+    
     let phoneNumberContainerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral100
-        $0.layer.cornerRadius = 8
+        $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
     }
+    
     let phoneNumberTextField = UITextField().then {
         $0.placeholder = "휴대폰 번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
-        
     }
+    
+    /// 버튼들
     let postButton = TDBaseButton(
         title: "인증요청",
         backgroundColor: TDColor.Primary.primary500,
@@ -62,8 +84,25 @@ final class PhoneVerificationView: BaseView {
         font: TDFont.boldHeader5.font
     )
     
-    override func addview() {
+    // MARK: - Initializer
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureUI()
+        setupConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configureUI()
+        setupConstraints()
+    }
+    
+    // MARK: - Setup UI
+    private func configureUI() {
+        carrierContainerView.addSubview(carrierLabel)
+        carrierContainerView.addSubview(downImage)
         phoneNumberContainerView.addSubview(phoneNumberTextField)
+        
         [
             currentPageIcon,
             nextPageIcon,
@@ -75,68 +114,110 @@ final class PhoneVerificationView: BaseView {
             postButton,
             nextButton
         ].forEach(addSubview)
+        
+        carrierContainerView.backgroundColor = TDColor.Neutral.neutral100
+        carrierContainerView.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
     }
     
-    override func layout() {
+    // MARK: - Setup Constraints
+    private func setupConstraints() {
         currentPageIcon.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(12)
-            make.leading.equalToSuperview().offset(16)
-            make.width.equalTo(16)
-            make.height.equalTo(6)
-        }
-        nextPageIcon.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(12)
-            make.leading.equalTo(currentPageIcon.snp.trailing).offset(8)
-            make.size.equalTo(6)
+            make.top.equalTo(safeAreaLayoutGuide).offset(LayoutConstants.pageIndicatorTopOffset)
+            make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
+            make.width.equalTo(LayoutConstants.pageIndicatorWidth)
+            make.height.equalTo(LayoutConstants.pageIndicatorHeight)
         }
         
+        nextPageIcon.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(LayoutConstants.pageIndicatorTopOffset)
+            make.leading.equalTo(currentPageIcon.snp.trailing).offset(LayoutConstants.iconSpacing)
+            make.size.equalTo(LayoutConstants.nextPageIconSize)
+        }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(currentPageIcon.snp.bottom).offset(16)
-            make.leading.equalToSuperview().offset(16)
+            make.top.equalTo(currentPageIcon.snp.bottom).offset(LayoutConstants.titleTopOffset)
+            make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
         }
+        
         subTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.top.equalTo(titleLabel.snp.bottom).offset(LayoutConstants.subtitleSpacing)
             make.leading.equalTo(titleLabel)
         }
         
         phoneLabel.snp.makeConstraints { make in
-            make.top.equalTo(subTitleLabel.snp.bottom).offset(70)
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(LayoutConstants.sectionSpacing)
             make.leading.equalTo(titleLabel)
         }
         
-        dropDownAnchorView.snp.makeConstraints { make in
-            make.top.equalTo(phoneLabel.snp.bottom).offset(24)
+        carrierContainerView.snp.makeConstraints { make in
+            make.top.equalTo(phoneLabel.snp.bottom).offset(LayoutConstants.inputSpacing)
             make.leading.equalTo(titleLabel)
-            make.width.equalTo(128)
-            make.height.equalTo(40)
+            make.width.equalTo(LayoutConstants.carrierContainerWidth)
+            make.height.equalTo(LayoutConstants.inputFieldHeight)
+        }
+        
+        carrierLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.centerX.equalToSuperview().offset(-LayoutConstants.iconSpacing)
+        }
+        
+        downImage.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(carrierLabel.snp.trailing).offset(LayoutConstants.iconSpacing)
+            make.size.equalTo(LayoutConstants.iconSize)
         }
         
         phoneNumberContainerView.snp.makeConstraints { make in
-            make.top.equalTo(dropDownAnchorView.snp.bottom).offset(10)
+            make.top.equalTo(carrierContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
             make.leading.equalTo(titleLabel)
-            make.width.equalTo(260)
-            make.height.equalTo(48)
+            make.width.equalTo(LayoutConstants.phoneInputWidth)
+            make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
+        
         phoneNumberTextField.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview().inset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.top.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.inputPadding)
         }
+        
         postButton.snp.makeConstraints { make in
-            make.top.equalTo(dropDownAnchorView.snp.bottom).offset(8)
-            make.leading.equalTo(phoneNumberContainerView.snp.trailing).offset(8)
-            make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(48)
+            make.top.equalTo(carrierContainerView.snp.bottom).offset(LayoutConstants.buttonSpacing)
+            make.leading.equalTo(phoneNumberContainerView.snp.trailing).offset(LayoutConstants.inputSpacing)
+            make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
+            make.height.equalTo(LayoutConstants.buttonHeight)
         }
+        
         nextButton.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(safeAreaLayoutGuide).offset(-16)
-            make.height.equalTo(48)
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalInset)
+            make.bottom.equalTo(safeAreaLayoutGuide).offset(-LayoutConstants.buttonBottomSpacing)
+            make.height.equalTo(LayoutConstants.buttonHeight)
         }
     }
+}
+
+// MARK: - Layout Constants
+private enum LayoutConstants {
+    static let pageIndicatorTopOffset: CGFloat = 12
+    static let pageIndicatorWidth: CGFloat = 16
+    static let pageIndicatorHeight: CGFloat = 6
+    static let nextPageIconSize: CGFloat = 6
+    static let pageIndicatorCornerRadius: CGFloat = 4
     
-    override func configure() {
-        dropDownAnchorView.backgroundColor = TDColor.Neutral.neutral100
-        dropDownAnchorView.layer.cornerRadius = 8
-    }
+    static let titleTopOffset: CGFloat = 16
+    static let subtitleSpacing: CGFloat = 4
+    static let sectionSpacing: CGFloat = 70
+    
+    static let inputSpacing: CGFloat = 10
+    static let inputPadding: CGFloat = 16
+    static let inputFieldCornerRadius: CGFloat = 8
+    static let inputFieldHeight: CGFloat = 48
+    static let carrierContainerWidth: CGFloat = 152
+    static let phoneInputWidth: CGFloat = 260
+    
+    static let buttonSpacing: CGFloat = 8
+    static let buttonHeight: CGFloat = 48
+    static let buttonBottomSpacing: CGFloat = 16
+    
+    static let horizontalInset: CGFloat = 16
+    static let iconSpacing: CGFloat = 8
+    static let iconSize: CGFloat = 24
 }

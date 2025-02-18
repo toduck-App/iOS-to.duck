@@ -19,7 +19,7 @@ extension PhoneVerificationViewController: TDDropDownDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         let option = CarrierDropDownMenuItem.allCases[indexPath.row]
-        layoutView.dropDownAnchorView.setTitle(option.rawValue)
+        layoutView.carrierLabel.setText(option.rawValue)
     }
 }
 
