@@ -11,9 +11,7 @@ public struct TDTimerSetting {
 
     /// 초기값 설정
     public init() {
-        focusDuration = 25
-        maxFocusCount = 4
-        restDuration = 5
+        self.init(focusDuration: 25, maxFocusCount: 4, restDuration: 5)
     }
 
     public func toFocusDurationMinutes() -> Int {
