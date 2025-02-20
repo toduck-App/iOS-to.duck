@@ -24,7 +24,7 @@ final class TimerRepositoryImpl: TimerRepository {
     func updateTimerSetting(setting: TDDomain.TDTimerSetting) -> Result<Void, TDCore.TDDataError> {
         return storage.updateTimerSetting(
             TDTimerSettingDTO(
-                maxFocusCount: setting.maxFocusCount,
+                maxFocusCount: setting.focusCountLimit,
                 restDuration: setting.restDuration,
                 focusDuration: setting.focusDuration
             ))

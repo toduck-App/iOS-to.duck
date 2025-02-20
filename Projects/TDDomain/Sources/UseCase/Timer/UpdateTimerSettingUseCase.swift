@@ -12,7 +12,7 @@ final class UpdateTimerSettingUseCaseImpl: UpdateTimerSettingUseCase {
     }
 
     public func execute(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError> {
-        guard setting.maxFocusCount >= min, setting.maxFocusCount <= max else {
+        guard setting.focusCountLimit >= min, setting.focusCountLimit <= max else {
             return .failure(.updateEntityFailure)
          }
         return repository.updateTimerSetting(setting: setting)

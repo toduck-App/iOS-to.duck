@@ -1,17 +1,17 @@
 public struct TDTimerSetting {
     public var focusDuration: Int
-    public var maxFocusCount: Int
+    public var focusCountLimit: Int
     public var restDuration: Int
 
-    public init(focusDuration: Int, maxFocusCount: Int, restDuration: Int) {
+    public init(focusDuration: Int, focusCountLimit: Int, restDuration: Int) {
         self.focusDuration = focusDuration
-        self.maxFocusCount = maxFocusCount
-        self.restDuration = restDuration
+        self.focusCountLimit = focusCountLimit
+        self.restDuration = focusCountLimit
     }
 
     /// 초기값 설정
     public init() {
-        self.init(focusDuration: 25, maxFocusCount: 4, restDuration: 5)
+        self.init(focusDuration: 25, focusCountLimit: 4, restDuration: 5)
     }
 
     public func toFocusDurationMinutes() -> Int {
@@ -29,4 +29,15 @@ public struct TDTimerSetting {
             return restDuration * 60
         #endif
     }
+}
+
+public extension TDTimerSetting {
+    static let maxFocusCountLimit = 5
+    static let minFocusCountLimit = 1
+    
+    static let maxFocusDuration = 60
+    static let minFocusDuration = 5
+    
+    static let maxRestDuration = 10
+    static let minRestDuration = 0
 }
