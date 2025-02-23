@@ -211,7 +211,7 @@ private extension SocialDetailCommentCell {
         }
         
         if let imageURL = comment.imageURL {
-            bodyStackView.addArrangedSubview(SocialImageListView(style: .scroll, images: [imageURL.absoluteString]))
+            stackView.addArrangedSubview(SocialImageListView(style: .scroll, images: [imageURL.absoluteString]))
         }
         
         stackView.addArrangedSubview(replyFooter)
