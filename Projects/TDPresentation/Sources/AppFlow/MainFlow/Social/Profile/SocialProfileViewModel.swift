@@ -48,50 +48,46 @@ final class SocialProfileViewModel: BaseViewModel {
             case .fetchRoutine:
                 break
             case .fetchPosts:
-                self?.fetchPosts()
+                Task { await self?.fetchPosts() }
             case .fetchUser:
-                self?.fetchUser()
+                Task { await self?.fetchUser() }
             case .fetchUserDetail:
-                self?.fetchUserDetail()
+                Task { await self?.fetchUserDetail() }
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
     
-    private func fetchUser() {
-        Task {
-            do {
-                let user = try await fetchUserUseCase.execute(id: userId)
-                self.user = user
-                output.send(.fetchUser)
-            } catch {
-                output.send(.failure("유저를 찾을 수 없습니다."))
-            }
+    private func fetchUser() async {
+        do {
+            let user = try await fetchUserUseCase.execute(id: userId)
+            self.user = user
+            output.send(.fetchUser)
+        } catch {
+            output.send(.failure("유저를 찾을 수 없습니다."))
         }
     }
     
-    private func fetchUserDetail() {
-        Task {
-            do {
-                let userDetail = try await fetchUserDetailUseCase.execute(id: userId)
-                self.userDetail = userDetail
-                output.send(.fetchUserDetail)
-            } catch {
-                output.send(.failure("유저를 찾을 수 없습니다."))
-            }
+    private func fetchUserDetail() async {
+        do {
+            let userDetail = try await fetchUserDetailUseCase.execute(id: userId)
+            self.userDetail = userDetail
+            output.send(.fetchUserDetail)
+        } catch {
+            output.send(.failure("유저를 찾을 수 없습니다."))
         }
     }
     
-    private func fetchPosts() {
-        Task {
-            do {
-                let posts = try await fetchUserPostUseCase.execute(id: userId)
-                self.posts = posts ?? []
-                output.send(.fetchPosts)
-            } catch {
-                output.send(.failure("게시글을 불러오는데 실패했습니다."))
-            }
+    private func fetchPosts() async {
+        do {
+            let posts = try await fetchUserPostUseCase.execute(id: userId)
+            self.posts = posts ?? []
+            output.send(.fetchPosts)
+        } catch {
+            output.send(.failure("게시글을 불러오는데 실패했습니다."))
         }
     }
+    
+    private func fetchRoutines() async {}
 }

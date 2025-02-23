@@ -35,7 +35,7 @@ final class SocialProfileCoordinator: Coordinator {
         )
         let controller = SocialProfileViewController(viewModel: viewModel)
         controller.coordinator = self
-        navigationController.pushViewController(controller, animated: true)
+        navigationController.pushTDViewController(controller, animated: true)
     }
 }
 

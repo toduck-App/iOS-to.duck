@@ -57,6 +57,8 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView> {
                     let followingCount = self?.viewModel.userDetail?.followingCount ?? 0
                     let followerCount = self?.viewModel.userDetail?.followerCount ?? 0
                     let postCount = self?.viewModel.userDetail?.totalPostCount ?? 0
+                    let isFollowing = self?.viewModel.userDetail?.isFollowing ?? false
+                    self?.layoutView.configureFollowingButton(isFollowing: isFollowing)
                     self?.layoutView.configure(
                         followingCount: followingCount,
                         followerCount: followerCount,

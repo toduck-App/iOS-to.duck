@@ -14,7 +14,7 @@ public final class UserRepositoryImpl: UserRepository {
     public init() {}
 
     public func fetchUser(userID: User.ID) async throws -> User {
-        User.dummy.filter { $0.id == userID }.first!
+        User.dummy.first!
     }
 
     public func fetchUserDetail(userID: User.ID) async throws -> UserDetail {

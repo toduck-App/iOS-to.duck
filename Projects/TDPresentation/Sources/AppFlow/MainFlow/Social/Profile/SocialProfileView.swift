@@ -4,8 +4,28 @@ import TDDomain
 import UIKit
 
 final class SocialProfileView: BaseView {
-    private let userProfileView = UserProfileView()
-    private let userDetailView = UserDetailView()
+    private let avatarView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.layer.cornerRadius = 45
+        $0.clipsToBounds = true
+        $0.backgroundColor = TDColor.Neutral.neutral100
+    }
+    
+    private let nickNameLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
+    
+    private let titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
+    
+    private let followingLabel = TDLabel(labelText: "팔로잉", toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
+    
+    private let followingCountLabel = TDLabel(toduckFont: .boldBody3, toduckColor: TDColor.Neutral.neutral800)
+    
+    private let followerLabel = TDLabel(labelText: "팔로워", toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
+    
+    private let followerCountLabel = TDLabel(toduckFont: .boldBody3, toduckColor: TDColor.Neutral.neutral800)
+    
+    private let whiteBackgroundView = UIView().then {
+        $0.backgroundColor = TDColor.baseWhite
+    }
     
     private(set) var followButton = TDButton(
         title: "팔로우",
@@ -13,17 +33,7 @@ final class SocialProfileView: BaseView {
         foregroundColor: TDColor.baseWhite,
         backgroundColor: TDColor.Primary.primary500
     ).then {
-        $0.layer.cornerRadius = 8
-    }
-    
-    private(set) var shareButton = TDBaseButton(
-        image: TDImage.shareMedium,
-        backgroundColor: .clear,
-        foregroundColor: TDColor.Neutral.neutral300,
-        radius: 8
-    ).then {
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        $0.layer.cornerRadius = 12
     }
     
     private(set) var segmentedControl = TDSegmentedControl(
@@ -44,39 +54,67 @@ final class SocialProfileView: BaseView {
     }
     
     override func addview() {
-        addSubview(userProfileView)
-        addSubview(userDetailView)
-        addSubview(followButton)
-        addSubview(shareButton)
-        addSubview(segmentedControl)
-        addSubview(routineView)
-        addSubview(socialFeedCollectionView)
+        addSubview(whiteBackgroundView)
+        whiteBackgroundView.addSubview(avatarView)
+        whiteBackgroundView.addSubview(followButton)
+        whiteBackgroundView.addSubview(nickNameLabel)
+        whiteBackgroundView.addSubview(titleBagde)
+        whiteBackgroundView.addSubview(followButton)
+        whiteBackgroundView.addSubview(followingLabel)
+        whiteBackgroundView.addSubview(followingCountLabel)
+        whiteBackgroundView.addSubview(followerLabel)
+        whiteBackgroundView.addSubview(followerCountLabel)
+        whiteBackgroundView.addSubview(segmentedControl)
+        whiteBackgroundView.addSubview(routineView)
+        whiteBackgroundView.addSubview(socialFeedCollectionView)
     }
 
     override func layout() {
-        userProfileView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(10)
-            make.height.equalTo(60)
+        whiteBackgroundView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(100)
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
-        userDetailView.snp.makeConstraints { make in
-            make.top.equalTo(userProfileView.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(64)
+        avatarView.snp.makeConstraints { make in
+            make.size.equalTo(90)
+            make.top.equalToSuperview().offset(-45)
+            make.leading.equalToSuperview().offset(20)
+        }
+        
+        nickNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(avatarView.snp.bottom).offset(20)
+            make.leading.equalTo(avatarView.snp.leading)
+        }
+        
+        titleBagde.snp.makeConstraints { make in
+            make.leading.equalTo(nickNameLabel.snp.trailing).offset(10)
+            make.centerY.equalTo(nickNameLabel)
+        }
+        
+        followingLabel.snp.makeConstraints { make in
+            make.leading.equalTo(avatarView.snp.leading)
+            make.top.equalTo(nickNameLabel.snp.bottom).offset(8)
+        }
+        
+        followingCountLabel.snp.makeConstraints { make in
+            make.leading.equalTo(followingLabel.snp.trailing).offset(4)
+            make.centerY.equalTo(followingLabel)
+        }
+        
+        followerLabel.snp.makeConstraints { make in
+            make.leading.equalTo(followingCountLabel.snp.trailing).offset(20)
+            make.centerY.equalTo(followingLabel)
+        }
+        
+        followerCountLabel.snp.makeConstraints { make in
+            make.leading.equalTo(followerLabel.snp.trailing).offset(4)
+            make.centerY.equalTo(followingLabel)
         }
         
         followButton.snp.makeConstraints { make in
-            make.top.equalTo(userDetailView.snp.bottom).offset(8)
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.equalTo(shareButton.snp.leading).offset(-8)
-            make.height.equalTo(40)
-        }
-        
-        shareButton.snp.makeConstraints { make in
-            make.centerY.equalTo(followButton)
+            make.top.equalTo(avatarView.snp.bottom).offset(20)
             make.trailing.equalToSuperview().inset(16)
-            make.size.equalTo(40)
+            make.width.equalTo(120)
         }
         
         segmentedControl.snp.makeConstraints { make in
@@ -97,25 +135,28 @@ final class SocialProfileView: BaseView {
     }
     
     override func configure() {
-        backgroundColor = TDColor.baseWhite
+        backgroundColor = TDColor.Neutral.neutral100
         socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
+    public func configureFollowingButton(isFollowing: Bool) {
+        followButton.setTitle(isFollowing ? "팔로잉" : "팔로우", for: .normal)
+        followButton.backgroundColor = isFollowing ? TDColor.Neutral.neutral200 : TDColor.Primary.primary500
+    }
+    
     public func configure(avatarURL: String, badgeTitle: String, nickname: String) {
-        userProfileView.configure(
-            userAvatar: avatarURL,
-            titleBadge: badgeTitle,
-            nickname: nickname,
-            description: "토덕님과 비슷한 루틴을 가진 유저에요!"
-        )
+        titleBagde.setTitle(badgeTitle)
+        nickNameLabel.setText(nickname)
+        if let avatarURL = URL(string: avatarURL) {
+            avatarView.kf.setImage(with: avatarURL)
+        } else {
+            avatarView.image = TDImage.Profile.medium
+        }
     }
     
     public func configure(followingCount: Int, followerCount: Int, postCount: Int) {
-        userDetailView.configure(
-            followingCount: followingCount,
-            followerCount: followerCount,
-            postCount: postCount
-        )
+        followingCountLabel.setText("\(followingCount)")
+        followerCountLabel.setText("\(followerCount)")
     }
     
     public func showPostList() {
