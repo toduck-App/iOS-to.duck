@@ -1,6 +1,7 @@
 import Combine
 import TDCore
 import TDDomain
+import TDDesign
 import UIKit
 
 final class SocialDetailViewController: BaseViewController<SocialDetailView> {
@@ -39,6 +40,18 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     }
     
     override func configure() {
+        layoutView.detailCollectionView.delegate = self
+        layoutView.commentInputForm.setTapSendButton(
+            UIAction { [weak self] _ in
+            self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
+        })
+        layoutView.commentInputForm.setTapImageButton(
+            UIAction { [weak self] _ in
+                let picker = TDPhotoPickerController(maximumSelectablePhotos: 1)
+                picker.pickerDelegate = self
+                self?.navigationController?.pushTDViewController(picker, animated: true)
+        })
+        
         datasource = .init(collectionView: layoutView.detailCollectionView, cellProvider: { collectionView, indexPath, item in
             switch item {
             case .post:
@@ -81,6 +94,14 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     self?.updateSnapshot(items: [.post(post.id)], to: .post)
                 case .likeComment(let comment):
                     self?.updateSnapshot(items: [.comment(comment.id)], to: .comments)
+                case .registerImage(let data):
+                    self?.layoutView.showCommentInputImage(with: data)
+                case .didTapComment(let comment):
+                    self?.layoutView.showReplyInputForm(name: comment.user.name)
+                case .createComment:
+                    self?.layoutView.removeReplyInputForm()
+                    self?.layoutView.clearText()
+                    self?.layoutView.removeCommentInputImage()
                 default:
                     break
                 }
@@ -90,14 +111,24 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
 
 // MARK: User Action
 
-extension SocialDetailViewController: SocialPostDelegate {
+extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate, UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = datasource.itemIdentifier(for: indexPath) else { return }
+        switch item {
+        case .post:
+            break
+        case .comment(let commentID):
+            input.send(.didTapComment(commentID))
+        }
+    }
+    
     func didTapLikeButton(_ cell: UICollectionViewCell, _ postID: Post.ID) {
         guard let indexPath = layoutView.detailCollectionView.indexPath(for: cell) else { return }
         switch datasource.itemIdentifier(for: indexPath) {
         case .post:
             input.send(.likePost)
         case .comment(let commentID):
-            TDLogger.debug("Comment ID: \(commentID)")
             input.send(.likeComment(commentID))
         default:
             break
@@ -105,8 +136,39 @@ extension SocialDetailViewController: SocialPostDelegate {
     }
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
-        TDLogger.debug("Comment ID: \(commentID)")
         input.send(.likeComment(commentID))
+    }
+    
+    func didTapRegisterImage() {
+        
+    }
+    
+    func didTapCancleComment() {
+        
+    }
+    
+    func didTapDeleteImage() {
+        
+    }
+    
+    func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
+        guard let photo = photos.first else { return }
+        self.input.send(.registerImage(photo))
+    }
+    
+    func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
+        // TODO: - Denied Photo Access
+        let alert = UIAlertController(title: "알림", message: "사진 접근 권한이 거부되었습니다. 설정에서 권한을 허용해주세요.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
+        
+    }
+    
+    func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+        
     }
 }
 

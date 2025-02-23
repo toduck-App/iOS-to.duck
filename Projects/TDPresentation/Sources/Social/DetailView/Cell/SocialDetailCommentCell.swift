@@ -78,6 +78,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         )
         configureAction(item)
         configureUserImage(with: item.user.icon)
+        configureCommentImage(with: item.imageURL)
         configureReplies(item.reply)
     }
     
@@ -190,6 +191,11 @@ private extension SocialDetailCommentCell {
         }
     }
     
+    func configureCommentImage(with imageURL: URL?) {
+        guard let imageURL else { return }
+        bodyStackView.addArrangedSubview(SocialImageListView(style: .scroll, images: [imageURL.absoluteString]))
+    }
+    
     func createReplyView(_ comment: Comment) -> UIView {
         let replyContainer = UIView()
         let replyAvatar = buildReplyAvatar(comment)
@@ -202,8 +208,13 @@ private extension SocialDetailCommentCell {
             $0.spacing = 14
             $0.addArrangedSubview(replyHeader)
             $0.addArrangedSubview(replyContent)
-            $0.addArrangedSubview(replyFooter)
         }
+        
+        if let imageURL = comment.imageURL {
+            bodyStackView.addArrangedSubview(SocialImageListView(style: .scroll, images: [imageURL.absoluteString]))
+        }
+        
+        stackView.addArrangedSubview(replyFooter)
         
         replyContainer.addSubview(replyAvatar)
         replyContainer.addSubview(stackView)
@@ -213,6 +224,7 @@ private extension SocialDetailCommentCell {
         
         return replyContainer
     }
+
     
     // MARK: 대댓글 - Subview 생성 함수들
     

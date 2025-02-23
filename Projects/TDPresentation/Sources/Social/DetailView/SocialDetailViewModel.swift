@@ -8,11 +8,14 @@ public final class SocialDetailViewModel: BaseViewModel {
         case fetchComments
         case likePost
         case likeComment(Comment.ID)
-        case createComment
+        case registerComment(String)
+        case registerImage(Data)
+        case deleteRegisterImage
         case shareRoutine
         case reportPost
         case blockPost
         case blockCommet
+        case didTapComment(Comment.ID)
     }
     
     enum Output {
@@ -20,11 +23,13 @@ public final class SocialDetailViewModel: BaseViewModel {
         case comments([Comment])
         case likePost(Post)
         case likeComment(Comment)
-        case createComment(Comment)
+        case createComment
+        case registerImage(Data)
         case shareRoutine
         case reportPost
         case blockPost
         case blockCommet
+        case didTapComment(Comment)
         case failure(String)
     }
     
@@ -37,6 +42,10 @@ public final class SocialDetailViewModel: BaseViewModel {
     private let reportPostUseCase: ReportPostUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
+    private var registerComment: Comment?
+    private var registerImage: Data?
+    private var currentComment: Comment? // 현재 댓글을 다려는 댓글?
     
     private(set) var post: Post?
     private(set) var comments: [Comment] = []
@@ -69,8 +78,13 @@ public final class SocialDetailViewModel: BaseViewModel {
                 Task { await self.fetchComments() }
             case .likePost:
                 Task { await self.likePost() }
-            case .createComment:
-                break
+            case .registerComment(let content):
+                Task { await self.registerComment(content: content) }
+            case .registerImage(let data):
+                registerImage = data
+                output.send(.registerImage(data))
+            case .deleteRegisterImage:
+                registerImage = nil
             case .shareRoutine:
                 break
             case .reportPost:
@@ -81,7 +95,12 @@ public final class SocialDetailViewModel: BaseViewModel {
                 break
             case .likeComment(let commentID):
                 Task { await self.likeComment(commentID: commentID) }
+            case .didTapComment(let commentID):
+                currentComment = comments.first(where: { $0.id == commentID })
+                guard let comment = currentComment else { return }
+                output.send(.didTapComment(comment))
             }
+        
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
@@ -136,6 +155,49 @@ private extension SocialDetailViewModel {
             output.send(.likeComment(updatedComment))
         } catch {
             output.send(.failure("댓글 좋아요에 실패했습니다."))
+        }
+    }
+    
+    // MARK: 댓글 달기
+    
+    private func registerComment(content: String) async {
+        let target: CommentTarget
+        if let currentComment = currentComment {
+             target = .comment(currentComment.id)
+        } else {
+             guard let post = self.post else {
+                 output.send(.failure("게시글 정보가 없습니다."))
+                 return
+             }
+             target = .post(post.id)
+        }
+        
+        let newComment = NewComment(content: content, target: target, image: registerImage)
+        do {
+            let isCreated = try await createCommentUseCase.execute(newComment: newComment)
+            if isCreated {
+                currentComment = nil
+                output.send(.createComment)
+                await fetchComments()
+            } else {
+                output.send(.failure("댓글 작성에 실패했습니다."))
+            }
+        } catch {
+            output.send(.failure("댓글 작성에 실패했습니다."))
+        }
+    }
+
+    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: UUID) -> [Comment] {
+        return comments.map { comment in
+            if comment.id == parentID {
+                var updatedComment = comment
+                updatedComment.reply.append(reply)
+                return updatedComment
+            } else {
+                var updatedComment = comment
+                updatedComment.reply = updateCommentsArray(updatedComment.reply, withReply: reply, forParentID: parentID)
+                return updatedComment
+            }
         }
     }
 }
