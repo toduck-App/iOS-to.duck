@@ -120,8 +120,8 @@ final class AccountView: BaseView {
     
     let nextButton = TDBaseButton(
         title: "계속하기",
-        backgroundColor: TDColor.Neutral.neutral300,
-        foregroundColor: TDColor.Neutral.neutral500,
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
         font: TDFont.boldHeader5.font
     )
     
@@ -257,6 +257,7 @@ final class AccountView: BaseView {
     override func configure() {
         invaildPasswordLabel.isHidden = true
         invaildVerifyPasswordLabel.isHidden = true
+        nextButton.isEnabled = false
     }
 }
 

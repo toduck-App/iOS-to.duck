@@ -101,7 +101,8 @@ extension PhoneVerificationViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isUserInteractionEnabled = textField.text?.count == 6
+            layoutView.nextButton.isEnabled = textField.text?.count == 6
+            layoutView.nextButton.layer.borderWidth = 0
         }
     }
 }

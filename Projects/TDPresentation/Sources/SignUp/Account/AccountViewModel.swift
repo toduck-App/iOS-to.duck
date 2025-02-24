@@ -15,10 +15,15 @@ final class AccountViewModel: BaseViewModel {
         case validPassword
         case passwordMismatch
         case passwordMatched
+        case updateNextButtonState(isEnabled: Bool)
     }
     
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
+    private var isIdValid = false
+    private var isPasswordValid = false
+    private var isPasswordMatched = false
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
@@ -38,16 +43,27 @@ final class AccountViewModel: BaseViewModel {
     private func validateId(_ id: String) {
         let regex = "^[a-z0-9]{5,20}$"
         let isValid = NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: id)
+        isIdValid = isValid
         output.send(isValid ? .validId : .invalidIdFormat)
+        updateNextButtonState()
     }
     
     private func validatePassword(_ password: String) {
         let regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,16}$"
         let isValid = NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: password)
+        isPasswordValid = isValid
         output.send(isValid ? .validPassword : .invalidPassword)
+        updateNextButtonState()
     }
     
     private func checkPasswordMatch(_ password: String, _ verifyPassword: String) {
-        output.send(password == verifyPassword ? .passwordMatched : .passwordMismatch)
+        isPasswordMatched = password == verifyPassword
+        output.send(isPasswordMatched ? .passwordMatched : .passwordMismatch)
+        updateNextButtonState()
+    }
+
+    private func updateNextButtonState() {
+        let isEnabled = isIdValid && isPasswordValid && isPasswordMatched
+        output.send(.updateNextButtonState(isEnabled: isEnabled))
     }
 }

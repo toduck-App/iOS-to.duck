@@ -48,6 +48,9 @@ final class AccountViewController: BaseViewController<AccountView> {
                     self?.layoutView.invaildVerifyPasswordLabel.isHidden = false
                 case .passwordMatched:
                     self?.layoutView.invaildVerifyPasswordLabel.isHidden = true
+                case .updateNextButtonState(let isEnabled):
+                    self?.layoutView.nextButton.isEnabled = isEnabled
+                    self?.layoutView.nextButton.layer.borderWidth = 0
                 }
             }.store(in: &cancellables)
     }
@@ -71,6 +74,11 @@ final class AccountViewController: BaseViewController<AccountView> {
 // MARK: - UITextFieldDelegate
 extension AccountViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == layoutView.idTextField {
+            let id = layoutView.idTextField.text ?? ""
+            input.send(.validateId(id))
+        }
+        
         if textField == layoutView.passwordTextField {
             let password = layoutView.passwordTextField.text ?? ""
             input.send(.validatePassword(password))
