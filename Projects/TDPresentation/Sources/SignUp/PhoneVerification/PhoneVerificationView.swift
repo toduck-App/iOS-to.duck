@@ -77,6 +77,31 @@ final class PhoneVerificationView: BaseView {
         font: TDFont.boldHeader5.font
     )
     
+    /// 인증번호
+    let verificationNumberContainerView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+    }
+    
+    let verificationNumberTextField = UITextField().then {
+        $0.placeholder = "인증 번호를 입력하세요"
+        $0.font = TDFont.mediumHeader3.font
+        $0.textColor = TDColor.Neutral.neutral800
+        $0.keyboardType = .numberPad
+    }
+    
+    let verificationNumberTimerLabel = TDLabel(
+        labelText: "5:00",
+        toduckFont: .mediumHeader3,
+        toduckColor: TDColor.Semantic.error
+    )
+    
+    let invaildNumberLabel = TDLabel(
+        labelText: "올바르지 않은 인증 번호 입니다.",
+        toduckFont: .mediumHeader5,
+        toduckColor: TDColor.Semantic.error
+    )
+    
     let nextButton = TDBaseButton(
         title: "계속하기",
         backgroundColor: TDColor.Primary.primary500,
@@ -102,6 +127,8 @@ final class PhoneVerificationView: BaseView {
         carrierContainerView.addSubview(carrierLabel)
         carrierContainerView.addSubview(downImage)
         phoneNumberContainerView.addSubview(phoneNumberTextField)
+        verificationNumberContainerView.addSubview(verificationNumberTextField)
+        verificationNumberContainerView.addSubview(verificationNumberTimerLabel)
         
         [
             currentPageIcon,
@@ -112,6 +139,8 @@ final class PhoneVerificationView: BaseView {
             carrierDropDownView,
             phoneNumberContainerView,
             postButton,
+            verificationNumberContainerView,
+            invaildNumberLabel,
             nextButton
         ].forEach(addSubview)
         
@@ -180,10 +209,33 @@ final class PhoneVerificationView: BaseView {
         }
         
         postButton.snp.makeConstraints { make in
-            make.top.equalTo(carrierContainerView.snp.bottom).offset(LayoutConstants.buttonSpacing)
             make.leading.equalTo(phoneNumberContainerView.snp.trailing).offset(LayoutConstants.inputSpacing)
             make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
             make.height.equalTo(LayoutConstants.buttonHeight)
+            make.centerY.equalTo(phoneNumberContainerView)
+        }
+        
+        verificationNumberContainerView.snp.makeConstraints { make in
+            make.top.equalTo(phoneNumberContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
+            make.leading.equalTo(titleLabel)
+            make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
+            make.height.equalTo(LayoutConstants.inputFieldHeight)
+        }
+        
+        verificationNumberTextField.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.equalToSuperview().offset(LayoutConstants.inputPadding)
+            make.trailing.equalTo(verificationNumberTimerLabel.snp.leading).offset(-LayoutConstants.inputPadding)
+        }
+        
+        verificationNumberTimerLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-LayoutConstants.inputPadding)
+        }
+        
+        invaildNumberLabel.snp.makeConstraints { make in
+            make.top.equalTo(verificationNumberContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
+            make.leading.equalTo(titleLabel).offset(LayoutConstants.inputPadding)
         }
         
         nextButton.snp.makeConstraints { make in
@@ -191,6 +243,11 @@ final class PhoneVerificationView: BaseView {
             make.bottom.equalTo(safeAreaLayoutGuide).offset(-LayoutConstants.buttonBottomSpacing)
             make.height.equalTo(LayoutConstants.buttonHeight)
         }
+    }
+    
+    override func configure() {
+        verificationNumberContainerView.isHidden = true
+        invaildNumberLabel.isHidden = true
     }
 }
 
@@ -209,7 +266,7 @@ private enum LayoutConstants {
     static let inputSpacing: CGFloat = 10
     static let inputPadding: CGFloat = 16
     static let inputFieldCornerRadius: CGFloat = 8
-    static let inputFieldHeight: CGFloat = 48
+    static let inputFieldHeight: CGFloat = 56
     static let carrierContainerWidth: CGFloat = 152
     static let phoneInputWidth: CGFloat = 260
     
