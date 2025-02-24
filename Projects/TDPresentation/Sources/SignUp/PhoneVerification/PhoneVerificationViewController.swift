@@ -57,6 +57,7 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                     print("인증번호 형식이 올바르지 않습니다.")
                 case .verificationCodeValid:
                     print("인증번호 형식이 올바릅니다.")
+                    self?.coordinator?.startAccountViewCoordinator()
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 }
@@ -76,6 +77,7 @@ extension PhoneVerificationViewController: TDDropDownDelegate {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension PhoneVerificationViewController: UITextFieldDelegate {
     func textField(
         _ textField: UITextField,

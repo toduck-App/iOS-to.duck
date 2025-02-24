@@ -21,6 +21,15 @@ final class PhoneVerificationCoordinator: Coordinator {
         phoneVerificationViewController.coordinator = self
         navigationController.pushTDViewController(phoneVerificationViewController, animated: true)
     }
+    
+    func startAccountViewCoordinator() {
+        let accountViewCoordinator = AccountCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        childCoordinators.append(accountViewCoordinator)
+        accountViewCoordinator.start()
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
