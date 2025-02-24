@@ -16,7 +16,8 @@ final class AccountCoordinator: Coordinator {
     }
 
     func start() {
-        let accountViewController = AccountViewController()
+        let viewModel = AccountViewModel()
+        let accountViewController = AccountViewController(viewModel: viewModel)
         navigationController.pushTDViewController(accountViewController, animated: true)
     }
 }
