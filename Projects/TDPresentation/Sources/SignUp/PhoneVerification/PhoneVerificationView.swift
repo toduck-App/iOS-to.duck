@@ -57,24 +57,27 @@ final class PhoneVerificationView: BaseView {
         width: LayoutConstants.carrierContainerWidth
     )
     
+    /// 휴대폰 번호 입력 및 요청
     let phoneNumberContainerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral100
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
     }
-    
     let phoneNumberTextField = UITextField().then {
         $0.placeholder = "휴대폰 번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
     }
-    
-    /// 버튼들
     let postButton = TDBaseButton(
         title: "인증요청",
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
         font: TDFont.boldHeader5.font
+    )
+    let invaildPhoneNumberLabel = TDLabel(
+        labelText: "올바르지 않은 휴대폰 번호 입니다.",
+        toduckFont: .mediumHeader5,
+        toduckColor: TDColor.Semantic.error
     )
     
     /// 인증번호
@@ -82,21 +85,18 @@ final class PhoneVerificationView: BaseView {
         $0.backgroundColor = TDColor.Neutral.neutral100
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
     }
-    
     let verificationNumberTextField = UITextField().then {
         $0.placeholder = "인증 번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
     }
-    
     let verificationNumberTimerLabel = TDLabel(
         labelText: "5:00",
         toduckFont: .mediumHeader3,
         toduckColor: TDColor.Semantic.error
     )
-    
-    let invaildNumberLabel = TDLabel(
+    let invaildVerificationNumberLabel = TDLabel(
         labelText: "올바르지 않은 인증 번호 입니다.",
         toduckFont: .mediumHeader5,
         toduckColor: TDColor.Semantic.error
@@ -139,8 +139,9 @@ final class PhoneVerificationView: BaseView {
             carrierDropDownView,
             phoneNumberContainerView,
             postButton,
+            invaildPhoneNumberLabel,
             verificationNumberContainerView,
-            invaildNumberLabel,
+            invaildVerificationNumberLabel,
             nextButton
         ].forEach(addSubview)
         
@@ -202,17 +203,19 @@ final class PhoneVerificationView: BaseView {
             make.width.equalTo(LayoutConstants.phoneInputWidth)
             make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
-        
         phoneNumberTextField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.inputPadding)
         }
-        
         postButton.snp.makeConstraints { make in
             make.leading.equalTo(phoneNumberContainerView.snp.trailing).offset(LayoutConstants.inputSpacing)
             make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
             make.height.equalTo(LayoutConstants.buttonHeight)
             make.centerY.equalTo(phoneNumberContainerView)
+        }
+        invaildPhoneNumberLabel.snp.makeConstraints { make in
+            make.top.equalTo(phoneNumberContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
+            make.leading.equalTo(phoneNumberContainerView).offset(LayoutConstants.inputPadding)
         }
         
         verificationNumberContainerView.snp.makeConstraints { make in
@@ -221,7 +224,6 @@ final class PhoneVerificationView: BaseView {
             make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
             make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
-        
         verificationNumberTextField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.leading.equalToSuperview().offset(LayoutConstants.inputPadding)
@@ -232,8 +234,7 @@ final class PhoneVerificationView: BaseView {
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-LayoutConstants.inputPadding)
         }
-        
-        invaildNumberLabel.snp.makeConstraints { make in
+        invaildVerificationNumberLabel.snp.makeConstraints { make in
             make.top.equalTo(verificationNumberContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
             make.leading.equalTo(titleLabel).offset(LayoutConstants.inputPadding)
         }
@@ -247,7 +248,8 @@ final class PhoneVerificationView: BaseView {
     
     override func configure() {
         verificationNumberContainerView.isHidden = true
-        invaildNumberLabel.isHidden = true
+        invaildPhoneNumberLabel.isHidden = true
+        invaildVerificationNumberLabel.isHidden = true
         nextButton.isUserInteractionEnabled = false
     }
 }

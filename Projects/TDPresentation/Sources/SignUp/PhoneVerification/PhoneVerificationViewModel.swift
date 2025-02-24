@@ -20,23 +20,23 @@ final class PhoneVerificationViewModel: BaseViewModel {
     private var cancellables = Set<AnyCancellable>()
     
     private var timer: AnyCancellable?
-    private var remainingSeconds = 300
+    private var verificationTimeRemaining = 300
 
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
             case .postPhoneNumber(let phoneNumber):
-                self?.validatePhoneNumber(phoneNumber)
+                self?.validatePhoneNumber(with: phoneNumber)
             case .postVerificationCode(let code):
-                self?.validateVerificationCode(code)
+                self?.validateVerificationCode(with: code)
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
 
-    private func validatePhoneNumber(_ phoneNumber: String) {
-        guard phoneNumber.range(of: #"^01[0-9]{8,9}$"#, options: .regularExpression) != nil else {
+    private func validatePhoneNumber(with phoneNumber: String) {
+        guard isValidPhoneNumber(with: phoneNumber) else {
             output.send(.phoneNumberInvalid)
             return
         }
@@ -44,9 +44,14 @@ final class PhoneVerificationViewModel: BaseViewModel {
         output.send(.phoneNumberValid)
         startVerificationTimer()
     }
+    
+    private func isValidPhoneNumber(with phoneNumber: String) -> Bool {
+        let phoneRegex = #"^01[0-9]{8,9}$"#
+        return phoneNumber.range(of: phoneRegex, options: .regularExpression) != nil
+    }
 
-    private func validateVerificationCode(_ code: String) {
-        guard code.count == 6, code.allSatisfy({ $0.isNumber }) else {
+    private func validateVerificationCode(with code: String) {
+        guard isValidVerificationCode(with: code) else {
             output.send(.verificationCodeInvalid)
             return
         }
@@ -54,19 +59,23 @@ final class PhoneVerificationViewModel: BaseViewModel {
         output.send(.verificationCodeValid)
     }
     
+    private func isValidVerificationCode(with code: String) -> Bool {
+        return code.count == 6 && code.allSatisfy { $0.isNumber }
+    }
+    
     private func startVerificationTimer() {
         timer?.cancel()
-        remainingSeconds = 300
+        verificationTimeRemaining = 300
 
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 
-                if self.remainingSeconds > 0 {
-                    self.remainingSeconds -= 1
-                    let minutes = self.remainingSeconds / 60
-                    let seconds = self.remainingSeconds % 60
+                if self.verificationTimeRemaining > 0 {
+                    self.verificationTimeRemaining -= 1
+                    let minutes = self.verificationTimeRemaining / 60
+                    let seconds = self.verificationTimeRemaining % 60
                     let timeString = String(format: "%01d:%02d", minutes, seconds)
                     self.output.send(.updateVerificationTimer(time: timeString))
                 } else {
