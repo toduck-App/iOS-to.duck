@@ -76,7 +76,7 @@ final class PhoneVerificationView: BaseView {
     )
     let invaildPhoneNumberLabel = TDLabel(
         labelText: "올바르지 않은 휴대폰 번호 입니다.",
-        toduckFont: .mediumHeader5,
+        toduckFont: .mediumBody3,
         toduckColor: TDColor.Semantic.error
     )
     
@@ -98,7 +98,7 @@ final class PhoneVerificationView: BaseView {
     )
     let invaildVerificationNumberLabel = TDLabel(
         labelText: "올바르지 않은 인증 번호 입니다.",
-        toduckFont: .mediumHeader5,
+        toduckFont: .mediumBody3,
         toduckColor: TDColor.Semantic.error
     )
     
@@ -109,21 +109,7 @@ final class PhoneVerificationView: BaseView {
         font: TDFont.boldHeader5.font
     )
     
-    // MARK: - Initializer
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureUI()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configureUI()
-        setupConstraints()
-    }
-    
-    // MARK: - Setup UI
-    private func configureUI() {
+    override func addview() {
         carrierContainerView.addSubview(carrierLabel)
         carrierContainerView.addSubview(downImage)
         phoneNumberContainerView.addSubview(phoneNumberTextField)
@@ -149,8 +135,7 @@ final class PhoneVerificationView: BaseView {
         carrierContainerView.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
     }
     
-    // MARK: - Setup Constraints
-    private func setupConstraints() {
+    override func layout() {
         currentPageIcon.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(LayoutConstants.pageIndicatorTopOffset)
             make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
