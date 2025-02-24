@@ -104,8 +104,8 @@ final class PhoneVerificationView: BaseView {
     
     let nextButton = TDBaseButton(
         title: "계속하기",
-        backgroundColor: TDColor.Primary.primary500,
-        foregroundColor: TDColor.baseWhite,
+        backgroundColor: TDColor.Neutral.neutral300,
+        foregroundColor: TDColor.Neutral.neutral500,
         font: TDFont.boldHeader5.font
     )
     
@@ -248,6 +248,7 @@ final class PhoneVerificationView: BaseView {
     override func configure() {
         verificationNumberContainerView.isHidden = true
         invaildNumberLabel.isHidden = true
+        nextButton.isUserInteractionEnabled = false
     }
 }
 

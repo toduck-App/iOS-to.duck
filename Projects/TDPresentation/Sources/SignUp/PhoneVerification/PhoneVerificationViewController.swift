@@ -24,6 +24,8 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
     override func configure() {
         layoutView.carrierDropDownView.delegate = self
         layoutView.carrierDropDownView.dataSource = CarrierDropDownMenuItem.allCases.map { $0.dropDownItem }
+        layoutView.phoneNumberTextField.delegate = self
+        layoutView.verificationNumberTextField.delegate = self
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""
@@ -71,5 +73,31 @@ extension PhoneVerificationViewController: TDDropDownDelegate {
     ) {
         let option = CarrierDropDownMenuItem.allCases[indexPath.row]
         layoutView.carrierLabel.setText(option.rawValue)
+    }
+}
+
+extension PhoneVerificationViewController: UITextFieldDelegate {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
+        guard let text = textField.text else { return false }
+        let newLength = text.count + string.count - range.length
+        
+        switch textField {
+        case layoutView.phoneNumberTextField:
+            return newLength <= 11
+        case layoutView.verificationNumberTextField:
+            return newLength <= 6
+        default:
+            return false
+        }
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == layoutView.verificationNumberTextField {
+            layoutView.nextButton.isUserInteractionEnabled = textField.text?.count == 6
+        }
     }
 }
