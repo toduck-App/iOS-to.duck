@@ -7,13 +7,28 @@ final class FindPasswordView: BaseView {
     // MARK: - UI Components
     
     /// 휴대폰 인증 입력 관련
+    private let idLabel = TDLabel(
+        labelText: "아이디",
+        toduckFont: .mediumHeader5,
+        toduckColor: TDColor.Neutral.neutral800
+    )
+    let idContainerView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+    }
+    let idTextField = UITextField().then {
+        $0.placeholder = "아이디를 입력하세요"
+        $0.font = TDFont.mediumHeader3.font
+        $0.textColor = TDColor.Neutral.neutral800
+    }
+    
+    /// 휴대폰 번호 입력 및 요청
     private let phoneLabel = TDLabel(
         labelText: "휴대폰 번호 인증",
         toduckFont: .mediumHeader5,
         toduckColor: TDColor.Neutral.neutral800
     )
     
-    /// 휴대폰 번호 입력 및 요청
     let phoneNumberContainerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral100
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
@@ -34,7 +49,7 @@ final class FindPasswordView: BaseView {
         font: TDFont.boldHeader5.font
     )
     let invaildPhoneNumberLabel = TDLabel(
-        labelText: "올바르지 않은 휴대폰 번호 입니다.",
+        labelText: "아이디와 휴대폰 번호를 다시 확인해주세요.",
         toduckFont: .mediumBody3,
         toduckColor: TDColor.Semantic.error
     )
@@ -69,11 +84,14 @@ final class FindPasswordView: BaseView {
     )
     
     override func addview() {
+        idContainerView.addSubview(idTextField)
         phoneNumberContainerView.addSubview(phoneNumberTextField)
         verificationNumberContainerView.addSubview(verificationNumberTextField)
         verificationNumberContainerView.addSubview(verificationNumberTimerLabel)
         
         [
+            idLabel,
+            idContainerView,
             phoneLabel,
             phoneNumberContainerView,
             postButton,
@@ -85,14 +103,27 @@ final class FindPasswordView: BaseView {
     }
     
     override func layout() {
-        phoneLabel.snp.makeConstraints { make in
+        idLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(LayoutConstants.titleTopOffset)
             make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
         }
+        idContainerView.snp.makeConstraints { make in
+            make.top.equalTo(idLabel.snp.bottom).offset(LayoutConstants.inputSpacing)
+            make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
+            make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
+            make.height.equalTo(LayoutConstants.inputFieldHeight)
+        }
+        idTextField.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(LayoutConstants.inputPadding)
+        }
         
+        phoneLabel.snp.makeConstraints { make in
+            make.top.equalTo(idContainerView.snp.bottom).offset(44)
+            make.leading.equalTo(idLabel)
+        }
         phoneNumberContainerView.snp.makeConstraints { make in
             make.top.equalTo(phoneLabel.snp.bottom).offset(LayoutConstants.inputSpacing)
-            make.leading.equalTo(phoneLabel)
+            make.leading.equalTo(idLabel)
             make.trailing.equalTo(postButton.snp.leading).offset(-10)
             make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
@@ -113,7 +144,7 @@ final class FindPasswordView: BaseView {
         
         verificationNumberContainerView.snp.makeConstraints { make in
             make.top.equalTo(phoneNumberContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
-            make.leading.equalTo(phoneLabel)
+            make.leading.equalTo(idLabel)
             make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
             make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
@@ -129,7 +160,7 @@ final class FindPasswordView: BaseView {
         }
         invaildVerificationNumberLabel.snp.makeConstraints { make in
             make.top.equalTo(verificationNumberContainerView.snp.bottom).offset(LayoutConstants.inputSpacing)
-            make.leading.equalTo(phoneLabel).offset(LayoutConstants.inputPadding)
+            make.leading.equalTo(idLabel).offset(LayoutConstants.inputPadding)
         }
         
         nextButton.snp.makeConstraints { make in
@@ -141,7 +172,6 @@ final class FindPasswordView: BaseView {
     
     override func configure() {
         verificationNumberContainerView.isHidden = true
-        postButton.isEnabled = false
         invaildPhoneNumberLabel.isHidden = true
         invaildVerificationNumberLabel.isHidden = true
         nextButton.isEnabled = false
