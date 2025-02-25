@@ -51,6 +51,9 @@ final class AccountViewController: BaseViewController<AccountView> {
                 case .updateNextButtonState(let isEnabled):
                     self?.layoutView.nextButton.isEnabled = isEnabled
                     self?.layoutView.nextButton.layer.borderWidth = 0
+                case .updateDuplicateVerificationButtonState(let isEnabled):
+                    self?.layoutView.duplicateVerificationButton.isEnabled = isEnabled
+                    self?.layoutView.duplicateVerificationButton.layer.borderWidth = 0
                 }
             }.store(in: &cancellables)
     }

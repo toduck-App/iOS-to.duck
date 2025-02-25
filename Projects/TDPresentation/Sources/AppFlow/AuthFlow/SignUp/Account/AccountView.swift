@@ -46,8 +46,8 @@ final class AccountView: BaseView {
     }
     let duplicateVerificationButton = TDBaseButton(
         title: "중복확인",
-        backgroundColor: TDColor.baseWhite,
-        foregroundColor: TDColor.Neutral.neutral600,
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
         font: TDFont.boldHeader5.font
     ).then {
         $0.layer.borderWidth = 1
@@ -256,6 +256,7 @@ final class AccountView: BaseView {
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
+        duplicateVerificationButton.isEnabled = false
         invaildPasswordLabel.isHidden = true
         invaildVerifyPasswordLabel.isHidden = true
         nextButton.isEnabled = false

@@ -16,6 +16,7 @@ final class AccountViewModel: BaseViewModel {
         case passwordMismatch
         case passwordMatched
         case updateNextButtonState(isEnabled: Bool)
+        case updateDuplicateVerificationButtonState(isEnabled: Bool)
     }
     
     private let output = PassthroughSubject<Output, Never>()
@@ -46,6 +47,7 @@ final class AccountViewModel: BaseViewModel {
         isIdValid = isValid
         output.send(isValid ? .validId : .invalidIdFormat)
         updateNextButtonState()
+        output.send(.updateDuplicateVerificationButtonState(isEnabled: isValid))
     }
     
     private func validatePassword(_ password: String) {
