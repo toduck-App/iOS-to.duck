@@ -48,7 +48,7 @@ final class SignInView: BaseView {
     /// 아이디 · 비밀번호 찾기
     let findAccountContainerView = UIView()
     let findAccountLabel = TDLabel(
-        labelText: "아이디 · 비밀번호 찾기 ",
+        labelText: "아이디 · 비밀번호 찾기",
         toduckFont: .regularBody3,
         toduckColor: TDColor.Neutral.neutral800
     )

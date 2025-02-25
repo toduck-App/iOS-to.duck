@@ -4,13 +4,20 @@ import TDCore
 import TDDesign
 
 final class FindAccountViewController: BaseViewController<BaseView> {
-    private let segmentedControl = UISegmentedControl(items: ["아이디 찾기", "비밀번호 찾기"])
+    private let segmentedControl = TDSegmentedControl(
+        items: ["아이디 찾기", "비밀번호 찾기"],
+        indicatorForeGroundColor: TDColor.Primary.primary500,
+        indicatorBackGroundColor: TDColor.Neutral.neutral400,
+        selectedTextColor: TDColor.Primary.primary500,
+        normalTextColor: TDColor.Neutral.neutral500
+    )
     
     private var currentViewController: UIViewController?
     weak var coordinator: FindAccountCoordinator?
     
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
+        navigationItem.title = "아이디 · 비밀번호 찾기"
         setupSegmentedControl()
         updateView()
     }
@@ -19,8 +26,9 @@ final class FindAccountViewController: BaseViewController<BaseView> {
         view.addSubview(segmentedControl)
         
         segmentedControl.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(44)
         }
         
         segmentedControl.addAction(UIAction { [weak self] _ in

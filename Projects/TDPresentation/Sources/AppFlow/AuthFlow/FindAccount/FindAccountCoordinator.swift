@@ -18,7 +18,7 @@ final class FindAccountCoordinator: Coordinator {
     func start() {
         let findAccountViewController = FindAccountViewController()
         findAccountViewController.coordinator = self
-        navigationController.pushTDViewController(findAccountViewController, animated: false)
+        navigationController.pushTDViewController(findAccountViewController, animated: true)
     }
 }
 
