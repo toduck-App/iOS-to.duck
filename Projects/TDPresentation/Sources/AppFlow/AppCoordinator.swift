@@ -1,10 +1,3 @@
-//
-//  AppCoordinator.swift
-//  toduck
-//
-//  Created by 박효준 on 7/15/24.
-//
-
 import UIKit
 import TDCore
 
@@ -23,7 +16,7 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController, injector: injector)
+        let tabBarCoordinator = MainTabBarCoordinator(navigationController: navigationController, injector: injector)
         tabBarCoordinator.start()
         childCoordinators.append(tabBarCoordinator)
     }

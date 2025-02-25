@@ -11,7 +11,11 @@ final class SocialListDropdownView: UIView {
         $0.distribution = .equalSpacing
     }
     
-    private let labelView = TDLabel(labelText: "", toduckFont: TDFont.boldBody2, alignment: .center, toduckColor: TDColor.Neutral.neutral700)
+    private let labelView = TDLabel(
+        toduckFont: TDFont.boldBody2,
+        alignment: .center,
+        toduckColor: TDColor.Neutral.neutral700
+    )
     
     private lazy var downImage = UIImageView().then {
         $0.tintColor = TDColor.Neutral.neutral500

@@ -39,7 +39,7 @@ extension MyPageCoordinator: CoordinatorFinishDelegate {
 // MARK: - Navigation Delegate
 extension MyPageCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController)
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()

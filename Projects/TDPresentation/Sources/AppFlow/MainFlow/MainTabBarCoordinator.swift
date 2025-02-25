@@ -1,7 +1,7 @@
 import UIKit
 import TDCore
 
-final class TabBarCoordinator: Coordinator {
+final class MainTabBarCoordinator: Coordinator {
     // MARK: - Properties
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
@@ -22,7 +22,7 @@ final class TabBarCoordinator: Coordinator {
     }
 
     func start() {
-        let items: [UINavigationController] = TabbarItem.allCases.map { createNavigationController(for: $0) }
+        let items: [UINavigationController] = MainTabbarItem.allCases.map { createNavigationController(for: $0) }
         configureTabBarController(with: items)
     }
 
@@ -33,7 +33,7 @@ final class TabBarCoordinator: Coordinator {
         navigationController.viewControllers = [tabBarController]
     }
 
-    private func createNavigationController(for item: TabbarItem) -> UINavigationController {
+    private func createNavigationController(for item: MainTabbarItem) -> UINavigationController {
         let navigationController = UINavigationController()
         navigationController.setNavigationBarHidden(false, animated: false)
         navigationController.tabBarItem = item.item
@@ -41,7 +41,7 @@ final class TabBarCoordinator: Coordinator {
         return navigationController
     }
 
-    private func configureCoordinator(for item: TabbarItem, navigationController: UINavigationController) {
+    private func configureCoordinator(for item: MainTabbarItem, navigationController: UINavigationController) {
         let coordinator: Coordinator
 
         switch item {
@@ -68,7 +68,7 @@ final class TabBarCoordinator: Coordinator {
 }
 
 // MARK: - CoordinatorFinishDelegate
-extension TabBarCoordinator: CoordinatorFinishDelegate {
+extension MainTabBarCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         if let index = childCoordinators.firstIndex(where: { $0 === childCoordinator }) {
             childCoordinators.remove(at: index)

@@ -1,17 +1,10 @@
-//
-//  MainTabBarController.swift
-//  toduck
-//
-//  Created by 박효준 on 7/16/24.
-//
-
 import TDDesign
 import UIKit
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
-    weak var coordinator: TabBarCoordinator?
+    weak var coordinator: MainTabBarCoordinator?
     
-    init(coordinator: TabBarCoordinator? = nil) {
+    init(coordinator: MainTabBarCoordinator? = nil) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
