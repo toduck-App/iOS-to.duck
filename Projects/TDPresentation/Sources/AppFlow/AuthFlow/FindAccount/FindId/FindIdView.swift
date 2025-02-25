@@ -23,6 +23,9 @@ final class FindIdView: BaseView {
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
+        
+        $0.adjustsFontSizeToFitWidth = true
+        $0.minimumFontSize = 10
     }
     let postButton = TDBaseButton(
         title: "인증요청",
@@ -90,7 +93,7 @@ final class FindIdView: BaseView {
         phoneNumberContainerView.snp.makeConstraints { make in
             make.top.equalTo(phoneLabel.snp.bottom).offset(LayoutConstants.inputSpacing)
             make.leading.equalTo(phoneLabel)
-            make.width.equalTo(LayoutConstants.phoneInputWidth)
+            make.trailing.equalTo(postButton.snp.leading).offset(-10)
             make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
         phoneNumberTextField.snp.makeConstraints { make in
@@ -98,8 +101,8 @@ final class FindIdView: BaseView {
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.inputPadding)
         }
         postButton.snp.makeConstraints { make in
-            make.leading.equalTo(phoneNumberContainerView.snp.trailing).offset(LayoutConstants.inputSpacing)
             make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
+            make.width.equalTo(LayoutConstants.buttonWidth)
             make.height.equalTo(LayoutConstants.buttonHeight)
             make.centerY.equalTo(phoneNumberContainerView)
         }
@@ -138,6 +141,7 @@ final class FindIdView: BaseView {
     
     override func configure() {
         verificationNumberContainerView.isHidden = true
+        postButton.isEnabled = false
         invaildPhoneNumberLabel.isHidden = true
         invaildVerificationNumberLabel.isHidden = true
         nextButton.isEnabled = false
@@ -152,7 +156,7 @@ private enum LayoutConstants {
     static let nextPageIconSize: CGFloat = 6
     static let pageIndicatorCornerRadius: CGFloat = 4
     
-    static let titleTopOffset: CGFloat = 16
+    static let titleTopOffset: CGFloat = 44
     static let subtitleSpacing: CGFloat = 4
     static let sectionSpacing: CGFloat = 70
     
@@ -164,10 +168,11 @@ private enum LayoutConstants {
     static let phoneInputWidth: CGFloat = 260
     
     static let buttonSpacing: CGFloat = 8
+    static let buttonWidth: CGFloat = 108
     static let buttonHeight: CGFloat = 48
     static let buttonBottomSpacing: CGFloat = 16
     
-    static let horizontalInset: CGFloat = 16
+    static let horizontalInset: CGFloat = 24
     static let iconSpacing: CGFloat = 8
     static let iconSize: CGFloat = 24
 }

@@ -1,12 +1,12 @@
 import UIKit
 import TDCore
 
-protocol SignUpDelegate: AnyObject {
-    func didSignInButtonTapped(_ signUpViewController: SignUpViewController)
-    func didSignUpButtonTapped(_ signUpViewController: SignUpViewController)
+protocol AuthDelegate: AnyObject {
+    func didSignInButtonTapped()
+    func didSignUpButtonTapped()
 }
 
-final class SignUpCoordinator: Coordinator {
+final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -21,29 +21,35 @@ final class SignUpCoordinator: Coordinator {
     }
 
     func start() {
-        let signUpViewController = SignUpViewController()
+        let signUpViewController = AuthViewController()
         signUpViewController.coordinator = self
         navigationController.pushViewController(signUpViewController, animated: false)
     }
 }
 
 // MARK: - Coordinator Finish Delegate
-extension SignUpCoordinator: CoordinatorFinishDelegate {
+extension AuthCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }
 
 // MARK: - SignUp Delegate
-extension SignUpCoordinator: SignUpDelegate {
-    func didSignInButtonTapped(_ signUpViewController: SignUpViewController) {
+extension AuthCoordinator: AuthDelegate {
+    func didSignInButtonTapped() {
         let signInCoordinator = SignInCoordinator(navigationController: navigationController, injector: injector)
         signInCoordinator.finishDelegate = self
         childCoordinators.append(signInCoordinator)
         signInCoordinator.start()
     }
     
-    func didSignUpButtonTapped(_ signUpViewController: SignUpViewController) {
-        
+    func didSignUpButtonTapped() {
+        let phoneVerificationCoordinator = PhoneVerificationCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        phoneVerificationCoordinator.finishDelegate = self
+        childCoordinators.append(phoneVerificationCoordinator)
+        phoneVerificationCoordinator.start()
     }
 }

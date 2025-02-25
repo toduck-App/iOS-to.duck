@@ -3,7 +3,7 @@ import SnapKit
 import TDCore
 import TDDesign
 
-final class SignUpView: BaseView {
+final class AuthView: BaseView {
     let signInButton = TDBaseButton(title: "Sign In")
     let signUpButton = TDBaseButton(title: "Sign Up")
     
@@ -26,4 +26,3 @@ final class SignUpView: BaseView {
         }
     }
 }
-

@@ -24,7 +24,7 @@ final class SignInCoordinator: Coordinator {
         let signInViewModel = SignInViewModel()
         let signInViewController = SignInViewController(viewModel: signInViewModel)
         signInViewController.coordinator = self
-        navigationController.pushTDViewController(signInViewController, animated: false)
+        navigationController.pushTDViewController(signInViewController, animated: true)
     }
 }
 
