@@ -39,6 +39,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     
     // MARK: - Setup & Configuration
     override func configure() {
+        layoutView.backgroundColor = TDColor.baseWhite
         layoutView.saveButton.isUserInteractionEnabled = false
         setupActions()
         setupCollectionView()
