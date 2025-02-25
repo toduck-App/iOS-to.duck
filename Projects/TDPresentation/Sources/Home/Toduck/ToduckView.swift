@@ -43,28 +43,28 @@ final class ToduckView: BaseView {
         }
         
         scheduleContainerView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().offset(-24)
-            make.height.equalTo(200)
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.containerHorizontalInset)
+            make.bottom.equalToSuperview().offset(-LayoutConstants.containerBottomOffset)
+            make.height.equalTo(LayoutConstants.containerHeight)
         }
         
         scheduleSegmentedControl.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(12)
-            make.leading.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(LayoutConstants.segmentedControlTopOffset)
+            make.leading.equalToSuperview().offset(LayoutConstants.segmentedControlLeadingOffset)
             make.width.equalTo(LayoutConstants.segmentedControlWidth)
             make.height.equalTo(LayoutConstants.segmentedControlHeight)
         }
         
         scheduleCollectionView.snp.makeConstraints { make in
             make.top.equalTo(scheduleSegmentedControl.snp.bottom)
-            make.leading.trailing.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview().offset(-8)
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.collectionViewHorizontalInset)
+            make.bottom.equalToSuperview().offset(-LayoutConstants.collectionViewBottomOffset)
         }
     }
     
     override func configure() {
         scheduleContainerView.backgroundColor = .white
-        scheduleContainerView.layer.cornerRadius = 16
+        scheduleContainerView.layer.cornerRadius = LayoutConstants.containerCornerRadius
         setupscheduleSegmentedControl()
     }
     
@@ -81,13 +81,18 @@ final class ToduckView: BaseView {
 // MARK: - Constants
 private extension ToduckView {
     enum LayoutConstants {
-        static let segmentedControlBottomOffset: CGFloat = 180
-        static let segmentedControlLeadingOffset: CGFloat = 36
+        static let containerHorizontalInset: CGFloat = 16
+        static let containerBottomOffset: CGFloat = 24
+        static let containerHeight: CGFloat = 200
+        static let containerCornerRadius: CGFloat = 16
+        
+        static let segmentedControlTopOffset: CGFloat = 12
+        static let segmentedControlLeadingOffset: CGFloat = 16
         static let segmentedControlWidth: CGFloat = 160
         static let segmentedControlHeight: CGFloat = 40
         
-        static let collectionViewTopOffset: CGFloat = 16
-        static let collectionViewBottomOffset: CGFloat = 48
+        static let collectionViewHorizontalInset: CGFloat = 8
+        static let collectionViewBottomOffset: CGFloat = 8
         static let collectionViewSpacing: CGFloat = 10
     }
 }
