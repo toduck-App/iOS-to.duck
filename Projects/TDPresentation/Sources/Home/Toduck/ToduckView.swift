@@ -16,8 +16,8 @@ final class ToduckView: BaseView {
         $0.play()
     }
     
+    let scheduleContainerView = UIView()
     let scheduleSegmentedControl = ScheduleSegmentedControl(items: ["현재 일정", "남은 일정"])
-    
     let scheduleCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -32,8 +32,9 @@ final class ToduckView: BaseView {
     // MARK: - Common Methods
     override func addview() {
         addSubview(lottieView)
-        addSubview(scheduleSegmentedControl)
-        addSubview(scheduleCollectionView)
+        addSubview(scheduleContainerView)
+        scheduleContainerView.addSubview(scheduleSegmentedControl)
+        scheduleContainerView.addSubview(scheduleCollectionView)
     }
     
     override func layout() {
@@ -41,23 +42,39 @@ final class ToduckView: BaseView {
             make.edges.equalToSuperview()
         }
         
+        scheduleContainerView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().offset(-24)
+            make.height.equalTo(200)
+        }
+        
         scheduleSegmentedControl.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-LayoutConstants.segmentedControlBottomOffset)
-            make.leading.equalToSuperview().offset(LayoutConstants.segmentedControlLeadingOffset)
+            make.top.equalToSuperview().offset(12)
+            make.leading.equalToSuperview().offset(16)
             make.width.equalTo(LayoutConstants.segmentedControlWidth)
             make.height.equalTo(LayoutConstants.segmentedControlHeight)
         }
         
         scheduleCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(scheduleSegmentedControl.snp.bottom).offset(LayoutConstants.collectionViewTopOffset)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-LayoutConstants.collectionViewBottomOffset)
+            make.top.equalTo(scheduleSegmentedControl.snp.bottom)
+            make.leading.trailing.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().offset(-8)
         }
     }
     
     override func configure() {
+        scheduleContainerView.backgroundColor = .white
+        scheduleContainerView.layer.cornerRadius = 16
+        setupscheduleSegmentedControl()
+    }
+    
+    private func setupscheduleSegmentedControl() {
         scheduleSegmentedControl.selectedSegmentIndex = 0
         scheduleSegmentedControl.backgroundColor = .clear
+        
+        scheduleSegmentedControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
+        scheduleSegmentedControl.setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
+        scheduleSegmentedControl.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
     }
 }
 
