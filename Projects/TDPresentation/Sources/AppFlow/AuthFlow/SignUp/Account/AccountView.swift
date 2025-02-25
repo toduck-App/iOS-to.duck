@@ -255,6 +255,7 @@ final class AccountView: BaseView {
     }
     
     override func configure() {
+        backgroundColor = TDColor.baseWhite
         invaildPasswordLabel.isHidden = true
         invaildVerifyPasswordLabel.isHidden = true
         nextButton.isEnabled = false

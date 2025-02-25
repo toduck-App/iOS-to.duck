@@ -232,6 +232,7 @@ final class PhoneVerificationView: BaseView {
     }
     
     override func configure() {
+        backgroundColor = TDColor.baseWhite
         verificationNumberContainerView.isHidden = true
         invaildPhoneNumberLabel.isHidden = true
         invaildVerificationNumberLabel.isHidden = true
