@@ -16,8 +16,28 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        let tabBarCoordinator = MainTabBarCoordinator(navigationController: navigationController, injector: injector)
+        if let _ = UserDefaults.standard.string(forKey: "USER_NAME") {
+            startTabBarFlow()
+        } else {
+            startSignUpFlow()
+        }
+    }
+    
+    private func startTabBarFlow() {
+        let tabBarCoordinator = MainTabBarCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
         tabBarCoordinator.start()
         childCoordinators.append(tabBarCoordinator)
+    }
+    
+    private func startSignUpFlow() {
+        let signUpCoordinator = SignUpCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        signUpCoordinator.start()
+        childCoordinators.append(signUpCoordinator)
     }
 }
