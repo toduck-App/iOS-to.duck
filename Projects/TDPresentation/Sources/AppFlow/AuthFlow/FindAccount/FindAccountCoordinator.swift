@@ -1,7 +1,7 @@
 import UIKit
 import TDCore
 
-final class AccountCoordinator: Coordinator {
+final class FindAccountCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -16,14 +16,14 @@ final class AccountCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = AccountViewModel()
-        let accountViewController = AccountViewController(viewModel: viewModel)
-        navigationController.pushTDViewController(accountViewController, animated: true)
+        let findAccountViewController = FindAccountViewController()
+        findAccountViewController.coordinator = self
+        navigationController.pushTDViewController(findAccountViewController, animated: false)
     }
 }
 
 // MARK: - Coordinator Finish Delegate
-extension AccountCoordinator: CoordinatorFinishDelegate {
+extension FindAccountCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
