@@ -1,11 +1,11 @@
 import UIKit
 import TDCore
 
-protocol SignUpDelegate: AnyObject {
-    func didSignUpButtonTapped(_ signUpViewController: SignUpViewController)
+protocol AuthDelegate: AnyObject {
+    func didSignUpButtonTapped(_ signUpViewController: AuthViewController)
 }
 
-final class SignUpCoordinator: Coordinator {
+final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -20,21 +20,21 @@ final class SignUpCoordinator: Coordinator {
     }
 
     func start() {
-        let signUpViewController = SignUpViewController()
+        let signUpViewController = AuthViewController()
         signUpViewController.coordinator = self
         navigationController.pushViewController(signUpViewController, animated: false)
     }
 }
 
 // MARK: - Coordinator Finish Delegate
-extension SignUpCoordinator: CoordinatorFinishDelegate {
+extension AuthCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }
 
-extension SignUpCoordinator: SignUpDelegate {
-    func didSignUpButtonTapped(_ signUpViewController: SignUpViewController) {
+extension AuthCoordinator: AuthDelegate {
+    func didSignUpButtonTapped(_ signUpViewController: AuthViewController) {
         let phoneVerificationCoordinator = PhoneVerificationCoordinator(
             navigationController: navigationController,
             injector: injector

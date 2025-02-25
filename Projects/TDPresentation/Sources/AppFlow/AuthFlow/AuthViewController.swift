@@ -3,8 +3,8 @@ import UIKit
 import TDCore
 import TDDesign
 
-final class SignUpViewController: BaseViewController<SignUpView> {
-    weak var coordinator: SignUpCoordinator?
+final class AuthViewController: BaseViewController<AuthView> {
+    weak var coordinator: AuthCoordinator?
     
     override func configure() {
         layoutView.signUpButton.addAction(UIAction { [weak self] _ in

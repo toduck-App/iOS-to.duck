@@ -3,7 +3,7 @@ import SnapKit
 import TDCore
 import TDDesign
 
-final class SignUpView: BaseView {
+final class AuthView: BaseView {
     let signUpButton = TDBaseButton(title: "Sign Up")
     
     override func addview() {

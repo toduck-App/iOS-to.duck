@@ -16,7 +16,7 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController, injector: injector)
+        let tabBarCoordinator = MainTabBarCoordinator(navigationController: navigationController, injector: injector)
         tabBarCoordinator.start()
         childCoordinators.append(tabBarCoordinator)
     }
