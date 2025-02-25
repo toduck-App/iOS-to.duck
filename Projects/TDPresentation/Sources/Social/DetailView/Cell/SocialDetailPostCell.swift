@@ -62,7 +62,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
             titleLabel.isHidden = true
         }
         contentLabel.setText(item.contentText)
-        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount, shareCount: item.shareCount)
+        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount)
         configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)
@@ -104,14 +104,8 @@ private extension SocialDetailPostCell {
     }
     
     func setupConstraints() {
-        contentView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.bottom.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview().inset(24)
-        }
-        
         avatarView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.top.leading.equalToSuperview().offset(20)
             make.size.equalTo(36)
         }
         
@@ -131,9 +125,10 @@ private extension SocialDetailPostCell {
         }
         
         verticalStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
+            make.leading.equalTo(avatarView.snp.leading)
+            make.trailing.equalToSuperview().offset(-20)
             make.top.equalTo(avatarView.snp.bottom).offset(10)
-            make.bottom.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
 }
@@ -162,7 +157,7 @@ extension SocialDetailPostCell {
     
     private func configureImageList(with imageList: [String]?) {
         if let imageList {
-            bodyStackView.addArrangedSubview(SocialImageListView(with: imageList))
+            bodyStackView.addArrangedSubview(SocialImageListView(style: .scroll, images: imageList))
         }
     }
 }

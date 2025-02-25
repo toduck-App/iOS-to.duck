@@ -4,6 +4,7 @@ public struct Comment: Identifiable {
     public let id: UUID
     public let user: User
     public let content: String
+    public let imageURL: URL?
     public let timestamp: Date
     public var isLike: Bool
     public var likeCount: Int
@@ -13,6 +14,7 @@ public struct Comment: Identifiable {
         id: UUID,
         user: User,
         content: String,
+        imageURL: URL? = nil,
         timestamp: Date,
         isLike: Bool,
         likeCount: Int?,
@@ -21,6 +23,7 @@ public struct Comment: Identifiable {
         self.id = id
         self.user = user
         self.content = content
+        self.imageURL = imageURL
         self.timestamp = timestamp
         self.isLike = isLike
         self.likeCount = likeCount ?? 0
@@ -66,6 +69,7 @@ public extension Comment {
                 content: """
                 커피를 끊기가 힘들어서 ㅜㅜ 그래도 오늘부터 노력해봐야겠어요!
                 """,
+                imageURL: URL(string: "https://picsum.photos/250/250"),
                 timestamp: Date(),
                 isLike: true,
                 likeCount: 1,

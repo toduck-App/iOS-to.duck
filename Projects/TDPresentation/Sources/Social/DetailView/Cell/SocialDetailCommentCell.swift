@@ -47,7 +47,6 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.spacing = 14
         $0.alignment = .fill
         $0.distribution = .fill
-        $0.isLayoutMarginsRelativeArrangement = true
     }
     
     // MARK: - Init
@@ -65,6 +64,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
     // MARK: - Configure
     
     func configure(with item: Comment) {
+        setupUI()
         headerView.configure(
             titleBadge: item.user.title,
             nickname: item.user.name,
@@ -74,11 +74,11 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         footerView.configure(
             isLike: item.isLike,
             likeCount: item.likeCount,
-            commentCount: item.reply.count,
-            shareCount: nil
+            commentCount: item.reply.count
         )
         configureAction(item)
         configureUserImage(with: item.user.icon)
+        configureCommentImage(with: item.imageURL)
         configureReplies(item.reply)
     }
     
@@ -102,7 +102,7 @@ private extension SocialDetailCommentCell {
     }
     
     func setupLayout() {
-        addSubview(containerView)
+        contentView.addSubview(containerView)
         containerView.addSubview(avatarView)
         containerView.addSubview(verticalStackView)
         bodyStackView.addArrangedSubview(contentLabel)
@@ -191,6 +191,11 @@ private extension SocialDetailCommentCell {
         }
     }
     
+    func configureCommentImage(with imageURL: URL?) {
+        guard let imageURL else { return }
+        bodyStackView.addArrangedSubview(SocialImageListView(style: .scroll, images: [imageURL.absoluteString]))
+    }
+    
     func createReplyView(_ comment: Comment) -> UIView {
         let replyContainer = UIView()
         let replyAvatar = buildReplyAvatar(comment)
@@ -203,8 +208,13 @@ private extension SocialDetailCommentCell {
             $0.spacing = 14
             $0.addArrangedSubview(replyHeader)
             $0.addArrangedSubview(replyContent)
-            $0.addArrangedSubview(replyFooter)
         }
+        
+        if let imageURL = comment.imageURL {
+            stackView.addArrangedSubview(SocialImageListView(style: .scroll, images: [imageURL.absoluteString]))
+        }
+        
+        stackView.addArrangedSubview(replyFooter)
         
         replyContainer.addSubview(replyAvatar)
         replyContainer.addSubview(stackView)
@@ -214,6 +224,7 @@ private extension SocialDetailCommentCell {
         
         return replyContainer
     }
+
     
     // MARK: 대댓글 - Subview 생성 함수들
     
@@ -259,8 +270,7 @@ private extension SocialDetailCommentCell {
         let footer = SocialFooterView(style: .compact).then {
             $0.configure(isLike: comment.isLike,
                          likeCount: comment.likeCount,
-                         commentCount: nil,
-                         shareCount: nil)
+                         commentCount: nil)
         }.then {
             $0.onLikeButtonTapped = { [weak self] in
                 guard let self else { return }

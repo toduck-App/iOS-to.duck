@@ -15,7 +15,7 @@ public protocol CommentRepository {
     func fetchCommentList(postID: Post.ID) async throws -> [Comment]?
     func fetchCommentList(commentID: Comment.ID) async throws -> [Comment]?
     func fetchUserCommentList(userID: User.ID) async throws -> [Comment]?
-    func createComment(comment: Comment) async throws -> Bool
+    func createComment(comment: NewComment) async throws -> Bool
     func updateComment(comment: Comment) async throws -> Bool
     func deleteComment(commentID: Comment.ID) async throws -> Bool
 }
