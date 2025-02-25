@@ -45,23 +45,12 @@ public final class TDPhotoPickerController: UIViewController, UICollectionViewDe
     public init(maximumSelectablePhotos: Int) {
         self.maximumSelectablePhotos = maximumSelectablePhotos
         super.init(nibName: nil, bundle: nil)
+        hidesBottomBarWhenPushed = true
     }
 
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Lifecycle
-
-    override public func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-    }
-
-    override public func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        tabBarController?.tabBar.isHidden = false
     }
 
     override public func viewDidLoad() {
