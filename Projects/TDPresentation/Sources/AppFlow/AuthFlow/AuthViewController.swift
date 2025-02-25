@@ -8,8 +8,7 @@ final class AuthViewController: BaseViewController<AuthView> {
     
     override func configure() {
         layoutView.signUpButton.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            self.coordinator?.didSignUpButtonTapped(self)
+            self?.coordinator?.didSignUpButtonTapped()
         }, for: .touchUpInside)
     }
 }
