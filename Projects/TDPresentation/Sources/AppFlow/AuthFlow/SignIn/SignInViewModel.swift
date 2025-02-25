@@ -19,7 +19,7 @@ final class SignInViewModel: BaseViewModel {
             case .didTapSignIn:
                 self?.output.send(.validSignIn)
             }
-        }
+        }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
