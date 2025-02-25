@@ -1,5 +1,6 @@
 import SnapKit
 import TDDesign
+import Then
 import UIKit
 
 final class SocialDetailView: BaseView, UITextViewDelegate {
@@ -11,114 +12,136 @@ final class SocialDetailView: BaseView, UITextViewDelegate {
         $0.bounces = false
         $0.isUserInteractionEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
+        $0.keyboardDismissMode = .onDrag
     }
-
-    private let bottomContainerView = UIView().then {
-        $0.backgroundColor = TDColor.baseWhite
-        $0.layer.cornerRadius = 14
-        $0.layer.shadowOffset = CGSize(width: 0, height: -2)
-        $0.layer.shadowColor = TDColor.Neutral.neutral200.cgColor
-        $0.layer.shadowOpacity = 1
-        $0.layer.shadowRadius = 14
+    
+    let commentStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.distribution = .fill
+        $0.spacing = 0
     }
-
-    private let profileImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 18
-        $0.image = TDImage.Profile.medium
-    }
-
-    private let commentTextView = UITextView().then {
-        $0.backgroundColor = TDColor.baseWhite
-        $0.text = ""
-        $0.textColor = TDColor.Neutral.neutral900
-        $0.font = TDFont.mediumBody2.font
-        $0.isScrollEnabled = false
-        $0.textContainerInset = UIEdgeInsets(top: 11, left: 16, bottom: 11, right: 0)
-        $0.layer.masksToBounds = true
-    }
-
-    private let placeholderLabel = UILabel().then {
-        $0.text = "댓글을 남겨주세요"
-        $0.textColor = TDColor.Neutral.neutral500
-        $0.font = TDFont.mediumBody2.font
-    }
-
+    
+    let commentImageView = CommentImageView()
+    let commentReplyView = CommentReplyForm()
+    let commentInputForm = CommentInputForm()
+    var commentInputFormBottomConstraint: Constraint?
+    
     override func addview() {
         addSubview(detailCollectionView)
-        addSubview(bottomContainerView)
-        bottomContainerView.addSubview(profileImageView)
-        bottomContainerView.addSubview(commentTextView)
-        commentTextView.addSubview(placeholderLabel)
+        addSubview(commentStackView)
+        
+        commentStackView.addArrangedSubview(commentImageView)
+        commentStackView.addArrangedSubview(commentReplyView)
+        commentStackView.addArrangedSubview(commentInputForm)
+        
+        commentImageView.isHidden = true
+        commentReplyView.isHidden = true
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow(_:)),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide(_:)),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
     }
-
+    
     override func configure() {
         backgroundColor = TDColor.baseWhite
         detailCollectionView.register(with: SocialDetailPostCell.self)
         detailCollectionView.register(with: SocialDetailCommentCell.self)
-
-        commentTextView.delegate = self
+        commentImageView.onRemove = { [weak self] in
+            self?.removeCommentInputImage()
+        }
+        commentReplyView.onRemove = { [weak self] in
+            self?.removeReplyInputForm()
+        }
     }
-
+    
     override func layout() {
         detailCollectionView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(bottomContainerView.snp.top)
+            make.bottom.equalTo(commentInputForm.snp.top)
         }
-
-        bottomContainerView.snp.makeConstraints { make in
+        
+        commentStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.height.equalTo(76)
+            commentInputFormBottomConstraint = make.bottom.equalToSuperview().offset(-20).constraint
         }
-
-        profileImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(10)
-            make.width.height.equalTo(36)
+        
+        commentReplyView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(48)
         }
-
-        commentTextView.snp.makeConstraints { make in
-            make.leading.equalTo(profileImageView.snp.trailing)
-            make.top.equalToSuperview().inset(10)
-            make.trailing.equalToSuperview().inset(8)
-        }
-
-        placeholderLabel.snp.makeConstraints { make in
-            make.top.equalTo(commentTextView).inset(commentTextView.textContainerInset.top)
-            make.leading.equalTo(commentTextView).inset(commentTextView.textContainerInset.left)
+        
+        commentImageView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(142)
         }
     }
-
-    func textViewDidChange(_ textView: UITextView) {
-        placeholderLabel.isHidden = !textView.text.isEmpty
+    
+    func showCommentInputImage(with data: Data) {
+        commentImageView.configure(with: data)
+        commentImageView.isHidden = false
     }
-
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        placeholderLabel.isHidden = !textView.text.isEmpty
+    
+    func removeCommentInputImage() {
+        commentImageView.isHidden = true
     }
-
-    func textViewDidEndEditing(_ textView: UITextView) {
-        placeholderLabel.isHidden = !textView.text.isEmpty
+    
+    func showReplyInputForm(name: String) {
+        if !commentReplyView.isHidden {
+            removeReplyInputForm()
+        }
+        commentReplyView.configure(userName: name)
+        commentReplyView.isHidden = false
     }
-}
-
-private extension SocialDetailView {
-    func makeCollectionViewLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(1.0)
-        )
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(1.0)
-        )
-
-        return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
-            itemSize: itemSize,
-            groupSize: groupSize
-        )
+    
+    func removeReplyInputForm() {
+        commentReplyView.isHidden = true
+    }
+    
+    func clearText() {
+        commentInputForm.clearText()
+    }
+    
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt else { return }
+        let options = UIView.AnimationOptions(rawValue: curveValue << 16)
+        let keyboardHeight = keyboardFrame.height
+        commentInputFormBottomConstraint?.update(offset: -keyboardHeight)
+        UIView.animate(withDuration: duration, delay: 0, options: options) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt else { return }
+        let options = UIView.AnimationOptions(rawValue: curveValue << 16)
+        commentInputFormBottomConstraint?.update(offset: -20)
+        UIView.animate(withDuration: duration, delay: 0, options: options) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    private func makeCollectionViewLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                              heightDimension: .estimated(1))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                               heightDimension: .estimated(1))
+        return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(itemSize: itemSize,
+                                                                                  groupSize: groupSize)
     }
 }
