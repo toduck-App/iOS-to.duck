@@ -141,7 +141,6 @@ final class FindIdView: BaseView {
     
     override func configure() {
         verificationNumberContainerView.isHidden = true
-        postButton.isEnabled = false
         invaildPhoneNumberLabel.isHidden = true
         invaildVerificationNumberLabel.isHidden = true
         nextButton.isEnabled = false
