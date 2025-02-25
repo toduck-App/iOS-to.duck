@@ -2,6 +2,7 @@ import UIKit
 import TDCore
 
 protocol AuthDelegate: AnyObject {
+    func didSignInButtonTapped()
     func didSignUpButtonTapped()
 }
 
@@ -33,7 +34,15 @@ extension AuthCoordinator: CoordinatorFinishDelegate {
     }
 }
 
+// MARK: - SignUp Delegate
 extension AuthCoordinator: AuthDelegate {
+    func didSignInButtonTapped() {
+        let signInCoordinator = SignInCoordinator(navigationController: navigationController, injector: injector)
+        signInCoordinator.finishDelegate = self
+        childCoordinators.append(signInCoordinator)
+        signInCoordinator.start()
+    }
+    
     func didSignUpButtonTapped() {
         let phoneVerificationCoordinator = PhoneVerificationCoordinator(
             navigationController: navigationController,

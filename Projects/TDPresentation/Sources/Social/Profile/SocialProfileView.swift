@@ -29,7 +29,7 @@ final class SocialProfileView: BaseView {
     private(set) var segmentedControl = TDSegmentedControl(
         items: ["루틴", "작성한 글"]
     ).then {
-        $0.indicatorColor = TDColor.Primary.primary500
+        $0.indicatorForeGroundColor = TDColor.Primary.primary500
         $0.selectedSegmentTextColor = TDColor.Primary.primary500
     }
     
