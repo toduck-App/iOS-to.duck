@@ -67,7 +67,9 @@ final class SheetTimeView: BaseView {
         layout.minimumInteritemSpacing = LayoutConstants.collectionViewSpacing
         layout.minimumLineSpacing = LayoutConstants.collectionViewSpacing
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
-    }()
+    }().then {
+        $0.backgroundColor = .white
+    }
     
     private let minuteContainerView = UIView()
     private let minLabel = TDLabel(
@@ -80,7 +82,9 @@ final class SheetTimeView: BaseView {
         layout.minimumInteritemSpacing = LayoutConstants.collectionViewSpacing
         layout.minimumLineSpacing = LayoutConstants.collectionViewSpacing
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
-    }()
+    }().then {
+        $0.backgroundColor = .white
+    }
     
     private let buttonHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal

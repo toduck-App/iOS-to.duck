@@ -154,7 +154,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             let displayTime = displayFormatter.string(from: selectedDate)
             eventMakorView.timeForm.updateDescription(displayTime)
             input.send(.selectTime(isAllDay, selectedDate))
-            print("\(selectedDate) 선택된 시간: \(displayTime)")
+            TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
         }
     }
 }
