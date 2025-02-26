@@ -86,7 +86,7 @@ final class AuthView: BaseView {
             $0.centerX.equalToSuperview()
         }
         toduckView.snp.makeConstraints {
-            $0.top.equalTo(toduckTitleLabel.snp.bottom).offset(Layout.viewTopOffset)
+            $0.top.equalTo(toduckTitleLabel.snp.bottom)
             $0.centerX.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
@@ -157,11 +157,10 @@ final class AuthView: BaseView {
 
 extension AuthView {
     enum Layout {
-        static let topOffset: CGFloat = 80
+        static let topOffset: CGFloat = 60
         static let logoWidth: CGFloat = 160
         static let logoHeight: CGFloat = 40
         static let titleTopOffset: CGFloat = 12
-        static let viewTopOffset: CGFloat = 20
         static let descriptionTopOffset: CGFloat = 24
         static let descriptionInset: CGFloat = 16
         static let lineSpacing: CGFloat = 12
