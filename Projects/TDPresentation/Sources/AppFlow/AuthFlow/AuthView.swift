@@ -15,9 +15,7 @@ final class AuthView: BaseView {
     let mainButton = TDBaseButton(title: "메인 홈으로 가기")
 
     /// 토덕 로고
-    let toduckLogoView = UIImageView(image: TDImage.toduckLogo.withRenderingMode(.alwaysTemplate)).then {
-        $0.tintColor = TDColor.Primary.primary500
-    }
+    let toduckLogoView = UIImageView(image: TDImage.toduckPrimaryLogo)
     let toduckTitleLabel = TDLabel(
         labelText: "ADHD 토덕과 함께 극복해요",
         toduckFont: TDFont.mediumBody3,
