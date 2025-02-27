@@ -2,7 +2,7 @@ public protocol AppleLoginUseCase {
     func execute(oauthId: String, idToken: String) async throws
 }
 
-public final class AppleLoginUseCaseImpl: AppleLoginUseCase {
+public struct AppleLoginUseCaseImpl: AppleLoginUseCase {
     private let repository: AuthRepository
 
     public init(repository: AuthRepository) {

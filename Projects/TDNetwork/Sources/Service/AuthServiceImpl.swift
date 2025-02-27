@@ -1,7 +1,7 @@
 import TDCore
 import TDData
 
-public final class AuthServiceImpl: AuthService {
+public struct AuthServiceImpl: AuthService {
     private let provider: MFProvider<AuthAPI>
     
     public init(provider: MFProvider<AuthAPI> = MFProvider<AuthAPI>()) {

@@ -1,7 +1,7 @@
 import TDCore
 import TDDomain
 
-public final class AuthRepositoryImpl: AuthRepository {
+public struct AuthRepositoryImpl: AuthRepository {
     private let service: AuthService
     
     public init(service: AuthService) {
