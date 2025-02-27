@@ -12,6 +12,7 @@ let project = Project.project(
             dependencies: [
                 .core(),
                 .domain(),
+                .data()
             ]
         ),
         Target.target(
