@@ -1,10 +1,3 @@
-//
-//  TDFont.swift
-//  toduck
-//
-//  Created by 박효준 on 7/9/24.
-//
-
 import UIKit
 
 public enum TDFont {

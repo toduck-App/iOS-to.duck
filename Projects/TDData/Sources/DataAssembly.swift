@@ -1,10 +1,3 @@
-//
-//  DataAssembly.swift
-//  TDData
-//
-//  Created by 박효준 on 10/21/24.
-//
-
 import TDDomain
 import Swinject
 

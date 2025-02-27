@@ -1,10 +1,3 @@
-//
-//  TDImage.swift
-//  toduck
-//
-//  Created by 박효준 on 7/11/24.
-//
-
 import Foundation
 import UIKit
 

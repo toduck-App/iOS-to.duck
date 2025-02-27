@@ -1,10 +1,3 @@
-//
-//  SocialPostRepository.swift
-//  toduck
-//
-//  Created by 신효성 on 6/13/24.
-//
-
 import TDDomain
 import Foundation
 

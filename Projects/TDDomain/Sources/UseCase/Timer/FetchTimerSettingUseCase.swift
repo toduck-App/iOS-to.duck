@@ -1,10 +1,3 @@
-//
-//  FetchTimerSettingUseCase.swift
-//  TDDomain
-//
-//  Created by 신효성 on 12/30/24.
-//
-
 public protocol FetchTimerSettingUseCase {
     func execute() -> TDTimerSetting
 }
