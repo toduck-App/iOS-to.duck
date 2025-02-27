@@ -73,8 +73,7 @@ final class AuthViewController: BaseViewController<AuthView> {
                     print("🔹 ID Token: \(idToken ?? "없음")")
                     print("🔹 Authorization Code: \(authCode ?? "없음")")
                 }
-            }
-            .store(in: &cancellables)
+            }.store(in: &cancellables)
     }
 }
 
