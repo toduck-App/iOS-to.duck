@@ -12,6 +12,7 @@ let appTarget = Target.target(
     resources: [
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/**")),
     ],
+    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     dependencies: [
         // Module
         .data(),
