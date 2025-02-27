@@ -1,10 +1,3 @@
-//
-//  DataAssembly.swift
-//  TDData
-//
-//  Created by 박효준 on 10/21/24.
-//
-
 import TDDomain
 import Swinject
 
@@ -12,6 +5,13 @@ public struct DataAssembly: Assembly {
     public init() { }
     
     public func assemble(container: Container) {
+        container.register(AuthRepository.self) { _ in
+            guard let service = container.resolve(AuthService.self) else {
+                fatalError("AuthService is not registered")
+            }
+            return AuthRepositoryImpl(service: service)
+        }.inObjectScope(.container)
+        
         container.register(CommentRepository.self) { _ in
             return CommentRepositoryImpl()
         }.inObjectScope(.container)

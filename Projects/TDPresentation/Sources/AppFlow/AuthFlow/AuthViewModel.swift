@@ -1,4 +1,5 @@
 import Combine
+import TDDomain
 import AuthenticationServices
 import Foundation
 
@@ -13,8 +14,15 @@ final class AuthViewModel: NSObject, BaseViewModel {
         case tokenReceived(idToken: String?, authCode: String?)
     }
     
+    private let appleLoginUseCase: AppleLoginUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
+    init(
+        appleLoginUseCase: AppleLoginUseCase
+    ) {
+        self.appleLoginUseCase = appleLoginUseCase
+    }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
@@ -54,6 +62,9 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
             let idToken = appleIdCredential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
             let authCode = appleIdCredential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
             
+            Task {
+                try await appleLoginUseCase.execute(oauthId: userID, idToken: idToken!)
+            }
             output.send(.tokenReceived(idToken: idToken, authCode: authCode))
             
         default:
