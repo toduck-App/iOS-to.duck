@@ -112,6 +112,9 @@ public final class EventDetailView: UIView {
         changeCheckBoxButtonImage(isFinished: isFinished)
     }
     
+    /// 셀에 데이터를 설정합니다.
+    /// - Parameters:
+    ///  - isHomeToduck: 홈 탭바의 토덕 세그먼트에서 사용하는 셀인지 여부 (체크박스가 안 보여야 함)
     public func configureCell(
         isHomeToduck: Bool = false,
         color: UIColor,
