@@ -287,7 +287,7 @@ private extension TimeSlotTableViewCell {
         static let eventDetailCornerRadius: CGFloat = 8
         static let buttonContainerWidth: CGFloat = 120
         static let buttonContainerTrailing: CGFloat = -16
-        static let buttonPadding: CGFloat = 4
+        static let buttonPadding: CGFloat = 6
         static let buttonWidth: CGFloat = 64
     }
     
