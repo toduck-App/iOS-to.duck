@@ -9,7 +9,13 @@ public enum TDDataError: Error, Equatable {
     case deleteEntityFailure
     case findEntityFailure
     case generalFailure
+    case serverError
     case setUserDefaultFailure
+    
+    /// 로그인
+    case requestLoginFailure
+    case invalidIDToken
+    case notFoundPulbicKey
 }
 
 extension TDDataError: CustomStringConvertible {
@@ -31,8 +37,17 @@ extension TDDataError: CustomStringConvertible {
             "Entity 찾기 실패"
         case .generalFailure:
             "알 수 없는 에러입니다."
+        case .serverError:
+            "서버 에러입니다."
         case .setUserDefaultFailure:
             "UserDefault 설정 실패"
+            
+        case .requestLoginFailure:
+            "로그인 요청 실패"
+        case .invalidIDToken:
+            "유효하지 않은 ID 토큰입니다."
+        case .notFoundPulbicKey:
+            "일치하는 공개키를 찾을 수 없습니다."
         }
     }
 }
