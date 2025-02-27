@@ -13,10 +13,8 @@ public enum AuthAPI {
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
     case registerUser(userDetails: [String: Any]) // 회원가입
     case login(username: String, password: String) // 자체 로그인
-    case loginApple(token: String) // 애플 로그인
-    case loginKakao(token: String) // 카카오 로그인
-    case loginNaver(token: String) // 네이버 로그인
-    case loginGoogle(token: String) // 구글 로그인
+    case loginApple(oauthId: String, idToken: String) // 애플 로그인
+    case loginKakao(oauthId: String, idToken: String) // 카카오 로그인
     case findIdPassword(phoneNumber: String) // 비밀번호 찾기
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
     case saveFCMToken(userId: Int, fcmToken:String) // FCM 토큰 저장
@@ -44,10 +42,6 @@ extension AuthAPI: MFTarget {
             return "/auth/oauth/apple"
         case .loginKakao:
             return "/auth/oauth/kakao"
-        case .loginNaver:
-            return "/auth/oauth/naver"
-        case .loginGoogle:
-            return "/auth/oauth/google"
         case .findIdPassword:
             return "/auth/find-id-password"
         case .refreshToken:
@@ -70,8 +64,6 @@ extension AuthAPI: MFTarget {
              .login,
              .loginApple,
              .loginKakao,
-             .loginNaver,
-             .loginGoogle,
              .findIdPassword,
              .saveFCMToken:
             return .post
@@ -91,8 +83,6 @@ extension AuthAPI: MFTarget {
              .login,
              .loginApple,
              .loginKakao,
-             .loginNaver,
-             .loginGoogle,
              .findIdPassword,
              .saveFCMToken:
             return nil
@@ -128,9 +118,13 @@ extension AuthAPI: MFTarget {
                              "password": password]
             )
             
-        case .loginApple(let token), .loginKakao(let token), .loginNaver(let token), .loginGoogle(let token):
+        case .loginApple(let oauthId, let idToken), .loginKakao(let oauthId, let idToken):
             return .requestParameters(
-                parameters: ["token": token]
+                parameters: [
+                    "oauthId": oauthId,
+                    "idToken": idToken,
+                    "nonce": "nonce"
+                ]
             )
             
         case .findIdPassword(let phoneNumber):
@@ -157,8 +151,6 @@ extension AuthAPI: MFTarget {
              .login,
              .loginApple,
              .loginKakao,
-             .loginNaver,
-             .loginGoogle,
              .findIdPassword:
             let jsonHeaders: MFHeaders = [.contentType("application/json")]
             return jsonHeaders
