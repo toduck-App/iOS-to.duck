@@ -4,6 +4,7 @@ import TDData
 import TDDomain
 import TDPresentation
 import TDStorage
+import TDNetwork
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -26,6 +27,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func assembleDependencies() {
-        DIContainer.shared.assemble([StorageAssembly(), DataAssembly(), DomainAssembly()])
+        DIContainer.shared.assemble([ServiceAssembly(), StorageAssembly(), DataAssembly(), DomainAssembly()])
     }
 }

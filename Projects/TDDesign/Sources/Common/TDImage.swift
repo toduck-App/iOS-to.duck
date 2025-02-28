@@ -3,6 +3,7 @@ import UIKit
 
 public enum TDImage {
     public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
+    public static let toduckPrimaryLogo = TDDesignAsset.Images.toduckPrimaryLogo.image
     public static let alarmMedium = TDDesignAsset.Images.alarmMedium.image
     public static let badMedium = TDDesignAsset.Images.badMedium.image
     public static let chartMedium = TDDesignAsset.Images.chartMedium.image
@@ -42,6 +43,7 @@ public enum TDImage {
     public static let banFillSmall = TDDesignAsset.Images.banFillSmall.image
     public static let reportEmptySmall = TDDesignAsset.Images.reportEmptySmall.image
     public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
+    public static let loginToduck = TDDesignAsset.Images.loginToduck.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image

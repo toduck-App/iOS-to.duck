@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import TDCore
 
 protocol AuthDelegate: AnyObject {
@@ -22,7 +23,9 @@ final class AuthCoordinator: Coordinator {
     }
 
     func start() {
-        let signUpViewController = AuthViewController()
+        let appleLoginUseCase = injector.resolve(AppleLoginUseCase.self)
+        let viewModel = AuthViewModel(appleLoginUseCase: appleLoginUseCase)
+        let signUpViewController = AuthViewController(viewModel: viewModel)
         signUpViewController.coordinator = self
         navigationController.pushViewController(signUpViewController, animated: false)
     }
