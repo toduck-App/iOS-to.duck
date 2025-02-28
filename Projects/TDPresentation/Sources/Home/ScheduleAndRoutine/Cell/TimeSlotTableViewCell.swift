@@ -63,9 +63,17 @@ final class TimeSlotTableViewCell: UITableViewCell {
     }
     
     private func setupCornerRadiusIfNeeded() {
-        guard !didSetCornerRadius, eventDetailView.bounds != .zero else { return }
-        configureCornerRadius()
-        didSetCornerRadius = true
+        if !didSetCornerRadius {
+            // eventDetailView의 bounds가 0이면 다음 runloop에서 재시도
+            if eventDetailView.bounds != .zero {
+                configureCornerRadius()
+                didSetCornerRadius = true
+            } else {
+                DispatchQueue.main.async { [weak self] in                    
+                    self?.setupCornerRadiusIfNeeded()
+                }
+            }
+        }
     }
     
     // MARK: - Configuration
