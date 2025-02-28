@@ -280,8 +280,8 @@ private extension TimeSlotTableViewCell {
         static let cellTopPadding: CGFloat = 6
         static let shadowLeading: CGFloat = 16
         static let shadowTrailing: CGFloat = -16
-        static let shadowOffset = CGSize(width: 4, height: 4)
-        static let shadowRadius: CGFloat = 3
+        static let shadowOffset = CGSize(width: 2, height: 2)
+        static let shadowRadius: CGFloat = 2
         static let shadowOpacity: Float = 0.1
         static let eventDetailInset: CGFloat = 4
         static let eventDetailCornerRadius: CGFloat = 8
@@ -299,12 +299,17 @@ private extension TimeSlotTableViewCell {
 
 // MARK: - UIGestureRecognizer Delegate
 extension TimeSlotTableViewCell {
-    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    override func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         // 수평 스와이프 제스처와 테이블뷰의 수직 스크롤 제스처가 동시에 인식되도록 허용
         return true
     }
     
-    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override func gestureRecognizerShouldBegin(
+        _ gestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         if let panGesture = gestureRecognizer as? UIPanGestureRecognizer {
             let velocity = panGesture.velocity(in: contentView)
             // 수평 이동이 수직 이동보다 클 경우 제스처 인식 (수평 스와이프)
