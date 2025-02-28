@@ -11,7 +11,9 @@ let appTarget = Target.target(
     sources: .sources,
     resources: [
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/**")),
+        .glob(pattern: .relativeToRoot("Projects/toduck/Resources/LaunchScreen.storyboard"))
     ],
+    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     dependencies: [
         // Module
         .data(),

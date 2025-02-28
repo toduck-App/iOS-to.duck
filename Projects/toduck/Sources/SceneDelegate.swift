@@ -12,6 +12,7 @@ import Swinject
 import TDPresentation
 import UIKit
 import TDStorage
+import TDNetwork
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -33,6 +34,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func assembleDependencies() {
-        DIContainer.shared.assemble([StorageAssembly(), DataAssembly(), DomainAssembly()])
+        DIContainer.shared.assemble([ServiceAssembly(), StorageAssembly(), DataAssembly(), DomainAssembly()])
     }
 }
