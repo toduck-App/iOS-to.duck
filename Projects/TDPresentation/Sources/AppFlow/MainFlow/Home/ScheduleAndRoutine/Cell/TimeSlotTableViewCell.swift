@@ -69,7 +69,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
                 configureCornerRadius()
                 didSetCornerRadius = true
             } else {
-                DispatchQueue.main.async { [weak self] in                    
+                DispatchQueue.main.async { [weak self] in
                     self?.setupCornerRadiusIfNeeded()
                 }
             }
