@@ -13,7 +13,7 @@ public struct AuthServiceImpl: AuthService {
         loginId: String,
         password: String
     ) async throws -> LoginUserResponseDTO {
-        let response = try await provider.request(.login(userLoginId: loginId, password: password))
+        let response = try await provider.request(.login(loginId: loginId, password: password))
 
         if let httpResponse = response.httpResponse {
             let statusCode = httpResponse.statusCode
