@@ -13,7 +13,14 @@ public struct AuthRepositoryImpl: AuthRepository {
         password: String
     ) async throws -> Result<Void, TDDataError> {
         TDLogger.debug("Repo: \(loginId), \(password)")
-        return try await service.requestLogin(loginId: loginId, password: password)
+        let result = try await service.requestLogin(loginId: loginId, password: password)
+        
+        switch result {
+        case .success:
+            return .success(())
+        case .failure(let error):
+            return .failure(error)
+        }
     }
     
     public func requestAppleLogin(

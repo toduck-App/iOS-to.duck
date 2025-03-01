@@ -12,25 +12,30 @@ public struct AuthServiceImpl: AuthService {
     public func requestLogin(
         loginId: String,
         password: String
-    ) async throws -> Result<Void, TDDataError> {
+    ) async throws -> Result<LoginUserResponseDTO, TDDataError> {
         let response = try await provider.request(.login(userLoginId: loginId, password: password))
-        
+
         if let httpResponse = response.httpResponse {
-            print("✅ Status Code: \(httpResponse.statusCode)")
-            print("✅ Headers: \(httpResponse.allHeaderFields)")
-        }
-        
-        if let data = response.value as? Data {
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("✅ Response Body: \(jsonString)")
-            }
-        }
-        
-        if let statusCode = response.httpResponse?.statusCode {
+            let statusCode = httpResponse.statusCode
+            let headers = httpResponse.allHeaderFields
+            
             switch statusCode {
-            case 200..<300:
-                TDLogger.info("로그인 성공")
-                return .success(())
+            case 200:
+                let refreshToken = extractRefreshToken(from: headers) ?? ""
+                let refreshTokenExpiredAt = extractRefreshTokenExpiry(from: headers) ?? ""
+
+                do {
+                    let loginResponse = try LoginUserResponseDTO.from(
+                        bodyData: response.value,
+                        refreshToken: refreshToken,
+                        refreshTokenExpiredAt: refreshTokenExpiredAt
+                    )
+                    TDLogger.info("로그인 성공: \(loginResponse)")
+                    return .success(loginResponse)
+                } catch {
+                    TDLogger.error("파싱 오류: \(error.localizedDescription)")
+                    return .failure(.parsingError)
+                }
             case 401:
                 TDLogger.error("[로그인 실패]: 아이디 또는 비밀번호가 잘못됨")
                 return .failure(.invalidIDOrPassword)
@@ -43,6 +48,30 @@ public struct AuthServiceImpl: AuthService {
         }
         
         return .failure(.requestLoginFailure)
+    }
+    
+    private func extractRefreshToken(from headers: [AnyHashable: Any]) -> String? {
+        guard let setCookie = headers["Set-Cookie"] as? String else { return nil }
+
+        let components = setCookie.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+        for component in components {
+            if component.hasPrefix("refreshToken=") {
+                return component.replacingOccurrences(of: "refreshToken=", with: "")
+            }
+        }
+        return nil
+    }
+    
+    private func extractRefreshTokenExpiry(from headers: [AnyHashable: Any]) -> String? {
+        guard let setCookie = headers["Set-Cookie"] as? String else { return nil }
+        
+        let components = setCookie.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+        for component in components {
+            if component.hasPrefix("Expires=") {
+                return component.replacingOccurrences(of: "Expires=", with: "")
+            }
+        }
+        return nil
     }
     
     public func requestAppleLogin(
