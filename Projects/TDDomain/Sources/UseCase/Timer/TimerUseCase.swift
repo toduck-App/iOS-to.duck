@@ -1,9 +1,3 @@
-//
-//  TimerUseCase.swift
-//  TDDomain
-//
-//  Created by 신효성 on 12/30/24.
-//
 import Foundation
 import TDCore
 

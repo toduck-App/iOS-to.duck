@@ -1,10 +1,3 @@
-//
-//  APIConstants.swift
-//  toduck
-//
-//  Created by 승재 on 7/10/24.
-//
-
 import Foundation
 
 public enum APIConstants {

@@ -1,18 +1,11 @@
-//
-//  SceneDelegate.swift
-//  toduck
-//
-//  Created by 승재 on 5/21/24.
-//
-
+import Swinject
 import TDCore
 import TDData
 import TDDomain
-import Swinject
 import TDPresentation
-import UIKit
 import TDStorage
 import TDNetwork
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?

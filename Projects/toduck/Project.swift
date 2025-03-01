@@ -24,10 +24,15 @@ let appTarget = Target.target(
         .storage(),
         .domain()
     ],
-    settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
-    ])
+    settings: .settings(
+        base: [
+            "DEVELOPMENT_LANGUAGE": "ko"
+        ],
+        configurations: [
+            .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
+            .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
+        ]
+    )
 )
 
 // MARK: - Project

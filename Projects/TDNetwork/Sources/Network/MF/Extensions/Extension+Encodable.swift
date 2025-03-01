@@ -1,10 +1,3 @@
-//
-//  Extension+Codable.swift
-//  TDNetwork
-//
-//  Created by 디해 on 1/10/25.
-//
-
 import Foundation
 
 extension Encodable {
