@@ -40,7 +40,6 @@ extension ToduckViewController: UICollectionViewDataSource {
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
         
         let currentSchedule = viewModel.todaySchedules[indexPath.row]
-        cell.eventDetailView.layer.cornerRadius = 16
         cell.eventDetailView.configureCell(
             isHomeToduck: true,
             color: currentSchedule.categoryColor,

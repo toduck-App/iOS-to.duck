@@ -23,7 +23,7 @@ final class RoutineViewModel: BaseViewModel {
 
 extension RoutineViewModel: TimeSlotProvider {
     var timeSlots: [TimeSlot] {
-        return [TimeSlot(timeText: "10:00", events: Routine.dummy)]
+        return [TimeSlot(timeText: "10:00", events: Routine.dummy), TimeSlot(timeText: "11:00", events: Routine.dummy)]
     }
     
     func convertEventToDisplayItem(

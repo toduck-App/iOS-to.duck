@@ -244,7 +244,10 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension ScheduleAndRoutineViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
         guard let provider else { return }
         
