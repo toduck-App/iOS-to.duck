@@ -12,7 +12,7 @@ public struct AuthServiceImpl: AuthService {
     public func requestLogin(
         loginId: String,
         password: String
-    ) async throws -> Result<LoginUserResponseDTO, TDDataError> {
+    ) async throws -> LoginUserResponseDTO {
         let response = try await provider.request(.login(userLoginId: loginId, password: password))
 
         if let httpResponse = response.httpResponse {
@@ -31,23 +31,23 @@ public struct AuthServiceImpl: AuthService {
                         refreshTokenExpiredAt: refreshTokenExpiredAt
                     )
                     TDLogger.info("로그인 성공: \(loginResponse)")
-                    return .success(loginResponse)
+                    return loginResponse
                 } catch {
                     TDLogger.error("파싱 오류: \(error.localizedDescription)")
-                    return .failure(.parsingError)
+                    throw TDDataError.parsingError
                 }
             case 401:
                 TDLogger.error("[로그인 실패]: 아이디 또는 비밀번호가 잘못됨")
-                return .failure(.invalidIDOrPassword)
+                throw TDDataError.invalidIDOrPassword
             case 500..<600:
                 TDLogger.error("[로그인 실패]: 서버 에러")
-                return .failure(.serverError)
+                throw TDDataError.serverError
             default:
-                return .failure(.generalFailure)
+                throw TDDataError.generalFailure
             }
         }
         
-        return .failure(.requestLoginFailure)
+        throw TDDataError.requestLoginFailure
     }
     
     private func extractRefreshToken(from headers: [AnyHashable: Any]) -> String? {

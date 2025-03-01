@@ -1,4 +1,5 @@
 import TDCore
+import Foundation
 import TDDomain
 
 public struct AuthRepositoryImpl: AuthRepository {
@@ -11,15 +12,23 @@ public struct AuthRepositoryImpl: AuthRepository {
     public func requestLogin(
         loginId: String,
         password: String
-    ) async throws -> Result<Void, TDDataError> {
+    ) async throws {
         TDLogger.debug("Repo: \(loginId), \(password)")
-        let result = try await service.requestLogin(loginId: loginId, password: password)
-        
-        switch result {
-        case .success:
-            return .success(())
-        case .failure(let error):
-            return .failure(error)
+        do {
+            let loginUserResponseDTO = try await service.requestLogin(loginId: loginId, password: password)
+
+            async let saveAccess = KeyChainManager.shared.save(string: loginUserResponseDTO.accessToken, account: KeyChainConstant.accessToken.rawValue)
+            async let saveRefresh = KeyChainManager.shared.save(string: loginUserResponseDTO.refreshToken, account: KeyChainConstant.refreshToken.rawValue)
+            async let saveRefreshExpiredAt = KeyChainManager.shared.save(string: loginUserResponseDTO.refreshTokenExpiredAt, account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
+            let saveUserIdData = try JSONEncoder().encode(loginUserResponseDTO.userId)
+            async let saveUserId = KeyChainManager.shared.save(with: saveUserIdData, account: KeyChainConstant.userId.rawValue)
+            
+            _ = try await (saveAccess, saveRefresh, saveRefreshExpiredAt, saveUserId)
+            TDLogger.info("로그인 정보 키체인 저장 완료")
+            
+        } catch {
+            TDLogger.error("로그인 실패: \(error)")
+            throw error // ✅ 실패 시 예외를 다시 던져서 상위 계층(ViewModel)에서 처리할 수 있도록 함
         }
     }
     

@@ -13,6 +13,6 @@ public final class LoginUseCaseImpl: LoginUseCase {
     }
     
     public func execute(loginId: String, password: String) async throws {
-        try await repository.requestLogin(loginId: loginId, password: password).get()
+        try await repository.requestLogin(loginId: loginId, password: password)
     }
 }
