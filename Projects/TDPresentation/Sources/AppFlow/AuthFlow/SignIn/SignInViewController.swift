@@ -55,6 +55,12 @@ final class SignInViewController: BaseViewController<SignInView> {
 // MARK: - UITextFieldDelegate
 extension SignInViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == layoutView.idTextField {
+            input.send(.loginIdChanged(textField.text ?? ""))
+        } else if textField == layoutView.passwordTextField {
+            input.send(.passwordChanged(textField.text ?? ""))
+        }
+        
         validateInputFields()
     }
     
@@ -64,7 +70,11 @@ extension SignInViewController: UITextFieldDelegate {
         let passwordText = layoutView.passwordTextField.text ?? ""
         
         let isIdValid = idText.count >= 5 && idText.count <= 20
+        #if DEBUG
+        let isPasswordValid = passwordText.count >= 4 && passwordText.count <= 16
+        #else
         let isPasswordValid = passwordText.count >= 8 && passwordText.count <= 16
+        #endif
         
         let isFormValid = isIdValid && isPasswordValid
         

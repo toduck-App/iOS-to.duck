@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import TDCore
 
 protocol SignInDelegate: AnyObject {
@@ -21,7 +22,8 @@ final class SignInCoordinator: Coordinator {
     }
 
     func start() {
-        let signInViewModel = SignInViewModel()
+        let loginUseCase = injector.resolve(LoginUseCase.self)
+        let signInViewModel = SignInViewModel(loginUseCase: loginUseCase)
         let signInViewController = SignInViewController(viewModel: signInViewModel)
         signInViewController.coordinator = self
         navigationController.pushTDViewController(signInViewController, animated: true)

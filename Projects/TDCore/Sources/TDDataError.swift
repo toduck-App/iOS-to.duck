@@ -13,6 +13,7 @@ public enum TDDataError: Error, Equatable {
     case setUserDefaultFailure
     
     /// 로그인
+    case invalidIDOrPassword
     case requestLoginFailure
     case invalidIDToken
     case notFoundPulbicKey
@@ -42,6 +43,8 @@ extension TDDataError: CustomStringConvertible {
         case .setUserDefaultFailure:
             "UserDefault 설정 실패"
             
+        case .invalidIDOrPassword:
+            "아이디 또는 비밀번호가 일치하지 않습니다."
         case .requestLoginFailure:
             "로그인 요청 실패"
         case .invalidIDToken:
