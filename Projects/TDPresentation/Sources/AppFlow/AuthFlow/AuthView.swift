@@ -6,12 +6,7 @@ import AuthenticationServices
 
 final class AuthView: BaseView {
     // MARK: - UI Components
-    let onboardingButton = UIButton().then {
-        $0.setTitleColor(TDColor.Primary.primary500, for: .normal)
-        $0.setTitle("둘러보기", for: .normal)
-        $0.titleLabel?.font = TDFont.mediumHeader5.font
-    }
-
+    let backGroundImageView = UIImageView(image: TDImage.loginBackGround)
     let mainButton = TDBaseButton(title: "메인 홈으로 가기")
 
     /// 토덕 로고
@@ -25,26 +20,25 @@ final class AuthView: BaseView {
     let toduckView = UIImageView(image: TDImage.loginToduck)
 
     /// Oauth 로그인
-    private let oauthDescriptionContainerView = UIView()
-    private let horizontalDummyView1 = UIView()
-    private let oauthLoginDescriptionLabel = TDLabel(
-        labelText: "3초만에 간편 가입하기",
-        toduckFont: TDFont.mediumBody3,
-        alignment: .center,
-        toduckColor: TDColor.Primary.primary500
+    let kakaoLoginButton = TDBaseButton(
+        title: "카카오로 로그인",
+        image: TDImage.Logo.kakaoLogo,
+        backgroundColor: TDColor.Oauth.kakaoBackground,
+        foregroundColor: TDColor.Oauth.kakaoForeground,
+        radius: 8,
+        font: TDFont.mediumBody1.font
     )
-    private let horizontalDummyView2 = UIView()
     let appleLoginButton = ASAuthorizationAppleIDButton()
 
     /// 자체 로그인/회원가입
     let signInButton = UIButton().then {
-        $0.setTitleColor(TDColor.Primary.primary500, for: .normal)
+        $0.setTitleColor(TDColor.Neutral.neutral800, for: .normal)
         $0.setTitle("로그인", for: .normal)
         $0.titleLabel?.font = TDFont.mediumHeader5.font
     }
     private let separatorView = UIView()
     let signUpButton = UIButton().then {
-        $0.setTitleColor(TDColor.Primary.primary500, for: .normal)
+        $0.setTitleColor(TDColor.Neutral.neutral800, for: .normal)
         $0.setTitle("회원가입", for: .normal)
         $0.titleLabel?.font = TDFont.mediumHeader5.font
     }
@@ -52,29 +46,25 @@ final class AuthView: BaseView {
     // MARK: - Setup Methods
     override func addview() {
         [
+            backGroundImageView,
             mainButton,
-            onboardingButton,
             toduckLogoView,
             toduckTitleLabel,
             toduckView,
-            oauthDescriptionContainerView,
+            kakaoLoginButton,
             appleLoginButton,
             signInButton,
             separatorView,
             signUpButton
         ].forEach { addSubview($0) }
 
-        oauthDescriptionContainerView.addSubview(horizontalDummyView1)
-        oauthDescriptionContainerView.addSubview(oauthLoginDescriptionLabel)
-        oauthDescriptionContainerView.addSubview(horizontalDummyView2)
     }
 
     override func layout() {
-        onboardingButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide)
-            $0.trailing.equalToSuperview().offset(-Layout.descriptionInset)
+        backGroundImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
-
+        
         toduckLogoView.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(Layout.topOffset)
             $0.centerX.equalToSuperview()
@@ -92,28 +82,14 @@ final class AuthView: BaseView {
         }
 
         /// Oauth 로그인
-        oauthDescriptionContainerView.snp.makeConstraints {
-            $0.top.equalTo(toduckView.snp.bottom).offset(Layout.descriptionTopOffset)
-            $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(Layout.descriptionInset)
-        }
-        horizontalDummyView1.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(oauthLoginDescriptionLabel.snp.leading).offset(-Layout.lineSpacing)
-            $0.width.equalTo(Layout.lineWidth)
-            $0.height.equalTo(Layout.lineHeight)
-        }
-        oauthLoginDescriptionLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        horizontalDummyView2.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalTo(oauthLoginDescriptionLabel.snp.trailing).offset(Layout.lineSpacing)
-            $0.width.equalTo(Layout.lineWidth)
-            $0.height.equalTo(Layout.lineHeight)
+        kakaoLoginButton.snp.makeConstraints {
+            $0.top.equalTo(toduckView.snp.bottom).offset(Layout.loginButtonTopOffset)
+            $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
+            $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
+            $0.height.equalTo(44)
         }
         appleLoginButton.snp.makeConstraints {
-            $0.top.equalTo(oauthDescriptionContainerView.snp.bottom).offset(Layout.loginButtonTopOffset)
+            $0.top.equalTo(kakaoLoginButton.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
             $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
             $0.height.equalTo(44)
@@ -149,9 +125,17 @@ final class AuthView: BaseView {
     }
 
     override func configure() {
-        [horizontalDummyView1, horizontalDummyView2, separatorView].forEach {
-            $0.backgroundColor = TDColor.Primary.primary500
-        }
+        backGroundImageView.contentMode = .scaleAspectFill
+        separatorView.backgroundColor = TDColor.Neutral.neutral800
+        setupKakaoLoginButton()
+    }
+    
+    private func setupKakaoLoginButton() {
+        let kakaoLogo = UIImage.resizedImage(
+            image: TDImage.Logo.kakaoLogo,
+            size: CGSize(width: 14, height: 14)
+        )
+        kakaoLoginButton.setImage(kakaoLogo, for: .normal)
     }
 }
 
@@ -166,9 +150,9 @@ extension AuthView {
         static let lineSpacing: CGFloat = 12
         static let lineWidth: CGFloat = 62
         static let lineHeight: CGFloat = 1
-        static let loginButtonTopOffset: CGFloat = 30
+        static let loginButtonTopOffset: CGFloat = 20
         static let loginButtonSideInset: CGFloat = 60
-        static let separatorBottomOffset: CGFloat = -20
+        static let separatorBottomOffset: CGFloat = -40
         static let separatorWidth: CGFloat = 1
         static let separatorHeight: CGFloat = 12
         static let buttonHeight: CGFloat = 16
