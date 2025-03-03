@@ -1,6 +1,12 @@
 import ProjectDescription
 
 public enum External: String {
+    case Alamofire
+    case KakaoSDKCommon
+    case KakaoSDKAuth
+    case KakaoSDKUser
+    case KakaoSDKShare
+    case KakaoSDKTalk
     case Then
     case Lottie
     case FSCalendar
