@@ -16,15 +16,11 @@ public struct AuthRepositoryImpl: AuthRepository {
     public func requestKakaoLogin() async throws {
         let idToken = try await service.requestKakaoLogin()
         TDLogger.info("[앱] 카카오로부터 IDToken을 받았습니다. 우리 서버로 \(idToken)을 전송합니다.")
-        try await service.requestOauthRegister(oauthProvider: "KAKAO", oauthId: kakaoAppKey, idToken: idToken)
+        try await service.requestOauthRegister(oauthProvider: AuthProvider.kakao.rawValue, oauthId: kakaoAppKey, idToken: idToken)
     }
     
-    public func requestAppleLogin(
-        oauthId: String,
-        idToken: String
-    ) async throws -> Result<Void, TDDataError> {
-        TDLogger.debug("Repo: \(oauthId), \(idToken)")
-        return try await service.requestAppleLogin(oauthId: oauthId, idToken: idToken)
+    public func requestAppleLogin(oauthId: String, idToken: String) async throws {
+        try await service.requestOauthRegister(oauthProvider: AuthProvider.apple.rawValue, oauthId: oauthId, idToken: idToken)
     }
 }
 

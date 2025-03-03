@@ -11,7 +11,7 @@ final class AuthViewModel: NSObject, BaseViewModel {
     }
     
     enum Output {
-        case loginSuccess(userID: String, email: String?, fullName: String?)
+        case loginSuccess(userID: String, idToken: String)
         case loginFailure(error: String)
         case tokenReceived(idToken: String?, authCode: String?)
     }
@@ -68,10 +68,6 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             let userID = appleIdCredential.user
-            let fullName = appleIdCredential.fullName
-            let email = appleIdCredential.email
-            
-            output.send(.loginSuccess(userID: userID, email: email, fullName: fullName?.givenName))
             
             // ID Token 및 Authorization Code 처리
             let idToken = appleIdCredential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
@@ -80,7 +76,7 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
             if let idToken, let authCode {
                 Task {
                     try await appleLoginUseCase.execute(oauthId: userID, idToken: idToken)
-                    output.send(.tokenReceived(idToken: idToken, authCode: authCode))
+                    output.send(.loginSuccess(userID: userID, idToken: idToken))
                 }
             }
         default:
