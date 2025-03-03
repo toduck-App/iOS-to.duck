@@ -10,7 +10,7 @@ public enum AuthAPI {
     case loginKakao(oauthId: String, idToken: String) // 카카오 로그인
     case findIdPassword(phoneNumber: String) // 비밀번호 찾기
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
-    case saveFCMToken(userId: Int, fcmToken:String) // FCM 토큰 저장
+    case saveFCMToken(userId: Int, fcmToken: String) // FCM 토큰 저장
     case deleteUser(userId: Int) // 유저 삭제
 }
 
