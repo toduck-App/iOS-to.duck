@@ -6,6 +6,7 @@ public enum External: String {
     case FSCalendar
     case Kingfisher
     case SnapKit
+    case Swinject
     case FittedSheets
 }
 
