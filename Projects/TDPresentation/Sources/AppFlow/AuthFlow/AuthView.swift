@@ -21,7 +21,7 @@ final class AuthView: BaseView {
 
     /// Oauth 로그인
     let kakaoLoginButton = TDBaseButton(
-        title: "카카오로 로그인",
+        title: "카카오 로그인",
         image: TDImage.Logo.kakaoLogo,
         backgroundColor: TDColor.Oauth.kakaoBackground,
         foregroundColor: TDColor.Oauth.kakaoForeground,

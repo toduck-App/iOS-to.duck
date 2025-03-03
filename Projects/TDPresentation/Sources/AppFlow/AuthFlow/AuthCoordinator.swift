@@ -23,8 +23,9 @@ final class AuthCoordinator: Coordinator {
     }
 
     func start() {
+        let kakaoLoginUseCase = injector.resolve(KakaoLoginUseCase.self)
         let appleLoginUseCase = injector.resolve(AppleLoginUseCase.self)
-        let viewModel = AuthViewModel(appleLoginUseCase: appleLoginUseCase)
+        let viewModel = AuthViewModel(kakaoLoginUseCase: kakaoLoginUseCase, appleLoginUseCase: appleLoginUseCase)
         let signUpViewController = AuthViewController(viewModel: viewModel)
         signUpViewController.coordinator = self
         navigationController.pushViewController(signUpViewController, animated: false)

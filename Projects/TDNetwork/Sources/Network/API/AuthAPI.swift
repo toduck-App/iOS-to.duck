@@ -6,8 +6,7 @@ public enum AuthAPI {
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
     case registerUser(userDetails: [String: Any]) // 회원가입
     case login(username: String, password: String) // 자체 로그인
-    case loginApple(oauthId: String, idToken: String) // 애플 로그인
-    case loginKakao(oauthId: String, idToken: String) // 카카오 로그인
+    case loginOauth(provider: String, oauthId: String, idToken: String) // 애플 로그인
     case findIdPassword(phoneNumber: String) // 비밀번호 찾기
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
     case saveFCMToken(userId: Int, fcmToken: String) // FCM 토큰 저장
@@ -31,10 +30,8 @@ extension AuthAPI: MFTarget {
             return "/auth/registerUser"
         case .login:
             return "/auth/login"
-        case .loginApple:
-            return "/auth/oauth/apple"
-        case .loginKakao:
-            return "/auth/oauth/kakao"
+        case .loginOauth:
+            return "/v1/auth/oauth/register"
         case .findIdPassword:
             return "/auth/find-id-password"
         case .refreshToken:
@@ -55,8 +52,7 @@ extension AuthAPI: MFTarget {
              .checkUsernameDuplication,
              .registerUser,
              .login,
-             .loginApple,
-             .loginKakao,
+             .loginOauth,
              .findIdPassword,
              .saveFCMToken:
             return .post
@@ -69,13 +65,13 @@ extension AuthAPI: MFTarget {
         switch self {
         case .refreshToken(let refreshToken):
             return ["refreshToken": refreshToken]
+        case .loginOauth(let provider, _, _):
+            return ["provider": provider]
         case .requestPhoneVerification,
              .checkPhoneVerification,
              .checkUsernameDuplication,
              .registerUser,
              .login,
-             .loginApple,
-             .loginKakao,
              .findIdPassword,
              .saveFCMToken:
             return nil
@@ -111,7 +107,7 @@ extension AuthAPI: MFTarget {
                              "password": password]
             )
             
-        case .loginApple(let oauthId, let idToken), .loginKakao(let oauthId, let idToken):
+        case .loginOauth(_, let oauthId, let idToken):
             return .requestParameters(
                 parameters: [
                     "oauthId": oauthId,
@@ -142,8 +138,7 @@ extension AuthAPI: MFTarget {
              .checkUsernameDuplication,
              .registerUser,
              .login,
-             .loginApple,
-             .loginKakao,
+             .loginOauth,
              .findIdPassword:
             let jsonHeaders: MFHeaders = [.contentType("application/json")]
             return jsonHeaders

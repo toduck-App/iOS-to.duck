@@ -43,6 +43,10 @@ final class AuthViewController: BaseViewController<AuthView> {
             self?.coordinator?.didMainButtonTapped()
         }, for: .touchUpInside)
         
+        layoutView.kakaoLoginButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.signInWithKakao)
+        }, for: .touchUpInside)
+        
         layoutView.appleLoginButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.signInWithApple)
         }, for: .touchUpInside)
