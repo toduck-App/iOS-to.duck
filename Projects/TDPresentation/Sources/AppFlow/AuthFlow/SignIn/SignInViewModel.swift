@@ -8,6 +8,7 @@ final class SignInViewModel: BaseViewModel {
     
     enum Output {
         case validSignIn
+        case invalidSignIn
     }
     
     private let output = PassthroughSubject<Output, Never>()

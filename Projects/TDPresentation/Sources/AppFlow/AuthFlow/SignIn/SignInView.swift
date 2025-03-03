@@ -194,6 +194,7 @@ final class SignInView: BaseView {
     override func configure() {
         backgroundColor = TDColor.baseWhite
         nextButton.isEnabled = false
+        failedContainerView.alpha = 0
     }
 }
 

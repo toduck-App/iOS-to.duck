@@ -47,6 +47,14 @@ final class SignInViewController: BaseViewController<SignInView> {
                 switch event {
                 case .validSignIn:
                     self?.coordinator?.didSignIn()
+                case .invalidSignIn:
+                    UIView.animate(withDuration: 1, delay: 0, options: .curveEaseIn) {
+                        self?.layoutView.failedContainerView.alpha = 1
+                    } completion: { _ in
+                        UIView.animate(withDuration: 1, delay: 4.0, options: .curveEaseOut) {
+                            self?.layoutView.failedContainerView.alpha = 0
+                        }
+                    }
                 }
             }.store(in: &cancellables)
     }
