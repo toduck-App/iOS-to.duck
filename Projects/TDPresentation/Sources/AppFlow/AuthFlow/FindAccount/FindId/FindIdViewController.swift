@@ -44,16 +44,18 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                 switch action {
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
-                    print("전화번호 형식이 올바르지 않습니다.")
+                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 1
+                    self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                 case .phoneNumberValid:
                     self?.layoutView.verificationNumberContainerView.isHidden = false
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = true
-                    print("전화번호 형식이 올바릅니다.")
+                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 0
                 case .verificationCodeInvalid:
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
-                    print("인증번호 형식이 올바르지 않습니다.")
+                    self?.layoutView.verificationNumberContainerView.layer.borderWidth = 1
+                    self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                 case .verificationCodeValid:
-                    print("인증번호 형식이 올바릅니다.")
+                    self?.layoutView.verificationNumberContainerView.layer.borderWidth = 0
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 }

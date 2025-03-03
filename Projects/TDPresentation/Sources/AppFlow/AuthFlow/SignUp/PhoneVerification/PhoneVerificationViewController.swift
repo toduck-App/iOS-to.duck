@@ -47,10 +47,12 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                 switch action {
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
-                    print("전화번호 형식이 올바르지 않습니다.")
+                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 1
+                    self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                 case .phoneNumberValid:
                     self?.layoutView.verificationNumberContainerView.isHidden = false
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = true
+                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 0
                     print("전화번호 형식이 올바릅니다.")
                 case .phoneNumberAlreadyExist:
                     print("이미 가입된 전화번호입니다.")
