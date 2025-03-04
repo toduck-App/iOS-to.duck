@@ -37,8 +37,8 @@ final class HomeViewController: BaseViewController<BaseView> {
     }
     
     private func setupNavigationBar() {
-        setupNavigationBar(style: .home, navigationDelegate: coordinator!) {
-            print("HomeViewController - setupNavigationBar")
+        setupNavigationBar(style: .home, navigationDelegate: coordinator!) { [weak self] in
+            self?.coordinator?.didTapAlarmButton()
         }
     }
     
