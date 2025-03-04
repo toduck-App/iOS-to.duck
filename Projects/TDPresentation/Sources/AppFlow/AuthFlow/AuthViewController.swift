@@ -43,6 +43,10 @@ final class AuthViewController: BaseViewController<AuthView> {
             self?.coordinator?.didMainButtonTapped()
         }, for: .touchUpInside)
         
+        layoutView.kakaoLoginButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.signInWithKakao)
+        }, for: .touchUpInside)
+        
         layoutView.appleLoginButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.signInWithApple)
         }, for: .touchUpInside)
@@ -63,15 +67,15 @@ final class AuthViewController: BaseViewController<AuthView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case let .loginSuccess(userID, email, fullName):
-                    print("✅ 로그인 성공: \(userID), \(email ?? "이메일 없음"), \(fullName ?? "이름 없음")")
+                case let .loginSuccess(userID, idToken):
+                    TDLogger.debug("로그인 성공: \(userID), \(idToken)")
                 
                 case let .loginFailure(error):
-                    print("❌ 로그인 실패: \(error)")
+                    TDLogger.error("로그인 실패: \(error)")
                 
                 case let .tokenReceived(idToken, authCode):
-                    print("🔹 ID Token: \(idToken ?? "없음")")
-                    print("🔹 Authorization Code: \(authCode ?? "없음")")
+                    TDLogger.info("ID Token: \(idToken ?? "없음")")
+                    TDLogger.info("Authorization Code: \(authCode ?? "없음")")
                 }
             }.store(in: &cancellables)
     }
