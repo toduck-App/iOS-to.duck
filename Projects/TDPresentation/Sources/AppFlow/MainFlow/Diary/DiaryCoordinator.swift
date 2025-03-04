@@ -1,10 +1,3 @@
-//
-//  DiaryCoordinator.swift
-//  toduck
-//
-//  Created by 박효준 on 7/15/24.
-//
-
 import UIKit
 import TDCore
 

@@ -44,5 +44,3 @@ public class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate 
         self.headerHeight = 0
     }
 }
-
-

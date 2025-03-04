@@ -38,7 +38,7 @@ public final class CalendarHeaderStackView: UIStackView {
             labelText: "2024년 8월",
             toduckFont: TDFont.boldHeader4,
             alignment: .center,
-            toduckColor: TDColor.Neutral.neutral800
+            toduckColor: TDColor.Neutral.neutral700
         )
         let pickerButton = PickerButton(type: .toduck)
         

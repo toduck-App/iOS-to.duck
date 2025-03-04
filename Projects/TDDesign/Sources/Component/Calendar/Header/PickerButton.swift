@@ -15,7 +15,7 @@ final class PickerButton: UIButton {
         
         switch type {
         case .toduck, .diary:
-            self.setImage(TDImage.Direction.rightMedium, for: .normal)
+            self.setImage(TDImage.Direction.rightMedium.withTintColor(TDColor.Neutral.neutral700), for: .normal)
         case .sheet:
             self.setImage(TDImage.Direction.rightSmall, for: .normal)
         }
