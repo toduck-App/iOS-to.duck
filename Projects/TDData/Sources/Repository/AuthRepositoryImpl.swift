@@ -46,14 +46,6 @@ public struct AuthRepositoryImpl: AuthRepository {
             throw error // ✅ 실패 시 예외를 다시 던져서 상위 계층(ViewModel)에서 처리할 수 있도록 함
         }
     }
-    
-    public func requestAppleLogin(
-        oauthId: String,
-        idToken: String
-    ) async throws -> Result<Void, TDDataError> {
-        TDLogger.debug("Repo: \(oauthId), \(idToken)")
-        return try await service.requestAppleLogin(oauthId: oauthId, idToken: idToken)
-    }
 }
 
 
