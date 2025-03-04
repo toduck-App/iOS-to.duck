@@ -5,8 +5,8 @@ public enum AuthAPI {
     case checkPhoneVerification(code: String) // 휴대폰 본인 인증 확인
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
     case registerUser(userDetails: [String: Any]) // 회원가입
-    case login(username: String, password: String) // 자체 로그인
-    case loginOauth(provider: String, oauthId: String, idToken: String) // 애플 로그인
+    case login(loginId: String, password: String) // 자체 로그인
+    case loginOauth(provider: String, oauthId: String, idToken: String) // Oauth 로그인
     case findIdPassword(phoneNumber: String) // 비밀번호 찾기
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
     case saveFCMToken(userId: Int, fcmToken: String) // FCM 토큰 저장
@@ -29,7 +29,7 @@ extension AuthAPI: MFTarget {
         case .registerUser:
             return "/auth/registerUser"
         case .login:
-            return "/auth/login"
+            return "/v1/auth/login"
         case .loginOauth:
             return "/v1/auth/oauth/register"
         case .findIdPassword:
@@ -101,9 +101,9 @@ extension AuthAPI: MFTarget {
         case .registerUser(let userDetails):
             return .requestParameters(parameters: userDetails)
             
-        case .login(let username, let password):
+        case .login(let loginId, let password):
             return .requestParameters(
-                parameters: ["username": username,
+                parameters: ["loginId": loginId,
                              "password": password]
             )
             
