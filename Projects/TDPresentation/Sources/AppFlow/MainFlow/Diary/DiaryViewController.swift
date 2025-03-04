@@ -1,26 +1,40 @@
 import TDDesign
 import UIKit
+import FSCalendar
+import SnapKit
 import TDCore
 
-final class DiaryViewController: UIViewController {
+final class DiaryViewController: BaseViewController<BaseView> {
     weak var coordinator: DiaryCoordinator?
+    let calendarHeader = CalendarHeaderStackView(type: .toduck)
+    let calendar = DiaryCalendar()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setupNavigationBar(style: .diary, navigationDelegate: coordinator!) {
+    override func configure() {
+        view.backgroundColor = TDColor.baseWhite
+        setupCalendar()
+        setupNavigationBar(style: .diary, navigationDelegate: coordinator!) { [weak self] in
             TDLogger.debug("MyPageViewController - setupNavigationBar")
+            self?.coordinator?.didTapAlarmButton()
         }
-        self.view.backgroundColor = .systemGray
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.tabBarController?.tabBar.backgroundColor = TDColor.baseBlack
+    override func layout() {
+        calendarHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.equalToSuperview().offset(24)
+            $0.height.equalTo(56)
+        }
+        
+        calendar.snp.makeConstraints {
+            $0.top.equalTo(calendarHeader.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(360)
+        }
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.tabBarController?.tabBar.backgroundColor = TDColor.baseWhite
+}
+
+extension DiaryViewController: TDCalendarConfigurable {
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        updateHeaderLabel(for: calendar.currentPage)
     }
 }
