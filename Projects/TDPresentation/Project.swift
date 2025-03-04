@@ -16,12 +16,12 @@ let project = Project(
                 .core(),
                 
                 // External
-                .external(name: "Then"),
-                .external(name: "SnapKit"),
-                .external(name: "Lottie"),
-                .external(name: "FSCalendar"),
-                .external(name: "Kingfisher"),
-                .external(name: "FittedSheets"),
+                .external(dependency: .Then),
+                .external(dependency: .SnapKit),
+                .external(dependency: .Lottie),
+                .external(dependency: .FSCalendar),
+                .external(dependency: .Kingfisher),
+                .external(dependency: .FittedSheets),
             ]
         ),
         Target.target(

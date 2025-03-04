@@ -26,6 +26,8 @@ let package = Package(
         .package(url: "https://github.com/devxoul/Then", from: "3.0.0"),
         .package(url: "https://github.com/WenchaoD/FSCalendar", from: "2.8.4"),
         .package(url: "https://github.com/gordontucker/FittedSheets.git", from: "2.6.1"),
-        .package(url: "https://github.com/Swinject/Swinject.git", from: "2.9.1")
+        .package(url: "https://github.com/Swinject/Swinject.git", from: "2.9.1"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.2"),
+        .package(url: "https://github.com/kakao/kakao-ios-sdk.git", from: "2.23.0")
     ]
 )

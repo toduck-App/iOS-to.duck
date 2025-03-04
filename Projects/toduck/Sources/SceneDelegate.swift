@@ -1,4 +1,5 @@
 import Swinject
+import KakaoSDKAuth
 import TDCore
 import TDData
 import TDDomain
@@ -28,5 +29,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func assembleDependencies() {
         DIContainer.shared.assemble([ServiceAssembly(), StorageAssembly(), DataAssembly(), DomainAssembly()])
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                _ = AuthController.handleOpenUrl(url: url)
+            }
+        }
     }
 }

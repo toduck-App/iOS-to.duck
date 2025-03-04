@@ -93,4 +93,9 @@ public enum TDColor {
         public static let success = TDDesignAsset.Colors.semanticSuccessColor.color
         public static let warning = TDDesignAsset.Colors.semanticWamingColor.color
     }
+    
+    public enum Oauth {
+        public static let kakaoBackground = TDDesignAsset.Colors.kakaoBackground.color
+        public static let kakaoForeground = TDDesignAsset.Colors.kakaoForeground.color
+    }
 }

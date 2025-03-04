@@ -12,6 +12,13 @@ public struct DomainAssembly: Assembly {
             return AppleLoginUseCaseImpl(repository: repository)
         }
         
+        container.register(KakaoLoginUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return KakaoLoginUseCaseImpl(repository: repository)
+        }
+        
         container.register(LoginUseCase.self) { resolver in
             guard let repository = resolver.resolve(AuthRepository.self) else {
                 fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
