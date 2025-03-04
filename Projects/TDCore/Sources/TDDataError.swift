@@ -11,8 +11,10 @@ public enum TDDataError: Error, Equatable {
     case generalFailure
     case serverError
     case setUserDefaultFailure
+    case parsingError
     
     /// 로그인
+    case invalidIDOrPassword
     case requestLoginFailure
     case invalidIDToken
     case notFoundPulbicKey
@@ -41,7 +43,12 @@ extension TDDataError: CustomStringConvertible {
             "서버 에러입니다."
         case .setUserDefaultFailure:
             "UserDefault 설정 실패"
-            
+        case .parsingError:
+            "JSON 파싱 에러"
+        
+        /// 로그인 관련
+        case .invalidIDOrPassword:
+            "아이디 또는 비밀번호가 일치하지 않습니다."
         case .requestLoginFailure:
             "로그인 요청 실패"
         case .invalidIDToken:
