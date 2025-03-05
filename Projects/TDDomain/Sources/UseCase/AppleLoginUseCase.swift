@@ -10,6 +10,6 @@ public struct AppleLoginUseCaseImpl: AppleLoginUseCase {
     }
     
     public func execute(oauthId: String, idToken: String) async throws {
-        try await repository.requestAppleLogin(oauthId: oauthId, idToken: idToken).get()
+        try await repository.requestAppleLogin(oauthId: oauthId, idToken: idToken)
     }
 }

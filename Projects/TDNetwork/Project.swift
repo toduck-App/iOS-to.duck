@@ -12,7 +12,11 @@ let project = Project.project(
             dependencies: [
                 .core(),
                 .domain(),
-                .data()
+                .data(),
+                
+                .external(dependency: .Alamofire),
+                .external(dependency: .KakaoSDKAuth),
+                .external(dependency: .KakaoSDKUser)
             ]
         ),
         Target.target(

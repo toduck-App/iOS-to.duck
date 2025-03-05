@@ -47,6 +47,14 @@ final class SignInViewController: BaseViewController<SignInView> {
                 switch event {
                 case .validSignIn:
                     self?.coordinator?.didSignIn()
+                case .invalidSignIn:
+                    UIView.animate(withDuration: 1, delay: 0, options: .curveEaseIn) {
+                        self?.layoutView.failedContainerView.alpha = 1
+                    } completion: { _ in
+                        UIView.animate(withDuration: 1, delay: 4.0, options: .curveEaseOut) {
+                            self?.layoutView.failedContainerView.alpha = 0
+                        }
+                    }
                 }
             }.store(in: &cancellables)
     }
@@ -55,6 +63,12 @@ final class SignInViewController: BaseViewController<SignInView> {
 // MARK: - UITextFieldDelegate
 extension SignInViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == layoutView.idTextField {
+            input.send(.loginIdChanged(textField.text ?? ""))
+        } else if textField == layoutView.passwordTextField {
+            input.send(.passwordChanged(textField.text ?? ""))
+        }
+        
         validateInputFields()
     }
     
@@ -64,7 +78,11 @@ extension SignInViewController: UITextFieldDelegate {
         let passwordText = layoutView.passwordTextField.text ?? ""
         
         let isIdValid = idText.count >= 5 && idText.count <= 20
+        #if DEBUG
+        let isPasswordValid = passwordText.count >= 4 && passwordText.count <= 16
+        #else
         let isPasswordValid = passwordText.count >= 8 && passwordText.count <= 16
+        #endif
         
         let isFormValid = isIdValid && isPasswordValid
         
