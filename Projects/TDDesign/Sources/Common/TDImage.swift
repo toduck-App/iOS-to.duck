@@ -45,6 +45,7 @@ public enum TDImage {
     public static let reportEmptySmall = TDDesignAsset.Images.reportEmptySmall.image
     public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     public static let loginToduck = TDDesignAsset.Images.loginToduck.image
+    public static let blockImage = TDDesignAsset.Images.blockMedium.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image

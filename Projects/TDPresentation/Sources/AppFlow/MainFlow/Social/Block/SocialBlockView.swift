@@ -17,6 +17,11 @@ final class SocialBlockView: BaseView {
     
     private let titleLabel = TDLabel(labelText: "작성자 차단", toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
     
+    private let blockImage = UIImageView().then {
+        $0.image = TDImage.blockImage
+        $0.contentMode = .scaleAspectFit
+    }
+    
     private let descriptionLabel = TDLabel(labelText: "차단한 사용자의 글이 더이상 보이지 않아요.", toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800)
     
     private(set) var cancelButton = TDBaseButton(
@@ -41,6 +46,7 @@ final class SocialBlockView: BaseView {
     override func addview() {
         addSubview(stackView)
         stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(blockImage)
         stackView.addArrangedSubview(descriptionLabel)
         stackView.addArrangedSubview(buttonStackView)
         buttonStackView.addArrangedSubview(cancelButton)
@@ -54,6 +60,11 @@ final class SocialBlockView: BaseView {
         
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(66)
+        }
+        
+        blockImage.snp.makeConstraints { make in
+            make.width.equalTo(148)
+            make.height.equalTo(140)
         }
         
         descriptionLabel.snp.makeConstraints { make in
