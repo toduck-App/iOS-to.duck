@@ -4,6 +4,7 @@ import TDCore
 public protocol RoutineRepository {
     func fetchRoutine() async -> Result<Routine, TDDataError>
     func fetchRoutineList() async -> Result<[Routine], TDDataError>
+    func fetchRoutineList(userId: User.ID) async -> Result<[Routine], TDDataError>
     func updateRoutine(routineId: Int) async -> Result<Void, TDDataError>
     func deleteRoutine(routineId: Int) async -> Result<Void, TDDataError>
     func createRoutine(routine: Routine) async -> Result<Void, TDDataError>

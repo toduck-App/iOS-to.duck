@@ -147,6 +147,7 @@ public enum TDImage {
     public enum Lock {
         public static let medium = TDDesignAsset.Images.lockMedium.image
         public static let small = TDDesignAsset.Images.lockSmall.image
+        public static let profile = TDDesignAsset.Images.lockProfile.image
     }
     
     public enum UnLock {

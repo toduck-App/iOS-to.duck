@@ -1,8 +1,9 @@
 public struct UserDetail {
-    public let isFollowing: Bool
+    public var isFollowing: Bool
     public let followingCount: Int
     public let followerCount: Int
     public let totalPostCount: Int
+    public let totalRoutineCount: Int
     public let whoFollow: [User]?
     public let routineShareCount: Int
     
@@ -11,6 +12,7 @@ public struct UserDetail {
         followingCount: Int,
         followerCount: Int,
         totalPostCount: Int,
+        totalRoutineCount: Int,
         whoFollow: [User]? = nil,
         routineShareCount: Int
     ) {
@@ -18,6 +20,7 @@ public struct UserDetail {
         self.followingCount = followingCount
         self.followerCount = followerCount
         self.totalPostCount = totalPostCount
+        self.totalRoutineCount = totalRoutineCount
         self.whoFollow = whoFollow
         self.routineShareCount = routineShareCount
     }
