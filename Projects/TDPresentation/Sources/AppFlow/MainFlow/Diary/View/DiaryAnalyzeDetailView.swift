@@ -24,7 +24,7 @@ final class DiaryAnalyzeDetailView: BaseView {
         toduckColor: TDColor.Neutral.neutral800
     )
     let analyzeImageView = UIImageView().then {
-        $0.image = TDImage.Analyze.book
+        $0.image = TDImage.Analyze.bookIncrease
         $0.contentMode = .scaleAspectFit
     }
     

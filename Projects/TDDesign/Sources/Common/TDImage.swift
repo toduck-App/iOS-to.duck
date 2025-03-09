@@ -225,7 +225,11 @@ public enum TDImage {
         public static let tired = TDDesignAsset.Images.tiredMood.image
     }
     
-    public enum Percent {
+    public enum DiaryPercent {
+        public static let bookPercent0 = TDDesignAsset.Images.bookPercent0.image
+    }
+    
+    public enum FocusPercent {
         public static let percent1to20 = TDDesignAsset.Images.percent1to20.image
         public static let percent21to40 = TDDesignAsset.Images.percent21to40.image
         public static let percent41to60 = TDDesignAsset.Images.percent41to60.image
@@ -234,7 +238,7 @@ public enum TDImage {
     }
     
     public enum Analyze {
-        public static let book = TDDesignAsset.Images.book.image
+        public static let bookIncrease = TDDesignAsset.Images.bookIncrease.image
     }
     
     public enum Category {
