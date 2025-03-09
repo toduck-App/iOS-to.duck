@@ -226,31 +226,11 @@ public enum TDImage {
     }
     
     public enum Percent {
-        public enum Dot {
-            public static let percent0 = TDDesignAsset.Images.percentDot0.image
-            public static let percent10 = TDDesignAsset.Images.percentDot10.image
-            public static let percent20 = TDDesignAsset.Images.percentDot20.image
-            public static let percent30 = TDDesignAsset.Images.percentDot30.image
-            public static let percent40 = TDDesignAsset.Images.percentDot40.image
-            public static let percent50 = TDDesignAsset.Images.percentDot50.image
-            public static let percent60 = TDDesignAsset.Images.percentDot60.image
-            public static let percent70 = TDDesignAsset.Images.percentDot70.image
-            public static let percent80 = TDDesignAsset.Images.percentDot80.image
-            public static let percent90 = TDDesignAsset.Images.percentDot90.image
-            public static let percent100 = TDDesignAsset.Images.percentDot100.image
-        }
-
-        public static let percent0 = TDDesignAsset.Images.percent0.image
-        public static let percent10 = TDDesignAsset.Images.percent10.image
-        public static let percent20 = TDDesignAsset.Images.percent20.image
-        public static let percent30 = TDDesignAsset.Images.percent30.image
-        public static let percent40 = TDDesignAsset.Images.percent40.image
-        public static let percent50 = TDDesignAsset.Images.percent50.image
-        public static let percent60 = TDDesignAsset.Images.percent60.image
-        public static let percent70 = TDDesignAsset.Images.percent70.image
-        public static let percent80 = TDDesignAsset.Images.percent80.image
-        public static let percent90 = TDDesignAsset.Images.percent90.image
-        public static let percent100 = TDDesignAsset.Images.percent100.image
+        public static let percent1to20 = TDDesignAsset.Images.percent1to20.image
+        public static let percent21to40 = TDDesignAsset.Images.percent21to40.image
+        public static let percent41to60 = TDDesignAsset.Images.percent41to60.image
+        public static let percent61to80 = TDDesignAsset.Images.percent61to80.image
+        public static let percent81to100 = TDDesignAsset.Images.percent81to100.image
     }
     
     public enum Category {
