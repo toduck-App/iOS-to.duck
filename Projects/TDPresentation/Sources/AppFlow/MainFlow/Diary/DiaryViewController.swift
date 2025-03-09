@@ -10,6 +10,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
         $0.alwaysBounceVertical = true
+        $0.delegate = nil
     }
     private let contentView = UIView()
     private let stackView = UIStackView().then {
@@ -18,11 +19,40 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.alignment = .fill
         $0.distribution = .fill
     }
+    
     let analyzeView = DiaryAnalyzeView(diaryCount: 25, focusPercent: 55)
+    
+    /// 캘린더 뷰
     let calendarContainerView = UIView()
     let calendarHeader = CalendarHeaderStackView(type: .toduck)
     let diarySegmentedControl = TDSegmentedControl(items: ["기분", "집중도"])
     let calendar = DiaryCalendar()
+    
+    /// 일기가 없는 경우 보여지는 뷰
+    let noDiaryContainerView = UIView()
+    let noDiaryImageView = UIImageView().then {
+        $0.image = TDImage.DiaryPercent.bookPercent0
+        $0.contentMode = .scaleAspectFit
+    }
+    let noDiaryLabel = TDLabel(
+        labelText: "일기를 작성하지 않았어요",
+        toduckFont: TDFont.boldBody1,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    
+    /// 버튼 컨테이너 뷰 (기본은 투명)
+    let diaryPostButtonContainerView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral50
+        $0.layer.masksToBounds = false
+    }
+    
+    let diaryPostButton = TDBaseButton(
+        title: "일기 작성",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        font: TDFont.boldHeader3.font,
+        radius: 12
+    )
     
     // MARK: - Properties
     weak var coordinator: DiaryCoordinator?
@@ -31,17 +61,26 @@ final class DiaryViewController: BaseViewController<BaseView> {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(stackView)
+        contentView.addSubview(diaryPostButtonContainerView)
         
         // 스택뷰에 뷰들을 추가
         stackView.addArrangedSubview(analyzeView)
         stackView.addArrangedSubview(calendarContainerView)
+        stackView.addArrangedSubview(noDiaryContainerView)
+        
         calendarContainerView.addSubview(calendarHeader)
         calendarContainerView.addSubview(diarySegmentedControl)
         calendarContainerView.addSubview(calendar)
+        
+        noDiaryContainerView.addSubview(noDiaryImageView)
+        noDiaryContainerView.addSubview(noDiaryLabel)
+        
+        diaryPostButtonContainerView.addSubview(diaryPostButton)
     }
     
     override func configure() {
         calendarContainerView.backgroundColor = TDColor.baseWhite
+        scrollView.delegate = self
         setupCalendar()
         setupNavigationBar(style: .diary, navigationDelegate: coordinator!) { [weak self] in
             TDLogger.debug("MyPageViewController - setupNavigationBar")
@@ -79,6 +118,42 @@ final class DiaryViewController: BaseViewController<BaseView> {
         calendar.snp.makeConstraints {
             $0.top.equalTo(diarySegmentedControl.snp.bottom).offset(36)
             $0.leading.trailing.bottom.equalToSuperview().inset(20)
+        }
+        noDiaryContainerView.snp.makeConstraints {
+            $0.height.equalTo(470)
+        }
+        noDiaryImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(140)
+            $0.centerX.equalToSuperview()
+        }
+        noDiaryLabel.snp.makeConstraints {
+            $0.top.equalTo(noDiaryImageView.snp.bottom).offset(60)
+            $0.centerX.equalToSuperview()
+        }
+        
+        diaryPostButtonContainerView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(112)
+        }
+        diaryPostButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(28)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().offset(-28)
+        }
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension DiaryViewController: UIScrollViewDelegate {
+    /// Scroll 감지하여 버튼 배경색 변경
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let calendarFrame = calendarContainerView.convert(calendarContainerView.bounds, to: view)
+        
+        if calendarFrame.maxY < diaryPostButtonContainerView.frame.minY {
+            diaryPostButtonContainerView.backgroundColor = .clear
+        } else {
+            diaryPostButtonContainerView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         }
     }
 }
