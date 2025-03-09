@@ -233,6 +233,10 @@ public enum TDImage {
         public static let percent81to100 = TDDesignAsset.Images.percent81to100.image
     }
     
+    public enum Analyze {
+        public static let book = TDDesignAsset.Images.book.image
+    }
+    
     public enum Category {
         public static let food = TDDesignAsset.Images.categoryFood.image
         public static let none = TDDesignAsset.Images.categoryNone.image
