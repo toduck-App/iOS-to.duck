@@ -2,8 +2,8 @@ import Foundation
 import TDDomain
 
 public struct TDCategoryDTO: Codable {
-    public let colorHex: String
-    public let imageName: String
+    private let colorHex: String
+    private let imageName: String
 
     public init(
         colorHex: String,

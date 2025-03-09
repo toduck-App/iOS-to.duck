@@ -1,10 +1,3 @@
-//
-//  MFError.swift
-//  TDNetwork
-//
-//  Created by 디해 on 1/10/25.
-//
-
 import Foundation
 
 extension Error {
@@ -40,7 +33,7 @@ public enum MFError: Error, CustomStringConvertible {
         case .requestJSONDecodingFailure:
             return "Error: Failed to decode the data to JSON."
         case .requestDecodableDecodingFailure:
-            return "Error. Failed to decode the data to decodable."
+            return "Error: Failed to decode the data to decodable."
         case .jsonSerializationFailure:
             return "Error: Expected a serializable dictionary but got something else."
         case .urlEncodingFailure:

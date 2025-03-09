@@ -1,10 +1,3 @@
-//
-//  DiaryAPI.swift
-//  TDNetwork
-//
-//  Created by 디해 on 1/22/25.
-//
-
 import Foundation
 import TDDomain
 

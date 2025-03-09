@@ -101,6 +101,7 @@ public final class TDFormButtonsView: UIView {
                 font: TDFont.mediumBody2.font
             )
             button.tag = index
+            button.setInset()
             return button
         }
     }

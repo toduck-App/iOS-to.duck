@@ -36,7 +36,7 @@ public class TDBaseButton: UIButton {
     }
     
     // MARK: - Setup Button
-    func setupButton() {
+    private func setupButton() {
         var config = UIButton.Configuration.filled()
         config.title = title
         config.baseBackgroundColor = backgroundToduckColor

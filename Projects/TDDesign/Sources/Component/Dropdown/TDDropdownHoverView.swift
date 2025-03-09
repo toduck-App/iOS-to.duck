@@ -15,6 +15,7 @@ public final class TDDropdownHoverView: UIView {
 
     public enum LocateLayout {
         case leading
+        case center
         case trailing
     }
 
@@ -121,13 +122,20 @@ private extension TDDropdownHoverView {
             $0.edges.equalTo(anchorView)
         }
 
-        if locate == .leading {
+        switch locate {
+        case .leading:
             setConstraints {
                 $0.leading.equalTo(self.anchorView)
                 $0.width.equalTo(self.width)
                 $0.top.equalTo(self.anchorView.snp.bottom)
             }
-        } else if locate == .trailing {
+        case .center:
+            setConstraints {
+                $0.centerX.equalTo(self.anchorView)
+                $0.width.equalTo(self.width)
+                $0.top.equalTo(self.anchorView.snp.bottom)
+            }
+        case .trailing:
             setConstraints {
                 $0.trailing.equalTo(self.anchorView.snp.trailing)
                 $0.width.equalTo(self.width)

@@ -1,10 +1,3 @@
-//
-//  TDColor.swift
-//  toduck
-//
-//  Created by 박효준 on 7/9/24.
-//
-
 import Foundation
 
 public enum TDColor {
@@ -99,5 +92,10 @@ public enum TDColor {
         public static let info = TDDesignAsset.Colors.semanticInfoColor.color
         public static let success = TDDesignAsset.Colors.semanticSuccessColor.color
         public static let warning = TDDesignAsset.Colors.semanticWamingColor.color
+    }
+    
+    public enum Oauth {
+        public static let kakaoBackground = TDDesignAsset.Colors.kakaoBackground.color
+        public static let kakaoForeground = TDDesignAsset.Colors.kakaoForeground.color
     }
 }

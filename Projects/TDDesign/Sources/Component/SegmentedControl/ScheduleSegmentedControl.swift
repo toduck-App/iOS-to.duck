@@ -3,9 +3,9 @@ import SnapKit
 import Then
 
 public final class ScheduleSegmentedControl: UISegmentedControl {
-    private let selectedSegmentTextColor: UIColor = TDColor.Neutral.neutral700
-    private let normalSegmentTextColor: UIColor = TDColor.baseWhite
-    private let titleFont: UIFont = TDFont.boldBody3.font
+    private let selectedSegmentTextColor: UIColor = TDColor.Neutral.neutral800
+    private let normalSegmentTextColor: UIColor = TDColor.Neutral.neutral500
+    private let titleFont: UIFont = TDFont.boldHeader5.font
     
     // MARK: - Initializers
     public override init(items: [Any]?) {

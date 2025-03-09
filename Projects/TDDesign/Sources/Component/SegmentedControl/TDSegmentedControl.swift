@@ -3,65 +3,80 @@ import Then
 import UIKit
 
 public final class TDSegmentedControl: UISegmentedControl {
-    public var indicatorColor: UIColor = TDColor.Neutral.neutral800 {
-        didSet {
-            underLineView.backgroundColor = indicatorColor
-        }
-    }
     
-    public var selectedSegmentTextColor: UIColor = TDColor.Neutral.neutral800 {
-        didSet {
-            setSegmentedFont()
-        }
-    }
+    // MARK: - Properties
     
-    public var normalSegmentTextColor: UIColor = TDColor.Neutral.neutral500 {
-        didSet {
-            setSegmentedFont()
-        }
-    }
+    public var indicatorForeGroundColor: UIColor
+    public var indicatorBackGroundColor: UIColor
+    public var selectedSegmentTextColor: UIColor
+    public var normalSegmentTextColor: UIColor
+    public var titleFont: UIFont
+
+    private let underForeGroundLineView = UIView()
+    private let underBackGroundLineView = UIView()
+
+    // MARK: - Initializer
     
-    public var titleFont: UIFont = TDFont.boldHeader5.font {
-        didSet {
-            setSegmentedFont()
-        }
-    }
-    
-    private var underLineView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral800
-    }
-    
-    public override init(items: [Any]?) {
+    public init(
+        items: [Any]?,
+        indicatorForeGroundColor: UIColor = TDColor.Neutral.neutral800,
+        indicatorBackGroundColor: UIColor = TDColor.baseWhite,
+        selectedTextColor: UIColor = TDColor.Neutral.neutral800,
+        normalTextColor: UIColor = TDColor.Neutral.neutral500,
+        titleFont: UIFont = TDFont.boldHeader5.font
+    ) {
+        self.indicatorForeGroundColor = indicatorForeGroundColor
+        self.indicatorBackGroundColor = indicatorBackGroundColor
+        self.selectedSegmentTextColor = selectedTextColor
+        self.normalSegmentTextColor = normalTextColor
+        self.titleFont = titleFont
         super.init(items: items)
-        setSegmentedControl()
+        
+        setupSegmentedControl()
     }
     
     public required init?(coder: NSCoder) {
+        self.indicatorForeGroundColor = TDColor.Neutral.neutral800
+        self.indicatorBackGroundColor = TDColor.baseWhite
+        self.selectedSegmentTextColor = TDColor.Neutral.neutral800
+        self.normalSegmentTextColor = TDColor.Neutral.neutral500
+        self.titleFont = TDFont.boldHeader5.font
         super.init(coder: coder)
-        setSegmentedControl()
+        
+        setupSegmentedControl()
     }
     
-    private func setSegmentedControl() {
+    // MARK: - Setup Methods
+    
+    private func setupSegmentedControl() {
         selectedSegmentIndex = 0
-        addSubview(underLineView)
-        addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+        
+        underBackGroundLineView.backgroundColor = indicatorBackGroundColor
+        addSubview(underBackGroundLineView)
+
+        underForeGroundLineView.backgroundColor = indicatorForeGroundColor
+        addSubview(underForeGroundLineView)
+        
+        addAction(UIAction { [weak self] _ in
+            self?.updateIndicatorPosition(animated: true)
+        }, for: .valueChanged)
         
         setSegmentedImage()
-        setSegmentedFont()
+        updateAppearance()
         layout()
     }
     
-    // MARK: 세그먼트 컨트롤 외형 커스터마이징 (투명 설정)
-    
+    /// 세그먼트 외형을 투명하게 설정
     private func setSegmentedImage() {
         setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
         setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
     }
     
-    // MARK: 폰트 & 색상 설정
-    
-    private func setSegmentedFont() {
+    /// 폰트 & 색상 설정
+    private func updateAppearance() {
+        underForeGroundLineView.backgroundColor = indicatorForeGroundColor
+        
         let selectedAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: selectedSegmentTextColor,
             .font: titleFont
@@ -75,10 +90,17 @@ public final class TDSegmentedControl: UISegmentedControl {
         setTitleTextAttributes(normalAttributes, for: .normal)
     }
     
-    // MARK: indicatorView 설정
+    // MARK: - Indicator Layout
 
     private func layout() {
-        underLineView.snp.makeConstraints {
+        underBackGroundLineView.snp.makeConstraints {
+            $0.top.equalTo(self.snp.bottom).offset(-1)
+            $0.height.equalTo(1)
+            $0.width.equalToSuperview()
+            $0.leading.equalToSuperview()
+        }
+        
+        underForeGroundLineView.snp.makeConstraints {
             $0.top.equalTo(self.snp.bottom).offset(-1)
             $0.height.equalTo(1.5)
             $0.width.equalTo(self.snp.width).dividedBy(self.numberOfSegments)
@@ -90,23 +112,38 @@ public final class TDSegmentedControl: UISegmentedControl {
         let segmentWidth = frame.width / CGFloat(numberOfSegments)
         let leadingDistance = segmentWidth * CGFloat(selectedSegmentIndex)
         
-        // 애니메이션 여부에 따라 위치 업데이트
         if animated {
             UIView.animate(withDuration: 0.2) {
-                self.underLineView.snp.updateConstraints {
+                self.underForeGroundLineView.snp.updateConstraints {
                     $0.leading.equalTo(self.snp.leading).offset(leadingDistance)
                 }
                 self.layoutIfNeeded()
             }
         } else {
-            underLineView.snp.updateConstraints {
+            underForeGroundLineView.snp.updateConstraints {
                 $0.leading.equalTo(self.snp.leading).offset(leadingDistance)
             }
             layoutIfNeeded()
         }
     }
     
-    @objc func segmentChanged() {
-        updateIndicatorPosition(animated: true)
+    // MARK: - Public Methods
+    
+    /// 색상 업데이트 메서드
+    public func updateColors(
+        indicator: UIColor,
+        selectedText: UIColor,
+        normalText: UIColor
+    ) {
+        self.indicatorForeGroundColor = indicator
+        self.selectedSegmentTextColor = selectedText
+        self.normalSegmentTextColor = normalText
+        updateAppearance()
+    }
+    
+    /// 폰트 업데이트 메서드
+    public func updateFont(_ font: UIFont) {
+        self.titleFont = font
+        updateAppearance()
     }
 }

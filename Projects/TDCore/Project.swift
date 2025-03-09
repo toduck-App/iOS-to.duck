@@ -10,7 +10,7 @@ let project = Project(
             bundleId: Project.bundleID + ".core",
             sources: .sources,
             dependencies: [
-                .external(name: "Swinject")
+                .external(dependency: .Swinject),
             ]
         )
     ]

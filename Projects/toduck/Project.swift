@@ -11,7 +11,9 @@ let appTarget = Target.target(
     sources: .sources,
     resources: [
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/**")),
+        .glob(pattern: .relativeToRoot("Projects/toduck/Resources/LaunchScreen.storyboard"))
     ],
+    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     dependencies: [
         // Module
         .data(),
@@ -22,10 +24,15 @@ let appTarget = Target.target(
         .storage(),
         .domain()
     ],
-    settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
-        .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
-    ])
+    settings: .settings(
+        base: [
+            "DEVELOPMENT_LANGUAGE": "ko"
+        ],
+        configurations: [
+            .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
+            .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
+        ]
+    )
 )
 
 // MARK: - Project

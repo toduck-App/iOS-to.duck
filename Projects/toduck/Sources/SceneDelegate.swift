@@ -1,17 +1,12 @@
-//
-//  SceneDelegate.swift
-//  toduck
-//
-//  Created by 승재 on 5/21/24.
-//
-
+import Swinject
+import KakaoSDKAuth
 import TDCore
 import TDData
 import TDDomain
-import Swinject
 import TDPresentation
-import UIKit
 import TDStorage
+import TDNetwork
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -33,6 +28,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func assembleDependencies() {
-        DIContainer.shared.assemble([StorageAssembly(), DataAssembly(), DomainAssembly()])
+        DIContainer.shared.assemble([ServiceAssembly(), StorageAssembly(), DataAssembly(), DomainAssembly()])
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                _ = AuthController.handleOpenUrl(url: url)
+            }
+        }
     }
 }

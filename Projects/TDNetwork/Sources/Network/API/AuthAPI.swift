@@ -1,10 +1,3 @@
-//
-//  AuthAPI.swift
-//  TDNetwork
-//
-//  Created by 디해 on 1/22/25.
-//
-
 import Foundation
 
 public enum AuthAPI {
@@ -12,14 +5,11 @@ public enum AuthAPI {
     case checkPhoneVerification(code: String) // 휴대폰 본인 인증 확인
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
     case registerUser(userDetails: [String: Any]) // 회원가입
-    case login(username: String, password: String) // 자체 로그인
-    case loginApple(token: String) // 애플 로그인
-    case loginKakao(token: String) // 카카오 로그인
-    case loginNaver(token: String) // 네이버 로그인
-    case loginGoogle(token: String) // 구글 로그인
+    case login(loginId: String, password: String) // 자체 로그인
+    case loginOauth(provider: String, oauthId: String, idToken: String) // Oauth 로그인
     case findIdPassword(phoneNumber: String) // 비밀번호 찾기
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
-    case saveFCMToken(userId: Int, fcmToken:String) // FCM 토큰 저장
+    case saveFCMToken(userId: Int, fcmToken: String) // FCM 토큰 저장
     case deleteUser(userId: Int) // 유저 삭제
 }
 
@@ -39,15 +29,9 @@ extension AuthAPI: MFTarget {
         case .registerUser:
             return "/auth/registerUser"
         case .login:
-            return "/auth/login"
-        case .loginApple:
-            return "/auth/oauth/apple"
-        case .loginKakao:
-            return "/auth/oauth/kakao"
-        case .loginNaver:
-            return "/auth/oauth/naver"
-        case .loginGoogle:
-            return "/auth/oauth/google"
+            return "/v1/auth/login"
+        case .loginOauth:
+            return "/v1/auth/oauth/register"
         case .findIdPassword:
             return "/auth/find-id-password"
         case .refreshToken:
@@ -68,10 +52,7 @@ extension AuthAPI: MFTarget {
              .checkUsernameDuplication,
              .registerUser,
              .login,
-             .loginApple,
-             .loginKakao,
-             .loginNaver,
-             .loginGoogle,
+             .loginOauth,
              .findIdPassword,
              .saveFCMToken:
             return .post
@@ -84,15 +65,13 @@ extension AuthAPI: MFTarget {
         switch self {
         case .refreshToken(let refreshToken):
             return ["refreshToken": refreshToken]
+        case .loginOauth(let provider, _, _):
+            return ["provider": provider]
         case .requestPhoneVerification,
              .checkPhoneVerification,
              .checkUsernameDuplication,
              .registerUser,
              .login,
-             .loginApple,
-             .loginKakao,
-             .loginNaver,
-             .loginGoogle,
              .findIdPassword,
              .saveFCMToken:
             return nil
@@ -122,15 +101,19 @@ extension AuthAPI: MFTarget {
         case .registerUser(let userDetails):
             return .requestParameters(parameters: userDetails)
             
-        case .login(let username, let password):
+        case .login(let loginId, let password):
             return .requestParameters(
-                parameters: ["username": username,
+                parameters: ["loginId": loginId,
                              "password": password]
             )
             
-        case .loginApple(let token), .loginKakao(let token), .loginNaver(let token), .loginGoogle(let token):
+        case .loginOauth(_, let oauthId, let idToken):
             return .requestParameters(
-                parameters: ["token": token]
+                parameters: [
+                    "oauthId": oauthId,
+                    "idToken": idToken,
+                    "nonce": "nonce"
+                ]
             )
             
         case .findIdPassword(let phoneNumber):
@@ -155,10 +138,7 @@ extension AuthAPI: MFTarget {
              .checkUsernameDuplication,
              .registerUser,
              .login,
-             .loginApple,
-             .loginKakao,
-             .loginNaver,
-             .loginGoogle,
+             .loginOauth,
              .findIdPassword:
             let jsonHeaders: MFHeaders = [.contentType("application/json")]
             return jsonHeaders

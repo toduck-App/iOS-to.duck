@@ -1,4 +1,5 @@
 import TDCore
+
 public protocol UpdateTimerSettingUseCase {
     func execute(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError>
 }
