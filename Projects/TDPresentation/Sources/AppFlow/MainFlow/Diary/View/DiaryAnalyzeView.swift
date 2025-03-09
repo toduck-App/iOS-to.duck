@@ -15,8 +15,8 @@ final class DiaryAnalyzeView: BaseView {
     
     private let analzeHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
+        $0.distribution = .fillEqually
         $0.spacing = 10
-        $0.alignment = .center
     }
     lazy var diaryAnalyzeLabel = DiaryAnalyzeDetailView(
         type: .diary,
@@ -57,7 +57,7 @@ final class DiaryAnalyzeView: BaseView {
         }
         titleLabel.snp.makeConstraints { make in
             make.centerY.equalTo(nickNameLabel)
-            make.leading.equalTo(nickNameLabel.snp.trailing).offset(4)
+            make.leading.equalTo(nickNameLabel.snp.trailing)
         }
         analzeHorizontalStackView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(20)

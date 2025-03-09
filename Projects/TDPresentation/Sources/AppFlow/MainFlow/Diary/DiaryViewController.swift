@@ -20,6 +20,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.distribution = .fill
     }
     
+    /// 분석 뷰
     let analyzeView = DiaryAnalyzeView(diaryCount: 25, focusPercent: 55)
     
     /// 캘린더 뷰
@@ -45,7 +46,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.layer.masksToBounds = false
     }
-    
     let diaryPostButton = TDBaseButton(
         title: "일기 작성",
         backgroundColor: TDColor.Primary.primary500,
@@ -106,12 +106,12 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.height.equalTo(456)
         }
         calendarHeader.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview().offset(20)
             $0.leading.equalToSuperview().offset(24)
-            $0.height.equalTo(56)
+            $0.height.equalTo(24)
         }
         diarySegmentedControl.snp.makeConstraints {
-            $0.top.equalTo(calendarHeader.snp.bottom)
+            $0.top.equalTo(calendarHeader.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(48)
         }
@@ -120,14 +120,14 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.leading.trailing.bottom.equalToSuperview().inset(20)
         }
         noDiaryContainerView.snp.makeConstraints {
-            $0.height.equalTo(470)
+            $0.height.equalTo(300)
         }
         noDiaryImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(140)
+            $0.top.equalToSuperview().offset(50)
             $0.centerX.equalToSuperview()
         }
         noDiaryLabel.snp.makeConstraints {
-            $0.top.equalTo(noDiaryImageView.snp.bottom).offset(60)
+            $0.top.equalTo(noDiaryImageView.snp.bottom).offset(24)
             $0.centerX.equalToSuperview()
         }
         

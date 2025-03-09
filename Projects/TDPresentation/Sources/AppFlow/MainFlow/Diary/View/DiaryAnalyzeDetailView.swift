@@ -64,12 +64,12 @@ final class DiaryAnalyzeDetailView: BaseView {
         }
         description1Label.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(24)
         }
         description2Label.snp.makeConstraints {
             $0.top.equalTo(description1Label.snp.bottom)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(24)
         }
         analyzeImageView.snp.makeConstraints {
