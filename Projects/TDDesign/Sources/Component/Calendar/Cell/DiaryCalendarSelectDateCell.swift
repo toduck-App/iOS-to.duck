@@ -1,10 +1,3 @@
-//
-//  FocusCalendarSelectDateCell.swift
-//  toduck
-//
-//  Created by 박효준 on 9/8/24.
-//
-
 import FSCalendar
 import SnapKit
 import Then
@@ -36,10 +29,6 @@ public final class DiaryCalendarSelectDateCell: FSCalendarCell {
             $0.size.equalTo(minSize())
         }
         backImageView.layer.cornerRadius = minSize() / 2
-    }
-    
-    public override func layoutSubviews() {
-        super.layoutSubviews()
     }
     
     public override func prepareForReuse() {
