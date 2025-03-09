@@ -75,7 +75,7 @@ final class DiaryAnalyzeDetailView: BaseView {
         analyzeImageView.snp.makeConstraints {
             $0.top.equalTo(description2Label.snp.bottom).offset(12)
             $0.leading.trailing.bottom.equalToSuperview().inset(16)
-            $0.height.equalTo(200)
+            $0.height.equalTo(80)
         }
     }
     

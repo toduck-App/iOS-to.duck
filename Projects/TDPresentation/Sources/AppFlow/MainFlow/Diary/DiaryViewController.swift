@@ -11,17 +11,15 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.showsHorizontalScrollIndicator = false
         $0.alwaysBounceVertical = true
     }
-    
-    private let contentView = UIView() // scrollView 내부 컨텐츠를 담을 뷰
-    
+    private let contentView = UIView()
     private let stackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 20
+        $0.spacing = 24
         $0.alignment = .fill
         $0.distribution = .fill
     }
-    
     let analyzeView = DiaryAnalyzeView(diaryCount: 25, focusPercent: 55)
+    let calendarContainerView = UIView()
     let calendarHeader = CalendarHeaderStackView(type: .toduck)
     let diarySegmentedControl = TDSegmentedControl(items: ["기분", "집중도"])
     let calendar = DiaryCalendar()
@@ -36,12 +34,14 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         // 스택뷰에 뷰들을 추가
         stackView.addArrangedSubview(analyzeView)
-        stackView.addArrangedSubview(calendarHeader)
-        stackView.addArrangedSubview(diarySegmentedControl)
-        stackView.addArrangedSubview(calendar)
+        stackView.addArrangedSubview(calendarContainerView)
+        calendarContainerView.addSubview(calendarHeader)
+        calendarContainerView.addSubview(diarySegmentedControl)
+        calendarContainerView.addSubview(calendar)
     }
     
     override func configure() {
+        calendarContainerView.backgroundColor = TDColor.baseWhite
         setupCalendar()
         setupNavigationBar(style: .diary, navigationDelegate: coordinator!) { [weak self] in
             TDLogger.debug("MyPageViewController - setupNavigationBar")
@@ -53,30 +53,32 @@ final class DiaryViewController: BaseViewController<BaseView> {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalTo(scrollView.frameLayoutGuide)
         }
-        
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
         analyzeView.snp.makeConstraints {
-            $0.height.equalTo(220)
+            $0.height.equalTo(230)
         }
-        
+        calendarContainerView.snp.makeConstraints {
+            $0.height.equalTo(456)
+        }
         calendarHeader.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview().offset(24)
             $0.height.equalTo(56)
         }
-        
         diarySegmentedControl.snp.makeConstraints {
-            $0.height.equalTo(32)
+            $0.top.equalTo(calendarHeader.snp.bottom)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(48)
         }
-        
         calendar.snp.makeConstraints {
-            $0.height.equalTo(360)
+            $0.top.equalTo(diarySegmentedControl.snp.bottom).offset(36)
+            $0.leading.trailing.bottom.equalToSuperview().inset(20)
         }
     }
 }
