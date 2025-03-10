@@ -3,7 +3,7 @@ import UIKit
 public typealias TDColorPair = (text: UIColor, back: UIColor)
 
 extension TDColor {
-    static let pair: [UIColor: UIColor] = [
+    public static let pair: [UIColor: UIColor] = [
         TDColor.Schedule.text1: TDColor.Schedule.back1,
         TDColor.Schedule.text2: TDColor.Schedule.back2,
         TDColor.Schedule.text3: TDColor.Schedule.back3,
@@ -26,7 +26,7 @@ extension TDColor {
         .white: TDColor.Schedule.back20
     ]
     
-    static let reversedPair: [UIColor: UIColor] = [
+    public static let reversedPair: [UIColor: UIColor] = [
         TDColor.Schedule.back1: TDColor.Schedule.text1,
         TDColor.Schedule.back2: TDColor.Schedule.text2,
         TDColor.Schedule.back3: TDColor.Schedule.text3,

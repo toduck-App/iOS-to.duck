@@ -2,11 +2,12 @@ import Foundation
 import TDDomain
 
 public final class UserRepositoryImpl: UserRepository {
-    private let dummyUserDetail = UserDetail(
-        isFollowing: false,
+    private var dummyUserDetail = UserDetail(
+        isFollowing: true,
         followingCount: 12,
         followerCount: 261,
         totalPostCount: 1,
+        totalRoutineCount: 1,
         whoFollow: [],
         routineShareCount: 1
     )
@@ -14,7 +15,7 @@ public final class UserRepositoryImpl: UserRepository {
     public init() {}
 
     public func fetchUser(userID: User.ID) async throws -> User {
-        User.dummy.filter { $0.id == userID }.first!
+        User.dummy.first!
     }
 
     public func fetchUserDetail(userID: User.ID) async throws -> UserDetail {
@@ -34,7 +35,8 @@ public final class UserRepositoryImpl: UserRepository {
     }
 
     public func toggleUserFollow(userID: User.ID, targetUserID: User.ID) async throws -> Bool {
-        false
+        dummyUserDetail.isFollowing.toggle()
+        return dummyUserDetail.isFollowing
     }
 
     public func blockUser(userID: User.ID) async throws -> Bool {
