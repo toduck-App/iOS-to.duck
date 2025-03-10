@@ -18,7 +18,6 @@ final class CategoryStorageImpl: CategoryStorage {
                 TDCategoryDTO(colorHex: "#FFE3CC", imageName: "rice"),
                 TDCategoryDTO(colorHex: "#FFF7D9", imageName: "pencil"),
                 TDCategoryDTO(colorHex: "#DAF9DD", imageName: "redBook"),
-                TDCategoryDTO(colorHex: "#DEEEFC", imageName: "yellowBook"),
                 TDCategoryDTO(colorHex: "#EAECFF", imageName: "sleep"),
                 TDCategoryDTO(colorHex: "#F3E6D6", imageName: "power"),
                 TDCategoryDTO(colorHex: "#F9D6CF", imageName: "people"),
@@ -26,7 +25,6 @@ final class CategoryStorageImpl: CategoryStorage {
                 TDCategoryDTO(colorHex: "#D6D6D6", imageName: "talk"),
                 TDCategoryDTO(colorHex: "#FFD6E2", imageName: "heart"),
                 TDCategoryDTO(colorHex: "#FFE3CC", imageName: "vehicle"),
-                TDCategoryDTO(colorHex: "#FFFFFF", imageName: "none"),
             ]
         }
         let decoder = JSONDecoder()

@@ -33,10 +33,10 @@ final class EventMakorViewModel: BaseViewModel {
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
-    private var selectedCategory: TDCategory?
+    private var selectedCategory: TDCategory? = TDCategory(colorHex: "FFFFFF", imageName: "None")
     private var startDate: String? // YYYY-MM-DD
     private var endDate: String? // YYYY-MM-DD
-    private var isAllDay: Bool = false
+    private var isAllDay: Bool = true
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?

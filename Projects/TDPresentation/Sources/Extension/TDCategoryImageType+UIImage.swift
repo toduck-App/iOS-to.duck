@@ -9,7 +9,6 @@ extension TDCategoryImageType {
         case "food": self = .food
         case "pencil": self = .pencil
         case "redbook": self = .redBook
-        case "yellowbook": self = .yellowBook
         case "sleep": self = .sleep
         case "power": self = .power
         case "people": self = .people
@@ -26,7 +25,6 @@ extension TDCategoryImageType {
         case .food: TDImage.Category.food
         case .pencil: TDImage.Category.pencil
         case .redBook: TDImage.Category.redBook
-        case .yellowBook: TDImage.Category.yellowBook
         case .sleep: TDImage.Category.sleep
         case .power: TDImage.Category.power
         case .people: TDImage.Category.people

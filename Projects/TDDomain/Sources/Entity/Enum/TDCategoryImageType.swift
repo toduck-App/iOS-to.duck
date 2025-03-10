@@ -3,7 +3,6 @@ public enum TDCategoryImageType {
     case food
     case pencil
     case redBook
-    case yellowBook
     case sleep
     case power
     case people

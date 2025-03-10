@@ -23,7 +23,6 @@ public final class TDCategoryCollectionView: UIView {
         TDImage.Category.food,      // 밥
         TDImage.Category.pencil,    // 연필
         TDImage.Category.redBook,   // 빨간책
-        TDImage.Category.yellowBook,// 노란책
         TDImage.Category.sleep,     // 물
         TDImage.Category.power,     // 운동
         TDImage.Category.people,    // 사람
@@ -31,7 +30,6 @@ public final class TDCategoryCollectionView: UIView {
         TDImage.Category.talk,      // 채팅
         TDImage.Category.heart,     // 하트
         TDImage.Category.vehicle,   // 차
-        TDImage.Category.none       // None
     ]
     private var categoryColors = [UIColor]()
     private var selectedIndex: Int?
