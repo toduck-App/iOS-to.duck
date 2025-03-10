@@ -1,28 +1,38 @@
-//
-//  PickerButton.swift
-//  toduck
-//
-//  Created by 박효준 on 8/17/24.
-//
-
 import UIKit
+import Then
 
-final class PickerButton: UIButton {
-    private var datePicker: UIDatePicker!
+public protocol PickerButtonDelegate: AnyObject {
+    func pickerButton(_ pickerButton: PickerButton, didSelect date: Date)
+}
+
+public final class PickerButton: UIButton {
+    private lazy var datePicker = UIDatePicker().then {
+        if #available(iOS 17.4, *) {
+            $0.datePickerMode = .yearAndMonth
+        } else {
+            $0.datePickerMode = .date
+        }
+        $0.preferredDatePickerStyle = .wheels
+        $0.locale = Locale(identifier: "ko_KR")
+    }
+    public weak var delegate: PickerButtonDelegate?
     
     init(type: CalendarType) {
         super.init(frame: .zero)
         
+        let image: UIImage?
         switch type {
         case .toduck, .diary:
-            self.setImage(TDImage.Direction.rightMedium, for: .normal)
+            image = TDImage.Direction.rightMedium.withTintColor(TDColor.Neutral.neutral700)
         case .sheet:
-            self.setImage(TDImage.Direction.rightSmall, for: .normal)
+            image = TDImage.Direction.rightSmall
         }
+        setImage(image, for: .normal)
         
         setupButton()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -33,35 +43,43 @@ final class PickerButton: UIButton {
         }, for: .touchUpInside)
     }
     
-    // [임시코드] UIDatePicker가 아닌, UIPickerView로 커스텀해야 할듯
-    // datePicker.datePickerMode = .yearAndMonth 옵션이 iOS 17.4 이상부터 가능함
-    @objc private func showDatePicker() {
-        let alert = UIAlertController(title: "원하는 년/월을 선택해주세요", message: "\n\n\n\n\n\n\n\n\n\n\n\n", preferredStyle: .actionSheet)
+    private func showDatePicker() {
+        let alert = UIAlertController(
+            title: "원하는 년/월을 선택해주세요",
+            message: "\n\n\n\n\n\n\n\n\n\n\n\n",
+            preferredStyle: .actionSheet
+        )
         
-        datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.preferredDatePickerStyle = .wheels
         datePicker.frame = CGRect(x: 0, y: 50, width: alert.view.bounds.width, height: 250)
-        datePicker.locale = Locale(identifier: "ko_KR") // 한국어로 설정
-        
         alert.view.addSubview(datePicker)
         
-        let selectAction = UIAlertAction(title: "Select", style: .default) { _ in
-            let selectedDate = self.datePicker.date
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy년 MM월"
-            let dateString = dateFormatter.string(from: selectedDate)
-            print("Selected Date: \(dateString)")
-            // 필요한 작업 수행
+        let selectAction = UIAlertAction(title: "선택", style: .default) { [weak self] _ in
+            guard let self else { return }
+            delegate?.pickerButton(self, didSelect: datePicker.date)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         
         alert.addAction(selectAction)
         alert.addAction(cancelAction)
         
-        if let topVC = UIApplication.shared.windows.first?.rootViewController {
-            topVC.present(alert, animated: true, completion: nil)
+        if let topVC = getTopViewController() {
+            topVC.present(alert, animated: true)
         }
+    }
+    
+    private func getTopViewController() -> UIViewController? {
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene }).first,
+              let window = windowScene.windows.first,
+              let rootVC = window.rootViewController else {
+            return nil
+        }
+        
+        var topVC = rootVC
+        while let presentedVC = topVC.presentedViewController {
+            topVC = presentedVC
+        }
+        return topVC
     }
 }

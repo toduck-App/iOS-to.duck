@@ -33,21 +33,27 @@ extension HomeCoordinator: CoordinatorFinishDelegate {
     }
 }
 
-// MARK: - Navigation Delegate
-extension HomeCoordinator: NavigationDelegate {
-    func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
-        toduckCalendarCoordinator.finishDelegate = self
-        childCoordinators.append(toduckCalendarCoordinator)
-        toduckCalendarCoordinator.start()
-    }
-}
-
+// MARK: - EventMakorDelegate
 extension HomeCoordinator: EventMakorDelegate {
     func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
         let eventMakorCoordinator = EventMakorCoordinator(navigationController: navigationController, injector: injector)
         eventMakorCoordinator.finishDelegate = self
         childCoordinators.append(eventMakorCoordinator)
         eventMakorCoordinator.start(mode: mode)
+    }
+}
+
+// MARK: - Navigation Delegate
+extension HomeCoordinator: NavigationDelegate {
+    func didTapAlarmButton() {
+        // TODO: 알람 페이지로 이동
+        TDLogger.debug("알람 페이지로 이동")
+    }
+    
+    func didTapCalendarButton() {
+        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
+        toduckCalendarCoordinator.finishDelegate = self
+        childCoordinators.append(toduckCalendarCoordinator)
+        toduckCalendarCoordinator.start()
     }
 }

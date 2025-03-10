@@ -1,10 +1,3 @@
-//
-//  BaseCalendar.swift
-//  toduck
-//
-//  Created by 박효준 on 8/16/24.
-//
-
 import FSCalendar
 import SnapKit
 import Then
@@ -44,5 +37,3 @@ public class BaseCalendar: FSCalendar, FSCalendarDataSource, FSCalendarDelegate 
         self.headerHeight = 0
     }
 }
-
-
