@@ -13,7 +13,7 @@ final class UpdateFocusCountUseCaseImpl: UpdateFocusCountUseCase {
     }
 
     public func execute(_ count: Int) -> Result<Void, TDCore.TDDataError> {
-        let max = repository.fetchTimerSetting().maxFocusCount
+        let max = repository.fetchTimerSetting().focusCountLimit
 
         guard count >= min, count <= max else { 
             return .failure(.updateEntityFailure)

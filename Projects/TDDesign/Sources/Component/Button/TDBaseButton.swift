@@ -51,7 +51,7 @@ public class TDBaseButton: UIButton {
         config.imagePadding = 4
         
         if let image = image {
-            config.image = image
+            config.image = image.withRenderingMode(.alwaysTemplate)
         }
         
         self.configuration = config

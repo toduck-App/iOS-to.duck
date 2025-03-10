@@ -12,6 +12,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
     private var cancellables = Set<AnyCancellable>()
     private var theme: TDTimerTheme = .Bboduck
+    private var focusCount: Int = 0 // 테마를 위한 변수
 
     // MARK: - Initializer
 
@@ -65,6 +66,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         )
     }
 
+    // MARK: - Binding
+
     override func binding() {
         let output: AnyPublisher<TimerViewModel.Output, Never> = viewModel.transform(input: input.eraseToAnyPublisher())
 
@@ -82,7 +85,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateFocusCount(with: count)
                 case let .updatedMaxFocusCount(maxCount):
                     self?.updateMaxFocusCount(with: maxCount)
-                case let .updatedTimerTheme(theme):
+                case let .updatedTimerTheme(theme), let .fetchedTimerTheme(theme):
                     self?.updateTheme(theme: theme)
                 case let .failure(code):
                     self?.handleFailure(code)
@@ -96,7 +99,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
 
     func setupNavigation() {
-        // TODO: 캘린더 이미지 tint 사용 금지
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: layoutView.leftNavigationItem)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -106,13 +108,17 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.dropDownView.delegate = self
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
 
-        layoutView.rightNavigationMenuButton.addAction(UIAction { _ in
-            self.layoutView.dropDownView.showDropDown()
-        }, for: .touchUpInside)
+        layoutView.rightNavigationMenuButton.addAction(
+            UIAction { _ in
+                self.layoutView.dropDownView.showDropDown()
+            }, for: .touchUpInside
+        )
 
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
 }
+
+// MARK: - Private Methods
 
 extension TimerViewController {
     // TODO: 집중 타이머 횟수를 다채웠으면 어떻게 할지 물어보고 구현하기
@@ -125,14 +131,7 @@ extension TimerViewController {
 
     private func updateTimer(_ remainedTime: Int) {
         guard let setting = viewModel.timerSetting else { return }
-        let imageStep = 5
-
-        // 이미지 업데이트
-        let timePerImage = setting.focusDuration / imageStep
-        let elapsedTime: Int = setting.focusDuration - remainedTime
-        let imageIndex = min(elapsedTime / timePerImage, imageStep - 1)
-
-        _ = "focus_0\(imageIndex + 1)" // 임시 코드
+        let elapsedTime = setting.toFocusDurationMinutes() - remainedTime
 
         // Label 업데이트
         let second = remainedTime % 60
@@ -143,6 +142,10 @@ extension TimerViewController {
             hour >= 1
                 ? String(format: "%d:%02d:%02d", hour, minute, second)
                 : String(format: "%02d:%02d", minute, second)
+
+        // progress 업데이트
+        layoutView.simpleTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
+        layoutView.bboduckTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
     }
 
     private func updateTimerRunning(_ isRunning: Bool?) {
@@ -157,15 +160,58 @@ extension TimerViewController {
         }
     }
 
-    // TODO: Theme 설정
-    private func updateTheme(theme _: TDTimerTheme) {}
+    // TODO: 임시 마크
+
+    // MARK: - updateTheme
+
+    private func updateTheme(theme: TDTimerTheme) {
+        self.theme = theme
+
+        layoutView.simpleTimerView.isHidden = theme == .Bboduck
+        layoutView.bboduckTimerView.isHidden = theme == .Simple
+
+        // button theme
+        layoutView.playButton.configuration?.baseBackgroundColor = theme.buttonCenterBackgroundColor
+        layoutView.playButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
+
+        layoutView.pauseButton.configuration?.baseBackgroundColor = theme.buttonCenterBackgroundColor
+        layoutView.pauseButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
+
+        layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
+        layoutView.restartButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
+
+        // background theme
+        layoutView.backgroundColor = theme.backgroundColor
+
+        // navigation theme
+        navigationItem.rightBarButtonItem?.customView?.subviews.forEach { view in
+            view.tintColor = theme.navigationColor
+        }
+
+        var  index = 0;
+        navigationItem.leftBarButtonItem?.customView?.subviews.forEach { view in
+            if view is UIImageView {
+                if index == 0 {
+                    (view as! UIImageView).image = theme.navigationImage
+                } else {
+                    view.tintColor = theme.navigationColor
+                }
+            }
+            index += 1
+        }
+
+        // stack theme
+        updateFocusCount(with: focusCount)
+        layoutView.layoutIfNeeded()
+    }
 
     private func updateFocusCount(with count: Int) {
         guard let setting = viewModel.timerSetting else { return }
 
+        focusCount = count
         layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        for i in 1 ... setting.maxFocusCount {
+        for i in 1 ... setting.focusCountLimit {
             if i <= count {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
@@ -186,7 +232,7 @@ extension TimerViewController {
             view.removeFromSuperview()
         }
 
-        for i in 1 ... setting.maxFocusCount {
+        for i in 1 ... setting.focusCountLimit {
             if i <= maxCount {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
@@ -243,8 +289,9 @@ extension TimerViewController: TDDropDownDelegate {
 }
 
 extension TimerViewController {
-    // MARK: - private methods
+    // MARK: - private methods related to UI
 
+    // TODO: initStack -> anyStack으로 바뀌면 레이아웃이 뭉개짐
     private func handleControlStack(_ state: TimerControlStackState) {
         let initStack = [layoutView.playButton]
         let playingStack = [
@@ -281,10 +328,10 @@ extension TimerViewController {
 
     private func createFocusCountEmptyView() -> UIView {
         return UIView().then {
-            $0.layer.borderColor = TDColor.Primary.primary200.cgColor
-            $0.layer.borderWidth = 1
+            $0.layer.borderColor = theme.counterStackBorderColor.cgColor
+            $0.layer.borderWidth = theme.counterStackBorderWidth
             $0.layer.cornerRadius = CGFloat(FocusCountViewLayoutConstant.size / 2)
-            $0.backgroundColor = TDColor.Primary.primary25
+            $0.backgroundColor = theme.counterStackBackgroundColor
 
             $0.snp.makeConstraints {
                 $0.size.equalTo(FocusCountViewLayoutConstant.size)
@@ -309,13 +356,13 @@ extension TimerViewController {
 // MARK: - Enum
 
 extension TimerViewController {
-    enum TimerControlStackState {
+    private enum TimerControlStackState {
         case initilize
         case playing
         case pause
     }
 
-    enum FocusCountViewLayoutConstant {
+    private enum FocusCountViewLayoutConstant {
         static let size: CGFloat = 16
     }
 
@@ -331,18 +378,103 @@ extension TimerViewController {
             return TDDropdownItem(title: rawValue, rightImage: image)
         }
 
-        //TODO: 이미지 추가 예정
+        // TODO: 이미지 추가 예정
         var image: TDDropdownItem.SelectableImage {
             switch self {
             case .timerSetting:
                 return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
             case .themeSetting:
-                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+                return (TDImage.Tomato.tomatoSmallEmtpy, TDImage.Tomato.tomatoSmallFill)
             case .whiteNoise:
-                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+                return (TDImage.Play.play2SmallEmtpy, TDImage.Play.play2SmallFill)
             default:
-                return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
+                return (TDImage.Tomato.tomatoSmallEmtpy, TDImage.Tomato.tomatoSmallFill)
             }
+        }
+    }
+}
+
+// MARK: - Theme Enum
+
+private extension TDTimerTheme {
+    var buttonForegroundColor: UIColor {
+        switch self {
+        case .Simple:
+            return TDColor.Neutral.neutral400
+        case .Bboduck:
+            return TDColor.Primary.primary100
+        }
+    }
+
+    var buttonCenterBackgroundColor: UIColor {
+        switch self {
+        case .Simple:
+            return .clear
+        case .Bboduck:
+            return TDColor.Primary.primary200
+        }
+    }
+
+    var buttonCenterForegroundColor: UIColor {
+        switch self {
+        case .Simple:
+            return TDColor.Neutral.neutral600
+        case .Bboduck:
+            return .white
+        }
+    }
+
+    var backgroundColor: UIColor {
+        switch self {
+        case .Simple:
+            return UIColor(red: 1.00, green: 1.00, blue: 0.99, alpha: 1.00)
+        case .Bboduck:
+            return TDColor.Primary.primary100
+        }
+    }
+
+    var navigationColor: UIColor {
+        switch self {
+        case .Simple:
+            return TDColor.Neutral.neutral500
+        case .Bboduck:
+            return TDColor.Primary.primary300
+        }
+    }
+
+    var navigationImage: UIImage {
+        switch self {
+        case .Simple:
+            return TDImage.Calendar.top2Medium
+        case .Bboduck:
+            return TDImage.Calendar.top2MediumOrange
+        }
+    }
+
+    var counterStackBorderWidth: CGFloat {
+        switch self {
+        case .Simple:
+            return 0
+        case .Bboduck:
+            return 1
+        }
+    }
+
+    var counterStackBackgroundColor: UIColor {
+        switch self {
+        case .Simple:
+            return TDColor.Neutral.neutral200
+        case .Bboduck:
+            return TDColor.Primary.primary25
+        }
+    }
+
+    var counterStackBorderColor: UIColor {
+        switch self {
+        case .Simple:
+            return .clear
+        case .Bboduck:
+            return TDColor.Primary.primary200
         }
     }
 }

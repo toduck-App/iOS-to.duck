@@ -229,8 +229,8 @@ extension TimerViewModel {
     private func increaseMaxFocusCount() {
         guard var setting = timerSetting else { return }
 
-        let current: Int = setting.maxFocusCount + 1
-        setting.maxFocusCount = current
+        let current: Int = setting.focusCountLimit + 1
+        setting.focusCountLimit = current
 
         let result = updateTimerSettingUseCase.execute(setting: setting)
         switch result {
@@ -240,15 +240,15 @@ extension TimerViewModel {
             }
             output.send(.failure(.updateFailed))
         case .success():
-            output.send(.updatedMaxFocusCount(maxCount: setting.maxFocusCount))
+            output.send(.updatedMaxFocusCount(maxCount: setting.focusCountLimit))
         }
     }
 
     private func decreaseMaxFocusCount() {
         guard var setting: TDTimerSetting = timerSetting else { return }
 
-        let current: Int = setting.maxFocusCount - 1
-        setting.maxFocusCount = current
+        let current: Int = setting.focusCountLimit - 1
+        setting.focusCountLimit = current
 
         let result = updateTimerSettingUseCase.execute(setting: setting)
         switch result {
@@ -258,7 +258,7 @@ extension TimerViewModel {
             }
             output.send(.failure(.updateFailed))
         case .success():
-            output.send(.updatedMaxFocusCount(maxCount: setting.maxFocusCount))
+            output.send(.updatedMaxFocusCount(maxCount: setting.focusCountLimit))
         }
     }
 

@@ -1,32 +1,57 @@
 import SnapKit
 import TDDesign
+import TDCore
 import UIKit
+import Lottie
 
-final class BboduckTimerView: UIView {
-    let backdropView = UIView().then {
-        $0.backgroundColor = UIColor(red: 1.00, green: 0.75, blue: 0.58, alpha: 1.00)
-    }
+final class BboduckTimerView: BaseTimerView {
+    private static let toduckBundle = Bundle(identifier: "to.duck.toduck.design")!
 
-    let BboduckView = UIImageView().then {
-        $0.image = TDImage.Tomato.tomato
+    private let images: [String] = [
+        "Timer_0",
+        "Timer_1",
+        "Timer_2",
+        "Timer_3",
+        "Timer_4",
+        "Timer_5",
+    ]
+
+    let bboduckView = LottieAnimationView(
+        name: "bboduckTimer",
+        bundle: BboduckTimerView.toduckBundle
+    ).then {
+        $0.backgroundColor = .clear
         $0.contentMode = .scaleAspectFit
+        $0.loopMode = .loop
+        $0.play()
     }
 
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        addViews()
-        layout()
+
+    override func addview() {
+        addSubview(bboduckView)
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        addViews()
-        layout()
+    override func layout() {
+        bboduckView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 
-    func addViews() {
-        addSubview(backdropView)
+    override var progress: CGFloat {
+        didSet {
+            updateProgress()
+        }
     }
 
-    func layout() {}
+    func updateProgress() {
+        let clampedProgress = min(max(progress, 0), 1)
+        
+        let stepSize = 1.0 / CGFloat(images.count - 1)
+        let imageIndex = min(Int(clampedProgress / stepSize), images.count - 1)
+
+        let newAnimation = LottieAnimation.named(images[imageIndex], bundle: BboduckTimerView.toduckBundle)
+
+        bboduckView.animation = newAnimation
+        bboduckView.play()
+    }
 }
