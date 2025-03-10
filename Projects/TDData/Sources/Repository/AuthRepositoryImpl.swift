@@ -2,6 +2,7 @@ import TDCore
 import Foundation
 import TDDomain
 import Foundation
+import KeyChainManager_KJ
 
 public struct AuthRepositoryImpl: AuthRepository {
     private let service: AuthService
@@ -32,11 +33,11 @@ public struct AuthRepositoryImpl: AuthRepository {
         do {
             let loginUserResponseDTO = try await service.requestLogin(loginId: loginId, password: password)
 
-            async let saveAccess = KeyChainManager.shared.save(string: loginUserResponseDTO.accessToken, account: KeyChainConstant.accessToken.rawValue)
-            async let saveRefresh = KeyChainManager.shared.save(string: loginUserResponseDTO.refreshToken, account: KeyChainConstant.refreshToken.rawValue)
-            async let saveRefreshExpiredAt = KeyChainManager.shared.save(string: loginUserResponseDTO.refreshTokenExpiredAt, account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
+            async let saveAccess = KeyChainManagerWithActor.shared.save(string: loginUserResponseDTO.accessToken, account: KeyChainConstant.accessToken.rawValue)
+            async let saveRefresh = KeyChainManagerWithActor.shared.save(string: loginUserResponseDTO.refreshToken, account: KeyChainConstant.refreshToken.rawValue)
+            async let saveRefreshExpiredAt = KeyChainManagerWithActor.shared.save(string: loginUserResponseDTO.refreshTokenExpiredAt, account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
             let saveUserIdData = try JSONEncoder().encode(loginUserResponseDTO.userId)
-            async let saveUserId = KeyChainManager.shared.save(with: saveUserIdData, account: KeyChainConstant.userId.rawValue)
+            async let saveUserId = KeyChainManagerWithActor.shared.save(with: saveUserIdData, account: KeyChainConstant.userId.rawValue)
             
             _ = try await (saveAccess, saveRefresh, saveRefreshExpiredAt, saveUserId)
             TDLogger.info("로그인 정보 키체인 저장 완료")
