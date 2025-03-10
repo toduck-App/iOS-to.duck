@@ -12,24 +12,24 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
     private var focusTime: Int = 25 {
         didSet {
-            layoutView.focusTimeField.leftButton.isEnabled = focusTime > 5
-            layoutView.focusTimeField.rightButton.isEnabled = focusTime < 60
+            layoutView.focusTimeField.leftButton.isEnabled = focusTime > TDTimerSetting.minFocusDuration
+            layoutView.focusTimeField.rightButton.isEnabled = focusTime < TDTimerSetting.maxFocusDuration
             layoutView.focusTimeField.outputLabel.text = "\(focusTime)분"
         }
     }
 
-    private var maxFocusCount: Int = 4 {
+    private var focusCountLimit: Int = 4 {
         didSet {
-            layoutView.focusCountField.leftButton.isEnabled = maxFocusCount > 1
-            layoutView.focusCountField.rightButton.isEnabled = maxFocusCount < 5
-            layoutView.focusCountField.outputLabel.text = "\(maxFocusCount)회"
+            layoutView.focusCountField.leftButton.isEnabled = focusCountLimit > TDTimerSetting.minFocusCountLimit
+            layoutView.focusCountField.rightButton.isEnabled = focusCountLimit < TDTimerSetting.maxFocusCountLimit
+            layoutView.focusCountField.outputLabel.text = "\(focusCountLimit)회"
         }
     }
 
     private var restTime: Int = 5 {
         didSet {
-            layoutView.restTimeField.leftButton.isEnabled = restTime > 0
-            layoutView.restTimeField.rightButton.isEnabled = restTime < 10
+            layoutView.restTimeField.leftButton.isEnabled = restTime > TDTimerSetting.minRestDuration
+            layoutView.restTimeField.rightButton.isEnabled = restTime < TDTimerSetting.maxRestDuration
             layoutView.restTimeField.outputLabel.text = "\(restTime)분"
         }
     }
@@ -53,7 +53,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
         guard let setting = viewModel.timerSetting else { return }
         focusTime = setting.focusDuration
-        maxFocusCount = setting.maxFocusCount
+        focusCountLimit = setting.focusCountLimit
         restTime = setting.restDuration
     }
 
@@ -74,13 +74,13 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         // focus count field
         layoutView.focusCountField.leftButton.addAction(
             UIAction { _ in
-                self.maxFocusCount -= 1
+                self.focusCountLimit -= 1
             }, for: .touchUpInside
         )
 
         layoutView.focusCountField.rightButton.addAction(
             UIAction { _ in
-                self.maxFocusCount += 1
+                self.focusCountLimit += 1
             }, for: .touchUpInside
         )
 
@@ -103,7 +103,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                     .updateTimerSetting(
                         setting: TDTimerSetting(
                             focusDuration: self.focusTime,
-                            maxFocusCount: self.maxFocusCount,
+                            focusCountLimit: self.focusCountLimit,
                             restDuration: self.restTime
                         )))
 

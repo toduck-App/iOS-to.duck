@@ -168,6 +168,8 @@ public enum TDImage {
         public static let play2Medium = TDDesignAsset.Images.play2Medium.image
         public static let play1Small = TDDesignAsset.Images.play1Small.image
         public static let play2Small = TDDesignAsset.Images.play2Small.image
+        public static let play2SmallFill = TDDesignAsset.Images.play2SmallFill.image
+        public static let play2SmallEmtpy = TDDesignAsset.Images.play2SmallEmtpy.image
     }
     
     public enum Setting {
@@ -264,6 +266,8 @@ public enum TDImage {
         public static let green = TDDesignAsset.Images.greenTomato.image
         public static let orange = TDDesignAsset.Images.orangeTomato.image
         public static let timer = TDDesignAsset.Images.timerTomato.image
+        public static let tomatoSmallFill = TDDesignAsset.Images.tomatoSmallFill.image
+        public static let tomatoSmallEmtpy = TDDesignAsset.Images.tomatoSmallEmtpy.image
     }
     
     public enum Pen {

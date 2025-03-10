@@ -1,24 +1,27 @@
 import TDDesign
+import TDCore
 import UIKit
 
-final class SimpleTimerView: UIView {
-    var progress: Float = 0 {
-        didSet {
-            updateProgress()
-            updateTomatoPosition()
-        }
+final class SimpleTimerView: BaseTimerView {
+    // MARK: - Properties
+    private let animationDuration: TimeInterval = 1
+
+    // MARK: - View
+
+    private let progressLayer = CAShapeLayer().then {
+        $0.strokeColor = TDColor.Primary.primary500.cgColor
+        $0.fillColor = UIColor.clear.cgColor
+        $0.lineWidth = 20
+        $0.lineCap = .round
+        $0.strokeEnd = 1
     }
 
-    var isEnabled: Bool = false {
-        didSet {
-
-        }
+    private let trackLayer = CAShapeLayer().then {
+        $0.strokeColor = TDColor.Primary.primary100.cgColor
+        $0.fillColor = UIColor.clear.cgColor
+        $0.lineWidth = 20
     }
 
-    private let progressLayer = CAShapeLayer()
-    private let trackLayer = CAShapeLayer()
-    private let circularPath: UIBezierPath? = nil
-    
     let tomatoView = UIImageView().then {
         $0.image = TDImage.Tomato.timer
         $0.contentMode = .scaleAspectFit
@@ -28,93 +31,84 @@ final class SimpleTimerView: UIView {
         $0.backgroundColor = .clear
     }
 
-    init() {
-        super.init(frame: .zero)
-        addViews()
-        layout()
-        setup()
+    // MARK: - Override Methods
+
+    override var progress: CGFloat {
+        didSet {
+            updateProgress()
+            updateTomatoRotation()
+        }
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        addViews()
-        layout()
-        setup()
-    }
-
-    func setup() {
-        trackLayer.strokeColor = TDColor.Primary.primary100.cgColor
-        trackLayer.fillColor = UIColor.clear.cgColor
-        trackLayer.lineWidth = 20
-
-        progressLayer.strokeColor = TDColor.Primary.primary500.cgColor
-        progressLayer.fillColor = UIColor.clear.cgColor
-        progressLayer.lineWidth = 20
-        progressLayer.lineCap = .round
-        progressLayer.strokeEnd = 0.5  // 초기값
-    }
-
-    func layout() {
-        
+    override func layout() {
         circleView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(10)
+            make.edges.equalToSuperview().inset(LayoutConstant.circleViewEdgeInset)
         }
 
         tomatoView.snp.makeConstraints { make in
+            make.size.equalTo(LayoutConstant.tomatoSize)
             make.center.equalToSuperview()
-            make.size.equalTo(54)
         }
     }
 
-    func addViews() {
+    override func addview() {
         circleView.layer.addSublayer(trackLayer)
         circleView.layer.addSublayer(progressLayer)
 
-        addSubview(tomatoView)
         addSubview(circleView)
-
+        addSubview(tomatoView)
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        // 원형 경로 생성
+
+        let circleBounds = circleView.bounds
+
+        let center = CGPoint(x: circleBounds.midX, y: circleBounds .midY)
+        let radius = min(circleBounds.width, circleBounds.height) / 2 - progressLayer.lineWidth / 2
         let circularPath = UIBezierPath(
-            arcCenter: CGPoint(x: circleView.bounds.midX, y: circleView.bounds.midY),
-            radius: circleView.bounds.width / 2 - progressLayer.lineWidth / 2,
+            arcCenter: center,
+            radius: radius,
             startAngle: -CGFloat.pi / 2,
             endAngle: 3 * CGFloat.pi / 2,
             clockwise: true
         )
-
-        // 경로 설정
-        trackLayer.path = circularPath.cgPath
         progressLayer.path = circularPath.cgPath
+        trackLayer.path = circularPath.cgPath
+        
+        updateTomatoRotation()
     }
-    
-    //MARK: - private methods
-    
-    private func updateProgress() {
+}
+
+// MAKR: - Private Methods
+
+private extension SimpleTimerView {
+    func updateProgress() {
         CATransaction.begin()
         CATransaction.setDisableActions(false)
-        CATransaction.setAnimationDuration(0.25) // 애니메이션 속도
-        progressLayer.strokeEnd = CGFloat(progress) // 프로그레스 값 설정
+        CATransaction.setAnimationDuration(animationDuration)
+        progressLayer.strokeEnd = 1 - progress
         CATransaction.commit()
     }
-    
-    private func updateTomatoPosition() {
-        guard let circularPath = circularPath else { return }
+
+    func updateTomatoRotation() {
+        layoutIfNeeded()
+        guard bounds.width > 0, bounds.height > 0 else { return }
         
-        // 토마토의 위치 계산
-        let progressAngle = CGFloat(progress) * 2 * .pi - .pi / 2
-        let radius = circleView.bounds.width / 2 - progressLayer.lineWidth / 2
+        let clampedProgress = min(max(progress, 0), 1)
+        let rotationAngle = clampedProgress * 2 * -CGFloat.pi
 
-        let x = circleView.bounds.midX + radius * cos(progressAngle)
-        let y = circleView.bounds.midY + radius * sin(progressAngle)
-
-        // 토마토 뷰 위치 업데이트
-        tomatoView.center = CGPoint(x: x, y: y)
+        UIView.animate(withDuration: animationDuration) {
+            self.tomatoView.transform = CGAffineTransform(rotationAngle: rotationAngle)
+        }
     }
-
 }
-    
+
+// MARK: - LayoutConstant
+
+private extension SimpleTimerView {
+    enum LayoutConstant {
+        static let circleViewEdgeInset = 10
+        static let tomatoSize: CGFloat = 54
+    }
+}
