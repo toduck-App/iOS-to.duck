@@ -8,12 +8,12 @@ final class BboduckTimerView: BaseTimerView {
     private static let toduckBundle = Bundle(identifier: "to.duck.toduck.design")!
 
     private let images: [String] = [
-        "toduckTimer_0",
-        "toduckTimer_1",
-        "toduckTimer_2",
-        "toduckTimer_3",
-        "toduckTimer_4",
-        "toduckTimer_5",
+        "Timer_0",
+        "Timer_1",
+        "Timer_2",
+        "Timer_3",
+        "Timer_4",
+        "Timer_5",
     ]
 
     let bboduckView = LottieAnimationView(
