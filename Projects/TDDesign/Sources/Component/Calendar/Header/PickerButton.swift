@@ -1,18 +1,33 @@
 import UIKit
+import Then
 
-final class PickerButton: UIButton {
-    private var datePicker = UIDatePicker()
-    var dateSelectedHandler: ((Date) -> Void)?
+public protocol PickerButtonDelegate: AnyObject {
+    func pickerButton(_ pickerButton: PickerButton, didSelect date: Date)
+}
+
+public final class PickerButton: UIButton {
+    private lazy var datePicker = UIDatePicker().then {
+        if #available(iOS 17.4, *) {
+            $0.datePickerMode = .yearAndMonth
+        } else {
+            $0.datePickerMode = .date
+        }
+        $0.preferredDatePickerStyle = .wheels
+        $0.locale = Locale(identifier: "ko_KR")
+    }
+    public weak var delegate: PickerButtonDelegate?
     
     init(type: CalendarType) {
         super.init(frame: .zero)
         
+        let image: UIImage?
         switch type {
         case .toduck, .diary:
-            self.setImage(TDImage.Direction.rightMedium.withTintColor(TDColor.Neutral.neutral700), for: .normal)
+            image = TDImage.Direction.rightMedium.withTintColor(TDColor.Neutral.neutral700)
         case .sheet:
-            self.setImage(TDImage.Direction.rightSmall, for: .normal)
+            image = TDImage.Direction.rightSmall
         }
+        setImage(image, for: .normal)
         
         setupButton()
     }
@@ -35,31 +50,36 @@ final class PickerButton: UIButton {
             preferredStyle: .actionSheet
         )
         
-        datePicker = UIDatePicker()
-        if #available(iOS 17.4, *) {
-            datePicker.datePickerMode = .yearAndMonth
-        } else {
-            datePicker.datePickerMode = .date
-        }
-        datePicker.preferredDatePickerStyle = .wheels
         datePicker.frame = CGRect(x: 0, y: 50, width: alert.view.bounds.width, height: 250)
-        datePicker.locale = Locale(identifier: "ko_KR")
-        
         alert.view.addSubview(datePicker)
         
         let selectAction = UIAlertAction(title: "선택", style: .default) { [weak self] _ in
-            if let selectedDate = self?.datePicker.date {
-                self?.dateSelectedHandler?(selectedDate)
-            }
+            guard let self else { return }
+            delegate?.pickerButton(self, didSelect: datePicker.date)
         }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         
         alert.addAction(selectAction)
         alert.addAction(cancelAction)
         
-        if let topVC = UIApplication.shared.windows.first?.rootViewController {
-            topVC.present(alert, animated: true, completion: nil)
+        if let topVC = getTopViewController() {
+            topVC.present(alert, animated: true)
         }
+    }
+    
+    private func getTopViewController() -> UIViewController? {
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene }).first,
+              let window = windowScene.windows.first,
+              let rootVC = window.rootViewController else {
+            return nil
+        }
+        
+        var topVC = rootVC
+        while let presentedVC = topVC.presentedViewController {
+            topVC = presentedVC
+        }
+        return topVC
     }
 }

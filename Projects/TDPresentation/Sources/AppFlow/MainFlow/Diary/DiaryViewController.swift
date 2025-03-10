@@ -80,6 +80,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     override func configure() {
         calendarContainerView.backgroundColor = TDColor.baseWhite
+        calendarHeader.pickerButton.delegate = self
         scrollView.delegate = self
         setupCalendar()
         setupNavigationBar(style: .diary, navigationDelegate: coordinator!) { [weak self] in
@@ -141,6 +142,14 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().offset(-28)
         }
+    }
+}
+
+// MARK: - PickerButtonDelegate
+extension DiaryViewController: PickerButtonDelegate {
+    func pickerButton(_ pickerButton: PickerButton, didSelect date: Date) {
+        calendar.setCurrentPage(date, animated: true)
+        updateHeaderLabel(for: calendar.currentPage)
     }
 }
 
