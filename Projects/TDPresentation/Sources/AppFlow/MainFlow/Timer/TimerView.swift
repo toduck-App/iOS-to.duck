@@ -118,6 +118,7 @@ final class TimerView: BaseView {
         // TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
         remainedFocusTimeLabel.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(36)
+            $0.height.equalTo(remainedFocusTimeLabel.font.lineHeight)
             $0.centerX.equalToSuperview()
         }
 
