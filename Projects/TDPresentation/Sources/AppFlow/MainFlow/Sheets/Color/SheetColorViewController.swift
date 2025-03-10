@@ -62,9 +62,10 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                         } ?? [])
                 case .updatedCategoryColor:
-                    self?.delegate?.didSaveCategory()
                     self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
-                    self?.dismiss(animated: true)
+                    self?.dismiss(animated: true, completion: { [weak self] in
+                        self?.delegate?.didSaveCategory()
+                    })
                 }
             }.store(in: &cancellables)
     }

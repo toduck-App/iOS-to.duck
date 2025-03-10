@@ -2,6 +2,7 @@ import TDCore
 import TDDomain
 
 public final class RoutineRepositoryImpl: RoutineRepository {
+    private let routines: [Routine] = Routine.dummy
     public init() { }
     
     public func fetchRoutine() async -> Result<Routine, TDDataError> {
@@ -25,6 +26,10 @@ public final class RoutineRepositoryImpl: RoutineRepository {
     
     public func fetchRoutineList() async -> Result<[Routine], TDDataError> {
         .success([])
+    }
+    
+    public func fetchRoutineList(userId userID: User.ID) async -> Result<[Routine], TDDataError> {
+        .success(routines)
     }
     
     public func updateRoutine(routineId: Int) async -> Result<Void, TDDataError> {

@@ -3,27 +3,48 @@ import TDDesign
 import TDDomain
 import UIKit
 
+protocol SocialProfileDelegate: AnyObject {
+    func didTapFollow()
+}
+
 final class SocialProfileView: BaseView {
-    private let userProfileView = UserProfileView()
-    private let userDetailView = UserDetailView()
+    weak var delegate: SocialProfileDelegate?
     
-    private(set) var followButton = TDButton(
-        title: "팔로우",
-        size: .small,
-        foregroundColor: TDColor.baseWhite,
-        backgroundColor: TDColor.Primary.primary500
-    ).then {
-        $0.layer.cornerRadius = 8
+    private let avatarView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.layer.cornerRadius = 45
+        $0.clipsToBounds = true
+        $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
-    private(set) var shareButton = TDBaseButton(
-        image: TDImage.shareMedium,
-        backgroundColor: .clear,
-        foregroundColor: TDColor.Neutral.neutral300,
-        radius: 8
+    private let nickNameLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
+    
+    private let titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
+    
+    private let followingLabel = TDLabel(labelText: "팔로잉", toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
+    
+    private let followingCountLabel = TDLabel(toduckFont: .boldBody3, toduckColor: TDColor.Neutral.neutral800)
+    
+    private let followerLabel = TDLabel(labelText: "팔로워", toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
+    
+    private let followerCountLabel = TDLabel(toduckFont: .boldBody3, toduckColor: TDColor.Neutral.neutral800)
+    
+    private let privateUserDetailView = HideUserView()
+    
+    private let whiteBackgroundView = UIView().then {
+        $0.backgroundColor = TDColor.baseWhite
+    }
+    
+    private(set) lazy var followButton = TDBaseButton(
+        title: "팔로우",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        font: TDFont.boldBody1.font,
+        radius: 12
     ).then {
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        $0.addAction(UIAction { [weak self] _ in
+            self?.delegate?.didTapFollow()
+        }, for: .touchUpInside)
     }
     
     private(set) var segmentedControl = TDSegmentedControl(
@@ -33,9 +54,30 @@ final class SocialProfileView: BaseView {
         $0.selectedSegmentTextColor = TDColor.Primary.primary500
     }
     
-    // TODO: Routine View 붙이기
-    private(set) lazy var routineView = UIView()
+    private let routineLabel = TDLabel(labelText: "루틴 공유수", toduckFont: .boldBody2, toduckColor: TDColor.Neutral.neutral800).then {
+        $0.isHidden = true
+    }
     
+    private let routineCountLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500).then {
+        $0.isHidden = true
+    }
+    
+    private let postLabel = TDLabel(labelText: "작성한 글", toduckFont: .boldBody2, toduckColor: TDColor.Neutral.neutral800).then {
+        $0.isHidden = true
+    }
+    
+    private let postCountLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500).then {
+        $0.isHidden = true
+    }
+    
+    private(set) lazy var routineTableView = UITableView(frame: .zero, style: .plain).then {
+        $0.separatorStyle = .none
+        $0.backgroundColor = TDColor.baseWhite
+        $0.register(TimelineRoutineCell.self, forCellReuseIdentifier: TimelineRoutineCell.identifier)
+        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 75
+    }
+
     private(set) lazy var socialFeedCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeCollectionViewLayout()
@@ -44,39 +86,72 @@ final class SocialProfileView: BaseView {
     }
     
     override func addview() {
-        addSubview(userProfileView)
-        addSubview(userDetailView)
-        addSubview(followButton)
-        addSubview(shareButton)
-        addSubview(segmentedControl)
-        addSubview(routineView)
-        addSubview(socialFeedCollectionView)
+        addSubview(whiteBackgroundView)
+        whiteBackgroundView.addSubview(avatarView)
+        whiteBackgroundView.addSubview(followButton)
+        whiteBackgroundView.addSubview(nickNameLabel)
+        whiteBackgroundView.addSubview(titleBagde)
+        whiteBackgroundView.addSubview(followingLabel)
+        whiteBackgroundView.addSubview(followingCountLabel)
+        whiteBackgroundView.addSubview(followerLabel)
+        whiteBackgroundView.addSubview(followerCountLabel)
+        whiteBackgroundView.addSubview(segmentedControl)
+        whiteBackgroundView.addSubview(routineLabel)
+        whiteBackgroundView.addSubview(routineCountLabel)
+        whiteBackgroundView.addSubview(postLabel)
+        whiteBackgroundView.addSubview(postCountLabel)
+        whiteBackgroundView.addSubview(routineTableView)
+        whiteBackgroundView.addSubview(socialFeedCollectionView)
+        whiteBackgroundView.addSubview(privateUserDetailView)
     }
 
     override func layout() {
-        userProfileView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(10)
-            make.height.equalTo(60)
+        whiteBackgroundView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(100)
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
-        userDetailView.snp.makeConstraints { make in
-            make.top.equalTo(userProfileView.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(64)
+        avatarView.snp.makeConstraints { make in
+            make.size.equalTo(90)
+            make.top.equalToSuperview().offset(-45)
+            make.leading.equalToSuperview().offset(20)
+        }
+        
+        nickNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(avatarView.snp.bottom).offset(20)
+            make.leading.equalTo(avatarView.snp.leading)
+        }
+        
+        titleBagde.snp.makeConstraints { make in
+            make.leading.equalTo(nickNameLabel.snp.trailing).offset(10)
+            make.centerY.equalTo(nickNameLabel)
+        }
+        
+        followingLabel.snp.makeConstraints { make in
+            make.leading.equalTo(avatarView.snp.leading)
+            make.top.equalTo(nickNameLabel.snp.bottom).offset(8)
+        }
+        
+        followingCountLabel.snp.makeConstraints { make in
+            make.leading.equalTo(followingLabel.snp.trailing).offset(4)
+            make.centerY.equalTo(followingLabel)
+        }
+        
+        followerLabel.snp.makeConstraints { make in
+            make.leading.equalTo(followingCountLabel.snp.trailing).offset(20)
+            make.centerY.equalTo(followingLabel)
+        }
+        
+        followerCountLabel.snp.makeConstraints { make in
+            make.leading.equalTo(followerLabel.snp.trailing).offset(4)
+            make.centerY.equalTo(followingLabel)
         }
         
         followButton.snp.makeConstraints { make in
-            make.top.equalTo(userDetailView.snp.bottom).offset(8)
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.equalTo(shareButton.snp.leading).offset(-8)
-            make.height.equalTo(40)
-        }
-        
-        shareButton.snp.makeConstraints { make in
-            make.centerY.equalTo(followButton)
+            make.top.equalTo(avatarView.snp.bottom).offset(20)
             make.trailing.equalToSuperview().inset(16)
-            make.size.equalTo(40)
+            make.width.equalTo(120)
+            make.height.equalTo(44)
         }
         
         segmentedControl.snp.makeConstraints { make in
@@ -85,54 +160,101 @@ final class SocialProfileView: BaseView {
             make.height.equalTo(40)
         }
         
-        routineView.snp.makeConstraints { make in
+        routineLabel.snp.makeConstraints { make in
             make.top.equalTo(segmentedControl.snp.bottom).offset(16)
+            make.leading.equalToSuperview().inset(16)
+        }
+        
+        routineCountLabel.snp.makeConstraints { make in
+            make.leading.equalTo(routineLabel.snp.trailing).offset(4)
+            make.centerY.equalTo(routineLabel)
+        }
+        
+        postLabel.snp.makeConstraints { make in
+            make.top.equalTo(segmentedControl.snp.bottom).offset(16)
+            make.leading.equalToSuperview().inset(16)
+        }
+        
+        postCountLabel.snp.makeConstraints { make in
+            make.leading.equalTo(postLabel.snp.trailing).offset(4)
+            make.centerY.equalTo(postLabel)
+        }
+        
+        routineTableView.snp.makeConstraints { make in
+            make.top.equalTo(routineLabel.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalToSuperview().inset(16)
         }
         
         socialFeedCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom).offset(16)
+            make.top.equalTo(routineLabel.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalToSuperview().inset(16)
+        }
+        
+        privateUserDetailView.snp.makeConstraints { make in
+            make.top.equalTo(routineLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-80)
         }
     }
     
     override func configure() {
-        backgroundColor = TDColor.baseWhite
+        backgroundColor = TDColor.Neutral.neutral100
         socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
-    public func configure(avatarURL: String, badgeTitle: String, nickname: String) {
-        userProfileView.configure(
-            userAvatar: avatarURL,
-            titleBadge: badgeTitle,
-            nickname: nickname,
-            description: "토덕님과 비슷한 루틴을 가진 유저에요!"
-        )
+    public func configureFollowingButton(isFollowing: Bool) {
+        followButton.setTitle(isFollowing ? "팔로잉" : "팔로우", for: .normal)
+        followButton.configuration?.baseForegroundColor = isFollowing ? TDColor.Neutral.neutral600 : TDColor.baseWhite
+        followButton.configuration?.baseBackgroundColor = isFollowing ? TDColor.Neutral.neutral100 : TDColor.Primary.primary500
     }
     
-    public func configure(followingCount: Int, followerCount: Int, postCount: Int) {
-        userDetailView.configure(
-            followingCount: followingCount,
-            followerCount: followerCount,
-            postCount: postCount
-        )
+    public func configure(avatarURL: String, badgeTitle: String, nickname: String) {
+        titleBagde.setTitle(badgeTitle)
+        nickNameLabel.setText(nickname)
+        if let avatarURL = URL(string: avatarURL) {
+            avatarView.kf.setImage(with: avatarURL)
+        } else {
+            avatarView.image = TDImage.Profile.medium
+        }
+    }
+    
+    public func showPrivateUserDetailView() {
+        privateUserDetailView.isHidden = false
+        postLabel.isHidden = true
+        postCountLabel.isHidden = true
+    }
+    
+    public func configure(followingCount: Int, followerCount: Int, postCount: Int, routineCount: Int) {
+        followingCountLabel.setText("\(followingCount)")
+        followerCountLabel.setText("\(followerCount)")
+        postCountLabel.setText("\(postCount)개")
+        routineCountLabel.setText("\(routineCount)개")
     }
     
     public func showPostList() {
-        routineView.isHidden = true
+        postLabel.isHidden = false
+        postCountLabel.isHidden = false
+        routineLabel.isHidden = true
+        routineCountLabel.isHidden = true
+        routineTableView.isHidden = true
         socialFeedCollectionView.isHidden = false
+        privateUserDetailView.isHidden = true
     }
     
     public func showRoutineList() {
-        routineView.isHidden = false
+        postLabel.isHidden = true
+        postCountLabel.isHidden = true
+        routineLabel.isHidden = false
+        routineCountLabel.isHidden = false
+        routineTableView.isHidden = false
         socialFeedCollectionView.isHidden = true
+        privateUserDetailView.isHidden = true
     }
 }
 
 private extension SocialProfileView {
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 10
-        let groupPadding: CGFloat = 16
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(500)
@@ -149,18 +271,10 @@ private extension SocialProfileView {
             bottom: .fixed(itemPadding)
         )
         
-        let groupInset = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: groupPadding,
-            bottom: 0,
-            trailing: groupPadding
-        )
-        
         return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(
             itemSize: itemSize,
             itemEdgeSpacing: edgeSpacing,
-            groupSize: groupSize,
-            groupInset: groupInset
+            groupSize: groupSize
         )
     }
 }

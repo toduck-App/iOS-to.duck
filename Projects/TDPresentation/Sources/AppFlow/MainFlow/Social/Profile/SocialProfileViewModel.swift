@@ -8,6 +8,7 @@ final class SocialProfileViewModel: BaseViewModel {
         case fetchPosts
         case fetchUser
         case fetchUserDetail
+        case toggleFollow
     }
     
     enum Output {
@@ -21,6 +22,8 @@ final class SocialProfileViewModel: BaseViewModel {
     private let fetchUserDetailUseCase: FetchUserDetailUseCase
     private let fetchUserUseCase: FetchUserUseCase
     private let fetchUserPostUseCase: FetchUserPostUseCase
+    private let toggleUserFollowUseCase: ToggleUserFollowUseCase
+    private let fetchRoutineListUseCase: FetchRoutineListUseCase
     private let userId: User.ID
     
     private let output = PassthroughSubject<Output, Never>()
@@ -29,69 +32,90 @@ final class SocialProfileViewModel: BaseViewModel {
     private(set) var user: User?
     private(set) var userDetail: UserDetail?
     private(set) var posts: [Post] = []
+    private(set) var routines: [Routine] = []
     
     init(
         id: User.ID,
         fetchUserDetailUseCase: FetchUserDetailUseCase,
         fetchUserUseCase: FetchUserUseCase,
-        fetchUserPostUseCase: FetchUserPostUseCase
+        fetchUserPostUseCase: FetchUserPostUseCase,
+        toggleUserFollowUseCase: ToggleUserFollowUseCase,
+        fetchRoutineListUseCase: FetchRoutineListUseCase
     ) {
         self.userId = id
         self.fetchUserDetailUseCase = fetchUserDetailUseCase
         self.fetchUserUseCase = fetchUserUseCase
         self.fetchUserPostUseCase = fetchUserPostUseCase
+        self.toggleUserFollowUseCase = toggleUserFollowUseCase
+        self.fetchRoutineListUseCase = fetchRoutineListUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] input in
             switch input {
             case .fetchRoutine:
-                break
+                Task { await self?.fetchRoutines() }
             case .fetchPosts:
-                self?.fetchPosts()
+                Task { await self?.fetchPosts() }
             case .fetchUser:
-                self?.fetchUser()
+                Task { await self?.fetchUser() }
             case .fetchUserDetail:
-                self?.fetchUserDetail()
+                Task { await self?.fetchUserDetail() }
+            case .toggleFollow:
+                Task { await self?.toggleFollow() }
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
     
-    private func fetchUser() {
-        Task {
-            do {
-                let user = try await fetchUserUseCase.execute(id: userId)
-                self.user = user
-                output.send(.fetchUser)
-            } catch {
-                output.send(.failure("유저를 찾을 수 없습니다."))
-            }
+    private func fetchUser() async {
+        do {
+            let user = try await fetchUserUseCase.execute(id: userId)
+            self.user = user
+            output.send(.fetchUser)
+        } catch {
+            output.send(.failure("유저를 찾을 수 없습니다."))
         }
     }
     
-    private func fetchUserDetail() {
-        Task {
-            do {
-                let userDetail = try await fetchUserDetailUseCase.execute(id: userId)
-                self.userDetail = userDetail
-                output.send(.fetchUserDetail)
-            } catch {
-                output.send(.failure("유저를 찾을 수 없습니다."))
-            }
+    private func fetchUserDetail() async {
+        do {
+            let userDetail = try await fetchUserDetailUseCase.execute(id: userId)
+            self.userDetail = userDetail
+            output.send(.fetchUserDetail)
+        } catch {
+            output.send(.failure("유저를 찾을 수 없습니다."))
         }
     }
     
-    private func fetchPosts() {
-        Task {
-            do {
-                let posts = try await fetchUserPostUseCase.execute(id: userId)
-                self.posts = posts ?? []
-                output.send(.fetchPosts)
-            } catch {
-                output.send(.failure("게시글을 불러오는데 실패했습니다."))
-            }
+    private func fetchPosts() async {
+        do {
+            let posts = try await fetchUserPostUseCase.execute(id: userId)
+            self.posts = posts ?? []
+            output.send(.fetchPosts)
+        } catch {
+            output.send(.failure("게시글을 불러오는데 실패했습니다."))
+        }
+    }
+    
+    private func fetchRoutines() async {
+        do {
+            let routines = try await fetchRoutineListUseCase.execute(userId: userId)
+            self.routines = routines
+            output.send(.fetchRoutine)
+        } catch {
+            output.send(.failure("루틴을 불러오는데 실패했습니다."))
+        }
+    }
+    
+    private func toggleFollow() async {
+        do {
+            let isFollowed = try await toggleUserFollowUseCase.execute(userID: .init(), targetUserID: .init())
+            self.userDetail?.isFollowing = isFollowed
+            output.send(.fetchUserDetail)
+        } catch {
+            output.send(.failure("팔로잉에 실패했습니다."))
         }
     }
 }
