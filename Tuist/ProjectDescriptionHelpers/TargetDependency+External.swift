@@ -14,6 +14,7 @@ public enum External: String {
     case SnapKit
     case Swinject
     case FittedSheets
+    case KeyChainManager = "KeyChainManager-KJ"
 }
 
 extension TargetDependency {

@@ -12,7 +12,8 @@ let packageSettings = PackageSettings(
         "Then": .framework,
         "FSCalendar": .framework,
         "FittedSheets": .framework,
-        "Swinject": .framework
+        "Swinject": .framework,
+        "KeyChainManager": .framework,
     ]
 )
 #endif
@@ -28,6 +29,7 @@ let package = Package(
         .package(url: "https://github.com/gordontucker/FittedSheets.git", from: "2.6.1"),
         .package(url: "https://github.com/Swinject/Swinject.git", from: "2.9.1"),
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.2"),
-        .package(url: "https://github.com/kakao/kakao-ios-sdk.git", from: "2.23.0")
+        .package(url: "https://github.com/kakao/kakao-ios-sdk.git", from: "2.23.0"),
+        .package(url: "https://github.com/Kyxxn/SPM-KeyChainManager-KJ.git", from: "1.0.1"),
     ]
 )
