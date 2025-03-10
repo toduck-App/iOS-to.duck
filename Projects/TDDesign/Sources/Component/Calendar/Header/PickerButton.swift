@@ -1,14 +1,8 @@
-//
-//  PickerButton.swift
-//  toduck
-//
-//  Created by 박효준 on 8/17/24.
-//
-
 import UIKit
 
 final class PickerButton: UIButton {
-    private var datePicker: UIDatePicker!
+    private var datePicker = UIDatePicker()
+    var dateSelectedHandler: ((Date) -> Void)?
     
     init(type: CalendarType) {
         super.init(frame: .zero)
@@ -23,6 +17,7 @@ final class PickerButton: UIButton {
         setupButton()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -33,29 +28,32 @@ final class PickerButton: UIButton {
         }, for: .touchUpInside)
     }
     
-    // [임시코드] UIDatePicker가 아닌, UIPickerView로 커스텀해야 할듯
-    // datePicker.datePickerMode = .yearAndMonth 옵션이 iOS 17.4 이상부터 가능함
-    @objc private func showDatePicker() {
-        let alert = UIAlertController(title: "원하는 년/월을 선택해주세요", message: "\n\n\n\n\n\n\n\n\n\n\n\n", preferredStyle: .actionSheet)
+    private func showDatePicker() {
+        let alert = UIAlertController(
+            title: "원하는 년/월을 선택해주세요",
+            message: "\n\n\n\n\n\n\n\n\n\n\n\n",
+            preferredStyle: .actionSheet
+        )
         
         datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
+        if #available(iOS 17.4, *) {
+            datePicker.datePickerMode = .yearAndMonth
+        } else {
+            datePicker.datePickerMode = .date
+        }
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.frame = CGRect(x: 0, y: 50, width: alert.view.bounds.width, height: 250)
-        datePicker.locale = Locale(identifier: "ko_KR") // 한국어로 설정
+        datePicker.locale = Locale(identifier: "ko_KR")
         
         alert.view.addSubview(datePicker)
         
-        let selectAction = UIAlertAction(title: "Select", style: .default) { _ in
-            let selectedDate = self.datePicker.date
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy년 MM월"
-            let dateString = dateFormatter.string(from: selectedDate)
-            print("Selected Date: \(dateString)")
-            // 필요한 작업 수행
+        let selectAction = UIAlertAction(title: "선택", style: .default) { [weak self] _ in
+            if let selectedDate = self?.datePicker.date {
+                self?.dateSelectedHandler?(selectedDate)
+            }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         
         alert.addAction(selectAction)
         alert.addAction(cancelAction)
