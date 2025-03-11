@@ -172,6 +172,7 @@ public final class EventDetailView: UIView {
 
             categoryVerticalStackView.snp.remakeConstraints { $0.width.equalTo(64) }
             categoryImageView.snp.remakeConstraints { $0.width.height.equalTo(64) }
+            categoryImageView.setCategoryImageInsets(18)
             categoryImageView.layer.cornerRadius = 32
             categoryImageView.layer.masksToBounds = true
 
@@ -180,6 +181,7 @@ public final class EventDetailView: UIView {
         } else {
             categoryVerticalStackView.snp.remakeConstraints { $0.width.equalTo(32) }
             categoryImageView.snp.remakeConstraints { $0.width.height.equalTo(32) }
+            categoryImageView.setCategoryImageInsets(8)
         }
     }
     

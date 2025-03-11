@@ -95,16 +95,16 @@ public final class TDSegmentedControl: UISegmentedControl {
     private func layout() {
         underBackGroundLineView.snp.makeConstraints {
             $0.top.equalTo(self.snp.bottom).offset(-1)
-            $0.height.equalTo(1)
-            $0.width.equalToSuperview()
-            $0.leading.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(2)
+            $0.leading.trailing.equalToSuperview()
         }
         
         underForeGroundLineView.snp.makeConstraints {
-            $0.top.equalTo(self.snp.bottom).offset(-1)
-            $0.height.equalTo(1.5)
-            $0.width.equalTo(self.snp.width).dividedBy(self.numberOfSegments)
-            $0.leading.equalTo(self.snp.leading)
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(2)
+            $0.width.equalToSuperview().dividedBy(numberOfSegments)
+            $0.leading.equalToSuperview()
         }
     }
     
