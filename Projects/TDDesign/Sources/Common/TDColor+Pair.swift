@@ -26,30 +26,30 @@ extension TDColor {
         .white: TDColor.Schedule.back20
     ]
     
-    public static let reversedPair: [UIColor: UIColor] = [
-        TDColor.Schedule.back1: TDColor.Schedule.text1,
-        TDColor.Schedule.back2: TDColor.Schedule.text2,
-        TDColor.Schedule.back3: TDColor.Schedule.text3,
-        TDColor.Schedule.back4: TDColor.Schedule.text4,
-        TDColor.Schedule.back5: TDColor.Schedule.text5,
-        TDColor.Schedule.back6: TDColor.Schedule.text6,
-        TDColor.Schedule.back7: TDColor.Schedule.text7,
-        TDColor.Schedule.back8: TDColor.Schedule.text8,
-        TDColor.Schedule.back9: TDColor.Schedule.text9,
-        TDColor.Schedule.back10: TDColor.Schedule.text10,
-        TDColor.Schedule.back11: TDColor.Schedule.text11,
-        TDColor.Schedule.back12: TDColor.Schedule.text12,
-        TDColor.Schedule.back13: TDColor.Schedule.text13,
-        TDColor.Schedule.back14: TDColor.Schedule.text14,
-        TDColor.Schedule.back15: TDColor.Schedule.text15,
-        TDColor.Schedule.back16: .white,
-        TDColor.Schedule.back17: .white,
-        TDColor.Schedule.back18: .white,
-        TDColor.Schedule.back19: .white,
-        TDColor.Schedule.back20: .white
+    public static let reversedPair: [ColorValue: UIColor] = [
+        ColorValue(color: TDColor.Schedule.back1): TDColor.Schedule.text1,
+        ColorValue(color: TDColor.Schedule.back2): TDColor.Schedule.text2,
+        ColorValue(color: TDColor.Schedule.back3): TDColor.Schedule.text3,
+        ColorValue(color: TDColor.Schedule.back4): TDColor.Schedule.text4,
+        ColorValue(color: TDColor.Schedule.back5): TDColor.Schedule.text5,
+        ColorValue(color: TDColor.Schedule.back6): TDColor.Schedule.text6,
+        ColorValue(color: TDColor.Schedule.back7): TDColor.Schedule.text7,
+        ColorValue(color: TDColor.Schedule.back8): TDColor.Schedule.text8,
+        ColorValue(color: TDColor.Schedule.back9): TDColor.Schedule.text9,
+        ColorValue(color: TDColor.Schedule.back10): TDColor.Schedule.text10,
+        ColorValue(color: TDColor.Schedule.back11): TDColor.Schedule.text11,
+        ColorValue(color: TDColor.Schedule.back12): TDColor.Schedule.text12,
+        ColorValue(color: TDColor.Schedule.back13): TDColor.Schedule.text13,
+        ColorValue(color: TDColor.Schedule.back14): TDColor.Schedule.text14,
+        ColorValue(color: TDColor.Schedule.back15): TDColor.Schedule.text15,
+        ColorValue(color: TDColor.Schedule.back16): .white,
+        ColorValue(color: TDColor.Schedule.back17): .white,
+        ColorValue(color: TDColor.Schedule.back18): .white,
+        ColorValue(color: TDColor.Schedule.back19): .white,
+        ColorValue(color: TDColor.Schedule.back20): .white
     ]
     
-    static let ColorPair: [Int: TDColorPair] = [
+    public static let colorPair: [Int: TDColorPair] = [
         1: (text: TDColor.Schedule.text1, back: TDColor.Schedule.back1),
         2: (text: TDColor.Schedule.text2, back: TDColor.Schedule.back2),
         3: (text: TDColor.Schedule.text3, back: TDColor.Schedule.back3),
@@ -70,5 +70,23 @@ extension TDColor {
         18: (text: .white, back: TDColor.Schedule.back18),
         19: (text: .white, back: TDColor.Schedule.back19),
         20: (text: .white, back: TDColor.Schedule.back20)
+    ]
+    
+    public static let colorCheckBox: [ColorValue: UIImage] = [
+        ColorValue(color: TDColor.Schedule.back1): TDImage.CheckBox.back1,
+        ColorValue(color: TDColor.Schedule.back2): TDImage.CheckBox.back2,
+        ColorValue(color: TDColor.Schedule.back3): TDImage.CheckBox.back3,
+        ColorValue(color: TDColor.Schedule.back4): TDImage.CheckBox.back4,
+        ColorValue(color: TDColor.Schedule.back5): TDImage.CheckBox.back5,
+        ColorValue(color: TDColor.Schedule.back6): TDImage.CheckBox.back6,
+        ColorValue(color: TDColor.Schedule.back7): TDImage.CheckBox.back7,
+        ColorValue(color: TDColor.Schedule.back8): TDImage.CheckBox.back8,
+        ColorValue(color: TDColor.Schedule.back9): TDImage.CheckBox.back9,
+        ColorValue(color: TDColor.Schedule.back10): TDImage.CheckBox.back10,
+        ColorValue(color: TDColor.Schedule.back11): TDImage.CheckBox.back11,
+        ColorValue(color: TDColor.Schedule.back12): TDImage.CheckBox.back12,
+        ColorValue(color: TDColor.Schedule.back13): TDImage.CheckBox.back13,
+        ColorValue(color: TDColor.Schedule.back14): TDImage.CheckBox.back14,
+        ColorValue(color: TDColor.Schedule.back15): TDImage.CheckBox.back15
     ]
 }

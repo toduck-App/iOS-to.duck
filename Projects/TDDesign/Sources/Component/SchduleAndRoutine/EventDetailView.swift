@@ -80,6 +80,7 @@ public final class EventDetailView: UIView {
     // MARK: - Properties
 
     private var isFinished: Bool = false
+    private var identifierColor: UIColor = .clear
     
     // MARK: - Initializer
 
@@ -154,9 +155,12 @@ public final class EventDetailView: UIView {
                 category: category ?? TDImage.Category.none
             )
             scheduleIdentyColorView.backgroundColor = TDColor.baseWhite
+            identifierColor = TDColor.baseWhite
         } else {
-            scheduleIdentyColorView.backgroundColor = TDColor.reversedPair[color] ?? color
+            let key = ColorValue(color: color)
+            scheduleIdentyColorView.backgroundColor = TDColor.reversedPair[key] ?? color
             categoryImageView.configure(backgroundColor: color, category: category ?? TDImage.Category.none)
+            identifierColor = color
         }
     }
 
@@ -189,7 +193,15 @@ public final class EventDetailView: UIView {
     }
     
     private func changeCheckBoxButtonImage(isFinished: Bool) {
-        let checkBoxImage = isFinished ? TDImage.CheckBox.back10 : TDImage.CheckBox.empty
+        let checkBoxImage: UIImage = {
+            if isFinished {
+                return TDImage.CheckBox.empty
+            } else {
+                let key = ColorValue(color: identifierColor)
+                return TDColor.colorCheckBox[key] ?? TDImage.CheckBox.empty
+            }
+        }()
+        
         checkBoxButton.setImage(checkBoxImage, for: .normal)
     }
     
