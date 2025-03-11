@@ -44,6 +44,11 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         view = eventMakorView
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        input.send(.fetchCategories)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
@@ -56,7 +61,6 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     // MARK: - Base Method
     override func configure() {
-        input.send(.fetchCategories)
         navigationItem.rightBarButtonItem = registerButton
         navigationController?.navigationBar.isHidden = false
         setupDelegate()

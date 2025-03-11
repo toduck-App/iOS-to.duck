@@ -95,8 +95,9 @@ final class HomeViewController: BaseViewController<BaseView> {
 
 // MARK: - EventMakorDelegate
 extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
-        coordinator?.didTapEventMakor(mode: mode)
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
+        guard let selectedDate else { return }
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
     }
 }
 

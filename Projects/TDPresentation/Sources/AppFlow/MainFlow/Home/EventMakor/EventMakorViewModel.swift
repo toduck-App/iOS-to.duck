@@ -62,6 +62,14 @@ final class EventMakorViewModel: BaseViewModel {
         }.store(in: &cancellables)
         return output.eraseToAnyPublisher()
     }
+    
+    func setupInitialDate(with date: Date) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let initialDate = dateFormatter.string(from: date)
+        startDate = initialDate
+    }
 
     private func handleInput(_ event: Input) {
         switch event {
