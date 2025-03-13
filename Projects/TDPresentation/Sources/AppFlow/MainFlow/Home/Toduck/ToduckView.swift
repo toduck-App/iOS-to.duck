@@ -64,7 +64,7 @@ final class ToduckView: BaseView {
     }
     
     override func configure() {
-        backgroundColor = .white
+        backgroundColor = TDColor.Neutral.neutral50
         scheduleContainerView.backgroundColor = .white
         scheduleContainerView.layer.cornerRadius = LayoutConstants.containerCornerRadius
         setupscheduleSegmentedControl()

@@ -146,4 +146,12 @@ public final class TDSegmentedControl: UISegmentedControl {
         self.titleFont = font
         updateAppearance()
     }
+    
+    public func updateIndicatorColor(foreground: UIColor, background: UIColor) {
+        self.indicatorForeGroundColor = foreground
+        self.indicatorBackGroundColor = background
+        underForeGroundLineView.backgroundColor = foreground
+        underBackGroundLineView.backgroundColor = background
+        updateAppearance()
+    }
 }

@@ -47,7 +47,31 @@ final class HomeViewController: BaseViewController<BaseView> {
         let newViewController = getViewController(for: segmentedControl.selectedSegmentIndex)
         guard currentViewController !== newViewController else { return }
         
+        updateNavigationBarColor(for: segmentedControl.selectedSegmentIndex)
         replaceCurrentViewController(with: newViewController)
+    }
+    
+    private func updateNavigationBarColor(for index: Int) {
+        if index == 0 {
+            navigationController?.navigationBar.barTintColor = TDColor.Neutral.neutral50
+            navigationController?.navigationBar.backgroundColor = TDColor.Neutral.neutral50
+            view.backgroundColor = TDColor.Neutral.neutral50
+            segmentedControl.tintColor = TDColor.Neutral.neutral50
+            segmentedControl.updateIndicatorColor(
+                foreground: TDColor.Neutral.neutral800,
+                background: TDColor.Neutral.neutral50
+            )
+        } else {
+            navigationController?.navigationBar.barTintColor = TDColor.baseWhite
+            navigationController?.navigationBar.backgroundColor = TDColor.baseWhite
+            view.backgroundColor = TDColor.baseWhite
+            segmentedControl.tintColor = TDColor.baseWhite
+            
+            segmentedControl.updateIndicatorColor(
+                foreground: TDColor.Neutral.neutral800,
+                background: TDColor.baseWhite
+            )
+        }
     }
     
     private func getViewController(for index: Int) -> UIViewController {
