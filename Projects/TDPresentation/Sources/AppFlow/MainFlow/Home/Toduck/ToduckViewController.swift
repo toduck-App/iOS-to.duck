@@ -34,6 +34,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         layoutView.lottieView.play()
     }
     
+    // MARK: 종일 일정만 있는 경우 자동스크롤 구현
     private func updateAutoScroll() {
         if viewModel.isAllDays {
             startAutoScroll()
@@ -55,25 +56,47 @@ final class ToduckViewController: BaseViewController<ToduckView> {
             self?.scrollToNextItem()
         }
     }
-
+    
     private func stopAutoScroll() {
         autoScrollTimer?.invalidate()
         autoScrollTimer = nil
     }
-
+    
+    /// 자동 스크롤이 일정한 간격을 유지를 위해 셀의 너비에 따라 다음 인덱스 계산
     private func scrollToNextItem() {
         let collectionView = layoutView.scheduleCollectionView
         let itemCount = viewModel.todaySchedules.count
         guard itemCount > 1 else { return }
         
-        let currentIndex = Int(collectionView.contentOffset.x / collectionView.frame.width)
-        let nextIndex = (currentIndex + 1) % itemCount
+        let nextIndex = getNextIndex(for: collectionView, totalItems: itemCount)
+        let newOffsetX = calculateNewOffsetX(for: collectionView, index: nextIndex)
         
-        let newOffset = CGPoint(x: CGFloat(nextIndex) * collectionView.frame.width + 16, y: 0)
-        collectionView.setContentOffset(newOffset, animated: true)
+        animateCollectionViewScroll(to: newOffsetX)
+    }
+    
+    private func getNextIndex(for collectionView: UICollectionView, totalItems: Int) -> Int {
+        let currentIndex = Int(round(collectionView.contentOffset.x / collectionView.frame.width))
+        return (currentIndex + 1) % totalItems
+    }
+    
+    private func calculateNewOffsetX(for collectionView: UICollectionView, index: Int) -> CGFloat {
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return 0 }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.updateLottieAnimationForVisibleCell()
+        let sectionInsetLeft = layout.sectionInset.left
+        let cellSpacing = layout.minimumLineSpacing
+        let cellWidth = collectionView.frame.width
+        let totalCellWidth = cellWidth + cellSpacing
+        
+        return CGFloat(index) * totalCellWidth - sectionInsetLeft
+    }
+    
+    private func animateCollectionViewScroll(to offsetX: CGFloat) {
+        let collectionView = layoutView.scheduleCollectionView
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
+        }) { _ in
+            self.updateLottieAnimationForVisibleCell()
         }
     }
 }
