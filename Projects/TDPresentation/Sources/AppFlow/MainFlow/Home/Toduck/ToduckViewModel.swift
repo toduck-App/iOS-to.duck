@@ -13,6 +13,7 @@ final class ToduckViewModel: BaseViewModel {
     
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private(set) var isAllDays = true
     private(set) var todaySchedules: [Schedule] = [Schedule(
         id: 0,
         title: "1번 일정",
@@ -42,7 +43,7 @@ final class ToduckViewModel: BaseViewModel {
     ), Schedule(
         id: 0,
         title: "3번 일정",
-        category: TDCategory(colorHex: "#FF3872", imageName: "sleep"),
+        category: TDCategory(colorHex: "#FF3872", imageName: "food"),
         startDate: "2021-09-01",
         endDate: "2021-09-01",
         isAllDay: true,
@@ -55,7 +56,7 @@ final class ToduckViewModel: BaseViewModel {
     ), Schedule(
         id: 0,
         title: "4번 일정",
-        category: TDCategory(colorHex: "#FF3872", imageName: "sleep"),
+        category: TDCategory(colorHex: "#FF3872", imageName: "pencil"),
         startDate: "2021-09-01",
         endDate: "2021-09-01",
         isAllDay: true,

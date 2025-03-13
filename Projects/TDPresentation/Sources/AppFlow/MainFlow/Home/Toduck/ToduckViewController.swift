@@ -12,10 +12,13 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private let viewModel = ToduckViewModel()
     private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var autoScrollTimer: Timer?
     
     // MARK: Common Methods
     override func configure() {
         updateLottieView(at: 0)
+        updateAutoScroll()
+        updateLottieAnimationForVisibleCell()
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
         layoutView.scheduleCollectionView.register(
@@ -30,10 +33,65 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         layoutView.lottieView.animation = newAnimation
         layoutView.lottieView.play()
     }
+    
+    private func updateAutoScroll() {
+        if viewModel.isAllDays {
+            startAutoScroll()
+            layoutView.scheduleCollectionView.isScrollEnabled = false
+        } else {
+            stopAutoScroll()
+            layoutView.scheduleCollectionView.isScrollEnabled = true
+        }
+    }
+    
+    private func startAutoScroll() {
+        guard viewModel.isAllDays else {
+            stopAutoScroll()
+            return
+        }
+        
+        stopAutoScroll()
+        autoScrollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
+            self?.scrollToNextItem()
+        }
+    }
+
+    private func stopAutoScroll() {
+        autoScrollTimer?.invalidate()
+        autoScrollTimer = nil
+    }
+
+    private func scrollToNextItem() {
+        let collectionView = layoutView.scheduleCollectionView
+        let itemCount = viewModel.todaySchedules.count
+        guard itemCount > 1 else { return }
+        
+        let currentIndex = Int(collectionView.contentOffset.x / collectionView.frame.width)
+        let nextIndex = (currentIndex + 1) % itemCount
+        
+        let newOffset = CGPoint(x: CGFloat(nextIndex) * collectionView.frame.width + 16, y: 0)
+        collectionView.setContentOffset(newOffset, animated: true)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.updateLottieAnimationForVisibleCell()
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
 extension ToduckViewController: UICollectionViewDataSource {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        updateLottieAnimationForVisibleCell()
+    }
+    
+    func updateLottieAnimationForVisibleCell() {
+        let collectionView = layoutView.scheduleCollectionView
+        let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
+        guard let visibleIndexPath = collectionView.indexPathForItem(at: CGPoint(x: visibleRect.midX, y: visibleRect.midY)) else { return }
+        
+        updateLottieView(at: visibleIndexPath.row)
+    }
+    
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
@@ -49,8 +107,6 @@ extension ToduckViewController: UICollectionViewDataSource {
             withReuseIdentifier: ScheduleCollectionViewCell.identifier,
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
-        
-        updateLottieView(at: indexPath.row)
         
         let currentSchedule = viewModel.todaySchedules[indexPath.row]
         cell.eventDetailView.configureCell(
