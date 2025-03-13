@@ -9,5 +9,6 @@ public enum TDCategoryImageType {
     case medicine
     case talk
     case vehicle
+    case heart
     case none
 }
