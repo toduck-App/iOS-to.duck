@@ -114,6 +114,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         diarySegmentedControl.snp.makeConstraints {
             $0.top.equalTo(calendarHeader.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
+            $0.width.equalTo(133)
             $0.height.equalTo(48)
         }
         calendar.snp.makeConstraints {
