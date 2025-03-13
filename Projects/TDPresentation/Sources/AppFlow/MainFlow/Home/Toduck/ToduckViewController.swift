@@ -1,4 +1,7 @@
 import Combine
+import Lottie
+import TDCore
+import TDDomain
 import UIKit
 import TDDesign
 import SnapKit
@@ -12,12 +15,20 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     
     // MARK: Common Methods
     override func configure() {
+        updateLottieView(at: 0)
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
         layoutView.scheduleCollectionView.register(
             ScheduleCollectionViewCell.self,
             forCellWithReuseIdentifier: ScheduleCollectionViewCell.identifier
         )
+    }
+    
+    private func updateLottieView(at index: Int) {
+        let lottieImageType = TDCategoryImageType(category: viewModel.todaySchedules[index].category)
+        let newAnimation = ToduckLottieManager.shared.getLottieAnimation(for: lottieImageType)
+        layoutView.lottieView.animation = newAnimation
+        layoutView.lottieView.play()
     }
 }
 
@@ -38,6 +49,8 @@ extension ToduckViewController: UICollectionViewDataSource {
             withReuseIdentifier: ScheduleCollectionViewCell.identifier,
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
+        
+        updateLottieView(at: indexPath.row)
         
         let currentSchedule = viewModel.todaySchedules[indexPath.row]
         cell.eventDetailView.configureCell(
