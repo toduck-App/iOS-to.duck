@@ -1,9 +1,3 @@
-//
-//  Coordinator.swift
-//  toduck
-//
-//  Created by 박효준 on 5/24/24.
-//
 import TDCore
 import UIKit
 
@@ -17,4 +11,16 @@ public protocol Coordinator: AnyObject {
     var finishDelegate: CoordinatorFinishDelegate? { get set }
     
     func start()
+    func finish(shouldPop: Bool)
+}
+
+extension Coordinator {
+    public func finish(shouldPop: Bool = true) {
+        childCoordinators.forEach { $0.finish(shouldPop: false) }
+        finishDelegate?.didFinish(childCoordinator: self)
+        
+        if shouldPop {
+            navigationController.popViewController(animated: true)
+        }
+    }
 }
