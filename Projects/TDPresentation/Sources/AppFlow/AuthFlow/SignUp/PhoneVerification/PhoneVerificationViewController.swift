@@ -21,6 +21,14 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(shouldPop: false)
+        }
+    }
+    
     override func configure() {
         layoutView.carrierDropDownView.delegate = self
         layoutView.carrierDropDownView.dataSource = CarrierDropDownMenuItem.allCases.map { $0.dropDownItem }

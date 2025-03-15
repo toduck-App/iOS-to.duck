@@ -56,7 +56,11 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
         tabBarController?.tabBar.isHidden = false
+        if isMovingFromParent {
+            coordinator?.finish()
+        }
     }
     
     // MARK: - Base Method

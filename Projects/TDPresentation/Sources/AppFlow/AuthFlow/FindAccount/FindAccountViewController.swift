@@ -15,6 +15,14 @@ final class FindAccountViewController: BaseViewController<BaseView> {
     private var currentViewController: UIViewController?
     weak var coordinator: FindAccountCoordinator?
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(shouldPop: false)
+        }
+    }
+    
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         navigationItem.title = "아이디 · 비밀번호 찾기"

@@ -30,9 +30,13 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         self.viewModel = nil
         super.init(coder: coder)
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(shouldPop: false)
+        }
     }
 
     override func configure() {
