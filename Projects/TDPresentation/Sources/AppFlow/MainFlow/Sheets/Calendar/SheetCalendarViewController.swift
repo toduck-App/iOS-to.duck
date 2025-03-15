@@ -66,8 +66,7 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         updateSaveButtonState()
         
         cancelButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
-            self?.dismiss(animated: true)
+            self?.coordinator?.finish()
         }, for: .touchUpInside)
         
         resetButton.addAction(UIAction { [weak self] _ in
@@ -83,8 +82,7 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
             guard let startDate = self?.startDate else { return }
             
             self?.delegate?.didTapSaveButton(startDate: startDate, endDate: self?.endDate)
-            self?.coordinator?.finishDelegate?.didFinish(childCoordinator: (self?.coordinator)!)
-            self?.dismiss(animated: true)
+            self?.coordinator?.finish()
         }, for: .touchUpInside)
     }
     
