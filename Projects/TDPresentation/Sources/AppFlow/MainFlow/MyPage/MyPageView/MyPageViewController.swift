@@ -5,14 +5,6 @@ import TDCore
 final class MyPageViewController: BaseViewController<MyPageView> {
     weak var coordinator: MyPageCoordinator?
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if isMovingFromParent {
-            coordinator?.finish(shouldPop: false)
-        }
-    }
-    
     override func layout() {
         self.view.backgroundColor = .white
     }
