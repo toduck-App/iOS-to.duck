@@ -28,11 +28,6 @@ final class EditProfileCoordinator: Coordinator {
         editProfileViewController.coordinator = self
         navigationController.pushViewController(editProfileViewController, animated: true)
     }
-    
-    func popViewController() {
-        navigationController.popViewController(animated: true)
-        finishDelegate?.didFinish(childCoordinator: self)
-    }
 }
 
 // MARK: - Coordinator Finish Delegate

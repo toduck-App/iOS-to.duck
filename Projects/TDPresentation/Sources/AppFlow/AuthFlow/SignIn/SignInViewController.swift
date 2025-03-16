@@ -25,7 +25,7 @@ final class SignInViewController: BaseViewController<SignInView> {
         super.viewWillDisappear(animated)
         
         if isMovingFromParent {
-            coordinator?.finish(shouldPop: false)
+            coordinator?.finish(by: .pop)
         }
     }
     

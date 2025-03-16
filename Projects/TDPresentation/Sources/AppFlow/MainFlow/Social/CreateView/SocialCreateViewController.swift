@@ -35,7 +35,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         super.viewWillDisappear(animated)
         
         if isMovingFromParent {
-            coordinator?.finish(shouldPop: false)
+            coordinator?.finish(by: .pop)
         }
     }
 
@@ -58,7 +58,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                 guard let self else { return }
                 switch event {
                 case .createPost:
-                    coordinator?.didTapDoneButton()
+                    coordinator?.finish(by: .pop)
                 case .setRoutine:
                     layoutView.socialSelectRoutineView.setRoutine(string: viewModel.selectedRoutine?.title ?? "")
                 case .setImage:

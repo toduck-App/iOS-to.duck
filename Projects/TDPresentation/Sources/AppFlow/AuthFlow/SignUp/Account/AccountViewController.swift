@@ -23,7 +23,7 @@ final class AccountViewController: BaseViewController<AccountView> {
         super.viewWillDisappear(animated)
         
         if isMovingFromParent {
-            coordinator?.finish(shouldPop: false)
+            coordinator?.finish(by: .pop)
         }
     }
     

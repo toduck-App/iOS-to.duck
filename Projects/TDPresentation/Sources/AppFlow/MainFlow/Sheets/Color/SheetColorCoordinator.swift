@@ -43,12 +43,6 @@ final class SheetColorCoordinator: Coordinator {
         sheetController.cornerRadius = 28
         navigationController.present(sheetController, animated: true, completion: nil)
     }
-    
-    func finish(shouldPop: Bool = false, completion: (() -> Void)? = nil) {
-        childCoordinators.forEach { $0.finish(shouldPop: false) }
-        finishDelegate?.didFinish(childCoordinator: self)
-        navigationController.dismiss(animated: true, completion: completion)
-    }
 }
 
 // MARK: - Coordinator Finish Delegate

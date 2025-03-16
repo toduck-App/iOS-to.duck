@@ -64,7 +64,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     private func setupActions() {
         /// 취소 버튼
         layoutView.closeButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.finish()
+            self?.coordinator?.finish(by: .modal)
         }, for: .touchUpInside)
         
         /// 종일 설정
@@ -93,7 +93,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
                     minute: self.selectedMinute ?? 0
                 )
             }
-            self.coordinator?.finish()
+            self.coordinator?.finish(by: .modal)
         }, for: .touchUpInside)
     }
     

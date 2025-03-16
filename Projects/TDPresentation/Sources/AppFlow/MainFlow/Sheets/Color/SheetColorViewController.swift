@@ -37,7 +37,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
     // MARK: - Common Methods
     override func configure() {
         layoutView.cancelButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.finish()
+            self?.coordinator?.finish(by: .modal)
         }, for: .touchUpInside)
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
@@ -61,9 +61,9 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                         } ?? [])
                 case .updatedCategoryColor:
-                    self?.coordinator?.finish(shouldPop: false) { [weak self] in
+                    self?.coordinator?.finish(by: .sheet(completion: { [weak self] in
                         self?.delegate?.didSaveCategory()
-                    }
+                    }))
                 }
             }.store(in: &cancellables)
     }

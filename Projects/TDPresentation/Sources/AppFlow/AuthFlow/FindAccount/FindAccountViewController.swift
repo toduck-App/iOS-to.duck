@@ -19,7 +19,7 @@ final class FindAccountViewController: BaseViewController<BaseView> {
         super.viewWillDisappear(animated)
         
         if isMovingFromParent {
-            coordinator?.finish(shouldPop: false)
+            coordinator?.finish(by: .pop)
         }
     }
     

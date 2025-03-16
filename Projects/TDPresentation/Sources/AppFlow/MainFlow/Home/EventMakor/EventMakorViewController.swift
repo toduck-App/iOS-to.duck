@@ -59,7 +59,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         
         tabBarController?.tabBar.isHidden = false
         if isMovingFromParent {
-            coordinator?.finish()
+            coordinator?.finish(by: .pop)
         }
     }
     

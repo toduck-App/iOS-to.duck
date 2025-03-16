@@ -29,8 +29,8 @@ final class EditProfileViewController: UICollectionViewController {
         setupCollectionView()
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "프로필",
-            leftButtonAction: UIAction(handler: { _ in
-                self.coordinator?.popViewController()
+            leftButtonAction: UIAction(handler: { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
             })
         )
     }
