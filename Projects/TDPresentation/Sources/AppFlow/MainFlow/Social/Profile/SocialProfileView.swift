@@ -48,11 +48,10 @@ final class SocialProfileView: BaseView {
     }
     
     private(set) var segmentedControl = TDSegmentedControl(
-        items: ["루틴", "작성한 글"]
-    ).then {
-        $0.indicatorForeGroundColor = TDColor.Primary.primary500
-        $0.selectedSegmentTextColor = TDColor.Primary.primary500
-    }
+        items: ["루틴", "작성한 글"],
+        indicatorForeGroundColor: TDColor.Primary.primary500,
+        selectedTextColor: TDColor.Primary.primary500
+    )
     
     private let routineLabel = TDLabel(labelText: "루틴 공유수", toduckFont: .boldBody2, toduckColor: TDColor.Neutral.neutral800).then {
         $0.isHidden = true

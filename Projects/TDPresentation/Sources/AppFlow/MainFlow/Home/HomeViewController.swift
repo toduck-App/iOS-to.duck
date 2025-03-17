@@ -33,8 +33,6 @@ final class HomeViewController: BaseViewController<BaseView> {
         segmentedControl.addAction(UIAction { [weak self] _ in
             self?.updateView()
         }, for: .valueChanged)
-        
-        segmentedControl.selectedSegmentIndex = 0
     }
     
     private func setupNavigationBar() {
@@ -68,10 +66,34 @@ final class HomeViewController: BaseViewController<BaseView> {
     
     // MARK: - View Update
     private func updateView() {
-        let newViewController = getViewController(for: segmentedControl.selectedSegmentIndex)
+        let newViewController = getViewController(for: segmentedControl.selectedIndex)
         guard currentViewController !== newViewController else { return }
         
+        updateNavigationBarColor(for: segmentedControl.selectedIndex)
         replaceCurrentViewController(with: newViewController)
+    }
+    
+    private func updateNavigationBarColor(for index: Int) {
+        if index == 0 {
+            navigationController?.navigationBar.barTintColor = TDColor.Neutral.neutral50
+            navigationController?.navigationBar.backgroundColor = TDColor.Neutral.neutral50
+            view.backgroundColor = TDColor.Neutral.neutral50
+            segmentedControl.tintColor = TDColor.Neutral.neutral50
+            segmentedControl.updateIndicatorColor(
+                foreground: TDColor.Neutral.neutral800,
+                background: TDColor.Neutral.neutral50
+            )
+        } else {
+            navigationController?.navigationBar.barTintColor = TDColor.baseWhite
+            navigationController?.navigationBar.backgroundColor = TDColor.baseWhite
+            view.backgroundColor = TDColor.baseWhite
+            segmentedControl.tintColor = TDColor.baseWhite
+            
+            segmentedControl.updateIndicatorColor(
+                foreground: TDColor.Neutral.neutral800,
+                background: TDColor.baseWhite
+            )
+        }
     }
     
     private func getViewController(for index: Int) -> UIViewController {
@@ -119,8 +141,9 @@ final class HomeViewController: BaseViewController<BaseView> {
 
 // MARK: - EventMakorDelegate
 extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
-        coordinator?.didTapEventMakor(mode: mode)
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
+        guard let selectedDate else { return }
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
     }
 }
 

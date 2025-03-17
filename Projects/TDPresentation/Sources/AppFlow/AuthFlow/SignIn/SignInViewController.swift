@@ -30,6 +30,7 @@ final class SignInViewController: BaseViewController<SignInView> {
     }
     
     override func configure() {
+        keyboardAdjustableButton = layoutView.nextButton
         layoutView.idTextField.delegate = self
         layoutView.passwordTextField.delegate = self
         

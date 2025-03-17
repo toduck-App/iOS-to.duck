@@ -53,7 +53,7 @@ public enum TDImage {
     
     public enum CheckBox {
         public static let empty = TDDesignAsset.Images.emptyCheckBox.image
-        public static let filled = TDDesignAsset.Images.back1CheckBox.image
+        public static let back1 = TDDesignAsset.Images.back1CheckBox.image
         public static let back2 = TDDesignAsset.Images.back2CheckBox.image
         public static let back3 = TDDesignAsset.Images.back3CheckBox.image
         public static let back4 = TDDesignAsset.Images.back4CheckBox.image

@@ -222,6 +222,11 @@ final class SheetTimeView: BaseView {
             $0.height.equalTo(LayoutConstants.buttonHeight)
         }
     }
+    
+    override func configure() {
+        cancelButton.layer.borderWidth = 1
+        cancelButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+    }
 }
 
 // MARK: - Layout Constants

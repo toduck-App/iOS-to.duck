@@ -8,13 +8,13 @@ extension TDCategoryImageType {
         case "computer": self = .computer
         case "food": self = .food
         case "pencil": self = .pencil
-        case "redbook": self = .redBook
-        case "yellowbook": self = .yellowBook
+        case "redBook": self = .redBook
         case "sleep": self = .sleep
         case "power": self = .power
         case "people": self = .people
         case "medicine": self = .medicine
         case "talk": self = .talk
+        case "heart": self = .heart
         case "vehicle": self = .vehicle
         default: self = .none
         }
@@ -26,12 +26,12 @@ extension TDCategoryImageType {
         case .food: TDImage.Category.food
         case .pencil: TDImage.Category.pencil
         case .redBook: TDImage.Category.redBook
-        case .yellowBook: TDImage.Category.yellowBook
         case .sleep: TDImage.Category.sleep
         case .power: TDImage.Category.power
         case .people: TDImage.Category.people
         case .medicine: TDImage.Category.medicine
         case .talk: TDImage.Category.talk
+        case .heart: TDImage.Category.heart
         case .vehicle: TDImage.Category.vehicle
         case .none: TDImage.Category.none
         }

@@ -4,6 +4,7 @@ import UIKit
 class BaseViewController<LayoutView: BaseView>: UIViewController {
     // MARK: - Properties
     var layoutView = LayoutView()
+    var keyboardAdjustableButton: UIButton?
     
     // MARK: - Initialize
     init() {
@@ -24,15 +25,54 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.configure()
-        self.addView()
-        self.layout()
-        self.binding()
+        configure()
+        addView()
+        layout()
+        binding()
+        configureKeyboardNotification()
     }
     
     // MARK: - Common Method
-    func layout() { }
     func configure() { }
     func addView() { }
+    func layout() { }
     func binding() { }
+    
+    func configureKeyboardNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide(_:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    @objc
+    func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let button = keyboardAdjustableButton else { return }
+
+        UIView.animate(withDuration: duration) {
+            button.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 30)
+        }
+    }
+    
+    @objc
+    func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let button = keyboardAdjustableButton else { return }
+
+        UIView.animate(withDuration: duration) {
+            button.transform = .identity
+        }
+    }
 }

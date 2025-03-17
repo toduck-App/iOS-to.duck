@@ -31,6 +31,7 @@ final class AccountViewController: BaseViewController<AccountView> {
         layoutView.idTextField.delegate = self
         layoutView.passwordTextField.delegate = self
         layoutView.verifyPasswordTextField.delegate = self
+        keyboardAdjustableButton = layoutView.nextButton
         
         setupButtonActions()
     }

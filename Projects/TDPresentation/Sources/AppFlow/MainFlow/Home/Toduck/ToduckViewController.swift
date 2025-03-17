@@ -1,4 +1,7 @@
 import Combine
+import Lottie
+import TDCore
+import TDDomain
 import UIKit
 import TDDesign
 import SnapKit
@@ -9,9 +12,13 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private let viewModel = ToduckViewModel()
     private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var autoScrollTimer: Timer?
     
     // MARK: Common Methods
     override func configure() {
+        updateLottieView(at: 0)
+        updateAutoScroll()
+        updateLottieAnimationForVisibleCell()
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
         layoutView.scheduleCollectionView.register(
@@ -19,10 +26,95 @@ final class ToduckViewController: BaseViewController<ToduckView> {
             forCellWithReuseIdentifier: ScheduleCollectionViewCell.identifier
         )
     }
+    
+    private func updateLottieView(at index: Int) {
+        let lottieImageType = TDCategoryImageType(category: viewModel.todaySchedules[index].category)
+        let newAnimation = ToduckLottieManager.shared.getLottieAnimation(for: lottieImageType)
+        layoutView.lottieView.animation = newAnimation
+        layoutView.lottieView.play()
+    }
+    
+    // MARK: 종일 일정만 있는 경우 자동스크롤 구현
+    private func updateAutoScroll() {
+        if viewModel.isAllDays {
+            startAutoScroll()
+            layoutView.scheduleCollectionView.isScrollEnabled = false
+        } else {
+            stopAutoScroll()
+            layoutView.scheduleCollectionView.isScrollEnabled = true
+        }
+    }
+    
+    private func startAutoScroll() {
+        guard viewModel.isAllDays else {
+            stopAutoScroll()
+            return
+        }
+        
+        stopAutoScroll()
+        autoScrollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
+            self?.scrollToNextItem()
+        }
+    }
+    
+    private func stopAutoScroll() {
+        autoScrollTimer?.invalidate()
+        autoScrollTimer = nil
+    }
+    
+    /// 자동 스크롤이 일정한 간격을 유지를 위해 셀의 너비에 따라 다음 인덱스 계산
+    private func scrollToNextItem() {
+        let collectionView = layoutView.scheduleCollectionView
+        let itemCount = viewModel.todaySchedules.count
+        guard itemCount > 1 else { return }
+        
+        let nextIndex = getNextIndex(for: collectionView, totalItems: itemCount)
+        let newOffsetX = calculateNewOffsetX(for: collectionView, index: nextIndex)
+        
+        animateCollectionViewScroll(to: newOffsetX)
+    }
+    
+    private func getNextIndex(for collectionView: UICollectionView, totalItems: Int) -> Int {
+        let currentIndex = Int(round(collectionView.contentOffset.x / collectionView.frame.width))
+        return (currentIndex + 1) % totalItems
+    }
+    
+    private func calculateNewOffsetX(for collectionView: UICollectionView, index: Int) -> CGFloat {
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return 0 }
+        
+        let sectionInsetLeft = layout.sectionInset.left
+        let cellSpacing = layout.minimumLineSpacing
+        let cellWidth = collectionView.frame.width
+        let totalCellWidth = cellWidth + cellSpacing
+        
+        return CGFloat(index) * totalCellWidth - sectionInsetLeft
+    }
+    
+    private func animateCollectionViewScroll(to offsetX: CGFloat) {
+        let collectionView = layoutView.scheduleCollectionView
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
+        }) { _ in
+            self.updateLottieAnimationForVisibleCell()
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
 extension ToduckViewController: UICollectionViewDataSource {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        updateLottieAnimationForVisibleCell()
+    }
+    
+    func updateLottieAnimationForVisibleCell() {
+        let collectionView = layoutView.scheduleCollectionView
+        let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
+        guard let visibleIndexPath = collectionView.indexPathForItem(at: CGPoint(x: visibleRect.midX, y: visibleRect.midY)) else { return }
+        
+        updateLottieView(at: visibleIndexPath.row)
+    }
+    
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
@@ -60,7 +152,7 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let width = collectionView.frame.width * 0.8
+        let width = collectionView.frame.width
         let height: CGFloat = 116
         return CGSize(width: width, height: height)
     }
@@ -84,15 +176,10 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         
         // 셀 전체 폭(셀 너비 + 간격)
-        let cellWidth = collectionView.frame.width * 0.8
+        let cellWidth = collectionView.frame.width
         let cellSpacing = layout.minimumLineSpacing
         let cellWidthWithSpacing = cellWidth + cellSpacing
-        
-        // 섹션 inset (왼쪽 10pt)
-        let insetLeft: CGFloat = 10.0
-        
-        // 현재 오프셋에 inset을 더한 값
-        let offset = scrollView.contentOffset.x + insetLeft
+        let offset = scrollView.contentOffset.x
         
         // 현재 스크롤 위치에 해당하는 인덱스(소수점 포함)
         let estimatedIndex = offset / cellWidthWithSpacing
@@ -107,8 +194,8 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
             index = round(estimatedIndex)
         }
         
-        // 새 오프셋 계산 (왼쪽 inset을 빼서 보정)
-        let newOffsetX = index * cellWidthWithSpacing - insetLeft
+        // 새 오프셋 계산
+        let newOffsetX = index * cellWidthWithSpacing
         
         targetContentOffset.pointee = CGPoint(x: newOffsetX, y: targetContentOffset.pointee.y)
     }
