@@ -221,9 +221,9 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
         input.send(.likePost(postID))
     }
     
-    @objc func didTapSegmentedControl(sender: UISegmentedControl) {
-        input.send(.segmentSelect(at: sender.selectedSegmentIndex))
-        layoutView.updateLayoutForSegmentedControl(index: sender.selectedSegmentIndex)
+    @objc func didTapSegmentedControl(sender: TDSegmentedControl) {
+        input.send(.segmentSelect(at: sender.selectedIndex))
+        layoutView.updateLayoutForSegmentedControl(index: sender.selectedIndex)
     }
     
     @objc func didRefresh() {

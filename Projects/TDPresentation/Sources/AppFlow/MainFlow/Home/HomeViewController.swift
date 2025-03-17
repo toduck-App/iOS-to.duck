@@ -32,8 +32,6 @@ final class HomeViewController: BaseViewController<BaseView> {
         segmentedControl.addAction(UIAction { [weak self] _ in
             self?.updateView()
         }, for: .valueChanged)
-        
-        segmentedControl.selectedSegmentIndex = 0
     }
     
     private func setupNavigationBar() {
@@ -44,7 +42,7 @@ final class HomeViewController: BaseViewController<BaseView> {
     
     // MARK: - View Update
     private func updateView() {
-        let newViewController = getViewController(for: segmentedControl.selectedSegmentIndex)
+        let newViewController = getViewController(for: segmentedControl.selectedIndex)
         guard currentViewController !== newViewController else { return }
         
         updateNavigationBarColor(for: segmentedControl.selectedSegmentIndex)
