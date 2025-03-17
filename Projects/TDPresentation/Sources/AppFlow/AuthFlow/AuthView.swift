@@ -1,4 +1,5 @@
 import UIKit
+import Lottie
 import SnapKit
 import Then
 import TDDesign
@@ -7,7 +8,7 @@ import AuthenticationServices
 final class AuthView: BaseView {
     // MARK: - UI Components
     let backGroundImageView = UIImageView(image: TDImage.loginBackGround)
-    let mainButton = TDBaseButton(title: "메인 홈으로 가기")
+    let mainButton = TDBaseButton(title: "메인 홈으로 가기", radius: 8)
 
     /// 토덕 로고
     let toduckLogoView = UIImageView(image: TDImage.toduckPrimaryLogo)
@@ -17,7 +18,15 @@ final class AuthView: BaseView {
         alignment: .center,
         toduckColor: TDColor.Primary.primary400
     )
-    let toduckView = UIImageView(image: TDImage.loginToduck)
+    let toduckView = LottieAnimationView(
+        name: "toduckOnboarding",
+        bundle: Bundle(identifier: "to.duck.toduck.design")!
+    ).then {
+        $0.backgroundColor = .clear
+        $0.contentMode = .scaleAspectFit
+        $0.loopMode = .loop
+        $0.play()
+    }
 
     /// Oauth 로그인
     let kakaoLoginButton = TDBaseButton(
@@ -76,32 +85,33 @@ final class AuthView: BaseView {
             $0.centerX.equalToSuperview()
         }
         toduckView.snp.makeConstraints {
-            $0.top.equalTo(toduckTitleLabel.snp.bottom)
+            $0.top.equalTo(toduckTitleLabel.snp.bottom).offset(20)
             $0.centerX.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(kakaoLoginButton.snp.top).offset(-50)
         }
 
         /// Oauth 로그인
         kakaoLoginButton.snp.makeConstraints {
-            $0.top.equalTo(toduckView.snp.bottom).offset(Layout.loginButtonTopOffset)
             $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
             $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
+            $0.bottom.equalTo(appleLoginButton.snp.top).offset(-10)
             $0.height.equalTo(44)
         }
         appleLoginButton.snp.makeConstraints {
-            $0.top.equalTo(kakaoLoginButton.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
             $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
+            $0.bottom.equalTo(signInButton.snp.top).offset(-52)
             $0.height.equalTo(44)
+        }
+        mainButton.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
+            $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
+            $0.bottom.equalTo(signInButton.snp.top).offset(-20)
+            $0.height.equalTo(20)
         }
         
         // TODO: 제거
-        mainButton.snp.makeConstraints {
-            $0.top.equalTo(appleLoginButton.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
-            $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
-            $0.height.equalTo(44)
-        }
 
         /// 자체 로그인/회원가입
         signInButton.snp.makeConstraints {

@@ -8,13 +8,16 @@ final class EventMakorCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    private let selectedDate: Date
 
     init(
         navigationController: UINavigationController,
-        injector: DependencyResolvable
+        injector: DependencyResolvable,
+        selectedDate: Date
     ) {
         self.navigationController = navigationController
         self.injector = injector
+        self.selectedDate = selectedDate
     }
 
     func start(mode: ScheduleAndRoutineViewController.Mode) {
@@ -27,9 +30,11 @@ final class EventMakorCoordinator: Coordinator {
             createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase
         )
+        viewModel.setupInitialDate(with: selectedDate)
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         eventMakorViewController.hidesBottomBarWhenPushed = true
+        eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
     }
     

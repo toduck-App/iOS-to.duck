@@ -52,7 +52,7 @@ extension Schedule {
         Schedule(
             id: 0,
             title: "1번 일정",
-            category: TDCategory(colorHex: "#123456", imageName: "power"),
+            category: TDCategory(colorHex: "#DEEEFC", imageName: "power"),
             startDate: "2021-09-01",
             endDate: "2021-09-01",
             isAllDay: false,

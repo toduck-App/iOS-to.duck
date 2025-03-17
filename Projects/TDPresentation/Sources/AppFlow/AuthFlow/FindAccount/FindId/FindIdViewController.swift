@@ -23,6 +23,7 @@ final class FindIdViewController: BaseViewController<FindIdView> {
     override func configure() {
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self
+        keyboardAdjustableButton = layoutView.nextButton
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""

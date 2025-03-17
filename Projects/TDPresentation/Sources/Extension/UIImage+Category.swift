@@ -7,7 +7,6 @@ extension UIImage {
         "food",       // 밥
         "pencil",     // 연필
         "redBook",    // 빨간책
-        "yellowBook", // 노란책
         "sleep",      // 물
         "power",      // 운동
         "people",     // 사람
@@ -15,7 +14,6 @@ extension UIImage {
         "talk",       // 채팅
         "heart",      // 하트
         "vehicle",    // 차
-        "none"        // None
     ]
     
     static let categoryImages: [UIImage] = [
@@ -23,7 +21,6 @@ extension UIImage {
         TDImage.Category.food,
         TDImage.Category.pencil,
         TDImage.Category.redBook,
-        TDImage.Category.yellowBook,
         TDImage.Category.sleep,
         TDImage.Category.power,
         TDImage.Category.people,
@@ -31,7 +28,6 @@ extension UIImage {
         TDImage.Category.talk,
         TDImage.Category.heart,
         TDImage.Category.vehicle,
-        TDImage.Category.none
     ]
     
     static let categoryDictionary: [String: UIImage] = {

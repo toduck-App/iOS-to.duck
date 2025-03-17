@@ -48,7 +48,9 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
-        output.sink { [weak self] event in
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
             switch event {
             case let .fetchedTimerTheme(theme):
                 self?.fetchedTimerTheme(theme: theme)
