@@ -1,4 +1,5 @@
 import Combine
+import TDDesign
 import TDDomain
 import UIKit
 
@@ -91,8 +92,8 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView>, 
 // MARK: Input
 
 private extension SocialProfileViewController {
-    @objc func didTapSegmentedControl(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
+    @objc func didTapSegmentedControl(sender: TDSegmentedControl) {
+        switch sender.selectedIndex {
         case 0:
             input.send(.fetchRoutine)
         case 1:
