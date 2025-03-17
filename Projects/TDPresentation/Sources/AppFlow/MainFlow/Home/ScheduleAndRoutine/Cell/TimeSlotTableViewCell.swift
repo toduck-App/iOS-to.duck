@@ -1,5 +1,4 @@
 import UIKit
-import TDDomain
 import TDDesign
 import SnapKit
 import Then
@@ -17,8 +16,8 @@ final class TimeSlotTableViewCell: UITableViewCell {
     private let deleteButton = UIButton()
     
     // MARK: - Properties
+    private let maxButtonWidth: CGFloat = LayoutConstants.buttonContainerWidth
     private var didSetCornerRadius = false
-    private var maxButtonWidth: CGFloat = 120
     var editAction: (() -> Void)?
     var deleteAction: (() -> Void)?
     
@@ -28,15 +27,15 @@ final class TimeSlotTableViewCell: UITableViewCell {
         reuseIdentifier: String?
     ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        configureAddSubview()
-        configureLayout()
-        configureShadow()
-        setupButtons()
-        configureGesture()
+        commonInit()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        commonInit()
+    }
+    
+    private func commonInit() {
         configureAddSubview()
         configureLayout()
         configureShadow()
