@@ -45,7 +45,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         let newViewController = getViewController(for: segmentedControl.selectedIndex)
         guard currentViewController !== newViewController else { return }
         
-        updateNavigationBarColor(for: segmentedControl.selectedSegmentIndex)
+        updateNavigationBarColor(for: segmentedControl.selectedIndex)
         replaceCurrentViewController(with: newViewController)
     }
     
