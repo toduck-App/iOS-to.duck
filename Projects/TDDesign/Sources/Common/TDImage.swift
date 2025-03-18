@@ -221,12 +221,15 @@ public enum TDImage {
     }
     
     public enum Mood {
-        public static let sad = TDDesignAsset.Images.sadMood.image
         public static let happy = TDDesignAsset.Images.happyMood.image
+        public static let good = TDDesignAsset.Images.goodMood.image
+        public static let sad = TDDesignAsset.Images.sadMood.image
         public static let angry = TDDesignAsset.Images.angryMood.image
-        public static let anxiety = TDDesignAsset.Images.anxietyMood.image
-        public static let calmness = TDDesignAsset.Images.calmnessMood.image
+        public static let anxious = TDDesignAsset.Images.anxietyMood.image
         public static let tired = TDDesignAsset.Images.tiredMood.image
+        public static let sick = TDDesignAsset.Images.sickMood.image
+        public static let soso = TDDesignAsset.Images.sosoMood.image
+        public static let love = TDDesignAsset.Images.loveMood.image
     }
     
     public enum DiaryPercent {
