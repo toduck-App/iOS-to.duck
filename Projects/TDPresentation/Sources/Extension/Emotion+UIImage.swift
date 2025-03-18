@@ -9,15 +9,15 @@ extension Emotion {
     
     init(fromRawValue rawValue: String) {
         switch rawValue {
-        case "happy": self = .happy
-        case "good": self = .good
-        case "sad": self = .sad
-        case "angry": self = .angry
-        case "anxious": self = .anxious
-        case "tired": self = .tired
-        case "sick": self = .sick
-        case "soso": self = .soso
-        case "love": self = .love
+        case "HAPPY": self = .happy
+        case "GOOD": self = .good
+        case "SAD": self = .sad
+        case "ANGRY": self = .angry
+        case "ANXIOUS": self = .anxious
+        case "TIRED": self = .tired
+        case "SICK": self = .sick
+        case "SOSO": self = .soso
+        case "LOVE": self = .love
         default: self = .soso
         }
     }
