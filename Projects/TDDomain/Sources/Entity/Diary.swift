@@ -1,28 +1,26 @@
 import Foundation
-import UIKit
 
 public struct Diary: Hashable, Identifiable {
-    public let id: UUID
-    public let focus: Focus
-    public let emotion: Emotion
-    public let contentText: String
+    public let id: Int
     public let date: Date
+    public let emotion: Emotion
+    public let title: String
+    public let contentText: String
+    public let imagesURL: [String]?
     
     public init(
-        id: UUID,
-        focus: Focus,
+        id: Int,
+        date: Date,
         emotion: Emotion,
+        title: String,
         contentText: String,
-        date: Date
+        imagesURL: [String]?
     ) {
         self.id = id
-        self.focus = focus
-        self.emotion = emotion
-        self.contentText = contentText
         self.date = date
-    }
-    
-    public var emotionImageName: String {
-        return emotion.imageName
+        self.emotion = emotion
+        self.title = title
+        self.contentText = contentText
+        self.imagesURL = imagesURL
     }
 }
