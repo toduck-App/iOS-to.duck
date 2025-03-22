@@ -15,7 +15,7 @@ extension URLRequest {
         if let queries {
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { throw MFError.invalidURL }
             var queryItems = components.queryItems ?? []
-            queryItems.append(contentsOf: try queries.map { key, value in
+            try queryItems.append(contentsOf: queries.map { key, value in
                 guard let stringValue = convertToValidString(value) else { throw MFError.invalidQueryValue(key: key, value: value) }
                 return URLQueryItem(name: key, value: stringValue)
             })
@@ -42,7 +42,12 @@ extension URLRequest {
             }
         }
         
-        allHTTPHeaderFields = headers?.dictionary
+        
+        if let headersDict = headers?.dictionary {
+            for (key, value) in headersDict {
+                setValue(value, forHTTPHeaderField: key)
+            }
+        }
     }
     
     private func validateAndSerializeJSON(_ params: [String: Any]) throws -> Data {
@@ -60,7 +65,8 @@ extension URLRequest {
     private func encodeFormURLEncoded(_ params: [String: Any]) throws -> Data {
         let parameterString = try params.map { key, value -> String in
             guard let encodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-                  let encodedValue = convertToValidString(value) else {
+                  let encodedValue = convertToValidString(value)
+            else {
                 throw MFError.urlEncodingFailure
             }
             return "\(encodedKey)=\(encodedValue)"
