@@ -1,4 +1,6 @@
 import Foundation
+import TDCore
+import TDData
 
 open class MFSession {
     public static let `default` = MFSession()
@@ -17,7 +19,7 @@ open class MFSession {
     @discardableResult
     open func request(_ request: MFRequest) async throws(MFError) -> MFResponse<Data> {
         let response = try await perform(request) { data in
-            return data
+            data
         }
         
         return response
@@ -36,17 +38,22 @@ open class MFSession {
     @discardableResult
     open func requestDecodable<T: Decodable>(of type: T.Type, _ request: MFRequest) async throws(MFError) -> MFResponse<T> {
         let response = try await perform(request) { data in
-            do {
-                let decoder = JSONDecoder()
-                return try decoder.decode(T.self, from: data)
-            } catch {
-                throw MFError.requestDecodableDecodingFailure
+            let decoder = JSONDecoder()
+            let serverResponse = try decoder.decode(ServerResponse<T>.self, from: data)
+            TDLogger.debug("\(serverResponse.code), \(serverResponse.message)")
+            guard (20000 ... 29999).contains(serverResponse.code) else {
+                if let apiError = APIError(rawValue: serverResponse.code) {
+                    throw MFError.serverError(apiError: apiError)
+                } else {
+                    throw MFError.serverErrorCode(code: serverResponse.code, message: serverResponse.message)
+                }
             }
+            guard let content = serverResponse.content else { throw MFError.requestDecodableDecodingFailure }
+            return content
         }
-        
         return response
     }
-    
+
     @discardableResult
     open func requestJSON(_ request: MFRequest) async throws(MFError) -> MFResponse<[String: Any]> {
         let response = try await perform(request) { data in
@@ -61,7 +68,11 @@ open class MFSession {
         return response
     }
     
-    func perform<T>(_ request: MFRequest, transformer: @escaping (Data) throws -> T) async throws(MFError) -> MFResponse<T> {
+    func perform<T>(
+        _ request: MFRequest,
+        transformer: @escaping (Data) throws -> T,
+        retryCount: Int = 1
+    ) async throws(MFError) -> MFResponse<T> {
         if let error = request.error {
             throw error
         }
@@ -69,21 +80,66 @@ open class MFSession {
         do {
             let urlRequest = try request.asURLRequest()
             let (data, response) = try await session.data(for: urlRequest)
+            if let responseString = String(data: data, encoding: .utf8) {
+                print(responseString)
+            }
             let transformedData = try transformer(data)
             
-            let mfResponse = MFResponse(
-                request: try request.asURLRequest(),
+            let mfResponse = try MFResponse(
+                request: request.asURLRequest(),
                 response: response,
                 value: transformedData
             )
+            
             return mfResponse
         } catch {
-            if let error = error.asMFError {
-                throw error
+            if let mfError = error.asMFError {
+                TDLogger.network(mfError.description)
+                if case let MFError.serverError(apiError) = mfError {
+                    switch apiError {
+                    case .expiredAccessToken:
+                        if retryCount > 0 {
+                            try await refreshToken()
+                            return try await perform(request, transformer: transformer, retryCount: retryCount - 1)
+                        } else {
+                            throw mfError
+                        }
+                    case .emptyAccessToken,
+                         .malformedToken,
+                         .tamperedToken,
+                         .unsupportedJWTToken,
+                         .takenAwayToken,
+                         .expiredRefreshToken:
+                        NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
+                        throw mfError
+                    default:
+                        throw mfError
+                    }
+                }
+                throw mfError
             } else {
-                let error = MFError.networkFailure(underlyingError: error)
-                throw error
+                throw MFError.networkFailure(underlyingError: error)
             }
         }
+    }
+
+    private func refreshToken() async throws(MFError) {
+        let provider = MFProvider<AuthAPI>()
+        guard let refreshToken = TDTokenManager.shared.refreshToken else {
+            throw MFError.serverError(apiError: .expiredRefreshToken)
+        }
+        let target = AuthAPI.refreshToken(refreshToken: refreshToken)
+        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
+        guard let refreshToken = response.extractRefreshToken(),
+              let refreshTokenExpiredAt = response.extractRefreshTokenExpiry()
+        else {
+            throw MFError.requestJSONDecodingFailure
+        }
+        try? await TDTokenManager.shared.saveToken((
+            accessToken: response.value.accessToken,
+            refreshToken: refreshToken,
+            refreshTokenExpiredAt: refreshTokenExpiredAt,
+            userId: response.value.userId
+        ))
     }
 }

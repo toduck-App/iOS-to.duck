@@ -1,4 +1,5 @@
 import Foundation
+import TDCore
 import TDDomain
 
 public enum DiaryAPI {
@@ -11,34 +12,34 @@ public enum DiaryAPI {
 
 extension DiaryAPI: MFTarget {
     public var baseURL: URL {
-        return URL(string: APIConstants.baseURL)!
+        URL(string: APIConstants.baseURL)!
     }
     
     public var path: String {
         switch self {
         case .fetchDiary(let id):
-            return "/diary/\(id)"
+            "/diary/\(id)"
         case .fetchDiaryList:
-            return "/diary"
+            "/diary"
         case .addDiary:
-            return "/diary"
+            "/diary"
         case .updateDiary(let diary):
-            return "/diary/\(diary.id)"
+            "/diary/\(diary.id)"
         case .deleteDiary(let id):
-            return "/diary/\(id)"
+            "/diary/\(id)"
         }
     }
     
     public var method: MFHTTPMethod {
         switch self {
         case .fetchDiary, .fetchDiaryList:
-            return .get
+            .get
         case .addDiary:
-            return .post
+            .post
         case .updateDiary:
-            return .put
+            .put
         case .deleteDiary:
-            return .delete
+            .delete
         }
     }
     
@@ -62,7 +63,8 @@ extension DiaryAPI: MFTarget {
     
     public var headers: MFHeaders? {
         let headers: MFHeaders = [
-            .contentType("application/json")
+            .contentType("application/json"),
+            .authorization(bearerToken: TDTokenManager.shared.accessToken ?? "")
         ]
         return headers
     }

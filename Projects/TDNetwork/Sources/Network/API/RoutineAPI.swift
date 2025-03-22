@@ -1,5 +1,6 @@
 import TDDomain
 import Foundation
+import TDCore
 
 public enum RoutineAPI {
     case fetchRoutineList // 모든 루틴 조회
@@ -62,7 +63,8 @@ extension RoutineAPI: MFTarget {
     
     public var headers: MFHeaders? {
         let jsonHeaders: MFHeaders = [
-            .contentType("application/json")
+            .contentType("application/json"),
+            .authorization(bearerToken: TDTokenManager.shared.accessToken ?? "")
         ]
         // TODO: - 나중에 회의 후 결정
         return jsonHeaders

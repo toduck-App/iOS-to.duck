@@ -44,11 +44,15 @@ extension MFHeader {
     }
     
     public static func accept(_ value: String) -> MFHeader {
-        return MFHeader(name: "Accept", value: value)
+        return MFHeader(name: "accept", value: value)
     }
     
     public static func contentType(_ value: String) -> MFHeader {
         return MFHeader(name: "Content-Type", value: value)
+    }
+    
+    public static func cookie(_ value: String) -> MFHeader {
+        return MFHeader(name: "Cookie", value: value)
     }
 }
 

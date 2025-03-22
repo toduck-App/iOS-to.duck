@@ -18,6 +18,11 @@ public enum TDDataError: Error, Equatable {
     case requestLoginFailure
     case invalidIDToken
     case notFoundPulbicKey
+    
+    /// token
+    case notFoundToken
+    case expiredRefreshToken
+    case invalidRefreshToken
 }
 
 extension TDDataError: CustomStringConvertible {
@@ -55,6 +60,12 @@ extension TDDataError: CustomStringConvertible {
             "유효하지 않은 ID 토큰입니다."
         case .notFoundPulbicKey:
             "일치하는 공개키를 찾을 수 없습니다."
+        case .notFoundToken:
+            "토큰이 존재하지 않습니다."
+        case .expiredRefreshToken:
+            "리프레시 토큰이 만료되었습니다."
+        case .invalidRefreshToken:
+            "리프레시 토큰이 유효하지 않습니다."
         }
     }
 }

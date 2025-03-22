@@ -17,27 +17,9 @@ public struct LoginUserResponseDTO: Decodable {
         self.refreshTokenExpiredAt = refreshTokenExpiredAt
         self.userId = userId
     }
-    
-    public static func from(
-        bodyData: Data,
-        refreshToken: String,
-        refreshTokenExpiredAt: String
-    ) throws -> LoginUserResponseDTO {
-        let body = try JSONDecoder().decode(LoginUserResponseBody.self, from: bodyData)
-        return LoginUserResponseDTO(
-            accessToken: body.content.accessToken,
-            refreshToken: refreshToken,
-            refreshTokenExpiredAt: refreshTokenExpiredAt,
-            userId: body.content.userId
-        )
-    }
 }
 
-private struct LoginUserResponseBody: Decodable {
-    struct Content: Decodable {
-        let accessToken: String
-        let userId: Int
-    }
-    let code: Int
-    let content: Content
+public struct LoginUserResponseBody: Decodable {
+    public let accessToken: String
+    public let userId: Int
 }
