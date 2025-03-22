@@ -30,9 +30,13 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         self.viewModel = nil
         super.init(coder: coder)
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(by: .pop)
+        }
     }
 
     override func configure() {
@@ -54,7 +58,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                 guard let self else { return }
                 switch event {
                 case .createPost:
-                    coordinator?.didTapDoneButton()
+                    coordinator?.finish(by: .pop)
                 case .setRoutine:
                     layoutView.socialSelectRoutineView.setRoutine(string: viewModel.selectedRoutine?.title ?? "")
                 case .setImage:

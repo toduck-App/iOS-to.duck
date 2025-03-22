@@ -19,3 +19,31 @@ public struct MFResponse<T> {
         self.value = value
     }
 }
+
+extension MFResponse {
+    public func extractRefreshToken() -> String? {
+        guard let headers = self.httpResponse?.allHeaderFields else { return nil }
+        guard let setCookie = headers["Set-Cookie"] as? String else { return nil }
+
+        let components = setCookie.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+        for component in components {
+            if component.hasPrefix("refreshToken=") {
+                return component.replacingOccurrences(of: "refreshToken=", with: "")
+            }
+        }
+        return nil
+    }
+    
+    public func extractRefreshTokenExpiry() -> String? {
+        guard let headers = self.httpResponse?.allHeaderFields else { return nil }
+        guard let setCookie = headers["Set-Cookie"] as? String else { return nil }
+        
+        let components = setCookie.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+        for component in components {
+            if component.hasPrefix("Expires=") {
+                return component.replacingOccurrences(of: "Expires=", with: "")
+            }
+        }
+        return nil
+    }
+}

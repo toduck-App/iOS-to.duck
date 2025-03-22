@@ -11,9 +11,8 @@ final class AuthViewModel: NSObject, BaseViewModel {
     }
     
     enum Output {
-        case loginSuccess(userID: String, idToken: String)
+        case loginSuccess
         case loginFailure(error: String)
-        case tokenReceived(idToken: String?, authCode: String?)
     }
     
     private let kakaoLoginUseCase: KakaoLoginUseCase
@@ -69,14 +68,13 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             let userID = appleIdCredential.user
             
+            
             // ID Token 및 Authorization Code 처리
             let idToken = appleIdCredential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
-            let authCode = appleIdCredential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
-            
-            if let idToken, let authCode {
+            if let idToken {
                 Task {
                     try await appleLoginUseCase.execute(oauthId: userID, idToken: idToken)
-                    output.send(.loginSuccess(userID: userID, idToken: idToken))
+                    output.send(.loginSuccess)
                 }
             }
         default:

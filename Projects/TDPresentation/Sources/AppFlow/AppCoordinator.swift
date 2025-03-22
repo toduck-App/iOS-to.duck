@@ -1,5 +1,6 @@
-import UIKit
 import TDCore
+import TDDomain
+import UIKit
 
 public final class AppCoordinator: Coordinator {
     public var navigationController: UINavigationController
@@ -16,10 +17,32 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        if let _ = UserDefaults.standard.string(forKey: "USER_NAME") {
-            startTabBarFlow()
-        } else {
-            startAuthFlow()
+        observeTokenExpired()
+        Task {
+            do {
+                try await TDTokenManager.shared.loadTokenFromKC()
+                let authRepository = injector.resolve(AuthRepository.self)
+                try await authRepository.refreshToken()
+                await MainActor.run {
+                    TDTokenManager.shared.accessToken == nil ? startAuthFlow() : startTabBarFlow()
+                }
+            } catch {
+                await MainActor.run {
+                    startAuthFlow()
+                }
+            }
+        }
+    }
+    
+    private func observeTokenExpired() {
+        NotificationCenter.default.addObserver(
+            forName: .userRefreshTokenExpired,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.childCoordinators.removeAll()
+            self?.navigationController.popToRootViewController(animated: true)
+            self?.startAuthFlow()
         }
     }
     
@@ -33,11 +56,22 @@ public final class AppCoordinator: Coordinator {
     }
     
     private func startAuthFlow() {
-        let signUpCoordinator = AuthCoordinator(
+        let authCoordinator = AuthCoordinator(
             navigationController: navigationController,
             injector: injector
         )
-        signUpCoordinator.start()
-        childCoordinators.append(signUpCoordinator)
+        authCoordinator.start()
+        authCoordinator.finishDelegate = self
+        childCoordinators.append(authCoordinator)
+    }
+}
+
+extension AppCoordinator: CoordinatorFinishDelegate {
+    public func didFinish(childCoordinator: Coordinator) {
+        childCoordinators.removeAll { $0 === childCoordinator }
+
+        if childCoordinator is AuthCoordinator {
+            startTabBarFlow()
+        }
     }
 }
