@@ -234,6 +234,18 @@ public enum TDImage {
         public static let love = TDDesignAsset.Images.loveMood.image
     }
     
+    public enum MoodCircle {
+        public static let happy = TDDesignAsset.Images.happyCircle.image
+        public static let good = TDDesignAsset.Images.goodCircle.image
+        public static let sad = TDDesignAsset.Images.sadCircle.image
+        public static let angry = TDDesignAsset.Images.angryCircle.image
+        public static let anxious = TDDesignAsset.Images.anxietyCircle.image
+        public static let tired = TDDesignAsset.Images.tiredCircle.image
+        public static let sick = TDDesignAsset.Images.sickCircle.image
+        public static let soso = TDDesignAsset.Images.sosoCircle.image
+        public static let love = TDDesignAsset.Images.loveCircle.image
+    }
+    
     public enum DiaryPercent {
         public static let bookPercent0 = TDDesignAsset.Images.bookPercent0.image
     }
