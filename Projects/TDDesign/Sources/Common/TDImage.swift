@@ -46,6 +46,8 @@ public enum TDImage {
     public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     public static let loginToduck = TDDesignAsset.Images.loginToduck.image
     public static let blockImage = TDDesignAsset.Images.blockMedium.image
+    public static let photo = TDDesignAsset.Images.photoMedium.image
+    public static let plus = TDDesignAsset.Images.plusMedium.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
@@ -276,6 +278,7 @@ public enum TDImage {
     public enum Pen {
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
+        public static let penNeutralColor = TDDesignAsset.Images.penNeutralColor.image
     }
     
     public enum Sort {
