@@ -1,6 +1,5 @@
 import TDCore
 import TDDomain
-import TDNetwork
 import UIKit
 
 public final class AppCoordinator: Coordinator {
