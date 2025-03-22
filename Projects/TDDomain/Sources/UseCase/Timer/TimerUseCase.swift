@@ -2,56 +2,68 @@ import Foundation
 import TDCore
 
 public protocol TimerUseCase {
-    func start(setting: TDTimerSetting, completion: @escaping (Int) -> Void)
+    func start()
     func stop()
     func reset()
-    func runningStatus() -> Bool
+    var isRunning: Bool { get }
+    var delegate: TimerUseCaseDelegate? { get set }
+}
+
+public protocol TimerUseCaseDelegate: AnyObject {
+    func didUpdateFocusTime(remainTime: Int)
+    func didUpdateRestTime(restTime: Int)
 }
 
 final class TimerUseCaseImpl: TimerUseCase {
+    // MARK: - Properties
+
     private var timer: Timer?
-    private var setting: TDTimerSetting?
-    private var duration: Int?
-    private var remainTime: Int?
-    private var isRunning: Bool = false
+    private var duration: Int = 0
+    private var remainTime: Int = 0
+    public var isRunning: Bool {
+        return timer != nil
+    }
+    private let repository: TimerRepository
 
-    func start(setting: TDTimerSetting, completion: @escaping (Int) -> Void) {
-        if isRunning { return }
+    weak var delegate: TimerUseCaseDelegate?
 
-        isRunning = true
-        remainTime = remainTime ?? setting.toFocusDurationMinutes()
+    // MARK: - Initializer
 
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
-            [weak self] _ in
-            self?.updateRemainTime()
-            completion(self?.remainTime ?? 0)
+    init(repository: TimerRepository) {
+        self.repository = repository
+
+    }
+
+    func start() {
+        guard !isRunning else { return}
+        let setting = repository.fetchTimerSetting()
+        self.remainTime = self.remainTime == 0 ? setting.toFocusDurationMinutes() : self.remainTime
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.remainTime > 0 {
+                self.remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요 
+                self.delegate?.didUpdateFocusTime(remainTime: self.remainTime)
+            } else {
+                self.stop()
+                self.delegate?.didUpdateRestTime(restTime: 0)
+            }
         }
     }
 
     func stop() {
-        if !isRunning { return }
-        isRunning = false
+        guard isRunning else { return }
         timer?.invalidate()
         timer = nil
     }
 
     func reset() {
         stop()
-        remainTime = nil
+        self.remainTime = 0
     }
 
-    func updateRemainTime() {
-        guard let remainTime = remainTime else { return }
-        if remainTime > 1 {
-            TDLogger.debug("[TimerUseCase] remainTime: \(remainTime)")
-            self.remainTime = remainTime - 1
-        } else {
-            reset()
-            TDLogger.debug("[TimerUseCase] reset Timer")
-        }
-    }
+    // MARK: - Private Methods
 
-    func runningStatus() -> Bool {
-        return isRunning
+    private func scheduleTimer() {
     }
 }

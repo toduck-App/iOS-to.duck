@@ -14,6 +14,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private var theme: TDTimerTheme = .Bboduck
     private var focusCount: Int = 0 // 테마를 위한 변수
 
+    // TODO: 처음 로딩시 테마 2개가 동시에 보이는것 수정
+
     // MARK: - Initializer
 
     init(viewModel: TimerViewModel) {
@@ -59,9 +61,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             }, for: .touchUpInside
         )
 
-        layoutView.restartButton.addAction(
+        layoutView.stopButton.addAction(
             UIAction { _ in
-                self.input.send(.restartTimer)
+                self.input.send(.resumeTimer)
             }, for: .touchUpInside
         )
     }
@@ -71,9 +73,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     override func binding() {
         let output: AnyPublisher<TimerViewModel.Output, Never> = viewModel.transform(input: input.eraseToAnyPublisher())
 
-        output.sink { [weak self] event in
-            TDLogger.debug("[TimerViewController] revice event: \(event)")
-            DispatchQueue.main.async {
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
                 switch event {
                 case let .updatedTimer(remainedTime):
                     self?.updateTimer(remainedTime)
@@ -94,8 +96,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                 default:
                     break
                 }
-            }
-        }.store(in: &cancellables)
+            }.store(in: &cancellables)
     }
 
     func setupNavigation() {
@@ -121,7 +122,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 // MARK: - Private Methods
 
 extension TimerViewController {
-    // TODO: 집중 타이머 횟수를 다채웠으면 어떻게 할지 물어보고 구현하기
     private func finishedTimer() {
         handleControlStack(.pause)
         showToast(type: .orange, title: "휴식 시간 끝 💡️", message: "집중할 시간이에요 ! 자리에 앉아볼까요?")
@@ -160,10 +160,6 @@ extension TimerViewController {
         }
     }
 
-    // TODO: 임시 마크
-
-    // MARK: - updateTheme
-
     private func updateTheme(theme: TDTimerTheme) {
         self.theme = theme
 
@@ -178,7 +174,7 @@ extension TimerViewController {
         layoutView.pauseButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
 
         layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
-        layoutView.restartButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
+        layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
 
         // background theme
         layoutView.backgroundColor = theme.backgroundColor
@@ -188,7 +184,7 @@ extension TimerViewController {
             view.tintColor = theme.navigationColor
         }
 
-        var  index = 0;
+        var index = 0
         navigationItem.leftBarButtonItem?.customView?.subviews.forEach { view in
             if view is UIImageView {
                 if index == 0 {
@@ -295,10 +291,10 @@ extension TimerViewController {
     private func handleControlStack(_ state: TimerControlStackState) {
         let initStack = [layoutView.playButton]
         let playingStack = [
-            layoutView.restartButton, layoutView.pauseButton, layoutView.resetButton,
+            layoutView.resetButton, layoutView.pauseButton, layoutView.stopButton,
         ]
         let pauseStack = [
-            layoutView.restartButton, layoutView.playButton, layoutView.resetButton,
+            layoutView.resetButton, layoutView.playButton, layoutView.stopButton,
         ]
 
         layoutView.controlStack.arrangedSubviews.forEach { $0.removeFromSuperview() }

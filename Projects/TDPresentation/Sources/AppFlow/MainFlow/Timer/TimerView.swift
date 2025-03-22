@@ -25,7 +25,7 @@ final class TimerView: BaseView {
         foregroundColor: TDColor.Neutral.neutral400
     )
 
-    let resetButton = TDBaseButton(
+    let stopButton = TDBaseButton(
         image: TDImage.Timer.stop,
         backgroundColor: .clear,
         foregroundColor: TDColor.Neutral.neutral400
@@ -37,7 +37,7 @@ final class TimerView: BaseView {
         foregroundColor: TDColor.Neutral.neutral400
     )
 
-    let restartButton = TDBaseButton(
+    let resetButton = TDBaseButton(
         image: TDImage.Timer.reset,
         backgroundColor: .clear,
         foregroundColor: TDColor.Neutral.neutral400
@@ -106,6 +106,9 @@ final class TimerView: BaseView {
     override func configure() {
         simpleTimerView.layer.transform = CATransform3DMakeRotation(.pi, 0, 1, 0) //y축 대칭
         backgroundColor = TDColor.Primary.primary100
+
+        bboduckTimerView.isHidden = true
+        simpleTimerView.isHidden = true
     }
 
     override func layout() {
