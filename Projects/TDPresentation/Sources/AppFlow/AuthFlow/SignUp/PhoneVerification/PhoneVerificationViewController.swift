@@ -21,6 +21,14 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(by: .pop)
+        }
+    }
+    
     override func configure() {
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self

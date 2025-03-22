@@ -47,9 +47,6 @@ extension SignInCoordinator: SignInDelegate {
     }
     
     func didSignIn() {
-        let mainTabBarCoordinator = MainTabBarCoordinator(navigationController: navigationController, injector: injector)
-        mainTabBarCoordinator.finishDelegate = self
-        childCoordinators = [mainTabBarCoordinator]
-        mainTabBarCoordinator.start()
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }

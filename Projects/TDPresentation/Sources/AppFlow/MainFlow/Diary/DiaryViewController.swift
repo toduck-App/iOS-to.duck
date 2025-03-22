@@ -83,10 +83,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         calendarHeader.pickerButton.delegate = self
         scrollView.delegate = self
         setupCalendar()
-        setupNavigationBar(style: .diary, navigationDelegate: coordinator!) { [weak self] in
-            TDLogger.debug("MyPageViewController - setupNavigationBar")
-            self?.coordinator?.didTapAlarmButton()
-        }
+        setupNavigationBar()
     }
     
     override func layout() {
@@ -143,6 +140,35 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().offset(-28)
         }
+    }
+    
+    private func setupNavigationBar() {
+        // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
+        let calendarButton = UIButton(type: .custom)
+        calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
+        calendarButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapCalendarButton()
+        }, for: .touchUpInside)
+        
+        let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
+        toduckLogoImageView.contentMode = .scaleAspectFit
+        
+        let leftBarButtonItems = [
+            UIBarButtonItem(customView: calendarButton),
+            UIBarButtonItem(customView: toduckLogoImageView)
+        ]
+        
+        navigationItem.leftBarButtonItems = leftBarButtonItems
+        
+        // 우측 네비게이션 바 버튼 설정 (알람 버튼)
+        let alarmButton = UIButton(type: .custom)
+        alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
+        alarmButton.addAction(UIAction { [weak self] _ in
+            TDLogger.debug("DiaryViewController - 알람 버튼 클릭")
+            self?.coordinator?.didTapAlarmButton()
+        }, for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
     }
 }
 

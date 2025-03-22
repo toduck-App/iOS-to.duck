@@ -33,11 +33,22 @@ public final class AppCoordinator: Coordinator {
     }
     
     private func startAuthFlow() {
-        let signUpCoordinator = AuthCoordinator(
+        let authCoordinator = AuthCoordinator(
             navigationController: navigationController,
             injector: injector
         )
-        signUpCoordinator.start()
-        childCoordinators.append(signUpCoordinator)
+        authCoordinator.start()
+        authCoordinator.finishDelegate = self
+        childCoordinators.append(authCoordinator)
+    }
+}
+
+extension AppCoordinator: CoordinatorFinishDelegate {
+    public func didFinish(childCoordinator: Coordinator) {
+        childCoordinators.removeAll { $0 === childCoordinator }
+
+        if childCoordinator is AuthCoordinator {
+            startTabBarFlow()
+        }
     }
 }
