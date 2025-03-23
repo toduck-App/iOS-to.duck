@@ -117,6 +117,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         /// 캘린더 뷰
         calendarContainerView.snp.makeConstraints {
             $0.height.equalTo(456)
+            $0.leading.trailing.equalTo(contentView)
         }
         calendarHeader.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
@@ -166,25 +167,47 @@ final class DiaryViewController: BaseViewController<BaseView> {
         }
     }
     
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .selectedDiary(let diary):
+                    self?.updateDiaryView(with: diary)
+                case .fetchedDiaryList:
+                    self?.calendar.reloadData()
+                case .notFoundDiary:
+                    self?.updateDiaryView()
+                }
+            }.store(in: &cancellables)
+    }
+    
     override func configure() {
         calendarContainerView.backgroundColor = TDColor.baseWhite
         calendarHeader.pickerButton.delegate = self
         scrollView.delegate = self
         setupCalendar()
-        updateDiaryView()
         setupNavigationBar()
+        fetchDiaryList(for: Date())
     }
     
-    private func updateDiaryView() {
-        let hasDiary = viewModel.todayDiary != nil
+    private func fetchDiaryList(for date: Date) {
+        let components = Calendar.current.dateComponents([.year, .month], from: date)
+        guard let year = components.year, let month = components.month else { return }
 
-        // 일기 상세 뷰 & 일기 없음 뷰 & 일기 작성 버튼 가시성 설정
+        input.send(.fetchDiaryList(year, month))
+    }
+    
+    private func updateDiaryView(with diary: Diary? = nil) {
+        let hasDiary = diary != nil
+
         diaryDetailView.isHidden = !hasDiary
         noDiaryContainerView.isHidden = hasDiary
         diaryPostButtonContainerView.isHidden = hasDiary
-        
-        // 일기 상세 뷰 업데이트
-        if let diary = viewModel.todayDiary {
+
+        if let diary {
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
                 date: diary.date.currentDateString,
@@ -250,6 +273,7 @@ extension DiaryViewController: UIScrollViewDelegate {
 extension DiaryViewController: TDCalendarConfigurable {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         updateHeaderLabel(for: calendar.currentPage)
+        fetchDiaryList(for: calendar.currentPage)
     }
     
     func calendar(
@@ -263,6 +287,24 @@ extension DiaryViewController: TDCalendarConfigurable {
             at: position
         ) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
         
+        let normalized = date.normalized
+        if let diary = viewModel.monthDiaryList[normalized] {
+            cell.backImageView.image = diary.emotion.image
+        } else {
+            cell.backImageView.image = nil
+        }
+        
         return cell
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
+        didSelect date: Date,
+        at monthPosition: FSCalendarMonthPosition
+    ) {
+        let normalizedDate = date.normalized
+        
+        viewModel.selectedDiary = viewModel.monthDiaryList[normalizedDate]
+        input.send(.selecteDay(normalizedDate))
     }
 }
