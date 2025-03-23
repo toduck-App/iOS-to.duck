@@ -122,6 +122,7 @@ public final class DiaryDetailView: UIView {
         photoHeaderStackView.addArrangedSubview(photoIcon)
         photoHeaderStackView.addArrangedSubview(photoTitleLabel)
         
+        photoVerticalStackView.addArrangedSubview(.spacer(height: 16))
         photoVerticalStackView.addArrangedSubview(photoHeaderStackView)
         photoVerticalStackView.addArrangedSubview(photoContentStackView)
     }
