@@ -137,7 +137,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.top.equalTo(calendarContainerView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-20)
-            $0.height.equalTo(400)
         }
         
         /// 일기가 없는 경우
@@ -185,11 +184,11 @@ final class DiaryViewController: BaseViewController<BaseView> {
         // 일기 상세 뷰 업데이트
         if let diary = viewModel.todayDiary {
             diaryDetailView.configure(
-                emotionImage: diary.emotion.image,
+                emotionImage: diary.emotion.circleImage,
                 date: diary.date.currentDateString,
                 title: diary.title,
-                sentences: [diary.contentText],
-                photos: [TDImage.Mood.good]
+                sentences: diary.sentenceText,
+                photos: [TDImage.Mood.angry, TDImage.Mood.happy]
             )
         }
     }

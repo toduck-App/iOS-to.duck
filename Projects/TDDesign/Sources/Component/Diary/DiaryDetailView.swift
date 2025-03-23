@@ -5,220 +5,214 @@ public final class DiaryDetailView: UIView {
     
     // MARK: - UI Components
     
-    // 공통 요소
-    private let emotionContainerView = UIView()
-    private let emotionImageView = UIImageView()
-    private let dateLabel = TDLabel(toduckFont: TDFont.mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
-    private let titleLabel = TDLabel(toduckFont: TDFont.mediumBody2, toduckColor: TDColor.Neutral.neutral900)
-    private let dropdownButton = TDBaseButton(image: TDImage.Dot.verticalMedium, backgroundColor: TDColor.baseWhite, foregroundColor: TDColor.Neutral.neutral500)
-    
-    // 섹션 컨테이너
-    private lazy var contentStackView = UIStackView().then {
+    private let mainStackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 24
+        $0.spacing = 20
     }
     
-    // 문장 기록 섹션 (Lazy)
-    private lazy var sentenceSection: UIView = {
-        let container = UIView()
-        let titleStack = UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 4
-            $0.alignment = .center
-        }
-        
-        let pencilIcon = UIImageView(image: TDImage.Pen.penNeutralColor)
-        let sectionTitleLabel = TDLabel(
-            labelText: "문장 기록",
-            toduckFont: TDFont.boldBody2,
-            toduckColor: TDColor.Neutral.neutral600
-        )
-        let contentLabel = TDLabel(
-            toduckFont: TDFont.mediumBody2,
-            toduckColor: TDColor.Neutral.neutral600
-        ).then {
-            $0.numberOfLines = 0
-            $0.textAlignment = .natural
-        }
-        
-        titleStack.addArrangedSubview(pencilIcon)
-        titleStack.addArrangedSubview(sectionTitleLabel)
-        container.addSubview(titleStack)
-        container.addSubview(contentLabel)
-        
-        pencilIcon.snp.makeConstraints { $0.size.equalTo(16) }
-        
-        titleStack.snp.makeConstraints {
-            $0.top.leading.equalToSuperview()
-        }
-        
-        contentLabel.snp.makeConstraints {
-            $0.top.equalTo(titleStack.snp.bottom).offset(12)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        return container
-    }()
+    // 날짜 섹션
+    private let dateHeaderStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+        $0.alignment = .center
+    }
+    private let emotionImageView = UIImageView()
+    private let dropdownButton = TDBaseButton(
+        image: TDImage.Dot.verticalMedium,
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral500
+    )
+    private let dateVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 4
+        $0.alignment = .leading
+    }
+    private let dateLabel = TDLabel(toduckFont: TDFont.mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
+    private let titleLabel = TDLabel(toduckFont: TDFont.mediumBody2, toduckColor: TDColor.Neutral.neutral900)
     
-    // 사진 기록 섹션 (Lazy)
-    private lazy var photoSection: UIView = {
-        let container = UIView()
-        let photoIcon = UIImageView(image: TDImage.photo)
-        let titleLabel = TDLabel(labelText: "사진 기록", toduckFont: TDFont.boldBody2, toduckColor: TDColor.Neutral.neutral600)
-        let stackView = UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 12
-            $0.distribution = .fillEqually
-        }
-        
-        [photoIcon, titleLabel, stackView].forEach { container.addSubview($0) }
-        
-        photoIcon.snp.makeConstraints {
-            $0.top.leading.equalToSuperview()
-            $0.size.equalTo(16)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerY.equalTo(photoIcon)
-            $0.leading.equalTo(photoIcon.snp.trailing).offset(4)
-        }
-        
-        stackView.snp.makeConstraints {
-            $0.top.equalTo(photoIcon.snp.bottom).offset(12)
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(160)
-        }
-        
-        return container
-    }()
+    // 문장 섹션
+    private let sentenceVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
+    }
+    private let sentenceHeaderStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+    private let pencilIcon = UIImageView(image: TDImage.Pen.penNeutralColor)
+    private let sentenceTitleLabel = TDLabel(
+        labelText: "문장 기록",
+        toduckFont: TDFont.boldBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    private let sentenceContentLabel = TDLabel(
+        toduckFont: TDFont.regularBody4,
+        toduckColor: TDColor.Neutral.neutral800
+    ).then {
+        $0.numberOfLines = 0
+        $0.textAlignment = .natural
+    }
     
-    // MARK: - Properties
-    private var photoStackView: UIStackView? {
-        return photoSection.subviews.first(where: { $0 is UIStackView }) as? UIStackView
+    // 사진 섹션
+    private let photoVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
+    }
+    private let photoHeaderStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+    private let photoIcon = UIImageView(image: TDImage.photo)
+    private let photoTitleLabel = TDLabel(
+        labelText: "사진 기록",
+        toduckFont: TDFont.boldBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    private let photoContentStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 12
+        $0.distribution = .fillEqually
     }
     
     // MARK: - Initializers
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupCommonUI()
+        setupHierarchy()
         setupLayout()
+        configureUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup Methods
-    private func setupCommonUI() {
-        backgroundColor = TDColor.baseWhite
-        layer.cornerRadius = 12
+    // MARK: - Setup
+    
+    private func setupHierarchy() {
+        addSubview(mainStackView)
         
-        [emotionContainerView, dateLabel, titleLabel, dropdownButton, contentStackView].forEach {
-            addSubview($0)
-        }
+        setupDateSection()
+        setupSentenceSection()
+        setupPhotoSection()
+    }
+    
+    private func setupDateSection() {
+        mainStackView.addArrangedSubview(dateHeaderStackView)
         
-        emotionContainerView.addSubview(emotionImageView)
+        dateHeaderStackView.addArrangedSubview(emotionImageView)
+        dateHeaderStackView.addArrangedSubview(dateVerticalStackView)
+        dateHeaderStackView.addArrangedSubview(dropdownButton)
+        
+        dateVerticalStackView.addArrangedSubview(dateLabel)
+        dateVerticalStackView.addArrangedSubview(titleLabel)
+    }
+    
+    private func setupSentenceSection() {
+        sentenceHeaderStackView.addArrangedSubview(pencilIcon)
+        sentenceHeaderStackView.addArrangedSubview(sentenceTitleLabel)
+        
+        sentenceVerticalStackView.addArrangedSubview(sentenceHeaderStackView)
+        sentenceVerticalStackView.addArrangedSubview(sentenceContentLabel)
+    }
+    
+    private func setupPhotoSection() {
+        photoHeaderStackView.addArrangedSubview(photoIcon)
+        photoHeaderStackView.addArrangedSubview(photoTitleLabel)
+        
+        photoVerticalStackView.addArrangedSubview(photoHeaderStackView)
+        photoVerticalStackView.addArrangedSubview(photoContentStackView)
     }
     
     private func setupLayout() {
-        emotionContainerView.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(16)
-            $0.size.equalTo(32)
-        }
-        
-        emotionImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
-        dateLabel.snp.makeConstraints {
-            $0.centerY.equalTo(emotionContainerView)
-            $0.leading.equalTo(emotionContainerView.snp.trailing).offset(8)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.bottom).offset(4)
-            $0.leading.equalTo(dateLabel)
-            $0.trailing.equalTo(dropdownButton.snp.leading).offset(-8)
-        }
-        
-        dropdownButton.snp.makeConstraints {
-            $0.centerY.equalTo(emotionContainerView)
-            $0.trailing.equalToSuperview().inset(16)
-            $0.size.equalTo(24)
-        }
-        
-        contentStackView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(24)
-        }
+        mainStackView.snp.makeConstraints { $0.edges.equalToSuperview().inset(16) }
+        dateHeaderStackView.snp.makeConstraints { $0.height.equalTo(48) }
+        emotionImageView.snp.makeConstraints { $0.size.equalTo(48) }
+        dropdownButton.snp.makeConstraints { $0.size.equalTo(24) }
+        pencilIcon.snp.makeConstraints { $0.size.equalTo(16) }
+        photoIcon.snp.makeConstraints { $0.size.equalTo(16) }
+        photoContentStackView.snp.makeConstraints { $0.height.equalTo(160) }
     }
     
-    // MARK: - Public Methods
+    private func configureUI() {
+        backgroundColor = TDColor.baseWhite
+        layer.cornerRadius = 12
+    }
+    
+    // MARK: - Public Method
+    
     public func configure(
         emotionImage: UIImage,
         date: String,
         title: String,
-        sentences: [String]? = nil,
+        sentences: String? = nil,
         photos: [UIImage]? = nil
     ) {
         emotionImageView.image = emotionImage
-        dateLabel.setText(date)
-        titleLabel.setText(title)
+        dateLabel.text = date
+        titleLabel.text = title
         
-        // 문장 기록 추가
+        mainStackView.arrangedSubviews
+            .filter { $0 != dateHeaderStackView }
+            .forEach { $0.removeFromSuperview() }
+        
         if let sentences, !sentences.isEmpty {
-            let contentLabel = sentenceSection.subviews
-                .compactMap { $0 as? TDLabel }
-                .first(where: { $0.text != "문장 기록" })
-            
-            contentLabel?.setText(sentences.joined(separator: "\n\n"))
-            contentStackView.addArrangedSubview(sentenceSection)
+            sentenceContentLabel.text = sentences
+            sentenceVerticalStackView.isHidden = false
+            mainStackView.addArrangedSubview(sentenceVerticalStackView)
         }
         
-        // 사진 기록 추가
-        if let photos = photos, !photos.isEmpty {
-            setupPhotos(photos)
-            contentStackView.addArrangedSubview(photoSection)
-        }
-    }
-    
-    // MARK: - Private Methods
-    private func setupPhotos(_ photos: [UIImage]) {
-        photoStackView?.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        photoContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        photos.prefix(2).forEach { image in
-            let imageView = UIImageView().then {
-                $0.contentMode = .scaleAspectFit
-                $0.layer.cornerRadius = 12
-                $0.clipsToBounds = true
-                $0.image = image
-            }
-            photoStackView?.addArrangedSubview(imageView)
-        }
-        
-        if photos.count == 1 {
-            let addPhotoButton = TDBaseButton(
-                image: TDImage.plus,
-                backgroundColor: TDColor.baseWhite,
-                foregroundColor: TDColor.Neutral.neutral500,
-                radius: 12
-            )
-            addPhotoButton.layer.borderWidth = 1
-            addPhotoButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-            photoStackView?.addArrangedSubview(addPhotoButton)
+        if let photos, !photos.isEmpty {
+            configurePhotos(photos)
+            photoVerticalStackView.isHidden = false
+            mainStackView.addArrangedSubview(photoVerticalStackView)
+        } else {
+            photoVerticalStackView.isHidden = true
+            let addPhotoButton = createAddPhotoButton(isEmpty: true)
+            mainStackView.addArrangedSubview(addPhotoButton)
         }
     }
     
-    // MARK: - Dynamic Height
-    override public var intrinsicContentSize: CGSize {
-        let totalHeight = contentStackView.arrangedSubviews
-            .map { $0.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height }
-            .reduce(0, +)
+    // MARK: - Helpers
+    
+    private func configurePhotos(_ photos: [UIImage]) {
+        photoContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        return CGSize(
-            width: UIView.noIntrinsicMetric,
-            height: totalHeight + 120
-        )
+        switch photos.count {
+        case 1:
+            photoContentStackView.addArrangedSubview(createPhotoView(photos[0]))
+            photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
+        case 2...:
+            photos.prefix(2).forEach { photoContentStackView.addArrangedSubview(createPhotoView($0)) }
+        default:
+            break
+        }
+    }
+    
+    private func createPhotoView(_ image: UIImage) -> UIImageView {
+        return UIImageView().then {
+            $0.contentMode = .scaleAspectFit
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 12
+            $0.image = image
+        }
+    }
+    
+    private func createAddPhotoButton(isEmpty: Bool) -> UIButton {
+        return UIButton().then {
+            $0.setImage(TDImage.plus, for: .normal)
+            $0.setTitle(isEmpty ? "사진 추가" : nil, for: .normal)
+            $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
+            $0.titleLabel?.font = TDFont.boldBody1.font
+            $0.backgroundColor = TDColor.baseWhite
+            $0.layer.cornerRadius = 12
+            $0.layer.borderWidth = 1
+            $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            $0.snp.makeConstraints { $0.height.equalTo(52) }
+        }
     }
 }

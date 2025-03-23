@@ -18,7 +18,7 @@ final class DiaryViewModel: BaseViewModel {
         date: Date(),
         emotion: .angry,
         title: "ㅁㄴㅇ",
-        contentText: "12312312213\n123152363246\n1325135",
+        sentenceText: "12312312213\n123152363246\n1325135",
         imagesURL: [""]
     )
     
