@@ -63,6 +63,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     private let input = PassthroughSubject<DiaryViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Initializer
     init(
         viewModel: DiaryViewModel
     ) {
@@ -75,6 +76,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Common Methods
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -134,9 +136,9 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         /// 일기 상세 뷰
         diaryDetailView.snp.makeConstraints {
-            $0.top.equalTo(calendarContainerView.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-20)
+            $0.top.equalTo(calendarContainerView.snp.bottom).offset(12)
+            $0.leading.trailing.equalTo(contentView).inset(10)
+            $0.bottom.equalTo(contentView).offset(-20)
         }
         
         /// 일기가 없는 경우
