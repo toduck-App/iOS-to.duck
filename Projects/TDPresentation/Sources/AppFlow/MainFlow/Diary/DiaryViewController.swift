@@ -1,8 +1,10 @@
-import TDDesign
 import UIKit
+import Combine
 import FSCalendar
 import SnapKit
 import TDCore
+import TDDomain
+import TDDesign
 
 final class DiaryViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
@@ -53,9 +55,25 @@ final class DiaryViewController: BaseViewController<BaseView> {
         font: TDFont.boldHeader3.font,
         radius: 12
     )
+    let diaryDetailView = DiaryDetailView()
     
     // MARK: - Properties
     weak var coordinator: DiaryCoordinator?
+    private let viewModel: DiaryViewModel
+    private let input = PassthroughSubject<DiaryViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(
+        viewModel: DiaryViewModel
+    ) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func addView() {
         view.addSubview(scrollView)
@@ -67,6 +85,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         stackView.addArrangedSubview(analyzeView)
         stackView.addArrangedSubview(calendarContainerView)
         stackView.addArrangedSubview(noDiaryContainerView)
+        stackView.addArrangedSubview(diaryDetailView)
         
         calendarContainerView.addSubview(calendarHeader)
         calendarContainerView.addSubview(diarySegmentedControl)
@@ -76,14 +95,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         noDiaryContainerView.addSubview(noDiaryLabel)
         
         diaryPostButtonContainerView.addSubview(diaryPostButton)
-    }
-    
-    override func configure() {
-        calendarContainerView.backgroundColor = TDColor.baseWhite
-        calendarHeader.pickerButton.delegate = self
-        scrollView.delegate = self
-        setupCalendar()
-        setupNavigationBar()
     }
     
     override func layout() {
@@ -100,6 +111,8 @@ final class DiaryViewController: BaseViewController<BaseView> {
         analyzeView.snp.makeConstraints {
             $0.height.equalTo(230)
         }
+        
+        /// 캘린더 뷰
         calendarContainerView.snp.makeConstraints {
             $0.height.equalTo(456)
         }
@@ -118,6 +131,16 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.top.equalTo(diarySegmentedControl.snp.bottom).offset(36)
             $0.leading.trailing.bottom.equalToSuperview().inset(20)
         }
+        
+        /// 일기 상세 뷰
+        diaryDetailView.snp.makeConstraints {
+            $0.top.equalTo(calendarContainerView.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-20)
+            $0.height.equalTo(400)
+        }
+        
+        /// 일기가 없는 경우
         noDiaryContainerView.snp.makeConstraints {
             $0.height.equalTo(300)
         }
@@ -139,6 +162,35 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.top.equalToSuperview().offset(28)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().offset(-28)
+        }
+    }
+    
+    override func configure() {
+        calendarContainerView.backgroundColor = TDColor.baseWhite
+        calendarHeader.pickerButton.delegate = self
+        scrollView.delegate = self
+        setupCalendar()
+        updateDiaryView()
+        setupNavigationBar()
+    }
+    
+    private func updateDiaryView() {
+        let hasDiary = viewModel.todayDiary != nil
+
+        // 일기 상세 뷰 & 일기 없음 뷰 & 일기 작성 버튼 가시성 설정
+        diaryDetailView.isHidden = !hasDiary
+        noDiaryContainerView.isHidden = hasDiary
+        diaryPostButtonContainerView.isHidden = hasDiary
+        
+        // 일기 상세 뷰 업데이트
+        if let diary = viewModel.todayDiary {
+            diaryDetailView.configure(
+                emotionImage: diary.emotion.image,
+                date: diary.date.currentDateString,
+                title: diary.title,
+                sentences: [diary.contentText],
+                photos: [TDImage.Mood.good]
+            )
         }
     }
     
