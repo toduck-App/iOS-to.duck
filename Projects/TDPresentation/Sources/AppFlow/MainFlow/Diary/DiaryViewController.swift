@@ -76,6 +76,12 @@ final class DiaryViewController: BaseViewController<BaseView> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        fetchDiaryList(for: Date())
+    }
+    
     // MARK: - Common Methods
     override func addView() {
         view.addSubview(scrollView)
@@ -190,7 +196,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         scrollView.delegate = self
         setupCalendar()
         setupNavigationBar()
-        fetchDiaryList(for: Date())
     }
     
     private func fetchDiaryList(for date: Date) {
@@ -246,6 +251,15 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
     }
+    
+    private func colorForDate(_ date: Date) -> UIColor? {
+        // 오늘 날짜 확인
+        if Calendar.current.isDate(date, inSameDayAs: Date()) {
+            return TDColor.Primary.primary500
+        }
+        
+        return TDColor.Neutral.neutral800
+    }
 }
 
 // MARK: - PickerButtonDelegate
@@ -288,11 +302,8 @@ extension DiaryViewController: TDCalendarConfigurable {
         ) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
         
         let normalized = date.normalized
-        if let diary = viewModel.monthDiaryList[normalized] {
-            cell.backImageView.image = diary.emotion.image
-        } else {
-            cell.backImageView.image = nil
-        }
+        let diary = viewModel.monthDiaryList[normalized]
+        cell.configure(with: diary?.emotion.image)
         
         return cell
     }
@@ -306,5 +317,23 @@ extension DiaryViewController: TDCalendarConfigurable {
         
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedDate]
         input.send(.selecteDay(normalizedDate))
+    }
+    
+    // 기본 폰트 색
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleDefaultColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
+    }
+    
+    // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleSelectionColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
     }
 }
