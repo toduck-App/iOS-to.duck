@@ -46,35 +46,3 @@ public struct Schedule: Eventable {
         self.isFinished = isFinished
     }
 }
-
-extension Schedule {
-    public static let dummy: [Schedule] = [
-        Schedule(
-            id: 0,
-            title: "1번 일정",
-            category: TDCategory(colorHex: "#DEEEFC", imageName: "power"),
-            startDate: "2021-09-01",
-            endDate: "2021-09-01",
-            isAllDay: false,
-            time: Date(),
-            repeatDays: [.friday, .sunday],
-            alarmTimes: [.oneHourBefore],
-            place: "장소1",
-            memo: "메모1",
-            isFinished: false
-        ), Schedule(
-            id: 0,
-            title: "2번 일정",
-            category: TDCategory(colorHex: "#FFE3CC", imageName: "sleep"),
-            startDate: "2021-09-01",
-            endDate: "2022-10-10",
-            isAllDay: false,
-            time: Date(),
-            repeatDays: [.monday],
-            alarmTimes: [.oneHourBefore],
-            place: "장소2",
-            memo: "메모2",
-            isFinished: false
-        )
-    ]
-}

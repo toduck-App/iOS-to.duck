@@ -22,13 +22,7 @@ final class ScheduleViewModel: BaseViewModel {
 
 extension ScheduleViewModel: TimeSlotProvider {
     var timeSlots: [TimeSlot] {
-        return [TimeSlot(
-            timeText: "10:00",
-            events: Schedule.dummy
-        ), TimeSlot(
-            timeText: "12:00",
-            events: Schedule.dummy
-        )]
+        return []
     }
     
     func convertEventToDisplayItem(
