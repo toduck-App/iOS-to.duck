@@ -7,8 +7,9 @@ import Lottie
 final class BboduckTimerView: BaseTimerView {
     private static let toduckBundle = Bundle(identifier: "to.duck.toduck.design")!
 
+    private let pauseImage = "Timer_0"
+
     private let images: [String] = [
-        "Timer_0",
         "Timer_1",
         "Timer_2",
         "Timer_3",
@@ -16,7 +17,7 @@ final class BboduckTimerView: BaseTimerView {
         "Timer_5",
     ]
 
-    let bboduckView = LottieAnimationView(
+    private let bboduckView = LottieAnimationView(
         name: "bboduckTimer",
         bundle: BboduckTimerView.toduckBundle
     ).then {
@@ -39,19 +40,28 @@ final class BboduckTimerView: BaseTimerView {
 
     override var progress: CGFloat {
         didSet {
+            guard isRunning else { return }
             updateProgress()
         }
     }
 
-    func updateProgress() {
+    private func updateProgress() {
         let clampedProgress = min(max(progress, 0), 1)
         
         let stepSize = 1.0 / CGFloat(images.count - 1)
         let imageIndex = min(Int(clampedProgress / stepSize), images.count - 1)
 
+        TDLogger.debug("[BboduckTimerView#updateProgress] progress: \(progress), imageIndex: \(imageIndex)")
+
         let newAnimation = LottieAnimation.named(images[imageIndex], bundle: BboduckTimerView.toduckBundle)
 
         bboduckView.animation = newAnimation
         bboduckView.play()
+    }
+
+    public func pause() {
+        let pauseAnimation = LottieAnimation.named(pauseImage, bundle: BboduckTimerView.toduckBundle)
+        bboduckView.animation = pauseAnimation
+        bboduckView.play() // 요청마다 처음부터 재생됨 방지 필요
     }
 }
