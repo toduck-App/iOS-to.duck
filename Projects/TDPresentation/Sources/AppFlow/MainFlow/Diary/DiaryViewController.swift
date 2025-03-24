@@ -220,7 +220,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         if let diary {
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
-                date: diary.date.currentDateString,
+                date: diary.date.convertToString(formatType: .monthDayWithWeekday),
                 title: diary.title,
                 sentences: diary.sentenceText,
                 photos: [TDImage.Mood.angry, TDImage.Mood.happy]
