@@ -52,8 +52,12 @@ public final class DiaryCalendarSelectDateCell: FSCalendarCell {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        selectionBackgroundView.layer.cornerRadius = selectionBackgroundView.bounds.width / 2
-        backImageView.layer.cornerRadius = backImageView.bounds.width / 2
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.selectionBackgroundView.layer.cornerRadius = self.selectionBackgroundView.bounds.width / 2
+            self.backImageView.layer.cornerRadius = self.backImageView.bounds.width / 2
+        }
     }
 
     public override var isSelected: Bool {
