@@ -51,8 +51,6 @@ final class BboduckTimerView: BaseTimerView {
         let stepSize = 1.0 / CGFloat(images.count - 1)
         let imageIndex = min(Int(clampedProgress / stepSize), images.count - 1)
 
-        TDLogger.debug("[BboduckTimerView#updateProgress] progress: \(progress), imageIndex: \(imageIndex)")
-
         let newAnimation = LottieAnimation.named(images[imageIndex], bundle: BboduckTimerView.toduckBundle)
 
         bboduckView.animation = newAnimation

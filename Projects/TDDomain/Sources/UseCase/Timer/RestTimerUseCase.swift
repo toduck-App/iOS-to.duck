@@ -36,7 +36,8 @@ final class RestTimerUseCaseImpl: RestTimerUseCase {
     func start() {
         guard !isRunning else { return}
         let setting = repository.fetchTimerSetting()
-        TDLogger.debug("[RestTimerUseCaseImpl#start] setting: \(setting.restDuration), \(setting.toRestDurationMinutes())")
+
+        remainTime = remainTime == 0 ? setting.toRestDurationMinutes() : remainTime
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }

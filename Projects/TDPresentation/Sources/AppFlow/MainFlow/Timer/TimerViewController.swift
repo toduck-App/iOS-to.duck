@@ -131,8 +131,7 @@ extension TimerViewController {
     }
 
     private func updateTimer(_ remainedTime: Int) {
-        TDLogger.debug("[TimerViewController] updateTimer: \(remainedTime)")
-        guard let setting = viewModel.timerSetting else { return }
+        guard let setting: TDTimerSetting = viewModel.timerSetting else { return }
         let elapsedTime = setting.toFocusDurationMinutes() - remainedTime
 
         // Label 업데이트
@@ -254,6 +253,8 @@ extension TimerViewController {
             let message = "[\(code)]: 알 수 없는 오류가 발생했습니다."
             TDLogger.error("[TimerViewController]\(message)")
         case .outOfRange:
+            handleControlStack(.pause)
+
             TDLogger.error("[TimerViewController] outOfRange")
         }
     }
