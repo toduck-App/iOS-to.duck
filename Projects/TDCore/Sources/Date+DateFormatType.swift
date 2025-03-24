@@ -1,14 +1,14 @@
 import Foundation
 import Then
 
-enum DateFormatType {
+public enum DateFormatType {
     case yearMonth
     case time12Hour
     case time12HourEnglish
     case time24Hour
     case monthDayWithWeekday
     
-    var formatter: DateFormatter {
+    public var formatter: DateFormatter {
         switch self {
         case .yearMonth:
             return DateFormatter().then {
@@ -39,7 +39,7 @@ enum DateFormatType {
 }
 
 // MARK: - Date <-> String 타입변환 Extension
-extension Date{
+public extension Date {
     
     /// String을 Format을 지정하여 Date?으로 변환합니다.
     ///
@@ -60,12 +60,11 @@ extension Date{
     func convertToString(formatType: DateFormatType = .yearMonth) -> String {
         return formatType.formatter.string(from: self)
     }
-    
 }
 
 // MARK: - Format으로 표현할 수 없는 경우의 Date Extension
-extension Date {
-    /// pram의 Date와 현재 시간을 비교하는 상대시간을 String으로 반환하는 함수
+public extension Date {
+    /// param의 Date와 현재 시간을 비교하는 상대시간을 String으로 반환하는 함수
     /// - Returns: 1시간전, 1일전, 1주전, 1개월전, 1년전과 같은 상대시간을 반환
     func convertRelativeTime() -> String {
         let now = Date()
