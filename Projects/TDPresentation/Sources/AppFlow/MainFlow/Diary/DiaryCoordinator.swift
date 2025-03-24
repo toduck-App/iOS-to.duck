@@ -16,7 +16,8 @@ final class DiaryCoordinator: Coordinator {
     }
 
     func start() {
-        let diaryViewController = DiaryViewController()
+        let viewModel = DiaryViewModel()
+        let diaryViewController = DiaryViewController(viewModel: viewModel)
         diaryViewController.coordinator = self
         navigationController.pushViewController(diaryViewController, animated: false)
     }

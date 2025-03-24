@@ -123,8 +123,6 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
     }
     
     private func colorForDate(_ date: Date) -> UIColor? {
-        let weekday = Calendar.current.component(.weekday, from: date)
-        
         // 오늘 날짜 확인
         if Calendar.current.isDate(date, inSameDayAs: Date()) {
             return TDColor.Primary.primary500

@@ -46,6 +46,8 @@ public enum TDImage {
     public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     public static let loginToduck = TDDesignAsset.Images.loginToduck.image
     public static let blockImage = TDDesignAsset.Images.blockMedium.image
+    public static let photo = TDDesignAsset.Images.photoMedium.image
+    public static let plus = TDDesignAsset.Images.plusMedium.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
@@ -232,6 +234,18 @@ public enum TDImage {
         public static let love = TDDesignAsset.Images.loveMood.image
     }
     
+    public enum MoodCircle {
+        public static let happy = TDDesignAsset.Images.happyCircle.image
+        public static let good = TDDesignAsset.Images.goodCircle.image
+        public static let sad = TDDesignAsset.Images.sadCircle.image
+        public static let angry = TDDesignAsset.Images.angryCircle.image
+        public static let anxious = TDDesignAsset.Images.anxietyCircle.image
+        public static let tired = TDDesignAsset.Images.tiredCircle.image
+        public static let sick = TDDesignAsset.Images.sickCircle.image
+        public static let soso = TDDesignAsset.Images.sosoCircle.image
+        public static let love = TDDesignAsset.Images.loveCircle.image
+    }
+    
     public enum DiaryPercent {
         public static let bookPercent0 = TDDesignAsset.Images.bookPercent0.image
     }
@@ -276,6 +290,7 @@ public enum TDImage {
     public enum Pen {
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
+        public static let penNeutralColor = TDDesignAsset.Images.penNeutralColor.image
     }
     
     public enum Sort {
