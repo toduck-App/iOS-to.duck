@@ -97,7 +97,6 @@ final class TimerView: BaseView {
         addSubview(remainedFocusTimeLabel)
         addSubview(focusCountStackView)
 
-
         controlStack.addArrangedSubview(playButton)
         addSubview(controlStack)
 
@@ -119,25 +118,24 @@ final class TimerView: BaseView {
         }
 
         // TODO: layout 다시 잡기, 숫자의 크기에 따라 전체적으로 움직임
-        remainedFocusTimeLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(36)
-            $0.height.equalTo(remainedFocusTimeLabel.font.lineHeight)
-            $0.centerX.equalToSuperview()
+        remainedFocusTimeLabel.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(36)
+            make.height.equalTo(remainedFocusTimeLabel.font.lineHeight)
+            make.centerX.equalToSuperview()
         }
 
-        focusCountStackView.snp.makeConstraints {
-            $0.top.equalTo(remainedFocusTimeLabel.snp.bottom).offset(12)
-            $0.centerX.equalToSuperview()
+        focusCountStackView.snp.makeConstraints { make in
+            make.top.equalTo(remainedFocusTimeLabel.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
         }
 
-        controlStack.snp.makeConstraints {
-            $0.bottom.equalTo(safeAreaLayoutGuide).inset(55)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(72)
+        controlStack.snp.makeConstraints { make in
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(55)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(72)
         }
 
         bboduckTimerView.snp.makeConstraints { make in
-            //make.edges.equalToSuperview()
             make.leading.trailing.equalToSuperview()
             make.top.equalTo(remainedFocusTimeLabel.snp.bottom)
             make.bottom.equalToSuperview().offset(200)
