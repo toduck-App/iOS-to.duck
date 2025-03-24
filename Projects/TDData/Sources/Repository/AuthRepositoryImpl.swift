@@ -16,8 +16,20 @@ public struct AuthRepositoryImpl: AuthRepository {
     
     public func requestKakaoLogin() async throws {
         let idToken = try await service.requestKakaoLogin()
-        TDLogger.info("[앱] 카카오로부터 IDToken을 받았습니다. 우리 서버로 \(idToken)을 전송합니다.")
-        try await service.requestOauthRegister(oauthProvider: AuthProvider.kakao.rawValue, oauthId: kakaoAppKey, idToken: idToken)
+        TDLogger.info("[앱] 카카오로부터 IDToken을 받았습니다.")
+
+        guard let payload = await JWTDecoder.shared.decode(token: idToken),
+              let oauthId = payload["sub"] as? String else {
+            TDLogger.error("[앱] 카카오 idToken 디코딩 실패 또는 sub 없음")
+            throw TDDataError.invalidIDToken
+        }
+
+        TDLogger.info("[앱] 디코딩된 oauthId(sub): \(oauthId)")
+        try await service.requestOauthRegister(
+            oauthProvider: AuthProvider.kakao.rawValue,
+            oauthId: oauthId,
+            idToken: idToken
+        )
     }
     
     public func requestAppleLogin(oauthId: String, idToken: String) async throws {
