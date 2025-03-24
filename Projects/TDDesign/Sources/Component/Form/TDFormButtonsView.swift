@@ -142,18 +142,25 @@ public final class TDFormButtonsView: UIView {
     
     private func setupActions() {
         buttons.forEach { button in
-            button.addTarget(
-                self,
-                action: #selector(buttonTapped(_:)),
-                for: .touchUpInside
-            )
+            button.addAction(UIAction { [weak self] action in
+                guard let sender = action.sender as? TDSelectableButton else { return }
+                self?.buttonTapped(sender)
+            }, for: .touchUpInside)
         }
     }
 
-    @objc
-    private func buttonTapped(_ sender: UIButton) {
-        print("buttonTapped")
-        guard let index = buttons.firstIndex(of: sender as! TDSelectableButton) else { return }
+    private func buttonTapped(_ sender: TDSelectableButton) {
+        guard let index = buttons.firstIndex(of: sender) else { return }
+
+        switch type {
+        case .repeatDay:
+            sender.isSelected = true
+            
+        case .alarm:
+            buttons.forEach { $0.isSelected = false }
+            sender.isSelected = true
+        }
+
         delegate?.formButtonsView(self, type: type, didSelectIndex: index)
     }
 }

@@ -12,7 +12,7 @@ final class EventMakorViewModel: BaseViewModel {
         case saveEvent
         case updateTitleTextField(String)
         case updateLocationTextField(String)
-        case updateTextView(String)
+        case updateMemoTextView(String)
         case selectLockType(Bool)
         case selectRepeatDay(index: Int)
         case selectAlarm(index: Int)
@@ -92,7 +92,7 @@ final class EventMakorViewModel: BaseViewModel {
             self.title = title
         case .updateLocationTextField(let location):
             self.location = location
-        case .updateTextView(let memo):
+        case .updateMemoTextView(let memo):
             self.memo = memo
         case .selectRepeatDay(let index):
             handleRepeatDaySelection(at: index)
@@ -239,7 +239,7 @@ final class EventMakorViewModel: BaseViewModel {
         }
         
         let selectedAlarm = alarmTypesArray[index]
-        
-        TDLogger.info("현재 알람: \(alarm)")
+        alarm = selectedAlarm
+        TDLogger.info("현재 알람: \(selectedAlarm)")
     }
 }

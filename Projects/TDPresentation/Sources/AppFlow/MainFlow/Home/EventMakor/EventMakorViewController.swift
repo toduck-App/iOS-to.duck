@@ -105,6 +105,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         eventMakorView.repeatDayForm.delegate = self
         eventMakorView.alarmForm.delegate = self
         eventMakorView.lockForm.delegate = self
+        eventMakorView.locationForm.delegate = self
         eventMakorView.memoTextView.delegate = self
     }
     
@@ -170,7 +171,7 @@ extension EventMakorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         input.send(.selectCategory(
             color.convertToHexString() ?? "",
-            UIImage.reverseCategoryDictionary[image] ?? "none"
+            UIImage.reverseCategoryDictionary[image] ?? "None"
         ))
     }
 }
@@ -180,7 +181,13 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == eventMakorView.titleForm {
             input.send(.updateTitleTextField(text))
-        } else {
+        }
+        
+        if textField == eventMakorView.memoTextView {
+            input.send(.updateMemoTextView(text))
+        }
+        
+        if textField == eventMakorView.locationForm {
             input.send(.updateLocationTextField(text))
         }
     }
@@ -189,7 +196,7 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
 // MARK: - TextViewDelegate
 extension EventMakorViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
-        input.send(.updateTextView(text))
+        input.send(.updateMemoTextView(text))
     }
 }
 
