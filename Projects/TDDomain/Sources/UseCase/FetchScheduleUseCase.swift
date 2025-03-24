@@ -12,6 +12,6 @@ public final class FetchScheduleUseCaseImpl: FetchScheduleUseCase {
     }
     
     public func execute() async throws -> Schedule {
-        try await scheduleRepository.fetchSchedule().get()
+        try await scheduleRepository.fetchSchedule()
     }
 }

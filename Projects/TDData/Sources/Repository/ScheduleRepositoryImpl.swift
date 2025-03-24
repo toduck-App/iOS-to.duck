@@ -3,18 +3,19 @@ import TDDomain
 import Foundation
 
 public final class ScheduleRepositoryImpl: ScheduleRepository {
+    
     public init() { }
     
-    public func createSchedule(schedule: Schedule) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func createSchedule(schedule: Schedule) async throws {
+        
     }
     
-    public func fetchScheduleList() async -> Result<[Schedule], TDDataError> {
-        return .success([])
+    public func fetchScheduleList() async throws -> [Schedule] {
+        return []
     }
     
-    public func fetchSchedule() async -> Result<Schedule, TDDataError> {
-        return .success(
+    public func fetchSchedule() async throws -> Schedule {
+        return
             Schedule(
                 id: 0,
                 title: "title",
@@ -29,18 +30,17 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
                 memo: nil,
                 isFinished: false
             )
-        )
     }
     
-    public func updateSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func updateSchedule(scheduleId: Int) async throws {
+        
     }
     
-    public func deleteSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func deleteSchedule(scheduleId: Int) async throws {
+        
     }
     
-    public func moveTomorrowSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func moveTomorrowSchedule(scheduleId: Int) async throws {
+        
     }
 }

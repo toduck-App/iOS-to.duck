@@ -12,6 +12,6 @@ public final class MoveTomorrowScheduleUseCaseImpl: MoveTomorrowScheduleUseCase 
     }
     
     public func execute(scheduleId: Int) async throws {
-        try await scheduleRepository.moveTomorrowSchedule(scheduleId: scheduleId).get()
+        try await scheduleRepository.moveTomorrowSchedule(scheduleId: scheduleId)
     }
 }

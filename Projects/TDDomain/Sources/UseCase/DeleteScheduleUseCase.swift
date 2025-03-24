@@ -13,6 +13,6 @@ public final class DeleteScheduleUseCaseImpl: DeleteScheduleUseCase {
     }
     
     public func execute(scheduleId: Int) async throws {
-        try await scheduleRepository.deleteSchedule(scheduleId: scheduleId).get()
+        try await scheduleRepository.deleteSchedule(scheduleId: scheduleId)
     }
 }

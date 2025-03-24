@@ -2,10 +2,10 @@ import Foundation
 import TDCore
 
 public protocol ScheduleRepository {
-    func fetchSchedule() async -> Result<Schedule, TDDataError>
-    func fetchScheduleList() async -> Result<[Schedule], TDDataError>
-    func updateSchedule(scheduleId: Int) async -> Result<Void, TDDataError>
-    func deleteSchedule(scheduleId: Int) async -> Result<Void, TDDataError>
-    func moveTomorrowSchedule(scheduleId: Int) async -> Result<Void, TDDataError>
-    func createSchedule(schedule: Schedule) async -> Result<Void, TDDataError>
+    func fetchSchedule() async throws -> Schedule
+    func fetchScheduleList() async throws -> [Schedule]
+    func updateSchedule(scheduleId: Int) async throws
+    func deleteSchedule(scheduleId: Int) async throws
+    func moveTomorrowSchedule(scheduleId: Int) async throws
+    func createSchedule(schedule: Schedule) async throws
 }
