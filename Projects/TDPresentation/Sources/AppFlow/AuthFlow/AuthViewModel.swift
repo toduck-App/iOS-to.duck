@@ -66,17 +66,22 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
-            let userID = appleIdCredential.user
-            
-            
-            // ID Token 및 Authorization Code 처리
             let idToken = appleIdCredential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
+
             if let idToken {
                 Task {
-                    try await appleLoginUseCase.execute(oauthId: userID, idToken: idToken)
-                    output.send(.loginSuccess)
+                    if let payload = await JWTDecoder.shared.decode(token: idToken),
+                       let oauthId = payload["sub"] as? String {
+                        try await appleLoginUseCase.execute(oauthId: oauthId, idToken: idToken)
+                        output.send(.loginSuccess)
+                    } else {
+                        output.send(.loginFailure(error: "idToken 디코딩 실패 또는 sub 없음"))
+                    }
                 }
+            } else {
+                output.send(.loginFailure(error: "idToken 없음"))
             }
+
         default:
             output.send(.loginFailure(error: "알 수 없는 인증 응답"))
         }
