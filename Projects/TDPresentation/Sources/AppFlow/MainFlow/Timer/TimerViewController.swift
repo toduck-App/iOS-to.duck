@@ -51,7 +51,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
         layoutView.pauseButton.addAction(
             UIAction { _ in
-                self.input.send(.stopTimer)
+                self.input.send(.pauseTimer)
             }, for: .touchUpInside
         )
 
@@ -63,7 +63,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
         layoutView.stopButton.addAction(
             UIAction { _ in
-                self.input.send(.resumeTimer)
+                self.input.send(.stopTimer)
             }, for: .touchUpInside
         )
     }
@@ -96,6 +96,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                 default:
                     break
                 }
+
             }.store(in: &cancellables)
     }
 
@@ -130,6 +131,7 @@ extension TimerViewController {
     }
 
     private func updateTimer(_ remainedTime: Int) {
+        TDLogger.debug("[TimerViewController] updateTimer: \(remainedTime)")
         guard let setting = viewModel.timerSetting else { return }
         let elapsedTime = setting.toFocusDurationMinutes() - remainedTime
 
@@ -151,12 +153,17 @@ extension TimerViewController {
     private func updateTimerRunning(_ isRunning: Bool?) {
         guard let isRunning = isRunning else {
             handleControlStack(.initilize)
+            layoutView.bboduckTimerView.pause()
             return
         }
+        layoutView.bboduckTimerView.isRunning = isRunning
+        layoutView.simpleTimerView.isRunning = isRunning
+
         if isRunning {
             handleControlStack(.playing)
         } else {
             handleControlStack(.pause)
+            layoutView.bboduckTimerView.pause()
         }
     }
 
