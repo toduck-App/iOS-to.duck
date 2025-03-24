@@ -1,20 +1,21 @@
 import Foundation
 import TDCore
 
-public protocol TimerUseCase {
+public protocol FocusTimerUseCase {
     func start()
     func stop()
     func reset()
     var isRunning: Bool { get }
-    var delegate: TimerUseCaseDelegate? { get set }
+    var delegate: FocusTimerUseCaseDelegate? { get set }
 }
 
-public protocol TimerUseCaseDelegate: AnyObject {
+public protocol FocusTimerUseCaseDelegate: AnyObject {
     func didUpdateFocusTime(remainTime: Int)
-    func didUpdateRestTime(restTime: Int)
+    func didFinishFocusTimer()
+    func didStartFocusTimer()
 }
 
-final class TimerUseCaseImpl: TimerUseCase {
+final class FocusTimerUseCaseImpl: FocusTimerUseCase {
     // MARK: - Properties
 
     private var timer: Timer?
@@ -25,7 +26,7 @@ final class TimerUseCaseImpl: TimerUseCase {
     }
     private let repository: TimerRepository
 
-    weak var delegate: TimerUseCaseDelegate?
+    weak var delegate: FocusTimerUseCaseDelegate?
 
     // MARK: - Initializer
 
@@ -39,19 +40,23 @@ final class TimerUseCaseImpl: TimerUseCase {
         let setting = repository.fetchTimerSetting()
         self.remainTime = self.remainTime == 0 ? setting.toFocusDurationMinutes() : self.remainTime
 
+        if self.remainTime == setting.toFocusDurationMinutes() {
+            self.delegate?.didStartFocusTimer()
+        }
+
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             if self.remainTime > 0 {
                 self.remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요 
                 self.delegate?.didUpdateFocusTime(remainTime: self.remainTime)
             } else {
+                self.delegate?.didFinishFocusTimer()
                 self.stop()
-                self.delegate?.didUpdateRestTime(restTime: 0)
             }
         }
     }
 
-    func stop() {
+    func stop() {   
         guard isRunning else { return }
         timer?.invalidate()
         timer = nil
@@ -62,8 +67,7 @@ final class TimerUseCaseImpl: TimerUseCase {
         self.remainTime = 0
     }
 
+
     // MARK: - Private Methods
 
-    private func scheduleTimer() {
-    }
 }
