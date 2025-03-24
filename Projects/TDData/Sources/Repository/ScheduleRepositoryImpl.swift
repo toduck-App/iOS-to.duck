@@ -3,11 +3,15 @@ import TDDomain
 import Foundation
 
 public final class ScheduleRepositoryImpl: ScheduleRepository {
+    private let service: ScheduleService
     
-    public init() { }
+    public init(service: ScheduleService) {
+        self.service = service
+    }
     
     public func createSchedule(schedule: Schedule) async throws {
-        
+        let scheduleRequestDTO = ScheduleRequestDTO(schedule: schedule)
+        try await service.create(schedule: scheduleRequestDTO)
     }
     
     public func fetchScheduleList() async throws -> [Schedule] {
