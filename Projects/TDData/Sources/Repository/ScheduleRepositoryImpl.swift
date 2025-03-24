@@ -25,7 +25,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
                 isAllDay: false,
                 time: nil,
                 repeatDays: nil,
-                alarmTimes: nil,
+                alarmTime: nil,
                 place: nil,
                 memo: nil,
                 isFinished: false

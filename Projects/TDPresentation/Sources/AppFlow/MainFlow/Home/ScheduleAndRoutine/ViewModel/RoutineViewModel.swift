@@ -33,7 +33,7 @@ extension RoutineViewModel: TimeSlotProvider {
         
         return EventDisplayItem(
             from: event,
-            alarmTimes: routine.alarmTimes?.map { $0.title },
+            alarmTime: routine.alarmTime?.rawValue,
             date: nil, // TODO: 일정 등록 날짜 추가
             repeatDays: routine.repeatDays?.map { $0.title }.joined(separator: ", "),
             place: nil,

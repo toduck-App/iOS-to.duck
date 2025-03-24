@@ -14,7 +14,7 @@ public final class PostRepositoryImpl: PostRepository {
         date: Date(),
         time: nil,
         repeatDays: nil,
-        alarmTimes: nil,
+        alarmTime: nil,
         memo: nil,
         recommendedRoutines: nil,
         isFinished: false

@@ -40,7 +40,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
-    private var alarms: [AlarmType]?
+    private var alarm: AlarmType?
     private var location: String?
     private var memo: String?
     
@@ -160,7 +160,7 @@ final class EventMakorViewModel: BaseViewModel {
             isAllDay: isAllDay,
             time: time,
             repeatDays: repeatDays,
-            alarmTimes: alarms,
+            alarmTime: alarm,
             place: location,
             memo: memo,
             isFinished: false
@@ -177,7 +177,7 @@ final class EventMakorViewModel: BaseViewModel {
             date: nil,
             time: time,
             repeatDays: repeatDays,
-            alarmTimes: alarms,
+            alarmTime: alarm,
             memo: memo,
             recommendedRoutines: nil,
             isFinished: false
@@ -228,16 +228,7 @@ final class EventMakorViewModel: BaseViewModel {
         }
         
         let selectedAlarm = alarmTypesArray[index]
-        if alarms == nil {
-            alarms = []
-        }
         
-        if let existingIndex = alarms?.firstIndex(of: selectedAlarm) {
-            alarms?.remove(at: existingIndex) // 이미 선택된 경우 제거 (토글 기능)
-        } else {
-            alarms?.append(selectedAlarm) // 선택 추가
-        }
-        
-        TDLogger.info("현재 알람: \(alarms ?? [])")
+        TDLogger.info("현재 알람: \(alarm)")
     }
 }

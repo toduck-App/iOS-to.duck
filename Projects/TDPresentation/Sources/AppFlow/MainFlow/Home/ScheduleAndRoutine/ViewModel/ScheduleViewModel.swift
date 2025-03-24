@@ -32,7 +32,7 @@ extension ScheduleViewModel: TimeSlotProvider {
         
         return EventDisplayItem(
             from: event,
-            alarmTimes: schedule.alarmTimes?.map { $0.title },
+            alarmTime: schedule.alarmTime?.rawValue,
             date: nil, // TODO: 일정 등록 날짜 추가
             repeatDays: schedule.repeatDays?.map { $0.title }.joined(separator: ", "),
             place: schedule.place,
