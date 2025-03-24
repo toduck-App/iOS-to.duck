@@ -24,7 +24,7 @@ public struct TDTimerSetting {
 
     public func toRestDurationMinutes() -> Int {
         #if DEBUG
-            return restDuration / 10
+            return restDuration
         #else
             return restDuration * 60
         #endif
