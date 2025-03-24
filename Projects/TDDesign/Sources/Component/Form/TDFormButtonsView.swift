@@ -8,10 +8,12 @@ public protocol TDFormButtonsViewDelegate: AnyObject {
     ///   - formButtonsView: 현재 `TDFormButtonsView` 인스턴스
     ///   - type: 버튼 뷰의 타입 (`repeatDay` 또는 `alarm`)
     ///   - selectedIndex: 눌린 버튼의 인덱스
+    ///   - isSelected: 눌린 버튼이 선택되었는지 여부
     func formButtonsView(
         _ formButtonsView: TDFormButtonsView,
         type: TDFormButtonsViewType,
-        didSelectIndex selectedIndex: Int
+        didSelectIndex selectedIndex: Int,
+        isSelected: Bool
     )
 }
 
@@ -154,13 +156,19 @@ public final class TDFormButtonsView: UIView {
 
         switch type {
         case .repeatDay:
-            sender.isSelected = true
+            sender.isSelected.toggle()
             
         case .alarm:
+            let wasSelected = sender.isSelected
             buttons.forEach { $0.isSelected = false }
-            sender.isSelected = true
+            sender.isSelected = !wasSelected
         }
 
-        delegate?.formButtonsView(self, type: type, didSelectIndex: index)
+        delegate?.formButtonsView(
+            self,
+            type: type,
+            didSelectIndex: index,
+            isSelected: sender.isSelected
+        )
     }
 }

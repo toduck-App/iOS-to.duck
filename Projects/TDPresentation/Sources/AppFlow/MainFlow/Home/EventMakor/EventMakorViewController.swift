@@ -211,13 +211,14 @@ extension EventMakorViewController: TDFormButtonsViewDelegate {
     func formButtonsView(
         _ formButtonsView: TDFormButtonsView,
         type: TDFormButtonsViewType,
-        didSelectIndex selectedIndex: Int
+        didSelectIndex selectedIndex: Int,
+        isSelected: Bool
     ) {
         switch type {
         case .repeatDay:
-            input.send(.selectRepeatDay(index: selectedIndex))
+            input.send(.selectRepeatDay(index: selectedIndex, isSelected: isSelected))
         case .alarm:
-            input.send(.selectAlarm(index: selectedIndex))
+            input.send(.selectAlarm(index: selectedIndex, isSelected: isSelected))
         }
     }
 }

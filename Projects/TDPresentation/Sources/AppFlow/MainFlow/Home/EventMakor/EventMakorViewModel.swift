@@ -14,8 +14,8 @@ final class EventMakorViewModel: BaseViewModel {
         case updateLocationTextField(String)
         case updateMemoTextView(String)
         case selectLockType(Bool)
-        case selectRepeatDay(index: Int)
-        case selectAlarm(index: Int)
+        case selectRepeatDay(index: Int, isSelected: Bool)
+        case selectAlarm(index: Int, isSelected: Bool)
     }
     
     enum Output {
@@ -94,10 +94,10 @@ final class EventMakorViewModel: BaseViewModel {
             self.location = location
         case .updateMemoTextView(let memo):
             self.memo = memo
-        case .selectRepeatDay(let index):
-            handleRepeatDaySelection(at: index)
-        case .selectAlarm(let index):
-            handleAlarmSelection(at: index)
+        case .selectRepeatDay(let index, let isSelected):
+            handleRepeatDaySelection(at: index, isSelected: isSelected)
+        case .selectAlarm(let index, let isSelected):
+            handleAlarmSelection(at: index, isSelected: isSelected)
         }
     }
     
@@ -208,38 +208,50 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     // MARK: - 반복 날짜와 알람에 대한 설정
-    private func handleRepeatDaySelection(at index: Int) {
+    private func handleRepeatDaySelection(at index: Int, isSelected: Bool) {
         let repeatDaysArray: [TDWeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-        
+
         guard index >= 0, index < repeatDaysArray.count else {
             TDLogger.error("Invalid repeat day index: \(index)")
             return
         }
-        
+
         let selectedDay = repeatDaysArray[index]
         if repeatDays == nil {
             repeatDays = []
         }
-        
-        if let existingIndex = repeatDays?.firstIndex(of: selectedDay) {
-            repeatDays?.remove(at: existingIndex) // 이미 선택된 경우 제거 (토글 기능)
+
+        if isSelected {
+            // 선택 추가
+            if repeatDays?.contains(selectedDay) == false {
+                repeatDays?.append(selectedDay)
+            }
         } else {
-            repeatDays?.append(selectedDay) // 선택 추가
+            // 선택 해제
+            repeatDays?.removeAll(where: { $0 == selectedDay })
         }
-        
+
         TDLogger.info("현재 반복 요일: \(repeatDays ?? [])")
     }
 
-    private func handleAlarmSelection(at index: Int) {
+    private func handleAlarmSelection(at index: Int, isSelected: Bool) {
         let alarmTypesArray: [AlarmType] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
-        
+
         guard index >= 0, index < alarmTypesArray.count else {
             TDLogger.error("Invalid alarm index: \(index)")
             return
         }
-        
+
         let selectedAlarm = alarmTypesArray[index]
-        alarm = selectedAlarm
-        TDLogger.info("현재 알람: \(selectedAlarm)")
+
+        if isSelected {
+            // 선택한 알람 설정
+            alarm = selectedAlarm
+            TDLogger.info("알람 선택됨: \(selectedAlarm)")
+        } else {
+            // 다시 눌러서 해제한 경우
+            alarm = nil
+            TDLogger.info("알람 해제됨")
+        }
     }
 }
