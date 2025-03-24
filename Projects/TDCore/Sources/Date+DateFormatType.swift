@@ -3,9 +3,11 @@ import Then
 
 public enum DateFormatType {
     case yearMonth
+    case yearMonthDay
     case time12Hour
     case time12HourEnglish
     case time24Hour
+    case monthDay
     case monthDayWithWeekday
     
     public var formatter: DateFormatter {
@@ -13,6 +15,10 @@ public enum DateFormatType {
         case .yearMonth:
             return DateFormatter().then {
                 $0.dateFormat = "yyyy년 MM월"
+            }
+        case .yearMonthDay:
+            return DateFormatter().then {
+                $0.dateFormat = "yyyy-MM-dd"
             }
         case .time12Hour:
             return DateFormatter().then {
@@ -29,6 +35,10 @@ public enum DateFormatType {
         case .time24Hour:
             return DateFormatter().then {
                 $0.dateFormat = "HH:mm"
+            }
+        case .monthDay:
+            return DateFormatter().then {
+                $0.dateFormat = "M월 d일"
             }
         case .monthDayWithWeekday:
             return DateFormatter().then {

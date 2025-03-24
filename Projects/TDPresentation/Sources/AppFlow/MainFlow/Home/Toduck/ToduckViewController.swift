@@ -28,7 +28,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     private func updateLottieView(at index: Int) {
-        let lottieImageType = TDCategoryImageType(category: viewModel.todaySchedules[index].category)
+        let lottieImageType = TDCategoryImageType(category: TDCategory.init(colorHex: "FFFFFF", imageName: "computer"))
         let newAnimation = ToduckLottieManager.shared.getLottieAnimation(for: lottieImageType)
         layoutView.lottieView.animation = newAnimation
         layoutView.lottieView.play()
