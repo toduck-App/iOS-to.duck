@@ -143,3 +143,5 @@ open class MFSession {
         ))
     }
 }
+
+public struct EmptyResponse: Decodable { }

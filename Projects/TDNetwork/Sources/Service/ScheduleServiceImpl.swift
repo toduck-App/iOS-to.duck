@@ -14,7 +14,7 @@ public struct ScheduleServiceImpl: ScheduleService {
         let target = ScheduleAPI.createSchedule(schedule: schedule)
         
         do {
-            try await provider.requestDecodable(of: ScheduleResponseDTO.self, target)
+            try await provider.requestDecodable(of: EmptyResponse.self, target)
         } catch {
             throw TDDataError.createRequestFailure
         }
