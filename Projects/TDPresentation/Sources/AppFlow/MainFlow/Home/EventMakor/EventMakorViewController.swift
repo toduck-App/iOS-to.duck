@@ -84,6 +84,14 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                         } ?? [])
                 case .savedEvent:
                     self?.navigationController?.popViewController(animated: true)
+                case .failedToSaveEvent:
+                    let alert = UIAlertController(
+                        title: "저장 실패",
+                        message: "일정을 저장하는 데 실패했습니다.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    self?.present(alert, animated: true)
                 }
             }.store(in: &cancellables)
     }

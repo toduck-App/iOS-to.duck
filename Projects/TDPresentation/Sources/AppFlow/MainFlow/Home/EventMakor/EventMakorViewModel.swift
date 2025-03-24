@@ -21,6 +21,7 @@ final class EventMakorViewModel: BaseViewModel {
     enum Output {
         case fetchedCategories
         case savedEvent
+        case failedToSaveEvent
     }
     
     private let mode: ScheduleAndRoutineViewController.Mode
@@ -109,7 +110,10 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func saveSchedule() async {
-        guard validateScheduleInputs() else { return }
+        guard validateScheduleInputs() else {
+            output.send(.failedToSaveEvent)
+            return
+        }
         do {
             let schedule = createSchedule()
             try await createScheduleUseCase.execute(schedule: schedule)
@@ -122,7 +126,10 @@ final class EventMakorViewModel: BaseViewModel {
     
     // MARK: - Create Schedule & Routine
     private func saveRoutine() async {
-        guard validateRoutineInputs() else { return }
+        guard validateRoutineInputs() else {
+            output.send(.failedToSaveEvent)
+            return
+        }
         do {
             let routine = createRoutine()
             try await createRoutineUseCase.execute(routine: routine)
@@ -134,8 +141,7 @@ final class EventMakorViewModel: BaseViewModel {
     }
 
     private func validateScheduleInputs() -> Bool {
-        guard let title, let selectedCategory, let startDate, let endDate else {
-            TDLogger.error("필수 값 누락: \(title), \(selectedCategory), \(startDate), \(endDate)")
+        guard let title, let selectedCategory, let startDate else {
             return false
         }
         return true
@@ -143,7 +149,6 @@ final class EventMakorViewModel: BaseViewModel {
 
     private func validateRoutineInputs() -> Bool {
         guard let title, let selectedCategory else {
-            TDLogger.error("필수 값 누락: \(title), \(selectedCategory)")
             return false
         }
         return true
@@ -151,7 +156,11 @@ final class EventMakorViewModel: BaseViewModel {
 
     // MARK: - Object Creation
     private func createSchedule() -> Schedule {
-        Schedule(
+        if endDate == nil {
+            endDate = startDate
+        }
+        
+        let schedule = Schedule(
             id: nil,
             title: title!,
             category: selectedCategory!,
@@ -165,6 +174,8 @@ final class EventMakorViewModel: BaseViewModel {
             memo: memo,
             isFinished: false
         )
+        
+        return schedule
     }
 
     private func createRoutine() -> Routine {
