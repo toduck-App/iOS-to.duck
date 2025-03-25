@@ -44,6 +44,7 @@ final class AuthViewModel: NSObject, BaseViewModel {
     private func signInWithKakao() async {
         do {
             try await kakaoLoginUseCase.execute()
+            output.send(.loginSuccess)
         } catch {
             TDLogger.error("Kakao Login Error: \(error)")
             output.send(.loginFailure(error: "카카오 로그인에 실패했습니다."))
