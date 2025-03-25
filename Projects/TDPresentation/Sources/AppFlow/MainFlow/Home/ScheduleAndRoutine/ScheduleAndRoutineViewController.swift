@@ -53,6 +53,25 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
         super.init(coder: coder)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        if let startWeekDay = Date().startOfWeek()?.convertToString(formatType: .yearMonthDay),
+           let endWeekDay = Date().endOfWeek()?.convertToString(formatType: .yearMonthDay) {
+            switch mode {
+            case .schedule:
+                scheduleInput.send(
+                    .fetchScheduleList(
+                        startDate: startWeekDay,
+                        endDate: endWeekDay
+                    )
+                )
+            case .routine:
+                break
+            }
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -111,6 +130,29 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
         }
     }
     
+    override func binding() {
+        let scheduleOutput = scheduleViewModel?.transform(input: scheduleInput.eraseToAnyPublisher())
+        let routineOutput = routineViewModel?.transform(input: routineInput.eraseToAnyPublisher())
+        
+        scheduleOutput?
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedScheduleList:
+                    self?.scheduleAndRoutineTableView.reloadData()
+                case .failure(let error):
+                    self?.showErrorAlert(with: error)
+                }
+            }.store(in: &cancellables)
+        
+        routineOutput?
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                }
+            }.store(in: &cancellables)
+    }
+    
     private func configureEventMakorButton() {
         eventMakorFloattingButton.setTitle(
             mode == .schedule ? "일정추가" : "루틴추가",
@@ -134,6 +176,28 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
 
 // MARK: - FSCalendarDelegate
 extension ScheduleAndRoutineViewController: FSCalendarDelegate {
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        let currentPage = calendar.currentPage
+        let calendar = Calendar.current
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: currentPage)?.start
+        let endOfWeek = startOfWeek.flatMap { calendar.date(byAdding: .day, value: 6, to: $0) }
+        
+        if let startDate = startOfWeek?.convertToString(formatType: .yearMonthDay),
+           let endDate = endOfWeek?.convertToString(formatType: .yearMonthDay) {
+            switch mode {
+            case .schedule:
+                scheduleInput.send(
+                    .fetchScheduleList(
+                        startDate: startDate,
+                        endDate: endDate
+                    )
+                )
+            case .routine:
+                break
+            }
+        }
+    }
+    
     func calendar(
         _ calendar: FSCalendar,
         boundingRectWillChange bounds: CGRect,

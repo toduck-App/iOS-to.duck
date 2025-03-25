@@ -103,9 +103,11 @@ final class HomeViewController: BaseViewController<BaseView> {
             let viewModel = ToduckViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
             return ToduckViewController(viewModel: viewModel)
         case 1:
-            let viewModel = ScheduleViewModel()
+            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+            let viewModel = ScheduleViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
             return createScheduleAndRoutineViewController(viewModel: viewModel, mode: .schedule)
         case 2:
+            let fetchRoutineListUseCase = DIContainer.shared.resolve(FetchRoutineListUseCase.self)
             let viewModel = RoutineViewModel()
             return createScheduleAndRoutineViewController(viewModel: viewModel, mode: .routine)
         default:
