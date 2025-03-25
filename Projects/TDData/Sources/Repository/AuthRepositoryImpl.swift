@@ -25,15 +25,21 @@ public struct AuthRepositoryImpl: AuthRepository {
         }
 
         TDLogger.info("[앱] 디코딩된 oauthId(sub): \(oauthId)")
-        try await service.requestOauthRegister(
+        let loginUserResponseDTO = try await service.requestOauthRegister(
             oauthProvider: AuthProvider.kakao.rawValue,
             oauthId: oauthId,
             idToken: idToken
         )
+        try await saveToken(response: loginUserResponseDTO)
     }
     
     public func requestAppleLogin(oauthId: String, idToken: String) async throws {
-        try await service.requestOauthRegister(oauthProvider: AuthProvider.apple.rawValue, oauthId: oauthId, idToken: idToken)
+        let loginUserResponseDTO = try await service.requestOauthRegister(
+            oauthProvider: AuthProvider.apple.rawValue,
+            oauthId: oauthId,
+            idToken: idToken
+        )
+        try await saveToken(response: loginUserResponseDTO)
     }
         
     public func requestLogin(
