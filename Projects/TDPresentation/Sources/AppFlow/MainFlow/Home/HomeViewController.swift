@@ -8,6 +8,7 @@ final class HomeViewController: BaseViewController<BaseView> {
     private let segmentedControl = TDSegmentedControl(items: ["토덕", "일정", "루틴"])
     
     // MARK: - Properties
+    private var cachedViewControllers = [Int: UIViewController]()
     private var currentViewController: UIViewController?
     weak var coordinator: HomeCoordinator?
     
@@ -97,22 +98,29 @@ final class HomeViewController: BaseViewController<BaseView> {
     }
     
     private func getViewController(for index: Int) -> UIViewController {
+        if let cachedVC = cachedViewControllers[index] {
+            return cachedVC
+        }
+
+        let newViewController: UIViewController
         switch index {
         case 0:
-            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
-            let viewModel = ToduckViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
-            return ToduckViewController(viewModel: viewModel)
+            let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+            newViewController = ToduckViewController(viewModel: ToduckViewModel(fetchScheduleListUseCase: useCase))
         case 1:
-            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
-            let viewModel = ScheduleViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
-            return createScheduleAndRoutineViewController(viewModel: viewModel, mode: .schedule)
+            let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+            let viewModel = ScheduleViewModel(fetchScheduleListUseCase: useCase)
+            newViewController = createScheduleAndRoutineViewController(viewModel: viewModel, mode: .schedule)
         case 2:
-            let fetchRoutineListUseCase = DIContainer.shared.resolve(FetchRoutineListUseCase.self)
+            let useCase = DIContainer.shared.resolve(FetchRoutineListUseCase.self)
             let viewModel = RoutineViewModel()
-            return createScheduleAndRoutineViewController(viewModel: viewModel, mode: .routine)
+            newViewController = createScheduleAndRoutineViewController(viewModel: viewModel, mode: .routine)
         default:
-            return UIViewController()
+            newViewController = UIViewController()
         }
+
+        cachedViewControllers[index] = newViewController
+        return newViewController
     }
     
     private func createScheduleAndRoutineViewController(viewModel: Any, mode: ScheduleAndRoutineViewController.Mode) -> ScheduleAndRoutineViewController {
