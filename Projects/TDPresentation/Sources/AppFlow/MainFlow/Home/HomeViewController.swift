@@ -115,8 +115,8 @@ final class HomeViewController: BaseViewController<BaseView> {
     
     private func createScheduleAndRoutineViewController(viewModel: Any, mode: ScheduleAndRoutineViewController.Mode) -> ScheduleAndRoutineViewController {
         let viewController = (mode == .schedule)
-            ? ScheduleAndRoutineViewController(scheduleViewModel: viewModel as? ScheduleViewModel, mode: mode)
-            : ScheduleAndRoutineViewController(routineViewModel: viewModel as? RoutineViewModel, mode: mode)
+        ? ScheduleAndRoutineViewController(scheduleViewModel: viewModel as? ScheduleViewModel, mode: mode)
+        : ScheduleAndRoutineViewController(routineViewModel: viewModel as? RoutineViewModel, mode: mode)
         
         viewController.coordinator = self
         return viewController

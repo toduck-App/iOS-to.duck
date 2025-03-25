@@ -29,8 +29,8 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
     private var selectedDate: Date?
     private let scheduleViewModel: ScheduleViewModel?
     private let routineViewModel: RoutineViewModel?
-    private let createInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
-    private let modifyInput = PassthroughSubject<RoutineViewModel.Input, Never>()
+    private let scheduleInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
+    private let routineInput = PassthroughSubject<RoutineViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: EventMakorDelegate?
     

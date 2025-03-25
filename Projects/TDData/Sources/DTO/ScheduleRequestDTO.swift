@@ -17,7 +17,7 @@ public struct ScheduleRequestDTO: Encodable {
     public init(schedule: Schedule) {
         self.title = schedule.title
         self.category = schedule.category.imageName.uppercased()
-        self.color = "#\(schedule.category.colorHex)"
+        self.color = schedule.category.colorHex
         self.startDate = schedule.startDate
         self.endDate = schedule.endDate
         self.isAllDay = schedule.isAllDay

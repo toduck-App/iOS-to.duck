@@ -34,7 +34,7 @@ final class EventMakorViewModel: BaseViewModel {
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
-    private var selectedCategory: TDCategory? = TDCategory(colorHex: "FFFFFF", imageName: "None")
+    private var selectedCategory: TDCategory? = TDCategory(colorHex: "#FFFFFF", imageName: "None")
     private var startDate: String? // YYYY-MM-DD
     private var endDate: String? // YYYY-MM-DD
     private var isAllDay: Bool = true
