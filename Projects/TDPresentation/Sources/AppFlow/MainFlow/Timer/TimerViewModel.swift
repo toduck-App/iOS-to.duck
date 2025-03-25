@@ -198,6 +198,11 @@ extension TimerViewModel {
     /// 집중 타이머를 중지하고 진행상황을 보고
     private func stopTimer() {
         resetTimer()
+
+        let count = fetchFocusCountUseCase.execute()
+        let limit = fetchTimerSettingUseCase.execute().focusCountLimit
+
+        TDLogger.debug("[TimerViewModel#stopTimer] count: \(count), limit: \(limit)")
         // TODO: 비지니스 로직 추가
     }
 
@@ -223,7 +228,11 @@ extension TimerViewModel {
             }
             output.send(.failure(.updateFailed))
         case .success():
-            output.send(.updatedFocusCount(count: count))
+            if count % timerSetting!.focusCountLimit == 0 {
+                output.send(.updatedFocusCount(count: timerSetting!.focusCountLimit))
+            } else {
+                output.send(.updatedFocusCount(count: count % timerSetting!.focusCountLimit))
+            }
         }
     }
 
@@ -281,10 +290,6 @@ extension TimerViewModel {
 
 // MARK: - TimerUseCaseDelegate
 
-//아래것들 아마 다 해결됨?
-//TODO: 즉각 반응되게 만들기
-//TODO: 끝나기전 남은 1초 딜레이 없애기
-//TODO: 시작하고 1초 딜레이 있음 (로티가 늦게 시작됨)
 extension TimerViewModel: FocusTimerUseCaseDelegate {
     public func didStartFocusTimer() {
         output.send(.updatedTimerRunning(true))
@@ -299,7 +304,16 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
     public func didFinishFocusTimer() {
         output.send(.updatedTimer(0))
         output.send(.finishedTimer)
-        restTimerUseCase.start()
+
+        let limit = fetchTimerSettingUseCase.execute().focusCountLimit
+        let count = fetchFocusCountUseCase.execute()
+
+        if (count + 1) % limit == 0 {
+            restTimerUseCase.stop()
+        } else {
+            restTimerUseCase.start()
+        }
+        
         output.send(.updatedTimerRunning(false))
     }
 }
