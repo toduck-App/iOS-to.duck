@@ -32,7 +32,8 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
                 alarmTime: nil,
                 place: nil,
                 memo: nil,
-                isFinished: false
+                isFinished: false,
+                scheduleRecords: nil
             )
     }
     

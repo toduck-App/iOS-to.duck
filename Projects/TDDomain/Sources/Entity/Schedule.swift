@@ -13,6 +13,7 @@ public struct Schedule: Eventable {
     public let place: String?
     public let memo: String?
     public let isFinished: Bool
+    public let scheduleRecords: [ScheduleRecord]?
     
     public var isRepeating: Bool {
         repeatDays != nil || startDate != endDate
@@ -30,7 +31,8 @@ public struct Schedule: Eventable {
         alarmTime: AlarmType?,
         place: String?,
         memo: String?,
-        isFinished: Bool
+        isFinished: Bool,
+        scheduleRecords: [ScheduleRecord]?
     ) {
         self.id = id
         self.title = title
@@ -44,5 +46,20 @@ public struct Schedule: Eventable {
         self.place = place
         self.memo = memo
         self.isFinished = isFinished
+        self.scheduleRecords = scheduleRecords
+    }
+}
+
+public struct ScheduleRecord {
+    public let id: Int
+    public let isComplete: Bool
+    public let recordDate: String
+    public let deletedAt: String?
+    
+    public init(id: Int, isComplete: Bool, recordDate: String, deletedAt: String?) {
+        self.id = id
+        self.isComplete = isComplete
+        self.recordDate = recordDate
+        self.deletedAt = deletedAt
     }
 }

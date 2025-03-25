@@ -172,7 +172,8 @@ final class EventMakorViewModel: BaseViewModel {
             alarmTime: alarm,
             place: location,
             memo: memo,
-            isFinished: false
+            isFinished: false,
+            scheduleRecords: nil
         )
         
         return schedule
