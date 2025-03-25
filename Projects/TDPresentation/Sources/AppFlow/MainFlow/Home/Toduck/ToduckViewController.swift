@@ -9,12 +9,45 @@ import Then
 
 final class ToduckViewController: BaseViewController<ToduckView> {
     // MARK: - Properties
-    private let viewModel = ToduckViewModel()
+    private let viewModel: ToduckViewModel
     private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var autoScrollTimer: Timer?
     
+    init(
+        viewModel: ToduckViewModel
+    ) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        input.send(.fetchScheduleList)
+    }
+    
     // MARK: Common Methods
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output.receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedScheduleList:
+                    self?.layoutView.scheduleCollectionView.reloadData()
+                    self?.updateAutoScroll()
+                case .failure(let error):
+                    self?.showErrorAlert(with: error)
+                }
+            }.store(in: &cancellables)
+    }
+    
     override func configure() {
         updateLottieView(at: 0)
         updateAutoScroll()

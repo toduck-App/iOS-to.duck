@@ -1,11 +1,11 @@
 import TDDesign
+import TDDomain
 import TDCore
 import UIKit
 
 final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
     private let segmentedControl = TDSegmentedControl(items: ["토덕", "일정", "루틴"])
-    private let todoViewController = ToduckViewController()
     
     // MARK: - Properties
     private var currentViewController: UIViewController?
@@ -99,7 +99,9 @@ final class HomeViewController: BaseViewController<BaseView> {
     private func getViewController(for index: Int) -> UIViewController {
         switch index {
         case 0:
-            return todoViewController
+            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+            let viewModel = ToduckViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
+            return ToduckViewController(viewModel: viewModel)
         case 1:
             let viewModel = ScheduleViewModel()
             return createScheduleAndRoutineViewController(viewModel: viewModel, mode: .schedule)

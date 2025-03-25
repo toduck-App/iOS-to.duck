@@ -14,8 +14,10 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
         try await service.create(schedule: scheduleRequestDTO)
     }
     
-    public func fetchScheduleList() async throws -> [Schedule] {
-        return []
+    public func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
+        let responseDTO = try await service.fetchScheduleList(startDate: startDate, endDate: endDate)
+        TDLogger.debug("\(#function) - \(responseDTO)")
+        return responseDTO.content.scheduleHeadDtos.map { $0.convertToSchedule() }
     }
     
     public func fetchSchedule() async throws -> Schedule {

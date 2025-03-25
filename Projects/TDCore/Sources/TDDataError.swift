@@ -13,6 +13,7 @@ public enum TDDataError: Error, Equatable {
     case setUserDefaultFailure
     case parsingError
     case createRequestFailure
+    case fetchRequestFailure
     
     /// 로그인
     case invalidIDOrPassword
@@ -53,6 +54,8 @@ extension TDDataError: CustomStringConvertible {
             "JSON 파싱 에러"
         case .createRequestFailure:
             "요청 생성 실패"
+        case .fetchRequestFailure:
+            "요청 실패"
         
         /// 로그인 관련
         case .invalidIDOrPassword:
