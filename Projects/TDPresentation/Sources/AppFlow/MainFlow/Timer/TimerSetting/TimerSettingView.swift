@@ -61,7 +61,7 @@ final class TimerSettingView: BaseView {
         }
     }
 
-    let exitButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear)
+    let exitButton: TDBaseButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear,foregroundColor: TDColor.Neutral.neutral700)
     let timerSettingTitleLabel = TDLabel(
         labelText: "타이머 설정", toduckFont: .boldHeader4, alignment: .center,
         toduckColor: TDColor.Neutral.neutral800
