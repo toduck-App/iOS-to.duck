@@ -16,10 +16,11 @@ final class DiaryMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 24
     }
+    private let diaryMoodLabelContainerView = UIView()
     private let diaryMoodLabel = TDRequiredTitle()
     private let infoLabel = TDLabel(
         labelText: "* 필수 항목",
-        toduckFont: .mediumBody1,
+        toduckFont: .mediumBody3,
         toduckColor: TDColor.Neutral.neutral500
     )
     let diaryMoodCollectionView = DiaryMoodCollectionView()
@@ -34,17 +35,21 @@ final class DiaryMakorView: BaseView {
     )
     
     // 문장 기록
-    let memoTextView = TDFormTextView(
-        image: TDImage.photo,
+    let recordTextView = TDFormTextView(
+        image: TDImage.Pen.penNeutralColor,
         title: "문장 기록",
+        titleFont: .boldBody2,
+        titleColor: TDColor.Neutral.neutral600,
         isRequired: false,
-        maxCharacter: 40,
-        placeholder: "자유롭게 내용을 작성해 주세요."
+        maxCharacter: 200,
+        placeholder: "자유롭게 내용을 작성해 주세요.",
+        maxHeight: 196
     )
     
     // 사진 기록
-    private(set) var formPhotoView = TDFormPhotoView(
+    let formPhotoView = TDFormPhotoView(
         titleText: "사진 기록",
+        titleColor: TDColor.Neutral.neutral600,
         isRequired: false,
         maxCount: 2
     )
@@ -55,12 +60,12 @@ final class DiaryMakorView: BaseView {
         $0.spacing = 4
     }
     private let descriptionLabel1 = TDLabel(
-        labelText: "나의 하루를 되돌아보며 오늘의 실수와 감정을 정리해봐요",
+        labelText: "· 나의 하루를 되돌아보며 오늘의 실수와 감정을 정리해봐요",
         toduckFont: .mediumBody2,
         toduckColor: TDColor.Neutral.neutral500
     )
     private let descriptionLabel2 = TDLabel(
-        labelText: "더 나은 내일을 위한 기록 습관들이기",
+        labelText: "· 더 나은 내일을 위한 기록 습관들이기",
         toduckFont: .mediumBody2,
         toduckColor: TDColor.Neutral.neutral500
     )
@@ -85,17 +90,21 @@ final class DiaryMakorView: BaseView {
         addSubview(scrollView)
         scrollView.addSubview(stackView)
         
-        // 제목
-        stackView.addArrangedSubview(titleForm)
-        
         // 카테고리
         stackView.addArrangedSubview(diaryMoodVerticalStackView)
-        diaryMoodVerticalStackView.addArrangedSubview(diaryMoodLabel)
-        diaryMoodVerticalStackView.addArrangedSubview(infoLabel)
+        diaryMoodVerticalStackView.addArrangedSubview(diaryMoodLabelContainerView)
+        diaryMoodVerticalStackView.addArrangedSubview(diaryMoodCollectionView)
+        diaryMoodVerticalStackView.addArrangedSubview(divideLineView)
+        diaryMoodLabelContainerView.addSubview(diaryMoodLabel)
+        diaryMoodLabelContainerView.addSubview(infoLabel)
         
-        stackView.addArrangedSubview(memoTextView)
+        // 제목
+        stackView.addArrangedSubview(titleForm)
+        stackView.addArrangedSubview(recordTextView)
         stackView.addArrangedSubview(formPhotoView)
         stackView.addArrangedSubview(descriptionStackView)
+        descriptionStackView.addArrangedSubview(descriptionLabel1)
+        descriptionStackView.addArrangedSubview(descriptionLabel2)
     }
     
     override func configure() {
@@ -103,6 +112,7 @@ final class DiaryMakorView: BaseView {
         scrollView.showsVerticalScrollIndicator = false
         diaryMoodLabel.setTitleFont(.boldHeader5)
         diaryMoodLabel.setTitleLabel("감정 선택")
+        diaryMoodLabel.setRequiredLabel()
     }
     
     override func layout() {
@@ -114,6 +124,26 @@ final class DiaryMakorView: BaseView {
             make.edges.equalToSuperview().inset(16)
             make.width.equalTo(scrollView.snp.width).offset(-32)
         }
+        
+        // 감정 선택
+        diaryMoodVerticalStackView.snp.makeConstraints { make in
+            make.height.equalTo(120)
+        }
+
+        diaryMoodCollectionView.snp.makeConstraints { make in
+            make.height.equalTo(80)
+        }
+        diaryMoodLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview()
+        }
+        infoLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
+        divideLineView.snp.makeConstraints { make in
+            make.height.equalTo(1)
+        }
 
         // 제목
         titleForm.snp.makeConstraints { make in
@@ -121,18 +151,18 @@ final class DiaryMakorView: BaseView {
         }
 
         // 문장 기록
-        memoTextView.snp.makeConstraints { make in
+        recordTextView.snp.makeConstraints { make in
             make.height.equalTo(230)
         }
 
         // 사진 기록
         formPhotoView.snp.makeConstraints { make in
-            make.height.equalTo(120)
+            make.height.equalTo(160)
         }
 
         // 설명
         descriptionStackView.snp.makeConstraints { make in
-            make.height.equalTo(32)
+            make.height.equalTo(40)
         }
     }
 }

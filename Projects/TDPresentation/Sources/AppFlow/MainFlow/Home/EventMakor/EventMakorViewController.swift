@@ -175,7 +175,7 @@ extension EventMakorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         input.send(.selectCategory(
             color.convertToHexString() ?? "",
-            UIImage.reverseCategoryDictionary[image] ?? "none"
+            UIImage.reverseCategoryDictionary[image] ?? "None"
         ))
     }
 }

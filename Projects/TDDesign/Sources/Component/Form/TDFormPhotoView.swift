@@ -83,6 +83,7 @@ public final class TDFormPhotoView: UIView {
     public init(
         frame: CGRect = .zero,
         titleText: String = "사진 첨부",
+        titleColor: UIColor = TDColor.Neutral.neutral800,
         isRequired: Bool = false,
         maxCount: Int = 5
     ) {
@@ -92,6 +93,7 @@ public final class TDFormPhotoView: UIView {
         
         // 타이틀 설정
         title.setTitleLabel(titleText)
+        title.setTitleColor(titleColor)
         
         // 필수 항목 여부에 따라 별표(*) 표시
         if isRequired {

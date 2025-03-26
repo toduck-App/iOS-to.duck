@@ -69,6 +69,8 @@ public final class TDFormTextView: UIView {
     public init(
         image: UIImage? = nil,
         title: String,
+        titleFont: TDFont = .boldBody1,
+        titleColor: UIColor = TDColor.Neutral.neutral800,
         isRequired: Bool,
         maxCharacter: Int,
         placeholder: String,
@@ -82,6 +84,8 @@ public final class TDFormTextView: UIView {
         // Title 설정
         titleImageView.contentMode = .scaleAspectFit
         titleLabel.setTitleLabel(title)
+        titleLabel.setTitleFont(titleFont)
+        titleLabel.setTitleColor(titleColor)
         
         // 필수 항목 표시
         if isRequired {

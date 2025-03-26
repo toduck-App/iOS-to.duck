@@ -55,6 +55,10 @@ public final class TDRequiredTitle: UIView {
         }
     }
     
+    public func setTitleColor(_ color: UIColor) {
+        label.setColor(color)
+    }
+    
     /// 필수 입력을 나타내는 별표(*) 레이블을 추가하고 레이아웃을 구성합니다.
     /// 이 메서드는 `setTitleLabel(_:)` 호출 후에 사용해야 합니다.
     public func setRequiredLabel() {
