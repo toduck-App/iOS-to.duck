@@ -202,8 +202,8 @@ extension TimerViewModel {
         let count = fetchFocusCountUseCase.execute()
         let limit = fetchTimerSettingUseCase.execute().focusCountLimit
 
-        TDLogger.debug("[TimerViewModel#stopTimer] count: \(count), limit: \(limit)")
         // TODO: 비지니스 로직 추가
+        TDLogger.debug("[TimerViewModel#stopTimer] count: \(count), limit: \(limit)")
     }
 
     private func fetchTimerRunningStatus() {

@@ -6,7 +6,7 @@ public struct TDTimerSetting {
     public init(focusDuration: Int, focusCountLimit: Int, restDuration: Int) {
         self.focusDuration = focusDuration
         self.focusCountLimit = focusCountLimit
-        self.restDuration = focusCountLimit
+        self.restDuration = restDuration
     }
 
     /// 초기값 설정
