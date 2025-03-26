@@ -12,7 +12,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
     private var cancellables = Set<AnyCancellable>()
     private var theme: TDTimerTheme = .Bboduck
-    private var focusCount: Int = 0 // 테마를 위한 변수
+    // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
+    private var focusCount: Int = 0
 
     // TODO: 처음 로딩시 테마 2개가 동시에 보이는것 수정
 
@@ -209,12 +210,13 @@ extension TimerViewController {
 
     private func updateFocusCount(with count: Int) {
         guard let setting = viewModel.timerSetting else { return }
-
         focusCount = count
+        let newCount = count % setting.focusCountLimit == 0 ? setting.focusCountLimit : count % setting.focusCountLimit
+        
         layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         for i in 1 ... setting.focusCountLimit {
-            if i <= count {
+            if i <= newCount {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
             } else {

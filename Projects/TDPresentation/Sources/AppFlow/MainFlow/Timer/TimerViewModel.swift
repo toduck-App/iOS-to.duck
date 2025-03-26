@@ -33,7 +33,7 @@ public final class TimerViewModel: BaseViewModel {
         case updatedTimerSetting
         case finishedTimer
         case fetchedFocusCount(count: Int)
-        case fetchedTimerSetting // viewmodel에서 변수로 활용됨
+        case fetchedTimerSetting(setting: TDTimerSetting) // viewmodel에서 변수로 활용됨
         case fetchedTimerTheme(theme: TDTimerTheme)
         case updatedFocusCount(count: Int)
         case updatedMaxFocusCount(maxCount: Int)
@@ -93,7 +93,6 @@ public final class TimerViewModel: BaseViewModel {
 
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
-            TDLogger.debug("[TimerViewModel] event: \(event)")
             switch event {
             case .fetchTimerSetting:
                 self?.fetchTimerSetting()
@@ -135,11 +134,11 @@ public final class TimerViewModel: BaseViewModel {
 extension TimerViewModel {
     private func fetchTimerSetting() {
         timerSetting = fetchTimerSettingUseCase.execute()
-        output.send(.fetchedTimerSetting)
+        guard let setting = timerSetting else { return}
+        output.send(.fetchedTimerSetting(setting: setting))
     }
 
     private func updateTimerSetting(setting: TDTimerSetting) {
-        timerSetting = setting
         let result = updateTimerSettingUseCase.execute(setting: setting)
         switch result {
         case let .failure(error):
@@ -148,6 +147,7 @@ extension TimerViewModel {
             }
             output.send(.failure(.updateFailed))
         case .success():
+            timerSetting = fetchTimerSettingUseCase.execute()
             output.send(.updatedTimerSetting)
             output.send(.updatedTimer(setting.toFocusDurationMinutes()))
         }

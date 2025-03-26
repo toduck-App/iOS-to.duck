@@ -48,13 +48,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         input.send(.fetchTimerSetting)
-
-        guard let setting = viewModel.timerSetting else { return }
-        focusTime = setting.focusDuration
-        focusCountLimit = setting.focusCountLimit
-        restTime = setting.restDuration
     }
 
     override func configure() {
@@ -104,7 +98,6 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                     focusCountLimit: self.focusCountLimit,
                     restDuration: self.restTime
                 )
-
                 self.input.send(
                     .updateTimerSetting(setting: setting))
                 self.dismiss(animated: true)
@@ -116,5 +109,26 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                 self.dismiss(animated: true)
             }, for: .touchUpInside
         )
+    }
+
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case let .fetchedTimerSetting(setting):
+                    self?.fetchedTimerSetting(setting: setting)
+                default:
+                    break
+                }
+            }.store(in: &cancellables)
+    }
+
+    private func fetchedTimerSetting(setting: TDTimerSetting) {
+        focusTime = setting.focusDuration
+        focusCountLimit = setting.focusCountLimit
+        restTime = setting.restDuration
     }
 }
