@@ -37,6 +37,7 @@ public final class TDFormTextView: UIView {
     public weak var delegate: TDFormTextViewDelegate?
     
     private let maxCharacter: Int
+    private let maxHeight: CGFloat
     
     // MARK: - UI Properties
     
@@ -58,7 +59,7 @@ public final class TDFormTextView: UIView {
         $0.isScrollEnabled = true
         $0.textContainerInset = UIEdgeInsets(top: 14, left: 12, bottom: 14, right: 12)
         $0.delegate = self
-        $0.backgroundColor = TDColor.baseWhite
+        $0.backgroundColor = TDColor.Neutral.neutral50
     }
     
     private let placeholderLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
@@ -70,10 +71,12 @@ public final class TDFormTextView: UIView {
         title: String,
         isRequired: Bool,
         maxCharacter: Int,
-        placeholder: String
+        placeholder: String,
+        maxHeight: CGFloat = 112
     ) {
         self.titleImageView.image = image
         self.maxCharacter = maxCharacter
+        self.maxHeight = maxHeight
         super.init(frame: .zero)
         
         // Title 설정
@@ -128,7 +131,7 @@ extension TDFormTextView {
         textView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(112)
+            make.height.equalTo(maxHeight)
         }
         
         maxCounterLabel.snp.makeConstraints { make in

@@ -158,7 +158,7 @@ private final class TDTextFieldCore: UITextField, UITextFieldDelegate {
         layer.cornerRadius = 12
         layer.borderWidth = 1
         layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        backgroundColor = TDColor.baseWhite
+        backgroundColor = TDColor.Neutral.neutral50
         font = TDFont.mediumBody2.font
         clearButtonMode = .whileEditing
 
