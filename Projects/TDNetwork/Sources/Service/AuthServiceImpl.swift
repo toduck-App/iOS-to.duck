@@ -11,8 +11,11 @@ public struct AuthServiceImpl: AuthService {
         self.provider = provider
     }
     
-    public func requestOauthRegister(oauthProvider: String, oauthId: String, idToken: String) async throws {
-        let response = try await provider.request(.loginOauth(provider: oauthProvider, oauthId: oauthId, idToken: idToken))
+    public func requestOauthRegister(oauthProvider: String, oauthId: String, idToken: String) async throws -> LoginUserResponseDTO {
+        let target = AuthAPI.loginOauth(provider: oauthProvider, oauthId: oauthId, idToken: idToken)
+        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
+        
+        return try mapToLoginUserResponseDTO(from: response)
     }
     
     public func requestLogin(
@@ -22,19 +25,7 @@ public struct AuthServiceImpl: AuthService {
         let target = AuthAPI.login(loginId: loginId, password: password)
         let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
 
-        if let refreshToken = response.extractRefreshToken(),
-           let refreshTokenExpiredAt = response.extractRefreshTokenExpiry()
-        {
-            let loginUserResponseDTO = LoginUserResponseDTO(
-                accessToken: response.value.accessToken,
-                refreshToken: refreshToken,
-                refreshTokenExpiredAt: refreshTokenExpiredAt,
-                userId: response.value.userId
-            )
-            return loginUserResponseDTO
-        }
-        
-        throw TDDataError.requestLoginFailure
+        return try mapToLoginUserResponseDTO(from: response)
     }
 
     public func refreshToken() async throws -> TDData.LoginUserResponseDTO {
@@ -43,18 +34,8 @@ public struct AuthServiceImpl: AuthService {
         }
         let target = AuthAPI.refreshToken(refreshToken: refreshToken)
         let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
-        if let refreshToken = response.extractRefreshToken(),
-           let refreshTokenExpiredAt = response.extractRefreshTokenExpiry()
-        {
-            let loginUserResponseDTO = LoginUserResponseDTO(
-                accessToken: response.value.accessToken,
-                refreshToken: refreshToken,
-                refreshTokenExpiredAt: refreshTokenExpiredAt,
-                userId: response.value.userId
-            )
-            return loginUserResponseDTO
-        }
-        throw TDDataError.requestLoginFailure
+        
+        return try mapToLoginUserResponseDTO(from: response)
     }
     
     public func requestKakaoLogin() async throws -> String {
@@ -99,5 +80,18 @@ public struct AuthServiceImpl: AuthService {
                 continuation.resume(returning: idToken)
             }
         }
+    }
+    
+    private func mapToLoginUserResponseDTO(from response: MFResponse<LoginUserResponseBody>) throws -> LoginUserResponseDTO {
+        if let refreshToken = response.extractRefreshToken(),
+           let refreshTokenExpiredAt = response.extractRefreshTokenExpiry() {
+            return LoginUserResponseDTO(
+                accessToken: response.value.accessToken,
+                refreshToken: refreshToken,
+                refreshTokenExpiredAt: refreshTokenExpiredAt,
+                userId: response.value.userId
+            )
+        }
+        throw TDDataError.requestLoginFailure
     }
 }

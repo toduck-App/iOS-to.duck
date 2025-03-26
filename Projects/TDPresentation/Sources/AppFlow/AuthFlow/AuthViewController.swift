@@ -67,10 +67,10 @@ final class AuthViewController: BaseViewController<AuthView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case let .loginSuccess:
-                    break
-                case let .loginFailure(error):
-                    TDLogger.error("로그인 실패: \(error)")
+                case .loginSuccess:
+                    self?.coordinator?.didMainButtonTapped()
+                case .loginFailure(let error):
+                    self?.showErrorAlert(with: error)
                 }
             }.store(in: &cancellables)
     }
