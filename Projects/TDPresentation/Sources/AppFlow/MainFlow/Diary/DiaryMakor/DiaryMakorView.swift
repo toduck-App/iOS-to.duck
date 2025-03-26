@@ -5,7 +5,7 @@ import Then
 
 final class DiaryMakorView: BaseView {
     // MARK: - UI Components
-    private let scrollView = UIScrollView()
+    let scrollView = UIScrollView()
     private let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 32
@@ -75,6 +75,40 @@ final class DiaryMakorView: BaseView {
         $0.backgroundColor = TDColor.Neutral.neutral700
         $0.layer.cornerRadius = 8
     }
+    let noticeSnackBarLabel = TDLabel(
+        labelText: "감정선택은 필수 입력이에요!",
+        toduckFont: .mediumBody3,
+        toduckColor: TDColor.baseWhite
+    )
+    
+    // 저장
+    let buttonStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+    }
+    let deleteButton = TDBaseButton(
+        title: "삭제",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Semantic.error,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    let saveButton = TDBaseButton(
+        title: "저장",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    let dummyView = UIView()
+    
+    // MARK: - Property
+    var isEdit: Bool = false {
+        didSet {
+            // `isEdit`가 변경될 때 버튼을 적절히 업데이트
+            updateDeleteButtonVisibility()
+        }
+    }
     
     // MARK: - Initialize
     override init(frame: CGRect) {
@@ -88,6 +122,8 @@ final class DiaryMakorView: BaseView {
     // MARK: - Base Method
     override func addview() {
         addSubview(scrollView)
+        addSubview(noticeSnackBarView)
+        addSubview(buttonStackView)
         scrollView.addSubview(stackView)
         
         // 카테고리
@@ -98,21 +134,21 @@ final class DiaryMakorView: BaseView {
         diaryMoodLabelContainerView.addSubview(diaryMoodLabel)
         diaryMoodLabelContainerView.addSubview(infoLabel)
         
-        // 제목
+        // 폼 정보
         stackView.addArrangedSubview(titleForm)
         stackView.addArrangedSubview(recordTextView)
         stackView.addArrangedSubview(formPhotoView)
         stackView.addArrangedSubview(descriptionStackView)
+        stackView.addArrangedSubview(dummyView)
         descriptionStackView.addArrangedSubview(descriptionLabel1)
         descriptionStackView.addArrangedSubview(descriptionLabel2)
-    }
-    
-    override func configure() {
-        backgroundColor = TDColor.baseWhite
-        scrollView.showsVerticalScrollIndicator = false
-        diaryMoodLabel.setTitleFont(.boldHeader5)
-        diaryMoodLabel.setTitleLabel("감정 선택")
-        diaryMoodLabel.setRequiredLabel()
+        
+        // 버튼
+        noticeSnackBarView.addSubview(noticeSnackBarLabel)
+        if isEdit {
+            buttonStackView.addArrangedSubview(deleteButton)
+        }
+        buttonStackView.addArrangedSubview(saveButton)
     }
     
     override func layout() {
@@ -163,6 +199,48 @@ final class DiaryMakorView: BaseView {
         // 설명
         descriptionStackView.snp.makeConstraints { make in
             make.height.equalTo(40)
+        }
+        
+        dummyView.snp.makeConstraints { make in
+            make.height.equalTo(130)
+        }
+        
+        // 사용자 피드백 스낵바
+        noticeSnackBarView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(buttonStackView.snp.top).offset(-20)
+            make.height.equalTo(42)
+        }
+        noticeSnackBarLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(16)
+        }
+        
+        // 저장
+        buttonStackView.snp.makeConstraints { make in
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(36)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(56)
+        }
+    }
+    
+    override func configure() {
+        backgroundColor = TDColor.baseWhite
+        scrollView.showsVerticalScrollIndicator = false
+        diaryMoodLabel.setTitleFont(.boldHeader5)
+        diaryMoodLabel.setTitleLabel("감정 선택")
+        diaryMoodLabel.setRequiredLabel()
+        noticeSnackBarView.alpha = 0
+    }
+    
+    // MARK: - Helper Method
+    private func updateDeleteButtonVisibility() {
+        if isEdit {
+            deleteButton.layer.borderWidth = 1
+            deleteButton.layer.borderColor = TDColor.Semantic.error.cgColor
+            buttonStackView.addArrangedSubview(deleteButton)
+        } else {
+            deleteButton.removeFromSuperview()
         }
     }
 }

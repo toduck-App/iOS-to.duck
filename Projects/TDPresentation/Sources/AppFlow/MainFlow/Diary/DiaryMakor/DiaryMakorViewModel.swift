@@ -4,6 +4,7 @@ import Foundation
 final class DiaryMakorViewModel: BaseViewModel {
     enum Input {
         case tapCategoryCell(String)
+        case scrollToBottom
     }
     
     enum Output {
@@ -17,6 +18,8 @@ final class DiaryMakorViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
+            case .scrollToBottom:
+                self?.output.send(.notificationScrollToBottom)
             case .tapCategoryCell(let mood):
                 self?.selectedMood = mood
             }
