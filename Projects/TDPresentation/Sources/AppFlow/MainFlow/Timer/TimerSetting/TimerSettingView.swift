@@ -68,8 +68,8 @@ final class TimerSettingView: BaseView {
     )
 
     let focusTimeField = TimerSettingFieldControl(state: .focusTime)
-    let restTimeField = TimerSettingFieldControl(state: .focusCount)
-    let focusCountField = TimerSettingFieldControl(state: .restTime)
+    let restTimeField = TimerSettingFieldControl(state: .restTime)
+    let focusCountField = TimerSettingFieldControl(state: .focusCount)
 
     let fieldStack = UIStackView().then {
         $0.spacing = 28
