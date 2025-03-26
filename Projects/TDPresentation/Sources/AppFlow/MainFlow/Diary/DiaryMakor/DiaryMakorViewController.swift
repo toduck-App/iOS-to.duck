@@ -42,4 +42,17 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
                 }
             }.store(in: &cancellables)
     }
+    
+    override func configure() {
+        layoutView.diaryMoodCollectionView.delegate = self
+    }
+}
+
+extension DiaryMakorViewController: DiaryMoodCollectionViewDelegate {
+    func didTapCategoryCell(
+        _ diaryMoodCollectionView: TDDesign.DiaryMoodCollectionView,
+        selectedMood: UIImage
+    ) {
+        input.send(.tapCategoryCell(UIImage.reverseMoodDictionary[selectedMood] ?? "HAPPY"))
+    }
 }

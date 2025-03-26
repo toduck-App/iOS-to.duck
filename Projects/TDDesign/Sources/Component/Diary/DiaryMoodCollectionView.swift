@@ -3,7 +3,7 @@ import SnapKit
 import Then
 
 public protocol DiaryMoodCollectionViewDelegate: AnyObject {
-    func didTapCategoryCell(_ diaryMoodCollectionView: DiaryMoodCollectionView, at indexPath: IndexPath)
+    func didTapCategoryCell(_ diaryMoodCollectionView: DiaryMoodCollectionView, selectedMood: UIImage)
 }
 
 public final class DiaryMoodCollectionView: UIView {
@@ -107,6 +107,7 @@ extension DiaryMoodCollectionView: UICollectionViewDelegateFlowLayout {
             }
         }
         
-        delegate?.didTapCategoryCell(self, at: indexPath)
+        let selectedMood = moodImages[indexPath.row]
+        delegate?.didTapCategoryCell(self, selectedMood: selectedMood)
     }
 }
