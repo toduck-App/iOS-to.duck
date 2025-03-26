@@ -62,6 +62,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     private let viewModel: DiaryViewModel
     private let input = PassthroughSubject<DiaryViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var selectedDate = Date().normalized
     
     // MARK: - Initializer
     init(
@@ -201,6 +202,11 @@ final class DiaryViewController: BaseViewController<BaseView> {
         scrollView.delegate = self
         setupCalendar()
         setupNavigationBar()
+        
+        diaryPostButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate)
+        }, for: .touchUpInside)
     }
     
     private func fetchDiaryList(for date: Date) {
@@ -318,6 +324,7 @@ extension DiaryViewController: TDCalendarConfigurable {
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {
+        selectedDate = date.normalized
         let normalizedDate = date.normalized
         
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedDate]
