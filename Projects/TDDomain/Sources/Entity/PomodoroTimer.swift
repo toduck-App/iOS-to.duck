@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 public struct Time: Hashable{
     public let hours: Int
@@ -44,7 +43,7 @@ enum WhiteNoise {
 }
 
 struct PomodoroTimer {
-    public let studyingToduckImage: UIImage
+    public let studyingToduckImageURL: String
     public let timerState: TimeState
     public let theme: Theme
     public let whiteNoise: WhiteNoise?

@@ -36,6 +36,10 @@ final class AuthCoordinator: Coordinator {
 extension AuthCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        
+        if childCoordinator is SignInCoordinator {
+            finishDelegate?.didFinish(childCoordinator: self)
+        }
     }
 }
 

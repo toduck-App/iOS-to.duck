@@ -21,7 +21,16 @@ final class SignInViewController: BaseViewController<SignInView> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(by: .pop)
+        }
+    }
+    
     override func configure() {
+        keyboardAdjustableButton = layoutView.nextButton
         layoutView.idTextField.delegate = self
         layoutView.passwordTextField.delegate = self
         

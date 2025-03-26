@@ -6,6 +6,7 @@ enum DateFormatType {
     case time12Hour
     case time12HourEnglish
     case time24Hour
+    case monthDayWithWeekday
     
     var formatter: DateFormatter {
         switch self {
@@ -28,6 +29,10 @@ enum DateFormatType {
         case .time24Hour:
             return DateFormatter().then {
                 $0.dateFormat = "HH:mm"
+            }
+        case .monthDayWithWeekday:
+            return DateFormatter().then {
+                $0.dateFormat = "M월 d일 (E)"
             }
         }
     }

@@ -71,7 +71,7 @@ extension Routine {
         Routine(
             id: 1,
             title: "하루 물 1L 이상 마시기",
-            category: TDCategory(colorHex: "#648EF8", imageName: "computer"),
+            category: TDCategory(colorHex: "#FFD6E2 ", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -85,7 +85,7 @@ extension Routine {
         Routine(
             id: 2,
             title: "자기 전 감정기록 작성하기",
-            category: TDCategory(colorHex: "#BD7E7E", imageName: "computer"),
+            category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -99,7 +99,7 @@ extension Routine {
         Routine(
             id: 3,
             title: "기상 후 이부자리 정리",
-            category: TDCategory(colorHex: "#123456", imageName: "computer"),
+            category: TDCategory(colorHex: "#FFD6E2", imageName: "computer"),
             isAllDay: false,
             isPublic: false,
             date: Date(),
@@ -113,7 +113,7 @@ extension Routine {
         Routine(
             id: 4,
             title: "모닝 스트레칭 하기",
-            category: TDCategory(colorHex: "#FF7200", imageName: "computer"),
+            category: TDCategory(colorHex: "#E4E9F3", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -127,7 +127,7 @@ extension Routine {
         Routine(
             id: 5,
             title: "나가기 전 잊지 말고 챙기자",
-            category: TDCategory(colorHex: "#123456", imageName: "computer"),
+            category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -141,7 +141,7 @@ extension Routine {
         Routine(
             id: 6,
             title: "디자인 아티클 읽고 공부하기",
-            category: TDCategory(colorHex: "#123456", imageName: "computer"),
+            category: TDCategory(colorHex: "#FFD6E2", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
             date: Date(),
@@ -155,7 +155,7 @@ extension Routine {
         Routine(
             id: 7,
             title: "헬스장 가기! 빠샤!",
-            category: TDCategory(colorHex: "#123456", imageName: "computer"),
+            category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: true,
             isPublic: true,
             date: Date(),

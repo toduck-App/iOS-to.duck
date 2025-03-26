@@ -29,7 +29,24 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
     }
     
     private func setupDefaultNavigationBar() {
-        navigationItem.leftBarButtonItems = createLeftBarButtons(style: .social, navigationDelegate: coordinator!)
+        // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
+        let calendarButton = UIButton(type: .custom)
+        calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
+        calendarButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapCalendarButton()
+        }, for: .touchUpInside)
+        
+        let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
+        toduckLogoImageView.contentMode = .scaleAspectFit
+        
+        let leftBarButtonItems = [
+            UIBarButtonItem(customView: calendarButton),
+            UIBarButtonItem(customView: toduckLogoImageView)
+        ]
+        
+        navigationItem.leftBarButtonItems = leftBarButtonItems
+        
+        // 우측 버튼 설정 (검색 버튼)
         navigationItem.titleView = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchButton)
     }
@@ -221,9 +238,9 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
         input.send(.likePost(postID))
     }
     
-    @objc func didTapSegmentedControl(sender: UISegmentedControl) {
-        input.send(.segmentSelect(at: sender.selectedSegmentIndex))
-        layoutView.updateLayoutForSegmentedControl(index: sender.selectedSegmentIndex)
+    @objc func didTapSegmentedControl(sender: TDSegmentedControl) {
+        input.send(.segmentSelect(at: sender.selectedIndex))
+        layoutView.updateLayoutForSegmentedControl(index: sender.selectedIndex)
     }
     
     @objc func didRefresh() {

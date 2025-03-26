@@ -35,7 +35,7 @@ extension AuthAPI: MFTarget {
         case .findIdPassword:
             return "/auth/find-id-password"
         case .refreshToken:
-            return "/auth/refresh-token"
+            return "/v1/auth/refresh"
         case .saveFCMToken(let userId, _):
             return "/users/\(userId)/fcm-token"
         case .deleteUser(let userId):
@@ -63,8 +63,6 @@ extension AuthAPI: MFTarget {
     
     public var queries: Parameters? {
         switch self {
-        case .refreshToken(let refreshToken):
-            return ["refreshToken": refreshToken]
         case .loginOauth(let provider, _, _):
             return ["provider": provider]
         case .requestPhoneVerification,
@@ -73,7 +71,8 @@ extension AuthAPI: MFTarget {
              .registerUser,
              .login,
              .findIdPassword,
-             .saveFCMToken:
+             .saveFCMToken,
+             .refreshToken:
             return nil
         case .deleteUser(let userId):
             // TODO: - 나중 결정?
@@ -142,12 +141,14 @@ extension AuthAPI: MFTarget {
              .findIdPassword:
             let jsonHeaders: MFHeaders = [.contentType("application/json")]
             return jsonHeaders
-            
-        case .refreshToken,
-             .saveFCMToken,
+        case .refreshToken(let refreshToken):
+            let cookieHeaderValue = "refreshToken=\(refreshToken)"
+            let headers: MFHeaders = [.cookie(cookieHeaderValue), .accept("application/json")]
+            return headers
+        case .saveFCMToken,
              .deleteUser:
-            // TODO: - saveFCMToken도 Content-Type을 지정해야 할 것 같습니다.
             return nil
         }
     }
+
 }

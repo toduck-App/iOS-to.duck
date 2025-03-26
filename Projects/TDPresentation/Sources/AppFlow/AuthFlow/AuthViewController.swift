@@ -67,15 +67,10 @@ final class AuthViewController: BaseViewController<AuthView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case let .loginSuccess(userID, idToken):
-                    TDLogger.debug("로그인 성공: \(userID), \(idToken)")
-                
-                case let .loginFailure(error):
-                    TDLogger.error("로그인 실패: \(error)")
-                
-                case let .tokenReceived(idToken, authCode):
-                    TDLogger.info("ID Token: \(idToken ?? "없음")")
-                    TDLogger.info("Authorization Code: \(authCode ?? "없음")")
+                case .loginSuccess:
+                    self?.coordinator?.didMainButtonTapped()
+                case .loginFailure(let error):
+                    self?.showErrorAlert(with: error)
                 }
             }.store(in: &cancellables)
     }

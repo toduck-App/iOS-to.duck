@@ -1,8 +1,8 @@
-import TDCore
-import TDDomain
-import TDData
 import Foundation
 import KakaoSDKUser
+import TDCore
+import TDData
+import TDDomain
 
 public struct AuthServiceImpl: AuthService {
     private let provider: MFProvider<AuthAPI>
@@ -11,73 +11,31 @@ public struct AuthServiceImpl: AuthService {
         self.provider = provider
     }
     
-    public func requestOauthRegister(oauthProvider: String, oauthId: String, idToken: String) async throws {
-        let response = try await provider.request(.loginOauth(provider: oauthProvider, oauthId: oauthId, idToken: idToken))
+    public func requestOauthRegister(oauthProvider: String, oauthId: String, idToken: String) async throws -> LoginUserResponseDTO {
+        let target = AuthAPI.loginOauth(provider: oauthProvider, oauthId: oauthId, idToken: idToken)
+        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
+        
+        return try mapToLoginUserResponseDTO(from: response)
     }
     
     public func requestLogin(
         loginId: String,
         password: String
     ) async throws -> LoginUserResponseDTO {
-        let response = try await provider.request(.login(loginId: loginId, password: password))
+        let target = AuthAPI.login(loginId: loginId, password: password)
+        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
 
-        if let httpResponse = response.httpResponse {
-            let statusCode = httpResponse.statusCode
-            let headers = httpResponse.allHeaderFields
-            
-            switch statusCode {
-            case 200:
-                let refreshToken = extractRefreshToken(from: headers) ?? ""
-                let refreshTokenExpiredAt = extractRefreshTokenExpiry(from: headers) ?? ""
-
-                do {
-                    let loginResponse = try LoginUserResponseDTO.from(
-                        bodyData: response.value,
-                        refreshToken: refreshToken,
-                        refreshTokenExpiredAt: refreshTokenExpiredAt
-                    )
-                    TDLogger.info("로그인 성공: \(loginResponse)")
-                    return loginResponse
-                } catch {
-                    TDLogger.error("파싱 오류: \(error.localizedDescription)")
-                    throw TDDataError.parsingError
-                }
-            case 401:
-                TDLogger.error("[로그인 실패]: 아이디 또는 비밀번호가 잘못됨")
-                throw TDDataError.invalidIDOrPassword
-            case 500..<600:
-                TDLogger.error("[로그인 실패]: 서버 에러")
-                throw TDDataError.serverError
-            default:
-                throw TDDataError.generalFailure
-            }
-        }
-        
-        throw TDDataError.requestLoginFailure
+        return try mapToLoginUserResponseDTO(from: response)
     }
-    
-    private func extractRefreshToken(from headers: [AnyHashable: Any]) -> String? {
-        guard let setCookie = headers["Set-Cookie"] as? String else { return nil }
 
-        let components = setCookie.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
-        for component in components {
-            if component.hasPrefix("refreshToken=") {
-                return component.replacingOccurrences(of: "refreshToken=", with: "")
-            }
+    public func refreshToken() async throws -> TDData.LoginUserResponseDTO {
+        guard let refreshToken = TDTokenManager.shared.refreshToken else {
+            throw TDDataError.invalidRefreshToken
         }
-        return nil
-    }
-    
-    private func extractRefreshTokenExpiry(from headers: [AnyHashable: Any]) -> String? {
-        guard let setCookie = headers["Set-Cookie"] as? String else { return nil }
+        let target = AuthAPI.refreshToken(refreshToken: refreshToken)
+        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
         
-        let components = setCookie.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
-        for component in components {
-            if component.hasPrefix("Expires=") {
-                return component.replacingOccurrences(of: "Expires=", with: "")
-            }
-        }
-        return nil
+        return try mapToLoginUserResponseDTO(from: response)
     }
     
     public func requestKakaoLogin() async throws -> String {
@@ -91,9 +49,9 @@ public struct AuthServiceImpl: AuthService {
     }
     
     private func handleKakaoLoginWithApp() async throws -> String {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-                if let error = error {
+                if let error {
                     continuation.resume(throwing: error)
                     return
                 }
@@ -109,9 +67,9 @@ public struct AuthServiceImpl: AuthService {
     }
     
     private func handleKakaoLoginWithAccount() async throws -> String {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-                if let error = error {
+                if let error {
                     continuation.resume(throwing: error)
                     return
                 }
@@ -122,5 +80,18 @@ public struct AuthServiceImpl: AuthService {
                 continuation.resume(returning: idToken)
             }
         }
+    }
+    
+    private func mapToLoginUserResponseDTO(from response: MFResponse<LoginUserResponseBody>) throws -> LoginUserResponseDTO {
+        if let refreshToken = response.extractRefreshToken(),
+           let refreshTokenExpiredAt = response.extractRefreshTokenExpiry() {
+            return LoginUserResponseDTO(
+                accessToken: response.value.accessToken,
+                refreshToken: refreshToken,
+                refreshTokenExpiredAt: refreshTokenExpiredAt,
+                userId: response.value.userId
+            )
+        }
+        throw TDDataError.requestLoginFailure
     }
 }

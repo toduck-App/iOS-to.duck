@@ -21,11 +21,18 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(by: .pop)
+        }
+    }
+    
     override func configure() {
-        layoutView.carrierDropDownView.delegate = self
-        layoutView.carrierDropDownView.dataSource = CarrierDropDownMenuItem.allCases.map { $0.dropDownItem }
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self
+        keyboardAdjustableButton = layoutView.nextButton
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""
@@ -69,17 +76,6 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                 }
             }
             .store(in: &cancellables)
-    }
-}
-
-// MARK: - TDDropDownDelegate
-extension PhoneVerificationViewController: TDDropDownDelegate {
-    func dropDown(
-        _ dropDownView: TDDropdownHoverView,
-        didSelectRowAt indexPath: IndexPath
-    ) {
-        let option = CarrierDropDownMenuItem.allCases[indexPath.row]
-        layoutView.carrierLabel.setText(option.rawValue)
     }
 }
 

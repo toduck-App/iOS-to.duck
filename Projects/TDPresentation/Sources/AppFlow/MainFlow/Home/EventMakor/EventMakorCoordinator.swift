@@ -8,15 +8,18 @@ final class EventMakorCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    private let selectedDate: Date
 
     init(
         navigationController: UINavigationController,
-        injector: DependencyResolvable
+        injector: DependencyResolvable,
+        selectedDate: Date
     ) {
         self.navigationController = navigationController
         self.injector = injector
+        self.selectedDate = selectedDate
     }
-
+    
     func start(mode: ScheduleAndRoutineViewController.Mode) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
@@ -27,9 +30,11 @@ final class EventMakorCoordinator: Coordinator {
             createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase
         )
+        viewModel.setupInitialDate(with: selectedDate)
         let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         eventMakorViewController.hidesBottomBarWhenPushed = true
+        eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
     }
     
@@ -46,6 +51,7 @@ extension EventMakorCoordinator: CoordinatorFinishDelegate {
 // MARK: - TDFormMoveView Delegate
 extension EventMakorCoordinator: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDDesign.TDFormMoveView, type: TDDesign.TDFormMoveViewType) {
+        var selectedCoordinator: Coordinator?
         switch type {
         case .category:
             let categoryCoordinator = SheetColorCoordinator(
@@ -55,6 +61,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
             categoryCoordinator.finishDelegate = self
             categoryCoordinator.delegate = self
             categoryCoordinator.start()
+            selectedCoordinator = categoryCoordinator
         case .date:
             let dateCoordinator = SheetCalendarCoordinator(
                 navigationController: navigationController,
@@ -63,6 +70,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
             dateCoordinator.finishDelegate = self
             dateCoordinator.delegate = self
             dateCoordinator.start()
+            selectedCoordinator = dateCoordinator
         case .time:
             let timeCoordinator = SheetTimeCoordinator(
                 navigationController: navigationController,
@@ -71,7 +79,12 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
             timeCoordinator.finishDelegate = self
             timeCoordinator.delegate = self
             timeCoordinator.start()
+            selectedCoordinator = timeCoordinator
         default: break
+        }
+        
+        if let selectedCoordinator = selectedCoordinator {
+            childCoordinators.append(selectedCoordinator)
         }
     }
 }

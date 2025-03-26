@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "anxiety.png",
+      "filename" : "anxious_Mood.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "anxiety@2x.png",
+      "filename" : "anxious_Mood@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "anxiety@3x.png",
+      "filename" : "anxious_Mood@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

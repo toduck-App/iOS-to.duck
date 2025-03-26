@@ -1,5 +1,6 @@
-import TDDomain
 import Foundation
+import TDCore
+import TDDomain
 
 public enum ScheduleAPI {
     case fetchSchedule(scheduleId: Int) // 특정 일정 조회
@@ -12,23 +13,23 @@ public enum ScheduleAPI {
 
 extension ScheduleAPI: MFTarget {
     public var baseURL: URL {
-        return URL(string: APIConstants.baseURL)!
+        URL(string: APIConstants.baseURL)!
     }
     
     public var path: String {
         switch self {
         case .fetchSchedule(let scheduleId):
-            return "/schedules/\(scheduleId)"
+            "/schedules/\(scheduleId)"
         case .fetchScheduleList:
-            return "/schedules"
+            "/schedules"
         case .moveTomorrowSchedule(let scheduleId):
-            return "/schedules/\(scheduleId)/move-tomorrow"
+            "/schedules/\(scheduleId)/move-tomorrow"
         case .createSchedule:
-            return "/schedules"
+            "/schedules"
         case .updateSchedule(let scheduleId, _):
-            return "/schedules/\(scheduleId)"
+            "/schedules/\(scheduleId)"
         case .deleteSchedule(let scheduleId):
-            return "/schedules/\(scheduleId)"
+            "/schedules/\(scheduleId)"
         }
     }
     
@@ -36,19 +37,19 @@ extension ScheduleAPI: MFTarget {
         switch self {
         case .fetchSchedule,
              .fetchScheduleList:
-            return .get
+            .get
         case .moveTomorrowSchedule,
              .createSchedule,
              .updateSchedule:
-            return .post
+            .post
         case .deleteSchedule:
-            return .delete
+            .delete
         }
     }
     
     public var queries: Parameters? {
         // TODO: - API에 따라 이 부분도 구현되어야 합니다.
-        return nil
+        nil
     }
     
     public var task: MFTask {
@@ -56,32 +57,33 @@ extension ScheduleAPI: MFTarget {
         switch self {
         case .fetchSchedule,
              .fetchScheduleList:
-            return .requestPlain
+            .requestPlain
             
         case .moveTomorrowSchedule,
              .deleteSchedule:
-            return .requestPlain
+            .requestPlain
             
         case .createSchedule(let schedule),
              .updateSchedule(_, let schedule):
-            return .requestPlain
+            .requestPlain
         }
     }
     
     public var headers: MFHeaders? {
         let jsonHeaders: MFHeaders = [
-            .contentType("application/json")
+            .contentType("application/json"),
+            .authorization(bearerToken: TDTokenManager.shared.accessToken ?? "")
         ]
         // TODO: - 나중에 회의 후 결정
         return jsonHeaders
     }
 }
 
-extension ScheduleAPI {
-    public var sampleData: Data {
+public extension ScheduleAPI {
+    var sampleData: Data {
         switch self {
         case .fetchSchedule:
-            return """
+            """
             {
                 "id": 1,
                 "title": "회의",
@@ -97,7 +99,7 @@ extension ScheduleAPI {
             }
             """.data(using: .utf8)!
         case .fetchScheduleList:
-            return """
+            """
             [
                 {
                     "id": 1,
@@ -128,7 +130,7 @@ extension ScheduleAPI {
             ]
             """.data(using: .utf8)!
         case .createSchedule, .updateSchedule:
-            return """
+            """
             {
                 "id": 1,
                 "title": "회의",
@@ -144,13 +146,13 @@ extension ScheduleAPI {
             }
             """.data(using: .utf8)!
         case .deleteSchedule:
-            return """
+            """
             {
                 "success": true
             }
             """.data(using: .utf8)!
         case .moveTomorrowSchedule(scheduleId: let scheduleId):
-            return """
+            """
             {
                 "success": true
             }

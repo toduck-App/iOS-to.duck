@@ -15,6 +15,14 @@ final class FindAccountViewController: BaseViewController<BaseView> {
     private var currentViewController: UIViewController?
     weak var coordinator: FindAccountCoordinator?
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent {
+            coordinator?.finish(by: .pop)
+        }
+    }
+    
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         navigationItem.title = "아이디 · 비밀번호 찾기"
@@ -34,13 +42,11 @@ final class FindAccountViewController: BaseViewController<BaseView> {
         segmentedControl.addAction(UIAction { [weak self] _ in
             self?.updateView()
         }, for: .valueChanged)
-        
-        segmentedControl.selectedSegmentIndex = 0
     }
     
     // MARK: - View Update
     private func updateView() {
-        let newViewController = getViewController(for: segmentedControl.selectedSegmentIndex)
+        let newViewController = getViewController(for: segmentedControl.selectedIndex)
         guard currentViewController !== newViewController else { return }
         
         replaceCurrentViewController(with: newViewController)

@@ -1,8 +1,7 @@
-import TDCore
-import Foundation
-import TDDomain
 import Foundation
 import KeyChainManager_KJ
+import TDCore
+import TDDomain
 
 public struct AuthRepositoryImpl: AuthRepository {
     private let service: AuthService
@@ -17,36 +16,51 @@ public struct AuthRepositoryImpl: AuthRepository {
     
     public func requestKakaoLogin() async throws {
         let idToken = try await service.requestKakaoLogin()
-        TDLogger.info("[앱] 카카오로부터 IDToken을 받았습니다. 우리 서버로 \(idToken)을 전송합니다.")
-        try await service.requestOauthRegister(oauthProvider: AuthProvider.kakao.rawValue, oauthId: kakaoAppKey, idToken: idToken)
+        TDLogger.info("[앱] 카카오로부터 IDToken을 받았습니다.")
+
+        guard let payload = await JWTDecoder.shared.decode(token: idToken),
+              let oauthId = payload["sub"] as? String else {
+            TDLogger.error("[앱] 카카오 idToken 디코딩 실패 또는 sub 없음")
+            throw TDDataError.invalidIDToken
+        }
+
+        TDLogger.info("[앱] 디코딩된 oauthId(sub): \(oauthId)")
+        let loginUserResponseDTO = try await service.requestOauthRegister(
+            oauthProvider: AuthProvider.kakao.rawValue,
+            oauthId: oauthId,
+            idToken: idToken
+        )
+        try await saveToken(response: loginUserResponseDTO)
     }
     
     public func requestAppleLogin(oauthId: String, idToken: String) async throws {
-        try await service.requestOauthRegister(oauthProvider: AuthProvider.apple.rawValue, oauthId: oauthId, idToken: idToken)
+        let loginUserResponseDTO = try await service.requestOauthRegister(
+            oauthProvider: AuthProvider.apple.rawValue,
+            oauthId: oauthId,
+            idToken: idToken
+        )
+        try await saveToken(response: loginUserResponseDTO)
     }
         
     public func requestLogin(
         loginId: String,
         password: String
     ) async throws {
-        TDLogger.debug("Repo: \(loginId), \(password)")
-        do {
-            let loginUserResponseDTO = try await service.requestLogin(loginId: loginId, password: password)
-
-            async let saveAccess = KeyChainManagerWithActor.shared.save(string: loginUserResponseDTO.accessToken, account: KeyChainConstant.accessToken.rawValue)
-            async let saveRefresh = KeyChainManagerWithActor.shared.save(string: loginUserResponseDTO.refreshToken, account: KeyChainConstant.refreshToken.rawValue)
-            async let saveRefreshExpiredAt = KeyChainManagerWithActor.shared.save(string: loginUserResponseDTO.refreshTokenExpiredAt, account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
-            let saveUserIdData = try JSONEncoder().encode(loginUserResponseDTO.userId)
-            async let saveUserId = KeyChainManagerWithActor.shared.save(with: saveUserIdData, account: KeyChainConstant.userId.rawValue)
-            
-            _ = try await (saveAccess, saveRefresh, saveRefreshExpiredAt, saveUserId)
-            TDLogger.info("로그인 정보 키체인 저장 완료")
-            
-        } catch {
-            TDLogger.error("로그인 실패: \(error)")
-            throw error // ✅ 실패 시 예외를 다시 던져서 상위 계층(ViewModel)에서 처리할 수 있도록 함
-        }
+        let loginUserResponseDTO = try await service.requestLogin(loginId: loginId, password: password)
+        try await saveToken(response: loginUserResponseDTO)
+    }
+    
+    public func refreshToken() async throws {
+        let loginUserResponseDTO = try await service.refreshToken()
+        try await saveToken(response: loginUserResponseDTO)
+    }
+    
+    private func saveToken(response: LoginUserResponseDTO) async throws {
+        let accessToken = response.accessToken
+        let refreshToken = response.refreshToken
+        let refreshTokenExpiredAt = response.refreshTokenExpiredAt
+        let userId = response.userId
+        let token = (accessToken, refreshToken, refreshTokenExpiredAt, userId)
+        try await TDTokenManager.shared.saveToken(token)
     }
 }
-
-

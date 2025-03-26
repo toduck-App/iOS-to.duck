@@ -11,9 +11,8 @@ final class AuthViewModel: NSObject, BaseViewModel {
     }
     
     enum Output {
-        case loginSuccess(userID: String, idToken: String)
+        case loginSuccess
         case loginFailure(error: String)
-        case tokenReceived(idToken: String?, authCode: String?)
     }
     
     private let kakaoLoginUseCase: KakaoLoginUseCase
@@ -45,6 +44,7 @@ final class AuthViewModel: NSObject, BaseViewModel {
     private func signInWithKakao() async {
         do {
             try await kakaoLoginUseCase.execute()
+            output.send(.loginSuccess)
         } catch {
             TDLogger.error("Kakao Login Error: \(error)")
             output.send(.loginFailure(error: "카카오 로그인에 실패했습니다."))
@@ -67,18 +67,22 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
-            let userID = appleIdCredential.user
-            
-            // ID Token 및 Authorization Code 처리
             let idToken = appleIdCredential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
-            let authCode = appleIdCredential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
-            
-            if let idToken, let authCode {
+
+            if let idToken {
                 Task {
-                    try await appleLoginUseCase.execute(oauthId: userID, idToken: idToken)
-                    output.send(.loginSuccess(userID: userID, idToken: idToken))
+                    if let payload = await JWTDecoder.shared.decode(token: idToken),
+                       let oauthId = payload["sub"] as? String {
+                        try await appleLoginUseCase.execute(oauthId: oauthId, idToken: idToken)
+                        output.send(.loginSuccess)
+                    } else {
+                        output.send(.loginFailure(error: "idToken 디코딩 실패 또는 sub 없음"))
+                    }
                 }
+            } else {
+                output.send(.loginFailure(error: "idToken 없음"))
             }
+
         default:
             output.send(.loginFailure(error: "알 수 없는 인증 응답"))
         }

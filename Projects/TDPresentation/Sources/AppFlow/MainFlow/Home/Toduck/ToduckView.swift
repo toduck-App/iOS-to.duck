@@ -1,4 +1,5 @@
 import UIKit
+import TDCore
 import TDDesign
 import SnapKit
 import Then
@@ -6,9 +7,9 @@ import Lottie
 
 final class ToduckView: BaseView {
     // MARK: - UI Components
-    private let lottieView = LottieAnimationView(
-        name: "toduckStudy",
-        bundle: Bundle(identifier: "to.duck.toduck.design")!
+    let lottieView = LottieAnimationView(
+        name: "toduckFood",
+        bundle: Bundle(identifier: Constant.toduckDesignBundle)!
     ).then {
         $0.backgroundColor = .clear
         $0.contentMode = .scaleAspectFit
@@ -63,7 +64,7 @@ final class ToduckView: BaseView {
     }
     
     override func configure() {
-        backgroundColor = .white
+        backgroundColor = TDColor.Neutral.neutral50
         scheduleContainerView.backgroundColor = .white
         scheduleContainerView.layer.cornerRadius = LayoutConstants.containerCornerRadius
         setupscheduleSegmentedControl()

@@ -46,6 +46,8 @@ public enum TDImage {
     public static let reportFillSmall = TDDesignAsset.Images.reportFillSmall.image
     public static let loginToduck = TDDesignAsset.Images.loginToduck.image
     public static let blockImage = TDDesignAsset.Images.blockMedium.image
+    public static let photo = TDDesignAsset.Images.photoMedium.image
+    public static let plus = TDDesignAsset.Images.plusMedium.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
@@ -53,7 +55,7 @@ public enum TDImage {
     
     public enum CheckBox {
         public static let empty = TDDesignAsset.Images.emptyCheckBox.image
-        public static let filled = TDDesignAsset.Images.back1CheckBox.image
+        public static let back1 = TDDesignAsset.Images.back1CheckBox.image
         public static let back2 = TDDesignAsset.Images.back2CheckBox.image
         public static let back3 = TDDesignAsset.Images.back3CheckBox.image
         public static let back4 = TDDesignAsset.Images.back4CheckBox.image
@@ -221,12 +223,27 @@ public enum TDImage {
     }
     
     public enum Mood {
-        public static let sad = TDDesignAsset.Images.sadMood.image
         public static let happy = TDDesignAsset.Images.happyMood.image
+        public static let good = TDDesignAsset.Images.goodMood.image
+        public static let sad = TDDesignAsset.Images.sadMood.image
         public static let angry = TDDesignAsset.Images.angryMood.image
-        public static let anxiety = TDDesignAsset.Images.anxietyMood.image
-        public static let calmness = TDDesignAsset.Images.calmnessMood.image
+        public static let anxious = TDDesignAsset.Images.anxietyMood.image
         public static let tired = TDDesignAsset.Images.tiredMood.image
+        public static let sick = TDDesignAsset.Images.sickMood.image
+        public static let soso = TDDesignAsset.Images.sosoMood.image
+        public static let love = TDDesignAsset.Images.loveMood.image
+    }
+    
+    public enum MoodCircle {
+        public static let happy = TDDesignAsset.Images.happyCircle.image
+        public static let good = TDDesignAsset.Images.goodCircle.image
+        public static let sad = TDDesignAsset.Images.sadCircle.image
+        public static let angry = TDDesignAsset.Images.angryCircle.image
+        public static let anxious = TDDesignAsset.Images.anxietyCircle.image
+        public static let tired = TDDesignAsset.Images.tiredCircle.image
+        public static let sick = TDDesignAsset.Images.sickCircle.image
+        public static let soso = TDDesignAsset.Images.sosoCircle.image
+        public static let love = TDDesignAsset.Images.loveCircle.image
     }
     
     public enum DiaryPercent {
@@ -273,6 +290,7 @@ public enum TDImage {
     public enum Pen {
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
+        public static let penNeutralColor = TDDesignAsset.Images.penNeutralColor.image
     }
     
     public enum Sort {

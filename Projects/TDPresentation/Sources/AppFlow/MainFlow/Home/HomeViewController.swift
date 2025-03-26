@@ -1,4 +1,5 @@
 import TDDesign
+import TDCore
 import UIKit
 
 final class HomeViewController: BaseViewController<BaseView> {
@@ -32,22 +33,67 @@ final class HomeViewController: BaseViewController<BaseView> {
         segmentedControl.addAction(UIAction { [weak self] _ in
             self?.updateView()
         }, for: .valueChanged)
-        
-        segmentedControl.selectedSegmentIndex = 0
     }
     
     private func setupNavigationBar() {
-        setupNavigationBar(style: .home, navigationDelegate: coordinator!) { [weak self] in
+        // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
+        let calendarButton = UIButton(type: .custom)
+        calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
+        calendarButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapCalendarButton()
+        }, for: .touchUpInside)
+        
+        let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
+        toduckLogoImageView.contentMode = .scaleAspectFit
+        
+        let leftBarButtonItems = [
+            UIBarButtonItem(customView: calendarButton),
+            UIBarButtonItem(customView: toduckLogoImageView)
+        ]
+        
+        navigationItem.leftBarButtonItems = leftBarButtonItems
+        
+        // 우측 네비게이션 바 버튼 설정 (알림)
+        let alarmButton = UIButton(type: .custom)
+        alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
+        alarmButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.didTapAlarmButton()
-        }
+            TDLogger.debug("홈 화면 네비게이션 우측 알람 버튼 클릭")
+        }, for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
     }
     
     // MARK: - View Update
     private func updateView() {
-        let newViewController = getViewController(for: segmentedControl.selectedSegmentIndex)
+        let newViewController = getViewController(for: segmentedControl.selectedIndex)
         guard currentViewController !== newViewController else { return }
         
+        updateNavigationBarColor(for: segmentedControl.selectedIndex)
         replaceCurrentViewController(with: newViewController)
+    }
+    
+    private func updateNavigationBarColor(for index: Int) {
+        if index == 0 {
+            navigationController?.navigationBar.barTintColor = TDColor.Neutral.neutral50
+            navigationController?.navigationBar.backgroundColor = TDColor.Neutral.neutral50
+            view.backgroundColor = TDColor.Neutral.neutral50
+            segmentedControl.tintColor = TDColor.Neutral.neutral50
+            segmentedControl.updateIndicatorColor(
+                foreground: TDColor.Neutral.neutral800,
+                background: TDColor.Neutral.neutral50
+            )
+        } else {
+            navigationController?.navigationBar.barTintColor = TDColor.baseWhite
+            navigationController?.navigationBar.backgroundColor = TDColor.baseWhite
+            view.backgroundColor = TDColor.baseWhite
+            segmentedControl.tintColor = TDColor.baseWhite
+            
+            segmentedControl.updateIndicatorColor(
+                foreground: TDColor.Neutral.neutral800,
+                background: TDColor.baseWhite
+            )
+        }
     }
     
     private func getViewController(for index: Int) -> UIViewController {
@@ -95,8 +141,9 @@ final class HomeViewController: BaseViewController<BaseView> {
 
 // MARK: - EventMakorDelegate
 extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode) {
-        coordinator?.didTapEventMakor(mode: mode)
+    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
+        guard let selectedDate else { return }
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
     }
 }
 

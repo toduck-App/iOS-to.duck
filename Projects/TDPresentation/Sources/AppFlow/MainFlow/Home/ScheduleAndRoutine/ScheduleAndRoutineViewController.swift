@@ -26,6 +26,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
     )
     // MARK: - Properties
     private let mode: Mode
+    private var selectedDate: Date?
     private let scheduleViewModel: ScheduleViewModel?
     private let routineViewModel: RoutineViewModel?
     private let createInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
@@ -56,9 +57,11 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
         super.viewDidAppear(animated)
         
         let today = Date()
+        selectedDate = today
         let calendar = Calendar.current
         let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
         
+        weekCalendarView.select(today)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
     }
     
@@ -115,27 +118,17 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
         )
         eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            self.coordinator?.didTapEventMakor(mode: self.mode)
+            self.coordinator?.didTapEventMakor(mode: self.mode, selectedDate: selectedDate)
         }, for: .touchUpInside)
     }
     
     private func colorForDate(_ date: Date) -> UIColor? {
-        let weekday = Calendar.current.component(.weekday, from: date)
-        
         // 오늘 날짜 확인
         if Calendar.current.isDate(date, inSameDayAs: Date()) {
             return TDColor.Primary.primary500
         }
         
-        // 요일별 색상 설정
-        switch weekday {
-        case 1:  // 일요일
-            return TDColor.Semantic.error
-        case 7:  // 토요일
-            return TDColor.Schedule.text6
-        default:
-            return TDColor.Neutral.neutral800
-        }
+        return TDColor.Neutral.neutral600
     }
 }
 
@@ -172,6 +165,14 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
         titleSelectionColorFor date: Date
     ) -> UIColor? {
         colorForDate(date)
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
+        didSelect date: Date,
+        at monthPosition: FSCalendarMonthPosition
+    ) {
+        selectedDate = date
     }
 }
 

@@ -54,7 +54,7 @@ public final class TDCategoryColorPaletteView: UIView {
     }
     
     private func loadCategoryColors() {
-        categoryColors = (1...14).compactMap { TDColor.ColorPair[$0] }
+        categoryColors = (1...14).compactMap { TDColor.colorPair[$0] }
         categoryColors.append((text: TDColor.Schedule.text15, back: TDColor.baseWhite))
         collectionView.reloadData()
     }
