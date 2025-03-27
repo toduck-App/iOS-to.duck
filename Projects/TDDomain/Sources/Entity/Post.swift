@@ -45,6 +45,22 @@ public struct Post: Identifiable {
         self.category = category
     }
     
+    public init(title: String?, content: String, routine: Routine?, category: [PostCategory]) {
+        self.id = UUID()
+        self.titleText = title
+        self.contentText = content
+        self.routine = routine
+        self.category = category
+        self.isLike = false
+        self.likeCount = 0
+        self.commentCount = 0
+        self.shareCount = 0
+        self.timestamp = Date()
+        // 임시
+        self.user = User(id: UUID(), name: "", icon: nil, title: "임시 사용자", isblock: false)
+        self.imageList = nil
+    }
+    
     public mutating func toggleLike(){
         if isLike && likeCount > 0 {
             likeCount -= 1

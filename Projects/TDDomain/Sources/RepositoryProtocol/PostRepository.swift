@@ -8,10 +8,10 @@ public protocol PostRepository {
 
     // MARK: - Post CRUD
 
-    func createPost(post: Post) async throws -> Bool
-    func updatePost(post: Post) async throws -> Bool
-    func deletePost(postID: Post.ID) async throws -> Bool
+    func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws
+    func updatePost(post: Post) async throws
+    func deletePost(postID: Post.ID) async throws
     func fetchPost(postID: Post.ID) async throws -> Post
-    func reportPost(postID: Post.ID) async throws -> Bool
-    func blockPost(postID: Post.ID) async throws -> Bool
+    func reportPost(postID: Post.ID) async throws
+    func blockPost(postID: Post.ID) async throws 
 }

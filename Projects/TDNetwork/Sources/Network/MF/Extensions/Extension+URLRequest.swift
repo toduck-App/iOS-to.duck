@@ -36,7 +36,8 @@ extension URLRequest {
                     
             case "application/x-www-form-urlencoded":
                 httpBody = try encodeFormURLEncoded(params)
-                    
+            case "image/jpeg":
+                httpBody = params["image"] as? Data
             default:
                 throw MFError.invalidContentType
             }

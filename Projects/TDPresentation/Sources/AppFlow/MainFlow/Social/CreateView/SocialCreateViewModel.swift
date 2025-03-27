@@ -10,17 +10,20 @@ final class SocialCreateViewModel: BaseViewModel {
         case setTitle(String)
         case setContent(String)
         case setImages([Data])
+        case createPost
     }
     
     enum Output {
+        case canCreatePost(Bool)
         case createPost
         case setRoutine
         case setImage
         case failure(String)
+        case success
     }
     
     private(set) var routines: [Routine] = []
-    private(set) var selectedCategory: PostCategory?
+    private(set) var selectedCategory: [PostCategory]?
     private(set) var selectedRoutine: Routine?
     private(set) var images: [Data] = []
     private(set) var title: String = ""
@@ -28,7 +31,13 @@ final class SocialCreateViewModel: BaseViewModel {
     
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private var category: PostCategory?
+    private var category: [PostCategory] = []
+    
+    private let createPostUseCase: CreatePostUseCase
+    
+    init(createPostUseCase: CreatePostUseCase) {
+        self.createPostUseCase = createPostUseCase
+    }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
@@ -39,11 +48,13 @@ final class SocialCreateViewModel: BaseViewModel {
             case .setRoutine(let routine):
                 setRoutine(routine)
             case .setContent(let content):
-                break
+                setContent(content)
             case .setImages(let data):
                 setImages(data)
             case .setTitle(let title):
-                break
+                setTitle(title)
+            case .createPost:
+                Task { await self.createPost() }
             }
         }.store(in: &cancellables)
         
@@ -52,9 +63,37 @@ final class SocialCreateViewModel: BaseViewModel {
 }
 
 extension SocialCreateViewModel {
+    private func createPost() async {
+        let post = Post(
+            title: title,
+            content: content,
+            routine: selectedRoutine,
+            category: category
+        )
+        
+        let image = images.map { ("\(UUID().uuidString).jpeg", $0) }
+        do {
+            try await createPostUseCase.execute(post: post, image: image)
+            output.send(.success)
+        } catch {
+            output.send(.failure(error.localizedDescription))
+        }
+
+    }
+    
+    private func setTitle(_ title: String) {
+        self.title = title
+        validateCreatePost()
+    }
     private func setCategory(at index: Int) {
-        let category = PostCategory.allCases[safe: index]
-        self.category = category
+        let category = PostCategory.allCases[index]
+        
+        if self.category.contains(category) {
+            self.category.removeAll { $0 == category }
+            return
+        }
+        self.category.append(category)
+        validateCreatePost()
     }
     
     private func setRoutine(_ routine: Routine) {
@@ -67,6 +106,7 @@ extension SocialCreateViewModel {
             return
         }
         self.content = content
+        validateCreatePost()
     }
     
     private func setImages(_ images: [Data]) {
@@ -76,5 +116,13 @@ extension SocialCreateViewModel {
         }
         self.images = images
         output.send(.setImage)
+    }
+    
+    private func validateCreatePost() {
+        if title.isEmpty || content.isEmpty || category.isEmpty {
+            output.send(.canCreatePost(false))
+            return
+        }
+        output.send(.canCreatePost(true))
     }
 }

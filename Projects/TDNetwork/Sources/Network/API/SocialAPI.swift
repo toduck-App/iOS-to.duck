@@ -1,4 +1,5 @@
 import Foundation
+import TDData
 import TDCore
 import TDDomain
 
@@ -7,7 +8,7 @@ public enum SocialAPI {
     case searchPost(keyword: String, category: PostCategory)
     case togglePostLike(postId: String)
     case bringUserRoutine(routine: Routine)
-    case createPost(post: Post)
+    case createPost(post: TDPostCreateRequestDTO)
     case updatePost(post: Post)
     case deletePost(postId: String)
     case fetchPost(postId: String)
@@ -47,7 +48,7 @@ extension SocialAPI: MFTarget {
         case .bringUserRoutine(let routine):
             "/routines/\(routine.id)"
         case .createPost:
-            "/posts"
+            "/v1/socials"
         case .updatePost(let post):
             "/posts/\(post.id)"
         case .deletePost(let postId):
@@ -172,18 +173,28 @@ extension SocialAPI: MFTarget {
              .bringUserRoutine,
              .deletePost,
              .deleteComment:
-            .requestPlain
-        case .createPost(let post), .updatePost(let post):
-            // TODO: - 수정 필요
-            .requestPlain
+            return .requestPlain
+        case .createPost(let post):
+            let params: [String: Any?] = [
+                "title": post.title,
+                "content": post.content,
+                "routineId": post.routineId,
+                "isAnonymous": post.isAnonymous,
+                "socialCategoryIds": post.socialCategoryIds,
+                "socialImageUrls": post.socialImageUrls
+            ]
+            
+            return .requestParameters(parameters: params.compactMapValues { $0 })
+        case  .updatePost(let post):
+            return .requestPlain
         case .createComment(let comment), .updateComment(let comment):
-            .requestPlain
+            return .requestPlain
         case .toggleUserFollow:
-            .requestPlain
+            return .requestPlain
         case .reportComment(commentId: let commentId):
-            .requestPlain
+            return .requestPlain
         case .blockComment(commentId: let commentId):
-            .requestPlain
+            return .requestPlain
         }
     }
     

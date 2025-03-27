@@ -21,8 +21,14 @@ public final class PostRepositoryImpl: PostRepository {
     )
     private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
     private var dummyPost = Post.dummy
+    
+    private let socialService: SocialService
+    private let awsService: AwsService
 
-    public init() { }
+    public init(socialService: SocialService, awsService: AwsService) {
+        self.socialService = socialService
+        self.awsService = awsService
+    }
 
     public func fetchPostList(category: PostCategory?) async throws -> [Post] {
         guard let category = category else {
@@ -54,16 +60,33 @@ public final class PostRepositoryImpl: PostRepository {
         return dummyRoutine
     }
 
-    public func createPost(post: Post) async throws -> Bool {
-        return false;
+    public func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws {
+        var imageUrls: [String] = []
+        if let image = image {
+            for (fileName, imageData) in image {
+                let url = try await awsService.requestPresignedUrl(fileName: fileName)
+                try await awsService.requestUploadImage(url: url, data: imageData)
+                imageUrls.append(url.absoluteString)
+            }
+        }
+        
+        let requestDTO = TDPostCreateRequestDTO(
+            title: post.titleText,
+            content: post.contentText,
+            routineId: post.routine?.id,
+            isAnonymous: false,
+            socialCategoryIds: post.category?.compactMap { $0.rawValue } ?? [],
+            socialImageUrls: imageUrls
+        )
+        let responseDTO = try await socialService.requestCreatePost(requestDTO: requestDTO)
     }
 
-    public func updatePost(post: Post) async throws -> Bool {
-        return false;
+    public func updatePost(post: Post) async throws {
+        return
     }
 
-    public func deletePost(postID: Post.ID) async throws -> Bool {
-        return false;
+    public func deletePost(postID: Post.ID) async throws  {
+        return
     }
 
     public func fetchPost(postID: Post.ID) async throws -> Post {
@@ -74,11 +97,11 @@ public final class PostRepositoryImpl: PostRepository {
         return post
     }
 
-    public func reportPost(postID: Post.ID) async throws -> Bool {
-        return false;
+    public func reportPost(postID: Post.ID) async throws {
+        return
     }
 
-    public func blockPost(postID: Post.ID) async throws -> Bool {
-        return false;
+    public func blockPost(postID: Post.ID) async throws {
+        return
     }
 }

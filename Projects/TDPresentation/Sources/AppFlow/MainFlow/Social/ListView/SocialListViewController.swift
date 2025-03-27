@@ -78,7 +78,7 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.rawValue) })
+        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.title) })
         setupDataSource()
         layoutView.dropDownHoverView.delegate = self
         layoutView.addPostButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)

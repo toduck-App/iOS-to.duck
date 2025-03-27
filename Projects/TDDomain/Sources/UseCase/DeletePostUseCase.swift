@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DeletePostUseCase {
-    func execute(postID: Post.ID) async throws -> Bool
+    func execute(postID: Post.ID) async throws
 }
 
 public final class DeletePostUseCaseImpl: DeletePostUseCase {
@@ -11,7 +11,7 @@ public final class DeletePostUseCaseImpl: DeletePostUseCase {
         self.repository = repository
     }
     
-    public func execute(postID: Post.ID) async throws -> Bool {
+    public func execute(postID: Post.ID) async throws {
         return try await repository.deletePost(postID: postID)
     }
 }

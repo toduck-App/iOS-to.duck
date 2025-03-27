@@ -80,6 +80,7 @@ open class MFSession {
         
         do {
             let urlRequest = try request.asURLRequest()
+            TDLogger.network(urlRequest.httpBody)
             let (data, response) = try await session.data(for: urlRequest)
             let transformedData = try transformer(data)
             
