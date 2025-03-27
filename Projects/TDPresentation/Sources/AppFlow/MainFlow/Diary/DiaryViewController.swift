@@ -61,6 +61,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     weak var coordinator: DiaryCoordinator?
     private let viewModel: DiaryViewModel
     private let input = PassthroughSubject<DiaryViewModel.Input, Never>()
+    private let dropDownDataSource = DiaryEditType.allCases
     private var cancellables = Set<AnyCancellable>()
     private var selectedDate = Date().normalized
     
@@ -197,11 +198,17 @@ final class DiaryViewController: BaseViewController<BaseView> {
     }
     
     override func configure() {
+        diaryDetailView.dropDownHoverView.delegate = self
+        diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
         calendarContainerView.backgroundColor = TDColor.baseWhite
         calendarHeader.pickerButton.delegate = self
         scrollView.delegate = self
         setupCalendar()
         setupNavigationBar()
+        
+        diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
+            self?.diaryDetailView.dropDownHoverView.showDropDown()
+        }, for: .touchUpInside)
         
         diaryPostButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
@@ -270,6 +277,21 @@ final class DiaryViewController: BaseViewController<BaseView> {
         }
         
         return TDColor.Neutral.neutral800
+    }
+}
+
+// MARK: - TDDropDownDelegate
+
+extension DiaryViewController: TDDropDownDelegate {
+    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let item = DiaryEditType.allCases[indexPath.row]
+        
+        switch item {
+        case .edit:
+            break
+        case .delete:
+            break
+        }
     }
 }
 
