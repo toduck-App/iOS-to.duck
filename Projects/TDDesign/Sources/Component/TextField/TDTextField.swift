@@ -69,7 +69,7 @@ public final class TDTextField: UIView {
     private func setupViews() {
         let mainStack = UIStackView()
         mainStack.axis = .vertical
-        mainStack.spacing = 10
+        mainStack.spacing = 16
         mainStack.alignment = .leading
         addSubview(mainStack)
 
@@ -120,7 +120,7 @@ public final class TDTextField: UIView {
             }
         } else {
             snp.updateConstraints {
-                $0.height.equalTo(56)
+                $0.height.equalTo(48)
             }
         }
     }
@@ -158,8 +158,8 @@ private final class TDTextFieldCore: UITextField, UITextFieldDelegate {
         layer.cornerRadius = 12
         layer.borderWidth = 1
         layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        backgroundColor = TDColor.baseWhite
-        font = TDFont.mediumBody2.font
+        backgroundColor = TDColor.Neutral.neutral50
+        font = TDFont.body4.font
         clearButtonMode = .whileEditing
 
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: frame.height))
@@ -171,7 +171,7 @@ private final class TDTextFieldCore: UITextField, UITextFieldDelegate {
 
     private func layout() {
         snp.updateConstraints {
-            $0.height.equalTo(56)
+            $0.height.equalTo(48)
         }
     }
 
