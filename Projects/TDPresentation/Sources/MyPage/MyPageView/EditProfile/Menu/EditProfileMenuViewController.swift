@@ -86,6 +86,30 @@ extension EditProfileMenuViewController {
     }
 }
 
+// MARK: - UICollectionViewDelegate
+extension EditProfileMenuViewController {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let selectedItem = Constants.mockDataSource[indexPath.row]
+        
+        // TODO: 임시 하드코딩, 이후 Model로 수정
+        // TODO: 로그아웃 미구현
+        switch selectedItem {
+        case "프로필 수정":
+            coordinator?.didTapEditProfileButton()
+        case "회원 정보 수정":
+            coordinator?.didTapEditInformationButton()
+        case "비밀번호 수정":
+            coordinator?.didTapEditPasswordButton()
+        case "회원 탈퇴":
+            coordinator?.didTapWithdrawButton()
+        default: break
+        }
+    }
+}
+
 // MARK: - UICollectionViewDelegateFlowLayout
 extension EditProfileMenuViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(

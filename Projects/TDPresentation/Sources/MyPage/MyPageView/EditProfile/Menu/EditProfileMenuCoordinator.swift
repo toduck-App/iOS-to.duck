@@ -36,3 +36,46 @@ extension EditProfileMenuCoordinator: CoordinatorFinishDelegate {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }
+
+// MARK: - Navigation Delegate
+extension EditProfileMenuCoordinator {
+    func didTapEditProfileButton() {
+        let editProfileCoordinator = EditProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        editProfileCoordinator.finishDelegate = self
+        childCoordinators.append(editProfileCoordinator)
+        editProfileCoordinator.start()
+    }
+    
+    func didTapEditInformationButton() {
+        let editInformationCoordinator = EditInformationCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        editInformationCoordinator.finishDelegate = self
+        childCoordinators.append(editInformationCoordinator)
+        editInformationCoordinator.start()
+    }
+    
+    func didTapEditPasswordButton() {
+        let editPasswordCoordinator = EditPasswordCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        editPasswordCoordinator.finishDelegate = self
+        childCoordinators.append(editPasswordCoordinator)
+        editPasswordCoordinator.start()
+    }
+    
+    func didTapWithdrawButton() {
+        let withdrawCoordinator = WithdrawCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        withdrawCoordinator.finishDelegate = self
+        childCoordinators.append(withdrawCoordinator)
+        withdrawCoordinator.start()
+    }
+}
