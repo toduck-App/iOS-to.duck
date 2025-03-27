@@ -10,13 +10,16 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
     private var cancellables = Set<AnyCancellable>()
     private var isAtBottom = false
     private var isMoodSelected = false
+    private var isEdit: Bool
     weak var coordinator: DiaryMakorCoordinator?
     
     // MARK: - Initializer
     init(
-        viewModel: DiaryMakorViewModel
+        viewModel: DiaryMakorViewModel,
+        isEdit: Bool
     ) {
         self.viewModel = viewModel
+        self.isEdit = isEdit
         super.init()
     }
     
@@ -46,6 +49,7 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
     }
     
     override func configure() {
+        layoutView.isEdit = isEdit
         layoutView.scrollView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
     }

@@ -9,20 +9,23 @@ final class DiaryMakorCoordinator: Coordinator {
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
     private let selectedDate: Date
+    private let isEdit: Bool
 
     init(
         navigationController: UINavigationController,
         injector: DependencyResolvable,
-        selectedDate: Date
+        selectedDate: Date,
+        isEdit: Bool
     ) {
         self.navigationController = navigationController
         self.injector = injector
         self.selectedDate = selectedDate
+        self.isEdit = isEdit
     }
     
     func start() {
         let viewModel = DiaryMakorViewModel()
-        let diaryMakorViewController = DiaryMakorViewController(viewModel: viewModel)
+        let diaryMakorViewController = DiaryMakorViewController(viewModel: viewModel, isEdit: isEdit)
         diaryMakorViewController.coordinator = self
         navigationController.pushTDViewController(diaryMakorViewController, animated: true)
     }

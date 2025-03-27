@@ -205,7 +205,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         diaryPostButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate)
+            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate, isEdit: viewModel.selectedDiary != nil)
         }, for: .touchUpInside)
     }
     

@@ -145,10 +145,6 @@ final class DiaryMakorView: BaseView {
         
         // 버튼
         noticeSnackBarView.addSubview(noticeSnackBarLabel)
-        if isEdit {
-            buttonStackView.addArrangedSubview(deleteButton)
-        }
-        buttonStackView.addArrangedSubview(saveButton)
     }
     
     override func layout() {
@@ -239,8 +235,10 @@ final class DiaryMakorView: BaseView {
             deleteButton.layer.borderWidth = 1
             deleteButton.layer.borderColor = TDColor.Semantic.error.cgColor
             buttonStackView.addArrangedSubview(deleteButton)
+            buttonStackView.addArrangedSubview(saveButton)
         } else {
             deleteButton.removeFromSuperview()
+            buttonStackView.addArrangedSubview(saveButton)
         }
     }
 }
