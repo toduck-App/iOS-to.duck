@@ -12,6 +12,6 @@ public final class CreateScheduleUseCaseImpl: CreateScheduleUseCase {
     }
     
     public func execute(schedule: Schedule) async throws {
-        try await scheduleRepository.createSchedule(schedule: schedule).get()
+        try await scheduleRepository.createSchedule(schedule: schedule)
     }
 }

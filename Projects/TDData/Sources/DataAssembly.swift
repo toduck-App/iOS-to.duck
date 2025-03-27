@@ -36,7 +36,10 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
         
         container.register(ScheduleRepository.self) { _ in
-            return ScheduleRepositoryImpl()
+            guard let service = container.resolve(ScheduleService.self) else {
+                fatalError("ScheduleService is not registered")
+            }
+            return ScheduleRepositoryImpl(service: service)
         }.inObjectScope(.container)
             
         container.register(UserRepository.self) { _ in

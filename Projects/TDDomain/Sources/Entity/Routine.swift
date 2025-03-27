@@ -15,7 +15,7 @@ public struct Routine: Eventable, Identifiable {
     public let date: Date?
     public let time: Date?
     public let repeatDays: [TDWeekDay]?
-    public let alarmTimes: [AlarmType]?
+    public let alarmTime: AlarmType?
     public let memo: String?
     public let recommendedRoutines: [String]?
     public let isFinished: Bool
@@ -34,7 +34,7 @@ public struct Routine: Eventable, Identifiable {
         date: Date?,
         time: Date?,
         repeatDays: [TDWeekDay]?,
-        alarmTimes: [AlarmType]?,
+        alarmTime: AlarmType?,
         memo: String?,
         recommendedRoutines: [String]?,
         isFinished: Bool,
@@ -48,7 +48,7 @@ public struct Routine: Eventable, Identifiable {
         self.date = date
         self.time = time
         self.repeatDays = repeatDays
-        self.alarmTimes = alarmTimes
+        self.alarmTime = alarmTime
         self.memo = memo
         self.recommendedRoutines = recommendedRoutines
         self.isFinished = isFinished
@@ -77,7 +77,7 @@ extension Routine {
             date: Date(),
             time: Date(),
             repeatDays: nil,
-            alarmTimes: nil,
+            alarmTime: nil,
             memo: "물만 마셔도 피부가 좋아진다나, 뭐라나,, ~~",
             recommendedRoutines: nil,
             isFinished: false
@@ -91,7 +91,7 @@ extension Routine {
             date: Date(),
             time: Date(),
             repeatDays: [.friday, .saturday],
-            alarmTimes: [.oneHourBefore],
+            alarmTime: .oneHourBefore,
             memo: "감정 기록으로 오늘 하루를 되돌아보며 마무리",
             recommendedRoutines: nil,
             isFinished: false
@@ -105,7 +105,7 @@ extension Routine {
             date: Date(),
             time: Date().addingTimeInterval(60 * 60 * 2),
             repeatDays: [.saturday],
-            alarmTimes: nil,
+            alarmTime: nil,
             memo: "눈 뜨자마자 이부자리 정리하는 사람은 성공한다더라..",
             recommendedRoutines: nil,
             isFinished: false
@@ -119,7 +119,7 @@ extension Routine {
             date: Date(),
             time: Date(),
             repeatDays: nil,
-            alarmTimes: nil,
+            alarmTime: nil,
             memo: "찌뿌둥한 아침, 스트레칭으로 몸도 정신도 깨우기!",
             recommendedRoutines: nil,
             isFinished: false
@@ -133,7 +133,7 @@ extension Routine {
             date: Date(),
             time: nil,
             repeatDays: nil,
-            alarmTimes: nil,
+            alarmTime: nil,
             memo: "지갑, 차키, 에어팟, 접이식 우산",
             recommendedRoutines: nil,
             isFinished: false
@@ -147,7 +147,7 @@ extension Routine {
             date: Date(),
             time: Date().addingTimeInterval(60 * 60 * 7),
             repeatDays: nil,
-            alarmTimes: nil,
+            alarmTime: nil,
             memo: "시간 날 때 마다 틈틈히 읽어두기!",
             recommendedRoutines: nil,
             isFinished: false
@@ -161,7 +161,7 @@ extension Routine {
             date: Date(),
             time: nil,
             repeatDays: nil,
-            alarmTimes: nil,
+            alarmTime: nil,
             memo: "더 이상 미룰 수 없다. 다이어트.",
             recommendedRoutines: nil,
             isFinished: false

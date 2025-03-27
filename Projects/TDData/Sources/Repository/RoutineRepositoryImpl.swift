@@ -16,7 +16,7 @@ public final class RoutineRepositoryImpl: RoutineRepository {
                 date: nil,
                 time: nil,
                 repeatDays: nil,
-                alarmTimes: nil,
+                alarmTime: nil,
                 memo: nil,
                 recommendedRoutines: nil,
                 isFinished: false

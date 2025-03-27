@@ -84,6 +84,14 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                         } ?? [])
                 case .savedEvent:
                     self?.navigationController?.popViewController(animated: true)
+                case .failedToSaveEvent:
+                    let alert = UIAlertController(
+                        title: "저장 실패",
+                        message: "일정을 저장하는 데 실패했습니다.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    self?.present(alert, animated: true)
                 }
             }.store(in: &cancellables)
     }
@@ -97,6 +105,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         eventMakorView.repeatDayForm.delegate = self
         eventMakorView.alarmForm.delegate = self
         eventMakorView.lockForm.delegate = self
+        eventMakorView.locationForm.delegate = self
         eventMakorView.memoTextView.delegate = self
     }
     
@@ -111,18 +120,12 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     func updateSelectedDate(startDate: Date, endDate: Date?) {
-        let backendFormatter = DateFormatter() // ViewModel 전달용 포맷터
-        backendFormatter.dateFormat = "yyyy-MM-dd"
-        
-        let displayFormatter = DateFormatter() // 화면 표시용 포맷터
-        displayFormatter.dateFormat = "M월 d일"
-        
-        let startDateForBackend = backendFormatter.string(from: startDate)
-        let startDateForDisplay = displayFormatter.string(from: startDate)
+        let startDateForBackend = startDate.convertToString(formatType: .yearMonthDay)
+        let startDateForDisplay = startDate.convertToString(formatType: .monthDay)
         
         if let endDate {
-            let endDateForBackend = backendFormatter.string(from: endDate)
-            let endDateForDisplay = displayFormatter.string(from: endDate)
+            let endDateForBackend = endDate.convertToString(formatType: .yearMonthDay)
+            let endDateForDisplay = endDate.convertToString(formatType: .monthDay)
             
             // 여러 기간 선택 시
             eventMakorView.dateForm.updateDescription("\(startDateForDisplay) - \(endDateForDisplay)")
@@ -135,13 +138,6 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     func updateSelectedTime(isAllDay: Bool, isAM: Bool, hour: Int, minute: Int) {
-        let backendFormatter = DateFormatter() // ViewModel 전달용 포맷터
-        backendFormatter.dateFormat = "HH:mm"
-        
-        let displayFormatter = DateFormatter() // 화면 표시용 포맷터
-        displayFormatter.locale = Locale(identifier: "ko_KR")
-        displayFormatter.dateFormat = "a h:mm"
-        
         if isAllDay {
             // "종일"로 표시 및 입력 이벤트 전송
             eventMakorView.timeForm.updateDescription("종일")
@@ -155,7 +151,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                 return Calendar.current.date(from: dateComponents) ?? Date()
             }()
             
-            let displayTime = displayFormatter.string(from: selectedDate)
+            let displayTime = selectedDate.convertToString(formatType: .time12HourEnglish)
             eventMakorView.timeForm.updateDescription(displayTime)
             input.send(.selectTime(isAllDay, selectedDate))
             TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
@@ -175,7 +171,7 @@ extension EventMakorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         input.send(.selectCategory(
             color.convertToHexString() ?? "",
-            UIImage.reverseCategoryDictionary[image] ?? "none"
+            UIImage.reverseCategoryDictionary[image] ?? "None"
         ))
     }
 }
@@ -185,7 +181,13 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == eventMakorView.titleForm {
             input.send(.updateTitleTextField(text))
-        } else {
+        }
+        
+        if textField == eventMakorView.memoTextView {
+            input.send(.updateMemoTextView(text))
+        }
+        
+        if textField == eventMakorView.locationForm {
             input.send(.updateLocationTextField(text))
         }
     }
@@ -194,7 +196,7 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
 // MARK: - TextViewDelegate
 extension EventMakorViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
-        input.send(.updateTextView(text))
+        input.send(.updateMemoTextView(text))
     }
 }
 
@@ -209,13 +211,14 @@ extension EventMakorViewController: TDFormButtonsViewDelegate {
     func formButtonsView(
         _ formButtonsView: TDFormButtonsView,
         type: TDFormButtonsViewType,
-        didSelectIndex selectedIndex: Int
+        didSelectIndex selectedIndex: Int,
+        isSelected: Bool
     ) {
         switch type {
         case .repeatDay:
-            input.send(.selectRepeatDay(index: selectedIndex))
+            input.send(.selectRepeatDay(index: selectedIndex, isSelected: isSelected))
         case .alarm:
-            input.send(.selectAlarm(index: selectedIndex))
+            input.send(.selectAlarm(index: selectedIndex, isSelected: isSelected))
         }
     }
 }

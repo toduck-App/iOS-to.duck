@@ -7,7 +7,7 @@ struct EventDisplayItem: EventPresentable {
     let title: String
     let categoryIcon: UIImage?
     let categoryColor: UIColor
-    let alarmTimes: [String]?
+    let alarmTime: String?
     let date: String?
     let time: String?
     let repeatDays: String?
@@ -22,7 +22,7 @@ struct EventDisplayItem: EventPresentable {
         title: String,
         categoryIcon: UIImage?,
         categoryColor: UIColor,
-        alarmTimes: [String]?,
+        alarmTime: String?,
         date: String?,
         time: String?,
         repeatDays: String?,
@@ -36,7 +36,7 @@ struct EventDisplayItem: EventPresentable {
         self.title = title
         self.categoryIcon = categoryIcon
         self.categoryColor = categoryColor
-        self.alarmTimes = alarmTimes
+        self.alarmTime = alarmTime
         self.date = date
         self.time = time
         self.repeatDays = repeatDays
@@ -49,7 +49,7 @@ struct EventDisplayItem: EventPresentable {
     
     init(
         from event: EventPresentable,
-        alarmTimes: [String]? = nil,
+        alarmTime: String? = nil,
         date: String? = nil,
         repeatDays: String? = nil,
         place: String? = nil,
@@ -59,7 +59,7 @@ struct EventDisplayItem: EventPresentable {
         self.title = event.title
         self.categoryIcon = event.categoryIcon
         self.categoryColor = event.categoryColor
-        self.alarmTimes = alarmTimes
+        self.alarmTime = alarmTime
         self.date = date
         self.time = event.time
         self.repeatDays = repeatDays
@@ -75,7 +75,7 @@ struct EventDisplayItem: EventPresentable {
         self.title = routine.title
         self.categoryIcon = UIImage(named: routine.category.imageName)
         self.categoryColor = routine.category.colorHex.convertToUIColor() ?? .white
-        self.alarmTimes = routine.alarmTimes?.map { $0.rawValue }
+        self.alarmTime = routine.alarmTime?.rawValue
         self.date = nil
         self.time = routine.time?.convertToString()
         self.repeatDays = routine.repeatDays?.map { $0.rawValue }.joined(separator: ", ")
@@ -91,7 +91,7 @@ struct EventDisplayItem: EventPresentable {
         self.title = schedule.title
         self.categoryIcon = UIImage(named: schedule.category.imageName)
         self.categoryColor = schedule.category.colorHex.convertToUIColor() ?? .white
-        self.alarmTimes = schedule.alarmTimes?.map { $0.rawValue }
+        self.alarmTime = schedule.alarmTime?.rawValue
         self.date = nil
         self.time = schedule.time?.convertToString()
         self.repeatDays = schedule.repeatDays?.map { $0.rawValue }.joined(separator: ", ")

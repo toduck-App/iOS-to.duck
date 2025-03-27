@@ -3,18 +3,25 @@ import TDDomain
 import Foundation
 
 public final class ScheduleRepositoryImpl: ScheduleRepository {
-    public init() { }
+    private let service: ScheduleService
     
-    public func createSchedule(schedule: Schedule) async -> Result<Void, TDDataError> {
-        return .success(())
+    public init(service: ScheduleService) {
+        self.service = service
     }
     
-    public func fetchScheduleList() async -> Result<[Schedule], TDDataError> {
-        return .success([])
+    public func createSchedule(schedule: Schedule) async throws {
+        let scheduleRequestDTO = ScheduleRequestDTO(schedule: schedule)
+        try await service.create(schedule: scheduleRequestDTO)
     }
     
-    public func fetchSchedule() async -> Result<Schedule, TDDataError> {
-        return .success(
+    public func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
+        let responseDTO = try await service.fetchScheduleList(startDate: startDate, endDate: endDate)
+        TDLogger.debug("\(#function) - \(responseDTO)")
+        return responseDTO.content.scheduleHeadDtos.map { $0.convertToSchedule() }
+    }
+    
+    public func fetchSchedule() async throws -> Schedule {
+        return
             Schedule(
                 id: 0,
                 title: "title",
@@ -24,23 +31,23 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
                 isAllDay: false,
                 time: nil,
                 repeatDays: nil,
-                alarmTimes: nil,
+                alarmTime: nil,
                 place: nil,
                 memo: nil,
-                isFinished: false
+                isFinished: false,
+                scheduleRecords: nil
             )
-        )
     }
     
-    public func updateSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func updateSchedule(scheduleId: Int) async throws {
+        
     }
     
-    public func deleteSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func deleteSchedule(scheduleId: Int) async throws {
+        
     }
     
-    public func moveTomorrowSchedule(scheduleId: Int) async -> Result<Void, TDDataError> {
-        return .success(())
+    public func moveTomorrowSchedule(scheduleId: Int) async throws {
+        
     }
 }

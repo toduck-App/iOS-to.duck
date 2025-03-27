@@ -24,7 +24,7 @@ final class RoutineShareViewModel: BaseViewModel {
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
-    private var alarms: [AlarmType]?
+    private var alarm: AlarmType?
     private var memo: String?
     
     private let output = PassthroughSubject<Output, Never>()
@@ -42,7 +42,7 @@ final class RoutineShareViewModel: BaseViewModel {
         self.time = routine.time
         self.isPublic = routine.isPublic
         self.repeatDays = routine.repeatDays
-        self.alarms = routine.alarmTimes
+        self.alarm = routine.alarmTime
         self.memo = routine.memo
         self.createRoutineUseCase = createRoutineUseCase
     }
@@ -84,7 +84,7 @@ final class RoutineShareViewModel: BaseViewModel {
                 date: nil,
                 time: time,
                 repeatDays: repeatDays,
-                alarmTimes: alarms,
+                alarmTime: alarm,
                 memo: memo,
                 recommendedRoutines: nil,
                 isFinished: false

@@ -9,5 +9,9 @@ public struct ServiceAssembly: Assembly {
         container.register(AuthService.self) { _ in
             return AuthServiceImpl()
         }
+        
+        container.register(ScheduleService.self) { _ in
+            return ScheduleServiceImpl()
+        }
     }
 }

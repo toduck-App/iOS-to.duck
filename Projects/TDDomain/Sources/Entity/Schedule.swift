@@ -9,10 +9,11 @@ public struct Schedule: Eventable {
     public let isAllDay: Bool
     public let time: Date?
     public let repeatDays: [TDWeekDay]?
-    public let alarmTimes: [AlarmType]?
+    public let alarmTime: AlarmType?
     public let place: String?
     public let memo: String?
     public let isFinished: Bool
+    public let scheduleRecords: [ScheduleRecord]?
     
     public var isRepeating: Bool {
         repeatDays != nil || startDate != endDate
@@ -27,10 +28,11 @@ public struct Schedule: Eventable {
         isAllDay: Bool,
         time: Date?,
         repeatDays: [TDWeekDay]?,
-        alarmTimes: [AlarmType]?,
+        alarmTime: AlarmType?,
         place: String?,
         memo: String?,
-        isFinished: Bool
+        isFinished: Bool,
+        scheduleRecords: [ScheduleRecord]?
     ) {
         self.id = id
         self.title = title
@@ -40,41 +42,24 @@ public struct Schedule: Eventable {
         self.isAllDay = isAllDay
         self.time = time
         self.repeatDays = repeatDays
-        self.alarmTimes = alarmTimes
+        self.alarmTime = alarmTime
         self.place = place
         self.memo = memo
         self.isFinished = isFinished
+        self.scheduleRecords = scheduleRecords
     }
 }
 
-extension Schedule {
-    public static let dummy: [Schedule] = [
-        Schedule(
-            id: 0,
-            title: "1번 일정",
-            category: TDCategory(colorHex: "#DEEEFC", imageName: "power"),
-            startDate: "2021-09-01",
-            endDate: "2021-09-01",
-            isAllDay: false,
-            time: Date(),
-            repeatDays: [.friday, .sunday],
-            alarmTimes: [.oneHourBefore],
-            place: "장소1",
-            memo: "메모1",
-            isFinished: false
-        ), Schedule(
-            id: 0,
-            title: "2번 일정",
-            category: TDCategory(colorHex: "#FFE3CC", imageName: "sleep"),
-            startDate: "2021-09-01",
-            endDate: "2022-10-10",
-            isAllDay: false,
-            time: Date(),
-            repeatDays: [.monday],
-            alarmTimes: [.oneHourBefore],
-            place: "장소2",
-            memo: "메모2",
-            isFinished: false
-        )
-    ]
+public struct ScheduleRecord {
+    public let id: Int
+    public let isComplete: Bool
+    public let recordDate: String
+    public let deletedAt: String?
+    
+    public init(id: Int, isComplete: Bool, recordDate: String, deletedAt: String?) {
+        self.id = id
+        self.isComplete = isComplete
+        self.recordDate = recordDate
+        self.deletedAt = deletedAt
+    }
 }
