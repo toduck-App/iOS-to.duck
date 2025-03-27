@@ -35,7 +35,6 @@ public enum TDImage {
     public static let hamburgerSmall = TDDesignAsset.Images.hamburgerSmall.image
     public static let imageSmall = TDDesignAsset.Images.imageSmall.image
     public static let locationSmall = TDDesignAsset.Images.locationSmall.image
-    public static let penSmall = TDDesignAsset.Images.penSmall.image
     public static let sortSmall = TDDesignAsset.Images.sortSmall.image
     public static let timeSmall = TDDesignAsset.Images.timeSmall.image
     public static let fireSmall = TDDesignAsset.Images.fireSmall.image
@@ -288,9 +287,11 @@ public enum TDImage {
     }
     
     public enum Pen {
+        public static let penSmall = TDDesignAsset.Images.penSmall.image
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
         public static let penNeutralColor = TDDesignAsset.Images.penNeutralColor.image
+        public static let penPrimaryColor = TDDesignAsset.Images.penPrimaryColor.image
     }
     
     public enum Sort {
