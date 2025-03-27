@@ -32,11 +32,16 @@ extension UINavigationController {
     }
     
     func updateRightButtonState(to state: UIControl.State) {
-        guard let rightButton = topViewController?.navigationItem.rightBarButtonItem?.customView as? UIButton else { return }
+        guard let container = topViewController?.navigationItem.rightBarButtonItem?.customView,
+              let rightButton = container.subviews.first(where: { $0 is UIButton }) as? UIButton else {
+            return
+        }
         
-        if state == .application {
+        if state == .normal {
+            rightButton.isEnabled = true
             rightButton.isUserInteractionEnabled = true
         } else {
+            rightButton.isEnabled = false
             rightButton.isUserInteractionEnabled = false
         }
     }
@@ -49,10 +54,8 @@ private extension UINavigationController {
     ) -> UIBarButtonItem {
         let container = UIButton(type: .custom)
         let backButtonView = UIImageView(image: TDImage.Direction.leftMedium.withRenderingMode(.alwaysTemplate))
-        let titleLabel = UILabel()
         
-        titleLabel.font = TDFont.boldHeader4.font
-        titleLabel.textColor = TDColor.Neutral.neutral800
+        let titleLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
         titleLabel.text = title
         backButtonView.tintColor = TDColor.Neutral.neutral800
         [backButtonView, titleLabel].forEach { container.addSubview($0) }
@@ -95,11 +98,12 @@ private extension UINavigationController {
         let button = UIButton(type: .system)
         
         button.setTitle(title, for: .normal)
-        button.setTitleColor(TDColor.Neutral.neutral600, for: .normal)
-        button.setTitleColor(TDColor.Neutral.neutral800, for: .application)
+        button.setTitleColor(TDColor.Neutral.neutral600, for: .disabled)
+        button.setTitleColor(TDColor.Neutral.neutral800, for: .normal)
         button.isUserInteractionEnabled = false
         button.titleLabel?.font = font
         button.sizeToFit()
+        button.isEnabled = false
         container.addSubview(button)
         
         if let action {
