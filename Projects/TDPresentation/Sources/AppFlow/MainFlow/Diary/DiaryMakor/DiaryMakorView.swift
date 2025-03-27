@@ -36,10 +36,9 @@ final class DiaryMakorView: BaseView {
     
     // 문장 기록
     let recordTextView = TDFormTextView(
-        image: TDImage.Pen.penNeutralColor,
         title: "문장 기록",
-        titleFont: .boldBody2,
-        titleColor: TDColor.Neutral.neutral600,
+        titleFont: .boldHeader5,
+        titleColor: TDColor.Neutral.neutral800,
         isRequired: false,
         maxCharacter: 200,
         placeholder: "자유롭게 내용을 작성해 주세요.",
@@ -49,7 +48,7 @@ final class DiaryMakorView: BaseView {
     // 사진 기록
     let formPhotoView = TDFormPhotoView(
         titleText: "사진 기록",
-        titleColor: TDColor.Neutral.neutral600,
+        titleColor: TDColor.Neutral.neutral800,
         isRequired: false,
         maxCount: 2
     )
