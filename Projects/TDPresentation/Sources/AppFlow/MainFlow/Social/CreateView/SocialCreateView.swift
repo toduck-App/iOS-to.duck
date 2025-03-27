@@ -5,7 +5,7 @@ import UIKit
 final class SocialCreateView: BaseView {
     // MARK: - UI Properties
     
-    private let scrollView = UIScrollView()
+    private(set) var scrollView = UIScrollView()
     
     /// 기존 `contentView` 대신 stackView 사용
     private let stackView = UIStackView().then {
@@ -47,11 +47,33 @@ final class SocialCreateView: BaseView {
         $0.addDescription("타인의 저작권을 침해한 글")
     }
     
+    let noticeSnackBarView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral700
+        $0.layer.cornerRadius = 8
+    }
+    let noticeSnackBarLabel = TDLabel(
+        labelText: "감정선택은 필수 입력이에요!",
+        toduckFont: .mediumBody3,
+        toduckColor: TDColor.baseWhite
+    )
+    
+    private(set) var saveButton = TDBaseButton(
+        title: "저장",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    private let dummyView = UIView()
+    
     // MARK: - Lifecycle
     
     override func addview() {
         addSubview(scrollView)
+        addSubview(noticeSnackBarView)
+        addSubview(saveButton)
         scrollView.addSubview(stackView)
+        noticeSnackBarView.addSubview(noticeSnackBarLabel)
         
         stackView.addArrangedSubview(socialSelectCategoryView)
         stackView.addArrangedSubview(socialSelectRoutineView)
@@ -60,10 +82,13 @@ final class SocialCreateView: BaseView {
         stackView.addArrangedSubview(formPhotoView)
         stackView.addArrangedSubview(noticeView)
         stackView.addArrangedSubview(warningView)
+        stackView.addArrangedSubview(dummyView)
     }
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
+        saveButton.isEnabled = false
+        noticeSnackBarView.alpha = 0
     }
     
     override func layout() {
@@ -74,6 +99,20 @@ final class SocialCreateView: BaseView {
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(16)
             make.width.equalTo(scrollView.snp.width).offset(-32)
+        }
+        noticeSnackBarView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(saveButton.snp.top).offset(-20)
+            make.height.equalTo(42)
+        }
+        noticeSnackBarLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(16)
+        }
+        saveButton.snp.makeConstraints { make in
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(36)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(56)
         }
         
         socialSelectCategoryView.snp.makeConstraints { make in
@@ -96,6 +135,9 @@ final class SocialCreateView: BaseView {
         }
         warningView.snp.makeConstraints { make in
             make.height.equalTo(138)
+        }
+        dummyView.snp.makeConstraints { make in
+            make.height.equalTo(110)
         }
     }
 }

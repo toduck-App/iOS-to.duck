@@ -170,7 +170,7 @@ final class DiaryMakorView: BaseView {
             make.leading.equalToSuperview()
         }
         infoLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.centerY.equalToSuperview()
             make.trailing.equalToSuperview()
         }
         divideLineView.snp.makeConstraints { make in

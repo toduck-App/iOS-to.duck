@@ -7,17 +7,10 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     weak var coordinator: SocialCreateCoordinator?
 
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
-    private lazy var registerButton = UIBarButtonItem(
-        title: "등록",
-        primaryAction: UIAction {
-            [weak self] _ in
-            self?.didTapRegisterButton()
-        }).then {
-        $0.tintColor = TDColor.Primary.primary500
-    }
 
     private let input = PassthroughSubject<SocialCreateViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var isAtBottom = false
     let viewModel: SocialCreateViewModel!
 
     init(viewModel: SocialCreateViewModel) {
@@ -44,9 +37,13 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         layoutView.socialSelectRoutineView.delegate = self
         layoutView.titleTextFieldView.delegate = self
         layoutView.descriptionTextFieldView.delegate = self
-        navigationItem.rightBarButtonItem = registerButton
         layoutView.socialSelectCategoryView.categorySelectView.chipDelegate = self
         layoutView.socialSelectCategoryView.categorySelectView.setChips(chips)
+        layoutView.scrollView.delegate = self
+        
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            self?.didTapRegisterButton()
+        }, for: .touchUpInside)
     }
 
     override func binding() {
@@ -66,14 +63,14 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                 case .failure:
                     break
                 }
-                updateNavigationBar()
+                updateSaveButton()
             }
             .store(in: &cancellables)
     }
 
-    private func updateNavigationBar() {
+    private func updateSaveButton() {
         let isEnabled = viewModel.selectedCategory != nil && !viewModel.title.isEmpty && !viewModel.content.isEmpty
-        registerButton.isEnabled = isEnabled
+        layoutView.saveButton.isEnabled = isEnabled
     }
 }
 
@@ -136,5 +133,30 @@ extension SocialCreateViewController: TDFormTextViewDelegate {
 extension SocialCreateViewController {
     private func didTapRegisterButton() {
         // TODO: - 등록 버튼 클릭
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension SocialCreateViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentHeight = scrollView.contentSize.height
+        let offsetY = scrollView.contentOffset.y
+        let height = scrollView.frame.size.height
+        
+        if offsetY + height >= contentHeight {
+            if !isAtBottom {
+                isAtBottom = true
+                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
+                    self.layoutView.noticeSnackBarView.alpha = 1
+                } completion: { _ in
+                    UIView.animate(withDuration: 1, delay: 4.0, options: .curveEaseOut) {
+                        self.layoutView.noticeSnackBarView.alpha = 0
+                    }
+                }
+            }
+        } else {
+            isAtBottom = false
+        }
     }
 }
