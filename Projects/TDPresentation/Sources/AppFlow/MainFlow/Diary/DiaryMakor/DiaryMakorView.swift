@@ -226,6 +226,7 @@ final class DiaryMakorView: BaseView {
         diaryMoodLabel.setTitleFont(.boldHeader5)
         diaryMoodLabel.setTitleLabel("감정 선택")
         diaryMoodLabel.setRequiredLabel()
+        saveButton.isEnabled = false
         noticeSnackBarView.alpha = 0
     }
     

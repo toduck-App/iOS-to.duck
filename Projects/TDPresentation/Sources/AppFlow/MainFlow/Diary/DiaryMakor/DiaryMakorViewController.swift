@@ -80,6 +80,8 @@ extension DiaryMakorViewController: DiaryMoodCollectionViewDelegate {
         selectedMood: UIImage
     ) {
         isMoodSelected = true
+        layoutView.saveButton.isEnabled = true
+        layoutView.saveButton.layer.borderWidth = 0
         input.send(.tapCategoryCell(UIImage.reverseMoodDictionary[selectedMood] ?? "HAPPY"))
     }
 }
