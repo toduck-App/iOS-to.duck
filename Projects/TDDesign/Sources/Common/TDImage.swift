@@ -263,6 +263,10 @@ public enum TDImage {
         public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.image
     }
     
+    public enum Illust {
+        public static let withdraw = TDDesignAsset.Images.withdraw.image
+    }
+    
     public enum Pen {
         public static let penMedium = TDDesignAsset.Images.penMedium.image
         public static let penMediumColor = TDDesignAsset.Images.penMediumColor.image
