@@ -14,7 +14,25 @@ public final class TDLabel: UILabel {
     private var toduckColor: UIColor
     
     /// 라벨에 표시할 텍스트
-    private var labelText: String
+    private var labelText: String {
+        didSet {
+            super.text = labelText
+            applyAttributes()
+        }
+    }
+    
+    // MARK: - Override Properties
+    public override var text: String? {
+        get { super.text }
+        set { labelText = newValue ?? "" }
+    }
+    
+    /// TDFont를 통해 font를 관리하므로 UILabel의 기본 프로퍼티인 font의 접근을 제한합니다.
+    @available(*, unavailable)
+    public override var font: UIFont! {
+        get { super.font }
+        set {}
+    }
     
     // MARK: - Initialization
     
@@ -33,10 +51,10 @@ public final class TDLabel: UILabel {
         alignment: NSTextAlignment = .justified,
         toduckColor: UIColor = TDColor.Neutral.neutral800
     ) {
-        self.labelText = labelText
         self.toduckFont = toduckFont
         self.alignment = alignment
         self.toduckColor = toduckColor
+        self.labelText = labelText
         
         super.init(frame: frame)
         applyAttributes()
@@ -63,10 +81,10 @@ public final class TDLabel: UILabel {
     }
     
     public required init?(coder: NSCoder) {
-        self.labelText = ""
         self.toduckFont = TDFont.mediumHeader5
         self.alignment = .justified
         self.toduckColor = TDColor.Neutral.neutral800
+        self.labelText = ""
         
         super.init(coder: coder)
         applyAttributes()
@@ -123,7 +141,16 @@ public final class TDLabel: UILabel {
     /// - Parameter font: 새로 적용할 TDFont
     public func setFont(_ font: TDFont) {
         toduckFont = font
-        applyAttributes()
+        let attributedString = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: labelText))
+        let range = NSRange(location: 0, length: labelText.count)
+        
+        attributedString.addAttribute(
+            .font,
+            value: toduckFont.font,
+            range: range
+        )
+        
+        attributedText = attributedString
     }
     
     /// 라벨의 텍스트 컬러를 변경합니다.
@@ -137,6 +164,23 @@ public final class TDLabel: UILabel {
     /// - Parameter text: 새로 적용할 텍스트
     public func setText(_ text: String) {
         labelText = text
-        applyAttributes()
+    }
+    
+    /// 라벨의 행간을 변경합니다.
+    /// - Parameter lineHeightMultiple: 새로 적용할 행간 (CGFloat)
+    public func setLineHeightMultiple(_ lineHeightMultiple: CGFloat) {
+        let attributedString = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: labelText))
+        let range = NSRange(location: 0, length: labelText.count)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        paragraphStyle.alignment = alignment
+        
+        attributedString.addAttribute(
+            .paragraphStyle,
+            value: paragraphStyle,
+            range: range
+        )
+        
+        attributedText = attributedString
     }
 }
