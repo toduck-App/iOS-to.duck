@@ -90,11 +90,27 @@ public final class PostRepositoryImpl: PostRepository {
     }
 
     public func fetchPost(postID: Post.ID) async throws -> Post {
-        guard let post = dummyPost.filter({ $0.id == postID }).first else {
-            // 에러 정의가 없어서 임시로 구현
-            return Post.dummy[0]
-        }
-        return post
+        let postDTO = try await socialService.requestPost(postID: postID)
+//        let post = Post(
+//            id: postDTO.socialId,
+//            user: User(
+//                id: postDTO.owner.ownerID,
+//                name: postDTO.owner.nickname,
+//                icon: nil,
+//                title: "작심삼일",
+//                isblock: false
+//            ),
+//            contentText: postDTO.content,
+//            imageList: postDTO.images.map { $0.url },
+//            timestamp: postDTO.createdAt,
+//            likeCount: <#T##Int#>,
+//            isLike: <#T##Bool#>,
+//            commentCount: <#T##Int?#>,
+//            shareCount: <#T##Int?#>,
+//            routine: <#T##Routine?#>,
+//            category: <#T##[PostCategory]?#>
+//        )
+        
     }
 
     public func reportPost(postID: Post.ID) async throws {

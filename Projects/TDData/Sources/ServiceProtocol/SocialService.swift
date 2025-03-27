@@ -6,7 +6,7 @@ public protocol SocialService {
     // 소셜 게시글 생성
     func requestCreatePost(requestDTO: TDPostCreateRequestDTO) async throws -> TDPostCreateResponseDTO
     // 게시글 단건 조회
-    func requestPost(postID: Int) async throws
+    func requestPost(postID: Int) async throws -> TDPostDTO
     // 소셜 게시글 삭제
     func requestDeletePost(postID: Int) async throws
     // 소셜 게시글 수정

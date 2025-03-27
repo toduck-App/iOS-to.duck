@@ -54,7 +54,7 @@ extension SocialAPI: MFTarget {
         case .deletePost(let postId):
             "/posts/\(postId)"
         case .fetchPost(let postId):
-            "/posts/\(postId)"
+            "v1/socials/\(postId)"
         case .reportPost(let postId):
             "/posts/\(postId)/report"
         case .blockPost(let postId):

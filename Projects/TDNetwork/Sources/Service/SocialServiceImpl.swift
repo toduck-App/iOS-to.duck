@@ -20,8 +20,9 @@ public struct SocialServiceImpl: SocialService {
         return response.value
     }
     
-    public func requestPost(postID: Int) async throws {
-        return
+    public func requestPost(postID: Int) async throws -> TDPostDTO {
+        let response = try await provider.requestDecodable(of: TDPostDTO.self, .fetchPost(postId: String(postID)))
+        return response.value
     }
     
     public func requestDeletePost(postID: Int) async throws {

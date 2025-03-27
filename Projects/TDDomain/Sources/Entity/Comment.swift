@@ -44,13 +44,7 @@ public extension Comment {
     static let dummy: [Comment] = [
         Comment(
             id: UUID(),
-            user: .init(
-                id: UUID(),
-                name: "꽉꽉",
-                icon: "https://avatars.githubusercontent.com/u/129862357?v=4",
-                title: "작심삼일",
-                isblock: false
-            ),
+            user: User.dummy[0],
             content: """
             평소에 카페인이 들어있는 음식을 줄이시는 것도 좋을 것 같아요
             """,
@@ -59,13 +53,7 @@ public extension Comment {
             likeCount: 1,
             comment: [Comment(
                 id: UUID(),
-                user: .init(
-                    id: UUID(),
-                    name: "오리발",
-                    icon: "https://avatars.githubusercontent.com/u/129862357?v=4",
-                    title: "작심삼일",
-                    isblock: false
-                ),
+                user: User.dummy[0],
                 content: """
                 커피를 끊기가 힘들어서 ㅜㅜ 그래도 오늘부터 노력해봐야겠어요!
                 """,
@@ -77,13 +65,7 @@ public extension Comment {
             ),
             Comment(
                 id: UUID(),
-                user: .init(
-                    id: UUID(),
-                    name: "오리발",
-                    icon: "https://avatars.githubusercontent.com/u/129862357?v=4",
-                    title: "작심삼일",
-                    isblock: false
-                ),
+                user: User.dummy[0],
                 content: """
                 커피를 끊기가 힘들어서 ㅜㅜ 그래도 오늘부터 노력해봐야겠어요!
                 """,
@@ -95,13 +77,7 @@ public extension Comment {
         ),
         Comment(
             id: UUID(),
-            user: .init(
-                id: UUID(),
-                name: "오리발",
-                icon: "https://avatars.githubusercontent.com/u/46300191?v=4",
-                title: "작심삼일",
-                isblock: false
-            ),
+            user: User.dummy[0],
             content: """
             안녕하세요! 제가 비슷한 문제를 겪을 때 사용하는 방법이 있어서
             소개해드릴게요! 혹시 ‘4-7-8 호흡법'이라고 들어보셨나요?
