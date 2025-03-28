@@ -52,11 +52,14 @@ final class SocialCreateView: BaseView {
         $0.layer.cornerRadius = 8
     }
     let noticeSnackBarLabel = TDLabel(
-        labelText: "감정선택은 필수 입력이에요!",
+        labelText: "카테고리와 내용은 필수 입력이에요!",
         toduckFont: .mediumBody3,
         toduckColor: TDColor.baseWhite
     )
     
+    private(set) var buttonContainerView = UIView().then {
+        $0.backgroundColor = TDColor.baseWhite
+    }
     private(set) var saveButton = TDBaseButton(
         title: "저장",
         backgroundColor: TDColor.Primary.primary500,
@@ -66,14 +69,19 @@ final class SocialCreateView: BaseView {
     )
     private let dummyView = UIView()
     
+    // MARK: - Properties
+    
+    var noticeSnackBarBottomConstraint: Constraint?
+    
     // MARK: - Lifecycle
     
     override func addview() {
         addSubview(scrollView)
         addSubview(noticeSnackBarView)
-        addSubview(saveButton)
+        addSubview(buttonContainerView)
         scrollView.addSubview(stackView)
         noticeSnackBarView.addSubview(noticeSnackBarLabel)
+        buttonContainerView.addSubview(saveButton)
         
         stackView.addArrangedSubview(socialSelectCategoryView)
         stackView.addArrangedSubview(socialSelectRoutineView)
@@ -88,7 +96,6 @@ final class SocialCreateView: BaseView {
     override func configure() {
         backgroundColor = TDColor.baseWhite
         saveButton.isEnabled = false
-        noticeSnackBarView.alpha = 0
     }
     
     override func layout() {
@@ -102,15 +109,20 @@ final class SocialCreateView: BaseView {
         }
         noticeSnackBarView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(saveButton.snp.top).offset(-20)
             make.height.equalTo(42)
+            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(-16).constraint
         }
         noticeSnackBarLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview().inset(16)
         }
+        buttonContainerView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(112)
+        }
         saveButton.snp.makeConstraints { make in
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(36)
+            make.centerY.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(56)
         }

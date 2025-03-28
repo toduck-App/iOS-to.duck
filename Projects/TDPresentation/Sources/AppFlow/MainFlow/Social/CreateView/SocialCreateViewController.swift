@@ -140,23 +140,30 @@ extension SocialCreateViewController {
 
 extension SocialCreateViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentHeight = scrollView.contentSize.height
         let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
         
-        if offsetY + height >= contentHeight {
-            if !isAtBottom {
-                isAtBottom = true
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
-                    self.layoutView.noticeSnackBarView.alpha = 1
-                } completion: { _ in
-                    UIView.animate(withDuration: 1, delay: 4.0, options: .curveEaseOut) {
-                        self.layoutView.noticeSnackBarView.alpha = 0
-                    }
-                }
-            }
+        if offsetY + height >= contentHeight - 10 {
+            showSnackBar()
         } else {
-            isAtBottom = false
+            hideSnackBar()
+        }
+    }
+    
+    private func showSnackBar() {
+        guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
+        constraint.update(offset: -20)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
+        }
+    }
+
+    private func hideSnackBar() {
+        guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
+        constraint.update(offset: 50)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
         }
     }
 }
