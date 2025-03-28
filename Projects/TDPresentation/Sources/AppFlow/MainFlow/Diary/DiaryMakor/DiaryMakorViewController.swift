@@ -8,7 +8,6 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
     private let viewModel: DiaryMakorViewModel
     private let input = PassthroughSubject<DiaryMakorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private var isAtBottom = false
     private var isMoodSelected = false
     private var isEdit: Bool
     weak var coordinator: DiaryMakorCoordinator?
@@ -36,14 +35,6 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .notificationScrollToBottom:
-                    UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
-                        self?.layoutView.noticeSnackBarView.alpha = 1
-                    } completion: { _ in
-                        UIView.animate(withDuration: 1, delay: 4.0, options: .curveEaseOut) {
-                            self?.layoutView.noticeSnackBarView.alpha = 0
-                        }
-                    }
                 }
             }.store(in: &cancellables)
     }
@@ -58,17 +49,32 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
 // MARK: - UIScrollViewDelegate
 extension DiaryMakorViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentHeight = scrollView.contentSize.height
         let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
         
-        if offsetY + height >= contentHeight {
-            if !isAtBottom && !isMoodSelected {
-                isAtBottom = true
-                input.send(.scrollToBottom)
+        if offsetY + height >= contentHeight - 10 {
+            if !isMoodSelected {
+                showSnackBar()
             }
         } else {
-            isAtBottom = false
+            hideSnackBar()
+        }
+    }
+    
+    private func showSnackBar() {
+        guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
+        constraint.update(offset: -20)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
+        }
+    }
+
+    private func hideSnackBar() {
+        guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
+        constraint.update(offset: 50)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
         }
     }
 }

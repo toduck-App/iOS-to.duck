@@ -81,8 +81,12 @@ final class DiaryMakorView: BaseView {
     )
     
     // 저장
+    let buttonContainerView = UIView().then {
+        $0.backgroundColor = TDColor.baseWhite
+    }
     let buttonStackView = UIStackView().then {
         $0.axis = .horizontal
+        $0.backgroundColor = TDColor.baseWhite
         $0.spacing = 10
     }
     let deleteButton = TDBaseButton(
@@ -102,9 +106,9 @@ final class DiaryMakorView: BaseView {
     let dummyView = UIView()
     
     // MARK: - Property
+    var noticeSnackBarBottomConstraint: Constraint?
     var isEdit: Bool = false {
         didSet {
-            // `isEdit`가 변경될 때 버튼을 적절히 업데이트
             updateDeleteButtonVisibility()
         }
     }
@@ -122,8 +126,9 @@ final class DiaryMakorView: BaseView {
     override func addview() {
         addSubview(scrollView)
         addSubview(noticeSnackBarView)
-        addSubview(buttonStackView)
+        addSubview(buttonContainerView)
         scrollView.addSubview(stackView)
+        buttonContainerView.addSubview(buttonStackView)
         
         // 카테고리
         stackView.addArrangedSubview(diaryMoodVerticalStackView)
@@ -197,14 +202,14 @@ final class DiaryMakorView: BaseView {
         }
         
         dummyView.snp.makeConstraints { make in
-            make.height.equalTo(130)
+            make.height.equalTo(110)
         }
         
         // 사용자 피드백 스낵바
         noticeSnackBarView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(buttonStackView.snp.top).offset(-20)
             make.height.equalTo(42)
+            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(-16).constraint
         }
         noticeSnackBarLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -212,8 +217,14 @@ final class DiaryMakorView: BaseView {
         }
         
         // 저장
+        buttonContainerView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(112)
+        }
+        
         buttonStackView.snp.makeConstraints { make in
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(36)
+            make.centerY.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(56)
         }
@@ -226,7 +237,6 @@ final class DiaryMakorView: BaseView {
         diaryMoodLabel.setTitleLabel("감정 선택")
         diaryMoodLabel.setRequiredLabel()
         saveButton.isEnabled = false
-        noticeSnackBarView.alpha = 0
     }
     
     // MARK: - Helper Method
