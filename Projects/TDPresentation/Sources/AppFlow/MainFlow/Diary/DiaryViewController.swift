@@ -89,6 +89,11 @@ final class DiaryViewController: BaseViewController<BaseView> {
         input.send(.selecteDay(normalizedToday))
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationAppearance()
+    }
+    
     // MARK: - Common Methods
     override func addView() {
         view.addSubview(scrollView)
@@ -241,6 +246,16 @@ final class DiaryViewController: BaseViewController<BaseView> {
         }
     }
     
+    private func colorForDate(_ date: Date) -> UIColor? {
+        // 오늘 날짜 확인
+        if Calendar.current.isDate(date, inSameDayAs: Date()) {
+            return TDColor.Primary.primary500
+        }
+        
+        return TDColor.Neutral.neutral800
+    }
+    
+    // MARK: - 네비게이션 바 설정
     private func setupNavigationBar() {
         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
         let calendarButton = UIButton(type: .custom)
@@ -270,13 +285,15 @@ final class DiaryViewController: BaseViewController<BaseView> {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
     }
     
-    private func colorForDate(_ date: Date) -> UIColor? {
-        // 오늘 날짜 확인
-        if Calendar.current.isDate(date, inSameDayAs: Date()) {
-            return TDColor.Primary.primary500
-        }
+    private func setupNavigationAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = TDColor.Neutral.neutral50
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.shadowColor = .clear
         
-        return TDColor.Neutral.neutral800
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 }
 
