@@ -16,12 +16,12 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "프로필 수정",
             leftButtonAction: UIAction { _ in
-                self.coordinator?.popViewController()
+                self.coordinator?.finish(by: .pop)
             },
             rightButtonTitle: "저장",
             rightButtonAction: UIAction { _ in
                 // TODO: 저장 기능 연동
-                self.coordinator?.popViewController()
+                self.coordinator?.finish(by: .pop)
             }
         )
     }
