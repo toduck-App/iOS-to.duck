@@ -4,75 +4,53 @@ import TDDomain
 
 final class ToduckViewModel: BaseViewModel {
     enum Input {
-        
+        case fetchScheduleList
     }
     
     enum Output {
-        
+        case fetchedScheduleList
+        case failure(error: String)
     }
     
+    private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private(set) var scheduleList: [Schedule] = []
     private(set) var isAllDays = true
-    private(set) var todaySchedules: [Schedule] = [Schedule(
-        id: 0,
-        title: "1번 일정",
-        category: TDCategory(colorHex: "#648EF8", imageName: "power"),
-        startDate: "2021-09-01",
-        endDate: "2021-09-01",
-        isAllDay: true,
-        time: nil,
-        repeatDays: nil,
-        alarmTimes: nil,
-        place: nil,
-        memo: nil,
-        isFinished: false
-    ), Schedule(
-        id: 0,
-        title: "2번 일정",
-        category: TDCategory(colorHex: "#FFD6E2", imageName: "sleep"),
-        startDate: "2021-09-01",
-        endDate: "2021-09-01",
-        isAllDay: true,
-        time: Date(),
-        repeatDays: nil,
-        alarmTimes: nil,
-        place: nil,
-        memo: nil,
-        isFinished: false
-    ), Schedule(
-        id: 0,
-        title: "3번 일정",
-        category: TDCategory(colorHex: "#FF3872", imageName: "food"),
-        startDate: "2021-09-01",
-        endDate: "2021-09-01",
-        isAllDay: true,
-        time: Date(),
-        repeatDays: nil,
-        alarmTimes: nil,
-        place: "장장소소",
-        memo: nil,
-        isFinished: true
-    ), Schedule(
-        id: 0,
-        title: "4번 일정",
-        category: TDCategory(colorHex: "#FF3872", imageName: "pencil"),
-        startDate: "2021-09-01",
-        endDate: "2021-09-01",
-        isAllDay: true,
-        time: Date(),
-        repeatDays: nil,
-        alarmTimes: nil,
-        place: "장장소소",
-        memo: nil,
-        isFinished: true
-    )]
+    private(set) var todaySchedules: [Schedule] = []
+    
     var categoryImages: [TDCategoryImageType] {
         todaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
     }
     
+    init(
+        fetchScheduleListUseCase: FetchScheduleListUseCase
+    ) {
+        self.fetchScheduleListUseCase = fetchScheduleListUseCase
+    }
+    
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
+        input.sink { [weak self] event in
+            switch event {
+            case .fetchScheduleList:
+                Task { await self?.fetchScheduleList() }
+            }
+        }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
+    }
+    
+    private func fetchScheduleList() async {
+        do {
+            let todayFormat = Date().convertToString(formatType: .yearMonthDay)
+            let scheduleList = try await fetchScheduleListUseCase.execute(
+                startDate: todayFormat,
+                endDate: todayFormat
+            )
+            self.scheduleList = scheduleList
+            output.send(.fetchedScheduleList)
+        } catch {
+            output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
+        }
     }
 }

@@ -26,10 +26,6 @@ public final class TDSelectableButton: TDBaseButton {
             radius: radius,
             font: font
         )
-        
-        addAction(UIAction { [weak self] _ in
-            self?.buttonTapped()
-        }, for: .touchUpInside)
     }
     
     @available(*, unavailable)
@@ -37,13 +33,6 @@ public final class TDSelectableButton: TDBaseButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup Methods
-    private func buttonTapped() {
-        isSelected.toggle()
-        updateConfiguration()
-    }
-    
-    // MARK: - Update Configuration
     override public func updateConfiguration() {
         super.updateConfiguration()
         

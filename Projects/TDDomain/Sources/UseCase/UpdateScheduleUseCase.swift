@@ -12,6 +12,6 @@ public final class UpdateScheduleUseCaseImpl: UpdateScheduleUseCase {
     }
     
     public func execute(scheduleId: Int) async throws {
-        try await scheduleRepository.updateSchedule(scheduleId: scheduleId).get()
+        try await scheduleRepository.updateSchedule(scheduleId: scheduleId)
     }
 }

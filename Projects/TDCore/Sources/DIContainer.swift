@@ -33,7 +33,6 @@ public final class DIContainer: DependencyInjectable {
     }
     
     public func resolve<Service>(_ serviceType: Service.Type) -> Service {
-        print("")
         guard let service = container.resolve(serviceType) else {
             fatalError("\(serviceType)를 Resolve 실패함")
         }

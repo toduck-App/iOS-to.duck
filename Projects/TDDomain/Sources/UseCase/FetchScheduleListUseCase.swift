@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FetchScheduleListUseCase {
-    func execute() async throws -> [Schedule]
+    func execute(startDate: String, endDate: String) async throws -> [Schedule]
 }
 
 public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
@@ -11,7 +11,7 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
         self.repository = repository
     }
     
-    public func execute() async throws -> [Schedule] {
-        try await repository.fetchScheduleList().get()
+    public func execute(startDate: String, endDate: String) async throws -> [Schedule] {
+        try await repository.fetchScheduleList(startDate: startDate, endDate: endDate)
     }
 }

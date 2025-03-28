@@ -65,7 +65,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     /// 이벤트 정보 설정
     private func configureEventDetails() {
         popupContentView.dateLabel.setText(event.date ?? "-")
-        popupContentView.alarmImageView.image = event.alarmTimes != nil
+        popupContentView.alarmImageView.image = event.alarmTime != nil
             ? TDImage.Bell.ringingMedium
             : TDImage.Bell.offMedium
         

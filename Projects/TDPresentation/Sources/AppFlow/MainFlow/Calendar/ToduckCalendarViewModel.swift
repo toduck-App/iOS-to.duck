@@ -5,7 +5,7 @@ import TDDomain
 
 final class ToduckCalendarViewModel: BaseViewModel {
     enum Input {
-        case fetchScheduleList
+        case fetchScheduleList(startDate: String, endDate: String)
     }
     
     enum Output {
@@ -28,17 +28,17 @@ final class ToduckCalendarViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
-            case .fetchScheduleList:
-                Task { await self?.fetchScheduleList() }
+            case .fetchScheduleList(let startDate, let endDate):
+                Task { await self?.fetchScheduleList(startDate: startDate, endDate: endDate) }
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
     
-    private func fetchScheduleList() async {
+    private func fetchScheduleList(startDate: String, endDate: String) async {
         do {
-            let scheduleList = try await fetchScheduleListUseCase.execute()
+            let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
             self.scheduleList = scheduleList
             output.send(.fetchedScheduleList)
         } catch {

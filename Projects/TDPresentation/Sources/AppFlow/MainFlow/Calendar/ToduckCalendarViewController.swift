@@ -55,12 +55,15 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        setup()
-        binding()
-        input.send(.fetchScheduleList)
-        addSubviews()
+        let startDate = Date().startOfMonth()
+        let endDate = Date().endOfMonth()
+        input.send(
+            .fetchScheduleList(
+                startDate: startDate.convertToString(formatType: .yearMonthDay),
+                endDate: endDate.convertToString(formatType: .yearMonthDay)
+            )
+        )
         setupCalendar()
-        setupConstraints()
         setupGesture()
         selectToday()
     }
@@ -89,7 +92,30 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Setup
-    private func setup() {
+    override func addView() {
+        view.addSubview(calendarHeader)
+        view.addSubview(calendar)
+        view.addSubview(selectedDayScheduleView)
+    }
+    
+    override func layout() {
+        calendarHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
+        }
+        calendar.snp.makeConstraints {
+            $0.centerX.equalTo(view)
+            $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
+            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
+            self.calendarHeightConstraint = $0.height.equalTo(Constant.calendarHeight).constraint
+        }
+        selectedDayScheduleView.snp.makeConstraints {
+            self.selectedDayViewTopConstraint = $0.top.equalTo(view).constraint
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
+    override func configure() {
         selectedDayScheduleView.scheduleTableView.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
@@ -108,29 +134,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                     self?.showErrorAlert(with: errorMessage)
                 }
             }.store(in: &cancellables)
-    }
-    
-    private func addSubviews() {
-        view.addSubview(calendarHeader)
-        view.addSubview(calendar)
-        view.addSubview(selectedDayScheduleView)
-    }
-    
-    private func setupConstraints() {
-        calendarHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
-            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
-        }
-        calendar.snp.makeConstraints {
-            $0.centerX.equalTo(view)
-            $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
-            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
-            self.calendarHeightConstraint = $0.height.equalTo(Constant.calendarHeight).constraint
-        }
-        selectedDayScheduleView.snp.makeConstraints {
-            self.selectedDayViewTopConstraint = $0.top.equalTo(view).constraint
-            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
     }
     
     private func selectToday() {

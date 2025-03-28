@@ -12,15 +12,16 @@ final class EventMakorViewModel: BaseViewModel {
         case saveEvent
         case updateTitleTextField(String)
         case updateLocationTextField(String)
-        case updateTextView(String)
+        case updateMemoTextView(String)
         case selectLockType(Bool)
-        case selectRepeatDay(index: Int)
-        case selectAlarm(index: Int)
+        case selectRepeatDay(index: Int, isSelected: Bool)
+        case selectAlarm(index: Int, isSelected: Bool)
     }
     
     enum Output {
         case fetchedCategories
         case savedEvent
+        case failedToSaveEvent
     }
     
     private let mode: ScheduleAndRoutineViewController.Mode
@@ -33,14 +34,14 @@ final class EventMakorViewModel: BaseViewModel {
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
-    private var selectedCategory: TDCategory? = TDCategory(colorHex: "FFFFFF", imageName: "None")
+    private var selectedCategory: TDCategory? = TDCategory(colorHex: "#FFFFFF", imageName: "None")
     private var startDate: String? // YYYY-MM-DD
     private var endDate: String? // YYYY-MM-DD
     private var isAllDay: Bool = true
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
-    private var alarms: [AlarmType]?
+    private var alarm: AlarmType?
     private var location: String?
     private var memo: String?
     
@@ -91,12 +92,12 @@ final class EventMakorViewModel: BaseViewModel {
             self.title = title
         case .updateLocationTextField(let location):
             self.location = location
-        case .updateTextView(let memo):
+        case .updateMemoTextView(let memo):
             self.memo = memo
-        case .selectRepeatDay(let index):
-            handleRepeatDaySelection(at: index)
-        case .selectAlarm(let index):
-            handleAlarmSelection(at: index)
+        case .selectRepeatDay(let index, let isSelected):
+            handleRepeatDaySelection(at: index, isSelected: isSelected)
+        case .selectAlarm(let index, let isSelected):
+            handleAlarmSelection(at: index, isSelected: isSelected)
         }
     }
     
@@ -109,7 +110,10 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func saveSchedule() async {
-        guard validateScheduleInputs() else { return }
+        guard validateScheduleInputs() else {
+            output.send(.failedToSaveEvent)
+            return
+        }
         do {
             let schedule = createSchedule()
             try await createScheduleUseCase.execute(schedule: schedule)
@@ -122,7 +126,10 @@ final class EventMakorViewModel: BaseViewModel {
     
     // MARK: - Create Schedule & Routine
     private func saveRoutine() async {
-        guard validateRoutineInputs() else { return }
+        guard validateRoutineInputs() else {
+            output.send(.failedToSaveEvent)
+            return
+        }
         do {
             let routine = createRoutine()
             try await createRoutineUseCase.execute(routine: routine)
@@ -134,8 +141,7 @@ final class EventMakorViewModel: BaseViewModel {
     }
 
     private func validateScheduleInputs() -> Bool {
-        guard let title, let selectedCategory, let startDate, let endDate else {
-            TDLogger.error("필수 값 누락: \(title), \(selectedCategory), \(startDate), \(endDate)")
+        guard let title, let selectedCategory, let startDate else {
             return false
         }
         return true
@@ -143,7 +149,6 @@ final class EventMakorViewModel: BaseViewModel {
 
     private func validateRoutineInputs() -> Bool {
         guard let title, let selectedCategory else {
-            TDLogger.error("필수 값 누락: \(title), \(selectedCategory)")
             return false
         }
         return true
@@ -151,7 +156,11 @@ final class EventMakorViewModel: BaseViewModel {
 
     // MARK: - Object Creation
     private func createSchedule() -> Schedule {
-        Schedule(
+        if endDate == nil {
+            endDate = startDate
+        }
+        
+        let schedule = Schedule(
             id: nil,
             title: title!,
             category: selectedCategory!,
@@ -160,11 +169,14 @@ final class EventMakorViewModel: BaseViewModel {
             isAllDay: isAllDay,
             time: time,
             repeatDays: repeatDays,
-            alarmTimes: alarms,
+            alarmTime: alarm,
             place: location,
             memo: memo,
-            isFinished: false
+            isFinished: false,
+            scheduleRecords: nil
         )
+        
+        return schedule
     }
 
     private func createRoutine() -> Routine {
@@ -177,7 +189,7 @@ final class EventMakorViewModel: BaseViewModel {
             date: nil,
             time: time,
             repeatDays: repeatDays,
-            alarmTimes: alarms,
+            alarmTime: alarm,
             memo: memo,
             recommendedRoutines: nil,
             isFinished: false
@@ -197,47 +209,50 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     // MARK: - 반복 날짜와 알람에 대한 설정
-    private func handleRepeatDaySelection(at index: Int) {
+    private func handleRepeatDaySelection(at index: Int, isSelected: Bool) {
         let repeatDaysArray: [TDWeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-        
+
         guard index >= 0, index < repeatDaysArray.count else {
             TDLogger.error("Invalid repeat day index: \(index)")
             return
         }
-        
+
         let selectedDay = repeatDaysArray[index]
         if repeatDays == nil {
             repeatDays = []
         }
-        
-        if let existingIndex = repeatDays?.firstIndex(of: selectedDay) {
-            repeatDays?.remove(at: existingIndex) // 이미 선택된 경우 제거 (토글 기능)
+
+        if isSelected {
+            // 선택 추가
+            if repeatDays?.contains(selectedDay) == false {
+                repeatDays?.append(selectedDay)
+            }
         } else {
-            repeatDays?.append(selectedDay) // 선택 추가
+            // 선택 해제
+            repeatDays?.removeAll(where: { $0 == selectedDay })
         }
-        
+
         TDLogger.info("현재 반복 요일: \(repeatDays ?? [])")
     }
 
-    private func handleAlarmSelection(at index: Int) {
+    private func handleAlarmSelection(at index: Int, isSelected: Bool) {
         let alarmTypesArray: [AlarmType] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
-        
+
         guard index >= 0, index < alarmTypesArray.count else {
             TDLogger.error("Invalid alarm index: \(index)")
             return
         }
-        
+
         let selectedAlarm = alarmTypesArray[index]
-        if alarms == nil {
-            alarms = []
-        }
-        
-        if let existingIndex = alarms?.firstIndex(of: selectedAlarm) {
-            alarms?.remove(at: existingIndex) // 이미 선택된 경우 제거 (토글 기능)
+
+        if isSelected {
+            // 선택한 알람 설정
+            alarm = selectedAlarm
+            TDLogger.info("알람 선택됨: \(selectedAlarm)")
         } else {
-            alarms?.append(selectedAlarm) // 선택 추가
+            // 다시 눌러서 해제한 경우
+            alarm = nil
+            TDLogger.info("알람 해제됨")
         }
-        
-        TDLogger.info("현재 알람: \(alarms ?? [])")
     }
 }
