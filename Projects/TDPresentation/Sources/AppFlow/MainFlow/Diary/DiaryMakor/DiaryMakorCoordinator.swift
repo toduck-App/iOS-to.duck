@@ -8,27 +8,33 @@ final class DiaryMakorCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
-    private let selectedDate: Date
     private let isEdit: Bool
 
     init(
         navigationController: UINavigationController,
         injector: DependencyResolvable,
-        selectedDate: Date,
         isEdit: Bool
     ) {
         self.navigationController = navigationController
         self.injector = injector
-        self.selectedDate = selectedDate
         self.isEdit = isEdit
     }
     
-    func start() {
-        let viewModel = DiaryMakorViewModel()
+    func start(
+        selectedDate: Date?,
+        diary: Diary?
+    ) {
+        let viewModel = DiaryMakorViewModel(selectedDate: selectedDate, preDiary: diary)
         let diaryMakorViewController = DiaryMakorViewController(viewModel: viewModel, isEdit: isEdit)
         diaryMakorViewController.coordinator = self
+        diaryMakorViewController.hidesBottomBarWhenPushed = true
         navigationController.pushTDViewController(diaryMakorViewController, animated: true)
+        if let diary, isEdit {
+            diaryMakorViewController.updateEditView(preDiary: diary)
+        }
     }
+    
+    func start() { }
 }
 
 // MARK: - Coordinator Finish Delegate

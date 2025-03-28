@@ -43,6 +43,21 @@ public final class DiaryMoodCollectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Method
+    public func isCategorySelected() -> Bool {
+        return selectedIndex != nil
+    }
+    
+    public func setupSelectedMoodImage(_ image: UIImage) {
+        guard let index = moodImages.firstIndex(of: image) else { return }
+        selectedIndex = index
+        
+        collectionView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            self?.updateCellAlpha()
+        }
+    }
+    
     // MARK: - Setup
     private func setupCollectionView() {
         addSubview(collectionView)
@@ -60,9 +75,12 @@ public final class DiaryMoodCollectionView: UIView {
         )
     }
     
-    // MARK: - Public Method
-    public func isCategorySelected() -> Bool {
-        return selectedIndex != nil
+    private func updateCellAlpha() {
+        for cell in collectionView.visibleCells {
+            if let index = collectionView.indexPath(for: cell)?.row {
+                cell.alpha = (index == selectedIndex) ? 1.0 : 0.3
+            }
+        }
     }
 }
 
@@ -85,7 +103,6 @@ extension DiaryMoodCollectionView: UICollectionViewDataSource {
         ) as? DiaryMoodCell else { return UICollectionViewCell() }
 
         let image = moodImages[indexPath.row]
-
         cell.configure(image: image)
         cell.alpha = (indexPath.row == selectedIndex) ? 1.0 : 0.3
 
@@ -100,12 +117,7 @@ extension DiaryMoodCollectionView: UICollectionViewDelegateFlowLayout {
         didSelectItemAt indexPath: IndexPath
     ) {
         selectedIndex = indexPath.row
-        
-        for cell in collectionView.visibleCells {
-            if let index = collectionView.indexPath(for: cell)?.row {
-                cell.alpha = (index == selectedIndex) ? 1.0 : 0.3
-            }
-        }
+        updateCellAlpha()
         
         let selectedMood = moodImages[indexPath.row]
         delegate?.didTapCategoryCell(self, selectedMood: selectedMood)

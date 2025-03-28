@@ -217,7 +217,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         diaryPostButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate, isEdit: viewModel.selectedDiary != nil)
+            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate)
         }, for: .touchUpInside)
     }
     
@@ -305,7 +305,8 @@ extension DiaryViewController: TDDropDownDelegate {
         
         switch item {
         case .edit:
-            break
+            guard let diary = viewModel.selectedDiary else { return }
+            coordinator?.didTapEditDiaryButton(diary: diary)
         case .delete:
             break
         }

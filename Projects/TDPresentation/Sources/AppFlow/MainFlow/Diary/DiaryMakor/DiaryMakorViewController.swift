@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import Combine
 import TDDesign
 import TDCore
@@ -43,6 +44,12 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         layoutView.isEdit = isEdit
         layoutView.scrollView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
+    }
+    
+    func updateEditView(preDiary: Diary) {
+        layoutView.diaryMoodCollectionView.setupSelectedMoodImage(preDiary.emotion.image)
+        layoutView.titleForm.setupTextField(preDiary.title)
+        layoutView.recordTextView.setupTextView(text: preDiary.sentenceText)
     }
 }
 

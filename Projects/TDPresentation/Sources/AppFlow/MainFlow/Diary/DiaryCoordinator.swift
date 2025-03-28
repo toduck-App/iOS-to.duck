@@ -1,8 +1,10 @@
 import UIKit
+import TDDomain
 import TDCore
 
 protocol DiaryCoordinatorDelegate: AnyObject {
-    func didTapCreateDiaryButton(selectedDate: Date, isEdit: Bool)
+    func didTapCreateDiaryButton(selectedDate: Date)
+    func didTapEditDiaryButton(diary: Diary)
 }
 
 final class DiaryCoordinator: Coordinator {
@@ -51,15 +53,25 @@ extension DiaryCoordinator: NavigationDelegate {
 
 // MARK: - Diary Coordinator Delegate
 extension DiaryCoordinator: DiaryCoordinatorDelegate {
-    func didTapCreateDiaryButton(selectedDate: Date, isEdit: Bool) {
+    func didTapCreateDiaryButton(selectedDate: Date) {
         let diaryMakorCoordinator = DiaryMakorCoordinator(
             navigationController: navigationController,
             injector: injector,
-            selectedDate: selectedDate,
-            isEdit: isEdit
+            isEdit: false
         )
         diaryMakorCoordinator.finishDelegate = self
         childCoordinators.append(diaryMakorCoordinator)
-        diaryMakorCoordinator.start()
+        diaryMakorCoordinator.start(selectedDate: selectedDate, diary: nil)
+    }
+    
+    func didTapEditDiaryButton(diary: Diary) {
+        let diaryMakorCoordinator = DiaryMakorCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            isEdit: true
+        )
+        diaryMakorCoordinator.finishDelegate = self
+        childCoordinators.append(diaryMakorCoordinator)
+        diaryMakorCoordinator.start(selectedDate: nil, diary: diary)
     }
 }
