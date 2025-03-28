@@ -71,6 +71,8 @@ public final class TDTextField: UIView {
     }
 
     private func setupViews() {
+        textField.font = TDFont.mediumBody2.font
+        textField.textColor = TDColor.Neutral.neutral800
         let mainStack = UIStackView()
         mainStack.axis = .vertical
         mainStack.spacing = 10

@@ -33,11 +33,6 @@ final class DiaryViewModel: BaseViewModel {
     }
     
     func selecteDay(date: Date) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let dateString = formatter.string(from: date)
-        print(dateString)
-        
         selectedDiary = monthDiaryList[date.normalized]
         if let selectedDiary = selectedDiary {
             output.send(.selectedDiary(selectedDiary))
