@@ -287,7 +287,7 @@ public enum TDImage {
         public static let tomatoSmallEmtpy = TDDesignAsset.Images.tomatoSmallEmtpy.image
     }
     
-	public enum Illust {
+    public enum Illust {
         public static let withdraw = TDDesignAsset.Images.withdraw.image
     }
     
