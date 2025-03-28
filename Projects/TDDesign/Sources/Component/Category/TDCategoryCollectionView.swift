@@ -80,7 +80,8 @@ public final class TDCategoryCollectionView: UIView {
         if let cell = collectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? TDCategoryCell {
             cell.configure(
                 image: categoryImages[index],
-                backgroundColor: color
+                backgroundColor: color,
+                isSelected: index == selectedIndex
             )
         }
     }
@@ -112,9 +113,8 @@ extension TDCategoryCollectionView: UICollectionViewDataSource {
 
         let image = categoryImages[indexPath.row]
         let color = indexPath.row < categoryColors.count ? categoryColors[indexPath.row] : UIColor.clear
-
-        cell.configure(image: image, backgroundColor: color)
-        cell.alpha = (indexPath.row == selectedIndex) ? 1.0 : 0.3
+        let isSelected = (selectedIndex == nil) || (indexPath.item == selectedIndex)
+        cell.configure(image: image, backgroundColor: color, isSelected: isSelected)
 
         return cell
     }
@@ -129,9 +129,14 @@ extension TDCategoryCollectionView: UICollectionViewDelegateFlowLayout {
         selectedIndex = indexPath.row
         
         for cell in collectionView.visibleCells {
-            if let index = collectionView.indexPath(for: cell)?.row {
-                cell.alpha = (index == selectedIndex) ? 1.0 : 0.3
-            }
+            guard let index = collectionView.indexPath(for: cell)?.row,
+                  let categoryCell = cell as? TDCategoryCell else { continue }
+            
+            let image = categoryImages[index]
+            let color = categoryColors[index]
+            let isSelected = (index == selectedIndex)
+            
+            categoryCell.configure(image: image, backgroundColor: color, isSelected: isSelected)
         }
         
         delegate?.didTapCategoryCell(
