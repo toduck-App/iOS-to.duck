@@ -52,9 +52,8 @@ public final class DiaryMoodCollectionView: UIView {
         guard let index = moodImages.firstIndex(of: image) else { return }
         selectedIndex = index
         
-        collectionView.reloadData()
         DispatchQueue.main.async { [weak self] in
-            self?.updateCellAlpha()
+            self?.updateVisibleCellsSelectionState()
         }
     }
     
@@ -75,11 +74,14 @@ public final class DiaryMoodCollectionView: UIView {
         )
     }
     
-    private func updateCellAlpha() {
+    private func updateVisibleCellsSelectionState() {
         for cell in collectionView.visibleCells {
-            if let index = collectionView.indexPath(for: cell)?.row {
-                cell.alpha = (index == selectedIndex) ? 1.0 : 0.3
-            }
+            guard let indexPath = collectionView.indexPath(for: cell),
+                  let moodCell = cell as? DiaryMoodCell else { continue }
+
+            let image = moodImages[indexPath.item]
+            let isSelected = (indexPath.item == selectedIndex)
+            moodCell.configure(image: image, isSelected: isSelected)
         }
     }
 }
@@ -102,9 +104,10 @@ extension DiaryMoodCollectionView: UICollectionViewDataSource {
             for: indexPath
         ) as? DiaryMoodCell else { return UICollectionViewCell() }
 
-        let image = moodImages[indexPath.row]
-        cell.configure(image: image)
-        cell.alpha = (indexPath.row == selectedIndex) ? 1.0 : 0.3
+
+        let image = moodImages[indexPath.item]
+        let isSelected = (selectedIndex == nil) || (indexPath.item == selectedIndex)
+        cell.configure(image: image, isSelected: isSelected)
 
         return cell
     }
@@ -117,7 +120,7 @@ extension DiaryMoodCollectionView: UICollectionViewDelegateFlowLayout {
         didSelectItemAt indexPath: IndexPath
     ) {
         selectedIndex = indexPath.row
-        updateCellAlpha()
+        updateVisibleCellsSelectionState()
         
         let selectedMood = moodImages[indexPath.row]
         delegate?.didTapCategoryCell(self, selectedMood: selectedMood)

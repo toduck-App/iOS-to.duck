@@ -48,6 +48,8 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
     
     func updateEditView(preDiary: Diary) {
         layoutView.diaryMoodCollectionView.setupSelectedMoodImage(preDiary.emotion.image)
+        layoutView.saveButton.isEnabled = true
+        layoutView.saveButton.layer.borderWidth = 0
         layoutView.titleForm.setupTextField(preDiary.title)
         layoutView.recordTextView.setupTextView(text: preDiary.sentenceText)
     }

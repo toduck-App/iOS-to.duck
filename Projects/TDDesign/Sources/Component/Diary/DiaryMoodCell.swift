@@ -17,13 +17,20 @@ final class DiaryMoodCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        imageView.image = nil
+        imageView.alpha = 1.0
+    }
+    
     private func setupView() {
         contentView.addSubview(imageView)
-        
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
-    func configure(image: UIImage) {
+    func configure(image: UIImage, isSelected: Bool) {
         imageView.image = image
+        imageView.alpha = isSelected ? 1.0 : 0.3
     }
 }
