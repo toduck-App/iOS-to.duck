@@ -21,19 +21,6 @@ public final class TDLabel: UILabel {
         }
     }
     
-    // MARK: - Override Properties
-    public override var text: String? {
-        get { super.text }
-        set { labelText = newValue ?? "" }
-    }
-    
-    /// TDFont를 통해 font를 관리하므로 UILabel의 기본 프로퍼티인 font의 접근을 제한합니다.
-    @available(*, unavailable)
-    public override var font: UIFont! {
-        get { super.font }
-        set {}
-    }
-    
     // MARK: - Initialization
     
     /// `TDLabel`의 지정(Designated) 이니셜라이저입니다.
