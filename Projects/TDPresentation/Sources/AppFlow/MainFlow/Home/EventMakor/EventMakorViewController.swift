@@ -84,10 +84,21 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                         } ?? [])
                 case .savedEvent:
                     self?.navigationController?.popViewController(animated: true)
-                case .failedToSaveEvent:
+                case .failedToSaveEvent(let missingFields):
+                    let missing = missingFields
+                        .map {
+                            switch $0 {
+                            case "title": return "제목"
+                            case "category": return "카테고리"
+                            case "startDate": return "시작 날짜"
+                            default: return $0
+                            }
+                        }
+                        .joined(separator: ", ")
+                    
                     let alert = UIAlertController(
                         title: "저장 실패",
-                        message: "일정을 저장하는 데 실패했습니다.",
+                        message: "\(missing)이(가) 입력되지 않았어요.",
                         preferredStyle: .alert
                     )
                     alert.addAction(UIAlertAction(title: "확인", style: .default))

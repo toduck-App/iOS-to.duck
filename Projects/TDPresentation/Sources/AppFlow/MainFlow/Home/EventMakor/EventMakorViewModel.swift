@@ -21,7 +21,7 @@ final class EventMakorViewModel: BaseViewModel {
     enum Output {
         case fetchedCategories
         case savedEvent
-        case failedToSaveEvent
+        case failedToSaveEvent(missingFields: [String])
     }
     
     private let mode: ScheduleAndRoutineViewController.Mode
@@ -110,8 +110,9 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func saveSchedule() async {
-        guard validateScheduleInputs() else {
-            output.send(.failedToSaveEvent)
+        let missingFields = validateScheduleInputs()
+        guard missingFields.isEmpty else {
+            output.send(.failedToSaveEvent(missingFields: missingFields))
             return
         }
         do {
@@ -126,8 +127,9 @@ final class EventMakorViewModel: BaseViewModel {
     
     // MARK: - Create Schedule & Routine
     private func saveRoutine() async {
-        guard validateRoutineInputs() else {
-            output.send(.failedToSaveEvent)
+        let missingFields = validateRoutineInputs()
+        guard missingFields.isEmpty else {
+            output.send(.failedToSaveEvent(missingFields: missingFields))
             return
         }
         do {
@@ -140,18 +142,19 @@ final class EventMakorViewModel: BaseViewModel {
         }
     }
 
-    private func validateScheduleInputs() -> Bool {
-        guard let title, let selectedCategory, let startDate else {
-            return false
-        }
-        return true
+    private func validateScheduleInputs() -> [String] {
+        var missingFields: [String] = []
+        if title == nil { missingFields.append("title") }
+        if selectedCategory == nil { missingFields.append("category") }
+        if startDate == nil { missingFields.append("startDate") }
+        return missingFields
     }
 
-    private func validateRoutineInputs() -> Bool {
-        guard let title, let selectedCategory else {
-            return false
-        }
-        return true
+    private func validateRoutineInputs() -> [String] {
+        var missingFields: [String] = []
+        if title == nil { missingFields.append("title") }
+        if selectedCategory == nil { missingFields.append("category") }
+        return missingFields
     }
 
     // MARK: - Object Creation
