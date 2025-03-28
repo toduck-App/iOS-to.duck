@@ -107,6 +107,11 @@ public final class TDFormTextView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    public func setupTextView(text: String) {
+        textView.text = text
+        textViewDidChange(textView)
+    }
 }
 
 // MARK: - Layout

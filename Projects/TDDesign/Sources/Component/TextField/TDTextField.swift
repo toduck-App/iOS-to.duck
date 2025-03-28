@@ -65,6 +65,10 @@ public final class TDTextField: UIView {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    public func setupTextField(_ text: String) {
+        textField.text = text
+    }
 
     private func setupViews() {
         let mainStack = UIStackView()
