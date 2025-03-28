@@ -39,8 +39,10 @@ final class PhoneVerificationView: BaseView {
     
     /// 휴대폰 번호 입력 및 요청
     let phoneNumberContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let phoneNumberTextField = UITextField().then {
         $0.placeholder = "휴대폰 번호를 입력하세요"
@@ -62,8 +64,10 @@ final class PhoneVerificationView: BaseView {
     
     /// 인증번호
     let verificationNumberContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let verificationNumberTextField = UITextField().then {
         $0.placeholder = "인증 번호를 입력하세요"
@@ -193,6 +197,7 @@ final class PhoneVerificationView: BaseView {
         invaildPhoneNumberLabel.isHidden = true
         invaildVerificationNumberLabel.isHidden = true
         nextButton.isEnabled = false
+        postButton.isEnabled = false
     }
 }
 

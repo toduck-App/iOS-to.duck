@@ -36,8 +36,10 @@ final class AccountView: BaseView {
         toduckColor: TDColor.Neutral.neutral800
     )
     let idContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let idTextField = UITextField().then {
         $0.placeholder = "아이디를 입력하세요"
@@ -70,8 +72,10 @@ final class AccountView: BaseView {
         $0.spacing = 8
     }
     let passwordContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let passwordTextField = UITextField().then {
         $0.placeholder = "비밀번호를 입력하세요"
@@ -97,8 +101,10 @@ final class AccountView: BaseView {
         $0.spacing = 8
     }
     let verifyPasswordContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let verifyPasswordTextField = UITextField().then {
         $0.placeholder = "비밀번호 확인"
