@@ -60,8 +60,9 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
                     self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .verificationCodeValid:
-                    self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Neutral.neutral50
-                    self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    let showPasswordViewController = ShowPasswordViewController()
+                    showPasswordViewController.coordinator = self?.coordinator
+                    self?.navigationController?.pushViewController(showPasswordViewController, animated: true)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 }
