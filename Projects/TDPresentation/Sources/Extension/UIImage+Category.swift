@@ -3,17 +3,18 @@ import TDDesign
 
 extension UIImage {
     static let categoryNames: [String] = [
-        "computer",   // 컴퓨터
-        "food",       // 밥
-        "pencil",     // 연필
-        "redBook",    // 빨간책
-        "sleep",      // 물
-        "power",      // 운동
-        "people",     // 사람
-        "medicine",   // 약
-        "talk",       // 채팅
-        "heart",      // 하트
-        "vehicle",    // 차
+        "COMPUTER",    // 컴퓨터
+        "FOOD",        // 밥
+        "PENCIL",      // 연필
+        "RED_BOOK",    // 빨간책
+        "SLEEP",       // 물
+        "POWER",       // 운동
+        "PEOPLE",      // 사람
+        "MEDICINE",    // 약
+        "TALK",        // 채팅
+        "HEART",       // 하트
+        "VEHICLE",     // 차
+        "NONE"         // None
     ]
     
     static let categoryImages: [UIImage] = [

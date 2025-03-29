@@ -39,8 +39,6 @@ public enum TDFont {
 
     case regularCaption3
     case mediumCaption3
-    
-    case body4
 }
 
 extension TDFont {
@@ -104,8 +102,6 @@ extension TDFont {
             return TDDesignFontFamily.Pretendard.regular.font(size: 9.0)
         case .mediumCaption3:
             return TDDesignFontFamily.Pretendard.medium.font(size: 9.0)
-        case .body4:
-            return TDDesignFontFamily.Pretendard.regular.font(size: 15.0)
         }
     }
     

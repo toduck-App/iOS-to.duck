@@ -109,8 +109,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
         
         layoutView.rightNavigationMenuButton.addAction(
-            UIAction { _ in
-                self.layoutView.dropDownView.showDropDown()
+            UIAction { [weak self] _ in
+                self?.layoutView.dropDownView.showDropDown()
             }, for: .touchUpInside
         )
         

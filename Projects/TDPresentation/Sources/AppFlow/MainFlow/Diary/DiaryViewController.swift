@@ -61,7 +61,9 @@ final class DiaryViewController: BaseViewController<BaseView> {
     weak var coordinator: DiaryCoordinator?
     private let viewModel: DiaryViewModel
     private let input = PassthroughSubject<DiaryViewModel.Input, Never>()
+    private let dropDownDataSource = DiaryEditType.allCases
     private var cancellables = Set<AnyCancellable>()
+    private var selectedDate = Date().normalized
     
     // MARK: - Initializer
     init(
@@ -85,6 +87,11 @@ final class DiaryViewController: BaseViewController<BaseView> {
         let normalizedToday = Date().normalized
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
         input.send(.selecteDay(normalizedToday))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationAppearance()
     }
     
     // MARK: - Common Methods
@@ -196,11 +203,22 @@ final class DiaryViewController: BaseViewController<BaseView> {
     }
     
     override func configure() {
+        diaryDetailView.dropDownHoverView.delegate = self
+        diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
         calendarContainerView.backgroundColor = TDColor.baseWhite
         calendarHeader.pickerButton.delegate = self
         scrollView.delegate = self
         setupCalendar()
         setupNavigationBar()
+        
+        diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
+            self?.diaryDetailView.dropDownHoverView.showDropDown()
+        }, for: .touchUpInside)
+        
+        diaryPostButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate)
+        }, for: .touchUpInside)
     }
     
     private func fetchDiaryList(for date: Date) {
@@ -228,6 +246,16 @@ final class DiaryViewController: BaseViewController<BaseView> {
         }
     }
     
+    private func colorForDate(_ date: Date) -> UIColor? {
+        // 오늘 날짜 확인
+        if Calendar.current.isDate(date, inSameDayAs: Date()) {
+            return TDColor.Primary.primary500
+        }
+        
+        return TDColor.Neutral.neutral800
+    }
+    
+    // MARK: - 네비게이션 바 설정
     private func setupNavigationBar() {
         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
         let calendarButton = UIButton(type: .custom)
@@ -257,13 +285,31 @@ final class DiaryViewController: BaseViewController<BaseView> {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
     }
     
-    private func colorForDate(_ date: Date) -> UIColor? {
-        // 오늘 날짜 확인
-        if Calendar.current.isDate(date, inSameDayAs: Date()) {
-            return TDColor.Primary.primary500
-        }
+    private func setupNavigationAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = TDColor.Neutral.neutral50
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.shadowColor = .clear
         
-        return TDColor.Neutral.neutral800
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+}
+
+// MARK: - TDDropDownDelegate
+
+extension DiaryViewController: TDDropDownDelegate {
+    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let item = DiaryEditType.allCases[indexPath.row]
+        
+        switch item {
+        case .edit:
+            guard let diary = viewModel.selectedDiary else { return }
+            coordinator?.didTapEditDiaryButton(diary: diary)
+        case .delete:
+            break
+        }
     }
 }
 
@@ -318,6 +364,7 @@ extension DiaryViewController: TDCalendarConfigurable {
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {
+        selectedDate = date.normalized
         let normalizedDate = date.normalized
         
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedDate]

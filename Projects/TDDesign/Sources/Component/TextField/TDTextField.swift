@@ -65,8 +65,14 @@ public final class TDTextField: UIView {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    public func setupTextField(_ text: String) {
+        textField.text = text
+    }
 
     private func setupViews() {
+        textField.font = TDFont.mediumBody2.font
+        textField.textColor = TDColor.Neutral.neutral800
         let mainStack = UIStackView()
         mainStack.axis = .vertical
         mainStack.spacing = 16
@@ -159,7 +165,7 @@ private final class TDTextFieldCore: UITextField, UITextFieldDelegate {
         layer.borderWidth = 1
         layer.borderColor = TDColor.Neutral.neutral300.cgColor
         backgroundColor = TDColor.Neutral.neutral50
-        font = TDFont.body4.font
+        font = TDFont.regularBody4.font
         clearButtonMode = .whileEditing
 
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: frame.height))

@@ -86,6 +86,10 @@ public final class TDFormTextField: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    public func setupTextField(_ text: String) {
+        textField.setupTextField(text)
+    }
 }
 
 // MARK: - Layout
@@ -102,7 +106,8 @@ extension TDFormTextField {
         addSubview(maxCounterLabel)
         
         titleHorizontalStackView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
+            make.top.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(4)
         }
         
         textField.snp.makeConstraints { make in
