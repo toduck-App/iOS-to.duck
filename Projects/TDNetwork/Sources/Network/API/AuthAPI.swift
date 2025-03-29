@@ -7,7 +7,6 @@ public enum AuthAPI {
     case registerUser(phoneNumber: String, loginId: String, password: String) // 회원가입
     case login(loginId: String, password: String) // 자체 로그인
     case loginOauth(provider: String, oauthId: String, idToken: String) // Oauth 로그인
-    case findIdPassword(phoneNumber: String) // 비밀번호 찾기
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
     case saveFCMToken(userId: Int, fcmToken: String) // FCM 토큰 저장
     case deleteUser(userId: Int) // 유저 삭제
@@ -32,8 +31,6 @@ extension AuthAPI: MFTarget {
             return "/v1/auth/login"
         case .loginOauth:
             return "/v1/auth/oauth/register"
-        case .findIdPassword:
-            return "/auth/find-id-password"
         case .refreshToken:
             return "/v1/auth/refresh"
         case .saveFCMToken(let userId, _):
@@ -53,7 +50,6 @@ extension AuthAPI: MFTarget {
         case .registerUser,
                 .login,
                 .loginOauth,
-                .findIdPassword,
                 .saveFCMToken:
             return .post
         case .deleteUser:
@@ -76,7 +72,6 @@ extension AuthAPI: MFTarget {
             return ["provider": provider]
         case .registerUser,
                 .login,
-                .findIdPassword,
                 .saveFCMToken,
                 .refreshToken:
             return nil
@@ -110,11 +105,6 @@ extension AuthAPI: MFTarget {
                 ]
             )
             
-        case .findIdPassword(let phoneNumber):
-            return .requestParameters(
-                parameters: ["phoneNumber": phoneNumber]
-            )
-            
         case .saveFCMToken(_, let fcmToken):
             return .requestParameters(
                 parameters: ["fcmToken": fcmToken]
@@ -135,8 +125,7 @@ extension AuthAPI: MFTarget {
                 .checkDuplicateUserID,
                 .registerUser,
                 .login,
-                .loginOauth,
-                .findIdPassword:
+                .loginOauth:
             let jsonHeaders: MFHeaders = [.contentType("application/json")]
             return jsonHeaders
         case .refreshToken(let refreshToken):
@@ -149,5 +138,4 @@ extension AuthAPI: MFTarget {
             return nil
         }
     }
-    
 }
