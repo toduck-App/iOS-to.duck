@@ -18,7 +18,7 @@ final class BboduckTimerView: BaseTimerView {
     ]
 
     private let bboduckView = LottieAnimationView(
-        name: "bboduckTimer",
+        name: "Timer_0",
         bundle: BboduckTimerView.toduckBundle
     ).then {
         $0.backgroundColor = .clear
