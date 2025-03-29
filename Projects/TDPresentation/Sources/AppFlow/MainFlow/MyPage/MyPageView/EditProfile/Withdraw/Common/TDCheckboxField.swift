@@ -35,7 +35,7 @@ final class TDCheckboxField: BaseView {
         textView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         textView.layer.borderWidth = LayoutConstants.textViewBorderWidth
         textView.textColor = TDColor.Neutral.neutral800
-        textView.font = TDFont.body4.font
+        textView.font = TDFont.regularBody4.font
         textView.isScrollEnabled = true
         textView.textContainerInset = UIEdgeInsets(
             top: LayoutConstants.textViewVerticalInset,
