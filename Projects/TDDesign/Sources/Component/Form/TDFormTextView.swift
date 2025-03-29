@@ -55,14 +55,14 @@ public final class TDFormTextView: UIView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         $0.layer.borderWidth = 1
         $0.textColor = TDColor.Neutral.neutral800
-        $0.font = TDFont.mediumBody2.font
+        $0.font = TDFont.body4.font
         $0.isScrollEnabled = true
         $0.textContainerInset = UIEdgeInsets(top: 14, left: 12, bottom: 14, right: 12)
         $0.delegate = self
         $0.backgroundColor = TDColor.Neutral.neutral50
     }
     
-    private let placeholderLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
+    private let placeholderLabel = TDLabel(toduckFont: .body4, toduckColor: TDColor.Neutral.neutral500)
     
     // MARK: - Initializers
 

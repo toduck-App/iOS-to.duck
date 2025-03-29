@@ -2,7 +2,7 @@
 //  EditProfileCoordinator.swift
 //  TDPresentation
 //
-//  Created by 정지용 on 1/20/25.
+//  Created by 정지용 on 1/23/25.
 //
 
 import UIKit
@@ -25,14 +25,13 @@ final class EditProfileCoordinator: Coordinator {
     
     func start() {
         let editProfileViewController = EditProfileViewController()
+        editProfileViewController.hidesBottomBarWhenPushed = true
         editProfileViewController.coordinator = self
         navigationController.pushViewController(editProfileViewController, animated: true)
     }
-}
-
-// MARK: - Coordinator Finish Delegate
-extension EditProfileCoordinator: CoordinatorFinishDelegate {
-    func didFinish(childCoordinator: Coordinator) {
-        childCoordinators.removeAll { $0 === childCoordinator }
+    
+    func popViewController() {
+        navigationController.popViewController(animated: true)
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }
