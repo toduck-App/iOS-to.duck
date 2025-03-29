@@ -1,4 +1,5 @@
 import Combine
+import TDDomain
 import UIKit
 import TDCore
 import TDDesign
@@ -55,11 +56,15 @@ final class FindAccountViewController: BaseViewController<BaseView> {
     private func getViewController(for index: Int) -> UIViewController {
         switch index {
         case 0:
-            let viewModel = FindIdViewModel()
+            let findUserIdUseCase = DIContainer.shared.resolve(FindUserIdUseCase.self)
+            let requestVerificationCodeForIdUseCase = DIContainer.shared.resolve(RequestVerificationCodeForIdUseCase.self)
+            let verifyPhoneCodeUseCase = DIContainer.shared.resolve(VerifyPhoneCodeUseCase.self)
+            let viewModel = FindIdViewModel(findUserIdUseCase: findUserIdUseCase, requestVerificationCodeForIdUseCase: requestVerificationCodeForIdUseCase, verifyPhoneCodeUseCase: verifyPhoneCodeUseCase)
             let findIdViewController = FindIdViewController(viewModel: viewModel)
             findIdViewController.coordinator = coordinator
             return UINavigationController(rootViewController: findIdViewController)
         case 1:
+            let requestVerificationCodeForPasswordUseCase = DIContainer.shared.resolve(RequestVerificationCodeForPasswordUseCase.self)
             let viewModel = FindPasswordViewModel()
             let findPasswordViewController = FindPasswordViewController(viewModel: viewModel)
             findPasswordViewController.coordinator = coordinator

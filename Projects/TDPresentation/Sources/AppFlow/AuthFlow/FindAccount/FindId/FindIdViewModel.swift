@@ -1,4 +1,5 @@
 import Combine
+import TDDomain
 import Foundation
 
 final class FindIdViewModel: BaseViewModel {
@@ -11,37 +12,58 @@ final class FindIdViewModel: BaseViewModel {
         case phoneNumberValid
         case phoneNumberInvalid
         case verificationCodeInvalid
-        case verificationCodeValid
+        case verificationCodeValid(userId: String)
         case updateVerificationTimer(time: String)
+        case failureAPI(String)
     }
     
+    private let findUserIdUseCase: FindUserIdUseCase
+    private let requestVerificationCodeForIdUseCase: RequestVerificationCodeForIdUseCase
+    private let verifyPhoneCodeUseCase: VerifyPhoneCodeUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
+    private var phoneNumber: String = ""
     private var timer: AnyCancellable?
     private var verificationTimeRemaining = 300
+    
+    init(
+        findUserIdUseCase: FindUserIdUseCase,
+        requestVerificationCodeForIdUseCase: RequestVerificationCodeForIdUseCase,
+        verifyPhoneCodeUseCase: VerifyPhoneCodeUseCase
+    ) {
+        self.findUserIdUseCase = findUserIdUseCase
+        self.requestVerificationCodeForIdUseCase = requestVerificationCodeForIdUseCase
+        self.verifyPhoneCodeUseCase = verifyPhoneCodeUseCase
+    }
 
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
             case .postPhoneNumber(let phoneNumber):
-                self?.validatePhoneNumber(with: phoneNumber)
+                Task { await self?.validatePhoneNumber(with: phoneNumber) }
             case .postVerificationCode(let code):
-                self?.validateVerificationCode(with: code)
+                Task { await self?.validateVerificationCode(with: code) }
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
 
-    private func validatePhoneNumber(with phoneNumber: String) {
+    private func validatePhoneNumber(with phoneNumber: String) async {
         guard isValidPhoneNumber(with: phoneNumber) else {
             output.send(.phoneNumberInvalid)
             return
         }
         
-        output.send(.phoneNumberValid)
+        self.phoneNumber = phoneNumber
         startVerificationTimer()
+        do {
+            try await requestVerificationCodeForIdUseCase.execute(phoneNumber: phoneNumber)
+            output.send(.phoneNumberValid)
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
+        }
     }
     
     private func isValidPhoneNumber(with phoneNumber: String) -> Bool {
@@ -49,13 +71,19 @@ final class FindIdViewModel: BaseViewModel {
         return phoneNumber.range(of: phoneRegex, options: .regularExpression) != nil
     }
 
-    private func validateVerificationCode(with code: String) {
+    private func validateVerificationCode(with code: String) async {
         guard isValidVerificationCode(with: code) else {
             output.send(.verificationCodeInvalid)
             return
         }
         
-        output.send(.verificationCodeValid)
+        do {
+            try await verifyPhoneCodeUseCase.execute(phoneNumber: phoneNumber, verifiedCode: code)
+            let userId = try await findUserIdUseCase.execute(phoneNumber: phoneNumber)
+            output.send(.verificationCodeValid(userId: userId))
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
+        }
     }
     
     private func isValidVerificationCode(with code: String) -> Bool {

@@ -13,5 +13,9 @@ public struct ServiceAssembly: Assembly {
         container.register(ScheduleService.self) { _ in
             return ScheduleServiceImpl()
         }
+        
+        container.register(UserAuthService.self) { _ in
+            return UserAuthServiceImpl()
+        }
     }
 }

@@ -71,7 +71,7 @@ final class ShowIdViewController: BaseViewController<BaseView> {
         }, for: .touchUpInside)
     }
     
-    func setUserId(_ id: String) {
+    func setUserId(with id: String) {
         userIdLabel.text = id
     }
 }

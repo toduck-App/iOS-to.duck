@@ -57,13 +57,15 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
                     self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
-                case .verificationCodeValid:
+                case .verificationCodeValid(let userId):
                     let showIdViewController = ShowIdViewController()
-                    showIdViewController.setUserId("gywns**")
+                    showIdViewController.setUserId(with: userId)
                     showIdViewController.coordinator = self?.coordinator
                     self?.navigationController?.pushViewController(showIdViewController, animated: true)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
                 }
             }
             .store(in: &cancellables)

@@ -1,3 +1,4 @@
+// 아이디 찾기 인증번호 요청 UseCase
 public protocol RequestVerificationCodeForIdUseCase {
     func execute(phoneNumber: String) async throws
 }

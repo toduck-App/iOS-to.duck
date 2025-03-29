@@ -46,6 +46,13 @@ public struct DataAssembly: Assembly {
             return UserRepositoryImpl()
         }.inObjectScope(.container)
         
+        container.register(UserAuthRepository.self) { _ in
+            guard let service = container.resolve(UserAuthService.self) else {
+                fatalError("UserAuthService is not registered")
+            }
+            return UserAuthRepositoryImpl(service: service)
+        }
+        
         container.register(RecentKeywordRepository.self) { _ in
             guard let storage = container.resolve(RecentKeywordStorage.self) else {
                 fatalError("Storage is not registered")

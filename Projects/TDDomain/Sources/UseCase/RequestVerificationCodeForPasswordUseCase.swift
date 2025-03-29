@@ -1,3 +1,4 @@
+// 비밀번호 찾기용 인증 코드 요청 UseCase
 public protocol RequestVerificationCodeForPasswordUseCase {
     func execute(loginId: String, phoneNumber: String) async throws
 }

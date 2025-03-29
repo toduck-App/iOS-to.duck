@@ -17,15 +17,15 @@ extension UserAuthAPI: MFTarget {
     public var path: String {
         switch self {
         case .changePassword:
-            return "v1/auth/verified-code"
+            return "v1/users/find/change-password"
         case .findId:
-            return "v1/auth/verified-code"
+            return "v1/users/find/login-id"
         case .requestVerificationCodeWithFindId:
-            return "v1/auth/verified-code"
+            return "v1/users/find/verified-code"
         case .requestVerificationCodeWithFindPassword:
-            return "v1/auth/verified-code"
+            return "v1/users/find/verify-login-id-phonenumber"
         case .logout:
-            return "v1/auth/verified-code"
+            return "v1/users/logout"
         }
     }
     

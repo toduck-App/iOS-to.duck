@@ -1,3 +1,4 @@
+// 회원가입 시 전화번호 인증 코드 요청 UseCase
 public protocol RequestPhoneVerificationCodeUseCase {
     func execute(with phoneNumber: String) async throws
 }
