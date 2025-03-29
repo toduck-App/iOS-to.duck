@@ -4,18 +4,18 @@ import TDDomain
 
 extension TDCategoryImageType {
     init(rawValue: String) {
-        switch rawValue.lowercased() {
-        case "computer": self = .computer
-        case "food": self = .food
-        case "pencil": self = .pencil
-        case "redBook": self = .redBook
-        case "sleep": self = .sleep
-        case "power": self = .power
-        case "people": self = .people
-        case "medicine": self = .medicine
-        case "talk": self = .talk
-        case "heart": self = .heart
-        case "vehicle": self = .vehicle
+        switch rawValue.uppercased() {
+        case "COMPUTER": self = .computer
+        case "FOOD": self = .food
+        case "PENCIL": self = .pencil
+        case "RED_BOOK": self = .redBook
+        case "SLEEP": self = .sleep
+        case "POWER": self = .power
+        case "PEOPLE": self = .people
+        case "MEDICINE": self = .medicine
+        case "TALK": self = .talk
+        case "HEART": self = .heart
+        case "VEHICLE": self = .vehicle
         default: self = .none
         }
     }

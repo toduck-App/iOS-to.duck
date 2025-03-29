@@ -20,6 +20,13 @@ final class TDCategoryCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        imageView.image = nil
+        circleView.alpha = 1.0
+    }
     
     private func setupView() {
         contentView.addSubview(circleView)
@@ -29,8 +36,9 @@ final class TDCategoryCell: UICollectionViewCell {
         imageView.snp.makeConstraints { $0.edges.equalToSuperview().inset(12) }
     }
     
-    func configure(image: UIImage, backgroundColor: UIColor) {
-        circleView.backgroundColor = backgroundColor
+    func configure(image: UIImage, backgroundColor: UIColor, isSelected: Bool) {
         imageView.image = image
+        circleView.backgroundColor = backgroundColor
+        circleView.alpha = isSelected ? 1.0 : 0.3
     }
 }

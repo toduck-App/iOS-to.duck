@@ -69,7 +69,7 @@ public class TDBaseButton: UIButton {
                 configuration?.baseForegroundColor = foregroundToduckColor
                 layer.borderWidth = 1
             } else {
-                configuration?.baseBackgroundColor = TDColor.Neutral.neutral300
+                configuration?.baseBackgroundColor = TDColor.Neutral.neutral100
                 configuration?.baseForegroundColor = TDColor.Neutral.neutral500
                 layer.borderWidth = 0
             }

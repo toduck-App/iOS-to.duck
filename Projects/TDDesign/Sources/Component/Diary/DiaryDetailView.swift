@@ -17,11 +17,17 @@ public final class DiaryDetailView: UIView {
         $0.alignment = .center
     }
     private let emotionImageView = UIImageView()
-    private let dropdownButton = TDBaseButton(
+    public let dropdownButton = TDBaseButton(
         image: TDImage.Dot.verticalMedium,
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral500
     )
+    public lazy var dropDownHoverView = TDDropdownHoverView(
+        anchorView: dropdownButton,
+        layout: .trailing,
+        width: 110
+    )
+    
     private let dateVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 4
@@ -104,7 +110,7 @@ public final class DiaryDetailView: UIView {
         
         dateHeaderStackView.addArrangedSubview(emotionImageView)
         dateHeaderStackView.addArrangedSubview(dateVerticalStackView)
-        dateHeaderStackView.addArrangedSubview(dropdownButton)
+        dateHeaderStackView.addArrangedSubview(dropDownHoverView)
         
         dateVerticalStackView.addArrangedSubview(dateLabel)
         dateVerticalStackView.addArrangedSubview(titleLabel)

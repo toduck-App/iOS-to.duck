@@ -1,5 +1,11 @@
 import UIKit
+import TDDomain
 import TDCore
+
+protocol DiaryCoordinatorDelegate: AnyObject {
+    func didTapCreateDiaryButton(selectedDate: Date)
+    func didTapEditDiaryButton(diary: Diary)
+}
 
 final class DiaryCoordinator: Coordinator {
     var navigationController: UINavigationController
@@ -42,5 +48,30 @@ extension DiaryCoordinator: NavigationDelegate {
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
+    }
+}
+
+// MARK: - Diary Coordinator Delegate
+extension DiaryCoordinator: DiaryCoordinatorDelegate {
+    func didTapCreateDiaryButton(selectedDate: Date) {
+        let diaryMakorCoordinator = DiaryMakorCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            isEdit: false
+        )
+        diaryMakorCoordinator.finishDelegate = self
+        childCoordinators.append(diaryMakorCoordinator)
+        diaryMakorCoordinator.start(selectedDate: selectedDate, diary: nil)
+    }
+    
+    func didTapEditDiaryButton(diary: Diary) {
+        let diaryMakorCoordinator = DiaryMakorCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            isEdit: true
+        )
+        diaryMakorCoordinator.finishDelegate = self
+        childCoordinators.append(diaryMakorCoordinator)
+        diaryMakorCoordinator.start(selectedDate: nil, diary: diary)
     }
 }

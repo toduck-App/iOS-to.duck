@@ -37,6 +37,7 @@ public final class TDFormTextView: UIView {
     public weak var delegate: TDFormTextViewDelegate?
     
     private let maxCharacter: Int
+    private let maxHeight: CGFloat
     
     // MARK: - UI Properties
     
@@ -54,31 +55,37 @@ public final class TDFormTextView: UIView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         $0.layer.borderWidth = 1
         $0.textColor = TDColor.Neutral.neutral800
-        $0.font = TDFont.body4.font
+        $0.font = TDFont.regularBody4.font
         $0.isScrollEnabled = true
         $0.textContainerInset = UIEdgeInsets(top: 14, left: 12, bottom: 14, right: 12)
         $0.delegate = self
         $0.backgroundColor = TDColor.Neutral.neutral50
     }
     
-    private let placeholderLabel = TDLabel(toduckFont: .body4, toduckColor: TDColor.Neutral.neutral500)
+    private let placeholderLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral500)
     
     // MARK: - Initializers
 
     public init(
         image: UIImage? = nil,
         title: String,
+        titleFont: TDFont = .boldBody1,
+        titleColor: UIColor = TDColor.Neutral.neutral800,
         isRequired: Bool,
         maxCharacter: Int,
-        placeholder: String
+        placeholder: String,
+        maxHeight: CGFloat = 112
     ) {
         self.titleImageView.image = image
         self.maxCharacter = maxCharacter
+        self.maxHeight = maxHeight
         super.init(frame: .zero)
         
         // Title 설정
         titleImageView.contentMode = .scaleAspectFit
         titleLabel.setTitleLabel(title)
+        titleLabel.setTitleFont(titleFont)
+        titleLabel.setTitleColor(titleColor)
         
         // 필수 항목 표시
         if isRequired {
@@ -99,6 +106,11 @@ public final class TDFormTextView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func setupTextView(text: String) {
+        textView.text = text
+        textViewDidChange(textView)
     }
 }
 
@@ -128,7 +140,7 @@ extension TDFormTextView {
         textView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(112)
+            make.height.equalTo(maxHeight)
         }
         
         maxCounterLabel.snp.makeConstraints { make in
