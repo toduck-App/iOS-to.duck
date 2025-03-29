@@ -7,6 +7,7 @@ final class PhoneVerificationCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    weak var accountFlowDelegate: AccountCoordinatorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -33,6 +34,8 @@ final class PhoneVerificationCoordinator: Coordinator {
             navigationController: navigationController,
             injector: injector
         )
+        accountViewCoordinator.finishDelegate = self
+        accountViewCoordinator.delegate = self
         childCoordinators.append(accountViewCoordinator)
         accountViewCoordinator.start()
     }
@@ -42,5 +45,14 @@ final class PhoneVerificationCoordinator: Coordinator {
 extension PhoneVerificationCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+// MARK: - AccountCoordinatorDelegate
+extension PhoneVerificationCoordinator: AccountCoordinatorDelegate {
+    func didFinishRegister(from coordinator: AccountCoordinator) {
+        childCoordinators.removeAll { $0 === coordinator }
+        accountFlowDelegate?.didFinishRegister(from: coordinator)
+        self.finish(by: .popNotAnimated)
     }
 }

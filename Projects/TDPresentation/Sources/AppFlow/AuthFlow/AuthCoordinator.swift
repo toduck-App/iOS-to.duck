@@ -8,6 +8,10 @@ protocol AuthDelegate: AnyObject {
     func didSignUpButtonTapped()
 }
 
+protocol AccountCoordinatorDelegate: AnyObject {
+    func didFinishRegister(from coordinator: AccountCoordinator)
+}
+
 final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
@@ -65,7 +69,15 @@ extension AuthCoordinator: AuthDelegate {
             injector: injector
         )
         phoneVerificationCoordinator.finishDelegate = self
+        phoneVerificationCoordinator.accountFlowDelegate = self
         childCoordinators.append(phoneVerificationCoordinator)
         phoneVerificationCoordinator.start()
+    }
+}
+
+// MARK: - Account Coordinator Delegate
+extension AuthCoordinator: AccountCoordinatorDelegate {
+    func didFinishRegister(from coordinator: AccountCoordinator) {
+        childCoordinators.removeAll { $0 === coordinator }
     }
 }
