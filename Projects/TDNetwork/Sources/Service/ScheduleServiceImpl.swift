@@ -21,15 +21,10 @@ public struct ScheduleServiceImpl: ScheduleService {
         }
     }
     
-    public func fetchScheduleList(startDate: String, endDate: String) async throws -> ScheduleListResponseDTO {
+    public func fetchScheduleList(startDate: String, endDate: String) async throws -> ScheduleListContentDTO {
         let target = ScheduleAPI.fetchScheduleList(startDate: startDate, endDate: endDate)
         
-        do {
-            let response = try await provider.requestDecodable(of: ScheduleListResponseDTO.self, target).value
-            TDLogger.network("\(#function) - \(response.code) \(response.message)")
-            return response
-        } catch {
-            throw TDDataError.fetchRequestFailure
-        }
+        let response = try await provider.requestDecodable(of: ScheduleListContentDTO.self, target).value
+        return response
     }
 }

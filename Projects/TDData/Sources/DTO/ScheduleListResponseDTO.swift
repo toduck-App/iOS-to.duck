@@ -1,12 +1,6 @@
 import Foundation
 import TDDomain
 
-public struct ScheduleListResponseDTO: Decodable {
-    public let code: Int
-    public let content: ScheduleListContentDTO
-    public let message: String?
-}
-
 public struct ScheduleListContentDTO: Decodable {
     public let queryStartDate: String
     public let queryEndDate: String

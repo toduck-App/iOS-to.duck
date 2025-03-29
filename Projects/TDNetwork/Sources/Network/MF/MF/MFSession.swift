@@ -39,8 +39,9 @@ open class MFSession {
     open func requestDecodable<T: Decodable>(of type: T.Type, _ request: MFRequest) async throws(MFError) -> MFResponse<T> {
         let response = try await perform(request) { data in
             let decoder = JSONDecoder()
+            TDLogger.debug("디코딩할 타입: \(ServerResponse<T>.self)\n디코딩할 데이터: \(String(data: data, encoding: .utf8) ?? "")")
             let serverResponse = try decoder.decode(ServerResponse<T>.self, from: data)
-            TDLogger.debug("\(serverResponse.code), \(serverResponse.message)")
+            TDLogger.debug("\(serverResponse.code), \(String(describing: serverResponse.message))")
             guard (20000 ... 29999).contains(serverResponse.code) else {
                 if let apiError = APIError(rawValue: serverResponse.code) {
                     throw MFError.serverError(apiError: apiError)
@@ -80,9 +81,6 @@ open class MFSession {
         do {
             let urlRequest = try request.asURLRequest()
             let (data, response) = try await session.data(for: urlRequest)
-            if let responseString = String(data: data, encoding: .utf8) {
-                print(responseString)
-            }
             let transformedData = try transformer(data)
             
             let mfResponse = try MFResponse(
