@@ -56,10 +56,14 @@ final class FindAccountViewController: BaseViewController<BaseView> {
         switch index {
         case 0:
             let viewModel = FindIdViewModel()
-            return FindIdViewController(viewModel: viewModel)
+            let findIdViewController = FindIdViewController(viewModel: viewModel)
+            findIdViewController.coordinator = coordinator
+            return UINavigationController(rootViewController: findIdViewController)
         case 1:
             let viewModel = FindPasswordViewModel()
-            return FindPasswordViewController(viewModel: viewModel)
+            let findPasswordViewController = FindPasswordViewController(viewModel: viewModel)
+            findPasswordViewController.coordinator = coordinator
+            return UINavigationController(rootViewController: findPasswordViewController)
         default:
             return UIViewController()
         }

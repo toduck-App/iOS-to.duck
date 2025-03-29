@@ -65,8 +65,6 @@ public final class TDSegmentedControl: UIControl {
     // MARK: - View Setup
     
     private func configureView() {
-        backgroundColor = indicatorBackGroundColor
-        
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         

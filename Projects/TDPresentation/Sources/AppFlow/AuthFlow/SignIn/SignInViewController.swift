@@ -47,7 +47,7 @@ final class SignInViewController: BaseViewController<SignInView> {
             .sink { [weak self] event in
                 switch event {
                 case .validSignIn:
-                    self?.coordinator?.didSignIn()
+                    self?.coordinator?.finish(by: .pop)
                 case .invalidSignIn:
                     UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
                         self?.layoutView.failedContainerView.alpha = 1

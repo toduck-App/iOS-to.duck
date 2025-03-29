@@ -45,7 +45,7 @@ final class FindIdViewModel: BaseViewModel {
     }
     
     private func isValidPhoneNumber(with phoneNumber: String) -> Bool {
-        let phoneRegex = #"^01[0-9]{8,9}$"#
+        let phoneRegex = #"^010[0-9]{8}$"#
         return phoneNumber.range(of: phoneRegex, options: .regularExpression) != nil
     }
 
@@ -59,7 +59,7 @@ final class FindIdViewModel: BaseViewModel {
     }
     
     private func isValidVerificationCode(with code: String) -> Bool {
-        return code.count == 6 && code.allSatisfy { $0.isNumber }
+        return code.count == 5 && code.allSatisfy { $0.isNumber }
     }
     
     private func startVerificationTimer() {

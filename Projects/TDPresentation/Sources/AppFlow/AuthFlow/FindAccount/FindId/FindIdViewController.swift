@@ -7,6 +7,7 @@ final class FindIdViewController: BaseViewController<FindIdView> {
     private let viewModel: FindIdViewModel
     private let input = PassthroughSubject<FindIdViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    weak var coordinator: FindAccountCoordinator?
     
     init(
         viewModel: FindIdViewModel
@@ -59,8 +60,10 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                     self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .verificationCodeValid:
-                    self?.layoutView.verificationNumberContainerView.layer.borderWidth = 0
-                    self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Neutral.neutral100
+                    let showIdViewController = ShowIdViewController()
+                    showIdViewController.setUserId("gywns**")
+                    showIdViewController.coordinator = self?.coordinator
+                    self?.navigationController?.pushViewController(showIdViewController, animated: true)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 }
@@ -83,7 +86,7 @@ extension FindIdViewController: UITextFieldDelegate {
         case layoutView.phoneNumberTextField:
             return newLength <= 11
         case layoutView.verificationNumberTextField:
-            return newLength <= 6
+            return newLength <= 5
         default:
             return false
         }
@@ -91,7 +94,7 @@ extension FindIdViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isEnabled = textField.text?.count == 6
+            layoutView.nextButton.isEnabled = textField.text?.count == 5
             layoutView.nextButton.layer.borderWidth = 0
         }
     }

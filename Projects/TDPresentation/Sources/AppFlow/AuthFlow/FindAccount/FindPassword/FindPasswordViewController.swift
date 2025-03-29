@@ -7,6 +7,7 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
     private let viewModel: FindPasswordViewModel
     private let input = PassthroughSubject<FindPasswordViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    weak var coordinator: FindAccountCoordinator?
     
     init(
         viewModel: FindPasswordViewModel
