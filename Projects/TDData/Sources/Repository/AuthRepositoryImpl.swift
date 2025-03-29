@@ -14,12 +14,23 @@ public struct AuthRepositoryImpl: AuthRepository {
         self.service = service
     }
     
+    public func requestRegisterUser(user: RegisterUser) async throws {
+        let phoneNumber = user.phoneNumber
+        let loginId = user.loginId
+        let password = user.password
+        try await service.requestRegisterUser(phoneNumber: phoneNumber, loginId: loginId, password: password)
+    }
+    
     public func requestPhoneVerification(with phoneNumber: String) async throws {
         try await service.requestPhoneVerification(with: phoneNumber)
     }
     
     public func checkPhoneVerification(phoneNumber: String, verifiedCode: String) async throws {
         try await service.checkPhoneVerification(phoneNumber: phoneNumber, verifiedCode: verifiedCode)
+    }
+    
+    public func checkDuplicateUserID(loginId: String) async throws {
+        try await service.checkDuplicateUserID(loginId: loginId)
     }
     
     public func requestKakaoLogin() async throws {

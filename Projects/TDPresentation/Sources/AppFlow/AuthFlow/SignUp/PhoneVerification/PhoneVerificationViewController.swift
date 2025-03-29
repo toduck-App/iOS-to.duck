@@ -61,17 +61,14 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = true
                     self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral50
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-                    TDLogger.info("전화번호 형식이 올바릅니다.")
-                case .phoneNumberAlreadyExist:
-                    TDLogger.debug("이미 가입된 전화번호입니다.")
+                case .phoneNumberAlreadyExist(let message):
+                    self?.showErrorAlert(with: message)
                 case .verificationCodeInvalid:
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
-                    TDLogger.debug("인증번호 형식이 올바르지 않습니다.")
-                case .verificationCodeValid:
-                    TDLogger.info("인증번호 형식이 올바릅니다.")
-                    self?.coordinator?.startAccountViewCoordinator()
+                case .verificationCodeValid(let phoneNumber):
+                    self?.coordinator?.startAccountViewCoordinator(phoneNumber: phoneNumber)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 case .apiFailure(let error):

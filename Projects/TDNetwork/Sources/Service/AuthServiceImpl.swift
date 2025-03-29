@@ -11,32 +11,24 @@ public struct AuthServiceImpl: AuthService {
         self.provider = provider
     }
     
+    public func requestRegisterUser(phoneNumber: String, loginId: String, password: String) async throws {
+        let target = AuthAPI.registerUser(phoneNumber: phoneNumber, loginId: loginId, password: password)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
     public func requestPhoneVerification(with phoneNumber: String) async throws {
         let target = AuthAPI.requestPhoneVerification(phoneNumber: phoneNumber)
-        let response = try await provider.requestDecodable(of: ServerResponse<EmptyResponse>.self, target)
-        
-        switch response.value.code {
-        case 40110:
-            throw APIError.existsPhoneNumber
-        case 40111:
-            throw APIError.overMaxMessageCount
-        default:
-            throw TDDataError.generalFailure
-        }
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
     public func checkPhoneVerification(phoneNumber: String, verifiedCode: String) async throws {
-        let target = AuthAPI.checkPhoneVerification(phoneNumber: phoneNumber, code: verifiedCode)
-        let response = try await provider.requestDecodable(of: ServerResponse<EmptyResponse>.self, target)
-        
-        switch response.value.code {
-        case 40112:
-            throw APIError.overMaxVerifiedCount
-        case 40114:
-            throw APIError.notSendPhoneNumber
-        default:
-            throw TDDataError.generalFailure
-        }
+        let target = AuthAPI.checkPhoneVerification(phoneNumber: phoneNumber, verifiedCode: verifiedCode)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func checkDuplicateUserID(loginId: String) async throws {
+        let target = AuthAPI.checkDuplicateUserID(loginId: loginId)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
     public func requestOauthRegister(oauthProvider: String, oauthId: String, idToken: String) async throws -> LoginUserResponseDTO {

@@ -11,9 +11,9 @@ final class PhoneVerificationViewModel: BaseViewModel {
     enum Output {
         case phoneNumberValid
         case phoneNumberInvalid
-        case phoneNumberAlreadyExist
+        case phoneNumberAlreadyExist(error: String)
         case verificationCodeInvalid
-        case verificationCodeValid
+        case verificationCodeValid(phoneNumber: String)
         case updateVerificationTimer(time: String)
         case apiFailure(error: String)
     }
@@ -78,7 +78,7 @@ final class PhoneVerificationViewModel: BaseViewModel {
         
         do {
             try await verifyPhoneCodeUseCase.execute(phoneNumber: phoneNumber, verifiedCode: code)
-            output.send(.verificationCodeValid)
+            output.send(.verificationCodeValid(phoneNumber: phoneNumber))
         } catch {
             output.send(.verificationCodeInvalid)
         }

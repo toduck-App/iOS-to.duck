@@ -2,9 +2,9 @@ import Foundation
 
 public enum AuthAPI {
     case requestPhoneVerification(phoneNumber: String) // 휴대폰 본인 인증 요청
-    case checkPhoneVerification(phoneNumber: String, code: String) // 휴대폰 본인 인증 확인
-    case checkUsernameDuplication(username: String) // 아이디 중복 확인
-    case registerUser(userDetails: [String: Any]) // 회원가입
+    case checkPhoneVerification(phoneNumber: String, verifiedCode: String) // 휴대폰 본인 인증 확인
+    case checkDuplicateUserID(loginId: String) // 아이디 중복 확인
+    case registerUser(phoneNumber: String, loginId: String, password: String) // 회원가입
     case login(loginId: String, password: String) // 자체 로그인
     case loginOauth(provider: String, oauthId: String, idToken: String) // Oauth 로그인
     case findIdPassword(phoneNumber: String) // 비밀번호 찾기
@@ -24,10 +24,10 @@ extension AuthAPI: MFTarget {
             return "v1/auth/verified-code"
         case .checkPhoneVerification:
             return "v1/auth/check-verfied-code"
-        case .checkUsernameDuplication:
-            return "/auth/check-username-duplication"
+        case .checkDuplicateUserID:
+            return "v1/auth/check-user-id"
         case .registerUser:
-            return "/auth/registerUser"
+            return "v1/auth/register"
         case .login:
             return "/v1/auth/login"
         case .loginOauth:
@@ -47,10 +47,10 @@ extension AuthAPI: MFTarget {
         switch self {
         case .requestPhoneVerification,
                 .refreshToken,
-                .checkPhoneVerification:
+                .checkPhoneVerification,
+                .checkDuplicateUserID:
             return .get
-        case .checkUsernameDuplication,
-                .registerUser,
+        case .registerUser,
                 .login,
                 .loginOauth,
                 .findIdPassword,
@@ -65,15 +65,16 @@ extension AuthAPI: MFTarget {
         switch self {
         case .requestPhoneVerification(let phoneNumber):
             return ["phoneNumber": phoneNumber]
-        case .checkPhoneVerification(let phoneNumber, let code):
+        case .checkPhoneVerification(let phoneNumber, let verifiedCode):
             return [
                 "phoneNumber": phoneNumber,
-                "code": code
+                "verifiedCode": verifiedCode
             ]
+        case .checkDuplicateUserID(let loginId):
+            return ["loginId": loginId]
         case .loginOauth(let provider, _, _):
             return ["provider": provider]
-        case .checkUsernameDuplication,
-                .registerUser,
+        case .registerUser,
                 .login,
                 .findIdPassword,
                 .saveFCMToken,
@@ -87,13 +88,12 @@ extension AuthAPI: MFTarget {
     
     public var task: MFTask {
         switch self {
-        case .checkUsernameDuplication(let username):
+        case .registerUser(let phoneNumber, let loginId, let password):
             return .requestParameters(
-                parameters: ["username": username]
+                parameters: ["phoneNumber": phoneNumber,
+                             "loginId": loginId,
+                             "password": password]
             )
-            
-        case .registerUser(let userDetails):
-            return .requestParameters(parameters: userDetails)
             
         case .login(let loginId, let password):
             return .requestParameters(
@@ -120,7 +120,8 @@ extension AuthAPI: MFTarget {
                 parameters: ["fcmToken": fcmToken]
             )
             
-        case .requestPhoneVerification,
+        case .checkDuplicateUserID,
+                .requestPhoneVerification,
                 .checkPhoneVerification,
                 .deleteUser,
                 .refreshToken:
@@ -131,7 +132,7 @@ extension AuthAPI: MFTarget {
     public var headers: MFHeaders? {
         switch self {
         case .checkPhoneVerification,
-                .checkUsernameDuplication,
+                .checkDuplicateUserID,
                 .registerUser,
                 .login,
                 .loginOauth,

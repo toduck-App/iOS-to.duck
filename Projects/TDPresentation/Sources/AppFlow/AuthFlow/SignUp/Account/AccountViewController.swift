@@ -51,6 +51,9 @@ final class AccountViewController: BaseViewController<AccountView> {
                 case .validId:
                     self?.layoutView.idContainerView.backgroundColor = TDColor.Neutral.neutral50
                     self?.layoutView.idContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    self?.layoutView.idFieldStateLabel.isHidden = true
+                case .notDuplicateId:
+                    self?.layoutView.idFieldStateLabel.isHidden = false
                     self?.layoutView.idFieldStateLabel.setText("사용 가능한 아이디입니다.")
                     self?.layoutView.idFieldStateLabel.setColor(TDColor.Semantic.success)
                 case .invalidPassword:
@@ -75,22 +78,29 @@ final class AccountViewController: BaseViewController<AccountView> {
                 case .updateDuplicateVerificationButtonState(let isEnabled):
                     self?.layoutView.duplicateVerificationButton.isEnabled = isEnabled
                     self?.layoutView.duplicateVerificationButton.layer.borderWidth = 0
+                case .duplicateId:
+                    self?.showErrorAlert(with: "이미 사용중인 아이디입니다.")
+                case .successRegister:
+                    self?.coordinator?.notifyRegistrationSuccess()
+                case .failureRegister(let message):
+                    self?.showErrorAlert(with: message)
                 }
             }.store(in: &cancellables)
     }
     
     private func setupButtonActions() {
         layoutView.duplicateVerificationButton.addAction(UIAction { [weak self] _ in
-            guard let id = self?.layoutView.idTextField.text else { return }
-            self?.input.send(.validateId(id))
+            self?.input.send(.duplicateIdVerification)
         }, for: .touchUpInside)
 
         layoutView.nextButton.addAction(UIAction { [weak self] _ in
             let password = self?.layoutView.passwordTextField.text ?? ""
             let verifyPassword = self?.layoutView.verifyPasswordTextField.text ?? ""
             
-            self?.input.send(.validatePassword(password))
-            self?.input.send(.checkPasswordMatch(password, verifyPassword))
+        }, for: .touchUpInside)
+
+        layoutView.nextButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.registerUser)
         }, for: .touchUpInside)
     }
 }
