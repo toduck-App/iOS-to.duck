@@ -13,7 +13,7 @@ public struct AuthServiceImpl: AuthService {
     
     public func requestPhoneVerification(with phoneNumber: String) async throws {
         let target = AuthAPI.requestPhoneVerification(phoneNumber: phoneNumber)
-        let response = try await provider.requestDecodable(of: ServerResponse<String?>.self, target)
+        let response = try await provider.requestDecodable(of: ServerResponse<EmptyResponse>.self, target)
         
         switch response.value.code {
         case 40110:
@@ -27,7 +27,7 @@ public struct AuthServiceImpl: AuthService {
     
     public func checkPhoneVerification(phoneNumber: String, verifiedCode: String) async throws {
         let target = AuthAPI.checkPhoneVerification(phoneNumber: phoneNumber, code: verifiedCode)
-        let response = try await provider.requestDecodable(of: ServerResponse<String?>.self, target)
+        let response = try await provider.requestDecodable(of: ServerResponse<EmptyResponse>.self, target)
         
         switch response.value.code {
         case 40112:

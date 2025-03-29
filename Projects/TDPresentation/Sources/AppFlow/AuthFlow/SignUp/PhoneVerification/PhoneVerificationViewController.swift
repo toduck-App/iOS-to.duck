@@ -96,22 +96,22 @@ extension PhoneVerificationViewController: UITextFieldDelegate {
         case layoutView.phoneNumberTextField:
             return newLength <= 11
         case layoutView.verificationNumberTextField:
-            return newLength <= 6
+            return newLength <= 5
         default:
             return false
         }
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isEnabled = textField.text?.count == 6
-            layoutView.nextButton.layer.borderWidth = 0
-        }
-
         if textField == layoutView.phoneNumberTextField {
             let isValidPhoneNumber = textField.text?.count == 11
             layoutView.postButton.isEnabled = isValidPhoneNumber
             layoutView.postButton.layer.borderWidth = 0
+        }
+        
+        if textField == layoutView.verificationNumberTextField {
+            layoutView.nextButton.isEnabled = textField.text?.count == 5
+            layoutView.nextButton.layer.borderWidth = 0
         }
     }
 }

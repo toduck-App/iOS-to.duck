@@ -85,7 +85,7 @@ final class PhoneVerificationViewModel: BaseViewModel {
     }
     
     private func isValidVerificationCode(with code: String) -> Bool {
-        return code.count == 6 && code.allSatisfy { $0.isNumber }
+        return code.count == 5 && code.allSatisfy { $0.isNumber }
     }
     
     private func startVerificationTimer() {
