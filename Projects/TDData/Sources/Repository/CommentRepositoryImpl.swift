@@ -37,14 +37,8 @@ public final class CommentRepositoryImpl: CommentRepository {
     
     public func createComment(comment newComment: NewComment) async throws -> Bool {
         let createdComment = Comment(
-            id: UUID(),
-            user: User(
-                id: UUID(),
-                name: "닉네임",
-                icon: "",
-                title: "작심삼일",
-                isblock: false
-            ),
+            id: 4,
+            user: User.dummy[0],
             content: newComment.content,
             imageURL: URL(string: "https://picsum.photos/250/250"),
             timestamp: Date(),
@@ -90,7 +84,7 @@ public final class CommentRepositoryImpl: CommentRepository {
     // MARK: - Private Helper
     
     @discardableResult
-    private func addReply(newComment: Comment, toCommentID parentCommentID: UUID, in commentsArray: inout [Comment]) -> Bool {
+    private func addReply(newComment: Comment, toCommentID parentCommentID: Int, in commentsArray: inout [Comment]) -> Bool {
         for index in commentsArray.indices {
             if commentsArray[index].id == parentCommentID {
                 commentsArray[index].reply.append(newComment)

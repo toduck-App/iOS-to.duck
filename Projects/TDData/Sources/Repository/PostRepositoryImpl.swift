@@ -1,4 +1,5 @@
 import TDDomain
+import TDCore
 import Foundation
 
 public final class PostRepositoryImpl: PostRepository {
@@ -19,7 +20,6 @@ public final class PostRepositoryImpl: PostRepository {
         recommendedRoutines: nil,
         isFinished: false
     )
-    private let dummyUser = User(id: UUID(), name: "", icon: "", title: "", isblock: false)
     private var dummyPost = Post.dummy
     
     private let socialService: SocialService
@@ -111,6 +111,7 @@ public final class PostRepositoryImpl: PostRepository {
 //            category: <#T##[PostCategory]?#>
 //        )
         
+        return Post.dummy[0]
     }
 
     public func reportPost(postID: Post.ID) async throws {

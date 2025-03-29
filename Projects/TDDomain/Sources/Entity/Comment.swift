@@ -1,7 +1,7 @@
 import Foundation
 
 public struct Comment: Identifiable {
-    public let id: UUID
+    public let id: Int
     public let user: User
     public let content: String
     public let imageURL: URL?
@@ -11,7 +11,7 @@ public struct Comment: Identifiable {
     public var reply: [Comment] = []
 
     public init(
-        id: UUID,
+        id: Int,
         user: User,
         content: String,
         imageURL: URL? = nil,
@@ -43,7 +43,7 @@ public struct Comment: Identifiable {
 public extension Comment {
     static let dummy: [Comment] = [
         Comment(
-            id: UUID(),
+            id: 0,
             user: User.dummy[0],
             content: """
             평소에 카페인이 들어있는 음식을 줄이시는 것도 좋을 것 같아요
@@ -52,7 +52,7 @@ public extension Comment {
             isLike: true,
             likeCount: 1,
             comment: [Comment(
-                id: UUID(),
+                id: 1,
                 user: User.dummy[0],
                 content: """
                 커피를 끊기가 힘들어서 ㅜㅜ 그래도 오늘부터 노력해봐야겠어요!
@@ -64,7 +64,7 @@ public extension Comment {
                 comment: []
             ),
             Comment(
-                id: UUID(),
+                id: 2,
                 user: User.dummy[0],
                 content: """
                 커피를 끊기가 힘들어서 ㅜㅜ 그래도 오늘부터 노력해봐야겠어요!
@@ -76,7 +76,7 @@ public extension Comment {
             )]
         ),
         Comment(
-            id: UUID(),
+            id: 3,
             user: User.dummy[0],
             content: """
             안녕하세요! 제가 비슷한 문제를 겪을 때 사용하는 방법이 있어서

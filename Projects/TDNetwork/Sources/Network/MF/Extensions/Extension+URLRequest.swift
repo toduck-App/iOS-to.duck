@@ -8,41 +8,47 @@ extension URLRequest {
         parameters: Parameters? = nil,
         headers: MFHeaders? = nil
     ) throws {
-        let url = try url.asURL()
+        let originalURL = try url.asURL()
         
-        self.init(url: url)
+        guard var components = URLComponents(url: originalURL, resolvingAgainstBaseURL: false) else {
+            throw MFError.invalidURL
+        }
+        
+        if components.path.hasSuffix("/") {
+            components.path = String(components.path.dropLast())
+        }
         
         if let queries {
-            guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { throw MFError.invalidURL }
             var queryItems = components.queryItems ?? []
             try queryItems.append(contentsOf: queries.map { key, value in
-                guard let stringValue = convertToValidString(value) else { throw MFError.invalidQueryValue(key: key, value: value) }
+                guard let stringValue = Self.convertToValidString(value) else {
+                    throw MFError.invalidQueryValue(key: key, value: value)
+                }
                 return URLQueryItem(name: key, value: stringValue)
             })
             components.queryItems = queryItems
-            
-            guard let newURL = components.url else { throw MFError.invalidURL }
-            self.url = newURL
         }
         
+        guard let newURL = components.url else {
+            throw MFError.invalidURL
+        }
+        
+        self.init(url: newURL)
         httpMethod = method.rawValue
         
         if let params = parameters {
             let contentType = headers?.dictionary["Content-Type"] ?? "application/json"
-                
             switch contentType {
             case "application/json":
-                httpBody = try validateAndSerializeJSON(params)
-                    
+                httpBody = try Self.validateAndSerializeJSON(params)
             case "application/x-www-form-urlencoded":
-                httpBody = try encodeFormURLEncoded(params)
+                httpBody = try Self.encodeFormURLEncoded(params)
             case "image/jpeg":
                 httpBody = params["image"] as? Data
             default:
                 throw MFError.invalidContentType
             }
         }
-        
         
         if let headersDict = headers?.dictionary {
             for (key, value) in headersDict {
@@ -51,22 +57,20 @@ extension URLRequest {
         }
     }
     
-    private func validateAndSerializeJSON(_ params: [String: Any]) throws -> Data {
+    private static func validateAndSerializeJSON(_ params: [String: Any]) throws -> Data {
         guard JSONSerialization.isValidJSONObject(params) else {
             throw MFError.jsonSerializationFailure
         }
-        
         guard let data = try? JSONSerialization.data(withJSONObject: params, options: []) else {
             throw MFError.jsonSerializationFailure
         }
-        
         return data
     }
     
-    private func encodeFormURLEncoded(_ params: [String: Any]) throws -> Data {
+    private static func encodeFormURLEncoded(_ params: [String: Any]) throws -> Data {
         let parameterString = try params.map { key, value -> String in
             guard let encodedKey = key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-                  let encodedValue = convertToValidString(value)
+                  let encodedValue = Self.convertToValidString(value)
             else {
                 throw MFError.urlEncodingFailure
             }
@@ -78,8 +82,8 @@ extension URLRequest {
         }
         return data
     }
-
-    private func convertToValidString(_ value: Any) -> String? {
+    
+    private static func convertToValidString(_ value: Any) -> String? {
         if let stringValue = value as? String {
             return stringValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         } else if let numberValue = value as? NSNumber {

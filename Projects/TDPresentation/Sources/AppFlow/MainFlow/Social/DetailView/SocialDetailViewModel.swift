@@ -33,7 +33,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case failure(String)
     }
     
-    private let postID: UUID
+    private let postID: Int
     private let fetchPostUsecase: FetchPostUseCase
     private let fetchCommentUsecase: FetchCommentUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
@@ -187,7 +187,7 @@ private extension SocialDetailViewModel {
         }
     }
 
-    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: UUID) -> [Comment] {
+    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: Int) -> [Comment] {
         return comments.map { comment in
             if comment.id == parentID {
                 var updatedComment = comment

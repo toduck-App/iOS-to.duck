@@ -71,7 +71,7 @@ extension SocialCreateViewModel {
             category: category
         )
         
-        let image = images.map { ("\(UUID().uuidString).jpeg", $0) }
+        let image = images.map { ("\(UUID().uuidString).jpg", $0) }
         do {
             try await createPostUseCase.execute(post: post, image: image)
             output.send(.success)
