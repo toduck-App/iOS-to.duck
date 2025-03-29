@@ -74,6 +74,8 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                     self?.coordinator?.startAccountViewCoordinator()
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
+                case .apiFailure(let error):
+                    self?.showErrorAlert(with: error)
                 }
             }
             .store(in: &cancellables)

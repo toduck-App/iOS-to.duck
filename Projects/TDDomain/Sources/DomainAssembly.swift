@@ -26,6 +26,20 @@ public struct DomainAssembly: Assembly {
             return LoginUseCaseImpl(repository: repository)
         }
         
+        container.register(RequestPhoneVerificationCodeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return RequestPhoneVerificationCodeUseCaseImpl(repository: repository)
+        }
+        
+        container.register(VerifyPhoneCodeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return VerifyPhoneCodeUseCaseImpl(repository: repository)
+        }
+        
         // MARK: - Block UseCases
         container.register(BlockCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {

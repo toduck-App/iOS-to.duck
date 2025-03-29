@@ -1,5 +1,6 @@
 import UIKit
 import TDCore
+import TDDomain
 
 final class PhoneVerificationCoordinator: Coordinator {
     var navigationController: UINavigationController
@@ -16,7 +17,12 @@ final class PhoneVerificationCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = PhoneVerificationViewModel()
+        let requestPhoneVerificationCodeUseCase = injector.resolve(RequestPhoneVerificationCodeUseCase.self)
+        let verifyPhoneCodeUseCase = injector.resolve(VerifyPhoneCodeUseCase.self)
+        let viewModel = PhoneVerificationViewModel(
+            requestPhoneVerificationCodeUseCase: requestPhoneVerificationCodeUseCase,
+            verifyPhoneCodeUseCase: verifyPhoneCodeUseCase
+        )
         let phoneVerificationViewController = PhoneVerificationViewController(viewModel: viewModel)
         phoneVerificationViewController.coordinator = self
         navigationController.pushTDViewController(phoneVerificationViewController, animated: true)

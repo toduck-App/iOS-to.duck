@@ -14,6 +14,14 @@ public struct AuthRepositoryImpl: AuthRepository {
         self.service = service
     }
     
+    public func requestPhoneVerification(with phoneNumber: String) async throws {
+        try await service.requestPhoneVerification(with: phoneNumber)
+    }
+    
+    public func checkPhoneVerification(phoneNumber: String, verifiedCode: String) async throws {
+        try await service.checkPhoneVerification(phoneNumber: phoneNumber, verifiedCode: verifiedCode)
+    }
+    
     public func requestKakaoLogin() async throws {
         let idToken = try await service.requestKakaoLogin()
         TDLogger.info("[앱] 카카오로부터 IDToken을 받았습니다.")

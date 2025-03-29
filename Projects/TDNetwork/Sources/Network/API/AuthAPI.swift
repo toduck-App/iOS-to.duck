@@ -2,7 +2,7 @@ import Foundation
 
 public enum AuthAPI {
     case requestPhoneVerification(phoneNumber: String) // 휴대폰 본인 인증 요청
-    case checkPhoneVerification(code: String) // 휴대폰 본인 인증 확인
+    case checkPhoneVerification(phoneNumber: String, code: String) // 휴대폰 본인 인증 확인
     case checkUsernameDuplication(username: String) // 아이디 중복 확인
     case registerUser(userDetails: [String: Any]) // 회원가입
     case login(loginId: String, password: String) // 자체 로그인
@@ -21,9 +21,9 @@ extension AuthAPI: MFTarget {
     public var path: String {
         switch self {
         case .requestPhoneVerification:
-            return "/auth/request-phone-verification"
+            return "v1/auth/verified-code"
         case .checkPhoneVerification:
-            return "/auth/check-phone-verification"
+            return "v1/auth/check-verfied-code"
         case .checkUsernameDuplication:
             return "/auth/check-username-duplication"
         case .registerUser:
@@ -45,16 +45,16 @@ extension AuthAPI: MFTarget {
     
     public var method: MFHTTPMethod {
         switch self {
-        case .refreshToken:
-            return .get
         case .requestPhoneVerification,
-             .checkPhoneVerification,
-             .checkUsernameDuplication,
-             .registerUser,
-             .login,
-             .loginOauth,
-             .findIdPassword,
-             .saveFCMToken:
+                .refreshToken,
+                .checkPhoneVerification:
+            return .get
+        case .checkUsernameDuplication,
+                .registerUser,
+                .login,
+                .loginOauth,
+                .findIdPassword,
+                .saveFCMToken:
             return .post
         case .deleteUser:
             return .delete
@@ -63,16 +63,21 @@ extension AuthAPI: MFTarget {
     
     public var queries: Parameters? {
         switch self {
+        case .requestPhoneVerification(let phoneNumber):
+            return ["phoneNumber": phoneNumber]
+        case .checkPhoneVerification(let phoneNumber, let code):
+            return [
+                "phoneNumber": phoneNumber,
+                "code": code
+            ]
         case .loginOauth(let provider, _, _):
             return ["provider": provider]
-        case .requestPhoneVerification,
-             .checkPhoneVerification,
-             .checkUsernameDuplication,
-             .registerUser,
-             .login,
-             .findIdPassword,
-             .saveFCMToken,
-             .refreshToken:
+        case .checkUsernameDuplication,
+                .registerUser,
+                .login,
+                .findIdPassword,
+                .saveFCMToken,
+                .refreshToken:
             return nil
         case .deleteUser(let userId):
             // TODO: - 나중 결정?
@@ -82,16 +87,6 @@ extension AuthAPI: MFTarget {
     
     public var task: MFTask {
         switch self {
-        case .requestPhoneVerification(let phoneNumber):
-            return .requestParameters(
-                parameters: ["phoneNumber": phoneNumber]
-            )
-            
-        case .checkPhoneVerification(let code):
-            return .requestParameters(
-                parameters: ["code": code]
-            )
-            
         case .checkUsernameDuplication(let username):
             return .requestParameters(
                 parameters: ["username": username]
@@ -125,30 +120,33 @@ extension AuthAPI: MFTarget {
                 parameters: ["fcmToken": fcmToken]
             )
             
-        case .deleteUser, .refreshToken:
+        case .requestPhoneVerification,
+                .checkPhoneVerification,
+                .deleteUser,
+                .refreshToken:
             return .requestPlain
         }
     }
     
     public var headers: MFHeaders? {
         switch self {
-        case .requestPhoneVerification,
-             .checkPhoneVerification,
-             .checkUsernameDuplication,
-             .registerUser,
-             .login,
-             .loginOauth,
-             .findIdPassword:
+        case .checkPhoneVerification,
+                .checkUsernameDuplication,
+                .registerUser,
+                .login,
+                .loginOauth,
+                .findIdPassword:
             let jsonHeaders: MFHeaders = [.contentType("application/json")]
             return jsonHeaders
         case .refreshToken(let refreshToken):
             let cookieHeaderValue = "refreshToken=\(refreshToken)"
             let headers: MFHeaders = [.cookie(cookieHeaderValue), .accept("application/json")]
             return headers
-        case .saveFCMToken,
-             .deleteUser:
+        case .requestPhoneVerification,
+                .saveFCMToken,
+                .deleteUser:
             return nil
         }
     }
-
+    
 }
