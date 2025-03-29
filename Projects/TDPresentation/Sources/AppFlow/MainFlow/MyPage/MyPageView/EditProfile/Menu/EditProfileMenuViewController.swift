@@ -1,5 +1,5 @@
 //
-//  EditProfileViewController.swift
+//  EditProfileMenuViewController.swift
 //  TDPresentation
 //
 //  Created by 정지용 on 1/15/25.
@@ -8,8 +8,8 @@
 import UIKit
 import SnapKit
 
-final class EditProfileViewController: UICollectionViewController {
-    weak var coordinator: EditProfileCoordinator?
+final class EditProfileMenuViewController: UICollectionViewController {
+    weak var coordinator: EditProfileMenuCoordinator?
     
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -42,7 +42,7 @@ final class EditProfileViewController: UICollectionViewController {
 }
 
 // MARK: - Private Methods
-private extension EditProfileViewController {
+private extension EditProfileMenuViewController {
     func setupCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -57,7 +57,7 @@ private extension EditProfileViewController {
 }
 
 // MARK: - UICollectionViewDataSource
-extension EditProfileViewController {
+extension EditProfileMenuViewController {
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -86,8 +86,32 @@ extension EditProfileViewController {
     }
 }
 
+// MARK: - UICollectionViewDelegate
+extension EditProfileMenuViewController {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let selectedItem = Constants.mockDataSource[indexPath.row]
+        
+        // TODO: 임시 하드코딩, 이후 Model로 수정
+        // TODO: 로그아웃 미구현
+        switch selectedItem {
+        case "프로필 수정":
+            coordinator?.didTapEditProfileButton()
+        case "회원 정보 수정":
+            coordinator?.didTapEditInformationButton()
+        case "비밀번호 수정":
+            coordinator?.didTapEditPasswordButton()
+        case "회원 탈퇴":
+            coordinator?.didTapWithdrawButton()
+        default: break
+        }
+    }
+}
+
 // MARK: - UICollectionViewDelegateFlowLayout
-extension EditProfileViewController: UICollectionViewDelegateFlowLayout {
+extension EditProfileMenuViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -102,7 +126,7 @@ extension EditProfileViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - Constants
-private extension EditProfileViewController {
+private extension EditProfileMenuViewController {
     enum LayoutConstants {
         static let cellSpacing: CGFloat = 12
         static let cellHeight: CGFloat = 41

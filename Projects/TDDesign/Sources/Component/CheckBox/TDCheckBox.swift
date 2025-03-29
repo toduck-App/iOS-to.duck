@@ -5,6 +5,7 @@ public final class TDCheckbox: UIButton {
     private var backgroundTocukColor: UIColor
     private var foregroundTocukColor: UIColor
     private var checkImage: UIImage
+    public var onToggle: ((Bool) -> Void)?
     
     // MARK: - Initialization
     public init(
@@ -63,5 +64,6 @@ public final class TDCheckbox: UIButton {
     
     private func buttonClicked() {
         isSelected.toggle()
+        onToggle?(isSelected)
     }
 }

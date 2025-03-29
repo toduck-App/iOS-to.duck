@@ -93,7 +93,9 @@ public final class TDFormTextField: UIView {
 extension TDFormTextField {
     private func setupLayout() {
         addSubview(titleHorizontalStackView)
-        titleHorizontalStackView.addArrangedSubview(titleImageView)
+        if titleImageView.image != nil {
+            titleHorizontalStackView.addArrangedSubview(titleImageView)
+        }
         titleHorizontalStackView.addArrangedSubview(titleLabel)
         addSubview(textField)
         addSubview(currentCounterLabel)
@@ -104,7 +106,7 @@ extension TDFormTextField {
         }
         
         textField.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(12)
+            make.top.equalTo(titleLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview()
         }
         
