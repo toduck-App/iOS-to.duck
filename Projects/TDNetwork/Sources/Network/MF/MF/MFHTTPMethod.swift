@@ -9,6 +9,8 @@ public struct MFHTTPMethod {
     
     public static let delete = MFHTTPMethod(rawValue: "DELETE")
     
+    public static let patch = MFHTTPMethod(rawValue: "PATCH")
+    
     public let rawValue: String
     
     public init(rawValue: String) {
