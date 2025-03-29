@@ -27,8 +27,10 @@ final class SignInView: BaseView {
     )
     
     let idContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.backgroundColor = TDColor.Neutral.neutral50
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     
     let idTextField = UITextField().then {
@@ -38,8 +40,10 @@ final class SignInView: BaseView {
     }
     
     let passwordContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral100
         $0.layer.cornerRadius = LayoutConstants.inputFieldCornerRadius
+        $0.backgroundColor = TDColor.Neutral.neutral50
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     
     let passwordTextField = UITextField().then {

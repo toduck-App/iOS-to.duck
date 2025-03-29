@@ -46,17 +46,15 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                 switch action {
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
-                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 1
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .phoneNumberValid:
                     self?.layoutView.verificationNumberContainerView.isHidden = false
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = true
-                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 0
-                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral100
+                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral50
+                    self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
                 case .verificationCodeInvalid:
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
-                    self?.layoutView.verificationNumberContainerView.layer.borderWidth = 1
                     self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .verificationCodeValid:
