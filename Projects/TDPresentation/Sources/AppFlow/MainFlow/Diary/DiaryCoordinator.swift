@@ -22,7 +22,8 @@ final class DiaryCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = DiaryViewModel()
+        let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
+        let viewModel = DiaryViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase)
         let diaryViewController = DiaryViewController(viewModel: viewModel)
         diaryViewController.coordinator = self
         navigationController.pushViewController(diaryViewController, animated: false)

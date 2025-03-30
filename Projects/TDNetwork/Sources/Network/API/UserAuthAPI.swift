@@ -1,11 +1,12 @@
 import Foundation
+import TDCore
 
 public enum UserAuthAPI {
     case changePassword(loginId: String, changedPassword: String, phoneNumber: String) // 비밀번호 변경
     case findId(phoneNumber: String) // 아이디 찾기
     case requestVerificationCodeWithFindId(phoneNumber: String) // 아이디 찾기 인증요청
     case requestVerificationCodeWithFindPassword(loginId: String, phoneNumber: String) // 비밀번호 찾기 인증요청
-    case logout(authorization: String, refreshToken: String) // 로그아웃
+    case logout // 로그아웃
     // 인증번호 유효성은 AuthAPI
 }
 
@@ -77,12 +78,11 @@ extension UserAuthAPI: MFTarget {
     
     public var headers: MFHeaders? {
         switch self {
-        case .logout(let authorization, let refreshToken):
-            let cookieHeaderValue = "refreshToken=\(refreshToken)"
+        case .logout:
             let headers: MFHeaders = [
-                .authorization(bearerToken: authorization),
-                .cookie(cookieHeaderValue),
-                .accept("application/json")
+                .authorization(bearerToken: TDTokenManager.shared.accessToken ?? ""),
+                .cookie(TDTokenManager.shared.refreshToken ?? ""),
+                .contentType("application/json"),
             ]
             return headers
             

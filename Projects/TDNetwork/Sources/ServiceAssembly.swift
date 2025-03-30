@@ -18,6 +18,10 @@ public struct ServiceAssembly: Assembly {
             return UserAuthServiceImpl()
         }
         
+        container.register(MyPageService.self) { _ in
+            return MyPageServiceImpl()
+        }
+        
         container.register(SocialService.self) { _ in
             return SocialServiceImpl()
         }

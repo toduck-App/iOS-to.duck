@@ -1,34 +1,63 @@
-//
-//  EditProfileViewController.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import UIKit
+import TDDesign
+import Combine
 
 final class EditProfileViewController: BaseViewController<EditProfileView> {
+    private let viewModel: EditProfileViewModel
+    private let input = PassthroughSubject<EditProfileViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     weak var coordinator: EditProfileCoordinator?
     
+    // MARK: - Initialize
+    init(viewModel: EditProfileViewModel) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Common Methods
     override func configure() {
         layoutView.delegate = self
         layoutView.backgroundColor = .white
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "프로필 수정",
-            leftButtonAction: UIAction { _ in
-                self.coordinator?.finish(by: .pop)
+            leftButtonAction: UIAction { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
             },
             rightButtonTitle: "저장",
-            rightButtonAction: UIAction { _ in
-                // TODO: 저장 기능 연동
-                self.coordinator?.finish(by: .pop)
+            rightButtonAction: UIAction { [weak self] _ in
+                self?.input.send(.updateNickname)
             }
         )
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .updatedNickname:
+                    self?.coordinator?.finish(by: .pop)
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
+                }
+            }.store(in: &cancellables)
     }
 }
 
 extension EditProfileViewController: EditProfileDelegate {
-    func editProfileView(_ view: EditProfileView, didUpdateCondition isConditionMet: Bool) {
+    func editProfileView(
+        _ view: EditProfileView,
+        text: String,
+        didUpdateCondition isConditionMet: Bool
+    ) {
+        input.send(.writeNickname(nickname: text))
         if isConditionMet {
             navigationController?.updateRightButtonState(to: .normal)
         } else {

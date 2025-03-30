@@ -9,13 +9,13 @@ import UIKit
 import TDDesign
 
 protocol EditProfileDelegate: AnyObject {
-    func editProfileView(_ view: EditProfileView, didUpdateCondition isConditionMet: Bool)
+    func editProfileView(_ view: EditProfileView, text: String, didUpdateCondition isConditionMet: Bool)
 }
 
 final class EditProfileView: BaseView {
     weak var delegate: EditProfileDelegate?
     private let profileImageView = TDImageView()
-    private let nicknameField = TDFormTextField(
+    let nicknameField = TDFormTextField(
         title: "닉네임",
         isRequired: false,
         maxCharacter: LayoutConstants.nicknameMaxLength,
@@ -45,7 +45,7 @@ final class EditProfileView: BaseView {
 extension EditProfileView: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         let condition = text.count > 0 && text.count <= LayoutConstants.nicknameMaxLength
-        delegate?.editProfileView(self, didUpdateCondition: condition)
+        delegate?.editProfileView(self, text: text, didUpdateCondition: condition)
     }
 }
 
@@ -55,7 +55,7 @@ private extension EditProfileView {
         static let imageViewSize: CGFloat = 120
         static let nicknameLabelTopPadding: CGFloat = 20
         static let commonPadding: CGFloat = 16
-        static let nicknameMaxLength: Int = 16
+        static let nicknameMaxLength: Int = 8
         static let nicknameFieldHeight: Int = 84
     }
 }

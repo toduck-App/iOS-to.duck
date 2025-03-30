@@ -3,7 +3,6 @@ import UIKit
 
 final class DiaryAnalyzeView: BaseView {
     let nickNameLabel = TDLabel(
-        labelText: "123",
         toduckFont: .boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
     )
@@ -64,5 +63,9 @@ final class DiaryAnalyzeView: BaseView {
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(180)
         }
+    }
+    
+    func configure(nickname: String) {
+        nickNameLabel.setText(nickname)
     }
 }
