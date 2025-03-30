@@ -7,15 +7,6 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     weak var coordinator: SocialCreateCoordinator?
 
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
-    private lazy var registerButton = UIBarButtonItem(
-        title: "등록",
-        primaryAction: UIAction {
-            [weak self] _ in
-            self?.didTapRegisterButton()
-        }).then {
-        $0.isEnabled = false
-        $0.tintColor = TDColor.Primary.primary500
-    }
 
     private let input = PassthroughSubject<SocialCreateViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -74,7 +65,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                 case .success:
                     coordinator?.didTapDoneButton()
                 case .canCreatePost(let isEnabled):
-                    registerButton.isEnabled = isEnabled
+                    layoutView.saveButton.isEnabled = isEnabled
                 }
             }
             .store(in: &cancellables)

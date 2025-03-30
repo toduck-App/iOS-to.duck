@@ -14,7 +14,7 @@ enum SocialFeedMoreType: String, CaseIterable {
         case .block:
             (TDImage.banEmptySmall, TDImage.banFillSmall)
         case .edit:
-            (TDImage.penSmall, TDImage.penSmall)
+            (TDImage.Pen.penMediumColor, TDImage.Pen.penPrimaryColor)
         case .delete:
             (TDImage.trashMedium, TDImage.trashMedium)
         }
