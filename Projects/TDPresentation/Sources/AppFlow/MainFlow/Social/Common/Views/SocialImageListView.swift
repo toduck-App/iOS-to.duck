@@ -26,8 +26,13 @@ final class SocialImageListView: UIView {
         self.layoutStyle = style
         self.images = images
         super.init(frame: .zero)
-        setupUI()
-        addImages()
+        if images.isEmpty {
+            self.isHidden = true
+        } else {
+            self.isHidden = false
+            setupUI()
+            addImages()
+        }
     }
     
     @available(*, unavailable)

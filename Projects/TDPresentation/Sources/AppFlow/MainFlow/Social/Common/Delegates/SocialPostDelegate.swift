@@ -17,6 +17,14 @@ protocol SocialPostDelegate: AnyObject {
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID)
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
+    
+    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID)
+    
+    func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
+    
+    func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID)
+    
+    func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
 }
 
 extension SocialPostDelegate {
@@ -35,4 +43,12 @@ extension SocialPostDelegate {
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {}
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
+    
+    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
+    
+    func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
+    
+    func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
+    
+    func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
 }

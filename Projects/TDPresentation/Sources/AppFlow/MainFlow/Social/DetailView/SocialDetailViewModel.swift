@@ -33,7 +33,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case failure(String)
     }
     
-    private let postID: UUID
+    private let postID: Int
     private let fetchPostUsecase: FetchPostUseCase
     private let fetchCommentUsecase: FetchCommentUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
@@ -134,11 +134,13 @@ private extension SocialDetailViewModel {
 
     private func likePost() async {
         do {
-            post = try await togglePostLikeUseCase.execute(postID: postID)
-            guard let post else {
-                output.send(.failure("게시글 좋아요에 실패했습니다."))
+            guard var post = post else {
+                output.send(.failure("게시글 정보가 없습니다."))
                 return
             }
+            try await togglePostLikeUseCase.execute(postID: postID, currentLike: post.isLike)
+            post.toggleLike()
+            self.post = post
             output.send(.likePost(post))
         } catch {
             output.send(.failure("게시글 좋아요에 실패했습니다."))
@@ -187,7 +189,7 @@ private extension SocialDetailViewModel {
         }
     }
 
-    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: UUID) -> [Comment] {
+    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: Int) -> [Comment] {
         return comments.map { comment in
             if comment.id == parentID {
                 var updatedComment = comment

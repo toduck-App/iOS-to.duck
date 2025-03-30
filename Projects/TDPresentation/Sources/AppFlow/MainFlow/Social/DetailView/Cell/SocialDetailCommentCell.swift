@@ -1,5 +1,6 @@
 import Kingfisher
 import SnapKit
+import TDCore
 import TDDesign
 import TDDomain
 import UIKit
@@ -68,7 +69,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         headerView.configure(
             titleBadge: item.user.title,
             nickname: item.user.name,
-            date: item.timestamp
+            date: item.timestamp, isMyPost: TDTokenManager.shared.userId == item.user.id
         )
         contentLabel.setText(item.content)
         footerView.configure(
@@ -162,6 +163,15 @@ private extension SocialDetailCommentCell {
             guard let self else { return }
             commentDelegate?.didTapReport(self, item.id)
         }
+        headerView.onEditTapped = { [weak self] in
+            guard let self else { return }
+            commentDelegate?.didTapEditComment(self, item.id)
+        }
+        
+        headerView.onDeleteTapped = { [weak self] in
+            guard let self else { return }
+            commentDelegate?.didTapDeleteComment(self, item.id)
+        }
         footerView.onLikeButtonTapped = { [weak self] in
             guard let self else { return }
             commentDelegate?.didTapLikeButton(self, item.id)
@@ -225,7 +235,6 @@ private extension SocialDetailCommentCell {
         return replyContainer
     }
 
-    
     // MARK: 대댓글 - Subview 생성 함수들
     
     func buildReplyAvatar(_ comment: Comment) -> UIImageView {
@@ -246,9 +255,12 @@ private extension SocialDetailCommentCell {
     
     func buildReplyHeader(_ comment: Comment) -> SocialHeaderView {
         let header = SocialHeaderView(style: .list).then {
-            $0.configure(titleBadge: comment.user.title,
-                         nickname: comment.user.name,
-                         date: comment.timestamp)
+            $0.configure(
+                titleBadge: comment.user.title,
+                nickname: comment.user.name,
+                date: comment.timestamp,
+                isMyPost: TDTokenManager.shared.userId == comment.user.id
+            )
             $0.onNicknameTapped = { [weak self] in
                 guard let self else { return }
                 commentDelegate?.didTapNicknameLabel(self, comment.user.id)

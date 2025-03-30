@@ -17,7 +17,8 @@ final class SocialCreateCoordinator: Coordinator {
     }
 
     func start() {
-        let socialCreateViewModel = SocialCreateViewModel()
+        let createPostUseCase = injector.resolve(CreatePostUseCase.self)
+        let socialCreateViewModel = SocialCreateViewModel(createPostUseCase: createPostUseCase)
         let socialCreateViewController = SocialCreateViewController(
             viewModel: socialCreateViewModel
         )

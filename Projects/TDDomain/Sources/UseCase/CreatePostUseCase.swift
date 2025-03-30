@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol CreatePostUseCase {
-    func execute(post: Post) async throws -> Bool
+    func execute(post: Post, image: [(fileName: String, imageData: Data)]?) async throws
 }
 
 public final class CreatePostUseCaseImpl: CreatePostUseCase {
@@ -11,7 +11,7 @@ public final class CreatePostUseCaseImpl: CreatePostUseCase {
         self.repository = repository
     }
     
-    public func execute(post: Post) async throws -> Bool {
-        return try await repository.createPost(post: post)
+    public func execute(post: Post, image: [(fileName: String, imageData: Data)]?) async throws {
+        return try await repository.createPost(post: post, image: image)
     }
 }
