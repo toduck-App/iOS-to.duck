@@ -1,3 +1,4 @@
+import TDCore
 import TDDomain
 
 public struct UserAuthRepositoryImpl: UserAuthRepository {
@@ -21,5 +22,10 @@ public struct UserAuthRepositoryImpl: UserAuthRepository {
     
     public func changePassword(loginId: String, changedPassword: String, phoneNumber: String) async throws {
         try await service.changePassword(loginId: loginId, changedPassword: changedPassword, phoneNumber: phoneNumber)
+    }
+    
+    public func logout() async throws {
+        try await service.logout()
+        try await TDTokenManager.shared.removeToken()
     }
 }

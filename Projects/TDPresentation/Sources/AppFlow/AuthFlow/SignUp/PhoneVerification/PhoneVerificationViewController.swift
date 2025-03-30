@@ -93,7 +93,7 @@ extension PhoneVerificationViewController: UITextFieldDelegate {
         case layoutView.phoneNumberTextField:
             return newLength <= 11
         case layoutView.verificationNumberTextField:
-            return newLength <= 5
+            return newLength <= 6
         default:
             return false
         }
@@ -107,7 +107,7 @@ extension PhoneVerificationViewController: UITextFieldDelegate {
         }
         
         if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isEnabled = textField.text?.count == 5
+            layoutView.nextButton.isEnabled = textField.text?.count == 6
             layoutView.nextButton.layer.borderWidth = 0
         }
     }

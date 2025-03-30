@@ -31,6 +31,7 @@ final class SocialListCoordinator: Coordinator {
         let updateRecentKeywordUseCase = injector.resolve(UpdateKeywordUseCase.self)
         let fetchRecentKeywordUseCase = injector.resolve(FetchKeywordUseCase.self)
         let deleteRecentKeywordUseCase = injector.resolve(DeleteKeywordUseCase.self)
+        let deletePostUseCase = injector.resolve(DeletePostUseCase.self)
         let socialViewModel = SocialListViewModel(
             fetchPostUseCase: fetchPostUseCase,
             togglePostLikeUseCase: togglePostLikeUseCase,
@@ -38,7 +39,8 @@ final class SocialListCoordinator: Coordinator {
             searchPostUseCase: searchPostUseCase,
             updateRecentKeywordUseCase: updateRecentKeywordUseCase,
             fetchRecentKeywordUseCase: fetchRecentKeywordUseCase,
-            deleteRecentKeywordUseCase: deleteRecentKeywordUseCase
+            deleteRecentKeywordUseCase: deleteRecentKeywordUseCase,
+            deletePostUseCase: deletePostUseCase
         )
         let socialViewController = SocialListViewController(viewModel: socialViewModel)
         socialViewController.coordinator = self

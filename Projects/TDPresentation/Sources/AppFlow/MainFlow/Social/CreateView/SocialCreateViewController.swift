@@ -6,7 +6,7 @@ import UIKit
 final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     weak var coordinator: SocialCreateCoordinator?
 
-    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.rawValue) }
+    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
 
     private let input = PassthroughSubject<SocialCreateViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -23,10 +23,10 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         self.viewModel = nil
         super.init(coder: coder)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         if isMovingFromParent {
             coordinator?.finish(by: .pop)
         }
@@ -62,15 +62,13 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                     layoutView.formPhotoView.addPhotos(viewModel.images)
                 case .failure:
                     break
+                case .success:
+                    coordinator?.didTapDoneButton()
+                case .canCreatePost(let isEnabled):
+                    layoutView.saveButton.isEnabled = isEnabled
                 }
-                updateSaveButton()
             }
             .store(in: &cancellables)
-    }
-
-    private func updateSaveButton() {
-        let isEnabled = viewModel.selectedCategory != nil && !viewModel.title.isEmpty && !viewModel.content.isEmpty
-        layoutView.saveButton.isEnabled = isEnabled
     }
 }
 
@@ -116,7 +114,7 @@ extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate
 
 extension SocialCreateViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDDesign.TDFormTextField, didChangeText text: String) {
-        input.send(.setContent(text))
+        input.send(.setTitle(text))
     }
 }
 
@@ -132,7 +130,7 @@ extension SocialCreateViewController: TDFormTextViewDelegate {
 
 extension SocialCreateViewController {
     private func didTapRegisterButton() {
-        // TODO: - 등록 버튼 클릭
+        input.send(.createPost)
     }
 }
 

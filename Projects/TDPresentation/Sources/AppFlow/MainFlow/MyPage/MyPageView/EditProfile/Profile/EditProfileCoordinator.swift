@@ -1,13 +1,6 @@
-//
-//  EditProfileCoordinator.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import UIKit
-
 import TDCore
+import TDDomain
 
 final class EditProfileCoordinator: Coordinator {
     var navigationController: UINavigationController
@@ -24,7 +17,9 @@ final class EditProfileCoordinator: Coordinator {
     }
     
     func start() {
-        let editProfileViewController = EditProfileViewController()
+        let updateUserNicknameUseCase = injector.resolve(UpdateUserNicknameUseCase.self)
+        let viewModel = EditProfileViewModel(updateUserNicknameUseCase: updateUserNicknameUseCase)
+        let editProfileViewController = EditProfileViewController(viewModel: viewModel)
         editProfileViewController.hidesBottomBarWhenPushed = true
         editProfileViewController.coordinator = self
         navigationController.pushViewController(editProfileViewController, animated: true)

@@ -1,16 +1,59 @@
 import UIKit
+import Combine
 import TDDesign
 import TDCore
 
 final class MyPageViewController: BaseViewController<MyPageView> {
+    private let viewModel: MyPageViewModel
+    private let input = PassthroughSubject<MyPageViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     weak var coordinator: MyPageCoordinator?
     
-    override func layout() {
-        self.view.backgroundColor = .white
+    // MARK: - Initialize
+    init(
+        viewModel: MyPageViewModel
+    ) {
+        self.viewModel = viewModel
+        super.init()
     }
     
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        input.send(.fetchUserNickname)
+    }
+    
+    // MARK: - Common Methods
     override func configure() {
+        view.backgroundColor = .white
         setupNavigationBar()
+        
+        layoutView.logoutButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.logout)
+        }, for: .touchUpInside)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchedUserNickname(let nickname):
+                    self?.layoutView.profileView.usernameLabel.setText(nickname)
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
+                case .logoutFinished:
+                    self?.coordinator?.didTapLogoutButton() // TODO: 로그인 화면으로 이동
+                }
+            }.store(in: &cancellables)
     }
     
     private func setupNavigationBar() {

@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol UpdatePostUseCase{
-    func execute(post: Post) async throws -> Bool
+    func execute(post: Post) async throws
 }
 
 public final class UpdatePostUseCaseImpl: UpdatePostUseCase {
@@ -11,7 +11,7 @@ public final class UpdatePostUseCaseImpl: UpdatePostUseCase {
         self.repository = repository
     }
     
-    public func execute(post: Post) async throws -> Bool {
-        return try await repository.createPost(post: post)
+    public func execute(post: Post) async throws  {
+        return try await repository.updatePost(post: post)
     }
 }

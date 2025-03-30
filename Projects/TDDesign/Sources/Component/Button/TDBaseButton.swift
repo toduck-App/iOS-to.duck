@@ -37,6 +37,7 @@ public class TDBaseButton: UIButton {
     
     // MARK: - Setup Button
     private func setupButton() {
+        layer.borderWidth = 0
         var config = UIButton.Configuration.filled()
         config.title = title
         config.baseBackgroundColor = backgroundToduckColor
@@ -67,11 +68,9 @@ public class TDBaseButton: UIButton {
             if isEnabled {
                 configuration?.baseBackgroundColor = backgroundToduckColor
                 configuration?.baseForegroundColor = foregroundToduckColor
-                layer.borderWidth = 1
             } else {
                 configuration?.baseBackgroundColor = TDColor.Neutral.neutral100
                 configuration?.baseForegroundColor = TDColor.Neutral.neutral500
-                layer.borderWidth = 0
             }
         }
     }

@@ -1,7 +1,7 @@
 import Foundation
 
 public struct Post: Identifiable {
-    public let id: UUID
+    public let id: Int
     public let user: User
     public let titleText: String?
     public let contentText: String
@@ -18,7 +18,7 @@ public struct Post: Identifiable {
     public let category: [PostCategory]?
     
     public init(
-        id: UUID,
+        id: Int,
         user: User,
         titleText: String? = nil,
         contentText: String,
@@ -45,6 +45,22 @@ public struct Post: Identifiable {
         self.category = category
     }
     
+    public init(title: String?, content: String, routine: Routine?, category: [PostCategory]) {
+        self.id = 0
+        self.titleText = title
+        self.contentText = content
+        self.routine = routine
+        self.category = category
+        self.isLike = false
+        self.likeCount = 0
+        self.commentCount = 0
+        self.shareCount = 0
+        self.timestamp = Date()
+        // 임시
+        self.user = User(id: 1, name: "", icon: nil, title: "임시 사용자", isblock: false)
+        self.imageList = nil
+    }
+    
     public mutating func toggleLike(){
         if isLike && likeCount > 0 {
             likeCount -= 1
@@ -56,8 +72,8 @@ public struct Post: Identifiable {
 }
 
 public extension Post {
-    static let dummy: [Post] = [Post(id: UUID(),
-                                     user: .init(id: UUID(), name: "오리발", icon: "https://avatars.githubusercontent.com/u/46300191?v=4", title: "작심삼일", isblock: false),
+    static let dummy: [Post] = [Post(id: 1,
+                                     user: User.dummy[0],
                                      contentText: "콘서타는 먹었는데 다른 약 먹는걸 깜빡했다.. 요새 매일 이러네 ㅠㅠ 저만 이런가요?콘서타는 먹었는데 다른 약 먹는걸 깜빡했다.. 요새 매일 이러네 ㅠㅠ 저만 이런가요? ",
                                      imageList: ["https://pbs.twimg.com/media/EFHWmyXUEAASe0o.jpg", "https://pbs.twimg.com/media/EHsTI9GUcAAOvS1.jpg:small"],
                                      timestamp: DateComponents(calendar: .current, year: 2024, month: 6, day: 13, hour: 13, minute: 30).date!,
@@ -68,8 +84,8 @@ public extension Post {
                                      routine: nil,
                                      category: [.anxiety, .impulse]),
                                 Post(
-                                    id: UUID(),
-                                    user: .init(id: UUID(), name: "꽉꽉", icon: "https://avatars.githubusercontent.com/u/129862357?v=4", title: "작심삼일", isblock: false),
+                                    id: 2,
+                                    user: User.dummy[1],
                                     contentText: "어제 잠들기 전 새로운 루틴을 추가했다👀\n덕분에 오늘은 까먹는 일 없이 장 챙김✌️",
                                     imageList: ["https://pbs.twimg.com/media/EHsTI9GUcAAOvS1.jpg:small", "https://pbs.twimg.com/media/EHsTI9GUcAAOvS1.jpg:small",
                                                 "https://pbs.twimg.com/media/EHsTI9GUcAAOvS1.jpg:small",
@@ -99,8 +115,8 @@ public extension Post {
                                     ),
                                     category: [.anxiety, .impulse]
                                 ),
-                                Post(id: UUID(),
-                                     user: .init(id: UUID(), name: "오리궁뎅이", icon: "https://avatars.githubusercontent.com/u/57449485?v=4", title: "작심삼일", isblock: false),
+                                Post(id: 3,
+                                     user: User.dummy[2],
                                      contentText: "오늘은 피곤해서 진짜 일찍 자고싶은데 ㅠㅠ 잠이 안와서 괴로워요ㅠㅠㅠㅠㅠ",
                                      imageList: nil,
                                      timestamp: .now,
@@ -111,8 +127,8 @@ public extension Post {
                                      routine: nil,
                                      category: [.anxiety, .memory, .sleep]),
                                 Post(
-                                    id: UUID(),
-                                    user: .init(id: UUID(), name: "꽉꽉", icon: nil, title: "작심삼일", isblock: false),
+                                    id: 4,
+                                    user: User.dummy[3],
                                     contentText: "어제 잠들기 전 새로운 루틴을 추가했다👀\n덕분에 오늘은 까먹는 일 없이 장 챙김✌️",
                                     imageList: nil,
                                     timestamp: .now,
@@ -136,8 +152,8 @@ public extension Post {
                                     ),
                                     category: [.anxiety, .impulse, .anxiety]
                                 ),
-                                Post(id: UUID(),
-                                     user: .init(id: UUID(), name: "오리궁뎅이", icon: nil, title: "작심삼일", isblock: false),
+                                Post(id: 5,
+                                     user: User.dummy[4],
                                      contentText: "오늘은 피곤해서 진짜 일찍 자고싶은데 ㅠㅠ 잠이 안와서 괴로워요ㅠㅠㅠㅠㅠ",
                                      imageList: nil,
                                      timestamp: .now,
@@ -148,8 +164,8 @@ public extension Post {
                                      routine: nil,
                                      category: [.anxiety, .concentration, .memory]),
                                 Post(
-                                    id: UUID(),
-                                    user: .init(id: UUID(), name: "오리발", icon: nil, title: "작심삼일", isblock: false),
+                                    id: 6,
+                                    user: User.dummy[4],
                                     titleText: "수면 관련 질문..",
                                     contentText: "최근들어 부쩍 수면의 질이 낮아져 너무 힘든데 도움되는 방법이 있을까요?",
                                     imageList: nil,

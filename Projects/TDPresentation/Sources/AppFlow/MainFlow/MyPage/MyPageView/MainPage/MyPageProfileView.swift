@@ -10,7 +10,7 @@ import SnapKit
 
 import TDDesign
 
-final class MyPageProfileView: UIView {
+final class MyPageProfileView: BaseView {
     private let containerView = UIView()
     private let profileImageView = TDImageView()
     private let innerStackView: UIStackView = {
@@ -31,13 +31,7 @@ final class MyPageProfileView: UIView {
         return stackView
     }()
 
-    private let usernameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "뽀덕잉"
-        label.font = TDFont.mediumHeader5.font
-        label.textColor = TDColor.Neutral.neutral800
-        return label
-    }()
+    let usernameLabel = TDLabel(toduckFont: .mediumHeader5, toduckColor: TDColor.Neutral.neutral800)
 
     private let badgeLabels: [BadgeLabel] = [BadgeLabel(text: "작심삼잉")]
 
@@ -95,6 +89,10 @@ final class MyPageProfileView: UIView {
         }
         
         isProfileImageTapped = false
+    }
+    
+    override func configure() {
+        badgeLabels.forEach { $0.isHidden = true }
     }
 }
 

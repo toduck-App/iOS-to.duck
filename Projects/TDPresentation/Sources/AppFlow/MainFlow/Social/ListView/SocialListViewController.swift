@@ -78,7 +78,7 @@ final class SocialListViewController: BaseViewController<SocialListView>, TDPopu
         layoutView.socialFeedCollectionView.delegate = self
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
-        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.rawValue) })
+        layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.title) })
         setupDataSource()
         layoutView.dropDownHoverView.delegate = self
         layoutView.addPostButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
@@ -212,13 +212,22 @@ extension SocialListViewController: UICollectionViewDelegate {
 
 // MARK: Input
 
-extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
+extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UIScrollViewDelegate {
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
         let controller = SocialBlockViewController()
         controller.onBlock = { [weak self] in
             self?.input.send(.blockUser(to: userID))
         }
         presentPopup(with: controller)
+    }
+    
+    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+        TDLogger.debug("EDIT POST")
+//        coordinator?.didTapEditPost(id: postID)
+    }
+    
+    func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+        input.send(.deletePost(postID))
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
@@ -255,6 +264,16 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
         let option = SocialSortType.allCases[indexPath.row]
         layoutView.dropDownAnchorView.setTitle(option.rawValue)
         input.send(.sortPost(by: option))
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        if offsetY > contentHeight - frameHeight * 1.5 {
+            input.send(.loadMorePosts)
+        }
     }
 }
 
