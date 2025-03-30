@@ -1,5 +1,6 @@
 import Kingfisher
 import SnapKit
+import TDCore
 import TDDesign
 import TDDomain
 import Then
@@ -53,7 +54,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with item: Post) {
-        headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
+        headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp, isMyPost: item.user.id == TDTokenManager.shared.userId)
         contentLabel.setText(item.contentText)
         footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount)
         configureAction(item)
@@ -176,6 +177,16 @@ extension SocialFeedCollectionViewCell {
         headerView.onReportTapped = { [weak self] in
             guard let self else { return }
             socialFeedCellDelegate?.didTapReport(self, item.id)
+        }
+        
+        headerView.onEditTapped = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapEditPost(self, item.id)
+        }
+        
+        headerView.onDeleteTapped = { [weak self] in
+            guard let self else { return }
+            socialFeedCellDelegate?.didTapDeletePost(self, item.id)
         }
         
         footerView.onLikeButtonTapped = { [weak self] in
