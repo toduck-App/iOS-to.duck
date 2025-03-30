@@ -25,10 +25,15 @@ final class MyPageCoordinator: Coordinator {
 
     func start() {
         let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
-        let viewModel = MyPageViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase)
+        let userLogoutUseCase = injector.resolve(UserLogoutUseCase.self)
+        let viewModel = MyPageViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase, userLogoutUseCase: userLogoutUseCase)
         let myPageViewController = MyPageViewController(viewModel: viewModel)
         myPageViewController.coordinator = self
         navigationController.pushViewController(myPageViewController, animated: false)
+    }
+    
+    func didTapLogoutButton() {
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }
 

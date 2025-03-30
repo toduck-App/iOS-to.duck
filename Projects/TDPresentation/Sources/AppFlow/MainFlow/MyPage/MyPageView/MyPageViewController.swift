@@ -33,6 +33,10 @@ final class MyPageViewController: BaseViewController<MyPageView> {
     override func configure() {
         view.backgroundColor = .white
         setupNavigationBar()
+        
+        layoutView.logoutButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.logout)
+        }, for: .touchUpInside)
     }
     
     override func binding() {
@@ -46,6 +50,8 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                     self?.layoutView.profileView.usernameLabel.setText(nickname)
                 case .failureAPI(let message):
                     self?.showErrorAlert(with: message)
+                case .logoutFinished:
+                    self?.coordinator?.didTapLogoutButton() // TODO: 로그인 화면으로 이동
                 }
             }.store(in: &cancellables)
     }

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import TDDesign
 
 final class MyPageView: BaseView {
     private let scrollView = CustomScrollView()
@@ -27,16 +28,25 @@ final class MyPageView: BaseView {
         collectionView.isScrollEnabled = false
         return collectionView
     }()
+    let logoutButton = TDBaseButton(
+        title: "로그아웃",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
+        radius: 12,
+        font: TDFont.boldBody1.font
+    )
     
     // MARK: - Default Methods
     override func addview() {
         addSubview(scrollView)
         scrollView.addSubview(containerView)
         scrollView.delegate = self
-        [profileView, socialButtonView, menuView].forEach { containerView.addSubview($0) }
+        [profileView, socialButtonView, menuView, logoutButton].forEach { containerView.addSubview($0) }
     }
     
     override func configure() {
+        logoutButton.layer.borderWidth = 1
+        logoutButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         menuView.delegate = self
         menuView.dataSource = self
         menuView.register(
@@ -88,6 +98,12 @@ final class MyPageView: BaseView {
             $0.width.equalToSuperview()
             $0.height.equalTo(LayoutConstants.randomHeight)
             $0.bottom.equalToSuperview()
+        }
+        
+        logoutButton.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(LayoutConstants.footerPadding)
+            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.sectionHorizontalInset)
+            $0.height.equalTo(48)
         }
     }
 }
