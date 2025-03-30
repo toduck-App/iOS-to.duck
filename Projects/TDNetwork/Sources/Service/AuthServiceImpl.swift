@@ -11,6 +11,26 @@ public struct AuthServiceImpl: AuthService {
         self.provider = provider
     }
     
+    public func requestRegisterUser(phoneNumber: String, loginId: String, password: String) async throws {
+        let target = AuthAPI.registerUser(phoneNumber: phoneNumber, loginId: loginId, password: password)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func requestPhoneVerification(with phoneNumber: String) async throws {
+        let target = AuthAPI.requestPhoneVerification(phoneNumber: phoneNumber)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func checkPhoneVerification(phoneNumber: String, verifiedCode: String) async throws {
+        let target = AuthAPI.checkPhoneVerification(phoneNumber: phoneNumber, verifiedCode: verifiedCode)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func checkDuplicateUserID(loginId: String) async throws {
+        let target = AuthAPI.checkDuplicateUserID(loginId: loginId)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
     public func requestOauthRegister(oauthProvider: String, oauthId: String, idToken: String) async throws -> LoginUserResponseDTO {
         let target = AuthAPI.loginOauth(provider: oauthProvider, oauthId: oauthId, idToken: idToken)
         let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)

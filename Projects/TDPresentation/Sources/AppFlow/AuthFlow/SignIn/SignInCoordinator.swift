@@ -4,7 +4,6 @@ import TDCore
 
 protocol SignInDelegate: AnyObject {
     func didFindAccount()
-    func didSignIn()
 }
 
 final class SignInCoordinator: Coordinator {
@@ -44,9 +43,5 @@ extension SignInCoordinator: SignInDelegate {
         findAccountCoordinator.finishDelegate = self
         childCoordinators.append(findAccountCoordinator)
         findAccountCoordinator.start()
-    }
-    
-    func didSignIn() {
-        finishDelegate?.didFinish(childCoordinator: self)
     }
 }

@@ -21,14 +21,6 @@ final class SignInViewController: BaseViewController<SignInView> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if isMovingFromParent {
-            coordinator?.finish(by: .pop)
-        }
-    }
-    
     override func configure() {
         keyboardAdjustableButton = layoutView.nextButton
         layoutView.idTextField.delegate = self
@@ -55,7 +47,7 @@ final class SignInViewController: BaseViewController<SignInView> {
             .sink { [weak self] event in
                 switch event {
                 case .validSignIn:
-                    self?.coordinator?.didSignIn()
+                    self?.coordinator?.finish(by: .pop)
                 case .invalidSignIn:
                     UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
                         self?.layoutView.failedContainerView.alpha = 1

@@ -1,4 +1,5 @@
 import Combine
+import TDDomain
 import UIKit
 import TDCore
 import TDDesign
@@ -19,7 +20,7 @@ final class FindAccountViewController: BaseViewController<BaseView> {
         super.viewWillDisappear(animated)
         
         if isMovingFromParent {
-            coordinator?.finish(by: .pop)
+            coordinator?.finish(by: .modal)
         }
     }
     
@@ -55,11 +56,29 @@ final class FindAccountViewController: BaseViewController<BaseView> {
     private func getViewController(for index: Int) -> UIViewController {
         switch index {
         case 0:
-            let viewModel = FindIdViewModel()
-            return FindIdViewController(viewModel: viewModel)
+            let findUserIdUseCase = DIContainer.shared.resolve(FindUserIdUseCase.self)
+            let requestVerificationCodeForFindUserUseCase = DIContainer.shared.resolve(RequestVerificationCodeForFindUserUseCase.self)
+            let verifyPhoneCodeUseCase = DIContainer.shared.resolve(VerifyPhoneCodeUseCase.self)
+            let viewModel = FindIdViewModel(
+                findUserIdUseCase: findUserIdUseCase,
+                requestVerificationCodeForFindUserUseCase: requestVerificationCodeForFindUserUseCase,
+                verifyPhoneCodeUseCase: verifyPhoneCodeUseCase
+            )
+            let findIdViewController = FindIdViewController(viewModel: viewModel)
+            findIdViewController.coordinator = coordinator
+            return UINavigationController(rootViewController: findIdViewController)
         case 1:
-            let viewModel = FindPasswordViewModel()
-            return FindPasswordViewController(viewModel: viewModel)
+            let requestVerificationCodeForFindUserUseCase = DIContainer.shared.resolve(RequestVerificationCodeForFindUserUseCase.self)
+            let requestValidFindUserUseCase = DIContainer.shared.resolve(RequestValidFindUserUseCase.self)
+            let verifyPhoneCodeUseCase = DIContainer.shared.resolve(VerifyPhoneCodeUseCase.self)
+            let viewModel = FindPasswordViewModel(
+                requestVerificationCodeForFindUserUseCase: requestVerificationCodeForFindUserUseCase,
+                verifyPhoneCodeUseCase: verifyPhoneCodeUseCase,
+                requestValidFindUserUseCase: requestValidFindUserUseCase
+            )
+            let findPasswordViewController = FindPasswordViewController(viewModel: viewModel)
+            findPasswordViewController.coordinator = coordinator
+            return UINavigationController(rootViewController: findPasswordViewController)
         default:
             return UIViewController()
         }

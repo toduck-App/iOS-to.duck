@@ -46,54 +46,55 @@ final class AccountViewController: BaseViewController<AccountView> {
                 case .invalidIdFormat:
                     self?.layoutView.idFieldStateLabel.setText("5~20자 영문 소문자, 숫자를 사용하여 입력해주세요.")
                     self?.layoutView.idContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
-                    self?.layoutView.idContainerView.layer.borderWidth = 1
                     self?.layoutView.idContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                     self?.layoutView.idFieldStateLabel.setColor(TDColor.Semantic.error)
                 case .validId:
-                    self?.layoutView.idContainerView.layer.borderWidth = 0
-                    self?.layoutView.idContainerView.backgroundColor = TDColor.Neutral.neutral100
+                    self?.layoutView.idContainerView.backgroundColor = TDColor.Neutral.neutral50
+                    self?.layoutView.idContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    self?.layoutView.idFieldStateLabel.isHidden = true
+                case .notDuplicateId:
+                    self?.layoutView.idFieldStateLabel.isHidden = false
                     self?.layoutView.idFieldStateLabel.setText("사용 가능한 아이디입니다.")
                     self?.layoutView.idFieldStateLabel.setColor(TDColor.Semantic.success)
                 case .invalidPassword:
                     self?.layoutView.invaildPasswordLabel.isHidden = false
                     self?.layoutView.passwordContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
-                    self?.layoutView.passwordContainerView.layer.borderWidth = 1
                     self?.layoutView.passwordContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .validPassword:
                     self?.layoutView.invaildPasswordLabel.isHidden = true
-                    self?.layoutView.passwordContainerView.layer.borderWidth = 0
-                    self?.layoutView.passwordContainerView.backgroundColor = TDColor.Neutral.neutral100
+                    self?.layoutView.passwordContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    self?.layoutView.passwordContainerView.backgroundColor = TDColor.Neutral.neutral50
                 case .passwordMismatch:
                     self?.layoutView.invaildVerifyPasswordLabel.isHidden = false
                     self?.layoutView.verifyPasswordContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
-                    self?.layoutView.verifyPasswordContainerView.layer.borderWidth = 1
                     self?.layoutView.verifyPasswordContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .passwordMatched:
                     self?.layoutView.invaildVerifyPasswordLabel.isHidden = true
-                    self?.layoutView.verifyPasswordContainerView.layer.borderWidth = 0
-                    self?.layoutView.verifyPasswordContainerView.backgroundColor = TDColor.Neutral.neutral100
+                    self?.layoutView.verifyPasswordContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    self?.layoutView.verifyPasswordContainerView.backgroundColor = TDColor.Neutral.neutral50
                 case .updateNextButtonState(let isEnabled):
                     self?.layoutView.nextButton.isEnabled = isEnabled
                     self?.layoutView.nextButton.layer.borderWidth = 0
                 case .updateDuplicateVerificationButtonState(let isEnabled):
                     self?.layoutView.duplicateVerificationButton.isEnabled = isEnabled
                     self?.layoutView.duplicateVerificationButton.layer.borderWidth = 0
+                case .duplicateId:
+                    self?.showErrorAlert(with: "이미 사용중인 아이디입니다.")
+                case .successRegister:
+                    self?.coordinator?.notifyRegistrationSuccess()
+                case .failureRegister(let message):
+                    self?.showErrorAlert(with: message)
                 }
             }.store(in: &cancellables)
     }
     
     private func setupButtonActions() {
         layoutView.duplicateVerificationButton.addAction(UIAction { [weak self] _ in
-            guard let id = self?.layoutView.idTextField.text else { return }
-            self?.input.send(.validateId(id))
+            self?.input.send(.duplicateIdVerification)
         }, for: .touchUpInside)
 
         layoutView.nextButton.addAction(UIAction { [weak self] _ in
-            let password = self?.layoutView.passwordTextField.text ?? ""
-            let verifyPassword = self?.layoutView.verifyPasswordTextField.text ?? ""
-            
-            self?.input.send(.validatePassword(password))
-            self?.input.send(.checkPasswordMatch(password, verifyPassword))
+            self?.input.send(.registerUser)
         }, for: .touchUpInside)
     }
 }

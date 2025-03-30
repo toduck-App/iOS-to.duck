@@ -54,9 +54,9 @@ public enum APIError: Int, Error, CustomStringConvertible {
     
     // MARK: - Other 관련 에러
 
-    case notFoundScheduleRecord = 41101 // 일정 기록을 찾을 수 없습니다.
-    case notFoundSchedule = 41102 // 일정을 찾을 수 없습니다.
-    case nonRepetitiveOneScheduleNotPeriodDelete = 41103 // 반복되지 않는 하루 일정은 기간 삭제가 불가능합니다.
+    case notFoundScheduleRecord = 43101 // 일정 기록을 찾을 수 없습니다.
+    case notFoundSchedule = 43102 // 일정을 찾을 수 없습니다.
+    case nonRepetitiveOneScheduleNotPeriodDelete = 43103 // 반복되지 않는 하루 일정은 기간 삭제가 불가능합니다.
     case notFoundResource = 49901 // 해당 경로를 찾을 수 없습니다.
     case methodForbidden = 49902 // 지원하지 않는 HTTP 메서드를 사용합니다.
     case invalidImageExtension = 49903 // 지원되지 않는 이미지 파일 확장자입니다.

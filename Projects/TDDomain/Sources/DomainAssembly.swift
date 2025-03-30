@@ -26,6 +26,63 @@ public struct DomainAssembly: Assembly {
             return LoginUseCaseImpl(repository: repository)
         }
         
+        container.register(RequestPhoneVerificationCodeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return RequestPhoneVerificationCodeUseCaseImpl(repository: repository)
+        }
+        
+        container.register(VerifyPhoneCodeUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return VerifyPhoneCodeUseCaseImpl(repository: repository)
+        }
+        
+        container.register(CheckDuplicateUserIdUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return CheckDuplicateUserIdUseCaseImpl(repository: repository)
+        }
+        
+        container.register(RegisterUserUseCase.self) { resolver in
+            guard let repository = resolver.resolve(AuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return RegisterUserUseCaseImpl(repository: repository)
+        }
+        
+        // MARK: - User Auth UseCases
+        container.register(FindUserIdUseCase.self) { resolve in
+            guard let repository = resolve.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return FindUserIdUseCaseImpl(repository: repository)
+        }
+        
+        container.register(RequestVerificationCodeForFindUserUseCase.self) { resolve in
+            guard let repository = resolve.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return RequestVerificationCodeForFindUserUseCaseImpl(repository: repository)
+        }
+        
+        container.register(RequestValidFindUserUseCase.self) { resolve in
+            guard let repository = resolve.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return RequestValidFindUserUseCaseImpl(repository: repository)
+        }
+        
+        container.register(ChangePasswordUseCase.self) { resolve in
+            guard let repository = resolve.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return ChangePasswordUseCaseImpl(repository: repository)
+        }
+        
         // MARK: - Block UseCases
         container.register(BlockCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {

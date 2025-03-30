@@ -1,11 +1,13 @@
 import UIKit
 import TDCore
+import TDDomain
 
 final class PhoneVerificationCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    weak var accountFlowDelegate: AccountCoordinatorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -16,17 +18,25 @@ final class PhoneVerificationCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = PhoneVerificationViewModel()
+        let requestPhoneVerificationCodeUseCase = injector.resolve(RequestPhoneVerificationCodeUseCase.self)
+        let verifyPhoneCodeUseCase = injector.resolve(VerifyPhoneCodeUseCase.self)
+        let viewModel = PhoneVerificationViewModel(
+            requestPhoneVerificationCodeUseCase: requestPhoneVerificationCodeUseCase,
+            verifyPhoneCodeUseCase: verifyPhoneCodeUseCase
+        )
         let phoneVerificationViewController = PhoneVerificationViewController(viewModel: viewModel)
         phoneVerificationViewController.coordinator = self
         navigationController.pushTDViewController(phoneVerificationViewController, animated: true)
     }
     
-    func startAccountViewCoordinator() {
+    func startAccountViewCoordinator(phoneNumber: String) {
         let accountViewCoordinator = AccountCoordinator(
             navigationController: navigationController,
-            injector: injector
+            injector: injector,
+            phoneNumber: phoneNumber
         )
+        accountViewCoordinator.finishDelegate = self
+        accountViewCoordinator.delegate = self
         childCoordinators.append(accountViewCoordinator)
         accountViewCoordinator.start()
     }
@@ -36,5 +46,14 @@ final class PhoneVerificationCoordinator: Coordinator {
 extension PhoneVerificationCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+// MARK: - AccountCoordinatorDelegate
+extension PhoneVerificationCoordinator: AccountCoordinatorDelegate {
+    func didFinishRegister(from coordinator: AccountCoordinator) {
+        childCoordinators.removeAll { $0 === coordinator }
+        accountFlowDelegate?.didFinishRegister(from: coordinator)
+        self.finish(by: .popNotAnimated)
     }
 }

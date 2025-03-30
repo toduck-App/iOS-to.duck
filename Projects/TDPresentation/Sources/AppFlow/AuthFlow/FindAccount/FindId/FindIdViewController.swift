@@ -7,6 +7,7 @@ final class FindIdViewController: BaseViewController<FindIdView> {
     private let viewModel: FindIdViewModel
     private let input = PassthroughSubject<FindIdViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    weak var coordinator: FindAccountCoordinator?
     
     init(
         viewModel: FindIdViewModel
@@ -45,24 +46,26 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                 switch action {
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
-                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 1
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .phoneNumberValid:
                     self?.layoutView.verificationNumberContainerView.isHidden = false
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = true
-                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 0
-                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral100
+                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral50
+                    self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
                 case .verificationCodeInvalid:
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
-                    self?.layoutView.verificationNumberContainerView.layer.borderWidth = 1
                     self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
-                case .verificationCodeValid:
-                    self?.layoutView.verificationNumberContainerView.layer.borderWidth = 0
-                    self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Neutral.neutral100
+                case .verificationCodeValid(let userId):
+                    let showIdViewController = ShowIdViewController()
+                    showIdViewController.setUserId(with: userId)
+                    showIdViewController.coordinator = self?.coordinator
+                    self?.navigationController?.pushViewController(showIdViewController, animated: true)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
                 }
             }
             .store(in: &cancellables)
@@ -83,7 +86,7 @@ extension FindIdViewController: UITextFieldDelegate {
         case layoutView.phoneNumberTextField:
             return newLength <= 11
         case layoutView.verificationNumberTextField:
-            return newLength <= 6
+            return newLength <= 5
         default:
             return false
         }
@@ -91,7 +94,7 @@ extension FindIdViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isEnabled = textField.text?.count == 6
+            layoutView.nextButton.isEnabled = textField.text?.count == 5
             layoutView.nextButton.layer.borderWidth = 0
         }
     }

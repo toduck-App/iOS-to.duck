@@ -25,7 +25,7 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
         super.viewWillDisappear(animated)
         
         if isMovingFromParent {
-            coordinator?.finish(by: .pop)
+            coordinator?.finish(by: .modal)
         }
     }
     
@@ -54,25 +54,25 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                 switch action {
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
-                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 1
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
                 case .phoneNumberValid:
                     self?.layoutView.verificationNumberContainerView.isHidden = false
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = true
-                    self?.layoutView.phoneNumberContainerView.layer.borderWidth = 0
-                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral100
-                    TDLogger.info("전화번호 형식이 올바릅니다.")
-                case .phoneNumberAlreadyExist:
-                    TDLogger.debug("이미 가입된 전화번호입니다.")
+                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral50
+                    self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                case .phoneNumberAlreadyExist(let message):
+                    self?.showErrorAlert(with: message)
                 case .verificationCodeInvalid:
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
-                    TDLogger.debug("인증번호 형식이 올바르지 않습니다.")
-                case .verificationCodeValid:
-                    TDLogger.info("인증번호 형식이 올바릅니다.")
-                    self?.coordinator?.startAccountViewCoordinator()
+                    self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
+                    self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
+                case .verificationCodeValid(let phoneNumber):
+                    self?.coordinator?.startAccountViewCoordinator(phoneNumber: phoneNumber)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
+                case .apiFailure(let error):
+                    self?.showErrorAlert(with: error)
                 }
             }
             .store(in: &cancellables)
@@ -93,15 +93,21 @@ extension PhoneVerificationViewController: UITextFieldDelegate {
         case layoutView.phoneNumberTextField:
             return newLength <= 11
         case layoutView.verificationNumberTextField:
-            return newLength <= 6
+            return newLength <= 5
         default:
             return false
         }
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == layoutView.phoneNumberTextField {
+            let isValidPhoneNumber = textField.text?.count == 11
+            layoutView.postButton.isEnabled = isValidPhoneNumber
+            layoutView.postButton.layer.borderWidth = 0
+        }
+        
         if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isEnabled = textField.text?.count == 6
+            layoutView.nextButton.isEnabled = textField.text?.count == 5
             layoutView.nextButton.layer.borderWidth = 0
         }
     }

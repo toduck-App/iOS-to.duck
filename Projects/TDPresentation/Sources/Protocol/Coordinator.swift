@@ -17,6 +17,8 @@ extension Coordinator {
         switch type {
         case .pop:
             navigationController.popViewController(animated: true)
+        case .popNotAnimated:
+            navigationController.popViewController(animated: false)
         case .modal:
             navigationController.dismiss(animated: true)
         case .sheet(let completion):
