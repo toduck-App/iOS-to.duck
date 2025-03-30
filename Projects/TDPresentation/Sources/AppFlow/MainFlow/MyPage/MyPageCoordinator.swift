@@ -7,6 +7,7 @@
 
 import UIKit
 import TDCore
+import TDDomain
 
 final class MyPageCoordinator: Coordinator {
     var navigationController: UINavigationController
@@ -23,7 +24,9 @@ final class MyPageCoordinator: Coordinator {
     }
 
     func start() {
-        let myPageViewController = MyPageViewController()
+        let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
+        let viewModel = MyPageViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase)
+        let myPageViewController = MyPageViewController(viewModel: viewModel)
         myPageViewController.coordinator = self
         navigationController.pushViewController(myPageViewController, animated: false)
     }

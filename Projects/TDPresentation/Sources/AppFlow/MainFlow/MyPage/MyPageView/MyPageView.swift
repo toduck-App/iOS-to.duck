@@ -11,7 +11,7 @@ import SnapKit
 final class MyPageView: BaseView {
     private let scrollView = CustomScrollView()
     private let containerView = UIView()
-    private let profileView = MyPageProfileView()
+    let profileView = MyPageProfileView()
     private let socialButtonView = MyPageSocialButtonView()
     private let menuView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
