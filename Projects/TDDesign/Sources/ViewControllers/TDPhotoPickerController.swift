@@ -9,7 +9,6 @@ public protocol TDPhotoPickerDelegate: AnyObject {
 }
 
 public final class TDPhotoPickerController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
     // MARK: - UI Properties
 
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -120,15 +119,23 @@ public final class TDPhotoPickerController: UIViewController, UICollectionViewDe
     // MARK: - Actions
 
     private func didTapDoneButton() {
-        let selectedPhotoData: [Data] = selectedPhotos.compactMap { asset in
-            let manager = PHImageManager.default()
-            let options = PHImageRequestOptions()
-            options.isSynchronous = true
-            var imageData: Data?
-            manager.requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
-                imageData = data
+        var selectedPhotoData: [Data] = []
+        let imageManager = PHImageManager.default()
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = true
+
+        for asset in selectedPhotos {
+            imageManager.requestImage(for: asset,
+                                      targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight),
+                                      contentMode: .aspectFill,
+                                      options: requestOptions)
+            { image, _ in
+                if let image,
+                   let jpegData = image.jpegData(compressionQuality: 1.0)
+                {
+                    selectedPhotoData.append(jpegData)
+                }
             }
-            return imageData
         }
         pickerDelegate?.didSelectPhotos(self, photos: selectedPhotoData)
         navigationController?.popViewController(animated: true)
@@ -166,7 +173,7 @@ public final class TDPhotoPickerController: UIViewController, UICollectionViewDe
     // MARK: - Saved Photo Callback
 
     @objc private func imageSavedCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
+        if let error {
             print("사진 저장 실패: \(error.localizedDescription)")
             return
         }
@@ -195,7 +202,7 @@ public final class TDPhotoPickerController: UIViewController, UICollectionViewDe
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // 첫 번째 셀은 카메라용 셀이므로 +1
-        return photos.count + 1
+        photos.count + 1
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

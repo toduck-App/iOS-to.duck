@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol TogglePostLikeUseCase {
-    func execute(postID: Post.ID) async throws -> Post
+    func execute(postID: Post.ID, currentLike: Bool) async throws
 }
 
 public final class TogglePostLikeUseCaseImpl: TogglePostLikeUseCase {
@@ -11,7 +11,7 @@ public final class TogglePostLikeUseCaseImpl: TogglePostLikeUseCase {
         self.repository = repository
     }
     
-    public func execute(postID: Post.ID) async throws -> Post {
-        try await repository.togglePostLike(postID: postID).get()
+    public func execute(postID: Post.ID, currentLike: Bool) async throws {
+        try await repository.togglePostLike(postID: postID, currentLike: currentLike)
     }
 }   

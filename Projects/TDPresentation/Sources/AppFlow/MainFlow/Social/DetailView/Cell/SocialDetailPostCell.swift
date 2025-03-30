@@ -1,5 +1,6 @@
 import Kingfisher
 import SnapKit
+import TDCore
 import TDDesign
 import TDDomain
 import Then
@@ -55,7 +56,12 @@ final class SocialDetailPostCell: UICollectionViewCell {
     }
     
     func configure(with item: Post) {
-        headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp)
+        headerView.configure(
+            titleBadge: item.user.title,
+            nickname: item.user.name,
+            date: item.timestamp,
+            isMyPost: item.user.id == TDTokenManager.shared.userId
+        )
         if let title = item.titleText {
             titleLabel.setText(title)
         } else {
@@ -179,6 +185,16 @@ extension SocialDetailPostCell {
         headerView.onReportTapped = { [weak self] in
             guard let self else { return }
             socialDetailPostCellDelegate?.didTapReport(self, item.id)
+        }
+        
+        headerView.onEditTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapEditPost(self, item.id)
+        }
+        
+        headerView.onDeleteTapped = { [weak self] in
+            guard let self else { return }
+            socialDetailPostCellDelegate?.didTapDeletePost(self, item.id)
         }
         
         footerView.onLikeButtonTapped = { [weak self] in

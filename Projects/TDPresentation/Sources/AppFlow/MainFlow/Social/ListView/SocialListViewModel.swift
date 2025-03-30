@@ -17,6 +17,8 @@ final class SocialListViewModel: BaseViewModel {
         case deleteRecentAllKeywords
         case search(term: String)
         case clearSearch
+        case loadMorePosts
+        case deletePost(Post.ID)
     }
 
     enum Output {
@@ -30,6 +32,9 @@ final class SocialListViewModel: BaseViewModel {
     // MARK: - Properties
     
     // 선택 상태
+    private var isLoadingMore: Bool = false
+    private var nextCursor: Int?
+    private var hasMore: Bool = false
     private var currentCategory: PostCategory?
     private var currentSegment: Int = 0 // 0이 전체, 1이 주제별
     private var currentChip: TDChipItem?
@@ -54,6 +59,7 @@ final class SocialListViewModel: BaseViewModel {
     private let updateRecentKeywordUseCase: UpdateKeywordUseCase
     private let fetchRecentKeywordUseCase: FetchKeywordUseCase
     private let deleteRecentKeywordUseCase: DeleteKeywordUseCase
+    private let deletePostUseCase: DeletePostUseCase
 
     // Combine
     private var cancellables = Set<AnyCancellable>()
@@ -68,7 +74,8 @@ final class SocialListViewModel: BaseViewModel {
         searchPostUseCase: SearchPostUseCase,
         updateRecentKeywordUseCase: UpdateKeywordUseCase,
         fetchRecentKeywordUseCase: FetchKeywordUseCase,
-        deleteRecentKeywordUseCase: DeleteKeywordUseCase
+        deleteRecentKeywordUseCase: DeleteKeywordUseCase,
+        deletePostUseCase: DeletePostUseCase
     ) {
         self.fetchPostUseCase = fetchPostUseCase
         self.togglePostLikeUseCase = togglePostLikeUseCase
@@ -77,6 +84,7 @@ final class SocialListViewModel: BaseViewModel {
         self.updateRecentKeywordUseCase = updateRecentKeywordUseCase
         self.fetchRecentKeywordUseCase = fetchRecentKeywordUseCase
         self.deleteRecentKeywordUseCase = deleteRecentKeywordUseCase
+        self.deletePostUseCase = deletePostUseCase
     }
     
     // MARK: - Transform
@@ -112,6 +120,15 @@ final class SocialListViewModel: BaseViewModel {
                 case .clearSearch:
                     searchTerm = ""
                     Task { await self.loadPosts() }
+                case .loadMorePosts:
+                    guard !isLoadingMore, hasMore, let cursor = nextCursor else { return }
+                    isLoadingMore = true
+                    Task {
+                        await self.loadMorePosts(cursor: cursor)
+                        self.isLoadingMore = false
+                    }
+                case .deletePost(let postID):
+                    Task { await self.deletePost(postId: postID) }
                 }
             }
             .store(in: &cancellables)
@@ -124,21 +141,19 @@ final class SocialListViewModel: BaseViewModel {
 
 extension SocialListViewModel {
     private func loadPosts() async {
-        let category = (currentSegment == 0) ? nil : currentCategory
+        let currentCategorys: [PostCategory] = [currentCategory].compactMap { $0 }
+        let category: [PostCategory]? = (currentSegment == 0) ? nil : currentCategorys
         do {
             if isSearching {
                 saveKeywords(term: searchTerm)
                 let results = try await searchPostUseCase.execute(keyword: searchTerm, category: category) ?? []
-                searchPosts = results
-                
-                let sorted = sortPosts(array: searchPosts, by: currentSort)
-                searchPosts = sorted
-                
+                searchPosts = sortPosts(array: results, by: currentSort)
                 output.send(.searchPosts(searchPosts))
             } else {
-                let results = try await fetchPostUseCase.execute(category: category) ?? []
-                defaultPosts = sortPosts(array: results, by: currentSort)
-                
+                let results = try await fetchPostUseCase.execute(cursor: nil, limit: 20, category: category)
+                hasMore = results.hasMore
+                nextCursor = results.nextCursor
+                defaultPosts = sortPosts(array: results.result, by: currentSort)
                 output.send(.fetchPosts(defaultPosts))
             }
         } catch {
@@ -150,7 +165,7 @@ extension SocialListViewModel {
             output.send(.failure("게시글을 불러오는데 실패했습니다."))
         }
     }
-    
+
     private func sortCurrentPosts() {
         if isSearching {
             searchPosts = sortPosts(array: searchPosts, by: currentSort)
@@ -176,17 +191,19 @@ extension SocialListViewModel {
 
     private func likePost(postID: Post.ID) async {
         do {
-            let resultPost = try await togglePostLikeUseCase.execute(postID: postID)
-            
             if let defaultIndex = defaultPosts.firstIndex(where: { $0.id == postID }) {
+                var resultPost = defaultPosts[defaultIndex]
+                try await togglePostLikeUseCase.execute(postID: postID, currentLike: resultPost.isLike)
+                resultPost.toggleLike()
                 defaultPosts[defaultIndex] = resultPost
-            }
-            if let searchIndex = searchPosts.firstIndex(where: { $0.id == postID }) {
+                output.send(.likePost(resultPost))
+            } else if let searchIndex = searchPosts.firstIndex(where: { $0.id == postID }) {
+                var resultPost = searchPosts[searchIndex]
+                try await togglePostLikeUseCase.execute(postID: postID, currentLike: resultPost.isLike)
+                resultPost.toggleLike()
                 searchPosts[searchIndex] = resultPost
+                output.send(.likePost(resultPost))
             }
-
-            output.send(.likePost(resultPost))
-
         } catch {
             output.send(.failure("게시글 좋아요에 실패했습니다."))
         }
@@ -240,6 +257,41 @@ extension SocialListViewModel {
             loadKeywords()
         } catch {
             output.send(.failure("검색어 저장에 실패했습니다."))
+        }
+    }
+    
+    private func loadMorePosts(cursor: Int) async {
+        let currentCategorys: [PostCategory] = [currentCategory].compactMap { $0 }
+        let category: [PostCategory]? = (currentSegment == 0) ? nil : currentCategorys
+        do {
+            if isSearching {
+                // TODO: Search 도 PageNation을 지원해야함.
+            } else {
+                let results = try await fetchPostUseCase.execute(cursor: cursor, limit: 20, category: category)
+                hasMore = results.hasMore
+                nextCursor = results.nextCursor
+                let morePosts = sortPosts(array: results.result, by: currentSort)
+                defaultPosts.append(contentsOf: morePosts)
+                output.send(.fetchPosts(defaultPosts))
+            }
+        } catch {
+            output.send(.failure("추가 게시글을 불러오는데 실패했습니다."))
+        }
+    }
+    
+    private func deletePost(postId: Post.ID) async {
+        do {
+            try await deletePostUseCase.execute(postID: postId)
+            if isSearching {
+                searchPosts.removeAll { $0.id == postId }
+                output.send(.searchPosts(searchPosts))
+            } else {
+                defaultPosts.removeAll { $0.id == postId }
+                output.send(.fetchPosts(defaultPosts))
+            }
+            
+        } catch {
+            output.send(.failure("게시글 삭제에 실패했습니다."))
         }
     }
 }

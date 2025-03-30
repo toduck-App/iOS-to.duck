@@ -80,6 +80,7 @@ open class MFSession {
         
         do {
             let urlRequest = try request.asURLRequest()
+            print(urlRequest.headers)
             let (data, response) = try await session.data(for: urlRequest)
             let transformedData = try transformer(data)
             
@@ -92,7 +93,7 @@ open class MFSession {
             return mfResponse
         } catch {
             if let mfError = error.asMFError {
-                TDLogger.network(mfError.description)
+                TDLogger.network("Network 오류가 발생했습니다. \(#file), \(#filePath)를 참고해주세요.\n \(mfError.description)")
                 if case let MFError.serverError(apiError) = mfError {
                     switch apiError {
                     case .expiredAccessToken:

@@ -23,7 +23,7 @@ final class SocialSelectCategoryView: UIView {
             height: 33
         ),
         hasAllSelectChip: false,
-        isMultiSelect: false
+        isMultiSelect: true
     )
     
     override init(frame: CGRect) {

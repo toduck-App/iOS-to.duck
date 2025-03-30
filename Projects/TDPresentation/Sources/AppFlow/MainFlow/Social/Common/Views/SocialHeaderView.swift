@@ -1,3 +1,4 @@
+import TDCore
 import Kingfisher
 import SnapKit
 import TDDesign
@@ -7,6 +8,10 @@ final class SocialHeaderView: UIView {
     var onNicknameTapped: (() -> Void)?
     var onReportTapped: (() -> Void)?
     var onBlockTapped: (() -> Void)?
+    var onEditTapped: (() -> Void)?
+    var onDeleteTapped: (() -> Void)?
+    
+    private var isMyPost: Bool = false
     
     private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
     
@@ -24,7 +29,6 @@ final class SocialHeaderView: UIView {
         layout: .trailing,
         width: 110
     ).then {
-        $0.dataSource = SocialFeedMoreType.allCases.map(\.dropdownItem)
         $0.delegate = self
     }
     
@@ -51,7 +55,13 @@ final class SocialHeaderView: UIView {
         setupRecognizer()
     }
     
-    func configure(titleBadge: String, nickname: String, date: Date) {
+    func configure(titleBadge: String, nickname: String, date: Date, isMyPost: Bool) {
+        self.isMyPost = isMyPost
+        if isMyPost {
+            dropDownHoverView.dataSource = [SocialFeedMoreType.edit.dropdownItem, SocialFeedMoreType.delete.dropdownItem]
+        } else {
+            dropDownHoverView.dataSource = [SocialFeedMoreType.report.dropdownItem, SocialFeedMoreType.block.dropdownItem]
+        }
         titleBagde.setTitle(titleBadge)
         nicknameLabel.setText(nickname)
         dateLabel.setText(date.convertRelativeTime())
@@ -107,12 +117,18 @@ private extension SocialHeaderView {
 
 extension SocialHeaderView: TDDropDownDelegate {
     func dropDown(_ dropDownView: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
-        let type = SocialFeedMoreType.allCases[indexPath.row]
-        switch type {
-        case .report:
-            onReportTapped?()
-        case .block:
-            onBlockTapped?()
+        if isMyPost {
+            if indexPath.row == 0 {
+                onEditTapped?()
+            } else {
+                onDeleteTapped?()
+            }
+        } else {
+            if indexPath.row == 0 {
+                onReportTapped?()
+            } else {
+                onBlockTapped?()
+            }
         }
     }
     
