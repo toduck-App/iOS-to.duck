@@ -65,9 +65,9 @@ public final class PostRepositoryImpl: PostRepository {
         var imageUrls: [String] = []
         if let image {
             for (fileName, imageData) in image {
-                let url = try await awsService.requestPresignedUrl(fileName: fileName)
-                try await awsService.requestUploadImage(url: url, data: imageData)
-                imageUrls.append(url.absoluteString)
+                let urls = try await awsService.requestPresignedUrl(fileName: fileName)
+                try await awsService.requestUploadImage(url: urls.presignedUrl, data: imageData)
+                imageUrls.append(urls.fileUrl.absoluteString)
             }
         }
 

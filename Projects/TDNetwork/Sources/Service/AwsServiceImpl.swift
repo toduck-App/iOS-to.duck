@@ -9,12 +9,15 @@ public struct AwsServiceImpl: AwsService {
         self.provider = provider
     }
 
-    public func requestPresignedUrl(fileName: String) async throws -> URL {
+    public func requestPresignedUrl(fileName: String) async throws -> (presignedUrl: URL, fileUrl: URL) {
         let response = try await provider.requestDecodable(of: PresignedUrlResponseDTO.self, .presignedUrl(fileName: fileName))
-        guard let presignedUrl = response.value.fileUrlsDtos.first?.presignedUrl, let url = URL(string: presignedUrl) else {
+        guard let dtos = response.value.fileUrlsDtos.first,
+              let presignedUrl = URL(string: dtos.presignedUrl),
+              let fileUrl = URL(string: dtos.fileUrl)
+                else {
             throw TDDataError.parsingError
         }
-        return url
+        return (presignedUrl, fileUrl)
     }
 
     public func requestUploadImage(url: URL, data: Data) async throws {
