@@ -83,6 +83,21 @@ public struct DomainAssembly: Assembly {
             return ChangePasswordUseCaseImpl(repository: repository)
         }
         
+        // MARK: - MyPage UseCases
+        container.register(FetchUserNicknameUseCase.self) { resolver in
+            guard let repository = resolver.resolve(MyPageRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchUserNicknameUseCaseImpl(repository: repository)
+        }
+        
+        container.register(UpdateUserNicknameUseCase.self) { resolver in
+            guard let repository = resolver.resolve(MyPageRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateUserNicknameUseCaseImpl(repository: repository)
+        }
+        
         // MARK: - Block UseCases
         container.register(BlockCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(CommentRepository.self) else {

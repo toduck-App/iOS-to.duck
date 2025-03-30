@@ -27,6 +27,13 @@ public struct DataAssembly: Assembly {
             return DiaryRepositoryImpl()
         }.inObjectScope(.container)
         
+        container.register(MyPageRepository.self) { _ in
+            guard let service = container.resolve(MyPageService.self) else {
+                fatalError("MyPageService is not registered")
+            }
+            return MyPageRepositoryImpl(service: service)
+        }.inObjectScope(.container)
+        
         container.register(PostRepository.self) { _ in
             return PostRepositoryImpl()
         }.inObjectScope(.container)

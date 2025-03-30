@@ -17,5 +17,9 @@ public struct ServiceAssembly: Assembly {
         container.register(UserAuthService.self) { _ in
             return UserAuthServiceImpl()
         }
+        
+        container.register(MyPageService.self) { _ in
+            return MyPageServiceImpl()
+        }
     }
 }

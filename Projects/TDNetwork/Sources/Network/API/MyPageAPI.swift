@@ -2,7 +2,7 @@ import Foundation
 
 public enum MyPageAPI {
     case fetchNickname
-    case changeNickname(nickname: String)
+    case updateNickname(nickname: String)
 }
 
 extension MyPageAPI: MFTarget {
@@ -13,7 +13,7 @@ extension MyPageAPI: MFTarget {
     public var path: String {
         switch self {
         case .fetchNickname,
-                .changeNickname:
+                .updateNickname:
             return "/v1/my-page/nickname"
         }
     }
@@ -22,7 +22,7 @@ extension MyPageAPI: MFTarget {
         switch self {
         case .fetchNickname:
             return .get
-        case .changeNickname:
+        case .updateNickname:
             return .patch
         }
     }
@@ -30,7 +30,7 @@ extension MyPageAPI: MFTarget {
     public var queries: Parameters? {
         switch self {
         case .fetchNickname,
-                .changeNickname:
+                .updateNickname:
             return nil
         }
     }
@@ -39,7 +39,7 @@ extension MyPageAPI: MFTarget {
         switch self {
         case .fetchNickname:
             return .requestPlain
-        case .changeNickname(let nickname):
+        case .updateNickname(let nickname):
             return .requestParameters(parameters: ["nickname": nickname])
         }
     }
@@ -47,7 +47,7 @@ extension MyPageAPI: MFTarget {
     public var headers: MFHeaders? {
         switch self {
         case .fetchNickname,
-                .changeNickname:
+                .updateNickname:
             return [.contentType("application/json")]
         }
     }
