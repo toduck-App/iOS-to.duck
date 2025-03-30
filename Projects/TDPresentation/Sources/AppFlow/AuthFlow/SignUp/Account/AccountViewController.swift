@@ -94,12 +94,6 @@ final class AccountViewController: BaseViewController<AccountView> {
         }, for: .touchUpInside)
 
         layoutView.nextButton.addAction(UIAction { [weak self] _ in
-            let password = self?.layoutView.passwordTextField.text ?? ""
-            let verifyPassword = self?.layoutView.verifyPasswordTextField.text ?? ""
-            
-        }, for: .touchUpInside)
-
-        layoutView.nextButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.registerUser)
         }, for: .touchUpInside)
     }

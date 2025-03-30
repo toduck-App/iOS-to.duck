@@ -18,4 +18,8 @@ public struct UserAuthRepositoryImpl: UserAuthRepository {
     public func requestFindPasswordVerificationCode(loginId: String, phoneNumber: String) async throws {
         try await service.requestFindPasswordVerificationCode(loginId: loginId, phoneNumber: phoneNumber)
     }
+    
+    public func changePassword(loginId: String, changedPassword: String, phoneNumber: String) async throws {
+        try await service.changePassword(loginId: loginId, changedPassword: changedPassword, phoneNumber: phoneNumber)
+    }
 }

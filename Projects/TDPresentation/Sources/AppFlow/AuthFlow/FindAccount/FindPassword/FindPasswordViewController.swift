@@ -1,4 +1,5 @@
 import Combine
+import TDDomain
 import UIKit
 import TDCore
 import TDDesign
@@ -59,12 +60,16 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
                     self?.layoutView.verificationNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
                     self?.layoutView.verificationNumberContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
-                case .verificationCodeValid:
-                    let showPasswordViewController = ShowPasswordViewController()
-                    showPasswordViewController.coordinator = self?.coordinator
-                    self?.navigationController?.pushViewController(showPasswordViewController, animated: true)
+                case .verificationCodeValid(let phoneNumber, let loginId):
+                    let changePasswordUseCase = DIContainer.shared.resolve(ChangePasswordUseCase.self)
+                    let changePasswordViewModel = ChangePasswordViewModel(changePasswordUseCase: changePasswordUseCase, phoneNumber: phoneNumber, loginId: loginId)
+                    let changePasswordViewController = ChangePasswordViewController(viewModel: changePasswordViewModel)
+                    changePasswordViewController.coordinator = self?.coordinator
+                    self?.navigationController?.pushViewController(changePasswordViewController, animated: true)
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
                 }
             }
             .store(in: &cancellables)
@@ -87,7 +92,7 @@ extension FindPasswordViewController: UITextFieldDelegate {
         case layoutView.phoneNumberTextField:
             return newLength <= 11
         case layoutView.verificationNumberTextField:
-            return newLength <= 6
+            return newLength <= 5
         default:
             return false
         }
@@ -95,7 +100,7 @@ extension FindPasswordViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField == layoutView.verificationNumberTextField {
-            layoutView.nextButton.isEnabled = textField.text?.count == 6
+            layoutView.nextButton.isEnabled = textField.text?.count == 5
             layoutView.nextButton.layer.borderWidth = 0
         }
     }

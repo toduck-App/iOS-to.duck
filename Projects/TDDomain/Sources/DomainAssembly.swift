@@ -62,18 +62,25 @@ public struct DomainAssembly: Assembly {
             return FindUserIdUseCaseImpl(repository: repository)
         }
         
-        container.register(RequestVerificationCodeForIdUseCase.self) { resolve in
+        container.register(RequestVerificationCodeForFindUserUseCase.self) { resolve in
             guard let repository = resolve.resolve(UserAuthRepository.self) else {
                 fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
             }
-            return RequestVerificationCodeForIdUseCaseImpl(repository: repository)
+            return RequestVerificationCodeForFindUserUseCaseImpl(repository: repository)
         }
         
-        container.register(RequestVerificationCodeForPasswordUseCase.self) { resolve in
+        container.register(RequestValidFindUserUseCase.self) { resolve in
             guard let repository = resolve.resolve(UserAuthRepository.self) else {
                 fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
             }
-            return RequestVerificationCodeForPasswordUseCaseImpl(repository: repository)
+            return RequestValidFindUserUseCaseImpl(repository: repository)
+        }
+        
+        container.register(ChangePasswordUseCase.self) { resolve in
+            guard let repository = resolve.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return ChangePasswordUseCaseImpl(repository: repository)
         }
         
         // MARK: - Block UseCases

@@ -23,4 +23,9 @@ public struct UserAuthServiceImpl: UserAuthService {
         let target = UserAuthAPI.requestVerificationCodeWithFindPassword(loginId: loginId, phoneNumber: phoneNumber)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func changePassword(loginId: String, changedPassword: String, phoneNumber: String) async throws {
+        let target = UserAuthAPI.changePassword(loginId: loginId, changedPassword: changedPassword, phoneNumber: phoneNumber)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

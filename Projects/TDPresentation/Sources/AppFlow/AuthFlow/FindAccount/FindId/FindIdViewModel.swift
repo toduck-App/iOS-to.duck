@@ -18,7 +18,7 @@ final class FindIdViewModel: BaseViewModel {
     }
     
     private let findUserIdUseCase: FindUserIdUseCase
-    private let requestVerificationCodeForIdUseCase: RequestVerificationCodeForIdUseCase
+    private let requestVerificationCodeForFindUserUseCase: RequestVerificationCodeForFindUserUseCase
     private let verifyPhoneCodeUseCase: VerifyPhoneCodeUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -29,11 +29,11 @@ final class FindIdViewModel: BaseViewModel {
     
     init(
         findUserIdUseCase: FindUserIdUseCase,
-        requestVerificationCodeForIdUseCase: RequestVerificationCodeForIdUseCase,
+        requestVerificationCodeForFindUserUseCase: RequestVerificationCodeForFindUserUseCase,
         verifyPhoneCodeUseCase: VerifyPhoneCodeUseCase
     ) {
         self.findUserIdUseCase = findUserIdUseCase
-        self.requestVerificationCodeForIdUseCase = requestVerificationCodeForIdUseCase
+        self.requestVerificationCodeForFindUserUseCase = requestVerificationCodeForFindUserUseCase
         self.verifyPhoneCodeUseCase = verifyPhoneCodeUseCase
     }
 
@@ -59,7 +59,7 @@ final class FindIdViewModel: BaseViewModel {
         self.phoneNumber = phoneNumber
         startVerificationTimer()
         do {
-            try await requestVerificationCodeForIdUseCase.execute(phoneNumber: phoneNumber)
+            try await requestVerificationCodeForFindUserUseCase.execute(phoneNumber: phoneNumber)
             output.send(.phoneNumberValid)
         } catch {
             output.send(.failureAPI(error.localizedDescription))

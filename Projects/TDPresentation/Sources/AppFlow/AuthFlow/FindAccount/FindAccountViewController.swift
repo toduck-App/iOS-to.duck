@@ -57,15 +57,25 @@ final class FindAccountViewController: BaseViewController<BaseView> {
         switch index {
         case 0:
             let findUserIdUseCase = DIContainer.shared.resolve(FindUserIdUseCase.self)
-            let requestVerificationCodeForIdUseCase = DIContainer.shared.resolve(RequestVerificationCodeForIdUseCase.self)
+            let requestVerificationCodeForFindUserUseCase = DIContainer.shared.resolve(RequestVerificationCodeForFindUserUseCase.self)
             let verifyPhoneCodeUseCase = DIContainer.shared.resolve(VerifyPhoneCodeUseCase.self)
-            let viewModel = FindIdViewModel(findUserIdUseCase: findUserIdUseCase, requestVerificationCodeForIdUseCase: requestVerificationCodeForIdUseCase, verifyPhoneCodeUseCase: verifyPhoneCodeUseCase)
+            let viewModel = FindIdViewModel(
+                findUserIdUseCase: findUserIdUseCase,
+                requestVerificationCodeForFindUserUseCase: requestVerificationCodeForFindUserUseCase,
+                verifyPhoneCodeUseCase: verifyPhoneCodeUseCase
+            )
             let findIdViewController = FindIdViewController(viewModel: viewModel)
             findIdViewController.coordinator = coordinator
             return UINavigationController(rootViewController: findIdViewController)
         case 1:
-            let requestVerificationCodeForPasswordUseCase = DIContainer.shared.resolve(RequestVerificationCodeForPasswordUseCase.self)
-            let viewModel = FindPasswordViewModel()
+            let requestVerificationCodeForFindUserUseCase = DIContainer.shared.resolve(RequestVerificationCodeForFindUserUseCase.self)
+            let requestValidFindUserUseCase = DIContainer.shared.resolve(RequestValidFindUserUseCase.self)
+            let verifyPhoneCodeUseCase = DIContainer.shared.resolve(VerifyPhoneCodeUseCase.self)
+            let viewModel = FindPasswordViewModel(
+                requestVerificationCodeForFindUserUseCase: requestVerificationCodeForFindUserUseCase,
+                verifyPhoneCodeUseCase: verifyPhoneCodeUseCase,
+                requestValidFindUserUseCase: requestValidFindUserUseCase
+            )
             let findPasswordViewController = FindPasswordViewController(viewModel: viewModel)
             findPasswordViewController.coordinator = coordinator
             return UINavigationController(rootViewController: findPasswordViewController)

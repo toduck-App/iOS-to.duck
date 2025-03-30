@@ -1,7 +1,9 @@
 import UIKit
+import Combine
+import TDDomain
 import TDDesign
 
-final class ShowPasswordViewController: BaseViewController<BaseView> {
+final class ChangePasswordViewController: BaseViewController<BaseView> {
     // MARK: UI Components
     private let passwordLabel = TDLabel(
         labelText: "새 비밀번호 입력",
@@ -72,9 +74,24 @@ final class ShowPasswordViewController: BaseViewController<BaseView> {
     )
     
     // MARK: Properties
+    private let viewModel: ChangePasswordViewModel
+    private let input = PassthroughSubject<ChangePasswordViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     weak var coordinator: FindAccountCoordinator?
     
-    // MARK: Life Cycle
+    // MARK: Initializer
+    init(
+        viewModel: ChangePasswordViewModel
+    ) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -155,9 +172,59 @@ final class ShowPasswordViewController: BaseViewController<BaseView> {
         layoutView.backgroundColor = .white
         invaildPasswordLabel.isHidden = true
         invaildVerifyPasswordLabel.isHidden = true
+        passwordTextField.delegate = self
+        verifyPasswordTextField.delegate = self
         
         confirmButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.finish(by: .pop)
+            self?.input.send(.changePassword)
         }, for: .touchUpInside)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .invalidPassword:
+                    self?.invaildPasswordLabel.isHidden = false
+                    self?.passwordContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
+                    self?.passwordContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
+                case .validPassword:
+                    self?.invaildPasswordLabel.isHidden = true
+                    self?.passwordContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    self?.passwordContainerView.backgroundColor = TDColor.Neutral.neutral50
+                case .passwordMismatch:
+                    self?.invaildVerifyPasswordLabel.isHidden = false
+                    self?.verifyPasswordContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
+                    self?.verifyPasswordContainerView.backgroundColor = TDColor.Semantic.error.withAlphaComponent(0.05)
+                case .passwordMatched:
+                    self?.invaildVerifyPasswordLabel.isHidden = true
+                    self?.verifyPasswordContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                    self?.verifyPasswordContainerView.backgroundColor = TDColor.Neutral.neutral50
+                case .updateNextButtonState(let isEnabled):
+                    self?.confirmButton.isEnabled = isEnabled
+                    self?.confirmButton.layer.borderWidth = 0
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
+                }
+            }.store(in: &cancellables)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension ChangePasswordViewController: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == passwordTextField {
+            let password = passwordTextField.text ?? ""
+            input.send(.validatePassword(password))
+        }
+        
+        if textField == verifyPasswordTextField {
+            let password = passwordTextField.text ?? ""
+            let verifyPassword = verifyPasswordTextField.text ?? ""
+            input.send(.checkPasswordMatch(password, verifyPassword))
+        }
     }
 }

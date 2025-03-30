@@ -1,9 +1,9 @@
-// 비밀번호 찾기용 인증 코드 요청 UseCase
-public protocol RequestVerificationCodeForPasswordUseCase {
+// 아이디와 인증된 휴대폰번호 검증
+public protocol RequestValidFindUserUseCase {
     func execute(loginId: String, phoneNumber: String) async throws
 }
 
-public final class RequestVerificationCodeForPasswordUseCaseImpl: RequestVerificationCodeForPasswordUseCase {
+public final class RequestValidFindUserUseCaseImpl: RequestValidFindUserUseCase {
     private let repository: UserAuthRepository
     
     public init(repository: UserAuthRepository) {
