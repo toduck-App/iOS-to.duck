@@ -2,6 +2,10 @@ import TDCore
 import TDDomain
 import UIKit
 
+protocol AuthCoordinatorDelegate: AnyObject {
+    func didLogin()
+}
+
 public final class AppCoordinator: Coordinator {
     public var navigationController: UINavigationController
     public var childCoordinators: [Coordinator] = []
@@ -62,6 +66,7 @@ public final class AppCoordinator: Coordinator {
         )
         authCoordinator.start()
         authCoordinator.finishDelegate = self
+        authCoordinator.delegate = self
         childCoordinators.append(authCoordinator)
     }
 }
@@ -73,5 +78,12 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         if childCoordinator is AuthCoordinator {
             startTabBarFlow()
         }
+    }
+}
+
+extension AppCoordinator: AuthCoordinatorDelegate {
+    func didLogin() {
+        childCoordinators.removeAll { $0 is AuthCoordinator }
+        startTabBarFlow()
     }
 }
