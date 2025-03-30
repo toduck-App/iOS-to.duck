@@ -212,11 +212,11 @@ private extension SocialListView {
         let groupPadding: CGFloat = 16
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(500)
+            heightDimension: .estimated(1)
         )
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(500)
+            heightDimension: .estimated(1)
         )
         
         let edgeSpacing = NSCollectionLayoutEdgeSpacing(

@@ -1,10 +1,10 @@
 import Foundation
-import TDData
 import TDCore
+import TDData
 import TDDomain
 
 public enum SocialAPI {
-    case fetchPostList(category: PostCategory)
+    case fetchPostList(curser: Int?, limit: Int, categoryIds: [Int]?)
     case searchPost(keyword: String, category: PostCategory)
     case togglePostLike(postId: String)
     case bringUserRoutine(routine: Routine)
@@ -40,7 +40,7 @@ extension SocialAPI: MFTarget {
     public var path: String {
         switch self {
         case .fetchPostList:
-            "/posts"
+            "v1/socials"
         case .searchPost:
             "/posts/search"
         case .togglePostLike(let postId):
@@ -123,10 +123,18 @@ extension SocialAPI: MFTarget {
     
     public var queries: Parameters? {
         switch self {
-        case .fetchPostList(let category):
-            ["category": category.rawValue]
+        case .fetchPostList(let cursor, let limit, let categoryIds):
+            var params: [String: Any] = ["limit": limit]
+            if let cursor {
+                params["cursor"] = cursor
+            }
+            if let categoryIds {
+                params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
+            }
+            return params
         case .searchPost(let keyword, let category):
-            ["keyword": keyword, "category": category.rawValue]
+            let params: [String: Any] = ["keyword": keyword, "category": category.rawValue]
+            return params
         case .togglePostLike,
              .fetchPost,
              .reportPost,
@@ -150,7 +158,7 @@ extension SocialAPI: MFTarget {
              .reportComment,
              .blockComment:
             // TODO: - API에 따라 이 부분도 구현되어야 합니다.
-            nil
+            return nil
         }
     }
     
@@ -185,7 +193,7 @@ extension SocialAPI: MFTarget {
             ]
             
             return .requestParameters(parameters: params.compactMapValues { $0 })
-        case  .updatePost(let post):
+        case .updatePost(let post):
             return .requestPlain
         case .createComment(let comment), .updateComment(let comment):
             return .requestPlain

@@ -212,7 +212,7 @@ extension SocialListViewController: UICollectionViewDelegate {
 
 // MARK: Input
 
-extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
+extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UIScrollViewDelegate {
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
         let controller = SocialBlockViewController()
         controller.onBlock = { [weak self] in
@@ -255,6 +255,16 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate {
         let option = SocialSortType.allCases[indexPath.row]
         layoutView.dropDownAnchorView.setTitle(option.rawValue)
         input.send(.sortPost(by: option))
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        if offsetY > contentHeight - frameHeight * 1.5 {
+            input.send(.loadMorePosts)
+        }
     }
 }
 

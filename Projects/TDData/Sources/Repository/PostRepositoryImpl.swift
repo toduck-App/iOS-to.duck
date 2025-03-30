@@ -1,6 +1,6 @@
-import TDDomain
-import TDCore
 import Foundation
+import TDCore
+import TDDomain
 
 public final class PostRepositoryImpl: PostRepository {
     private let dummyRoutine = Routine(
@@ -21,25 +21,26 @@ public final class PostRepositoryImpl: PostRepository {
         isFinished: false
     )
     private var dummyPost = Post.dummy
-    
+
     private let socialService: SocialService
     private let awsService: AwsService
+    private let cachePost: [Post] = []
 
     public init(socialService: SocialService, awsService: AwsService) {
         self.socialService = socialService
         self.awsService = awsService
     }
 
-    public func fetchPostList(category: PostCategory?) async throws -> [Post] {
-        guard let category = category else {
-            return dummyPost
-        }
-        return dummyPost
-            .filter { $0.category?.contains(category) ?? false }
+    public func fetchPostList(cursor: Int?, limit: Int = 20, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
+        let categoryIDs: [Int]? = category?.map(\.rawValue)
+        let postListDTO = try await socialService.requestPosts(cursor: cursor, limit: limit, categoryIDs: categoryIDs)
+        let postList = postListDTO.results.compactMap { $0.convertToEntity(category: category) }
+
+        return (postList, postListDTO.hasMore, postListDTO.nextCursor)
     }
 
-    public func searchPost(keyword: String, category: PostCategory?) async throws -> [Post]? {
-        guard let category = category else {
+    public func searchPost(keyword: String, category: [PostCategory]?) async throws -> [Post]? {
+        guard let category else {
             return dummyPost
                 .filter { $0.contentText.contains(keyword) }
         }
@@ -52,73 +53,47 @@ public final class PostRepositoryImpl: PostRepository {
             dummyPost[index].toggleLike()
             return .success(dummyPost[index])
         }
-        //TODO: 실제 리소스에 반영 후 적절한 Error 처리 필요
+        // TODO: 실제 리소스에 반영 후 적절한 Error 처리 필요
         return .failure(NSError(domain: "PostRepositoryImpl", code: 0, userInfo: nil))
     }
 
     public func bringUserRoutine(routine: Routine) async throws -> Routine {
-        return dummyRoutine
+        dummyRoutine
     }
 
     public func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws {
         var imageUrls: [String] = []
-        if let image = image {
+        if let image {
             for (fileName, imageData) in image {
                 let url = try await awsService.requestPresignedUrl(fileName: fileName)
                 try await awsService.requestUploadImage(url: url, data: imageData)
                 imageUrls.append(url.absoluteString)
             }
         }
-        
+
         let requestDTO = TDPostCreateRequestDTO(
             title: post.titleText,
             content: post.contentText,
             routineId: post.routine?.id,
             isAnonymous: false,
-            socialCategoryIds: post.category?.compactMap { $0.rawValue } ?? [],
+            socialCategoryIds: post.category?.compactMap(\.rawValue) ?? [],
             socialImageUrls: imageUrls
         )
-        let responseDTO = try await socialService.requestCreatePost(requestDTO: requestDTO)
+        try await socialService.requestCreatePost(requestDTO: requestDTO)
     }
 
-    public func updatePost(post: Post) async throws {
-        return
-    }
+    public func updatePost(post: Post) async throws {}
 
-    public func deletePost(postID: Post.ID) async throws  {
-        return
-    }
+    public func deletePost(postID: Post.ID) async throws {}
 
     public func fetchPost(postID: Post.ID) async throws -> Post {
         let postDTO = try await socialService.requestPost(postID: postID)
-//        let post = Post(
-//            id: postDTO.socialId,
-//            user: User(
-//                id: postDTO.owner.ownerID,
-//                name: postDTO.owner.nickname,
-//                icon: nil,
-//                title: "작심삼일",
-//                isblock: false
-//            ),
-//            contentText: postDTO.content,
-//            imageList: postDTO.images.map { $0.url },
-//            timestamp: postDTO.createdAt,
-//            likeCount: <#T##Int#>,
-//            isLike: <#T##Bool#>,
-//            commentCount: <#T##Int?#>,
-//            shareCount: <#T##Int?#>,
-//            routine: <#T##Routine?#>,
-//            category: <#T##[PostCategory]?#>
-//        )
-        
-        return Post.dummy[0]
+        let post = postDTO.convertToEntity()
+
+        return post
     }
 
-    public func reportPost(postID: Post.ID) async throws {
-        return
-    }
+    public func reportPost(postID: Post.ID) async throws {}
 
-    public func blockPost(postID: Post.ID) async throws {
-        return
-    }
+    public func blockPost(postID: Post.ID) async throws {}
 }

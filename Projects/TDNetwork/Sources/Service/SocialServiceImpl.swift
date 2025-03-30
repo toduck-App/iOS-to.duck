@@ -8,11 +8,12 @@ public struct SocialServiceImpl: SocialService {
     }
     
     public func requestPosts(
-        cursor: Int,
-        limit: Int,
-        categoryIDs: Int
-    ) async throws -> TDPostDTO {
-        let response = try await provider.requestDecodable(of: TDPostDTO.self, .fetchPostList(category: .anxiety))
+        cursor: Int?,
+        limit: Int = 20,
+        categoryIDs: [Int]?
+    ) async throws -> TDPostListDTO {
+        let target = SocialAPI.fetchPostList(curser: cursor, limit: limit, categoryIds: categoryIDs)
+        let response = try await provider.requestDecodable(of: TDPostListDTO.self, target)
         return response.value
     }
     public func requestCreatePost(requestDTO: TDPostCreateRequestDTO) async throws -> TDPostCreateResponseDTO {
