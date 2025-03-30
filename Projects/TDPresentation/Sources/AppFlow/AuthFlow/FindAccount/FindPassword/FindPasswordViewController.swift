@@ -29,9 +29,7 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
         keyboardAdjustableButton = layoutView.nextButton
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
-            let id = self?.layoutView.idTextField.text ?? ""
-            let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""
-            self?.input.send(.postPhoneNumber(id: id, phoneNumber: phoneNumber))
+            self?.input.send(.postPhoneNumber)
         }, for: .touchUpInside)
         
         layoutView.nextButton.addAction(UIAction { [weak self] _ in
@@ -47,6 +45,8 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] action in
                 switch action {
+                case .loginIdInvalid(let message):
+                    self?.showErrorAlert(with: message)
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
@@ -66,6 +66,9 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
                     let changePasswordViewController = ChangePasswordViewController(viewModel: changePasswordViewModel)
                     changePasswordViewController.coordinator = self?.coordinator
                     self?.navigationController?.pushViewController(changePasswordViewController, animated: true)
+                case .validIdAndPhoneNumber:
+                    self?.layoutView.postButton.isEnabled = true
+                    self?.layoutView.postButton.layer.borderWidth = 0
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 case .failureAPI(let message):
@@ -99,6 +102,16 @@ extension FindPasswordViewController: UITextFieldDelegate {
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField == layoutView.idTextField {
+            let id = textField.text ?? ""
+            input.send(.validateId(id: id))
+        }
+        
+        if textField == layoutView.phoneNumberTextField {
+            let phoneNumber = textField.text ?? ""
+            input.send(.validatePhoneNumber(phoneNumber: phoneNumber))
+        }
+        
         if textField == layoutView.verificationNumberTextField {
             layoutView.nextButton.isEnabled = textField.text?.count == 5
             layoutView.nextButton.layer.borderWidth = 0

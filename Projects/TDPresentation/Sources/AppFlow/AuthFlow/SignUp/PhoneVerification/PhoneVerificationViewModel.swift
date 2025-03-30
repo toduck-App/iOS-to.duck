@@ -56,7 +56,7 @@ final class PhoneVerificationViewModel: BaseViewModel {
         
         do {
             self.phoneNumber = phoneNumber
-            try await requestPhoneVerificationCodeUseCase.execute(with: phoneNumber)
+//            try await requestPhoneVerificationCodeUseCase.execute(with: phoneNumber)
             output.send(.phoneNumberValid)
         } catch {
             output.send(.apiFailure(error: error.localizedDescription))
@@ -77,7 +77,7 @@ final class PhoneVerificationViewModel: BaseViewModel {
         }
         
         do {
-            try await verifyPhoneCodeUseCase.execute(phoneNumber: phoneNumber, verifiedCode: code)
+//            try await verifyPhoneCodeUseCase.execute(phoneNumber: phoneNumber, verifiedCode: code)
             output.send(.verificationCodeValid(phoneNumber: phoneNumber))
         } catch {
             output.send(.verificationCodeInvalid)

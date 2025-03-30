@@ -4,15 +4,19 @@ import Foundation
 
 final class FindPasswordViewModel: BaseViewModel {
     enum Input {
-        case postPhoneNumber(id: String, phoneNumber: String)
+        case validateId(id: String)
+        case validatePhoneNumber(phoneNumber: String)
+        case postPhoneNumber
         case postVerificationCode(code: String)
     }
     
     enum Output {
+        case loginIdInvalid(message: String)
         case phoneNumberValid
         case phoneNumberInvalid
         case verificationCodeInvalid
         case verificationCodeValid(phoneNumber: String, loginId: String)
+        case validIdAndPhoneNumber
         case updateVerificationTimer(time: String)
         case failureAPI(String)
     }
@@ -25,6 +29,8 @@ final class FindPasswordViewModel: BaseViewModel {
     
     private var phoneNumber = ""
     private var loginId = ""
+    private var isIdValid = false
+    private var isPhoneNumberValid = false
     private var timer: AnyCancellable?
     private var verificationTimeRemaining = 300
     
@@ -41,8 +47,12 @@ final class FindPasswordViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
-            case .postPhoneNumber(let id, let phoneNumber):
-                Task { await self?.validatePhoneNumber(id: id, phoneNumber: phoneNumber) }
+            case .validateId(let id):
+                self?.validateId(with: id)
+            case .validatePhoneNumber(let phoneNumber):
+                self?.validatePhoneNumber(with: phoneNumber)
+            case .postPhoneNumber:
+                Task { await self?.postVerificationCode() }
             case .postVerificationCode(let code):
                 Task { await self?.validateVerificationCode(with: code) }
             }
@@ -51,9 +61,23 @@ final class FindPasswordViewModel: BaseViewModel {
         return output.eraseToAnyPublisher()
     }
     
-    private func validatePhoneNumber(id: String, phoneNumber: String) async {
-        guard id.count >= 5 && id.count <= 20 else {
-            output.send(.phoneNumberInvalid)
+    private func validateId(with id: String) {
+        let regex = "^(?=.*[a-z])(?=.*[0-9])[a-z0-9]{5,20}$"
+        let isValid = NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: id)
+        isIdValid = isValid
+        loginId = id
+        checkIdAndPhoneNumberValidation()
+    }
+    
+    private func validatePhoneNumber(with phoneNumber: String) {
+        isPhoneNumberValid = isValidPhoneNumber(with: phoneNumber)
+        self.phoneNumber = phoneNumber
+        checkIdAndPhoneNumberValidation()
+    }
+    
+    private func postVerificationCode() async {
+        guard loginId.count >= 5 && loginId.count <= 20 else {
+            output.send(.loginIdInvalid(message: "아이디는 5자 이상 20자 이하여야 합니다."))
             return
         }
         
@@ -61,8 +85,6 @@ final class FindPasswordViewModel: BaseViewModel {
             output.send(.phoneNumberInvalid)
             return
         }
-        self.phoneNumber = phoneNumber
-        self.loginId = id
         
         do {
             try await requestVerificationCodeForFindUserUseCase.execute(phoneNumber: phoneNumber)
@@ -70,6 +92,12 @@ final class FindPasswordViewModel: BaseViewModel {
             output.send(.phoneNumberValid)
         } catch {
             output.send(.failureAPI(error.localizedDescription))
+        }
+    }
+    
+    private func checkIdAndPhoneNumberValidation() {
+        if isIdValid && isPhoneNumberValid {
+            output.send(.validIdAndPhoneNumber)
         }
     }
     

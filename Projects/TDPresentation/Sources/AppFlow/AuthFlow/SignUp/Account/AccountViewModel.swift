@@ -69,7 +69,7 @@ final class AccountViewModel: BaseViewModel {
     }
     
     private func validateId(_ id: String) {
-        let regex = "^[a-z0-9]{5,20}$"
+        let regex = "^(?=.*[a-z])(?=.*[0-9])[a-z0-9]{5,20}$"
         let isValid = NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: id)
         isIdValid = isValid
         loginId = id
