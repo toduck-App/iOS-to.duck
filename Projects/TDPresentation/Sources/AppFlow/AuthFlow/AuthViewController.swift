@@ -39,10 +39,6 @@ final class AuthViewController: BaseViewController<AuthView> {
     
     // MARK: Base Methods
     override func configure() {
-        layoutView.mainButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.didMainButtonTapped()
-        }, for: .touchUpInside)
-        
         layoutView.kakaoLoginButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.signInWithKakao)
         }, for: .touchUpInside)
@@ -68,7 +64,7 @@ final class AuthViewController: BaseViewController<AuthView> {
             .sink { [weak self] event in
                 switch event {
                 case .loginSuccess:
-                    self?.coordinator?.didMainButtonTapped()
+                    self?.coordinator?.didLogin()
                 case .loginFailure(let error):
                     self?.showErrorAlert(with: error)
                 }

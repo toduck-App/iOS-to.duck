@@ -8,7 +8,7 @@ final class AccountCoordinator: Coordinator {
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
     private let phoneNumber: String
-    weak var delegate: AccountCoordinatorDelegate?
+    weak var delegate: RegisterSuccessCoordinatorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -33,9 +33,14 @@ final class AccountCoordinator: Coordinator {
         navigationController.pushTDViewController(accountViewController, animated: true)
     }
     
-    func notifyRegistrationSuccess() {
-        delegate?.didFinishRegister(from: self)
-        self.finish(by: .popNotAnimated)
+    func startRegisterSuccessViewCoordinator() {
+        let registerSuccessCoordinator = RegisterSuccessCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        registerSuccessCoordinator.delegate = self
+        childCoordinators.append(registerSuccessCoordinator)
+        registerSuccessCoordinator.start()
     }
 }
 
@@ -43,5 +48,14 @@ final class AccountCoordinator: Coordinator {
 extension AccountCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+    }
+}
+
+// MARK: - AccountCoordinatorDelegate
+extension AccountCoordinator: RegisterSuccessCoordinatorDelegate {
+    func didFinishRegister(from coordinator: RegisterSuccessCoordinator) {
+        childCoordinators.removeAll { $0 === coordinator }
+        delegate?.didFinishRegister(from: coordinator)
+        self.finish(by: .popNotAnimated)
     }
 }
