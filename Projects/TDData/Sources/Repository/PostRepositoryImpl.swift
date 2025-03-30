@@ -84,7 +84,9 @@ public final class PostRepositoryImpl: PostRepository {
 
     public func updatePost(post: Post) async throws {}
 
-    public func deletePost(postID: Post.ID) async throws {}
+    public func deletePost(postID: Post.ID) async throws {
+        try await socialService.requestDeletePost(postID: postID)
+    }
 
     public func fetchPost(postID: Post.ID) async throws -> Post {
         let postDTO = try await socialService.requestPost(postID: postID)

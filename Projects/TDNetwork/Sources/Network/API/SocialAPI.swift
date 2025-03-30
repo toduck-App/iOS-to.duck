@@ -10,7 +10,7 @@ public enum SocialAPI {
     case bringUserRoutine(routine: Routine)
     case createPost(post: TDPostCreateRequestDTO)
     case updatePost(post: Post)
-    case deletePost(postId: String)
+    case deletePost(postId: Int)
     case fetchPost(postId: String)
     case reportPost(postId: String)
     case blockPost(postId: String)
@@ -52,7 +52,7 @@ extension SocialAPI: MFTarget {
         case .updatePost(let post):
             "/posts/\(post.id)"
         case .deletePost(let postId):
-            "/posts/\(postId)"
+            "v1/socials/\(postId)"
         case .fetchPost(let postId):
             "v1/socials/\(postId)"
         case .reportPost(let postId):

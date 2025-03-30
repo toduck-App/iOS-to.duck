@@ -27,7 +27,8 @@ public struct SocialServiceImpl: SocialService {
     }
     
     public func requestDeletePost(postID: Int) async throws {
-        return
+        let target = SocialAPI.deletePost(postId: postID)
+        let response = try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
     public func requestUpdatePost(

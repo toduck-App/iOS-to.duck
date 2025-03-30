@@ -227,7 +227,7 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        TDLogger.debug("DELETE POST")
+        input.send(.deletePost(postID))
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {

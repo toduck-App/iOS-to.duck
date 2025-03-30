@@ -18,6 +18,7 @@ final class SocialListViewModel: BaseViewModel {
         case search(term: String)
         case clearSearch
         case loadMorePosts
+        case deletePost(Post.ID)
     }
 
     enum Output {
@@ -58,6 +59,7 @@ final class SocialListViewModel: BaseViewModel {
     private let updateRecentKeywordUseCase: UpdateKeywordUseCase
     private let fetchRecentKeywordUseCase: FetchKeywordUseCase
     private let deleteRecentKeywordUseCase: DeleteKeywordUseCase
+    private let deletePostUseCase: DeletePostUseCase
 
     // Combine
     private var cancellables = Set<AnyCancellable>()
@@ -72,7 +74,8 @@ final class SocialListViewModel: BaseViewModel {
         searchPostUseCase: SearchPostUseCase,
         updateRecentKeywordUseCase: UpdateKeywordUseCase,
         fetchRecentKeywordUseCase: FetchKeywordUseCase,
-        deleteRecentKeywordUseCase: DeleteKeywordUseCase
+        deleteRecentKeywordUseCase: DeleteKeywordUseCase,
+        deletePostUseCase: DeletePostUseCase
     ) {
         self.fetchPostUseCase = fetchPostUseCase
         self.togglePostLikeUseCase = togglePostLikeUseCase
@@ -81,6 +84,7 @@ final class SocialListViewModel: BaseViewModel {
         self.updateRecentKeywordUseCase = updateRecentKeywordUseCase
         self.fetchRecentKeywordUseCase = fetchRecentKeywordUseCase
         self.deleteRecentKeywordUseCase = deleteRecentKeywordUseCase
+        self.deletePostUseCase = deletePostUseCase
     }
     
     // MARK: - Transform
@@ -117,12 +121,14 @@ final class SocialListViewModel: BaseViewModel {
                     searchTerm = ""
                     Task { await self.loadPosts() }
                 case .loadMorePosts:
-                    guard !self.isLoadingMore, self.hasMore, let cursor = self.nextCursor else { return }
-                    self.isLoadingMore = true
+                    guard !isLoadingMore, hasMore, let cursor = nextCursor else { return }
+                    isLoadingMore = true
                     Task {
                         await self.loadMorePosts(cursor: cursor)
                         self.isLoadingMore = false
                     }
+                case .deletePost(let postID):
+                    Task { await self.deletePost(postId: postID) }
                 }
             }
             .store(in: &cancellables)
@@ -145,9 +151,9 @@ extension SocialListViewModel {
                 output.send(.searchPosts(searchPosts))
             } else {
                 let results = try await fetchPostUseCase.execute(cursor: nil, limit: 20, category: category)
-                self.hasMore = results.hasMore
-                self.nextCursor = results.nextCursor
-                self.defaultPosts = sortPosts(array: results.result, by: currentSort)
+                hasMore = results.hasMore
+                nextCursor = results.nextCursor
+                defaultPosts = sortPosts(array: results.result, by: currentSort)
                 output.send(.fetchPosts(defaultPosts))
             }
         } catch {
@@ -160,7 +166,6 @@ extension SocialListViewModel {
         }
     }
 
-    
     private func sortCurrentPosts() {
         if isSearching {
             searchPosts = sortPosts(array: searchPosts, by: currentSort)
@@ -261,14 +266,30 @@ extension SocialListViewModel {
                 // TODO: Search 도 PageNation을 지원해야함.
             } else {
                 let results = try await fetchPostUseCase.execute(cursor: cursor, limit: 20, category: category)
-                self.hasMore = results.hasMore
-                self.nextCursor = results.nextCursor
+                hasMore = results.hasMore
+                nextCursor = results.nextCursor
                 let morePosts = sortPosts(array: results.result, by: currentSort)
-                self.defaultPosts.append(contentsOf: morePosts)
+                defaultPosts.append(contentsOf: morePosts)
                 output.send(.fetchPosts(defaultPosts))
             }
         } catch {
             output.send(.failure("추가 게시글을 불러오는데 실패했습니다."))
+        }
+    }
+    
+    private func deletePost(postId: Post.ID) async {
+        do {
+            try await deletePostUseCase.execute(postID: postId)
+            if isSearching {
+                searchPosts.removeAll { $0.id == postId }
+                output.send(.searchPosts(searchPosts))
+            } else {
+                defaultPosts.removeAll { $0.id == postId }
+                output.send(.fetchPosts(defaultPosts))
+            }
+            
+        } catch {
+            output.send(.failure("게시글 삭제에 실패했습니다."))
         }
     }
 }
