@@ -14,4 +14,8 @@ public protocol SocialService {
     func requestUpdatePost(postID: Int, isChangeTitle: Bool, title: String?, isChangeRoutine: Bool, routineID: Int?, content: String?, isAnonymous: Bool?, socialCategoryIds: [Int]?, socialImageURLs: [String]?) async throws
     // 게시글 검색
     func requestSearchPosts(cursor: Int, limit: Int, keyword: String) async throws
+    // 게시글 좋아요
+    func requestLikePost(postID: Int) async throws
+    // 게시글 좋아요 취소
+    func requestUnlikePost(postID: Int) async throws
 }

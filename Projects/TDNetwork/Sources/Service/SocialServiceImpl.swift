@@ -28,7 +28,7 @@ public struct SocialServiceImpl: SocialService {
     
     public func requestDeletePost(postID: Int) async throws {
         let target = SocialAPI.deletePost(postId: postID)
-        let response = try await provider.requestDecodable(of: EmptyResponse.self, target)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
     public func requestUpdatePost(
@@ -51,5 +51,15 @@ public struct SocialServiceImpl: SocialService {
         keyword: String
     ) async throws {
         return
+    }
+    
+    public func requestLikePost(postID: Int) async throws {
+        let target = SocialAPI.likePost(postId: postID)
+        try await provider.requestDecodable(of: TDPostLikeDTO.self, target)
+    }
+    
+    public func requestUnlikePost(postID: Int) async throws {
+        let target = SocialAPI.unlikePost(postId: postID)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
 }

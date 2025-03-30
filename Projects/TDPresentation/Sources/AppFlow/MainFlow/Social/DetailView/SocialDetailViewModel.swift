@@ -134,11 +134,13 @@ private extension SocialDetailViewModel {
 
     private func likePost() async {
         do {
-            post = try await togglePostLikeUseCase.execute(postID: postID)
-            guard let post else {
-                output.send(.failure("게시글 좋아요에 실패했습니다."))
+            guard var post = post else {
+                output.send(.failure("게시글 정보가 없습니다."))
                 return
             }
+            try await togglePostLikeUseCase.execute(postID: postID, currentLike: post.isLike)
+            post.toggleLike()
+            self.post = post
             output.send(.likePost(post))
         } catch {
             output.send(.failure("게시글 좋아요에 실패했습니다."))

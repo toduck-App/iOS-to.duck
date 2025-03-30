@@ -191,17 +191,19 @@ extension SocialListViewModel {
 
     private func likePost(postID: Post.ID) async {
         do {
-            let resultPost = try await togglePostLikeUseCase.execute(postID: postID)
-            
             if let defaultIndex = defaultPosts.firstIndex(where: { $0.id == postID }) {
+                var resultPost = defaultPosts[defaultIndex]
+                try await togglePostLikeUseCase.execute(postID: postID, currentLike: resultPost.isLike)
+                resultPost.toggleLike()
                 defaultPosts[defaultIndex] = resultPost
-            }
-            if let searchIndex = searchPosts.firstIndex(where: { $0.id == postID }) {
+                output.send(.likePost(resultPost))
+            } else if let searchIndex = searchPosts.firstIndex(where: { $0.id == postID }) {
+                var resultPost = searchPosts[searchIndex]
+                try await togglePostLikeUseCase.execute(postID: postID, currentLike: resultPost.isLike)
+                resultPost.toggleLike()
                 searchPosts[searchIndex] = resultPost
+                output.send(.likePost(resultPost))
             }
-
-            output.send(.likePost(resultPost))
-
         } catch {
             output.send(.failure("게시글 좋아요에 실패했습니다."))
         }

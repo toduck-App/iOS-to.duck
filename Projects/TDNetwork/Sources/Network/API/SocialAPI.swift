@@ -5,31 +5,32 @@ import TDDomain
 
 public enum SocialAPI {
     case fetchPostList(curser: Int?, limit: Int, categoryIds: [Int]?)
-    case searchPost(keyword: String, category: PostCategory)
-    case togglePostLike(postId: String)
-    case bringUserRoutine(routine: Routine)
+    case searchPost(keyword: String, category: PostCategory) // TODO: Search 쪽 PageNation 구현 필요
+    case likePost(postId: Int)
+    case unlikePost(postId: Int)
+    case bringUserRoutine(routine: Routine) // TODO: 유저 루틴 저장하는 부분 필요
     case createPost(post: TDPostCreateRequestDTO)
-    case updatePost(post: Post)
+    case updatePost(post: Post) // TODO: Post 수정기능 필요
     case deletePost(postId: Int)
-    case fetchPost(postId: String)
-    case reportPost(postId: String)
-    case blockPost(postId: String)
+    case fetchPost(postId: String) // TODO: 단건 조회 필요
+    case reportPost(postId: String) // TODO: 신고 기능 구현 필요
+    case blockPost(postId: String) // TODO: 차단 기능 구현 필요
     
-    case toggleCommentLike(commentId: String)
-    case fetchCommentList(commentId: String)
-    case fetchUserCommentList(userId: String)
-    case createComment(comment: Comment)
-    case updateComment(comment: Comment)
-    case deleteComment(commentId: String)
-    case reportComment(commentId: String)
-    case blockComment(commentId: String)
+    case toggleCommentLike(commentId: String) // TODO: Comment 구현 기능 필요
+    case fetchCommentList(commentId: String) // TODO: CommentList 가져오는 기능 구현 필요
+    case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
+    case createComment(comment: Comment) // TODO: Comment 생성 기능 구현 필요
+    case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
+    case deleteComment(commentId: String) // TODO: Comment 삭제 기능 구현 필요
+    case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
+    case blockComment(commentId: String) // TODO: Comment 차단 기능 구현 필요
     
-    case fetchUser(userId: String)
-    case fetchUserDetail(userId: String)
-    case fetchUserPostList(userId: String)
-    case fetchUserRoutineList(userId: String)
-    case fetchUserShareUrl(userId: String)
-    case toggleUserFollow(userId: String, targetUserId: String)
+    case fetchUser(userId: String) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUserDetail(userId: String) // TODO: 다른 유저의 상세 정보 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUserPostList(userId: String) // TODO: 다른 유저의 Post List 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUserShareUrl(userId: String) // 이게 뭐지?
+    case toggleUserFollow(userId: String, targetUserId: String) // TODO: Follow 기능 구현 필요
 }
 
 extension SocialAPI: MFTarget {
@@ -43,8 +44,10 @@ extension SocialAPI: MFTarget {
             "v1/socials"
         case .searchPost:
             "/posts/search"
-        case .togglePostLike(let postId):
-            "/posts/\(postId)/like"
+        case .likePost(let postId):
+            "v1/socials/\(postId)/likes"
+        case .unlikePost(let postId):
+            "v1/socials/\(postId)/likes"
         case .bringUserRoutine(let routine):
             "/routines/\(routine.id)"
         case .createPost:
@@ -104,7 +107,7 @@ extension SocialAPI: MFTarget {
              .fetchUserShareUrl,
              .bringUserRoutine:
             .get
-        case .togglePostLike,
+        case .likePost,
              .createPost,
              .reportPost,
              .blockPost,
@@ -116,7 +119,7 @@ extension SocialAPI: MFTarget {
             .post
         case .updatePost, .updateComment:
             .put
-        case .deletePost, .deleteComment:
+        case .deletePost, .deleteComment, .unlikePost:
             .delete
         }
     }
@@ -135,7 +138,8 @@ extension SocialAPI: MFTarget {
         case .searchPost(let keyword, let category):
             let params: [String: Any] = ["keyword": keyword, "category": category.rawValue]
             return params
-        case .togglePostLike,
+        case .likePost,
+             .unlikePost,
              .fetchPost,
              .reportPost,
              .blockPost,
@@ -166,7 +170,8 @@ extension SocialAPI: MFTarget {
         switch self {
         case .fetchPostList,
              .searchPost,
-             .togglePostLike,
+             .likePost,
+             .unlikePost,
              .fetchPost,
              .reportPost,
              .blockPost,
@@ -215,228 +220,5 @@ extension SocialAPI: MFTarget {
         // TODO: - 논의 후 결정?
         
         return jsonHeader
-    }
-}
-
-public extension SocialAPI {
-    var sampleData: Data {
-        switch self {
-        case .fetchPostList:
-            """
-            [
-                {
-                    "id": 1,
-                    "user": {
-                        "id": 1,
-                        "name": "toduck",
-                        "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                        "title": "작심삼일",
-                        "isblock": false
-                    },
-                    "contentText": "테스트 게시물 내용입니다.",
-                    "imageList": ["https://geojecci.korcham.net/images/no-image01.gif", "https://geojecci.korcham.net/images/no-image01.gif"],
-                    "timestamp": "2024-07-10T09:00:00Z",
-                    "likeCount": 10,
-                    "isLike": true,
-                    "commentCount": 5,
-                    "shareCount": 2,
-                    "routine": null,
-                    "type": "communication",
-                    "category": ["집중력", "기억력"]
-                }
-            ]
-            """.data(using: .utf8)!
-        case .searchPost:
-            """
-            [
-                {
-                    "id": 2,
-                    "user": {
-                        "id": 2,
-                        "name": "toduck2",
-                        "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                        "title": "작심삼일",
-                        "isblock": false
-                    },
-                    "contentText": "테스트 게시물",
-                    "imageList": ["https://geojecci.korcham.net/images/no-image01.gif"],
-                    "timestamp": "2024-07-11T09:00:00Z",
-                    "likeCount": 5,
-                    "isLike": false,
-                    "commentCount": 2,
-                    "shareCount": 1,
-                    "routine": null,
-                    "type": "question",
-                    "category": ["충동"]
-                }
-            ]
-            """.data(using: .utf8)!
-        case .togglePostLike:
-            """
-            {
-                "success": true
-            }
-            """.data(using: .utf8)!
-        case .bringUserRoutine:
-            """
-            {
-                "id": 1,
-                "title": "아침 루틴",
-                "category": "건강",
-                "isPublic": true,
-                "dateAndTime": "2024-07-10T07:00:00Z",
-                "isRepeating": true,
-                "isRepeatAllDay": false,
-                "repeatDays": ["월", "수", "금"],
-                "alarm": true,
-                "alarmTimes": ["60"],
-                "memo": "스트레칭으로 시작하기",
-                "recommendedRoutines": ["달리기", "요가"],
-                "isFinish": false
-            }
-            """.data(using: .utf8)!
-        case .createPost, .updatePost:
-            """
-            {
-                "id": 3,
-                "user": {
-                    "id": 3,
-                    "name": "toduck3",
-                    "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                    "title": "작심삼일",
-                    "isblock": false
-                },
-                "contentText": "테스트 새로운 게시물입니다.",
-                "imageList": ["https://geojecci.korcham.net/images/no-image01.gif"],
-                "timestamp": "2024-07-12T09:00:00Z",
-                "likeCount": 0,
-                "isLike": false,
-                "commentCount": 0,
-                "shareCount": 0,
-                "routine": null,
-                "type": "communication",
-                "category": ["불안"]
-            }
-            """.data(using: .utf8)!
-        case .deletePost:
-            """
-            {
-                "success": true
-            }
-            """.data(using: .utf8)!
-        case .fetchPost:
-            """
-            {
-                "id": 1,
-                "user": {
-                    "id": 1,
-                    "name": "toduck",
-                    "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                    "title": "작심삼일",
-                    "isblock": false
-                },
-                "contentText": "테스트 게시물 내용입니다.",
-                "imageList": ["https://geojecci.korcham.net/images/no-image01.gif", "https://geojecci.korcham.net/images/no-image01.gif"],
-                "timestamp": "2024-07-10T09:00:00Z",
-                "likeCount": 10,
-                "isLike": true,
-                "commentCount": 5,
-                "shareCount": 2,
-                "routine": null,
-                "type": "communication",
-                "category": ["집중력", "기억력"]
-            }
-            """.data(using: .utf8)!
-        case .reportPost, .blockPost:
-            """
-            {
-                "success": true
-            }
-            """.data(using: .utf8)!
-        case .toggleCommentLike, .fetchCommentList, .fetchUserCommentList, .createComment, .updateComment, .deleteComment, .reportComment, .blockComment:
-            """
-            {
-                "id": 1,
-                "user": {
-                    "id": 1,
-                    "name": "toduck",
-                    "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                    "title": "작심삼일",
-                    "isblock": false
-                },
-                "content": "테스트 댓글입니다.",
-                "timestamp": "2024-07-10T09:00:00Z",
-                "isLike": true,
-                "like": 5
-            }
-            """.data(using: .utf8)!
-        case .fetchUser, .fetchUserDetail:
-            """
-            {
-                "id": 1,
-                "name": "toduck",
-                "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                "title": "작심삼일",
-                "isblock": false
-            }
-            """.data(using: .utf8)!
-        case .fetchUserPostList:
-            """
-            [
-                {
-                    "id": 1,
-                    "user": {
-                        "id": 1,
-                        "name": "toduck",
-                        "icon": "https://geojecci.korcham.net/images/no-image01.gif",
-                        "title": "작심삼일",
-                        "isblock": false
-                    },
-                    "contentText": "테스트 게시물 내용입니다.",
-                    "imageList": ["https://geojecci.korcham.net/images/no-image01.gif", "https://geojecci.korcham.net/images/no-image01.gif"],
-                    "timestamp": "2024-07-10T09:00:00Z",
-                    "likeCount": 10,
-                    "isLike": true,
-                    "commentCount": 5,
-                    "shareCount": 2,
-                    "routine": null,
-                    "type": "communication",
-                    "category": ["집중력", "기억력"]
-                }
-            ]
-            """.data(using: .utf8)!
-        case .fetchUserRoutineList:
-            """
-            [
-                {
-                    "id": 1,
-                    "title": "아침 루틴",
-                    "category": "건강",
-                    "isPublic": true,
-                    "dateAndTime": "2024-07-10T07:00:00Z",
-                    "isRepeating": true,
-                    "isRepeatAllDay": false,
-                    "repeatDays": ["월", "수", "금"],
-                    "alarm": true,
-                    "alarmTimes": ["60"],
-                    "memo": "스트레칭으로 시작하기",
-                    "recommendedRoutines": ["달리기", "요가"],
-                    "isFinish": false
-                }
-            ]
-            """.data(using: .utf8)!
-        case .fetchUserShareUrl:
-            """
-            {
-                "url": "https://example.com/share/user1"
-            }
-            """.data(using: .utf8)!
-        case .toggleUserFollow:
-            """
-            {
-                "success": true
-            }
-            """.data(using: .utf8)!
-        }
     }
 }

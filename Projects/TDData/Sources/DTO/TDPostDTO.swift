@@ -101,6 +101,9 @@ public struct TDPostDTO: Codable {
     }
 }
 
+public struct TDPostLikeDTO: Decodable {
+    public let socialLikeId: Int
+}
 
 public struct TDPostCreateResponseDTO: Decodable {
     public let socialId: Int
