@@ -1,4 +1,5 @@
 import Foundation
+import TDCore
 
 public enum MyPageAPI {
     case fetchNickname
@@ -48,7 +49,9 @@ extension MyPageAPI: MFTarget {
         switch self {
         case .fetchNickname,
                 .updateNickname:
-            return [.contentType("application/json")]
+            return [.contentType("application/json"),
+                .authorization(bearerToken: TDTokenManager.shared.accessToken ?? "")
+            ]
         }
     }
 }

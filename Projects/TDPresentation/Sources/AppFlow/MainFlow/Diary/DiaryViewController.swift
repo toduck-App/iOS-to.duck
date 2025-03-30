@@ -87,6 +87,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         let normalizedToday = Date().normalized
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
         input.send(.selecteDay(normalizedToday))
+        input.send(.fetchUserNickname)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -198,6 +199,10 @@ final class DiaryViewController: BaseViewController<BaseView> {
                     self?.calendar.reloadData()
                 case .notFoundDiary:
                     self?.updateDiaryView()
+                case .fetchedUserNickname(let nickname):
+                    self?.analyzeView.configure(nickname: nickname)
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
                 }
             }.store(in: &cancellables)
     }
