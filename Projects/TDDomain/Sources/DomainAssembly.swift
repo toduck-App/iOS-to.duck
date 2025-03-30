@@ -83,6 +83,13 @@ public struct DomainAssembly: Assembly {
             return ChangePasswordUseCaseImpl(repository: repository)
         }
         
+        container.register(UserLogoutUseCase.self) { resolve in
+            guard let repository = resolve.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 AuthRepository가 등록되어 있지 않습니다.")
+            }
+            return UserLogoutUseCaseImpl(repository: repository)
+        }
+        
         // MARK: - MyPage UseCases
         container.register(FetchUserNicknameUseCase.self) { resolver in
             guard let repository = resolver.resolve(MyPageRepository.self) else {

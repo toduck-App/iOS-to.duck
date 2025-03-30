@@ -28,4 +28,9 @@ public struct UserAuthServiceImpl: UserAuthService {
         let target = UserAuthAPI.changePassword(loginId: loginId, changedPassword: changedPassword, phoneNumber: phoneNumber)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func logout() async throws {
+        let target = UserAuthAPI.logout
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }
