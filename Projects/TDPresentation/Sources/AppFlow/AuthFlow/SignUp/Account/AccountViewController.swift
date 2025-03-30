@@ -81,7 +81,7 @@ final class AccountViewController: BaseViewController<AccountView> {
                 case .duplicateId:
                     self?.showErrorAlert(with: "이미 사용중인 아이디입니다.")
                 case .successRegister:
-                    self?.coordinator?.notifyRegistrationSuccess()
+                    self?.coordinator?.startRegisterSuccessViewCoordinator()
                 case .failureRegister(let message):
                     self?.showErrorAlert(with: message)
                 }
