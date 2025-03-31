@@ -27,7 +27,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     /// 캘린더 뷰
     let calendarContainerView = UIView()
-    let calendarHeader = CalendarHeaderStackView(type: .toduck)
+    let calendarHeader = CalendarHeaderStackView(type: .diary)
     let diarySegmentedControl = TDSegmentedControl(items: ["기분", "집중도"])
     let calendar = DiaryCalendar()
     
