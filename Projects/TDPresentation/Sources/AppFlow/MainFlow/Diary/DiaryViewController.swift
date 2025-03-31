@@ -21,7 +21,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.alignment = .fill
         $0.distribution = .fill
     }
-
+    
     /// 분석 뷰
     let analyzeView = DiaryAnalyzeView(diaryCount: 25, focusPercent: 55)
     
@@ -49,12 +49,12 @@ final class DiaryViewController: BaseViewController<BaseView> {
         self.viewModel = viewModel
         super.init()
     }
-
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,23 +63,23 @@ final class DiaryViewController: BaseViewController<BaseView> {
         switchCalendar(to: .diary)
         input.send(.fetchUserNickname)
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationAppearance()
     }
-
+    
     // MARK: - View Setup
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(stackView)
-
+        
         stackView.addArrangedSubview(analyzeView)
         stackView.addArrangedSubview(diarySegmentedControl)
         stackView.addArrangedSubview(calendarSwitchContainerView)
     }
-
+    
     override func layout() {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -95,16 +95,17 @@ final class DiaryViewController: BaseViewController<BaseView> {
             $0.height.equalTo(230)
         }
         diarySegmentedControl.snp.makeConstraints {
-            $0.height.equalTo(48)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.equalTo(130)
         }
         calendarSwitchContainerView.snp.makeConstraints {
             $0.height.equalTo(456 + 300)
         }
     }
-
+    
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
-
+        
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
@@ -116,70 +117,70 @@ final class DiaryViewController: BaseViewController<BaseView> {
                 }
             }.store(in: &cancellables)
     }
-
+    
     override func configure() {
         setupNavigationBar()
-
+        calendarSwitchContainerView.backgroundColor = TDColor.baseWhite
     }
-
+    
     private func switchCalendar(to type: CalendarType) {
         children.forEach { $0.removeFromParent(); $0.view.removeFromSuperview() }
-
+        
         let selectedVC: BaseViewController = (type == .diary) ? diaryCalendarViewController : focusCalendarViewController
-
+        
         addChild(selectedVC)
         calendarSwitchContainerView.addSubview(selectedVC.view)
         selectedVC.view.snp.makeConstraints { $0.edges.equalToSuperview() }
         selectedVC.didMove(toParent: self)
     }
-
+    
     private func setupSegmentedControl() {
         diarySegmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
     }
-
+    
     @objc private func segmentedControlValueChanged(_ sender: TDSegmentedControl) {
         let selectedType: CalendarType = sender.selectedIndex == 0 ? .diary : .focus
         switchCalendar(to: selectedType)
     }
     
     // MARK: - 네비게이션 바 설정
-     private func setupNavigationBar() {
-         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
-         let calendarButton = UIButton(type: .custom)
-         calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
-         calendarButton.addAction(UIAction { [weak self] _ in
-             self?.coordinator?.didTapCalendarButton()
-         }, for: .touchUpInside)
-         
-         let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
-         toduckLogoImageView.contentMode = .scaleAspectFit
-         
-         let leftBarButtonItems = [
-             UIBarButtonItem(customView: calendarButton),
-             UIBarButtonItem(customView: toduckLogoImageView)
-         ]
-         
-         navigationItem.leftBarButtonItems = leftBarButtonItems
-         
-         // 우측 네비게이션 바 버튼 설정 (알람 버튼)
-         let alarmButton = UIButton(type: .custom)
-         alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
-         alarmButton.addAction(UIAction { [weak self] _ in
-             TDLogger.debug("DiaryViewController - 알람 버튼 클릭")
-             self?.coordinator?.didTapAlarmButton()
-         }, for: .touchUpInside)
-         
-         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
-     }
-     
-     private func setupNavigationAppearance() {
-         let appearance = UINavigationBarAppearance()
-         appearance.configureWithOpaqueBackground()
-         appearance.backgroundColor = TDColor.Neutral.neutral50
-         appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-         appearance.shadowColor = .clear
-         
-         navigationController?.navigationBar.standardAppearance = appearance
-         navigationController?.navigationBar.scrollEdgeAppearance = appearance
-     }
- }
+    private func setupNavigationBar() {
+        // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
+        let calendarButton = UIButton(type: .custom)
+        calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
+        calendarButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapCalendarButton()
+        }, for: .touchUpInside)
+        
+        let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
+        toduckLogoImageView.contentMode = .scaleAspectFit
+        
+        let leftBarButtonItems = [
+            UIBarButtonItem(customView: calendarButton),
+            UIBarButtonItem(customView: toduckLogoImageView)
+        ]
+        
+        navigationItem.leftBarButtonItems = leftBarButtonItems
+        
+        // 우측 네비게이션 바 버튼 설정 (알람 버튼)
+        let alarmButton = UIButton(type: .custom)
+        alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
+        alarmButton.addAction(UIAction { [weak self] _ in
+            TDLogger.debug("DiaryViewController - 알람 버튼 클릭")
+            self?.coordinator?.didTapAlarmButton()
+        }, for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
+    }
+    
+    private func setupNavigationAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = TDColor.Neutral.neutral50
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.shadowColor = .clear
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+}
