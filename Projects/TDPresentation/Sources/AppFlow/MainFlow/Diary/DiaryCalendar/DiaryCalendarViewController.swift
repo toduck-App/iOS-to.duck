@@ -8,9 +8,9 @@ import TDDesign
 
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
-    private let calendarContainerView = UIView()
-    private let calendarHeader = CalendarHeaderStackView(type: .diary)
-    private let calendar = DiaryCalendar()
+    let calendarContainerView = UIView()
+    let calendarHeader = CalendarHeaderStackView(type: .diary)
+    let calendar = DiaryCalendar()
     
     private let noDiaryContainerView = UIView()
     private let noDiaryImageView = UIImageView().then {
@@ -24,18 +24,6 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     )
     /// 일기 상세 뷰
     let diaryDetailView = DiaryDetailView()
-    
-    private let diaryPostButtonContainerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral50
-        $0.layer.masksToBounds = false
-    }
-    private let diaryPostButton = TDBaseButton(
-        title: "일기 작성",
-        backgroundColor: TDColor.Primary.primary500,
-        foregroundColor: TDColor.baseWhite,
-        font: TDFont.boldHeader3.font,
-        radius: 12
-    )
     
     // MARK: Properties
     private let viewModel: DiaryCalendarViewModel
@@ -59,6 +47,10 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let normalizedToday = Date().normalized
+        viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
+        input.send(.selecteDay(normalizedToday))
+        fetchDiaryList(for: Date())
         calendarDidSelect(date: Date())
     }
     
@@ -66,7 +58,6 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         view.addSubview(calendarContainerView)
         view.addSubview(noDiaryContainerView)
         view.addSubview(diaryDetailView)
-        view.addSubview(diaryPostButtonContainerView)
         
         calendarContainerView.addSubview(calendarHeader)
         calendarContainerView.addSubview(calendar)
@@ -74,15 +65,10 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         noDiaryContainerView.addSubview(noDiaryImageView)
         noDiaryContainerView.addSubview(noDiaryLabel)
 
-        diaryPostButtonContainerView.addSubview(diaryPostButton)
 
         calendarHeader.pickerButton.delegate = self
         calendar.delegate = self
 
-        diaryPostButton.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            coordinator?.didTapCreateDiaryButton(selectedDate: selectedDate)
-        }, for: .touchUpInside)
     }
     
     override func layout() {
@@ -113,25 +99,42 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             $0.top.equalTo(noDiaryImageView.snp.bottom).offset(24)
             $0.centerX.equalToSuperview()
         }
-
-        diaryPostButtonContainerView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(112)
-        }
-        diaryPostButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(28)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().offset(-28)
+        
+        diaryDetailView.snp.makeConstraints {
+            $0.top.equalTo(calendarContainerView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.height.equalTo(500)
         }
     }
     
     override func configure() {
+        setupCalendar()
+        layoutView.backgroundColor = TDColor.baseWhite
+        noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral50
         diaryDetailView.dropDownHoverView.delegate = self
         diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
         diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
             self?.diaryDetailView.dropDownHoverView.showDropDown()
         }, for: .touchUpInside)
+    }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .selectedDiary(let diary):
+                    self?.updateDiaryView(with: diary)
+                case .fetchedDiaryList:
+                    self?.calendar.reloadData()
+                case .notFoundDiary:
+                    self?.updateDiaryView()
+                case .failureAPI(let message):
+                    self?.showErrorAlert(with: message)
+                }
+            }.store(in: &cancellables)
     }
     
     private func calendarDidSelect(date: Date) {
@@ -155,19 +158,18 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         }
     }
     
+    private func fetchDiaryList(for date: Date) {
+        let components = Calendar.current.dateComponents([.year, .month], from: date)
+        guard let year = components.year, let month = components.month else { return }
+
+        input.send(.fetchDiaryList(year, month))
+    }
 }
 
 extension DiaryCalendarViewController: PickerButtonDelegate {
     func pickerButton(_ pickerButton: PickerButton, didSelect date: Date) {
         calendar.setCurrentPage(date, animated: true)
-        // 필요하다면 헤더 갱신 로직 추가
-    }
-}
-
-extension DiaryCalendarViewController: FSCalendarDelegate {
-    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        selectedDate = date.normalized
-        // 필요 시 ViewModel 업데이트
+        updateHeaderLabel(for: calendar.currentPage)
     }
 }
 
@@ -184,5 +186,60 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
         case .delete:
             break
         }
+    }
+}
+
+extension DiaryCalendarViewController: TDCalendarConfigurable {
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        updateHeaderLabel(for: calendar.currentPage)
+        fetchDiaryList(for: calendar.currentPage)
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
+        cellFor date: Date,
+        at position: FSCalendarMonthPosition
+    ) -> FSCalendarCell {
+        guard let cell = calendar.dequeueReusableCell(
+            withIdentifier: DiaryCalendarSelectDateCell.identifier,
+            for: date,
+            at: position
+        ) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
+        
+        let normalized = date.normalized
+        let diary = viewModel.monthDiaryList[normalized]
+        cell.configure(with: diary?.emotion.image)
+        
+        return cell
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
+        didSelect date: Date,
+        at monthPosition: FSCalendarMonthPosition
+    ) {
+        selectedDate = date.normalized
+        let normalizedDate = date.normalized
+        
+        viewModel.selectedDiary = viewModel.monthDiaryList[normalizedDate]
+        input.send(.selecteDay(normalizedDate))
+    }
+    
+    // 기본 폰트 색
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleDefaultColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
+    }
+    
+    // 선택된 날짜 폰트 색 (이걸 안 하면 오늘날짜와 토,일 선택했을 때 폰트색이 바뀜)
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        titleSelectionColorFor date: Date
+    ) -> UIColor? {
+        colorForDate(date)
     }
 }

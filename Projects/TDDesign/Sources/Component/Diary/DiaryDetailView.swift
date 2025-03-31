@@ -182,6 +182,8 @@ public final class DiaryDetailView: UIView {
             let addPhotoButton = createAddPhotoButton(isEmpty: true)
             mainStackView.addArrangedSubview(addPhotoButton)
         }
+        setNeedsLayout()
+        layoutIfNeeded()
     }
     
     // MARK: - Helpers
@@ -221,5 +223,15 @@ public final class DiaryDetailView: UIView {
             $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
             $0.snp.makeConstraints { $0.height.equalTo(52) }
         }
+    }
+    
+    public override var intrinsicContentSize: CGSize {
+        let totalHeight =
+            titleLabel.frame.height +
+        sentenceVerticalStackView.frame.height +
+        photoVerticalStackView.frame.height +
+            120 // 고정 요소들의 높이 합
+        
+        return CGSize(width: UIView.noIntrinsicMetric, height: totalHeight)
     }
 }
