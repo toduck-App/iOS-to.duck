@@ -102,6 +102,7 @@ final class EventMakorView: BaseView {
     // MARK: - Properties
     private let mode: ScheduleAndRoutineViewController.Mode
     var noticeSnackBarBottomConstraint: Constraint?
+    var dummyViewHeightConstraint: Constraint?
     
     // MARK: - Initialize
     init(mode: ScheduleAndRoutineViewController.Mode) {
@@ -173,7 +174,8 @@ final class EventMakorView: BaseView {
     
     override func layout() {
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(buttonContainerView.snp.top)
         }
         noticeSnackBarView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
@@ -250,7 +252,7 @@ final class EventMakorView: BaseView {
         }
         
         dummyView.snp.makeConstraints { make in
-            make.height.equalTo(110)
+            dummyViewHeightConstraint = make.height.equalTo(40).constraint
         }
     }
 }

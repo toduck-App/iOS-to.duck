@@ -153,7 +153,8 @@ final class DiaryMakorView: BaseView {
     
     override func layout() {
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(buttonContainerView.snp.top)
         }
 
         stackView.snp.makeConstraints { make in
@@ -202,7 +203,7 @@ final class DiaryMakorView: BaseView {
         }
         
         dummyView.snp.makeConstraints { make in
-            make.height.equalTo(110)
+            make.height.equalTo(40)
         }
         
         // 사용자 피드백 스낵바

@@ -94,6 +94,31 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             }.store(in: &cancellables)
     }
     
+    @objc
+    override func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let keyboardAdjustableView else { return }
+        
+        UIView.animate(withDuration: duration) {
+            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 250)
+            keyboardAdjustableView.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 30)
+        }
+    }
+    
+    @objc
+    override func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let keyboardAdjustableView else { return }
+
+        UIView.animate(withDuration: duration) {
+            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 40)
+            keyboardAdjustableView.transform = .identity
+        }
+    }
+    
     private func setupDelegate() {
         eventMakorView.titleForm.delegate = self
         eventMakorView.categoryTitleForm.delegate = self
