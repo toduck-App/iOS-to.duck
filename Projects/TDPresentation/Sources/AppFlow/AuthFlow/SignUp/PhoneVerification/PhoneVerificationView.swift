@@ -49,6 +49,7 @@ final class PhoneVerificationView: BaseView {
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
+        $0.adjustsFontSizeToFitWidth = true
     }
     let postButton = TDBaseButton(
         title: "인증요청",
@@ -145,7 +146,7 @@ final class PhoneVerificationView: BaseView {
         phoneNumberContainerView.snp.makeConstraints { make in
             make.top.equalTo(phoneLabel.snp.bottom).offset(LayoutConstants.inputSpacing)
             make.leading.equalTo(titleLabel)
-            make.width.equalTo(LayoutConstants.phoneInputWidth)
+            make.trailing.equalTo(postButton.snp.leading).offset(-8)
             make.height.equalTo(LayoutConstants.inputFieldHeight)
         }
         phoneNumberTextField.snp.makeConstraints { make in
@@ -153,8 +154,8 @@ final class PhoneVerificationView: BaseView {
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.inputPadding)
         }
         postButton.snp.makeConstraints { make in
-            make.leading.equalTo(phoneNumberContainerView.snp.trailing).offset(LayoutConstants.inputSpacing)
             make.trailing.equalToSuperview().offset(-LayoutConstants.horizontalInset)
+            make.width.equalTo(108)
             make.height.equalTo(LayoutConstants.buttonHeight)
             make.centerY.equalTo(phoneNumberContainerView)
         }
