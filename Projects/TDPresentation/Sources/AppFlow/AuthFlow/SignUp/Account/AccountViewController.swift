@@ -88,6 +88,30 @@ final class AccountViewController: BaseViewController<AccountView> {
             }.store(in: &cancellables)
     }
     
+    @objc
+    override func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+
+        UIView.animate(withDuration: duration) {
+            self.layoutView.nextButton.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 20)
+            self.layoutView.contentWrapperView.transform = CGAffineTransform(translationX: 0, y: -100)
+        }
+    }
+    
+    @objc
+    override func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let button = keyboardAdjustableView else { return }
+
+        UIView.animate(withDuration: duration) {
+            self.layoutView.contentWrapperView.transform = .identity
+            button.transform = .identity
+        }
+    }
+    
     private func setupButtonActions() {
         layoutView.duplicateVerificationButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.duplicateIdVerification)

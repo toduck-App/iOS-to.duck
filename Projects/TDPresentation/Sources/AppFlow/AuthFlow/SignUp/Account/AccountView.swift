@@ -4,6 +4,7 @@ import TDDesign
 
 final class AccountView: BaseView {
     // MARK: - UI Components
+    let contentWrapperView = UIView()
     
     /// 페이지 진행 표시 아이콘
     private let prePageIcon = UIView().then {
@@ -170,12 +171,19 @@ final class AccountView: BaseView {
             duplicateVerificationButton,
             passwordLabel,
             passwordStackView,
-            verifypasswordStackView,
-            nextButton
-        ].forEach(addSubview)
+            verifypasswordStackView
+        ].forEach { contentWrapperView.addSubview($0) }
+        
+        addSubview(contentWrapperView)
+        addSubview(nextButton)
     }
     
     override func layout() {
+        contentWrapperView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(nextButton.snp.top).offset(-LayoutConstants.buttonBottomSpacing)
+        }
+        
         prePageIcon.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(LayoutConstants.pageIndicatorTopOffset)
             make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
