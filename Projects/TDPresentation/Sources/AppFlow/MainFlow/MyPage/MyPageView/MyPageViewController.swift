@@ -23,8 +23,8 @@ final class MyPageViewController: BaseViewController<MyPageView> {
     }
     
     // MARK: - Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         input.send(.fetchUserNickname)
     }
