@@ -4,7 +4,7 @@ import Combine
 import UIKit
 import TDDesign
 
-final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPopupPresentable {
+final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     enum Mode {
         case schedule
         case routine

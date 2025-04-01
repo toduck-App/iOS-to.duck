@@ -4,7 +4,7 @@ import TDDesign
 import TDDomain
 import UIKit
 
-final class SocialListViewController: BaseViewController<SocialListView>, TDPopupPresentable {
+final class SocialListViewController: BaseViewController<SocialListView> {
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
     private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
