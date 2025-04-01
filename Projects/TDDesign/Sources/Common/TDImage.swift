@@ -247,7 +247,7 @@ public enum TDImage {
     }
     
     public enum DiaryPercent {
-        public static let bookPercent0 = TDDesignAsset.Images.bookPercent0.image
+        public static let noRecord = TDDesignAsset.Images.noRecord.image
     }
     
     public enum FocusPercent {
@@ -260,6 +260,7 @@ public enum TDImage {
     
     public enum Analyze {
         public static let bookIncrease = TDDesignAsset.Images.bookIncrease.image
+        public static let bookDecrease = TDDesignAsset.Images.bookDecrease.image
     }
     
     public enum Category {
