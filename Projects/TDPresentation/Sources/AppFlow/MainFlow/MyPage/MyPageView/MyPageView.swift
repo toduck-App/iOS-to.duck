@@ -1,10 +1,3 @@
-//
-//  MyPageView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/7/25.
-//
-
 import UIKit
 import SnapKit
 import TDDesign
@@ -14,7 +7,7 @@ final class MyPageView: BaseView {
     private let containerView = UIView()
     let profileView = MyPageProfileView()
     private let socialButtonView = MyPageSocialButtonView()
-    private let menuView: UICollectionView = {
+    private let menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = LayoutConstants.sectionItemSpacing
@@ -35,35 +28,50 @@ final class MyPageView: BaseView {
         radius: 12,
         font: TDFont.boldBody1.font
     )
+    let deleteAccountButton = TDBaseButton(
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral500,
+        font: TDFont.regularBody2.font
+    )
     
     // MARK: - Default Methods
     override func addview() {
         addSubview(scrollView)
         scrollView.addSubview(containerView)
         scrollView.delegate = self
-        [profileView, socialButtonView, menuView, logoutButton].forEach { containerView.addSubview($0) }
+        [profileView, socialButtonView, menuCollectionView, logoutButton, deleteAccountButton].forEach { containerView.addSubview($0) }
     }
     
     override func configure() {
         logoutButton.layer.borderWidth = 1
         logoutButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        menuView.delegate = self
-        menuView.dataSource = self
-        menuView.register(
+        menuCollectionView.delegate = self
+        menuCollectionView.dataSource = self
+        menuCollectionView.register(
             MyPageMenuCollectionHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: MyPageMenuCollectionHeaderView.identifier
         )
-        menuView.register(
+        menuCollectionView.register(
             MyPageMenuCollectionViewCell.self,
             forCellWithReuseIdentifier: MyPageMenuCollectionViewCell.identifier
         )
-        menuView.register(
+        menuCollectionView.register(
             MyPageMenuCollectionFooterView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
             withReuseIdentifier: MyPageMenuCollectionFooterView.identifier
         )
-        menuView.reloadData()
+        menuCollectionView.reloadData()
+        
+        let underlineTitle = NSAttributedString(
+            string: "회원탈퇴",
+            attributes: [
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .foregroundColor: TDColor.Neutral.neutral500,
+                .font: TDFont.regularBody2.font
+            ]
+        )
+        deleteAccountButton.setAttributedTitle(underlineTitle, for: .normal)
     }
     
     override func layout() {
@@ -92,18 +100,24 @@ final class MyPageView: BaseView {
             $0.width.equalToSuperview()
         }
         
-        menuView.snp.makeConstraints {
+        menuCollectionView.snp.makeConstraints {
             $0.top.equalTo(socialButtonView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(LayoutConstants.randomHeight)
-            $0.bottom.equalToSuperview()
         }
         
         logoutButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(LayoutConstants.footerPadding)
+            $0.top.equalTo(menuCollectionView.snp.bottom).offset(34)
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.sectionHorizontalInset)
             $0.height.equalTo(48)
+        }
+        
+        deleteAccountButton.snp.makeConstraints {
+            $0.top.equalTo(logoutButton.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.sectionHorizontalInset)
+            $0.height.equalTo(20)
+            $0.bottom.equalToSuperview().offset(-20)
         }
     }
 }
@@ -205,9 +219,9 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
 
 extension MyPageView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentHeight = menuView.contentSize.height
+        let contentHeight = menuCollectionView.contentSize.height
         if contentHeight > 0 {
-            menuView.snp.updateConstraints {
+            menuCollectionView.snp.updateConstraints {
                 $0.height.equalTo(contentHeight)
             }
         }

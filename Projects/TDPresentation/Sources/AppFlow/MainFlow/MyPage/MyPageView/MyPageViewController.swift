@@ -37,6 +37,10 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         layoutView.logoutButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.logout)
         }, for: .touchUpInside)
+        
+        layoutView.deleteAccountButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapWithdrawButton()
+        }, for: .touchUpInside)
     }
     
     override func binding() {
