@@ -30,6 +30,7 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         layout()
         binding()
         configureKeyboardNotification()
+        configureDismissKeyboardGesture()
     }
     
     // MARK: - Common Method
@@ -53,6 +54,12 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         )
     }
     
+    func configureDismissKeyboardGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
     @objc
     func keyboardWillShow(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
@@ -61,7 +68,7 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
               let button = keyboardAdjustableView else { return }
 
         UIView.animate(withDuration: duration) {
-            button.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 30)
+            button.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 28)
         }
     }
     
@@ -74,5 +81,10 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         UIView.animate(withDuration: duration) {
             button.transform = .identity
         }
+    }
+    
+    @objc
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
