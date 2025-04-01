@@ -4,7 +4,7 @@ import UIKit
 class BaseViewController<LayoutView: BaseView>: UIViewController {
     // MARK: - Properties
     var layoutView = LayoutView()
-    var keyboardAdjustableButton: UIButton?
+    var keyboardAdjustableView: UIView?
     
     // MARK: - Initialize
     init() {
@@ -58,7 +58,7 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         guard let userInfo = notification.userInfo,
               let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-              let button = keyboardAdjustableButton else { return }
+              let button = keyboardAdjustableView else { return }
 
         UIView.animate(withDuration: duration) {
             button.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 30)
@@ -69,7 +69,7 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
     func keyboardWillHide(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-              let button = keyboardAdjustableButton else { return }
+              let button = keyboardAdjustableView else { return }
 
         UIView.animate(withDuration: duration) {
             button.transform = .identity

@@ -26,7 +26,7 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
         layoutView.idTextField.delegate = self
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self
-        keyboardAdjustableButton = layoutView.nextButton
+        keyboardAdjustableView = layoutView.nextButton
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.postPhoneNumber)
