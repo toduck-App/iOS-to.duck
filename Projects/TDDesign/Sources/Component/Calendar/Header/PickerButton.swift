@@ -22,7 +22,7 @@ public final class PickerButton: UIButton {
         
         let image: UIImage?
         switch type {
-        case .toduck, .diary:
+        case .toduck, .diary, .focus:
             image = TDImage.Direction.downMedium.withTintColor(TDColor.Neutral.neutral500)
         case .sheet:
             image = TDImage.Direction.rightSmall

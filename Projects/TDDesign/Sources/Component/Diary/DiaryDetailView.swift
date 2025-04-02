@@ -158,8 +158,8 @@ public final class DiaryDetailView: UIView {
         photos: [UIImage]? = nil
     ) {
         emotionImageView.image = emotionImage
-        dateLabel.text = date
-        titleLabel.text = title
+        dateLabel.setText(date)
+        titleLabel.setText(title)
         
         mainStackView.arrangedSubviews
             .filter { $0 != dateHeaderStackView }

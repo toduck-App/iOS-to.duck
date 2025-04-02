@@ -198,13 +198,14 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         switch index {
         case 0:
-            let fetchUserNicknameUseCase = DIContainer.shared.resolve(FetchUserNicknameUseCase.self)
-            let viewModel = DiaryCalendarViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase)
+            let viewModel = DiaryCalendarViewModel()
             let diaryCalendarViewController = DiaryCalendarViewController(viewModel: viewModel)
             newViewController = diaryCalendarViewController
             
         case 1:
-            newViewController = FocusCalendarViewController()
+            let viewModel = FocusCalendarViewModel()
+            let focusCalendarViewController = FocusCalendarViewController(viewModel: viewModel)
+            newViewController = focusCalendarViewController
             
         default:
             newViewController = UIViewController()
