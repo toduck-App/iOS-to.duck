@@ -12,7 +12,6 @@ public final class PostRepositoryImpl: PostRepository {
         ),
         isAllDay: false,
         isPublic: true,
-        date: Date(),
         time: nil,
         repeatDays: nil,
         alarmTime: nil,
@@ -39,13 +38,12 @@ public final class PostRepositoryImpl: PostRepository {
         return (postList, postListDTO.hasMore, postListDTO.nextCursor)
     }
 
-    public func searchPost(keyword: String, category: [PostCategory]?) async throws -> [Post]? {
-        guard let category else {
-            return dummyPost
-                .filter { $0.contentText.contains(keyword) }
-        }
-        return dummyPost
-            .filter { $0.contentText.contains(keyword) && $0.category?.contains(category) ?? false }
+    public func searchPost(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
+        let categoryIDs: [Int]? = category?.map(\.rawValue)
+        let postListDTO = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword)
+        let postList = postListDTO.results.compactMap { $0.convertToEntity(category: category) }
+        return (postList, postListDTO.hasMore, postListDTO.nextCursor)
+        // TODO: 카테고리 필터 필요
     }
 
     public func togglePostLike(postID: Post.ID, currentLike: Bool) async throws {

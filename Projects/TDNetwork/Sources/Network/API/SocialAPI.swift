@@ -5,7 +5,7 @@ import TDDomain
 
 public enum SocialAPI {
     case fetchPostList(curser: Int?, limit: Int, categoryIds: [Int]?)
-    case searchPost(keyword: String, category: PostCategory) // TODO: Search 쪽 PageNation 구현 필요
+    case searchPost(keyword: String, curser: Int?, limit: Int) // TODO: Search 쪽 PageNation 구현 필요
     case likePost(postId: Int)
     case unlikePost(postId: Int)
     case bringUserRoutine(routine: Routine) // TODO: 유저 루틴 저장하는 부분 필요
@@ -43,7 +43,7 @@ extension SocialAPI: MFTarget {
         case .fetchPostList:
             "v1/socials"
         case .searchPost:
-            "/posts/search"
+            "v1/socials/search"
         case .likePost(let postId):
             "v1/socials/\(postId)/likes"
         case .unlikePost(let postId):
@@ -135,8 +135,11 @@ extension SocialAPI: MFTarget {
                 params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
             }
             return params
-        case .searchPost(let keyword, let category):
-            let params: [String: Any] = ["keyword": keyword, "category": category.rawValue]
+        case .searchPost(let keyword, let cursor, let limit):
+            var params: [String: Any] = ["keyword": keyword, "limit": limit]
+            if let cursor {
+                params["cursor"] = cursor
+            }
             return params
         case .likePost,
              .unlikePost,

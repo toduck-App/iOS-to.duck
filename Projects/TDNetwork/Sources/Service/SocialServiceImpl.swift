@@ -46,11 +46,13 @@ public struct SocialServiceImpl: SocialService {
     }
     
     public func requestSearchPosts(
-        cursor: Int,
+        cursor: Int?,
         limit: Int,
         keyword: String
-    ) async throws {
-        return
+    ) async throws -> TDPostListDTO {
+        let target = SocialAPI.searchPost(keyword: keyword, curser: cursor, limit: limit)
+        let response = try await provider.requestDecodable(of: TDPostListDTO.self, target)
+        return response.value
     }
     
     public func requestLikePost(postID: Int) async throws {
