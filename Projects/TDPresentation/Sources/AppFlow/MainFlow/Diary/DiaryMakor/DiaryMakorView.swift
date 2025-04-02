@@ -153,21 +153,22 @@ final class DiaryMakorView: BaseView {
     
     override func layout() {
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(buttonContainerView.snp.top)
         }
 
         stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(16)
-            make.width.equalTo(scrollView.snp.width).offset(-32)
+            make.edges.equalToSuperview().inset(LayoutConstants.horizontalInset)
+            make.width.equalTo(scrollView.snp.width).offset(LayoutConstants.stackViewWidthOffset)
         }
-        
+
         // 감정 선택
         diaryMoodVerticalStackView.snp.makeConstraints { make in
-            make.height.equalTo(120)
+            make.height.equalTo(LayoutConstants.diaryMoodStackHeight)
         }
 
         diaryMoodCollectionView.snp.makeConstraints { make in
-            make.height.equalTo(80)
+            make.height.equalTo(LayoutConstants.diaryMoodCollectionHeight)
         }
         diaryMoodLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -183,50 +184,50 @@ final class DiaryMakorView: BaseView {
 
         // 제목
         titleForm.snp.makeConstraints { make in
-            make.height.equalTo(110)
+            make.height.equalTo(LayoutConstants.titleFormHeight)
         }
 
         // 문장 기록
         recordTextView.snp.makeConstraints { make in
-            make.height.equalTo(230)
+            make.height.equalTo(LayoutConstants.recordTextViewHeight)
         }
 
         // 사진 기록
         formPhotoView.snp.makeConstraints { make in
-            make.height.equalTo(160)
+            make.height.equalTo(LayoutConstants.formPhotoViewHeight)
         }
 
         // 설명
         descriptionStackView.snp.makeConstraints { make in
-            make.height.equalTo(40)
+            make.height.equalTo(LayoutConstants.descriptionStackViewHeight)
         }
-        
+
         dummyView.snp.makeConstraints { make in
-            make.height.equalTo(110)
+            make.height.equalTo(LayoutConstants.dummyViewHeight)
         }
-        
+
         // 사용자 피드백 스낵바
         noticeSnackBarView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(42)
-            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(-16).constraint
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalInset)
+            make.height.equalTo(LayoutConstants.snackBarHeight)
+            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(LayoutConstants.snackBarBottomSpacing).constraint
         }
         noticeSnackBarLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(LayoutConstants.horizontalInset)
         }
-        
+
         // 저장
         buttonContainerView.snp.makeConstraints { make in
             make.bottom.equalToSuperview()
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(112)
+            make.height.equalTo(LayoutConstants.buttonContainerHeight)
         }
-        
+
         buttonStackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(56)
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalInset)
+            make.height.equalTo(LayoutConstants.buttonHeight)
         }
     }
     
@@ -250,5 +251,24 @@ final class DiaryMakorView: BaseView {
             deleteButton.removeFromSuperview()
             buttonStackView.addArrangedSubview(saveButton)
         }
+    }
+}
+
+private extension DiaryMakorView {
+    // MARK: - Constants
+    enum LayoutConstants {
+        static let dummyViewHeight: CGFloat = 40
+        static let horizontalInset: CGFloat = 16
+        static let stackViewWidthOffset: CGFloat = -32
+        static let diaryMoodStackHeight: CGFloat = 120
+        static let diaryMoodCollectionHeight: CGFloat = 80
+        static let titleFormHeight: CGFloat = 110
+        static let recordTextViewHeight: CGFloat = 230
+        static let formPhotoViewHeight: CGFloat = 160
+        static let descriptionStackViewHeight: CGFloat = 40
+        static let snackBarHeight: CGFloat = 42
+        static let snackBarBottomSpacing: CGFloat = -16
+        static let buttonContainerHeight: CGFloat = 112
+        static let buttonHeight: CGFloat = 56
     }
 }

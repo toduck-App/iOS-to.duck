@@ -4,7 +4,7 @@ import Combine
 import UIKit
 import TDDesign
 
-final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPopupPresentable {
+final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     enum Mode {
         case schedule
         case routine
@@ -141,7 +141,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView>, TDPo
                 case .fetchedScheduleList:
                     self?.scheduleAndRoutineTableView.reloadData()
                 case .failure(let error):
-                    self?.showErrorAlert(with: error)
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
         

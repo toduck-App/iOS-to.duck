@@ -43,7 +43,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
                     self?.layoutView.scheduleCollectionView.reloadData()
                     self?.updateAutoScroll()
                 case .failure(let error):
-                    self?.showErrorAlert(with: error)
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
     }

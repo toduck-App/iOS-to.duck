@@ -3,7 +3,7 @@ import TDDesign
 import TDDomain
 import UIKit
 
-final class SocialProfileViewController: BaseViewController<SocialProfileView>, TDPopupPresentable {
+final class SocialProfileViewController: BaseViewController<SocialProfileView> {
     enum TimelineCellItem: Hashable {
         case allDay(routine: Routine, showTime: Bool)
         case routine(hour: Int, routine: Routine, showTime: Bool)

@@ -32,7 +32,7 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
     override func configure() {
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self
-        keyboardAdjustableButton = layoutView.nextButton
+        keyboardAdjustableView = layoutView.nextButton
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""
@@ -62,7 +62,7 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                     self?.layoutView.phoneNumberContainerView.backgroundColor = TDColor.Neutral.neutral50
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
                 case .phoneNumberAlreadyExist(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 case .verificationCodeInvalid:
                     self?.layoutView.invaildVerificationNumberLabel.isHidden = false
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
@@ -72,7 +72,7 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 case .apiFailure(let error):
-                    self?.showErrorAlert(with: error)
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }
             .store(in: &cancellables)

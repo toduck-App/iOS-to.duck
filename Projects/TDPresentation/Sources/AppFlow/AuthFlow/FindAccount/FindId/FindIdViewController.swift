@@ -24,7 +24,7 @@ final class FindIdViewController: BaseViewController<FindIdView> {
     override func configure() {
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self
-        keyboardAdjustableButton = layoutView.nextButton
+        keyboardAdjustableView = layoutView.nextButton
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""
@@ -65,7 +65,7 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }
             .store(in: &cancellables)

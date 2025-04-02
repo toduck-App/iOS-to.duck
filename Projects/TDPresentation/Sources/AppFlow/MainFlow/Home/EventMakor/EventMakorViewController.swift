@@ -12,16 +12,6 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: EventMakorCoordinator?
     
-    // MARK: - UI Components
-    private lazy var registerButton = UIBarButtonItem(
-        title: "저장",
-        primaryAction: UIAction {
-            [weak self] _ in
-            self?.input.send(.saveEvent)
-        }).then {
-            $0.tintColor = TDColor.Neutral.neutral700
-        }
-    
     // MARK: - Initializer
     init(
         mode: ScheduleAndRoutineViewController.Mode,
@@ -65,10 +55,14 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     // MARK: - Base Method
     override func configure() {
-        navigationItem.rightBarButtonItem = registerButton
         navigationController?.navigationBar.isHidden = false
+        keyboardAdjustableView = eventMakorView.buttonContainerView
+        eventMakorView.scrollView.delegate = self
         setupDelegate()
         setupCategory()
+        eventMakorView.saveButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.saveEvent)
+        }, for: .touchUpInside)
     }
     
     override func binding() {
@@ -95,16 +89,34 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                             }
                         }
                         .joined(separator: ", ")
-                    
-                    let alert = UIAlertController(
-                        title: "저장 실패",
-                        message: "\(missing)이(가) 입력되지 않았어요.",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "확인", style: .default))
-                    self?.present(alert, animated: true)
+                    self?.showErrorAlert(errorMessage: "\(missing)이(가) 입력되지 않았어요.")
                 }
             }.store(in: &cancellables)
+    }
+    
+    @objc
+    override func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let keyboardAdjustableView else { return }
+        
+        UIView.animate(withDuration: duration) {
+            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 250)
+            keyboardAdjustableView.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 30)
+        }
+    }
+    
+    @objc
+    override func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let keyboardAdjustableView else { return }
+
+        UIView.animate(withDuration: duration) {
+            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 40)
+            keyboardAdjustableView.transform = .identity
+        }
     }
     
     private func setupDelegate() {
@@ -192,6 +204,11 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == eventMakorView.titleForm {
             input.send(.updateTitleTextField(text))
+            if text.isEmpty {
+                eventMakorView.saveButton.isEnabled = false
+            } else {
+                eventMakorView.saveButton.isEnabled = true
+            }
         }
         
         if textField == eventMakorView.memoTextView {
@@ -230,6 +247,38 @@ extension EventMakorViewController: TDFormButtonsViewDelegate {
             input.send(.selectRepeatDay(index: selectedIndex, isSelected: isSelected))
         case .alarm:
             input.send(.selectAlarm(index: selectedIndex, isSelected: isSelected))
+        }
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension EventMakorViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        if offsetY + height >= contentHeight - 10 {
+            showSnackBar()
+        } else {
+            hideSnackBar()
+        }
+    }
+    
+    private func showSnackBar() {
+        guard let constraint = eventMakorView.noticeSnackBarBottomConstraint else { return }
+        constraint.update(offset: -20)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
+        }
+    }
+
+    private func hideSnackBar() {
+        guard let constraint = eventMakorView.noticeSnackBarBottomConstraint else { return }
+        constraint.update(offset: 50)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.view.layoutIfNeeded()
         }
     }
 }

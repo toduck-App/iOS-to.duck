@@ -5,7 +5,7 @@ import TDDesign
 
 final class EventMakorView: BaseView {
     // MARK: - UI Components
-    private let scrollView = UIScrollView()
+    let scrollView = UIScrollView()
     private let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 24
@@ -75,8 +75,34 @@ final class EventMakorView: BaseView {
         placeholder: "메모를 작성해 주세요."
     )
     
+    // 사용자 피드백 스낵바
+    let noticeSnackBarView = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral700
+        $0.layer.cornerRadius = 8
+    }
+    let noticeSnackBarLabel = TDLabel(
+        labelText: "카테고리와 내용은 필수 입력이에요!",
+        toduckFont: .mediumBody3,
+        toduckColor: TDColor.baseWhite
+    )
+    
+    // 저장
+    let buttonContainerView = UIView().then {
+        $0.backgroundColor = TDColor.baseWhite
+    }
+    let saveButton = TDBaseButton(
+        title: "저장",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    private let dummyView = UIView()
+    
     // MARK: - Properties
     private let mode: ScheduleAndRoutineViewController.Mode
+    var noticeSnackBarBottomConstraint: Constraint?
+    var dummyViewHeightConstraint: Constraint?
     
     // MARK: - Initialize
     init(mode: ScheduleAndRoutineViewController.Mode) {
@@ -92,7 +118,11 @@ final class EventMakorView: BaseView {
     // MARK: - Base Method
     override func addview() {
         addSubview(scrollView)
+        addSubview(noticeSnackBarView)
+        addSubview(buttonContainerView)
         scrollView.addSubview(stackView)
+        noticeSnackBarView.addSubview(noticeSnackBarLabel)
+        buttonContainerView.addSubview(saveButton)
         
         // 제목
         stackView.addArrangedSubview(titleForm)
@@ -133,16 +163,38 @@ final class EventMakorView: BaseView {
             
         // 메모
         stackView.addArrangedSubview(memoTextView)
+        stackView.addArrangedSubview(dummyView)
     }
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
         scrollView.showsVerticalScrollIndicator = false
+        saveButton.isEnabled = false
     }
     
     override func layout() {
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(buttonContainerView.snp.top)
+        }
+        noticeSnackBarView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(42)
+            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(-16).constraint
+        }
+        noticeSnackBarLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(16)
+        }
+        buttonContainerView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(112)
+        }
+        saveButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(56)
         }
         
         stackView.snp.makeConstraints { make in
@@ -197,6 +249,10 @@ final class EventMakorView: BaseView {
         // 메모
         memoTextView.snp.makeConstraints { make in
             make.height.equalTo(140)
+        }
+        
+        dummyView.snp.makeConstraints { make in
+            dummyViewHeightConstraint = make.height.equalTo(40).constraint
         }
     }
 }

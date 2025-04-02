@@ -45,7 +45,7 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
                 case .updatedNickname:
                     self?.coordinator?.finish(by: .pop)
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }

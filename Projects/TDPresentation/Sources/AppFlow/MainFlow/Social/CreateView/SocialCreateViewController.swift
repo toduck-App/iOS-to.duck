@@ -33,6 +33,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     }
 
     override func configure() {
+        keyboardAdjustableView = layoutView.buttonContainerView
         layoutView.formPhotoView.delegate = self
         layoutView.socialSelectRoutineView.delegate = self
         layoutView.titleTextFieldView.delegate = self

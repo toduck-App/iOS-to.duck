@@ -32,6 +32,16 @@ final class MyPageCoordinator: Coordinator {
         navigationController.pushViewController(myPageViewController, animated: false)
     }
     
+    func didTapWithdrawButton() {
+        let withdrawCoordinator = WithdrawCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        withdrawCoordinator.finishDelegate = self
+        childCoordinators.append(withdrawCoordinator)
+        withdrawCoordinator.start()
+    }
+    
     func didTapLogoutButton() {
         finishDelegate?.didFinish(childCoordinator: self)
     }

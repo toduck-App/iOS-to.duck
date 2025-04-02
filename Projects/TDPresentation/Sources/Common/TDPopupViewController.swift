@@ -1,9 +1,11 @@
 import SnapKit
+import TDDesign
 import UIKit
 
 /// 팝업을 위한 베이스 뷰 컨트롤러
 class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<BaseView>, UIGestureRecognizerDelegate {
     let popupContentView = PopupContentView()
+    var isPopupPresent: Bool = false
     
     override func configure() {
         setupBackgroundDim()
@@ -12,7 +14,7 @@ class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<Base
     
     /// 배경을 어둡게 설정
     private func setupBackgroundDim() {
-        layoutView.backgroundColor = .black.withAlphaComponent(0.5)
+        view.backgroundColor = TDColor.baseBlack.withAlphaComponent(0.5)
     }
     
     /// 팝업을 닫을 수 있도록 제스처 추가
@@ -37,6 +39,16 @@ class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<Base
     @objc
     func dismissPopup() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc
+    override func handleTapToDismiss() {
+        if isPopupPresent {
+            dismissPopup()
+            isPopupPresent = false
+        } else {
+            view.endEditing(true)
+        }
     }
     
     /// 팝업 외부 터치 시 닫히도록 설정
