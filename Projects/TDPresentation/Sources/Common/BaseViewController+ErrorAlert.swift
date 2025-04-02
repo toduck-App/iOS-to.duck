@@ -7,6 +7,7 @@ extension BaseViewController: TDPopupPresentable {
     func showErrorAlert(with errorMessage: String) {
         let errorAlertViewController = TDErrorAlertViewController()
         errorAlertViewController.configureErrorMessage(with: errorMessage)
+        errorAlertViewController.isPopupPresent = true
         presentPopup(with: errorAlertViewController)
     }
 }

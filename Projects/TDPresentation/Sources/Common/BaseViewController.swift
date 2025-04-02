@@ -39,6 +39,7 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
     func layout() { }
     func binding() { }
     
+    // MARK: - Keyboard Notification
     func configureKeyboardNotification() {
         NotificationCenter.default.addObserver(
             self,
@@ -55,36 +56,43 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
     }
     
     func configureDismissKeyboardGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTapToDismiss)
+        )
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
     
     @objc
     func keyboardWillShow(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-              let button = keyboardAdjustableView else { return }
+        guard
+            let userInfo = notification.userInfo,
+            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+            let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+            let keyboardAdjustableView
+        else { return }
 
         UIView.animate(withDuration: duration) {
-            button.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 28)
+            keyboardAdjustableView.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 28)
         }
     }
     
     @objc
     func keyboardWillHide(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-              let button = keyboardAdjustableView else { return }
+        guard
+            let userInfo = notification.userInfo,
+            let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+            let keyboardAdjustableView
+        else { return }
 
         UIView.animate(withDuration: duration) {
-            button.transform = .identity
+            keyboardAdjustableView.transform = .identity
         }
     }
     
     @objc
-    func dismissKeyboard() {
+    func handleTapToDismiss() {
         view.endEditing(true)
     }
 }
