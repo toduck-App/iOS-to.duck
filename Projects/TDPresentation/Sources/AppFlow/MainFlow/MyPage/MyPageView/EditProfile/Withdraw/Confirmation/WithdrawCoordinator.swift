@@ -1,12 +1,4 @@
-//
-//  WithdrawCoordinator.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import UIKit
-
 import TDCore
 
 final class WithdrawCoordinator: Coordinator {

@@ -31,7 +31,7 @@ final class AccountViewController: BaseViewController<AccountView> {
         layoutView.idTextField.delegate = self
         layoutView.passwordTextField.delegate = self
         layoutView.verifyPasswordTextField.delegate = self
-        keyboardAdjustableButton = layoutView.nextButton
+        keyboardAdjustableView = layoutView.nextButton
         
         setupButtonActions()
     }
@@ -79,13 +79,41 @@ final class AccountViewController: BaseViewController<AccountView> {
                     self?.layoutView.duplicateVerificationButton.isEnabled = isEnabled
                     self?.layoutView.duplicateVerificationButton.layer.borderWidth = 0
                 case .duplicateId:
-                    self?.showErrorAlert(with: "이미 사용중인 아이디입니다.")
+                    self?.showErrorAlert(
+                        titleError: "앗! 이미 사용중인 아이디에요",
+                        errorMessage: "다른 아이디를 사용해 주세요",
+                        image: TDImage.duplicateId
+                    )
                 case .successRegister:
                     self?.coordinator?.startRegisterSuccessViewCoordinator()
                 case .failureRegister(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
+    }
+    
+    @objc
+    override func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+
+        UIView.animate(withDuration: duration) {
+            self.layoutView.nextButton.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 20)
+            self.layoutView.contentWrapperView.transform = CGAffineTransform(translationX: 0, y: -100)
+        }
+    }
+    
+    @objc
+    override func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+              let button = keyboardAdjustableView else { return }
+
+        UIView.animate(withDuration: duration) {
+            self.layoutView.contentWrapperView.transform = .identity
+            button.transform = .identity
+        }
     }
     
     private func setupButtonActions() {

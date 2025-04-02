@@ -41,6 +41,7 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
     }
     
     override func configure() {
+        keyboardAdjustableView = layoutView.buttonContainerView
         layoutView.isEdit = isEdit
         layoutView.scrollView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self

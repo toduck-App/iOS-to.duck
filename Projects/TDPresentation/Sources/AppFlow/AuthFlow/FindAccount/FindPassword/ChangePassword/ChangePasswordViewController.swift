@@ -207,7 +207,7 @@ final class ChangePasswordViewController: BaseViewController<BaseView> {
                     self?.confirmButton.isEnabled = isEnabled
                     self?.confirmButton.layer.borderWidth = 0
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }

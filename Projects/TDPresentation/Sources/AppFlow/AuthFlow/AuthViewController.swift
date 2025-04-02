@@ -66,7 +66,7 @@ final class AuthViewController: BaseViewController<AuthView> {
                 case .loginSuccess:
                     self?.coordinator?.didLogin()
                 case .loginFailure(let error):
-                    self?.showErrorAlert(with: error)
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
     }

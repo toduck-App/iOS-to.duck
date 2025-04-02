@@ -68,14 +68,4 @@ extension EditProfileMenuCoordinator {
         childCoordinators.append(editPasswordCoordinator)
         editPasswordCoordinator.start()
     }
-    
-    func didTapWithdrawButton() {
-        let withdrawCoordinator = WithdrawCoordinator(
-            navigationController: navigationController,
-            injector: injector
-        )
-        withdrawCoordinator.finishDelegate = self
-        childCoordinators.append(withdrawCoordinator)
-        withdrawCoordinator.start()
-    }
 }

@@ -103,8 +103,6 @@ extension EditProfileMenuViewController {
             coordinator?.didTapEditInformationButton()
         case "비밀번호 수정":
             coordinator?.didTapEditPasswordButton()
-        case "회원 탈퇴":
-            coordinator?.didTapWithdrawButton()
         default: break
         }
     }
@@ -138,9 +136,7 @@ private extension EditProfileMenuViewController {
         static let mockDataSource: [String] = [
             "프로필 수정",
             "회원 정보 수정",
-            "비밀번호 수정",
-            "로그아웃",
-            "회원 탈퇴"
+            "비밀번호 수정"
         ]
     }
 }

@@ -165,7 +165,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
                 case .fetchedUserNickname(let nickname):
                     self?.analyzeView.configure(nickname: nickname)
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }
             .store(in: &cancellables)
