@@ -132,7 +132,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                 case .notFoundDiary:
                     self?.updateDiaryView()
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }
