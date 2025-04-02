@@ -12,7 +12,6 @@ public struct Routine: Eventable, Identifiable {
     public let category: TDCategory
     public let isAllDay: Bool
     public let isPublic: Bool
-    public let date: Date?
     public let time: Date?
     public let repeatDays: [TDWeekDay]?
     public let alarmTime: AlarmType?
@@ -31,7 +30,6 @@ public struct Routine: Eventable, Identifiable {
         category: TDCategory,
         isAllDay: Bool,
         isPublic: Bool,
-        date: Date?,
         time: Date?,
         repeatDays: [TDWeekDay]?,
         alarmTime: AlarmType?,
@@ -45,7 +43,6 @@ public struct Routine: Eventable, Identifiable {
         self.category = category
         self.isAllDay = isAllDay
         self.isPublic = isPublic
-        self.date = date
         self.time = time
         self.repeatDays = repeatDays
         self.alarmTime = alarmTime
@@ -74,7 +71,6 @@ extension Routine {
             category: TDCategory(colorHex: "#FFD6E2 ", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            date: Date(),
             time: Date(),
             repeatDays: nil,
             alarmTime: nil,
@@ -88,7 +84,6 @@ extension Routine {
             category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            date: Date(),
             time: Date(),
             repeatDays: [.friday, .saturday],
             alarmTime: .oneHourBefore,
@@ -102,7 +97,6 @@ extension Routine {
             category: TDCategory(colorHex: "#FFD6E2", imageName: "computer"),
             isAllDay: false,
             isPublic: false,
-            date: Date(),
             time: Date().addingTimeInterval(60 * 60 * 2),
             repeatDays: [.saturday],
             alarmTime: nil,
@@ -116,7 +110,6 @@ extension Routine {
             category: TDCategory(colorHex: "#E4E9F3", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            date: Date(),
             time: Date(),
             repeatDays: nil,
             alarmTime: nil,
@@ -130,7 +123,6 @@ extension Routine {
             category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            date: Date(),
             time: nil,
             repeatDays: nil,
             alarmTime: nil,
@@ -144,7 +136,6 @@ extension Routine {
             category: TDCategory(colorHex: "#FFD6E2", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            date: Date(),
             time: Date().addingTimeInterval(60 * 60 * 7),
             repeatDays: nil,
             alarmTime: nil,
@@ -158,7 +149,6 @@ extension Routine {
             category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: true,
             isPublic: true,
-            date: Date(),
             time: nil,
             repeatDays: nil,
             alarmTime: nil,
