@@ -8,6 +8,12 @@ import TDDesign
 
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
+    private let contentStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.distribution = .fill
+    }
+    
     let calendarContainerView = UIView()
     let calendarHeader = CalendarHeaderStackView(type: .diary)
     let calendar = DiaryCalendar()
@@ -22,19 +28,19 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         toduckFont: TDFont.boldBody1,
         toduckColor: TDColor.Neutral.neutral600
     )
-    /// 일기 상세 뷰
-    let diaryDetailView = DiaryDetailView()
     
-    // MARK: Properties
+    let diaryDetailContainerView = UIView()
+    let diaryDetailView = DiaryDetailView()
+    let dummyView = UIView()
+    
+    // MARK: - Properties
     private let viewModel: DiaryCalendarViewModel
     private let input = PassthroughSubject<DiaryCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: DiaryCoordinator?
     var selectedDate = Date().normalized
     
-    init(
-        viewModel: DiaryCalendarViewModel
-    ) {
+    init(viewModel: DiaryCalendarViewModel) {
         self.viewModel = viewModel
         super.init()
     }
@@ -54,45 +60,50 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         calendarDidSelect(date: Date())
     }
     
+    // MARK: - Common Methods
     override func addView() {
-        view.addSubview(calendarContainerView)
-        view.addSubview(noDiaryContainerView)
-        view.addSubview(diaryDetailView)
+        view.addSubview(contentStackView)
+        
+        contentStackView.addArrangedSubview(calendarContainerView)
+        contentStackView.addArrangedSubview(noDiaryContainerView)
+        contentStackView.addArrangedSubview(diaryDetailContainerView)
         
         calendarContainerView.addSubview(calendarHeader)
         calendarContainerView.addSubview(calendar)
-
+        
         noDiaryContainerView.addSubview(noDiaryImageView)
         noDiaryContainerView.addSubview(noDiaryLabel)
-
-
+        
+        diaryDetailContainerView.addSubview(diaryDetailView)
+        diaryDetailContainerView.addSubview(dummyView)
+        
         calendarHeader.pickerButton.delegate = self
         calendar.delegate = self
-
     }
     
     override func layout() {
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         calendarContainerView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(456)
+            $0.height.equalTo(400)
         }
         calendarHeader.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
-            $0.leading.equalToSuperview().offset(24)
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview().offset(20)
             $0.height.equalTo(24)
         }
         calendar.snp.makeConstraints {
-            $0.top.equalTo(calendarHeader.snp.bottom).offset(10)
+            $0.top.equalTo(calendarHeader.snp.bottom).offset(30)
             $0.leading.trailing.bottom.equalToSuperview().inset(20)
         }
-
+        
         noDiaryContainerView.snp.makeConstraints {
-            $0.top.equalTo(calendarContainerView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(300)
+            $0.height.equalTo(350)
         }
         noDiaryImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(50)
+            $0.top.equalToSuperview().offset(40)
             $0.centerX.equalToSuperview()
         }
         noDiaryLabel.snp.makeConstraints {
@@ -100,10 +111,17 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             $0.centerX.equalToSuperview()
         }
         
+        diaryDetailContainerView.snp.makeConstraints {
+            $0.height.equalTo(520)
+        }
         diaryDetailView.snp.makeConstraints {
-            $0.top.equalTo(calendarContainerView.snp.bottom).offset(20)
+            $0.top.equalToSuperview().offset(12)
             $0.leading.trailing.equalToSuperview().inset(10)
-            $0.height.equalTo(500)
+        }
+        dummyView.snp.makeConstraints {
+            $0.top.equalTo(diaryDetailView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(100)
         }
     }
     
@@ -111,6 +129,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         setupCalendar()
         layoutView.backgroundColor = TDColor.baseWhite
         noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral50
+        diaryDetailContainerView.backgroundColor = TDColor.Neutral.neutral50
         diaryDetailView.dropDownHoverView.delegate = self
         diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
         diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
@@ -145,8 +164,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     
     private func updateDiaryView(with diary: Diary? = nil) {
         let hasDiary = diary != nil
-        diaryDetailView.isHidden = !hasDiary
-
+        diaryDetailContainerView.isHidden = !hasDiary
+        noDiaryContainerView.isHidden = hasDiary
+        
         if let diary {
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
@@ -161,13 +181,15 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     private func fetchDiaryList(for date: Date) {
         let components = Calendar.current.dateComponents([.year, .month], from: date)
         guard let year = components.year, let month = components.month else { return }
-
         input.send(.fetchDiaryList(year, month))
     }
 }
 
 extension DiaryCalendarViewController: PickerButtonDelegate {
-    func pickerButton(_ pickerButton: PickerButton, didSelect date: Date) {
+    func pickerButton(
+        _ pickerButton: PickerButton,
+        didSelect date: Date
+    ) {
         calendar.setCurrentPage(date, animated: true)
         updateHeaderLabel(for: calendar.currentPage)
     }
@@ -176,7 +198,10 @@ extension DiaryCalendarViewController: PickerButtonDelegate {
 // MARK: - TDDropDownDelegate
 
 extension DiaryCalendarViewController: TDDropDownDelegate {
-    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+    func dropDown(
+        _: TDDesign.TDDropdownHoverView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         let item = DiaryEditType.allCases[indexPath.row]
         
         switch item {

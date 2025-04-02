@@ -14,7 +14,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
         $0.alwaysBounceVertical = true
-        $0.delegate = nil
     }
     
     private let contentView = UIView()
@@ -124,10 +123,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         analyzeView.snp.makeConstraints {
             $0.height.equalTo(230)
-        }
-        
-        diaryContentContainerView.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(900)
         }
         
         diarySegmentedControl.snp.makeConstraints {
