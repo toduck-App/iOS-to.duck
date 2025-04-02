@@ -4,9 +4,17 @@ import SnapKit
 import Then
 
 extension BaseViewController: TDPopupPresentable {
-    func showErrorAlert(with errorMessage: String) {
+    func showErrorAlert(
+        titleError: String = "앗 !! 일시적인 오류가 발생했어요",
+        errorMessage: String,
+        image: UIImage = TDImage.errorAlert
+    ) {
         let errorAlertViewController = TDErrorAlertViewController()
-        errorAlertViewController.configureErrorMessage(with: errorMessage)
+        errorAlertViewController.configureErrorMessage(
+            titleError: titleError,
+            errorMessage: errorMessage,
+            image: image
+        )
         errorAlertViewController.isPopupPresent = true
         presentPopup(with: errorAlertViewController)
     }
@@ -18,8 +26,10 @@ final class TDErrorAlertViewController: TDPopupViewController<TDErrorAlertView> 
         setupButtonAction()
     }
     
-    func configureErrorMessage(with message: String) {
-        popupContentView.descriptionLabel.setText(message)
+    func configureErrorMessage(titleError: String, errorMessage: String, image: UIImage = TDImage.errorAlert) {
+        popupContentView.deleteLabel.setText(titleError)
+        popupContentView.descriptionLabel.setText(errorMessage)
+        popupContentView.errorImageView.image = image
     }
 
     private func setupButtonAction() {
@@ -39,7 +49,6 @@ final class TDErrorAlertView: BaseView {
         $0.contentMode = .scaleAspectFit
     }
     let deleteLabel = TDLabel(
-        labelText: "앗 !! 일시적인 오류가 발생했어요",
         toduckFont: .boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
     )

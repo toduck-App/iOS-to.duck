@@ -89,7 +89,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                             }
                         }
                         .joined(separator: ", ")
-                    self?.showErrorAlert(with: "\(missing)이(가) 입력되지 않았어요.")
+                    self?.showErrorAlert(errorMessage: "\(missing)이(가) 입력되지 않았어요.")
                 }
             }.store(in: &cancellables)
     }

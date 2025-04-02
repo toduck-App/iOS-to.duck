@@ -46,7 +46,7 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
             .sink { [weak self] action in
                 switch action {
                 case .loginIdInvalid(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 case .phoneNumberInvalid:
                     self?.layoutView.invaildPhoneNumberLabel.isHidden = false
                     self?.layoutView.phoneNumberContainerView.layer.borderColor = TDColor.Semantic.error.cgColor
@@ -72,7 +72,7 @@ final class FindPasswordViewController: BaseViewController<FindPasswordView> {
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }
             .store(in: &cancellables)

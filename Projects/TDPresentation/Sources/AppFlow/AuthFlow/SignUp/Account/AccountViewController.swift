@@ -79,11 +79,15 @@ final class AccountViewController: BaseViewController<AccountView> {
                     self?.layoutView.duplicateVerificationButton.isEnabled = isEnabled
                     self?.layoutView.duplicateVerificationButton.layer.borderWidth = 0
                 case .duplicateId:
-                    self?.showErrorAlert(with: "이미 사용중인 아이디입니다.")
+                    self?.showErrorAlert(
+                        titleError: "앗! 이미 사용중인 아이디에요",
+                        errorMessage: "다른 아이디를 사용해 주세요",
+                        image: TDImage.duplicateId
+                    )
                 case .successRegister:
                     self?.coordinator?.startRegisterSuccessViewCoordinator()
                 case .failureRegister(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }

@@ -141,7 +141,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
                 case .fetchedScheduleList:
                     self?.scheduleAndRoutineTableView.reloadData()
                 case .failure(let error):
-                    self?.showErrorAlert(with: error)
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
         

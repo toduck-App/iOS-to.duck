@@ -65,7 +65,7 @@ final class FindIdViewController: BaseViewController<FindIdView> {
                 case .updateVerificationTimer(let time):
                     self?.layoutView.verificationNumberTimerLabel.setText(time)
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }
             .store(in: &cancellables)

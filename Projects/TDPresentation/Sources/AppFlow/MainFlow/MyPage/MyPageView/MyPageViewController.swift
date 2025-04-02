@@ -53,7 +53,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 case .fetchedUserNickname(let nickname):
                     self?.layoutView.profileView.usernameLabel.setText(nickname)
                 case .failureAPI(let message):
-                    self?.showErrorAlert(with: message)
+                    self?.showErrorAlert(errorMessage: message)
                 case .logoutFinished:
                     self?.coordinator?.didTapLogoutButton() // TODO: 로그인 화면으로 이동
                 }
