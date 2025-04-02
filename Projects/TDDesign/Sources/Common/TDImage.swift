@@ -50,6 +50,7 @@ public enum TDImage {
     public static let registerSuccess = TDDesignAsset.Images.registerSuccess.image
     public static let errorAlert = TDDesignAsset.Images.errorAlertImage.image
     public static let duplicateId = TDDesignAsset.Images.duplicateId.image
+    public static let clockFill = TDDesignAsset.Images.clockFill.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
