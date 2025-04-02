@@ -49,6 +49,7 @@ public enum TDImage {
     public static let plus = TDDesignAsset.Images.plusMedium.image
     public static let registerSuccess = TDDesignAsset.Images.registerSuccess.image
     public static let errorAlert = TDDesignAsset.Images.errorAlertImage.image
+    public static let duplicateId = TDDesignAsset.Images.duplicateId.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
