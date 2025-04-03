@@ -177,18 +177,4 @@ private extension SocialDetailViewModel {
             output.send(.failure("댓글 작성에 실패했습니다."))
         }
     }
-
-    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: Int) -> [Comment] {
-        return comments.map { comment in
-            if comment.id == parentID {
-                var updatedComment = comment
-                updatedComment.reply.append(reply)
-                return updatedComment
-            } else {
-                var updatedComment = comment
-                updatedComment.reply = updateCommentsArray(updatedComment.reply, withReply: reply, forParentID: parentID)
-                return updatedComment
-            }
-        }
-    }
 }
