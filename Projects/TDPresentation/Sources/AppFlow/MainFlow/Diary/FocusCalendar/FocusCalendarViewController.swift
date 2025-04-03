@@ -54,8 +54,8 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         super.viewDidLoad()
         
         let normalizedToday = Date().normalized
-        viewModel.selectedFocus = viewModel.monthFoucsList[normalizedToday]
-        input.send(.selecteDay(normalizedToday))
+        viewModel.selectedFocus = viewModel.monthFocusList[normalizedToday]
+        input.send(.selectDay(normalizedToday))
         fetchDiaryList(for: Date())
         calendarDidSelect(date: Date())
     }
@@ -155,8 +155,8 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
     
     private func calendarDidSelect(date: Date) {
         selectedDate = date.normalized
-        viewModel.selectedFocus = viewModel.monthFoucsList[date.normalized]
-        input.send(.selecteDay(date.normalized))
+        viewModel.selectedFocus = viewModel.monthFocusList[date.normalized]
+        input.send(.selectDay(date.normalized))
     }
     
     private func updateDiaryView(with focus: Focus? = nil) {
@@ -212,7 +212,7 @@ extension FocusCalendarViewController: TDCalendarConfigurable {
         ) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
         
         let normalized = date.normalized
-        guard let focus = viewModel.monthFoucsList[normalized]?.percentage else { return cell }
+        guard let focus = viewModel.monthFocusList[normalized]?.percentage else { return cell }
         switch focus {
         case 0:
             cell.configure(with: nil)
@@ -241,8 +241,8 @@ extension FocusCalendarViewController: TDCalendarConfigurable {
         selectedDate = date.normalized
         let normalizedDate = date.normalized
         
-        viewModel.selectedFocus = viewModel.monthFoucsList[normalizedDate]
-        input.send(.selecteDay(normalizedDate))
+        viewModel.selectedFocus = viewModel.monthFocusList[normalizedDate]
+        input.send(.selectDay(normalizedDate))
     }
     
     // 기본 폰트 색

@@ -55,7 +55,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         
         let normalizedToday = Date().normalized
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
-        input.send(.selecteDay(normalizedToday))
+        input.send(.selectDay(normalizedToday))
         fetchDiaryList(for: Date())
         calendarDidSelect(date: Date())
     }
@@ -159,7 +159,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     private func calendarDidSelect(date: Date) {
         selectedDate = date.normalized
         viewModel.selectedDiary = viewModel.monthDiaryList[date.normalized]
-        input.send(.selecteDay(date.normalized))
+        input.send(.selectDay(date.normalized))
     }
     
     private func updateDiaryView(with diary: Diary? = nil) {
@@ -247,7 +247,7 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         let normalizedDate = date.normalized
         
         viewModel.selectedDiary = viewModel.monthDiaryList[normalizedDate]
-        input.send(.selecteDay(normalizedDate))
+        input.send(.selectDay(normalizedDate))
     }
     
     // 기본 폰트 색

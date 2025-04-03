@@ -4,7 +4,7 @@ import Foundation
 
 final class FocusCalendarViewModel: BaseViewModel {
     enum Input {
-        case selecteDay(Date)
+        case selectDay(Date)
         case fetchFocusList(Int, Int)
     }
     
@@ -17,13 +17,13 @@ final class FocusCalendarViewModel: BaseViewModel {
     
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var monthFoucsList = [Date: Focus]()
+    private(set) var monthFocusList = [Date: Focus]()
     var selectedFocus: Focus?
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
-            case .selecteDay(let date):
+            case .selectDay(let date):
                 self?.selecteDay(date: date)
             case .fetchFocusList(let year, let month):
                 self?.fetchFocusList(year: year, month: month)
@@ -34,7 +34,7 @@ final class FocusCalendarViewModel: BaseViewModel {
     }
     
     func selecteDay(date: Date) {
-        selectedFocus = monthFoucsList[date.normalized]
+        selectedFocus = monthFocusList[date.normalized]
         if let selectedFocus {
             output.send(.selectedFocus(selectedFocus))
         } else {
@@ -69,6 +69,6 @@ final class FocusCalendarViewModel: BaseViewModel {
             selectedMonthDiaries = []
         }
         
-        monthFoucsList = Dictionary(uniqueKeysWithValues: selectedMonthDiaries.map { ($0.date.normalized, $0) })
+        monthFocusList = Dictionary(uniqueKeysWithValues: selectedMonthDiaries.map { ($0.date.normalized, $0) })
     }
 }

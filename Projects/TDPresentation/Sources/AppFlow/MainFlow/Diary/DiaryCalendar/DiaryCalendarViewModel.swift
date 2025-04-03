@@ -4,7 +4,7 @@ import Foundation
 
 final class DiaryCalendarViewModel: BaseViewModel {
     enum Input {
-        case selecteDay(Date)
+        case selectDay(Date)
         case fetchDiaryList(Int, Int)
     }
     
@@ -23,7 +23,7 @@ final class DiaryCalendarViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
-            case .selecteDay(let date):
+            case .selectDay(let date):
                 self?.selecteDay(date: date)
             case .fetchDiaryList(let year, let month):
                 self?.fetchDiaryList(year: year, month: month)
