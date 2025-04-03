@@ -4,22 +4,6 @@ import TDDomain
 
 public final class SocialRepositoryImp: SocialRepository {
     private var comments: [Comment] = Comment.dummy
-    private let dummyRoutine = Routine(
-        id: nil,
-        title: "123",
-        category: TDCategory(
-            colorHex: "#123456",
-            imageName: "computer"
-        ),
-        isAllDay: false,
-        isPublic: true,
-        time: nil,
-        repeatDays: nil,
-        alarmTime: nil,
-        memo: nil,
-        recommendedRoutines: nil,
-        isFinished: false
-    )
     private var dummyPost = Post.dummy
 
     private let socialService: SocialService
@@ -53,10 +37,6 @@ public final class SocialRepositoryImp: SocialRepository {
         } else {
             try await socialService.requestLikePost(postID: postID)
         }
-    }
-
-    public func bringUserRoutine(routine: Routine) async throws -> Routine {
-        dummyRoutine
     }
 
     public func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws {

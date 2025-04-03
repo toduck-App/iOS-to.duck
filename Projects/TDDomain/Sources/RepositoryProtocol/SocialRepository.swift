@@ -4,7 +4,6 @@ public protocol SocialRepository {
     func fetchPostList(cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?)
     func searchPost(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?)
     func togglePostLike(postID: Post.ID, currentLike: Bool) async throws
-    func bringUserRoutine(routine: Routine) async throws -> Routine
 
     // MARK: - Post CRUD
 
