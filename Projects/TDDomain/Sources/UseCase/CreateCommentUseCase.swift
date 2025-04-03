@@ -6,9 +6,9 @@ public protocol CreateCommentUseCase {
 
 public final class CreateCommentUseCaseImpl: CreateCommentUseCase {
     
-    private let repository: CommentRepository
+    private let repository: SocialRepository
     
-    public init(repository: CommentRepository) {
+    public init(repository: SocialRepository) {
         self.repository = repository
     }
     

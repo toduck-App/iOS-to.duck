@@ -12,10 +12,6 @@ public struct DataAssembly: Assembly {
             return AuthRepositoryImpl(service: service)
         }.inObjectScope(.container)
         
-        container.register(CommentRepository.self) { _ in
-            return CommentRepositoryImpl()
-        }.inObjectScope(.container)
-        
         container.register(CategoryRepository.self) { _ in
             guard let storage = container.resolve(CategoryStorage.self) else {
                 fatalError("Storage is not registered")
