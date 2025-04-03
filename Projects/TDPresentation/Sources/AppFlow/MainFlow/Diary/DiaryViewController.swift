@@ -196,6 +196,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         case 0:
             let viewModel = DiaryCalendarViewModel()
             let diaryCalendarViewController = DiaryCalendarViewController(viewModel: viewModel)
+            diaryCalendarViewController.coordinator = coordinator
             diaryCalendarViewController.delegate = self
             newViewController = diaryCalendarViewController
             
