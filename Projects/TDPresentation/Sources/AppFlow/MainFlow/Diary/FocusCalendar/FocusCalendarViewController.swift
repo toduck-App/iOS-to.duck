@@ -100,7 +100,7 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         }
         
         noFocusContainerView.snp.makeConstraints {
-            $0.height.equalTo(350)
+            $0.height.equalTo(250)
         }
         noFocusImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(40)
