@@ -8,7 +8,6 @@ public enum SocialAPI {
     case searchPost(keyword: String, curser: Int?, limit: Int) // TODO: Search 쪽 PageNation 구현 필요
     case likePost(postId: Int)
     case unlikePost(postId: Int)
-    case bringUserRoutine(routine: Routine) // TODO: 유저 루틴 저장하는 부분 필요
     case createPost(post: TDPostCreateRequestDTO)
     case updatePost(post: Post) // TODO: Post 수정기능 필요
     case deletePost(postId: Int)
@@ -48,8 +47,6 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(postId)/likes"
         case .unlikePost(let postId):
             "v1/socials/\(postId)/likes"
-        case .bringUserRoutine(let routine):
-            "/routines/\(routine.id)"
         case .createPost:
             "/v1/socials"
         case .updatePost(let post):
@@ -104,8 +101,7 @@ extension SocialAPI: MFTarget {
              .fetchUserDetail,
              .fetchUserPostList,
              .fetchUserRoutineList,
-             .fetchUserShareUrl,
-             .bringUserRoutine:
+             .fetchUserShareUrl:
             .get
         case .likePost,
              .createPost,
@@ -154,7 +150,6 @@ extension SocialAPI: MFTarget {
              .fetchUserPostList,
              .fetchUserRoutineList,
              .fetchUserShareUrl,
-             .bringUserRoutine,
              .deletePost,
              .deleteComment,
              .createPost,
@@ -186,7 +181,6 @@ extension SocialAPI: MFTarget {
              .fetchUserPostList,
              .fetchUserRoutineList,
              .fetchUserShareUrl,
-             .bringUserRoutine,
              .deletePost,
              .deleteComment:
             return .requestPlain
