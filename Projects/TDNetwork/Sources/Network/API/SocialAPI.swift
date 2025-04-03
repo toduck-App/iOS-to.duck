@@ -16,7 +16,6 @@ public enum SocialAPI {
     case blockPost(postId: String) // TODO: 차단 기능 구현 필요
     
     case toggleCommentLike(commentId: String) // TODO: Comment 구현 기능 필요
-    case fetchCommentList(commentId: String) // TODO: CommentList 가져오는 기능 구현 필요
     case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
     case createComment(comment: Comment) // TODO: Comment 생성 기능 구현 필요
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
@@ -61,8 +60,6 @@ extension SocialAPI: MFTarget {
             "/posts/\(postId)/block"
         case .toggleCommentLike(let commentId):
             "/comments/\(commentId)/like"
-        case .fetchCommentList(let commentId):
-            "/comments/\(commentId)"
         case .fetchUserCommentList(let userId):
             "/users/\(userId)/comments"
         case .createComment:
@@ -95,7 +92,6 @@ extension SocialAPI: MFTarget {
         case .fetchPostList,
              .searchPost,
              .fetchPost,
-             .fetchCommentList,
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserDetail,
@@ -143,7 +139,6 @@ extension SocialAPI: MFTarget {
              .reportPost,
              .blockPost,
              .toggleCommentLike,
-             .fetchCommentList,
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserDetail,
@@ -174,7 +169,6 @@ extension SocialAPI: MFTarget {
              .reportPost,
              .blockPost,
              .toggleCommentLike,
-             .fetchCommentList,
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserDetail,
