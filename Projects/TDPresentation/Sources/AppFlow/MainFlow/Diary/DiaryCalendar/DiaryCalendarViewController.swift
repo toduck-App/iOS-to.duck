@@ -6,6 +6,10 @@ import TDCore
 import TDDomain
 import TDDesign
 
+protocol DiaryCalendarViewControllerDelegate: AnyObject {
+    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, isWrited: Bool)
+}
+
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
     private let contentStackView = UIStackView().then {
@@ -38,6 +42,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     private let input = PassthroughSubject<DiaryCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: DiaryCoordinator?
+    weak var delegate: DiaryCalendarViewControllerDelegate?
     var selectedDate = Date().normalized
     
     init(viewModel: DiaryCalendarViewModel) {
@@ -112,7 +117,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         }
         
         diaryDetailContainerView.snp.makeConstraints {
-            $0.height.equalTo(520)
+            $0.height.equalTo(450)
         }
         diaryDetailView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)
@@ -168,6 +173,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         noDiaryContainerView.isHidden = hasDiary
         
         if let diary {
+            delegate?.didSelectDate(self, isWrited: true)
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
                 date: diary.date.convertToString(formatType: .monthDayWithWeekday),
@@ -175,6 +181,8 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                 sentences: diary.sentenceText,
                 photos: [TDImage.Mood.angry, TDImage.Mood.happy]
             )
+        } else {
+            delegate?.didSelectDate(self, isWrited: false)
         }
     }
     

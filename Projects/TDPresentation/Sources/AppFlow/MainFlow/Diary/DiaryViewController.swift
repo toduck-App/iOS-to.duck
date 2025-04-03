@@ -47,7 +47,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         radius: 12
     )
     
-    
     // MARK: - Properties
     
     enum CalendarType {
@@ -63,7 +62,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
     private var cachedViewControllers = [Int: UIViewController]()
     private var currentViewController: UIViewController?
     
-    
     // MARK: - Initializer
     
     init(viewModel: DiaryViewModel) {
@@ -75,7 +73,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     // MARK: - Life Cycle
     
@@ -137,7 +134,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         }
         
         diaryPostButtonContainerView.snp.makeConstraints {
-           
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(112)
@@ -200,6 +196,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         case 0:
             let viewModel = DiaryCalendarViewModel()
             let diaryCalendarViewController = DiaryCalendarViewController(viewModel: viewModel)
+            diaryCalendarViewController.delegate = self
             newViewController = diaryCalendarViewController
             
         case 1:
@@ -297,6 +294,16 @@ extension DiaryViewController: UIScrollViewDelegate {
             diaryPostButtonContainerView.backgroundColor = .clear
         } else {
             diaryPostButtonContainerView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        }
+    }
+}
+
+extension DiaryViewController: DiaryCalendarViewControllerDelegate {
+    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, isWrited: Bool) {
+        if isWrited && diarySegmentedControl.selectedIndex == 0 {
+            diaryPostButtonContainerView.isHidden = true
+        } else {
+            diaryPostButtonContainerView.isHidden = false
         }
     }
 }
