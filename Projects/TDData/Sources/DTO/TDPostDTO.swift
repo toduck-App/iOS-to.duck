@@ -26,7 +26,7 @@ public struct TDPostDTO: Codable {
         let profileImageUrl: String?
         
         func convertToEntity() -> User {
-            return User(
+            User(
                 id: ownerId,
                 name: nickname,
                 icon: profileImageUrl,
@@ -50,8 +50,10 @@ public struct TDPostDTO: Codable {
     
     public struct TDSocialCommentDTO: Codable {
         let commentId: Int
-        let parentCommentId: Int
+        let parentCommentId: Int?
         let owner: TDOwnerDTO
+        let imageUrl: String?
+        let hasImage: Bool
         let content: String
         let commentLikeInfo: TDSocialLikeInfoDTO
         let isReply: Bool
@@ -84,12 +86,12 @@ public struct TDPostDTO: Codable {
         self.createdAt = createdAt
     }
     
-    func convertToEntity(category: [PostCategory]? = nil) -> Post {
-        return Post(
+    func convertToPost(category: [PostCategory]? = nil) -> Post {
+        Post(
             id: socialId,
             user: owner.convertToEntity(),
             contentText: content ?? "",
-            imageList: images.map { $0.url },
+            imageList: images.map(\.url),
             timestamp: Date.convertFromString(createdAt, format: .serverDate) ?? Date(),
             likeCount: socialLikeInfo.likeCount,
             isLike: socialLikeInfo.isLikedByMe,
@@ -98,6 +100,44 @@ public struct TDPostDTO: Codable {
             routine: routine?.convertToEntity(),
             category: category
         )
+    }
+    
+    func convertToComment() -> [Comment] {
+        guard let dtos = comments else { return [] }
+        
+        var topLevelComments: [Comment] = []
+        var repliesDict: [Int: [Comment]] = [:]
+        
+        for dto in dtos {
+            let commentDate = Date.convertFromString(dto.createdAt, format: .serverDate) ?? Date()
+            let imageURL = dto.hasImage ? URL(string: dto.imageUrl ?? "") : nil
+    
+            let comment = Comment(
+                id: dto.commentId,
+                user: dto.owner.convertToEntity(),
+                content: dto.content,
+                imageURL: imageURL,
+                timestamp: commentDate,
+                isLike: dto.commentLikeInfo.isLikedByMe,
+                likeCount: dto.commentLikeInfo.likeCount,
+                comment: []
+            )
+            if let parentId = dto.parentCommentId {
+                repliesDict[parentId, default: []].append(comment)
+            } else {
+                topLevelComments.append(comment)
+            }
+        }
+
+        topLevelComments = topLevelComments.map { topComment in
+            var modifiedComment = topComment
+            if let replies = repliesDict[topComment.id] {
+                modifiedComment.reply = replies
+            }
+            return modifiedComment
+        }
+        
+        return topLevelComments
     }
 }
 

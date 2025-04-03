@@ -8,7 +8,6 @@ public final class SocialRepositoryImp: SocialRepository {
 
     private let socialService: SocialService
     private let awsService: AwsService
-    private let cachePost: [Post] = []
 
     public init(socialService: SocialService, awsService: AwsService) {
         self.socialService = socialService
@@ -18,7 +17,7 @@ public final class SocialRepositoryImp: SocialRepository {
     public func fetchPostList(cursor: Int?, limit: Int = 20, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
         let categoryIDs: [Int]? = category?.map(\.rawValue)
         let postListDTO = try await socialService.requestPosts(cursor: cursor, limit: limit, categoryIDs: categoryIDs)
-        let postList = postListDTO.results.compactMap { $0.convertToEntity(category: category) }
+        let postList = postListDTO.results.compactMap { $0.convertToPost(category: category) }
 
         return (postList, postListDTO.hasMore, postListDTO.nextCursor)
     }
@@ -26,7 +25,7 @@ public final class SocialRepositoryImp: SocialRepository {
     public func searchPost(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
         let categoryIDs: [Int]? = category?.map(\.rawValue)
         let postListDTO = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword)
-        let postList = postListDTO.results.compactMap { $0.convertToEntity(category: category) }
+        let postList = postListDTO.results.compactMap { $0.convertToPost(category: category) }
         return (postList, postListDTO.hasMore, postListDTO.nextCursor)
         // TODO: 카테고리 필터 필요
     }
@@ -66,11 +65,12 @@ public final class SocialRepositoryImp: SocialRepository {
         try await socialService.requestDeletePost(postID: postID)
     }
 
-    public func fetchPost(postID: Post.ID) async throws -> Post {
+    public func fetchPost(postID: Post.ID) async throws -> (Post, [Comment]) {
         let postDTO = try await socialService.requestPost(postID: postID)
-        let post = postDTO.convertToEntity()
+        let post = postDTO.convertToPost()
+        let comments = postDTO.convertToComment()
 
-        return post
+        return (post, comments)
     }
 
     public func reportPost(postID: Post.ID) async throws {}

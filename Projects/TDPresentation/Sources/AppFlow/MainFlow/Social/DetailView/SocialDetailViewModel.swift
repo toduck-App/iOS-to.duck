@@ -5,7 +5,6 @@ import TDDomain
 public final class SocialDetailViewModel: BaseViewModel {
     enum Input {
         case fetchPost
-        case fetchComments
         case likePost
         case likeComment(Comment.ID)
         case registerComment(String)
@@ -74,8 +73,6 @@ public final class SocialDetailViewModel: BaseViewModel {
             switch event {
             case .fetchPost:
                 Task { await self.fetchPost() }
-            case .fetchComments:
-                Task { await self.fetchComments() }
             case .likePost:
                 Task { await self.likePost() }
             case .registerComment(let content):
@@ -110,23 +107,15 @@ public final class SocialDetailViewModel: BaseViewModel {
 private extension SocialDetailViewModel {
     func fetchPost() async {
         do {
-            guard let post = try await fetchPostUsecase.execute(postID: postID) else { return }
-            self.post = post
-            output.send(.post(post))
+            let result = try await fetchPostUsecase.execute(postID: postID)
+            self.post = result.post
+            self.comments = result.comments
+            output.send(.post(result.post))
+            output.send(.comments(result.comments))
         } catch {
             post = nil
-            output.send(.failure("글을 불러오는데 실패했습니다."))
-        }
-    }
-    
-    func fetchComments() async {
-        do {
-            guard let comments = try await fetchCommentUsecase.execute(postID: postID) else { return }
-            self.comments = comments
-            output.send(.comments(comments))
-        } catch {
             comments = []
-            output.send(.failure("댓글을 불러오는데 실패했습니다."))
+            output.send(.failure("글을 불러오는데 실패했습니다."))
         }
     }
     
@@ -180,7 +169,7 @@ private extension SocialDetailViewModel {
             if isCreated {
                 currentComment = nil
                 output.send(.createComment)
-                await fetchComments()
+                await fetchPost()
             } else {
                 output.send(.failure("댓글 작성에 실패했습니다."))
             }

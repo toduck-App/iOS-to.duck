@@ -10,7 +10,7 @@ public protocol SocialRepository {
     func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws
     func updatePost(post: Post) async throws
     func deletePost(postID: Post.ID) async throws
-    func fetchPost(postID: Post.ID) async throws -> Post
+    func fetchPost(postID: Post.ID) async throws -> (Post, [Comment])
     func reportPost(postID: Post.ID) async throws
     func blockPost(postID: Post.ID) async throws
     

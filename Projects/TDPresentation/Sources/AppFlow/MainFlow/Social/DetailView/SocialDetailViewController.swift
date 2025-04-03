@@ -36,7 +36,6 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         input.send(.fetchPost)
-        input.send(.fetchComments)
     }
     
     override func configure() {
