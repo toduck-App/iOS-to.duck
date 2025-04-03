@@ -11,7 +11,7 @@ public enum SocialAPI {
     case createPost(post: TDPostCreateRequestDTO)
     case updatePost(post: Post) // TODO: Post 수정기능 필요
     case deletePost(postId: Int)
-    case fetchPost(postId: String) // TODO: 단건 조회 필요
+    case fetchPost(postId: String)
     case reportPost(postId: String) // TODO: 신고 기능 구현 필요
     case blockPost(postId: String) // TODO: 차단 기능 구현 필요
     
