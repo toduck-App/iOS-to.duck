@@ -233,17 +233,14 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     private func setupNavigationBar() {
         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
-        let calendarButton = UIButton(type: .custom)
-        calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
-        calendarButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.didTapCalendarButton()
-        }, for: .touchUpInside)
+        let tomatoImage = UIImageView(image: TDImage.Diary.navigationImage)
+        tomatoImage.contentMode = .scaleAspectFit
         
         let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
         toduckLogoImageView.contentMode = .scaleAspectFit
         
         navigationItem.leftBarButtonItems = [
-            UIBarButtonItem(customView: calendarButton),
+            UIBarButtonItem(customView: tomatoImage),
             UIBarButtonItem(customView: toduckLogoImageView)
         ]
         
