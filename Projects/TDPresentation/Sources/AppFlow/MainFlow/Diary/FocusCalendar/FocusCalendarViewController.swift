@@ -164,7 +164,7 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         diaryDetailContainerView.isHidden = !hasDiary
         noFocusContainerView.isHidden = hasDiary
         
-        if let focus {
+        if focus != nil {
             focusDetailView.configure(
                 focusImage: TDImage.FocusPercent.percent21to40,
                 date: "2025-03-25",

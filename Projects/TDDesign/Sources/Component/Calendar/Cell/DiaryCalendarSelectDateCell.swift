@@ -72,6 +72,7 @@ public final class DiaryCalendarSelectDateCell: FSCalendarCell {
         backImageView.image = nil
         hasEmotionImage = false
         selectionBackgroundView.isHidden = true
+        titleLabel.isHidden = false
     }
     
     // 셀 설정 함수 (선택적으로 감정 이미지 유무 판단)
