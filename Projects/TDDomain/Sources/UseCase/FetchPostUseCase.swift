@@ -6,9 +6,9 @@ public protocol FetchPostUseCase {
 }
 
 public final class FetchPostUseCaseImpl: FetchPostUseCase {
-    private let repository: PostRepository
+    private let repository: SocialRepository
     
-    public init(repository: PostRepository) {
+    public init(repository: SocialRepository) {
         self.repository = repository
     }
     

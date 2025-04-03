@@ -2,7 +2,7 @@ import Foundation
 import TDCore
 import TDDomain
 
-public final class PostRepositoryImpl: PostRepository {
+public final class SocialRepositoryImp: SocialRepository {
     private let dummyRoutine = Routine(
         id: nil,
         title: "123",

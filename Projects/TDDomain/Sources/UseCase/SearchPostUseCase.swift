@@ -5,9 +5,9 @@ public protocol SearchPostUseCase {
 }
 
 public final class SearchPostUseCaseImpl: SearchPostUseCase {
-    private let repository: PostRepository
+    private let repository: SocialRepository
 
-    public init(repository: PostRepository) {
+    public init(repository: SocialRepository) {
         self.repository = repository
     }
 

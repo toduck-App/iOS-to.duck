@@ -114,7 +114,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(BlockPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return BlockPostUseCaseImpl(repository: repository)
@@ -143,7 +143,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(CreatePostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return CreatePostUseCaseImpl(repository: repository)
@@ -179,7 +179,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(DeletePostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return DeletePostUseCaseImpl(repository: repository)
@@ -229,7 +229,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(FetchPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return FetchPostUseCaseImpl(repository: repository)
@@ -320,14 +320,14 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(ReportPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return ReportPostUseCaseImpl(repository: repository)
         }
 
         container.register(SearchPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return SearchPostUseCaseImpl(repository: repository)
@@ -341,7 +341,7 @@ public struct DomainAssembly: Assembly {
         }
 
         container.register(TogglePostLikeUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return TogglePostLikeUseCaseImpl(repository: repository)
@@ -376,7 +376,7 @@ public struct DomainAssembly: Assembly {
         }
 
         container.register(UpdatePostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return UpdatePostUseCaseImpl(repository: repository)
