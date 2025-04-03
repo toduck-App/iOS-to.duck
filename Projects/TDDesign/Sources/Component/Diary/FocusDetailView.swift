@@ -50,21 +50,21 @@ public final class FocusDetailView: UIView {
         $0.alignment = .center
     }
     private let userHourLabel = TDLabel(
-        toduckFont: TDFont.boldBody2,
+        toduckFont: TDFont.boldBody1,
         toduckColor: TDColor.Neutral.neutral800
     )
     private let hourLabel = TDLabel(
         labelText: "h",
-        toduckFont: TDFont.regularBody2,
+        toduckFont: TDFont.mediumCaption1,
         toduckColor: TDColor.Neutral.neutral700
     )
     private let userMinuteLabel = TDLabel(
-        toduckFont: TDFont.boldBody2,
+        toduckFont: TDFont.boldBody1,
         toduckColor: TDColor.Neutral.neutral800
     )
     private let minuteLabel = TDLabel(
         labelText: "m",
-        toduckFont: TDFont.regularBody2,
+        toduckFont: TDFont.mediumCaption1,
         toduckColor: TDColor.Neutral.neutral700
     )
     
