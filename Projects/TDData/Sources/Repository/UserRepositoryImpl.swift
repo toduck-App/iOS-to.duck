@@ -2,24 +2,18 @@ import Foundation
 import TDDomain
 
 public final class UserRepositoryImpl: UserRepository {
-    private var dummyUserDetail = UserDetail(
-        isFollowing: true,
-        followingCount: 12,
-        followerCount: 261,
-        totalPostCount: 1,
-        totalRoutineCount: 1,
-        whoFollow: [],
-        routineShareCount: 1
-    )
+    private let service: UserService
 
-    public init() {}
+    public init(service: UserService) {
+        self.service = service
+    }
 
     public func fetchUser(userID: User.ID) async throws -> User {
         User.dummy.first!
     }
 
     public func fetchUserDetail(userID: User.ID) async throws -> UserDetail {
-        dummyUserDetail
+        UserDetail.dummyUserDetail
     }
 
     public func fetchUserPostList(userID: User.ID) async throws -> [Post]? {
@@ -35,11 +29,11 @@ public final class UserRepositoryImpl: UserRepository {
     }
 
     public func toggleUserFollow(userID: User.ID, targetUserID: User.ID) async throws -> Bool {
-        dummyUserDetail.isFollowing.toggle()
-        return dummyUserDetail.isFollowing
+        UserDetail.dummyUserDetail.isFollowing.toggle()
+        return UserDetail.dummyUserDetail.isFollowing
     }
 
-    public func blockUser(userID: User.ID) async throws -> Bool {
-        true
+    public func blockUser(userID: User.ID) async throws {
+        try await service.requestUserBlock(userId: userID)
     }
 }

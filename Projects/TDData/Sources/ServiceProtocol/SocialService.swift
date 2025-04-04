@@ -1,5 +1,3 @@
-import TDDomain
-
 public protocol SocialService {
     // 게시물 목록 조회(카테고리 필터 가능)
     func requestPosts(cursor: Int?, limit: Int, categoryIDs: [Int]?) async throws -> TDPostListDTO

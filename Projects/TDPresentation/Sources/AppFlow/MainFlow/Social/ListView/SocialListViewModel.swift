@@ -237,7 +237,14 @@ extension SocialListViewModel {
 
     private func blockUser(to userID: User.ID) async {
         do {
-            _ = try await blockUserUseCase.execute(userID: userID)
+            try await blockUserUseCase.execute(userID: userID)
+            if isSearching {
+                searchPosts.removeAll { $0.user.id == userID }
+                output.send(.searchPosts(searchPosts))
+            } else {
+                defaultPosts.removeAll { $0.user.id == userID }
+                output.send(.fetchPosts(defaultPosts))
+            }
             // TODO: 차단 기능에 대한 후처리
         } catch {
             output.send(.failure("사용자 차단에 실패했습니다."))

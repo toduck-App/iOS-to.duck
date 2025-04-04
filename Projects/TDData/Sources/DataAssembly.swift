@@ -52,7 +52,10 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
             
         container.register(UserRepository.self) { _ in
-            return UserRepositoryImpl()
+            guard let service = container.resolve(UserService.self) else {
+                fatalError("UserService is not registered")
+            }
+            return UserRepositoryImpl(service: service)
         }.inObjectScope(.container)
         
         container.register(UserAuthRepository.self) { _ in

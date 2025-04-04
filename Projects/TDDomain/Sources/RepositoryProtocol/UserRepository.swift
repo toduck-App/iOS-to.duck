@@ -7,5 +7,5 @@ public protocol UserRepository {
     func fetchUserRoutineList(userID: User.ID) async throws -> [Routine]?
     func fetchUserShareUrl(userID: User.ID) async throws -> String
     func toggleUserFollow(userID: User.ID,targetUserID: User.ID) async throws -> Bool
-    func blockUser(userID: User.ID) async throws -> Bool
+    func blockUser(userID: User.ID) async throws
 }

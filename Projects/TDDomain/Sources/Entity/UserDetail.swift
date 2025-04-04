@@ -25,3 +25,15 @@ public struct UserDetail {
         self.routineShareCount = routineShareCount
     }
 }
+
+extension UserDetail {
+    public static var dummyUserDetail = UserDetail(
+        isFollowing: true,
+        followingCount: 12,
+        followerCount: 261,
+        totalPostCount: 1,
+        totalRoutineCount: 1,
+        whoFollow: [],
+        routineShareCount: 1
+    )
+}
