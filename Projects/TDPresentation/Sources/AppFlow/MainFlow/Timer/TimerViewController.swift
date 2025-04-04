@@ -209,7 +209,10 @@ extension TimerViewController {
     private func updateFocusCount(with count: Int) {
         guard let setting = viewModel.timerSetting else { return }
         focusCount = count
-        let newCount = count % setting.focusCountLimit == 0 ? setting.focusCountLimit : count % setting.focusCountLimit
+        var newCount = 0
+        if count != 0 {
+            newCount = count % setting.focusCountLimit == 0 ? setting.focusCountLimit : count % setting.focusCountLimit
+        }
         
         layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
