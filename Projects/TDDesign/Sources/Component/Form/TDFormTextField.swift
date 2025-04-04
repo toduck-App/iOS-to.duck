@@ -90,6 +90,10 @@ public final class TDFormTextField: UIView {
     public func setupTextField(_ text: String) {
         textField.setupTextField(text)
     }
+    
+    public func setupFont(_ font: TDFont) {
+        textField.setupFont(font)
+    }
 }
 
 // MARK: - Layout

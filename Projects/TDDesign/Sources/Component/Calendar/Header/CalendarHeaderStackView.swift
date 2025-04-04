@@ -27,7 +27,7 @@ public final class CalendarHeaderStackView: UIStackView {
         spacing = type == .sheet ? 4 : 8
 
         switch type {
-        case .toduck, .diary:
+        case .toduck, .diary, .focus:
             setupDefaultHeader()
         case .sheet:
             setupSheetHeader()

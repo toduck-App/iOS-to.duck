@@ -8,7 +8,6 @@ import AuthenticationServices
 final class AuthView: BaseView {
     // MARK: - UI Components
     let backGroundImageView = UIImageView(image: TDImage.loginBackGround)
-    let mainButton = TDBaseButton(title: "메인 홈으로 가기", radius: 8)
 
     /// 토덕 로고
     let toduckLogoView = UIImageView(image: TDImage.toduckPrimaryLogo)
@@ -56,7 +55,6 @@ final class AuthView: BaseView {
     override func addview() {
         [
             backGroundImageView,
-            mainButton,
             toduckLogoView,
             toduckTitleLabel,
             toduckView,
@@ -104,15 +102,7 @@ final class AuthView: BaseView {
             $0.bottom.equalTo(signInButton.snp.top).offset(-52)
             $0.height.equalTo(44)
         }
-        mainButton.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(Layout.loginButtonSideInset)
-            $0.trailing.equalToSuperview().offset(-Layout.loginButtonSideInset)
-            $0.bottom.equalTo(signInButton.snp.top).offset(-20)
-            $0.height.equalTo(20)
-        }
         
-        // TODO: 제거
-
         /// 자체 로그인/회원가입
         signInButton.snp.makeConstraints {
             $0.centerY.equalTo(separatorView)
