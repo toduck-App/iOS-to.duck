@@ -23,8 +23,8 @@ enum SocialFeedMoreType: String, CaseIterable {
     var dropdownItem: TDDropdownItem {
         TDDropdownItem(
             title: rawValue,
-            leftImage: nil,
-            rightImage: image
+            leftImage: image,
+            rightImage: nil
         )
     }
 }

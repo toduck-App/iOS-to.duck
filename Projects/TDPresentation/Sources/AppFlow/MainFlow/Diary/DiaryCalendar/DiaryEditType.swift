@@ -5,7 +5,7 @@ enum DiaryEditType: String, CaseIterable {
     case delete = "삭제"
     
     var dropDownItem: TDDropdownItem {
-        return TDDropdownItem(title: rawValue, rightImage: image)
+        return TDDropdownItem(title: rawValue, leftImage: image)
     }
     
     var image: TDDropdownItem.SelectableImage {
