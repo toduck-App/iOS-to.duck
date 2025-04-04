@@ -52,7 +52,7 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         layoutView.saveButton.isEnabled = true
         layoutView.saveButton.layer.borderWidth = 0
         layoutView.titleForm.setupTextField(preDiary.title)
-        layoutView.recordTextView.setupTextView(text: preDiary.sentenceText)
+        layoutView.recordTextView.setupTextView(text: preDiary.memo)
     }
 }
 

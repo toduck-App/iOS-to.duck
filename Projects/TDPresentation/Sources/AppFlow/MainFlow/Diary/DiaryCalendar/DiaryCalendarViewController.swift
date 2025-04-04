@@ -178,7 +178,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                 emotionImage: diary.emotion.circleImage,
                 date: diary.date.convertToString(formatType: .monthDayWithWeekday),
                 title: diary.title,
-                sentences: diary.sentenceText,
+                        memo: diary.memo,
                 photos: [TDImage.Mood.angry, TDImage.Mood.happy]
             )
         } else {

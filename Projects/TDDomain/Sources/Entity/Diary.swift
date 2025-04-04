@@ -5,7 +5,7 @@ public struct Diary: Hashable, Identifiable {
     public let date: Date
     public let emotion: Emotion
     public let title: String
-    public let sentenceText: String
+    public let memo: String
     public let imagesURL: [String]?
     
     public init(
@@ -13,14 +13,14 @@ public struct Diary: Hashable, Identifiable {
         date: Date,
         emotion: Emotion,
         title: String,
-        sentenceText: String,
+        memo: String,
         imagesURL: [String]?
     ) {
         self.id = id
         self.date = date
         self.emotion = emotion
         self.title = title
-        self.sentenceText = sentenceText
+        self.memo = memo
         self.imagesURL = imagesURL
     }
 }
