@@ -108,8 +108,8 @@ private extension SocialDetailViewModel {
     func fetchPost() async {
         do {
             let result = try await fetchPostUsecase.execute(postID: postID)
-            self.post = result.post
-            self.comments = result.comments
+            post = result.post
+            comments = result.comments
             output.send(.post(result.post))
             output.send(.comments(result.comments))
         } catch {
@@ -123,7 +123,7 @@ private extension SocialDetailViewModel {
 
     private func likePost() async {
         do {
-            guard var post = post else {
+            guard var post else {
                 output.send(.failure("게시글 정보가 없습니다."))
                 return
             }
@@ -152,29 +152,15 @@ private extension SocialDetailViewModel {
     // MARK: 댓글 달기
     
     private func registerComment(content: String) async {
-        let target: CommentTarget
-        if let currentComment = currentComment {
-             target = .comment(currentComment.id)
-        } else {
-             guard let post = self.post else {
-                 output.send(.failure("게시글 정보가 없습니다."))
-                 return
-             }
-             target = .post(post.id)
-        }
-        
-        let newComment = NewComment(content: content, target: target, image: registerImage)
         do {
-            let isCreated = try await createCommentUseCase.execute(newComment: newComment)
-            if isCreated {
-                currentComment = nil
-                output.send(.createComment)
-                await fetchPost()
-            } else {
-                output.send(.failure("댓글 작성에 실패했습니다."))
-            }
+            let image: (fileName: String, imageData: Data)? = registerImage != nil ? (fileName: "\(UUID().uuidString).jpg", imageData: registerImage!) : nil
+            try await createCommentUseCase.execute(postID: postID, parentId: currentComment?.id, content: content, image: image)
+            
+            currentComment = nil
+            output.send(.createComment)
+            await fetchPost()
         } catch {
-            output.send(.failure("댓글 작성에 실패했습니다."))
+            output.send(.failure("댓글 등록에 실패했습니다."))
         }
     }
 }

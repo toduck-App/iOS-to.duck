@@ -17,7 +17,7 @@ public enum SocialAPI {
     
     case toggleCommentLike(commentId: String) // TODO: Comment 구현 기능 필요
     case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
-    case createComment(comment: Comment) // TODO: Comment 생성 기능 구현 필요
+    case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
     case deleteComment(commentId: String) // TODO: Comment 삭제 기능 구현 필요
     case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
@@ -62,8 +62,8 @@ extension SocialAPI: MFTarget {
             "/comments/\(commentId)/like"
         case .fetchUserCommentList(let userId):
             "/users/\(userId)/comments"
-        case .createComment:
-            "/comments"
+        case .createComment(let socialId, _, _, _):
+            "v1/socials/\(socialId)/comments"
         case .updateComment(let comment):
             "/comments/\(comment.id)"
         case .deleteComment(let commentId):
@@ -191,7 +191,14 @@ extension SocialAPI: MFTarget {
             return .requestParameters(parameters: params.compactMapValues { $0 })
         case .updatePost(let post):
             return .requestPlain
-        case .createComment(let comment), .updateComment(let comment):
+        case .createComment(let socialId, let parentCommentId, let content, let imageUrl):
+            let params: [String: Any?] = [
+                "imageUrl": imageUrl,
+                "parentId": parentCommentId,
+                "content": content,
+            ]
+            return .requestParameters(parameters: params.compactMapValues { $0 })
+        case .updateComment(let comment):
             return .requestPlain
         case .toggleUserFollow:
             return .requestPlain

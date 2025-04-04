@@ -64,4 +64,9 @@ public struct SocialServiceImpl: SocialService {
         let target = SocialAPI.unlikePost(postId: postID)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws {
+        let target = SocialAPI.createComment(socialId: socialId, parentCommentId: parentId, content: content, imageUrl: imageUrl)
+        try await provider.requestDecodable(of: TDCommentCreateResponseDTO.self, target)
+    }
 }

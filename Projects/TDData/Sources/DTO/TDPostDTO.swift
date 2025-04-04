@@ -157,3 +157,7 @@ public struct TDPostCreateRequestDTO: Encodable {
     public let socialCategoryIds: [Int]
     public let socialImageUrls: [String]?
 }
+
+public struct TDCommentCreateResponseDTO: Decodable {
+    public let commentId: Int
+}

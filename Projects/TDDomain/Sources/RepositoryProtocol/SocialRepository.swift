@@ -18,10 +18,8 @@ public protocol SocialRepository {
     func reportComment(commentID: Comment.ID) async throws -> Bool
     func blockComment(commentID: Comment.ID) async throws -> Bool
     
-    func fetchCommentList(postID: Post.ID) async throws -> [Comment]?
-    func fetchCommentList(commentID: Comment.ID) async throws -> [Comment]?
     func fetchUserCommentList(userID: User.ID) async throws -> [Comment]?
-    func createComment(comment: NewComment) async throws -> Bool
+    func createComment( postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws
     func updateComment(comment: Comment) async throws -> Bool
     func deleteComment(commentID: Comment.ID) async throws -> Bool
 }
