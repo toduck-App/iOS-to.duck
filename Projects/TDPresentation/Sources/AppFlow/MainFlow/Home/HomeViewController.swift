@@ -105,8 +105,13 @@ final class HomeViewController: BaseViewController<BaseView> {
         let newViewController: UIViewController
         switch index {
         case 0:
-            let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
-            newViewController = ToduckViewController(viewModel: ToduckViewModel(fetchScheduleListUseCase: useCase))
+            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+            let shouldMarkAllDayUseCase = DIContainer.shared.resolve(ShouldMarkAllDayUseCase.self)
+            let viewModel = ToduckViewModel(
+                fetchScheduleListUseCase: fetchScheduleListUseCase,
+                shouldMarkAllDayUseCase: shouldMarkAllDayUseCase
+            )
+            newViewController = ToduckViewController(viewModel: viewModel)
         case 1:
             let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
             let viewModel = ScheduleViewModel(fetchScheduleListUseCase: useCase)

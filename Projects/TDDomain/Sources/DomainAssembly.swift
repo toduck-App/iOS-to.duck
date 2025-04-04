@@ -454,5 +454,9 @@ public struct DomainAssembly: Assembly {
             }
             return UpdateTimerThemeUseCaseImpl(repository: repository)
         }
+        
+        container.register(ShouldMarkAllDayUseCase.self) { _ in
+            return ShouldMarkAllDayUseCaseImpl()
+        }
     }
 }

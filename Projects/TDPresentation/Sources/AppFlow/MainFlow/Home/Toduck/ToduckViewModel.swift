@@ -13,6 +13,7 @@ final class ToduckViewModel: BaseViewModel {
     }
     
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var isAllDays = false
@@ -23,9 +24,11 @@ final class ToduckViewModel: BaseViewModel {
     }
     
     init(
-        fetchScheduleListUseCase: FetchScheduleListUseCase
+        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
+        self.shouldMarkAllDayUseCase = shouldMarkAllDayUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -46,7 +49,7 @@ final class ToduckViewModel: BaseViewModel {
                 startDate: todayFormat,
                 endDate: todayFormat
             )
-            isAllDays = todaySchedules.allSatisfy { $0.isAllDay }
+            isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
             self.todaySchedules = todaySchedules
             output.send(.fetchedScheduleList)
         } catch {
