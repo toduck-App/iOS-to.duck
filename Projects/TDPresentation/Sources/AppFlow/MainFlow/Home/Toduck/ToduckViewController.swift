@@ -26,8 +26,8 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         input.send(.fetchScheduleList)
     }
@@ -41,6 +41,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
                 switch event {
                 case .fetchedScheduleList:
                     self?.layoutView.scheduleCollectionView.reloadData()
+                    self?.updateLottieView(at: 0)
                     self?.updateAutoScroll()
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
@@ -49,8 +50,6 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     override func configure() {
-        updateLottieView(at: 0)
-        updateAutoScroll()
         updateLottieAnimationForVisibleCell()
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
@@ -61,7 +60,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     private func updateLottieView(at index: Int) {
-        let lottieImageType = TDCategoryImageType(category: TDCategory.init(colorHex: "FFFFFF", imageName: "computer"))
+        let lottieImageType = TDCategoryImageType(category: viewModel.todaySchedules[index].category)
         let newAnimation = ToduckLottieManager.shared.getLottieAnimation(for: lottieImageType)
         layoutView.lottieView.animation = newAnimation
         layoutView.lottieView.play()

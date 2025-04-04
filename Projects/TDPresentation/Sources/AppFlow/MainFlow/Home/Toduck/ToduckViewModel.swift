@@ -15,7 +15,7 @@ final class ToduckViewModel: BaseViewModel {
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var isAllDays = true
+    private(set) var isAllDays = false
     private(set) var todaySchedules: [Schedule] = []
     
     var categoryImages: [TDCategoryImageType] {
@@ -46,10 +46,10 @@ final class ToduckViewModel: BaseViewModel {
                 startDate: todayFormat,
                 endDate: todayFormat
             )
+            isAllDays = todaySchedules.allSatisfy { $0.isAllDay }
             self.todaySchedules = todaySchedules
             output.send(.fetchedScheduleList)
         } catch {
-            
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }
     }
