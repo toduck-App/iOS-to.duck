@@ -50,6 +50,7 @@ public final class TDCategoryCollectionView: UIView {
     private func setupCollectionView() {
         addSubview(collectionView)
         
+        collectionView.backgroundColor = .white
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

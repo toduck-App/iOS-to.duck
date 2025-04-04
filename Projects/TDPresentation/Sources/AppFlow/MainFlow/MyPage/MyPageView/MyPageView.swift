@@ -43,6 +43,10 @@ final class MyPageView: BaseView {
     }
     
     override func configure() {
+        containerView.backgroundColor = TDColor.baseWhite
+        profileView.backgroundColor = TDColor.baseWhite
+        socialButtonView.backgroundColor = TDColor.baseWhite
+        menuCollectionView.backgroundColor = TDColor.baseWhite
         logoutButton.layer.borderWidth = 1
         logoutButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         menuCollectionView.delegate = self

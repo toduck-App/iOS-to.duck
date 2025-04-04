@@ -1,10 +1,3 @@
-//
-//  EditProfileMenuViewController.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/15/25.
-//
-
 import UIKit
 import SnapKit
 
@@ -26,6 +19,7 @@ final class EditProfileMenuViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupCollectionView()
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "프로필",
@@ -44,6 +38,7 @@ final class EditProfileMenuViewController: UICollectionViewController {
 // MARK: - Private Methods
 private extension EditProfileMenuViewController {
     func setupCollectionView() {
+        collectionView.backgroundColor = .white
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isScrollEnabled = true
