@@ -3,8 +3,6 @@ import TDCore
 import TDDomain
 
 public final class SocialRepositoryImp: SocialRepository {
-    private var dummyPost = Post.dummy
-    
     private let socialService: SocialService
     private let awsService: AwsService
     
