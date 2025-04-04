@@ -15,7 +15,6 @@ final class ToduckViewModel: BaseViewModel {
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var scheduleList: [Schedule] = []
     private(set) var isAllDays = true
     private(set) var todaySchedules: [Schedule] = []
     
@@ -43,13 +42,14 @@ final class ToduckViewModel: BaseViewModel {
     private func fetchScheduleList() async {
         do {
             let todayFormat = Date().convertToString(formatType: .yearMonthDay)
-            let scheduleList = try await fetchScheduleListUseCase.execute(
+            let todaySchedules = try await fetchScheduleListUseCase.execute(
                 startDate: todayFormat,
                 endDate: todayFormat
             )
-            self.scheduleList = scheduleList
+            self.todaySchedules = todaySchedules
             output.send(.fetchedScheduleList)
         } catch {
+            
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }
     }
