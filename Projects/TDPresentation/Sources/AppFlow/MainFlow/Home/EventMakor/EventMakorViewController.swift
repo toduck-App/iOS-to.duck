@@ -56,7 +56,6 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     // MARK: - Base Method
     override func configure() {
         navigationController?.navigationBar.isHidden = false
-        keyboardAdjustableView = eventMakorView.buttonContainerView
         eventMakorView.scrollView.delegate = self
         setupDelegate()
         setupCategory()
