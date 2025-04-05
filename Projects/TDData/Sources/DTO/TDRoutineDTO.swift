@@ -40,10 +40,9 @@ public struct TDRoutineDTO: Codable {
         return Routine(
             id: routineId,
             title: title,
-            category: TDCategory.init(colorHex: "222222", imageName: category),
+            category: TDCategory.init(colorHex: color, imageName: category),
             isAllDay: isInDeletedState,
             isPublic: isPublic,
-            date: Date.convertFromString(time, format: .serverDate) ?? Date(),
             time: Date.convertFromString(time, format: .serverDate) ?? Date(),
             repeatDays: nil,
             alarmTime: nil,

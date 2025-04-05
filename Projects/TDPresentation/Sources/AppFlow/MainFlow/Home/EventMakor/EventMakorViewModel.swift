@@ -189,7 +189,6 @@ final class EventMakorViewModel: BaseViewModel {
             category: selectedCategory!,
             isAllDay: isAllDay,
             isPublic: isPublic,
-            date: nil,
             time: time,
             repeatDays: repeatDays,
             alarmTime: alarm,

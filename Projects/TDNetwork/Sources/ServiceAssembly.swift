@@ -33,5 +33,9 @@ public struct ServiceAssembly: Assembly {
         container.register(AwsService.self) { _ in
             return AwsServiceImpl()
         }
+        
+        container.register(UserService.self) { _ in
+            return UserServiceImpl()
+        }
     }
 }

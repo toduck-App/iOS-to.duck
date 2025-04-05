@@ -5,7 +5,6 @@ import TDDomain
 public final class SocialDetailViewModel: BaseViewModel {
     enum Input {
         case fetchPost
-        case fetchComments
         case likePost
         case likeComment(Comment.ID)
         case registerComment(String)
@@ -74,8 +73,6 @@ public final class SocialDetailViewModel: BaseViewModel {
             switch event {
             case .fetchPost:
                 Task { await self.fetchPost() }
-            case .fetchComments:
-                Task { await self.fetchComments() }
             case .likePost:
                 Task { await self.likePost() }
             case .registerComment(let content):
@@ -110,23 +107,15 @@ public final class SocialDetailViewModel: BaseViewModel {
 private extension SocialDetailViewModel {
     func fetchPost() async {
         do {
-            guard let post = try await fetchPostUsecase.execute(postID: postID) else { return }
-            self.post = post
-            output.send(.post(post))
+            let result = try await fetchPostUsecase.execute(postID: postID)
+            post = result.post
+            comments = result.comments
+            output.send(.post(result.post))
+            output.send(.comments(result.comments))
         } catch {
             post = nil
-            output.send(.failure("글을 불러오는데 실패했습니다."))
-        }
-    }
-    
-    func fetchComments() async {
-        do {
-            guard let comments = try await fetchCommentUsecase.execute(postID: postID) else { return }
-            self.comments = comments
-            output.send(.comments(comments))
-        } catch {
             comments = []
-            output.send(.failure("댓글을 불러오는데 실패했습니다."))
+            output.send(.failure("글을 불러오는데 실패했습니다."))
         }
     }
     
@@ -134,7 +123,7 @@ private extension SocialDetailViewModel {
 
     private func likePost() async {
         do {
-            guard var post = post else {
+            guard var post else {
                 output.send(.failure("게시글 정보가 없습니다."))
                 return
             }
@@ -163,43 +152,15 @@ private extension SocialDetailViewModel {
     // MARK: 댓글 달기
     
     private func registerComment(content: String) async {
-        let target: CommentTarget
-        if let currentComment = currentComment {
-             target = .comment(currentComment.id)
-        } else {
-             guard let post = self.post else {
-                 output.send(.failure("게시글 정보가 없습니다."))
-                 return
-             }
-             target = .post(post.id)
-        }
-        
-        let newComment = NewComment(content: content, target: target, image: registerImage)
         do {
-            let isCreated = try await createCommentUseCase.execute(newComment: newComment)
-            if isCreated {
-                currentComment = nil
-                output.send(.createComment)
-                await fetchComments()
-            } else {
-                output.send(.failure("댓글 작성에 실패했습니다."))
-            }
+            let image: (fileName: String, imageData: Data)? = registerImage != nil ? (fileName: "\(UUID().uuidString).jpg", imageData: registerImage!) : nil
+            try await createCommentUseCase.execute(postID: postID, parentId: currentComment?.id, content: content, image: image)
+            
+            currentComment = nil
+            output.send(.createComment)
+            await fetchPost()
         } catch {
-            output.send(.failure("댓글 작성에 실패했습니다."))
-        }
-    }
-
-    private func updateCommentsArray(_ comments: [Comment], withReply reply: Comment, forParentID parentID: Int) -> [Comment] {
-        return comments.map { comment in
-            if comment.id == parentID {
-                var updatedComment = comment
-                updatedComment.reply.append(reply)
-                return updatedComment
-            } else {
-                var updatedComment = comment
-                updatedComment.reply = updateCommentsArray(updatedComment.reply, withReply: reply, forParentID: parentID)
-                return updatedComment
-            }
+            output.send(.failure("댓글 등록에 실패했습니다."))
         }
     }
 }

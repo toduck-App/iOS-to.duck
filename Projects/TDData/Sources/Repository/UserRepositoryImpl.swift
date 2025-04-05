@@ -2,24 +2,17 @@ import Foundation
 import TDDomain
 
 public final class UserRepositoryImpl: UserRepository {
-    private var dummyUserDetail = UserDetail(
-        isFollowing: true,
-        followingCount: 12,
-        followerCount: 261,
-        totalPostCount: 1,
-        totalRoutineCount: 1,
-        whoFollow: [],
-        routineShareCount: 1
-    )
+    private let service: UserService
 
-    public init() {}
-
-    public func fetchUser(userID: User.ID) async throws -> User {
-        User.dummy.first!
+    public init(service: UserService) {
+        self.service = service
     }
 
-    public func fetchUserDetail(userID: User.ID) async throws -> UserDetail {
-        dummyUserDetail
+    public func fetchUser(userID: User.ID) async throws -> (User, UserDetail) {
+        let dto = try await service.requestUserProfile(userId: userID)
+        let user = User(id: userID, name: dto.nickname, icon: dto.profileImageUrl, title: "작심삼일")
+        let userDetail = UserDetail(isFollowing: false, followingCount: dto.followingCount, followerCount: dto.followerCount, totalPostCount: dto.postCount, totalRoutineCount: 0, isMe: dto.isMe)
+        return (user, userDetail)
     }
 
     public func fetchUserPostList(userID: User.ID) async throws -> [Post]? {
@@ -34,12 +27,15 @@ public final class UserRepositoryImpl: UserRepository {
         ""
     }
 
-    public func toggleUserFollow(userID: User.ID, targetUserID: User.ID) async throws -> Bool {
-        dummyUserDetail.isFollowing.toggle()
-        return dummyUserDetail.isFollowing
+    public func followUser(targetUserID: TDDomain.User.ID) async throws {
+        try await service.requestFollow(userId: targetUserID)
+    }
+    
+    public func unFollowUser(targetUserID: TDDomain.User.ID) async throws {
+        try await service.requestUnfollow(userId: targetUserID)
     }
 
-    public func blockUser(userID: User.ID) async throws -> Bool {
-        true
+    public func blockUser(userID: User.ID) async throws {
+        try await service.requestUserBlock(userId: userID)
     }
 }

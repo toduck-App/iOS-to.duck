@@ -3,7 +3,7 @@ import TDDomain
 import UIKit
 
 final class ThemeSettingView: BaseView {
-    let exitButton: TDBaseButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear)
+    let exitButton: TDBaseButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear,foregroundColor: TDColor.Neutral.neutral700)
 
     let themeSettingTitleLabel = TDLabel(
         labelText: "테마 설정", toduckFont: .boldHeader4, alignment: .center,

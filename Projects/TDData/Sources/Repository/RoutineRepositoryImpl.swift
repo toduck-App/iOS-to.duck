@@ -13,7 +13,6 @@ public final class RoutineRepositoryImpl: RoutineRepository {
                 category: TDCategory(colorHex: "", imageName: ""),
                 isAllDay: false,
                 isPublic: false,
-                date: nil,
                 time: nil,
                 repeatDays: nil,
                 alarmTime: nil,
