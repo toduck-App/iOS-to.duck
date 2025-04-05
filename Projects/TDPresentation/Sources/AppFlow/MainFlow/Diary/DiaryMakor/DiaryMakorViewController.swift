@@ -36,6 +36,8 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
+                case .failure(let message):
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }
@@ -44,7 +46,13 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         keyboardAdjustableView = layoutView.buttonContainerView
         layoutView.isEdit = isEdit
         layoutView.scrollView.delegate = self
+        layoutView.titleForm.delegate = self
+        layoutView.recordTextView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
+        
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.tapSaveButton)
+        }, for: .touchUpInside)
     }
     
     func updateEditView(preDiary: Diary) {
@@ -99,5 +107,21 @@ extension DiaryMakorViewController: DiaryMoodCollectionViewDelegate {
         layoutView.saveButton.isEnabled = true
         layoutView.saveButton.layer.borderWidth = 0
         input.send(.tapCategoryCell(UIImage.reverseMoodDictionary[selectedMood] ?? "HAPPY"))
+    }
+}
+
+// MARK: - TextFieldDelegate
+extension DiaryMakorViewController: TDFormTextFieldDelegate {
+    func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
+        if textField == layoutView.titleForm {
+            input.send(.updateTitleTextField(text))
+        }
+    }
+}
+
+// MARK: - TextViewDelegate
+extension DiaryMakorViewController: TDFormTextViewDelegate {
+    func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
+        input.send(.updateMemoTextView(text))
     }
 }
