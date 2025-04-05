@@ -107,14 +107,14 @@ public struct DomainAssembly: Assembly {
         
         // MARK: - Block UseCases
         container.register(BlockCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return BlockCommentUseCaseImpl(repository: repository)
         }
         
         container.register(BlockPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return BlockPostUseCaseImpl(repository: repository)
@@ -129,8 +129,8 @@ public struct DomainAssembly: Assembly {
         
         // MARK: - Create UseCases
         container.register(CreateCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return CreateCommentUseCaseImpl(repository: repository)
         }
@@ -143,7 +143,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(CreatePostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return CreatePostUseCaseImpl(repository: repository)
@@ -165,8 +165,8 @@ public struct DomainAssembly: Assembly {
         
         // MARK: - Delete UseCases
         container.register(DeleteCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return DeleteCommentUseCaseImpl(repository: repository)
         }
@@ -179,7 +179,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(DeletePostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return DeletePostUseCaseImpl(repository: repository)
@@ -208,8 +208,8 @@ public struct DomainAssembly: Assembly {
         
         // MARK: - Fetch UseCases
         container.register(FetchCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return FetchCommentUseCaseImpl(repository: repository)
         }
@@ -229,7 +229,7 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(FetchPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return FetchPostUseCaseImpl(repository: repository)
@@ -261,13 +261,6 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
             }
             return FetchScheduleUseCaseImpl(repository: repository)
-        }
-        
-        container.register(FetchUserDetailUseCase.self) { resolver in
-            guard let repository = resolver.resolve(UserRepository.self) else {
-                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
-            }
-            return FetchUserDetailUseCaseImpl(repository: repository)
         }
         
         container.register(FetchUserPostUseCase.self) { resolver in
@@ -313,35 +306,35 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(ReportCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return ReportCommentUseCaseImpl(repository: repository)
         }
         
         container.register(ReportPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return ReportPostUseCaseImpl(repository: repository)
         }
 
         container.register(SearchPostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return SearchPostUseCaseImpl(repository: repository)
         }
 
         container.register(ToggleCommentLikeUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return ToggleCommentLikeUseCaseImpl(repository: repository)
         }
 
         container.register(TogglePostLikeUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return TogglePostLikeUseCaseImpl(repository: repository)
@@ -362,8 +355,8 @@ public struct DomainAssembly: Assembly {
         }
 
         container.register(UpdateCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(CommentRepository.self) else {
-                fatalError("컨테이너에 CommentRepository가 등록되어 있지 않습니다.")
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return UpdateCommentUseCaseImpl(repository: repository)
         }
@@ -376,7 +369,7 @@ public struct DomainAssembly: Assembly {
         }
 
         container.register(UpdatePostUseCase.self) { resolver in
-            guard let repository = resolver.resolve(PostRepository.self) else {
+            guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 PostRepository가 등록되어 있지 않습니다.")
             }
             return UpdatePostUseCaseImpl(repository: repository)

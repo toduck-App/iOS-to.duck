@@ -30,7 +30,7 @@ final class SocialRoutineView: UIView {
         categoryImage.image = routine.categoryIcon
         routineTitleLabel.setText(routine.title)
         routineContentLabel.setText(routine.memo ?? "")
-        if let routineDate = routine.date {
+        if let routineDate = routine.time {
             routineDateLabel.setText(routineDate.convertToString(formatType: .time12HourEnglish))
         }
         setupUI()

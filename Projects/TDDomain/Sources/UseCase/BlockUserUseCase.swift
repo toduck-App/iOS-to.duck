@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol BlockUserUseCase {
-    func execute(userID: User.ID) async throws -> Bool
+    func execute(userID: User.ID) async throws
 }
 
 public final class BlockUserUseCaseImpl: BlockUserUseCase {
@@ -11,7 +11,7 @@ public final class BlockUserUseCaseImpl: BlockUserUseCase {
         self.repository = repository
     }
 
-    public func execute(userID: User.ID) async throws -> Bool {
+    public func execute(userID: User.ID) async throws {
         try await repository.blockUser(userID: userID)
     }
 }

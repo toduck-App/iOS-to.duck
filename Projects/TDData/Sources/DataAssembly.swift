@@ -12,10 +12,6 @@ public struct DataAssembly: Assembly {
             return AuthRepositoryImpl(service: service)
         }.inObjectScope(.container)
         
-        container.register(CommentRepository.self) { _ in
-            return CommentRepositoryImpl()
-        }.inObjectScope(.container)
-        
         container.register(CategoryRepository.self) { _ in
             guard let storage = container.resolve(CategoryStorage.self) else {
                 fatalError("Storage is not registered")
@@ -34,14 +30,14 @@ public struct DataAssembly: Assembly {
             return MyPageRepositoryImpl(service: service)
         }.inObjectScope(.container)
         
-        container.register(PostRepository.self) { _ in
+        container.register(SocialRepository.self) { _ in
             guard let socialService = container.resolve(SocialService.self) else {
                 fatalError("SocialService is not registered")
             }
             guard let awsService = container.resolve(AwsService.self) else {
                 fatalError("awsService is not registered")
             }
-            return PostRepositoryImpl(socialService: socialService, awsService: awsService)
+            return SocialRepositoryImp(socialService: socialService, awsService: awsService)
         }.inObjectScope(.container)
         
         container.register(RoutineRepository.self) { _ in
@@ -56,7 +52,10 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
             
         container.register(UserRepository.self) { _ in
-            return UserRepositoryImpl()
+            guard let service = container.resolve(UserService.self) else {
+                fatalError("UserService is not registered")
+            }
+            return UserRepositoryImpl(service: service)
         }.inObjectScope(.container)
         
         container.register(UserAuthRepository.self) { _ in

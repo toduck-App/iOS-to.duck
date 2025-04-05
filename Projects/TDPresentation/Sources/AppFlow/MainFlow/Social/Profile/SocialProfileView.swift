@@ -201,16 +201,20 @@ final class SocialProfileView: BaseView {
         socialFeedCollectionView.register(with: SocialFeedCollectionViewCell.self)
     }
     
-    public func configureFollowingButton(isFollowing: Bool) {
+    public func configureFollowingButton(isFollowing: Bool, isMe: Bool) {
+        if isMe {
+            followButton.isHidden = true
+            return
+        }
         followButton.setTitle(isFollowing ? "팔로잉" : "팔로우", for: .normal)
         followButton.configuration?.baseForegroundColor = isFollowing ? TDColor.Neutral.neutral600 : TDColor.baseWhite
         followButton.configuration?.baseBackgroundColor = isFollowing ? TDColor.Neutral.neutral100 : TDColor.Primary.primary500
     }
     
-    public func configure(avatarURL: String, badgeTitle: String, nickname: String) {
+    public func configure(avatarURL: String?, badgeTitle: String, nickname: String) {
         titleBagde.setTitle(badgeTitle)
         nickNameLabel.setText(nickname)
-        if let avatarURL = URL(string: avatarURL) {
+        if let avatarURL, let avatarURL = URL(string: avatarURL) {
             avatarView.kf.setImage(with: avatarURL)
         } else {
             avatarView.image = TDImage.Profile.medium

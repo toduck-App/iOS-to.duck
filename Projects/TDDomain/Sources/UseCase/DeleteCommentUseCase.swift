@@ -5,9 +5,9 @@ public protocol DeleteCommentUseCase {
 }
 
 public final class DeleteCommentUseCaseImpl: DeleteCommentUseCase {
-    private let repository: CommentRepository
+    private let repository: SocialRepository
     
-    public init(repository: CommentRepository) {
+    public init(repository: SocialRepository) {
         self.repository = repository
     }
     

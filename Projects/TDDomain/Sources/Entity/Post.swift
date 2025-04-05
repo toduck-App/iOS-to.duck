@@ -57,7 +57,7 @@ public struct Post: Identifiable {
         self.shareCount = 0
         self.timestamp = Date()
         // 임시
-        self.user = User(id: 1, name: "", icon: nil, title: "임시 사용자", isblock: false)
+        self.user = User(id: 1, name: "", icon: nil, title: "임시 사용자")
         self.imageList = nil
     }
     
@@ -105,7 +105,6 @@ public extension Post {
                                         ),
                                         isAllDay: false,
                                         isPublic: false,
-                                        date: Date(),
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
                                         alarmTime: .tenMinutesBefore,
@@ -142,7 +141,6 @@ public extension Post {
                                         category: TDCategory(colorHex: "#123456", imageName: "computer"),
                                         isAllDay: false,
                                         isPublic: false,
-                                        date: nil,
                                         time: nil,
                                         repeatDays: [.friday, .saturday],
                                         alarmTime: .tenMinutesBefore,

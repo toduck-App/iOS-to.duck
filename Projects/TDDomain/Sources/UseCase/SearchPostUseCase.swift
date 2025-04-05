@@ -1,17 +1,17 @@
 import Foundation
 
 public protocol SearchPostUseCase {
-    func execute(keyword: String, category: [PostCategory]?) async throws -> [Post]?
+    func execute(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?)
 }
 
 public final class SearchPostUseCaseImpl: SearchPostUseCase {
-    private let repository: PostRepository
+    private let repository: SocialRepository
 
-    public init(repository: PostRepository) {
+    public init(repository: SocialRepository) {
         self.repository = repository
     }
 
-    public func execute(keyword: String, category: [PostCategory]?) async throws -> [Post]? {
-        try await repository.searchPost(keyword: keyword, category: category)
+    public func execute(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
+        try await repository.searchPost(keyword: keyword, cursor: cursor, limit: limit, category: category)
     }
 }

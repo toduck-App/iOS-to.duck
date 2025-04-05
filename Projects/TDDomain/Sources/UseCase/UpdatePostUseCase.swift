@@ -5,9 +5,9 @@ public protocol UpdatePostUseCase{
 }
 
 public final class UpdatePostUseCaseImpl: UpdatePostUseCase {
-    private let repository: PostRepository
+    private let repository: SocialRepository
     
-    public init(repository: PostRepository) {
+    public init(repository: SocialRepository) {
         self.repository = repository
     }
     
