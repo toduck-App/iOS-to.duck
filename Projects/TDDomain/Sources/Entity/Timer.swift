@@ -16,7 +16,7 @@ public struct TDTimerSetting {
 
     public func toFocusDurationMinutes() -> Int {
         #if DEBUG
-            return focusDuration / 10
+            return focusDuration
         #else
             return focusDuration * 60
         #endif
