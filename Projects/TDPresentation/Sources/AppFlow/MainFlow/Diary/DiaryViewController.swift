@@ -198,7 +198,11 @@ final class DiaryViewController: BaseViewController<BaseView> {
         switch index {
         case 0:
             let fetchDiaryListUseCase = DIContainer.shared.resolve(FetchDiaryListUseCase.self)
-            let viewModel = DiaryCalendarViewModel(fetchDiaryListUseCase: fetchDiaryListUseCase)
+            let deleteDiaryUseCase = DIContainer.shared.resolve(DeleteDiaryUseCase.self)
+            let viewModel = DiaryCalendarViewModel(
+                fetchDiaryListUseCase: fetchDiaryListUseCase,
+                deleteDiaryUseCase: deleteDiaryUseCase
+            )
             let diaryCalendarViewController = DiaryCalendarViewController(viewModel: viewModel)
             diaryCalendarViewController.coordinator = coordinator
             diaryCalendarViewController.delegate = self

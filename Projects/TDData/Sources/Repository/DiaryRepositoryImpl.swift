@@ -23,6 +23,10 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         try await service.updateDiary(diary: diary)
     }
     
+    public func deleteDiary(id: Int) async throws {
+        try await service.deleteDiary(id: id)
+    }
+    
     public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
         try await service.fetchDiaryCompareCount(year: year, month: month)
     }

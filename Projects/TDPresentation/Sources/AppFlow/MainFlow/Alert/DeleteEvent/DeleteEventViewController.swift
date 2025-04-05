@@ -2,6 +2,10 @@ import TDCore
 import TDDesign
 import UIKit
 
+protocol DeleteEventViewControllerDelegate: AnyObject {
+    func didTapDeleteButton()
+}
+
 final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     enum EventRepeatingMode {
         case single
@@ -10,6 +14,7 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     
     private let mode: EventRepeatingMode
     private let isScheduleEvent: Bool
+    weak var delegate: DeleteEventViewControllerDelegate?
 
     /// - Parameters:
     ///   - isScheduleEvent: 일정인지 루틴인지 여부 (`true`: 일정, `false`: 루틴)
@@ -53,6 +58,10 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     }
 
     private func setupButtonAction() {
+        popupContentView.currentEventDeleteButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.didTapDeleteButton()
+        }, for: .touchUpInside)
+        
         popupContentView.cancelButton.addAction(UIAction { [weak self] _ in
             self?.dismiss(animated: true)
         }, for: .touchUpInside)

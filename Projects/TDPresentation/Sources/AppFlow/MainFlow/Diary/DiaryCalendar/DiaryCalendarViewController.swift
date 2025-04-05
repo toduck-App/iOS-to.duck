@@ -155,6 +155,8 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                     self?.calendar.reloadData()
                 case .notFoundDiary:
                     self?.updateDiaryView()
+                case .deletedDiary:
+                    self?.updateDiaryView()
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -217,7 +219,12 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
             guard let diary = viewModel.selectedDiary else { return }
             coordinator?.didTapEditDiaryButton(diary: diary)
         case .delete:
-            break
+            let deleteDiaryViewController = DeleteEventViewController(
+                isRepeating: false,
+                isScheduleEvent: false
+            )
+            deleteDiaryViewController.delegate = self
+            self.presentPopup(with: deleteDiaryViewController)
         }
     }
 }
@@ -274,5 +281,12 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         titleSelectionColorFor date: Date
     ) -> UIColor? {
         colorForDate(date)
+    }
+}
+
+// MARK:
+extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
+    func didTapDeleteButton() {
+        input.send(.deleteDiary(viewModel.selectedDiary?.id ?? 0))
     }
 }
