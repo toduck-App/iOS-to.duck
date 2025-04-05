@@ -61,15 +61,15 @@ final class TimerSettingView: BaseView {
         }
     }
 
-    let exitButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear)
+    let exitButton: TDBaseButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear,foregroundColor: TDColor.Neutral.neutral700)
     let timerSettingTitleLabel = TDLabel(
         labelText: "타이머 설정", toduckFont: .boldHeader4, alignment: .center,
         toduckColor: TDColor.Neutral.neutral800
     )
 
     let focusTimeField = TimerSettingFieldControl(state: .focusTime)
-    let restTimeField = TimerSettingFieldControl(state: .focusCount)
-    let focusCountField = TimerSettingFieldControl(state: .restTime)
+    let restTimeField = TimerSettingFieldControl(state: .restTime)
+    let focusCountField = TimerSettingFieldControl(state: .focusCount)
 
     let fieldStack = UIStackView().then {
         $0.spacing = 28

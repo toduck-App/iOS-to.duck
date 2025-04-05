@@ -6,7 +6,7 @@ public struct TDTimerSetting {
     public init(focusDuration: Int, focusCountLimit: Int, restDuration: Int) {
         self.focusDuration = focusDuration
         self.focusCountLimit = focusCountLimit
-        self.restDuration = focusCountLimit
+        self.restDuration = restDuration
     }
 
     /// 초기값 설정
@@ -16,7 +16,7 @@ public struct TDTimerSetting {
 
     public func toFocusDurationMinutes() -> Int {
         #if DEBUG
-            return focusDuration / 10
+            return focusDuration
         #else
             return focusDuration * 60
         #endif
@@ -24,7 +24,7 @@ public struct TDTimerSetting {
 
     public func toRestDurationMinutes() -> Int {
         #if DEBUG
-            return restDuration / 10
+            return restDuration
         #else
             return restDuration * 60
         #endif

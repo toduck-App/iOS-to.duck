@@ -409,8 +409,22 @@ public struct DomainAssembly: Assembly {
             return UpdateTimerSettingUseCaseImpl(repository: repository)
         }
         
-        container.register(TimerUseCase.self) { resolver in
-            return TimerUseCaseImpl()
+        container.register(FocusTimerUseCase.self) { resolver in
+            guard let repository = resolver.resolve(TimerRepository.self) else {
+                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+            }
+            return FocusTimerUseCaseImpl(repository: repository)
+        }
+
+        container.register(RestTimerUseCase.self) { resolver in
+            guard let repository = resolver.resolve(TimerRepository.self) else {
+                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+            }
+            return RestTimerUseCaseImpl(repository: repository)
+        }
+
+        container.register(PauseTimerUseCase.self) { resolver in
+            return PauseTimerUseCaseImpl()
         }
         
         container.register(FetchFocusCountUseCase.self, factory: { resolver in

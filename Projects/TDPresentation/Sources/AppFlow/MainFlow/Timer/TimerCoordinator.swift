@@ -25,7 +25,9 @@ final class TimerCoordinator: Coordinator {
     }
 
     func start() {
-        let timerUseCase = injector.resolve(TimerUseCase.self)
+        let focusTimerUseCase = injector.resolve(FocusTimerUseCase.self)
+        let restTimerUseCase = injector.resolve(RestTimerUseCase.self)
+        let pauseTimerUseCase = injector.resolve(PauseTimerUseCase.self)
 
         let fetchTimerSettingUseCase = injector.resolve(FetchTimerSettingUseCase.self)
         let updateTimerSettingUseCase = injector.resolve(UpdateTimerSettingUseCase.self)
@@ -38,7 +40,9 @@ final class TimerCoordinator: Coordinator {
         let resetFocusCountUseCase = injector.resolve(ResetFocusCountUseCase.self)
 
         let timerViewModel = TimerViewModel(
-            timerUseCase: timerUseCase,
+            focusTimerUseCase: focusTimerUseCase,
+            restTimerUseCase: restTimerUseCase,
+            pauseTimerUseCase: pauseTimerUseCase,
             fetchTimerSettingUseCase: fetchTimerSettingUseCase,
             updateTimerSettingUseCase: updateTimerSettingUseCase,
             fetchTimerThemeUseCase: fetchTimerThemeUseCase,
