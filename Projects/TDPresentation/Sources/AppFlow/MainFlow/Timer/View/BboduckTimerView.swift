@@ -8,7 +8,7 @@ final class BboduckTimerView: BaseTimerView {
     private static let toduckBundle = Bundle(identifier: "to.duck.toduck.design")!
 
     private let pauseImage = "Timer_0"
-
+    private var preLottieIndex = -1
     private let images: [String] = [
         "Timer_1",
         "Timer_2",
@@ -48,9 +48,12 @@ final class BboduckTimerView: BaseTimerView {
     private func updateProgress() {
         let clampedProgress = min(max(progress, 0), 1)
         
-        let stepSize = 1.0 / CGFloat(images.count - 1)
+        let stepSize = 1.0 / CGFloat(images.count)
         let imageIndex = min(Int(clampedProgress / stepSize), images.count - 1)
 
+
+        guard imageIndex != preLottieIndex else { return }
+        preLottieIndex = imageIndex
         let newAnimation = LottieAnimation.named(images[imageIndex], bundle: BboduckTimerView.toduckBundle)
 
         bboduckView.animation = newAnimation
