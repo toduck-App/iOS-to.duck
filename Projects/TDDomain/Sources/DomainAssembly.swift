@@ -263,13 +263,6 @@ public struct DomainAssembly: Assembly {
             return FetchScheduleUseCaseImpl(repository: repository)
         }
         
-        container.register(FetchUserDetailUseCase.self) { resolver in
-            guard let repository = resolver.resolve(UserRepository.self) else {
-                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
-            }
-            return FetchUserDetailUseCaseImpl(repository: repository)
-        }
-        
         container.register(FetchUserPostUseCase.self) { resolver in
             guard let repository = resolver.resolve(UserRepository.self) else {
                 fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")

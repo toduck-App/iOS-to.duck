@@ -8,12 +8,11 @@ public final class UserRepositoryImpl: UserRepository {
         self.service = service
     }
 
-    public func fetchUser(userID: User.ID) async throws -> User {
-        User.dummy.first!
-    }
-
-    public func fetchUserDetail(userID: User.ID) async throws -> UserDetail {
-        UserDetail.dummyUserDetail
+    public func fetchUser(userID: User.ID) async throws -> (User, UserDetail) {
+        let dto = try await service.requestUserProfile(userId: userID)
+        let user = User(id: userID, name: dto.nickname, icon: dto.profileImageUrl, title: "작심삼일")
+        let userDetail = UserDetail(isFollowing: false, followingCount: dto.followingCount, followerCount: dto.followerCount, totalPostCount: dto.postCount, totalRoutineCount: 0)
+        return (user, userDetail)
     }
 
     public func fetchUserPostList(userID: User.ID) async throws -> [Post]? {

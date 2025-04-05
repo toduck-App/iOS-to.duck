@@ -1,8 +1,7 @@
 import Foundation
 
 public protocol UserRepository {
-    func fetchUser(userID: User.ID) async throws -> User
-    func fetchUserDetail(userID: User.ID) async throws -> UserDetail
+    func fetchUser(userID: User.ID) async throws -> (User, UserDetail)
     func fetchUserPostList(userID: User.ID) async throws -> [Post]?
     func fetchUserRoutineList(userID: User.ID) async throws -> [Routine]?
     func fetchUserShareUrl(userID: User.ID) async throws -> String

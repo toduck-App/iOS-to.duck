@@ -23,8 +23,7 @@ public enum SocialAPI {
     case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
     case blockComment(commentId: String) // TODO: Comment 차단 기능 구현 필요
     
-    case fetchUser(userId: String) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
-    case fetchUserDetail(userId: String) // TODO: 다른 유저의 상세 정보 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUser(userId: Int) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserPostList(userId: String) // TODO: 다른 유저의 Post List 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserShareUrl(userId: String) // 이게 뭐지?
@@ -73,9 +72,7 @@ extension SocialAPI: MFTarget {
         case .blockComment(let commentId):
             "/comments/\(commentId)/block"
         case .fetchUser(let userId):
-            "/users/\(userId)"
-        case .fetchUserDetail(let userId):
-            "/users/\(userId)/detail"
+            "v1/profiles/\(userId)"
         case .fetchUserPostList(let userId):
             "/users/\(userId)/posts"
         case .fetchUserRoutineList(let userId):
@@ -94,7 +91,6 @@ extension SocialAPI: MFTarget {
              .fetchPost,
              .fetchUserCommentList,
              .fetchUser,
-             .fetchUserDetail,
              .fetchUserPostList,
              .fetchUserRoutineList,
              .fetchUserShareUrl:
@@ -141,7 +137,6 @@ extension SocialAPI: MFTarget {
              .toggleCommentLike,
              .fetchUserCommentList,
              .fetchUser,
-             .fetchUserDetail,
              .fetchUserPostList,
              .fetchUserRoutineList,
              .fetchUserShareUrl,
@@ -171,7 +166,6 @@ extension SocialAPI: MFTarget {
              .toggleCommentLike,
              .fetchUserCommentList,
              .fetchUser,
-             .fetchUserDetail,
              .fetchUserPostList,
              .fetchUserRoutineList,
              .fetchUserShareUrl,

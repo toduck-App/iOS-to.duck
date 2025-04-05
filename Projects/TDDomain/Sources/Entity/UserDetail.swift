@@ -4,25 +4,19 @@ public struct UserDetail {
     public let followerCount: Int
     public let totalPostCount: Int
     public let totalRoutineCount: Int
-    public let whoFollow: [User]?
-    public let routineShareCount: Int
     
     public init(
         isFollowing: Bool,
         followingCount: Int,
         followerCount: Int,
         totalPostCount: Int,
-        totalRoutineCount: Int,
-        whoFollow: [User]? = nil,
-        routineShareCount: Int
+        totalRoutineCount: Int
     ) {
         self.isFollowing = isFollowing
         self.followingCount = followingCount
         self.followerCount = followerCount
         self.totalPostCount = totalPostCount
         self.totalRoutineCount = totalRoutineCount
-        self.whoFollow = whoFollow
-        self.routineShareCount = routineShareCount
     }
 }
 
@@ -32,8 +26,6 @@ extension UserDetail {
         followingCount: 12,
         followerCount: 261,
         totalPostCount: 1,
-        totalRoutineCount: 1,
-        whoFollow: [],
-        routineShareCount: 1
+        totalRoutineCount: 1
     )
 }

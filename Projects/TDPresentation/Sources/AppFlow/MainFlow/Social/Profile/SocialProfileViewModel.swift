@@ -7,7 +7,6 @@ final class SocialProfileViewModel: BaseViewModel {
         case fetchRoutine
         case fetchPosts
         case fetchUser
-        case fetchUserDetail
         case toggleFollow
     }
     
@@ -15,11 +14,9 @@ final class SocialProfileViewModel: BaseViewModel {
         case fetchRoutine
         case fetchPosts
         case fetchUser
-        case fetchUserDetail
         case failure(String)
     }
     
-    private let fetchUserDetailUseCase: FetchUserDetailUseCase
     private let fetchUserUseCase: FetchUserUseCase
     private let fetchUserPostUseCase: FetchUserPostUseCase
     private let toggleUserFollowUseCase: ToggleUserFollowUseCase
@@ -36,14 +33,12 @@ final class SocialProfileViewModel: BaseViewModel {
     
     init(
         id: User.ID,
-        fetchUserDetailUseCase: FetchUserDetailUseCase,
         fetchUserUseCase: FetchUserUseCase,
         fetchUserPostUseCase: FetchUserPostUseCase,
         toggleUserFollowUseCase: ToggleUserFollowUseCase,
         fetchRoutineListUseCase: FetchRoutineListUseCase
     ) {
         self.userId = id
-        self.fetchUserDetailUseCase = fetchUserDetailUseCase
         self.fetchUserUseCase = fetchUserUseCase
         self.fetchUserPostUseCase = fetchUserPostUseCase
         self.toggleUserFollowUseCase = toggleUserFollowUseCase
@@ -59,8 +54,6 @@ final class SocialProfileViewModel: BaseViewModel {
                 Task { await self?.fetchPosts() }
             case .fetchUser:
                 Task { await self?.fetchUser() }
-            case .fetchUserDetail:
-                Task { await self?.fetchUserDetail() }
             case .toggleFollow:
                 Task { await self?.toggleFollow() }
             }
@@ -71,23 +64,24 @@ final class SocialProfileViewModel: BaseViewModel {
     
     private func fetchUser() async {
         do {
-            let user = try await fetchUserUseCase.execute(id: userId)
+            let (user, userDetail) = try await fetchUserUseCase.execute(id: userId)
             self.user = user
+            self.userDetail = userDetail
             output.send(.fetchUser)
         } catch {
             output.send(.failure("유저를 찾을 수 없습니다."))
         }
     }
     
-    private func fetchUserDetail() async {
-        do {
-            let userDetail = try await fetchUserDetailUseCase.execute(id: userId)
-            self.userDetail = userDetail
-            output.send(.fetchUserDetail)
-        } catch {
-            output.send(.failure("유저를 찾을 수 없습니다."))
-        }
-    }
+//    private func fetchUserDetail() async {
+//        do {
+//            let userDetail = try await fetchUserDetailUseCase.execute(id: userId)
+//            self.userDetail = userDetail
+//            output.send(.fetchUserDetail)
+//        } catch {
+//            output.send(.failure("유저를 찾을 수 없습니다."))
+//        }
+//    }
     
     private func fetchPosts() async {
         do {
@@ -113,7 +107,7 @@ final class SocialProfileViewModel: BaseViewModel {
         do {
             let isFollowed = try await toggleUserFollowUseCase.execute(userID: .init(), targetUserID: .init())
             self.userDetail?.isFollowing = isFollowed
-            output.send(.fetchUserDetail)
+            output.send(.fetchUser)
         } catch {
             output.send(.failure("팔로잉에 실패했습니다."))
         }

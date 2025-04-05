@@ -31,9 +31,7 @@ public struct TDPostDTO: Codable {
                 name: nickname,
                 icon: profileImageUrl,
                 // TODO: 뱃지 정보가 아직 미구현
-                title: "작심삼일",
-                // TODO: 차단 정보도 어떻게 되었는지 물어보기
-                isblock: false
+                title: "작심삼일"
             )
         }
     }

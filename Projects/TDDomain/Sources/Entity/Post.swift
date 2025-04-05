@@ -57,7 +57,7 @@ public struct Post: Identifiable {
         self.shareCount = 0
         self.timestamp = Date()
         // 임시
-        self.user = User(id: 1, name: "", icon: nil, title: "임시 사용자", isblock: false)
+        self.user = User(id: 1, name: "", icon: nil, title: "임시 사용자")
         self.imageList = nil
     }
     

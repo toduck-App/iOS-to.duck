@@ -28,7 +28,6 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView>, 
     override func viewDidLoad() {
         super.viewDidLoad()
         input.send(.fetchUser)
-        input.send(.fetchUserDetail)
         input.send(.fetchRoutine)
     }
 
@@ -62,17 +61,16 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView>, 
                     let url = self?.viewModel.user?.icon ?? ""
                     let badge = self?.viewModel.user?.title ?? ""
                     let nickname = self?.viewModel.user?.name ?? ""
-                    self?.layoutView.configure(
-                        avatarURL: url,
-                        badgeTitle: badge,
-                        nickname: nickname
-                    )
-                case .fetchUserDetail:
                     let followingCount = self?.viewModel.userDetail?.followingCount ?? 0
                     let followerCount = self?.viewModel.userDetail?.followerCount ?? 0
                     let postCount = self?.viewModel.userDetail?.totalPostCount ?? 0
                     let routineCount = self?.viewModel.userDetail?.totalRoutineCount ?? 0
                     let isFollowing = self?.viewModel.userDetail?.isFollowing ?? false
+                    self?.layoutView.configure(
+                        avatarURL: url,
+                        badgeTitle: badge,
+                        nickname: nickname
+                    )
                     self?.layoutView.configureFollowingButton(isFollowing: isFollowing)
                     self?.layoutView.configure(
                         followingCount: followingCount,
