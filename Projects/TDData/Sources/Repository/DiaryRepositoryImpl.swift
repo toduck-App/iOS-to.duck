@@ -2,7 +2,6 @@ import TDDomain
 import Foundation
 
 public final class DiaryRepositoryImpl: DiaryRepository {
-    
     private let service: DiaryService
     
     public init(service: DiaryService) {
@@ -19,9 +18,12 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         return response.convertToDiaryList()
     }
     
-    
     public func updateDiary(isChangeEmotion: Bool, diary: TDDomain.Diary) async throws {
         let diary = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
         try await service.updateDiary(diary: diary)
+    }
+    
+    public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
+        try await service.fetchDiaryCompareCount(year: year, month: month)
     }
 }

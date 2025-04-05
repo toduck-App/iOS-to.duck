@@ -9,6 +9,6 @@ public struct DiaryPostRequestDTO: Encodable {
         self.emotion = diary.emotion.rawValue
         self.title = diary.title
         self.memo = diary.memo
-        self.diaryImageUrls = diary.diaryImageUrls ?? [""]
+        self.diaryImageUrls = diary.diaryImageUrls ?? []
     }
 }

@@ -26,7 +26,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     }
     
     /// 분석 뷰
-    let analyzeView = DiaryAnalyzeView(diaryCount: 25, focusPercent: 55)
+    let analyzeView = DiaryAnalyzeView(diaryCount: 0, focusPercent: 0)
     
     let diaryContentContainerView = UIView()
     /// 세그먼트 컨트롤 (기분 / 집중도)
@@ -80,6 +80,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         super.viewDidLoad()
         
         input.send(.fetchUserNickname)
+        input.send(.fetchDiaryCompareCount)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -155,6 +156,8 @@ final class DiaryViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedUserNickname(let nickname):
                     self?.analyzeView.configure(nickname: nickname)
+                case .fetchedCompareCount(let count):
+                    self?.analyzeView.diaryAnalyzeView.updateDiaryCount(count)
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }

@@ -305,6 +305,13 @@ public struct DomainAssembly: Assembly {
             return FetchKeywordUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchDiaryCompareCountUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchDiaryCompareCountUseCaseImpl(repository: repository)
+        }
+        
         container.register(MoveTomorrowScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")

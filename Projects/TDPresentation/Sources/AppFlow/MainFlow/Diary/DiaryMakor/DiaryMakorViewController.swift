@@ -52,9 +52,9 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             if self?.isEdit == true {
-                self?.input.send(.tapSaveButton)
-            } else {
                 self?.input.send(.tapEditButton)
+            } else {
+                self?.input.send(.tapSaveButton)
             }
         }, for: .touchUpInside)
     }

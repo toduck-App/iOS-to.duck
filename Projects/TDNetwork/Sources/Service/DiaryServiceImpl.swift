@@ -26,4 +26,10 @@ public struct DiaryServiceImpl: DiaryService {
         let target = DiaryAPI.updateDiary(diary: diary)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
+        let target = DiaryAPI.compareDiaryCount(year: year, month: month)
+        let response = try await provider.requestDecodable(of: DiaryCompareCountResponseDTO.self, target)
+        return response.value.count
+    }
 }
