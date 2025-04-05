@@ -32,6 +32,10 @@ final class DiaryCoordinator: Coordinator {
         diaryViewController.coordinator = self
         navigationController.pushViewController(diaryViewController, animated: false)
     }
+    
+    func didTapHomeTomatoIcon() {
+        (finishDelegate as? MainTabBarCoordinator)?.switchToHomeTab()
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
