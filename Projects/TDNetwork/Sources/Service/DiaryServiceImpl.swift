@@ -4,7 +4,6 @@ import TDData
 import TDDomain
 
 public struct DiaryServiceImpl: DiaryService {
-    
     private let provider: MFProvider<DiaryAPI>
     
     public init(provider: MFProvider<DiaryAPI> = MFProvider<DiaryAPI>()) {
@@ -21,5 +20,10 @@ public struct DiaryServiceImpl: DiaryService {
         let response = try await provider.requestDecodable(of: DiaryListResponseDTO.self, target)
         
         return response.value
+    }
+    
+    public func updateDiary(diary: TDData.DiaryPatchRequestDTO) async throws {
+        let target = DiaryAPI.updateDiary(diary: diary)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
 }

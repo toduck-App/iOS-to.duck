@@ -8,6 +8,7 @@ final class DiaryMakorViewModel: BaseViewModel {
         case updateTitleTextField(String)
         case updateMemoTextView(String)
         case tapSaveButton
+        case tapEditButton
     }
     
     enum Output {
@@ -15,6 +16,7 @@ final class DiaryMakorViewModel: BaseViewModel {
     }
     
     private let createDiaryUseCase: CreateDiaryUseCase
+    private let updateDiaryUseCase: UpdateDiaryUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var selectedMood: String?
@@ -25,12 +27,17 @@ final class DiaryMakorViewModel: BaseViewModel {
     
     init(
         createDiaryUseCase: CreateDiaryUseCase,
+        updateDiaryUseCase: UpdateDiaryUseCase,
         selectedDate: Date? = nil,
         preDiary: Diary? = nil
     ) {
         self.createDiaryUseCase = createDiaryUseCase
+        self.updateDiaryUseCase = updateDiaryUseCase
         self.selectedDate = selectedDate
         self.preDiary = preDiary
+        self.selectedMood = preDiary?.emotion.rawValue
+        self.title = preDiary?.title
+        self.memo = preDiary?.memo
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -44,23 +51,45 @@ final class DiaryMakorViewModel: BaseViewModel {
                 self?.memo = memo
             case .tapSaveButton:
                 Task { await self?.saveDiary() }
+            case .tapEditButton:
+                Task { await self?.editDiary() }
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
     
+    private func createDiaryObject(id: Int = 0) -> Diary {
+        return Diary(
+            id: id,
+            date: selectedDate ?? Date(),
+            emotion: Emotion(rawValue: selectedMood ?? "") ?? .angry,
+            title: title ?? "",
+            memo: memo ?? "",
+            diaryImageUrls: nil
+        )
+    }
+
     private func saveDiary() async {
         do {
-            let diary = Diary(
-                id: 0,
-                date: selectedDate ?? Date(),
-                emotion: Emotion(rawValue: selectedMood ?? "") ?? .angry,
-                title: title ?? "",
-                memo: memo ?? "",
-                diaryImageUrls: nil
-            )
+            let diary = createDiaryObject()
             try await createDiaryUseCase.execute(diary: diary)
+        } catch {
+            output.send(.failure(error.localizedDescription))
+        }
+    }
+
+    private func editDiary() async {
+        guard let preDiary else { return }
+
+        do {
+            let isChangeEmotion = preDiary.emotion.rawValue != selectedMood
+            let updatedDiary = createDiaryObject(id: preDiary.id)
+
+            try await updateDiaryUseCase.execute(
+                isChangeEmotion: isChangeEmotion,
+                diary: updatedDiary
+            )
         } catch {
             output.send(.failure(error.localizedDescription))
         }

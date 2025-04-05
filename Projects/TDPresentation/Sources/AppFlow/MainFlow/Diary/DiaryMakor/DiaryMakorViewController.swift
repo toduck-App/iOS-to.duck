@@ -51,7 +51,11 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         layoutView.diaryMoodCollectionView.delegate = self
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
-            self?.input.send(.tapSaveButton)
+            if self?.isEdit == true {
+                self?.input.send(.tapSaveButton)
+            } else {
+                self?.input.send(.tapEditButton)
+            }
         }, for: .touchUpInside)
     }
     
@@ -87,7 +91,7 @@ extension DiaryMakorViewController: UIScrollViewDelegate {
             self?.view.layoutIfNeeded()
         }
     }
-
+    
     private func hideSnackBar() {
         guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
         constraint.update(offset: 50)

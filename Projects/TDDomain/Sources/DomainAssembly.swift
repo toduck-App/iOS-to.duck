@@ -221,12 +221,12 @@ public struct DomainAssembly: Assembly {
             return FetchCategoriesUseCaseImpl(repository: repository)
         }
         
-//        container.register(FetchDiaryUseCase.self) { resolver in
-//            guard let repository = resolver.resolve(DiaryRepository.self) else {
-//                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
-//            }
-//            return FetchDiaryUseCaseImpl(repository: repository)
-//        }
+        container.register(FetchDiaryListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchDiaryListUseCaseImpl(repository: repository)
+        }
         
         container.register(FetchPostUseCase.self) { resolver in
             guard let repository = resolver.resolve(PostRepository.self) else {
@@ -368,12 +368,12 @@ public struct DomainAssembly: Assembly {
             return UpdateCommentUseCaseImpl(repository: repository)
         }
 
-//        container.register(UpdateDiaryUseCase.self) { resolver in
-//            guard let repository = resolver.resolve(DiaryRepository.self) else {
-//                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
-//            }
-//            return UpdateDiaryUseCaseImpl(repository: repository)
-//        }
+        container.register(UpdateDiaryUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateDiaryUseCaseImpl(repository: repository)
+        }
 
         container.register(UpdatePostUseCase.self) { resolver in
             guard let repository = resolver.resolve(PostRepository.self) else {
