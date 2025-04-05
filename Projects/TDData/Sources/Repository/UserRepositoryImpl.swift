@@ -11,7 +11,7 @@ public final class UserRepositoryImpl: UserRepository {
     public func fetchUser(userID: User.ID) async throws -> (User, UserDetail) {
         let dto = try await service.requestUserProfile(userId: userID)
         let user = User(id: userID, name: dto.nickname, icon: dto.profileImageUrl, title: "작심삼일")
-        let userDetail = UserDetail(isFollowing: false, followingCount: dto.followingCount, followerCount: dto.followerCount, totalPostCount: dto.postCount, totalRoutineCount: 0)
+        let userDetail = UserDetail(isFollowing: false, followingCount: dto.followingCount, followerCount: dto.followerCount, totalPostCount: dto.postCount, totalRoutineCount: 0, isMe: dto.isMe)
         return (user, userDetail)
     }
 
@@ -27,9 +27,12 @@ public final class UserRepositoryImpl: UserRepository {
         ""
     }
 
-    public func toggleUserFollow(userID: User.ID, targetUserID: User.ID) async throws -> Bool {
-        UserDetail.dummyUserDetail.isFollowing.toggle()
-        return UserDetail.dummyUserDetail.isFollowing
+    public func followUser(targetUserID: TDDomain.User.ID) async throws {
+        try await service.requestFollow(userId: targetUserID)
+    }
+    
+    public func unFollowUser(targetUserID: TDDomain.User.ID) async throws {
+        try await service.requestUnfollow(userId: targetUserID)
     }
 
     public func blockUser(userID: User.ID) async throws {

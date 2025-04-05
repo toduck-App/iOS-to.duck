@@ -27,7 +27,9 @@ public enum SocialAPI {
     case fetchUserPostList(userId: String) // TODO: 다른 유저의 Post List 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserShareUrl(userId: String) // 이게 뭐지?
-    case toggleUserFollow(userId: String, targetUserId: String) // TODO: Follow 기능 구현 필요
+    
+    case followUser(targetUserId: Int)
+    case unfollowUser(targetUserId: Int)
 }
 
 extension SocialAPI: MFTarget {
@@ -79,8 +81,10 @@ extension SocialAPI: MFTarget {
             "/users/\(userId)/routines"
         case .fetchUserShareUrl(let userId):
             "/users/\(userId)/share-url"
-        case .toggleUserFollow(let userId, let targetUserId):
-            "/users/\(userId)/follow/\(targetUserId)"
+        case .followUser(let targetUserId):
+            "v1/users/\(targetUserId)/follow"
+        case .unfollowUser(let targetUserId):
+            "v1/users/\(targetUserId)/follow"
         }
     }
     
@@ -103,11 +107,11 @@ extension SocialAPI: MFTarget {
              .createComment,
              .reportComment,
              .blockComment,
-             .toggleUserFollow:
+             .followUser:
             .post
         case .updatePost, .updateComment:
             .put
-        case .deletePost, .deleteComment, .unlikePost:
+        case .deletePost, .deleteComment, .unlikePost, .unfollowUser:
             .delete
         }
     }
@@ -146,7 +150,8 @@ extension SocialAPI: MFTarget {
              .updatePost,
              .createComment,
              .updateComment,
-             .toggleUserFollow,
+             .followUser,
+             .unfollowUser,
              .reportComment,
              .blockComment:
             // TODO: - API에 따라 이 부분도 구현되어야 합니다.
@@ -170,7 +175,9 @@ extension SocialAPI: MFTarget {
              .fetchUserRoutineList,
              .fetchUserShareUrl,
              .deletePost,
-             .deleteComment:
+             .deleteComment,
+             .followUser,
+             .unfollowUser:
             return .requestPlain
         case .createPost(let post):
             let params: [String: Any?] = [
@@ -193,8 +200,6 @@ extension SocialAPI: MFTarget {
             ]
             return .requestParameters(parameters: params.compactMapValues { $0 })
         case .updateComment(let comment):
-            return .requestPlain
-        case .toggleUserFollow:
             return .requestPlain
         case .reportComment(commentId: let commentId):
             return .requestPlain

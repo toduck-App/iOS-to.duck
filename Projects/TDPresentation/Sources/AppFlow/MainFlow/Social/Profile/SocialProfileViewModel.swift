@@ -13,7 +13,7 @@ final class SocialProfileViewModel: BaseViewModel {
     enum Output {
         case fetchRoutine
         case fetchPosts
-        case fetchUser
+        case fetchUser(User, UserDetail)
         case failure(String)
     }
     
@@ -67,7 +67,7 @@ final class SocialProfileViewModel: BaseViewModel {
             let (user, userDetail) = try await fetchUserUseCase.execute(id: userId)
             self.user = user
             self.userDetail = userDetail
-            output.send(.fetchUser)
+            output.send(.fetchUser(user, userDetail))
         } catch {
             output.send(.failure("유저를 찾을 수 없습니다."))
         }
@@ -95,9 +95,11 @@ final class SocialProfileViewModel: BaseViewModel {
     
     private func toggleFollow() async {
         do {
-            let isFollowed = try await toggleUserFollowUseCase.execute(userID: .init(), targetUserID: .init())
-            self.userDetail?.isFollowing = isFollowed
-            output.send(.fetchUser)
+            guard let user = self.user, var userDetail = self.userDetail else { return }
+            try await toggleUserFollowUseCase.execute(currentFollowState: userDetail.isFollowing, targetUserID: user.id)
+            userDetail.isFollowing.toggle()
+            output.send(.fetchUser(user, userDetail))
+            self.userDetail = userDetail
         } catch {
             output.send(.failure("팔로잉에 실패했습니다."))
         }

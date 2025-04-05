@@ -57,21 +57,22 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView>, 
                         self?.layoutView.showPrivateUserDetailView()
                         return
                     }
-                case .fetchUser:
-                    let url = self?.viewModel.user?.icon ?? ""
-                    let badge = self?.viewModel.user?.title ?? ""
-                    let nickname = self?.viewModel.user?.name ?? ""
-                    let followingCount = self?.viewModel.userDetail?.followingCount ?? 0
-                    let followerCount = self?.viewModel.userDetail?.followerCount ?? 0
-                    let postCount = self?.viewModel.userDetail?.totalPostCount ?? 0
-                    let routineCount = self?.viewModel.userDetail?.totalRoutineCount ?? 0
-                    let isFollowing = self?.viewModel.userDetail?.isFollowing ?? false
+                case .fetchUser(let user, let userDetail):
+                    let url = user.icon
+                    let badge = user.title
+                    let nickname = user.name
+                    let followingCount = userDetail.followingCount
+                    let followerCount = userDetail.followerCount
+                    let postCount = userDetail.totalPostCount
+                    let routineCount = userDetail.totalRoutineCount
+                    let isFollowing = userDetail.isFollowing
+                    let isMe = userDetail.isMe
                     self?.layoutView.configure(
                         avatarURL: url,
                         badgeTitle: badge,
                         nickname: nickname
                     )
-                    self?.layoutView.configureFollowingButton(isFollowing: isFollowing)
+                    self?.layoutView.configureFollowingButton(isFollowing: isFollowing, isMe: isMe)
                     self?.layoutView.configure(
                         followingCount: followingCount,
                         followerCount: followerCount,
