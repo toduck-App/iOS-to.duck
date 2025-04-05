@@ -38,7 +38,7 @@ public final class TimerViewModel: BaseViewModel {
         case updatedFocusCount(count: Int)
         case updatedMaxFocusCount(maxCount: Int)
         case failure(_ code: TimerViewModelError)
-        case stopedTimer
+        case stoppedTimer
         case startTimer
     }
 
@@ -198,7 +198,7 @@ extension TimerViewModel {
     /// 집중 타이머를 중지하고 진행상황을 보고
     private func stopTimer() {
         resetTimer()
-
+        restTimerUseCase.reset()
         let count = fetchFocusCountUseCase.execute()
         let limit = fetchTimerSettingUseCase.execute().focusCountLimit
 
