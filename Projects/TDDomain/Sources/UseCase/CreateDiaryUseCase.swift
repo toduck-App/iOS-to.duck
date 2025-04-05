@@ -1,17 +1,15 @@
-import Foundation
-
 public protocol CreateDiaryUseCase {
-    func execute(diary: Diary) async throws -> Diary
+    func execute(diary: Diary) async throws
 }
 
-public final class CreateDiaryUseCaseImpl: CreateDiaryUseCase {
+final class CreateDiaryUseCaseImpl: CreateDiaryUseCase {
     private let repository: DiaryRepository
-    
-    public init(repository: DiaryRepository) {
+
+    init(repository: DiaryRepository) {
         self.repository = repository
     }
-    
-    public func execute(diary: Diary) async throws -> Diary {
-        return try await repository.createDiary(diary: diary)
+
+    func execute(diary: Diary) async throws {
+        try await repository.createDiary(diary: diary)
     }
 }
