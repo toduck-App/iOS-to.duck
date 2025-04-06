@@ -13,7 +13,7 @@ public struct DiaryListResponseDTO: Decodable {
                 emotion: Emotion(rawValue: $0.emotion) ?? .happy,
                 title: $0.title,
                 memo: $0.memo,
-                diaryImageUrls: $0.diaryImages.map { $0.url },
+                diaryImageUrls: $0.diaryImages.map { $0.url }
             )
         }
     }
