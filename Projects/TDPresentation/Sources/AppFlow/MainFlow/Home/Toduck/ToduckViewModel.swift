@@ -26,7 +26,7 @@ final class ToduckViewModel: BaseViewModel {
         isShowingRemaining ? uncompletedSchedules : todaySchedules
     }
     var categoryImages: [TDCategoryImageType] {
-        todaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
+        currentDisplaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
     }
     
     init(
