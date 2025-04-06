@@ -35,7 +35,7 @@ final class ToduckView: BaseView {
     }
     
     let noScheduleContainerView = UIView()
-    let noScheduleImageView = UIImageView(image: TDImage.Mood.angry)
+    let noScheduleImageView = UIImageView(image: TDImage.noEvent)
     let noScheduleStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .leading
