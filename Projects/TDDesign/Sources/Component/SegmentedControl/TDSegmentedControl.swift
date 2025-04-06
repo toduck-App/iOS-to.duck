@@ -163,6 +163,12 @@ public final class TDSegmentedControl: UIControl {
     
     // MARK: - Public Methods
     
+    public func setSelectedIndex(_ index: Int, animated: Bool = true) {
+        guard index < buttons.count else { return }
+        selectedIndex = index
+        updateIndicatorPosition(animated: animated)
+    }
+    
     public func setItems(_ items: [String]) {
         self.items = items
     }

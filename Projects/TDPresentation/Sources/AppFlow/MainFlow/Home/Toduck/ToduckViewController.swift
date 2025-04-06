@@ -13,6 +13,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var autoScrollTimer: Timer?
+    weak var delegate: ToduckViewDelegate?
     
     init(
         viewModel: ToduckViewModel
@@ -57,6 +58,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     override func configure() {
         setupSegmentedControl()
         updateLottieAnimationForVisibleCell()
+        layoutView.delegate = delegate
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
         layoutView.scheduleCollectionView.register(
@@ -252,5 +254,11 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         let newOffsetX = index * cellWidthWithSpacing
         
         targetContentOffset.pointee = CGPoint(x: newOffsetX, y: targetContentOffset.pointee.y)
+    }
+}
+
+extension ToduckViewController: ToduckViewDelegate {
+    func didTapNoScheduleContainerView() {
+        delegate?.didTapNoScheduleContainerView()
     }
 }
