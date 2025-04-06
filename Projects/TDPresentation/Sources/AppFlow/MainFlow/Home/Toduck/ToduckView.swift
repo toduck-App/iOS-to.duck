@@ -12,7 +12,7 @@ protocol ToduckViewDelegate: AnyObject {
 final class ToduckView: BaseView {
     // MARK: - UI Components
     let lottieView = LottieAnimationView(
-        name: "toduckNocategory",
+        name: "toduckNotodo",
         bundle: Bundle(identifier: Constant.toduckDesignBundle)!
     ).then {
         $0.backgroundColor = .clear
