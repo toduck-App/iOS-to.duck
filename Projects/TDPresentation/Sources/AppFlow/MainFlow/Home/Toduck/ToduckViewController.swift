@@ -55,6 +55,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     override func configure() {
+        setupSegmentedControl()
         updateLottieAnimationForVisibleCell()
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
@@ -62,6 +63,22 @@ final class ToduckViewController: BaseViewController<ToduckView> {
             ScheduleCollectionViewCell.self,
             forCellWithReuseIdentifier: ScheduleCollectionViewCell.identifier
         )
+    }
+    
+    private func setupSegmentedControl() {
+        layoutView.scheduleSegmentedControl.addAction(UIAction { [weak self] action in
+            guard let segmentedControl = action.sender as? UISegmentedControl else { return }
+            let selectedIndex = segmentedControl.selectedSegmentIndex
+            
+            if selectedIndex == 0 {
+                self?.viewModel.switchToTodaySchedules()
+            } else {
+                self?.viewModel.switchToRemainingSchedules()
+            }
+            
+            self?.layoutView.scheduleCollectionView.reloadData()
+            self?.updateAutoScroll()
+        }, for: .valueChanged)
     }
     
     private func updateLottieView(at index: Int) {
@@ -168,7 +185,7 @@ extension ToduckViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
         
-        let currentSchedule = viewModel.todaySchedules[indexPath.row]
+        let currentSchedule = viewModel.currentDisplaySchedules[indexPath.row]
         cell.eventDetailView.configureCell(
             isHomeToduck: true,
             color: currentSchedule.categoryColor,

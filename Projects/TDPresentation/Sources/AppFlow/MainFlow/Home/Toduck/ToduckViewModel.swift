@@ -19,7 +19,12 @@ final class ToduckViewModel: BaseViewModel {
     private var cancellables = Set<AnyCancellable>()
     private(set) var isAllDays = false
     private(set) var todaySchedules: [Schedule] = []
+    private(set) var uncompletedSchedules: [Schedule] = []
+    private(set) var isShowingRemaining: Bool = false
     
+    var currentDisplaySchedules: [Schedule] {
+        isShowingRemaining ? uncompletedSchedules : todaySchedules
+    }
     var categoryImages: [TDCategoryImageType] {
         todaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
     }
@@ -52,6 +57,18 @@ final class ToduckViewModel: BaseViewModel {
             )
             isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
             self.todaySchedules = todaySchedules
+            self.uncompletedSchedules = todaySchedules.filter { schedule in
+                guard let records = schedule.scheduleRecords, !records.isEmpty else {
+                    // 기록이 없으면 완료 안 했으므로 "남은일정"
+                    return true
+                }
+
+                // 기록이 있는 경우, 오늘 날짜에 완료 안 한 게 있다면 "남은일정"
+                return records.contains { record in
+                    record.recordDate == schedule.startDate && !record.isComplete
+                }
+            }
+            
             if todaySchedules.isEmpty {
                 output.send(.fetchedEmptyScheduleList)
             } else {
@@ -60,5 +77,13 @@ final class ToduckViewModel: BaseViewModel {
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }
+    }
+    
+    func switchToRemainingSchedules() {
+        isShowingRemaining = true
+    }
+
+    func switchToTodaySchedules() {
+        isShowingRemaining = false
     }
 }
