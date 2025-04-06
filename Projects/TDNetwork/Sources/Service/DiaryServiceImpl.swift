@@ -16,7 +16,9 @@ public struct DiaryServiceImpl: DiaryService {
     }
     
     public func fetchDiaryList(year: Int, month: Int) async throws -> DiaryListResponseDTO {
-        let target = DiaryAPI.fetchDiaryList(year: year, month: month)
+        let monthString = String(format: "%02d", month)
+        let yearMonth = "\(year)-\(monthString)"
+        let target = DiaryAPI.fetchDiaryList(yearMonth: yearMonth)
         let response = try await provider.requestDecodable(of: DiaryListResponseDTO.self, target)
         
         return response.value
@@ -33,7 +35,9 @@ public struct DiaryServiceImpl: DiaryService {
     }
     
     public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
-        let target = DiaryAPI.compareDiaryCount(year: year, month: month)
+        let monthString = String(format: "%02d", month)
+        let yearMonth = "\(year)-\(monthString)"
+        let target = DiaryAPI.compareDiaryCount(yearMonth: yearMonth)
         let response = try await provider.requestDecodable(of: DiaryCompareCountResponseDTO.self, target)
         return response.value.count
     }

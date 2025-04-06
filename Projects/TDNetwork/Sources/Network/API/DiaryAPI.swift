@@ -4,11 +4,11 @@ import TDCore
 import TDDomain
 
 public enum DiaryAPI {
-    case fetchDiaryList(year: Int, month: Int) // 다이어리 리스트 조회
+    case fetchDiaryList(yearMonth: String) // 다이어리 리스트 조회
     case createDiary(diary: DiaryPostRequestDTO) // 다이어리 추가
     case updateDiary(diary: DiaryPatchRequestDTO) // 다이어리 업데이트
     case deleteDiary(id: Int) // 다이어리 삭제
-    case compareDiaryCount(year: Int, month: Int) // 특정 연월과 전월의 일기 개수를 비교
+    case compareDiaryCount(yearMonth: String) // 특정 연월과 전월의 일기 개수를 비교
 }
 
 extension DiaryAPI: MFTarget {
@@ -50,10 +50,10 @@ extension DiaryAPI: MFTarget {
         switch self {
         case .deleteDiary, .createDiary, .updateDiary:
             return nil
-        case .fetchDiaryList(let year, let month):
-            return ["year": year, "month": month]
-        case .compareDiaryCount(let year, let month):
-            return ["year": year, "month": month]
+        case .fetchDiaryList(let yearMonth):
+            return ["yearMonth": yearMonth]
+        case .compareDiaryCount(let yearMonth):
+            return ["yearMonth": yearMonth]
         }
     }
     
