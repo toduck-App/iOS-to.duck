@@ -69,6 +69,10 @@ public final class TDTextField: UIView {
     public func setupTextField(_ text: String) {
         textField.text = text
     }
+    
+    public func setupFont(_ font: TDFont) {
+        textField.font = font.font
+    }
 
     private func setupViews() {
         textField.font = TDFont.mediumBody2.font

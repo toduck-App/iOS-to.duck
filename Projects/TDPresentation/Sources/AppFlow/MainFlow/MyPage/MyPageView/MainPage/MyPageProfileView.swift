@@ -31,7 +31,7 @@ final class MyPageProfileView: BaseView {
         return stackView
     }()
 
-    let usernameLabel = TDLabel(toduckFont: .mediumHeader5, toduckColor: TDColor.Neutral.neutral800)
+    let usernameLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
 
     private let badgeLabels: [BadgeLabel] = [BadgeLabel(text: "작심삼잉")]
 

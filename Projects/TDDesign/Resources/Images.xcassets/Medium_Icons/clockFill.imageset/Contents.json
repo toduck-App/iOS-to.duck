@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "bookPercent0.png",
+      "filename" : "clockFill.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "bookPercent0@2x.png",
+      "filename" : "clockFill@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "bookPercent0@3x.png",
+      "filename" : "clockFill@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

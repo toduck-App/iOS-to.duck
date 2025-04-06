@@ -35,6 +35,7 @@ final class SimpleTimerView: BaseTimerView {
 
     override var progress: CGFloat {
         didSet {
+            guard isRunning else { return }
             updateProgress()
             updateTomatoRotation()
         }

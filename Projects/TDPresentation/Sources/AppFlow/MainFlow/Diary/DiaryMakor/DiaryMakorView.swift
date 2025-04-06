@@ -234,6 +234,7 @@ final class DiaryMakorView: BaseView {
     override func configure() {
         backgroundColor = TDColor.baseWhite
         scrollView.showsVerticalScrollIndicator = false
+        titleForm.setupFont(.regularBody4)
         diaryMoodLabel.setTitleFont(.boldHeader5)
         diaryMoodLabel.setTitleLabel("감정 선택")
         diaryMoodLabel.setRequiredLabel()
