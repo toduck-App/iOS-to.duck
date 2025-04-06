@@ -9,6 +9,7 @@ final class ToduckViewModel: BaseViewModel {
     
     enum Output {
         case fetchedScheduleList
+        case fetchedEmptyScheduleList
         case failure(error: String)
     }
     
@@ -51,7 +52,11 @@ final class ToduckViewModel: BaseViewModel {
             )
             isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
             self.todaySchedules = todaySchedules
-            output.send(.fetchedScheduleList)
+            if todaySchedules.isEmpty {
+                output.send(.fetchedEmptyScheduleList)
+            } else {
+                output.send(.fetchedScheduleList)
+            }
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }

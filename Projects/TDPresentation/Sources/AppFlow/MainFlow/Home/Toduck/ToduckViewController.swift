@@ -40,9 +40,14 @@ final class ToduckViewController: BaseViewController<ToduckView> {
             .sink { [weak self] event in
                 switch event {
                 case .fetchedScheduleList:
+                    self?.layoutView.noScheduleContainerView.isHidden = true
+                    self?.layoutView.scheduleCollectionView.isHidden = false
                     self?.layoutView.scheduleCollectionView.reloadData()
                     self?.updateLottieView(at: 0)
                     self?.updateAutoScroll()
+                case .fetchedEmptyScheduleList:
+                    self?.layoutView.noScheduleContainerView.isHidden = false
+                    self?.layoutView.scheduleCollectionView.isHidden = true
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
                 }

@@ -8,7 +8,7 @@ import Lottie
 final class ToduckView: BaseView {
     // MARK: - UI Components
     let lottieView = LottieAnimationView(
-        name: "toduckFood",
+        name: "toduckNocategory",
         bundle: Bundle(identifier: Constant.toduckDesignBundle)!
     ).then {
         $0.backgroundColor = .clear
@@ -30,12 +30,24 @@ final class ToduckView: BaseView {
         $0.decelerationRate = .fast
     }
     
+    let noScheduleContainerView = UIView()
+    let noScheduleImageView = UIImageView(image: TDImage.Mood.angry)
+    let noScheduleLabel = TDLabel(
+        labelText: "등록된 일정이 없어요",
+        toduckFont: .boldBody1,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    
     // MARK: - Common Methods
     override func addview() {
         addSubview(lottieView)
         addSubview(scheduleContainerView)
         scheduleContainerView.addSubview(scheduleSegmentedControl)
         scheduleContainerView.addSubview(scheduleCollectionView)
+        scheduleContainerView.addSubview(noScheduleContainerView)
+        
+        noScheduleContainerView.addSubview(noScheduleImageView)
+        noScheduleContainerView.addSubview(noScheduleLabel)
     }
     
     override func layout() {
@@ -60,6 +72,21 @@ final class ToduckView: BaseView {
             make.top.equalTo(scheduleSegmentedControl.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.collectionViewHorizontalInset)
             make.bottom.equalToSuperview().offset(-LayoutConstants.collectionViewBottomOffset)
+        }
+        
+        noScheduleContainerView.snp.makeConstraints { make in
+            make.top.equalTo(scheduleSegmentedControl.snp.bottom)
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.collectionViewHorizontalInset)
+            make.bottom.equalToSuperview()
+        }
+        noScheduleImageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(24)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(96)
+        }
+        noScheduleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(noScheduleImageView.snp.trailing).offset(4)
+            make.centerY.equalToSuperview()
         }
     }
     
