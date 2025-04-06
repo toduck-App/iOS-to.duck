@@ -22,6 +22,7 @@ final class EventMakorViewModel: BaseViewModel {
         case fetchedCategories
         case savedEvent
         case failedToSaveEvent(missingFields: [String])
+        case failureAPI(String)
     }
     
     private let mode: ScheduleAndRoutineViewController.Mode
@@ -71,7 +72,7 @@ final class EventMakorViewModel: BaseViewModel {
         let initialDate = dateFormatter.string(from: date)
         startDate = initialDate
     }
-
+    
     private func handleInput(_ event: Input) {
         switch event {
         case .fetchCategories:
@@ -121,7 +122,7 @@ final class EventMakorViewModel: BaseViewModel {
             TDLogger.info("일정 생성 성공: \(schedule)")
             output.send(.savedEvent)
         } catch {
-            TDLogger.error("일정 생성 실패: \(error)")
+            output.send(.failureAPI("종일 여부 설정 시, 알람은 설정할 수 없습니다."))
         }
     }
     
@@ -138,10 +139,10 @@ final class EventMakorViewModel: BaseViewModel {
             TDLogger.info("루틴 생성 성공: \(routine)")
             output.send(.savedEvent)
         } catch {
-            TDLogger.error("루틴 생성 실패: \(error)")
+            output.send(.failureAPI(error.localizedDescription))
         }
     }
-
+    
     private func validateScheduleInputs() -> [String] {
         var missingFields: [String] = []
         if title == nil { missingFields.append("title") }
@@ -149,14 +150,14 @@ final class EventMakorViewModel: BaseViewModel {
         if startDate == nil { missingFields.append("startDate") }
         return missingFields
     }
-
+    
     private func validateRoutineInputs() -> [String] {
         var missingFields: [String] = []
         if title == nil { missingFields.append("title") }
         if selectedCategory == nil { missingFields.append("category") }
         return missingFields
     }
-
+    
     // MARK: - Object Creation
     private func createSchedule() -> Schedule {
         if endDate == nil {
@@ -181,7 +182,7 @@ final class EventMakorViewModel: BaseViewModel {
         
         return schedule
     }
-
+    
     private func createRoutine() -> Routine {
         Routine(
             id: nil,
@@ -206,25 +207,24 @@ final class EventMakorViewModel: BaseViewModel {
             self.categories = categories
             output.send(.fetchedCategories)
         } catch {
-            // TODO: Handle error
-            TDLogger.error(error)
+            output.send(.failureAPI(error.localizedDescription))
         }
     }
     
     // MARK: - 반복 날짜와 알람에 대한 설정
     private func handleRepeatDaySelection(at index: Int, isSelected: Bool) {
         let repeatDaysArray: [TDWeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-
+        
         guard index >= 0, index < repeatDaysArray.count else {
             TDLogger.error("Invalid repeat day index: \(index)")
             return
         }
-
+        
         let selectedDay = repeatDaysArray[index]
         if repeatDays == nil {
             repeatDays = []
         }
-
+        
         if isSelected {
             // 선택 추가
             if repeatDays?.contains(selectedDay) == false {
@@ -234,20 +234,20 @@ final class EventMakorViewModel: BaseViewModel {
             // 선택 해제
             repeatDays?.removeAll(where: { $0 == selectedDay })
         }
-
+        
         TDLogger.info("현재 반복 요일: \(repeatDays ?? [])")
     }
-
+    
     private func handleAlarmSelection(at index: Int, isSelected: Bool) {
         let alarmTypesArray: [AlarmType] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
-
+        
         guard index >= 0, index < alarmTypesArray.count else {
             TDLogger.error("Invalid alarm index: \(index)")
             return
         }
-
+        
         let selectedAlarm = alarmTypesArray[index]
-
+        
         if isSelected {
             // 선택한 알람 설정
             alarm = selectedAlarm

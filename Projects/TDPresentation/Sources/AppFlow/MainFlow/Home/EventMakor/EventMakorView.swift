@@ -81,7 +81,7 @@ final class EventMakorView: BaseView {
         $0.layer.cornerRadius = 8
     }
     let noticeSnackBarLabel = TDLabel(
-        labelText: "카테고리와 내용은 필수 입력이에요!",
+        labelText: "제목은 필수 입력이에요!",
         toduckFont: .mediumBody3,
         toduckColor: TDColor.baseWhite
     )
