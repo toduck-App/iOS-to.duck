@@ -39,9 +39,9 @@ final class ThemeSettingView: BaseView {
 
     override func layout() {
         exitButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(ThemeSettingViewLayoutConstant.exitButtonLeading)
-            make.top.equalToSuperview().inset(ThemeSettingViewLayoutConstant.exitButtonTop)
-            make.size.equalTo(ThemeSettingViewLayoutConstant.exitButtonSize)
+            make.leading.equalToSuperview().inset(LayoutConstant.exitButtonLeading)
+            make.top.equalToSuperview().inset(LayoutConstant.exitButtonTop)
+            make.size.equalTo(LayoutConstant.exitButtonSize)
         }
 
         themeSettingTitleLabel.snp.makeConstraints { make in
@@ -51,16 +51,16 @@ final class ThemeSettingView: BaseView {
 
         themeStackView.snp.makeConstraints { make in
             make.leading.equalTo(exitButton.snp.leading)
-            make.trailing.equalToSuperview().inset(ThemeSettingViewLayoutConstant.themeStackViewTrailing)
-            make.top.equalTo(exitButton.snp.bottom).offset(ThemeSettingViewLayoutConstant.themeStackViewTop)
+            make.trailing.equalToSuperview().inset(LayoutConstant.themeStackViewTrailing)
+            make.top.equalTo(exitButton.snp.bottom).offset(LayoutConstant.themeStackViewTop)
         }
 
         saveButton.snp.makeConstraints { make in
             make.leading.equalTo(themeStackView.snp.leading)
             make.trailing.equalTo(themeStackView.snp.trailing)
-            make.height.equalTo(ThemeSettingViewLayoutConstant.saveButtonHeight)
-            make.top.equalTo(themeBbouckButton.snp.bottom).offset(ThemeSettingViewLayoutConstant.saveButtonTop)
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(ThemeSettingViewLayoutConstant.saveButtonBottom).priority(750)
+            make.height.equalTo(LayoutConstant.saveButtonHeight)
+            make.top.equalTo(themeBbouckButton.snp.bottom).offset(LayoutConstant.saveButtonTop)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(LayoutConstant.saveButtonBottom).priority(750)
         }
     }
 }
@@ -68,7 +68,7 @@ final class ThemeSettingView: BaseView {
 // MARK: - Enum
 
 extension ThemeSettingView {
-    enum ThemeSettingViewLayoutConstant {
+    enum LayoutConstant {
         static let exitButtonSize: CGFloat = 24
         static let exitButtonLeading: CGFloat = 16
         static let exitButtonTop: CGFloat = 24
