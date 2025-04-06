@@ -100,12 +100,12 @@ final class ToduckView: BaseView {
         }
         noScheduleImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(24)
-            make.centerY.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-12)
             make.size.equalTo(96)
         }
         noScheduleStackView.snp.makeConstraints { make in
             make.leading.equalTo(noScheduleImageView.snp.trailing).offset(32)
-            make.centerY.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-12)
         }
     }
     
