@@ -12,6 +12,7 @@ final class DiaryMakorViewModel: BaseViewModel {
     }
     
     enum Output {
+        case saveDiary
         case failure(String)
     }
     
@@ -74,6 +75,7 @@ final class DiaryMakorViewModel: BaseViewModel {
         do {
             let diary = createDiaryObject()
             try await createDiaryUseCase.execute(diary: diary)
+            output.send(.saveDiary)
         } catch {
             output.send(.failure(error.localizedDescription))
         }
@@ -90,6 +92,7 @@ final class DiaryMakorViewModel: BaseViewModel {
                 isChangeEmotion: isChangeEmotion,
                 diary: updatedDiary
             )
+            output.send(.saveDiary)
         } catch {
             output.send(.failure(error.localizedDescription))
         }

@@ -76,17 +76,12 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        input.send(.fetchUserNickname)
-        input.send(.fetchDiaryCompareCount)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setupNavigationAppearance()
+        input.send(.fetchUserNickname)
+        input.send(.fetchDiaryCompareCount)
     }
     
     

@@ -36,6 +36,8 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
+                case .saveDiary:
+                    self?.coordinator?.finish(by: .pop)
                 case .failure(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }

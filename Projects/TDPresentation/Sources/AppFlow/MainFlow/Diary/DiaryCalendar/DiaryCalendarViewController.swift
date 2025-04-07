@@ -65,6 +65,12 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         calendarDidSelect(date: Date())
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchDiaryList(for: calendar.currentPage)
+    }
+    
     // MARK: - Common Methods
     override func addView() {
         view.addSubview(contentStackView)
@@ -157,6 +163,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                     self?.updateDiaryView()
                 case .deletedDiary:
                     self?.updateDiaryView()
+                    self?.calendar.reloadData()
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -284,9 +291,10 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
     }
 }
 
-// MARK:
+// MARK: DeleteEventViewControllerDelegate
 extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
     func didTapDeleteButton() {
         input.send(.deleteDiary(viewModel.selectedDiary?.id ?? 0))
+        dismiss(animated: true)
     }
 }

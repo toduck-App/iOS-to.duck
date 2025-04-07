@@ -36,27 +36,17 @@ final class DiaryCoordinator: Coordinator {
     func didTapHomeTomatoIcon() {
         (finishDelegate as? MainTabBarCoordinator)?.switchToHomeTab()
     }
+    
+    func didTapAlarmButton() {
+        // TODO: 알람 페이지로 이동
+        TDLogger.debug("알람 페이지로 이동")
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
 extension DiaryCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
-    }
-}
-
-// MARK: - Navigation Delegate
-extension DiaryCoordinator: NavigationDelegate {
-    func didTapAlarmButton() {
-        // TODO: 알람 페이지로 이동
-        TDLogger.debug("알람 페이지로 이동")
-    }
-    
-    func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
-        toduckCalendarCoordinator.finishDelegate = self
-        childCoordinators.append(toduckCalendarCoordinator)
-        toduckCalendarCoordinator.start()
     }
 }
 
