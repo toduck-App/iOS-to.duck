@@ -221,11 +221,11 @@ public struct DomainAssembly: Assembly {
             return FetchCategoriesUseCaseImpl(repository: repository)
         }
         
-        container.register(FetchDiaryUseCase.self) { resolver in
+        container.register(FetchDiaryListUseCase.self) { resolver in
             guard let repository = resolver.resolve(DiaryRepository.self) else {
                 fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
             }
-            return FetchDiaryUseCaseImpl(repository: repository)
+            return FetchDiaryListUseCaseImpl(repository: repository)
         }
         
         container.register(FetchPostUseCase.self) { resolver in
@@ -296,6 +296,13 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 RecentKeywordRepository가 등록되어 있지 않습니다.")
             }
             return FetchKeywordUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchDiaryCompareCountUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchDiaryCompareCountUseCaseImpl(repository: repository)
         }
         
         container.register(MoveTomorrowScheduleUseCase.self) { resolver in

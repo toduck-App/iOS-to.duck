@@ -7,7 +7,7 @@ import TDDomain
 import TDDesign
 
 protocol DiaryCalendarViewControllerDelegate: AnyObject {
-    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, isWrited: Bool)
+    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, selectedDate: Date, isWrited: Bool)
 }
 
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
@@ -63,6 +63,12 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         input.send(.selectDay(normalizedToday))
         fetchDiaryList(for: Date())
         calendarDidSelect(date: Date())
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchDiaryList(for: calendar.currentPage)
     }
     
     // MARK: - Common Methods
@@ -155,6 +161,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                     self?.calendar.reloadData()
                 case .notFoundDiary:
                     self?.updateDiaryView()
+                case .deletedDiary:
+                    self?.updateDiaryView()
+                    self?.calendar.reloadData()
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -173,16 +182,16 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         noDiaryContainerView.isHidden = hasDiary
         
         if let diary {
-            delegate?.didSelectDate(self, isWrited: true)
+            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: true)
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
                 date: diary.date.convertToString(formatType: .monthDayWithWeekday),
                 title: diary.title,
-                sentences: diary.sentenceText,
+                        memo: diary.memo,
                 photos: [TDImage.Mood.angry, TDImage.Mood.happy]
             )
         } else {
-            delegate?.didSelectDate(self, isWrited: false)
+            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: false)
         }
     }
     
@@ -217,7 +226,12 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
             guard let diary = viewModel.selectedDiary else { return }
             coordinator?.didTapEditDiaryButton(diary: diary)
         case .delete:
-            break
+            let deleteDiaryViewController = DeleteEventViewController(
+                isRepeating: false,
+                isScheduleEvent: false
+            )
+            deleteDiaryViewController.delegate = self
+            self.presentPopup(with: deleteDiaryViewController)
         }
     }
 }
@@ -274,5 +288,13 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         titleSelectionColorFor date: Date
     ) -> UIColor? {
         colorForDate(date)
+    }
+}
+
+// MARK: DeleteEventViewControllerDelegate
+extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
+    func didTapDeleteButton() {
+        input.send(.deleteDiary(viewModel.selectedDiary?.id ?? 0))
+        dismiss(animated: true)
     }
 }

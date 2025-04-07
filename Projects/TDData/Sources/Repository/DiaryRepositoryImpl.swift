@@ -2,41 +2,32 @@ import TDDomain
 import Foundation
 
 public final class DiaryRepositoryImpl: DiaryRepository {
-    private var diaries: [Diary] = []
-    private var nextId = 1
+    private let service: DiaryService
     
-    public init() { }
-    
-    public func fetchDiary(id: Diary.ID) async throws -> Diary {
-        guard let diary = diaries.first(where: { $0.id == id }) else {
-            throw NSError(domain: "DiaryNotFound", code: 404, userInfo: nil)
-        }
-        return diary
+    public init(service: DiaryService) {
+        self.service = service
     }
     
-    public func fetchDiaryList(from startDate: Date, to endDate: Date) async throws -> [Diary] {
-        return diaries.filter { $0.date >= startDate && $0.date <= endDate }
+    public func createDiary(diary: Diary) async throws {
+        try await service.createDiary(diary: DiaryPostRequestDTO(diary: diary))
     }
     
-    public func createDiary(diary: Diary) async throws -> Diary {
-        let newDiary = diary
-        diaries.append(newDiary)
-        return newDiary
+    public func fetchDiaryList(year: Int, month: Int) async throws -> [Diary] {
+        let response = try await service.fetchDiaryList(year: year, month: month)
+        
+        return response.convertToDiaryList()
     }
     
-    public func updateDiary(diary: Diary) async throws -> Diary {
-        guard let index = diaries.firstIndex(where: { $0.id == diary.id }) else {
-            throw NSError(domain: "DiaryNotFound", code: 404, userInfo: nil)
-        }
-        diaries[index] = diary
-        return diary
+    public func updateDiary(isChangeEmotion: Bool, diary: TDDomain.Diary) async throws {
+        let diary = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
+        try await service.updateDiary(diary: diary)
     }
     
-    public func deleteDiary(id: Diary.ID) async throws -> Bool {
-        guard let index = diaries.firstIndex(where: { $0.id == id }) else {
-            throw NSError(domain: "DiaryNotFound", code: 404, userInfo: nil)
-        }
-        diaries.remove(at: index)
-        return true
+    public func deleteDiary(id: Int) async throws {
+        try await service.deleteDiary(id: id)
+    }
+    
+    public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
+        try await service.fetchDiaryCompareCount(year: year, month: month)
     }
 }

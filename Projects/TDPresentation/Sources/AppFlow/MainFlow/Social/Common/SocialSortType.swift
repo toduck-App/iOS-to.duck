@@ -19,8 +19,8 @@ enum SocialSortType: String, CaseIterable {
     var dropdownItem: TDDropdownItem {
         return TDDropdownItem(
             title: rawValue,
-            leftImage: nil,
-            rightImage: image
+            leftImage: image,
+            rightImage: nil
         )
     }
 }

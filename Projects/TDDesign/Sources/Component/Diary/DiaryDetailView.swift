@@ -154,7 +154,7 @@ public final class DiaryDetailView: UIView {
         emotionImage: UIImage,
         date: String,
         title: String,
-        sentences: String? = nil,
+        memo: String? = nil,
         photos: [UIImage]? = nil
     ) {
         emotionImageView.image = emotionImage
@@ -165,8 +165,8 @@ public final class DiaryDetailView: UIView {
             .filter { $0 != dateHeaderStackView }
             .forEach { $0.removeFromSuperview() }
         
-        if let sentences, !sentences.isEmpty {
-            sentenceContentLabel.text = sentences
+        if let memo, !memo.isEmpty {
+            sentenceContentLabel.text = memo
             sentenceVerticalStackView.isHidden = false
             mainStackView.addArrangedSubview(sentenceVerticalStackView)
         }

@@ -23,10 +23,23 @@ final class DiaryCoordinator: Coordinator {
 
     func start() {
         let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
-        let viewModel = DiaryViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase)
+        let fetchDiaryCompareCountUseCase = injector.resolve(FetchDiaryCompareCountUseCase.self)
+        let viewModel = DiaryViewModel(
+            fetchUserNicknameUseCase: fetchUserNicknameUseCase,
+            fetchDiaryCompareCountUseCase: fetchDiaryCompareCountUseCase
+        )
         let diaryViewController = DiaryViewController(viewModel: viewModel)
         diaryViewController.coordinator = self
         navigationController.pushViewController(diaryViewController, animated: false)
+    }
+    
+    func didTapHomeTomatoIcon() {
+        (finishDelegate as? MainTabBarCoordinator)?.switchToHomeTab()
+    }
+    
+    func didTapAlarmButton() {
+        // TODO: 알람 페이지로 이동
+        TDLogger.debug("알람 페이지로 이동")
     }
 }
 
@@ -34,21 +47,6 @@ final class DiaryCoordinator: Coordinator {
 extension DiaryCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
-    }
-}
-
-// MARK: - Navigation Delegate
-extension DiaryCoordinator: NavigationDelegate {
-    func didTapAlarmButton() {
-        // TODO: 알람 페이지로 이동
-        TDLogger.debug("알람 페이지로 이동")
-    }
-    
-    func didTapCalendarButton() {
-        let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
-        toduckCalendarCoordinator.finishDelegate = self
-        childCoordinators.append(toduckCalendarCoordinator)
-        toduckCalendarCoordinator.start()
     }
 }
 

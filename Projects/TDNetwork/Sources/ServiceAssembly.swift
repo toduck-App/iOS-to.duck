@@ -10,6 +10,10 @@ public struct ServiceAssembly: Assembly {
             return AuthServiceImpl()
         }
         
+        container.register(DiaryService.self) { _ in
+            return DiaryServiceImpl()
+        }
+        
         container.register(ScheduleService.self) { _ in
             return ScheduleServiceImpl()
         }
