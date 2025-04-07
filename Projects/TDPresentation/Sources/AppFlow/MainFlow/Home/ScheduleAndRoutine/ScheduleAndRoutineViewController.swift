@@ -16,22 +16,31 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
+    
+    private let dimmedView = UIView().then {
+        $0.backgroundColor = TDColor.baseBlack.withAlphaComponent(0.5)
+        $0.alpha = 0
+        $0.isHidden = true
+    }
+    private let floatingActionMenuView = FloatingActionMenuView()
+    private let buttonShadowWrapper = UIView()
     private let eventMakorFloattingButton = TDBaseButton(
-        title: "일정추가",
         image: TDImage.addSmall,
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
-        radius: 24,
+        radius: 25,
         font: TDFont.boldHeader4.font
     )
     // MARK: - Properties
     private let mode: Mode
-    private var selectedDate: Date?
     private let scheduleViewModel: ScheduleViewModel?
     private let routineViewModel: RoutineViewModel?
     private let scheduleInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
     private let routineInput = PassthroughSubject<RoutineViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var selectedDate: Date?
+    private var isMenuVisible = false
+    private var didAddDimmedView = false
     weak var coordinator: EventMakorDelegate?
     
     // MARK: - Initialize
@@ -72,8 +81,8 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         let today = Date()
         selectedDate = today
@@ -84,11 +93,60 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        setupFloatingUIInWindow()
+    }
+    
+    private func setupFloatingUIInWindow() {
+        guard !didAddDimmedView,
+              let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else { return }
+
+        addFloatingViewsToWindow(window)
+        setupFloatingConstraints(in: window)
+        didAddDimmedView = true
+    }
+    
+    private func addFloatingViewsToWindow(_ window: UIWindow) {
+        window.addSubview(dimmedView)
+        window.addSubview(floatingActionMenuView)
+        window.addSubview(buttonShadowWrapper)
+        buttonShadowWrapper.addSubview(eventMakorFloattingButton)
+    }
+    
+    private func setupFloatingConstraints(in window: UIWindow) {
+        dimmedView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        buttonShadowWrapper.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(LayoutConstants.buttonTrailingInset)
+            $0.bottom.equalTo(window.safeAreaLayoutGuide.snp.bottom).offset(-84)
+            $0.width.equalTo(LayoutConstants.buttonWidth)
+            $0.height.equalTo(LayoutConstants.buttonHeight)
+        }
+
+        floatingActionMenuView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalTo(buttonShadowWrapper.snp.top).offset(-18)
+            $0.width.equalTo(120)
+            $0.height.equalTo(88)
+        }
+
+        eventMakorFloattingButton.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
     // MARK: Base Method
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
+        floatingActionMenuView.isHidden = true
         configureEventMakorButton()
+        configureDimmedViewGesture()
         
         scheduleAndRoutineTableView.delegate = self
         scheduleAndRoutineTableView.dataSource = self
@@ -107,10 +165,9 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     override func addView() {
         view.addSubview(weekCalendarView)
         view.addSubview(scheduleAndRoutineTableView)
-        view.addSubview(eventMakorFloattingButton)
     }
     
-    override func layout() {
+    override func layout() {        
         weekCalendarView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(LayoutConstants.calendarTopOffset)
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.calendarHorizontalInset)
@@ -120,13 +177,6 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         scheduleAndRoutineTableView.snp.makeConstraints {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(LayoutConstants.tableViewTopOffset)
             $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        eventMakorFloattingButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(LayoutConstants.buttonTrailingInset)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(LayoutConstants.buttonBottomInset)
-            $0.width.equalTo(LayoutConstants.buttonWidth)
-            $0.height.equalTo(LayoutConstants.buttonHeight)
         }
     }
     
@@ -154,14 +204,47 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     }
     
     private func configureEventMakorButton() {
-        eventMakorFloattingButton.setTitle(
-            mode == .schedule ? "일정추가" : "루틴추가",
-            for: .normal
-        )
+        buttonShadowWrapper.layer.shadowColor = TDColor.Neutral.neutral800.cgColor
+        buttonShadowWrapper.layer.shadowOpacity = 0.3
+        buttonShadowWrapper.layer.shadowOffset = CGSize(width: 0, height: 0)
+        buttonShadowWrapper.layer.shadowRadius = 10
+        buttonShadowWrapper.layer.masksToBounds = false
+        
         eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            self.coordinator?.didTapEventMakor(mode: self.mode, selectedDate: selectedDate)
+            self?.updateFloatingView()
         }, for: .touchUpInside)
+    }
+    
+    private func updateFloatingView() {
+        isMenuVisible.toggle()
+        floatingActionMenuView.isHidden = !isMenuVisible
+        dimmedView.isHidden = false
+        
+        UIView.animate(withDuration: 0.2, animations: {
+            self.dimmedView.alpha = self.isMenuVisible ? 1 : 0
+            self.eventMakorFloattingButton.updateBackgroundColor(
+                buttonColor: self.isMenuVisible ? TDColor.baseWhite : TDColor.Primary.primary500,
+                imageColor: self.isMenuVisible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
+            )
+            let angle: CGFloat = self.isMenuVisible ? .pi / 4 : 0
+            self.eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
+        }) { _ in
+            if !self.isMenuVisible {
+                self.dimmedView.isHidden = true
+            }
+        }
+    }
+    
+    private func configureDimmedViewGesture() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimmedView))
+        dimmedView.addGestureRecognizer(tap)
+    }
+    
+    @objc
+    private func didTapDimmedView() {
+        if isMenuVisible {
+            updateFloatingView()
+        }
     }
     
     private func colorForDate(_ date: Date) -> UIColor? {
@@ -343,7 +426,7 @@ extension ScheduleAndRoutineViewController {
         static let tableViewContentInsetTop: CGFloat = 12
         static let buttonTrailingInset: CGFloat = -20
         static let buttonBottomInset: CGFloat = -20
-        static let buttonWidth: CGFloat = 120
-        static let buttonHeight: CGFloat = 48
+        static let buttonWidth: CGFloat = 50
+        static let buttonHeight: CGFloat = 50
     }
 }
