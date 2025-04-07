@@ -251,10 +251,6 @@ public enum TDImage {
         public static let love = TDDesignAsset.Images.loveCircle.image
     }
     
-    public enum DiaryPercent {
-        public static let noRecord = TDDesignAsset.Images.noRecord.image
-    }
-    
     public enum FocusPercent {
         public static let percent1to20 = TDDesignAsset.Images.percent1to20.image
         public static let percent21to40 = TDDesignAsset.Images.percent21to40.image
