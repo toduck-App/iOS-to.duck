@@ -71,14 +71,14 @@ extension DiaryAPI: MFTarget {
                         "diaryImageUrls": diary.diaryImageUrls
                     ]
                 )
-        case .updateDiary(let id):
+        case .updateDiary(let diary):
             .requestParameters(parameters:
                 [
-                    "isChangeEmotion": id.isChangeEmotion,
-                    "emotion": id.emotion,
-                    "title": id.title,
-                    "memo": id.memo,
-                    "diaryImageUrls": id.diaryImageUrls
+                    "isChangeEmotion": diary.isChangeEmotion,
+                    "emotion": diary.emotion,
+                    "title": diary.title,
+                    "memo": diary.memo,
+                    "diaryImageUrls": diary.diaryImageUrls
                 ]
             )
         }
