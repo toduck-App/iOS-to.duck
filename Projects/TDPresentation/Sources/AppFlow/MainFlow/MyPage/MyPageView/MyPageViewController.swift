@@ -61,6 +61,17 @@ final class MyPageViewController: BaseViewController<MyPageView> {
     }
     
     private func setupNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.shadowColor = nil
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        if #available(iOS 15.0, *) {
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        }
+        
         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
         let calendarButton = UIButton(type: .custom)
         calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)

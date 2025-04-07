@@ -16,8 +16,8 @@ public struct ScheduleHeadDTO: Decodable {
     public let isAllDay: Bool
     public let startDate: String
     public let endDate: String
-    public let daysOfWeek: [String]
-    public let time: String
+    public let daysOfWeek: [String]?
+    public let time: String?
     public let location: String?
 }
 
@@ -31,7 +31,7 @@ public struct ScheduleRecordDTO: Decodable {
 public extension ScheduleHeadDTO {
     func convertToSchedule() -> Schedule {
         let category = TDCategory(colorHex: color, imageName: category)
-        let repeatDays = daysOfWeek.compactMap { TDWeekDay(rawValue: $0) }
+        let repeatDays = daysOfWeek?.compactMap { TDWeekDay(rawValue: $0) } ?? []
         let isFinished = scheduleRecordDto.contains(where: { $0.isComplete })
 
         let records: [ScheduleRecord] = scheduleRecordDto.map {
@@ -50,11 +50,11 @@ public extension ScheduleHeadDTO {
             startDate: startDate,
             endDate: endDate,
             isAllDay: isAllDay,
-            time: Date.convertFromString(time, format: .time24Hour),
+            time: time.flatMap { Date.convertFromString($0, format: .time24Hour) },
             repeatDays: repeatDays.isEmpty ? nil : repeatDays,
-            alarmTime: nil, // 알람 응답 생기면 대응 가능
+            alarmTime: nil,
             place: location,
-            memo: nil,      // 메모 응답 생기면 대응 가능
+            memo: nil,
             isFinished: isFinished,
             scheduleRecords: records
         )

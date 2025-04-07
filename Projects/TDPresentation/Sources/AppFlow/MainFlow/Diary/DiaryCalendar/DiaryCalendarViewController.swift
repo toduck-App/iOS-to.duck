@@ -24,7 +24,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     
     private let noDiaryContainerView = UIView()
     private let noDiaryImageView = UIImageView().then {
-        $0.image = TDImage.DiaryPercent.noRecord
+        $0.image = TDImage.noEvent
         $0.contentMode = .scaleAspectFit
     }
     private let noDiaryLabel = TDLabel(

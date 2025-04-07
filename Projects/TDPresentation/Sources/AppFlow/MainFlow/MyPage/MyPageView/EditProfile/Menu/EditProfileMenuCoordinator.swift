@@ -1,10 +1,3 @@
-//
-//  EditProfileMenuCoordinator.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/20/25.
-//
-
 import UIKit
 
 import TDCore
@@ -26,7 +19,7 @@ final class EditProfileMenuCoordinator: Coordinator {
     func start() {
         let editProfileMenuViewController = EditProfileMenuViewController()
         editProfileMenuViewController.coordinator = self
-        navigationController.pushViewController(editProfileMenuViewController, animated: true)
+        navigationController.pushTDViewController(editProfileMenuViewController, animated: true)
     }
 }
 

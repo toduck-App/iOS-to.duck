@@ -9,24 +9,32 @@ final class ToduckViewModel: BaseViewModel {
     
     enum Output {
         case fetchedScheduleList
+        case fetchedEmptyScheduleList
         case failure(error: String)
     }
     
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var scheduleList: [Schedule] = []
-    private(set) var isAllDays = true
+    private(set) var isAllDays = false
     private(set) var todaySchedules: [Schedule] = []
+    private(set) var uncompletedSchedules: [Schedule] = []
+    private(set) var isShowingRemaining: Bool = false
     
+    var currentDisplaySchedules: [Schedule] {
+        isShowingRemaining ? uncompletedSchedules : todaySchedules
+    }
     var categoryImages: [TDCategoryImageType] {
-        todaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
+        currentDisplaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
     }
     
     init(
-        fetchScheduleListUseCase: FetchScheduleListUseCase
+        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
+        self.shouldMarkAllDayUseCase = shouldMarkAllDayUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -43,14 +51,39 @@ final class ToduckViewModel: BaseViewModel {
     private func fetchScheduleList() async {
         do {
             let todayFormat = Date().convertToString(formatType: .yearMonthDay)
-            let scheduleList = try await fetchScheduleListUseCase.execute(
+            let todaySchedules = try await fetchScheduleListUseCase.execute(
                 startDate: todayFormat,
                 endDate: todayFormat
             )
-            self.scheduleList = scheduleList
-            output.send(.fetchedScheduleList)
+            isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
+            self.todaySchedules = todaySchedules
+            self.uncompletedSchedules = todaySchedules.filter { schedule in
+                guard let records = schedule.scheduleRecords, !records.isEmpty else {
+                    // 기록이 없으면 완료 안 했으므로 "남은일정"
+                    return true
+                }
+
+                // 기록이 있는 경우, 오늘 날짜에 완료 안 한 게 있다면 "남은일정"
+                return records.contains { record in
+                    record.recordDate == schedule.startDate && !record.isComplete
+                }
+            }
+            
+            if todaySchedules.isEmpty {
+                output.send(.fetchedEmptyScheduleList)
+            } else {
+                output.send(.fetchedScheduleList)
+            }
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }
+    }
+    
+    func switchToRemainingSchedules() {
+        isShowingRemaining = true
+    }
+
+    func switchToTodaySchedules() {
+        isShowingRemaining = false
     }
 }

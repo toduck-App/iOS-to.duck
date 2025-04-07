@@ -20,7 +20,7 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
     
     private let noFocusContainerView = UIView()
     private let noFocusImageView = UIImageView().then {
-        $0.image = TDImage.DiaryPercent.noRecord
+        $0.image = TDImage.noEvent
         $0.contentMode = .scaleAspectFit
     }
     private let noFocusLabel = TDLabel(

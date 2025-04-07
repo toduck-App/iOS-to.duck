@@ -50,6 +50,7 @@ public enum TDImage {
     public static let registerSuccess = TDDesignAsset.Images.registerSuccess.image
     public static let errorAlert = TDDesignAsset.Images.errorAlertImage.image
     public static let duplicateId = TDDesignAsset.Images.duplicateId.image
+    public static let noEvent = TDDesignAsset.Images.noEventImage.image
     public static let clockFill = TDDesignAsset.Images.clockFill.image
     
     public enum Alert {
@@ -248,10 +249,6 @@ public enum TDImage {
         public static let sick = TDDesignAsset.Images.sickCircle.image
         public static let soso = TDDesignAsset.Images.sosoCircle.image
         public static let love = TDDesignAsset.Images.loveCircle.image
-    }
-    
-    public enum DiaryPercent {
-        public static let noRecord = TDDesignAsset.Images.noRecord.image
     }
     
     public enum FocusPercent {

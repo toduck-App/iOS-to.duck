@@ -10,6 +10,7 @@ public enum DateFormatType {
     case monthDay
     case monthDayWithWeekday
     case serverDate  // 서버에서 받은 "yyyy-MM-dd HH:mm" 포맷을 변환할 때 사용
+    case weekday
     
     public var formatter: DateFormatter {
         switch self {
@@ -48,6 +49,11 @@ public enum DateFormatType {
         case .serverDate:
             return DateFormatter().then {
                 $0.dateFormat = "yyyy-MM-dd HH:mm"
+            }
+        case .weekday:
+            return DateFormatter().then {
+                $0.dateFormat = "EEEE"
+                $0.locale = Locale(identifier: "en_US_POSIX")
             }
         }
     }

@@ -43,6 +43,10 @@ final class MyPageView: BaseView {
     }
     
     override func configure() {
+        containerView.backgroundColor = TDColor.baseWhite
+        profileView.backgroundColor = TDColor.baseWhite
+        socialButtonView.backgroundColor = TDColor.baseWhite
+        menuCollectionView.backgroundColor = TDColor.baseWhite
         logoutButton.layer.borderWidth = 1
         logoutButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         menuCollectionView.delegate = self
@@ -246,7 +250,6 @@ private extension MyPageView {
     enum Constants {
         static let mockDataSource: [(key: String, value: [String])] = [
             ("계정 관리", ["알림 설정", "작성 글 관리", "나의 댓글", "차단 관리"]),
-            ("고객센터", ["자주 묻는 질문", "문의하기", "문의 내역", "공지사항", "토덕 이용 가이드"]),
             ("서비스 약관", ["이용 약관", "개인정보 처리방침"])
         ]
     }

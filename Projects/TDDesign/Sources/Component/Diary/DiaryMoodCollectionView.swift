@@ -61,6 +61,7 @@ public final class DiaryMoodCollectionView: UIView {
     private func setupCollectionView() {
         addSubview(collectionView)
         
+        collectionView.backgroundColor = .white
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

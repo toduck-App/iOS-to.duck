@@ -16,6 +16,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
+        view.backgroundColor = TDColor.baseWhite
         tabBar.backgroundColor = TDColor.baseWhite
         tabBar.tintColor = TDColor.Primary.primary400
         tabBar.unselectedItemTintColor = TDColor.Neutral.neutral600

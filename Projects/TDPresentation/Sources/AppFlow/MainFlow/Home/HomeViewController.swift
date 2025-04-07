@@ -105,8 +105,15 @@ final class HomeViewController: BaseViewController<BaseView> {
         let newViewController: UIViewController
         switch index {
         case 0:
-            let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
-            newViewController = ToduckViewController(viewModel: ToduckViewModel(fetchScheduleListUseCase: useCase))
+            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+            let shouldMarkAllDayUseCase = DIContainer.shared.resolve(ShouldMarkAllDayUseCase.self)
+            let viewModel = ToduckViewModel(
+                fetchScheduleListUseCase: fetchScheduleListUseCase,
+                shouldMarkAllDayUseCase: shouldMarkAllDayUseCase
+            )
+            let toduckViewController = ToduckViewController(viewModel: viewModel)
+            toduckViewController.delegate = self
+            newViewController = toduckViewController
         case 1:
             let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
             let viewModel = ScheduleViewModel(fetchScheduleListUseCase: useCase)
@@ -156,6 +163,13 @@ extension HomeViewController: EventMakorDelegate {
     func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
         guard let selectedDate else { return }
         coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
+    }
+}
+
+extension HomeViewController: ToduckViewDelegate {
+    func didTapNoScheduleContainerView() {
+        segmentedControl.setSelectedIndex(1)
+        updateView()
     }
 }
 

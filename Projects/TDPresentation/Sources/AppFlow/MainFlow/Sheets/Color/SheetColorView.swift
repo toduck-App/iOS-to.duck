@@ -88,6 +88,7 @@ final class SheetColorView: BaseView {
         backgroundColor = TDColor.baseWhite
         cancelButton.layer.borderWidth = 1
         cancelButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        categoryCollectionView.backgroundColor = TDColor.baseWhite
         
         updateSaveButtonState()
     }

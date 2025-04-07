@@ -13,6 +13,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var autoScrollTimer: Timer?
+    weak var delegate: ToduckViewDelegate?
     
     init(
         viewModel: ToduckViewModel
@@ -26,8 +27,8 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         input.send(.fetchScheduleList)
     }
@@ -40,8 +41,14 @@ final class ToduckViewController: BaseViewController<ToduckView> {
             .sink { [weak self] event in
                 switch event {
                 case .fetchedScheduleList:
+                    self?.layoutView.noScheduleContainerView.isHidden = true
+                    self?.layoutView.scheduleCollectionView.isHidden = false
                     self?.layoutView.scheduleCollectionView.reloadData()
+                    self?.updateLottieView(at: 0)
                     self?.updateAutoScroll()
+                case .fetchedEmptyScheduleList:
+                    self?.layoutView.noScheduleContainerView.isHidden = false
+                    self?.layoutView.scheduleCollectionView.isHidden = true
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
                 }
@@ -49,9 +56,9 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     override func configure() {
-        updateLottieView(at: 0)
-        updateAutoScroll()
+        setupSegmentedControl()
         updateLottieAnimationForVisibleCell()
+        layoutView.delegate = delegate
         layoutView.scheduleCollectionView.delegate = self
         layoutView.scheduleCollectionView.dataSource = self
         layoutView.scheduleCollectionView.register(
@@ -60,8 +67,24 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         )
     }
     
+    private func setupSegmentedControl() {
+        layoutView.scheduleSegmentedControl.addAction(UIAction { [weak self] action in
+            guard let segmentedControl = action.sender as? UISegmentedControl else { return }
+            let selectedIndex = segmentedControl.selectedSegmentIndex
+            
+            if selectedIndex == 0 {
+                self?.viewModel.switchToTodaySchedules()
+            } else {
+                self?.viewModel.switchToRemainingSchedules()
+            }
+            
+            self?.layoutView.scheduleCollectionView.reloadData()
+            self?.updateAutoScroll()
+        }, for: .valueChanged)
+    }
+    
     private func updateLottieView(at index: Int) {
-        let lottieImageType = TDCategoryImageType(category: TDCategory.init(colorHex: "FFFFFF", imageName: "computer"))
+        let lottieImageType = TDCategoryImageType(category: viewModel.currentDisplaySchedules[index].category)
         let newAnimation = ToduckLottieManager.shared.getLottieAnimation(for: lottieImageType)
         layoutView.lottieView.animation = newAnimation
         layoutView.lottieView.play()
@@ -164,7 +187,7 @@ extension ToduckViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
         
-        let currentSchedule = viewModel.todaySchedules[indexPath.row]
+        let currentSchedule = viewModel.currentDisplaySchedules[indexPath.row]
         cell.eventDetailView.configureCell(
             isHomeToduck: true,
             color: currentSchedule.categoryColor,
@@ -231,5 +254,11 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         let newOffsetX = index * cellWidthWithSpacing
         
         targetContentOffset.pointee = CGPoint(x: newOffsetX, y: targetContentOffset.pointee.y)
+    }
+}
+
+extension ToduckViewController: ToduckViewDelegate {
+    func didTapNoScheduleContainerView() {
+        delegate?.didTapNoScheduleContainerView()
     }
 }

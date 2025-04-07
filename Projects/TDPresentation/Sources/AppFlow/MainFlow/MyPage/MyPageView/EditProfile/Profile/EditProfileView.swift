@@ -1,10 +1,3 @@
-//
-//  EditProfileView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import UIKit
 import TDDesign
 
@@ -39,6 +32,10 @@ final class EditProfileView: BaseView {
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.commonPadding)
             $0.height.equalTo(LayoutConstants.nicknameFieldHeight)
         }
+    }
+    
+    override func configure() {
+        backgroundColor = .white
     }
 }
 
