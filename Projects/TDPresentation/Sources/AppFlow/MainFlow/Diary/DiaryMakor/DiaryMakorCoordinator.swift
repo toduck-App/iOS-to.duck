@@ -24,7 +24,14 @@ final class DiaryMakorCoordinator: Coordinator {
         selectedDate: Date?,
         diary: Diary?
     ) {
-        let viewModel = DiaryMakorViewModel(selectedDate: selectedDate, preDiary: diary)
+        let createDiaryUseCase = injector.resolve(CreateDiaryUseCase.self)
+        let updateDiaryUseCase = injector.resolve(UpdateDiaryUseCase.self)
+        let viewModel = DiaryMakorViewModel(
+            createDiaryUseCase: createDiaryUseCase,
+            updateDiaryUseCase: updateDiaryUseCase,
+            selectedDate: selectedDate,
+            preDiary: diary
+        )
         let diaryMakorViewController = DiaryMakorViewController(viewModel: viewModel, isEdit: isEdit)
         diaryMakorViewController.coordinator = self
         diaryMakorViewController.hidesBottomBarWhenPushed = true

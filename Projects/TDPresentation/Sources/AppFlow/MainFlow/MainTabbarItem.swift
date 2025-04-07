@@ -47,4 +47,14 @@ public enum MainTabbarItem: CaseIterable {
         
         return tabBarItem
     }
+    
+    var index: Int {
+        switch self {
+        case .home: return 0
+        case .timer: return 1
+        case .diary: return 2
+        case .social: return 3
+        case .mypage: return 4
+        }
+    }
 }

@@ -75,3 +75,9 @@ extension MainTabBarCoordinator: CoordinatorFinishDelegate {
         }
     }
 }
+
+extension MainTabBarCoordinator {
+    func switchToHomeTab() {
+        tabBarController.selectedIndex = MainTabbarItem.home.index
+    }
+}

@@ -17,12 +17,12 @@ final class DiaryAnalyzeView: BaseView {
         $0.distribution = .fillEqually
         $0.spacing = 10
     }
-    lazy var diaryAnalyzeLabel = DiaryAnalyzeDetailView(
+    lazy var diaryAnalyzeView = DiaryAnalyzeDetailView(
         type: .diary,
         diaryCount: diaryCount,
         focusPercent: focusPercent
     )
-    lazy var focusAnalyzeLabel = DiaryAnalyzeDetailView(
+    lazy var focusAnalyzeView = DiaryAnalyzeDetailView(
         type: .focus,
         diaryCount: diaryCount,
         focusPercent: focusPercent
@@ -45,8 +45,8 @@ final class DiaryAnalyzeView: BaseView {
         addSubview(nickNameLabel)
         addSubview(titleLabel)
         addSubview(analzeHorizontalStackView)
-        analzeHorizontalStackView.addArrangedSubview(diaryAnalyzeLabel)
-        analzeHorizontalStackView.addArrangedSubview(focusAnalyzeLabel)
+        analzeHorizontalStackView.addArrangedSubview(diaryAnalyzeView)
+        analzeHorizontalStackView.addArrangedSubview(focusAnalyzeView)
     }
     
     override func layout() {

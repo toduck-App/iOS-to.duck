@@ -388,7 +388,7 @@ extension TimerViewController {
         case resetFocusCount = "집중 횟수 초기화"
 #endif
         var dropDownItem: TDDropdownItem {
-            return TDDropdownItem(title: rawValue, rightImage: image)
+            return TDDropdownItem(title: rawValue, leftImage: image)
         }
         
         // TODO: 이미지 추가 예정

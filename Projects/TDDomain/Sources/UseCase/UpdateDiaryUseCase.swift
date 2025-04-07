@@ -1,7 +1,5 @@
-import Foundation
-
 public protocol UpdateDiaryUseCase {
-    func execute(diary: Diary) async throws -> Diary
+    func execute(isChangeEmotion: Bool, diary: Diary) async throws
 }
 
 public final class UpdateDiaryUseCaseImpl: UpdateDiaryUseCase {
@@ -11,7 +9,7 @@ public final class UpdateDiaryUseCaseImpl: UpdateDiaryUseCase {
         self.repository = repository
     }
 
-    public func execute(diary: Diary) async throws -> Diary {
-        try await repository.updateDiary(diary: diary)
+    public func execute(isChangeEmotion: Bool, diary: Diary) async throws {
+        try await repository.updateDiary(isChangeEmotion: isChangeEmotion, diary: diary)
     }
 }

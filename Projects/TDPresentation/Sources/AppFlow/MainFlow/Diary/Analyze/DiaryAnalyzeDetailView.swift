@@ -44,6 +44,7 @@ final class DiaryAnalyzeDetailView: BaseView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Common Method
     override func addview() {
         addSubview(containerView)
         
@@ -109,5 +110,24 @@ final class DiaryAnalyzeDetailView: BaseView {
             highlightFont: TDFont.boldHeader5.font,
             highlightColor: TDColor.Primary.primary500
         )
+    }
+    
+    // MARK: - Configure
+    func updateDiaryCount(_ count: Int) {
+        description1Label.setText("지난 달 보다")
+        
+        description2Label.attributedText = makeColoredText(
+            mainText: "\(count)일 더 작성했어요",
+            coloredPart: "\(count)일"
+        )
+        
+        switch count {
+        case let x where x > 0:
+            analyzeImageView.image = TDImage.Analyze.bookIncrease
+        case let x where x < 0:
+            analyzeImageView.image = TDImage.Analyze.bookDecrease
+        default:
+            analyzeImageView.image = TDImage.toduckLogo // TODO: 이미지 변경
+        }
     }
 }

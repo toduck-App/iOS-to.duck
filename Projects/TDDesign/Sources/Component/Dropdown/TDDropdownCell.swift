@@ -10,7 +10,7 @@ final class DropDownCell: UITableViewCell {
         $0.alignment = .center
         $0.distribution = .equalSpacing
         $0.isLayoutMarginsRelativeArrangement = true
-        $0.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        $0.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 16)
     }
     
     // MARK: - UI Components

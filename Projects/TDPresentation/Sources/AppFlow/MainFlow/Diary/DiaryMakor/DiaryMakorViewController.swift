@@ -36,6 +36,10 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
+                case .saveDiary:
+                    self?.coordinator?.finish(by: .pop)
+                case .failure(let message):
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }
@@ -44,7 +48,17 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         keyboardAdjustableView = layoutView.buttonContainerView
         layoutView.isEdit = isEdit
         layoutView.scrollView.delegate = self
+        layoutView.titleForm.delegate = self
+        layoutView.recordTextView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
+        
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            if self?.isEdit == true {
+                self?.input.send(.tapEditButton)
+            } else {
+                self?.input.send(.tapSaveButton)
+            }
+        }, for: .touchUpInside)
     }
     
     func updateEditView(preDiary: Diary) {
@@ -52,7 +66,7 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         layoutView.saveButton.isEnabled = true
         layoutView.saveButton.layer.borderWidth = 0
         layoutView.titleForm.setupTextField(preDiary.title)
-        layoutView.recordTextView.setupTextView(text: preDiary.sentenceText)
+        layoutView.recordTextView.setupTextView(text: preDiary.memo)
     }
 }
 
@@ -79,7 +93,7 @@ extension DiaryMakorViewController: UIScrollViewDelegate {
             self?.view.layoutIfNeeded()
         }
     }
-
+    
     private func hideSnackBar() {
         guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
         constraint.update(offset: 50)
@@ -99,5 +113,21 @@ extension DiaryMakorViewController: DiaryMoodCollectionViewDelegate {
         layoutView.saveButton.isEnabled = true
         layoutView.saveButton.layer.borderWidth = 0
         input.send(.tapCategoryCell(UIImage.reverseMoodDictionary[selectedMood] ?? "HAPPY"))
+    }
+}
+
+// MARK: - TextFieldDelegate
+extension DiaryMakorViewController: TDFormTextFieldDelegate {
+    func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
+        if textField == layoutView.titleForm {
+            input.send(.updateTitleTextField(text))
+        }
+    }
+}
+
+// MARK: - TextViewDelegate
+extension DiaryMakorViewController: TDFormTextViewDelegate {
+    func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
+        input.send(.updateMemoTextView(text))
     }
 }

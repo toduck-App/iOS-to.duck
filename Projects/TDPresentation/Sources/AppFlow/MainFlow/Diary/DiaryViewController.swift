@@ -26,7 +26,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
     }
     
     /// 분석 뷰
-    let analyzeView = DiaryAnalyzeView(diaryCount: 25, focusPercent: 55)
+    let analyzeView = DiaryAnalyzeView(diaryCount: 0, focusPercent: 0)
     
     let diaryContentContainerView = UIView()
     /// 세그먼트 컨트롤 (기분 / 집중도)
@@ -76,16 +76,12 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        input.send(.fetchUserNickname)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setupNavigationAppearance()
+        input.send(.fetchUserNickname)
+        input.send(.fetchDiaryCompareCount)
     }
     
     
@@ -155,6 +151,8 @@ final class DiaryViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedUserNickname(let nickname):
                     self?.analyzeView.configure(nickname: nickname)
+                case .fetchedCompareCount(let count):
+                    self?.analyzeView.diaryAnalyzeView.updateDiaryCount(count)
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -194,7 +192,12 @@ final class DiaryViewController: BaseViewController<BaseView> {
         
         switch index {
         case 0:
-            let viewModel = DiaryCalendarViewModel()
+            let fetchDiaryListUseCase = DIContainer.shared.resolve(FetchDiaryListUseCase.self)
+            let deleteDiaryUseCase = DIContainer.shared.resolve(DeleteDiaryUseCase.self)
+            let viewModel = DiaryCalendarViewModel(
+                fetchDiaryListUseCase: fetchDiaryListUseCase,
+                deleteDiaryUseCase: deleteDiaryUseCase
+            )
             let diaryCalendarViewController = DiaryCalendarViewController(viewModel: viewModel)
             diaryCalendarViewController.coordinator = coordinator
             diaryCalendarViewController.delegate = self
@@ -233,14 +236,17 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     private func setupNavigationBar() {
         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
-        let tomatoImage = UIImageView(image: TDImage.Diary.navigationImage)
-        tomatoImage.contentMode = .scaleAspectFit
+        let tomatoButton = UIButton(type: .custom)
+        tomatoButton.setImage(TDImage.Diary.navigationImage, for: .normal)
+        tomatoButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapHomeTomatoIcon()
+        }, for: .touchUpInside)
         
         let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
         toduckLogoImageView.contentMode = .scaleAspectFit
         
         navigationItem.leftBarButtonItems = [
-            UIBarButtonItem(customView: tomatoImage),
+            UIBarButtonItem(customView: tomatoButton),
             UIBarButtonItem(customView: toduckLogoImageView)
         ]
         
@@ -285,9 +291,9 @@ extension DiaryViewController: UIScrollViewDelegate {
         guard diarySegmentedControl.selectedIndex == 0,
               let diaryCalendarVC = currentViewController as? DiaryCalendarViewController,
               let calendarContainerView = diaryCalendarVC.calendarContainerView.superview else { return }
-
+        
         let calendarFrame = calendarContainerView.convert(diaryCalendarVC.calendarContainerView.frame, to: view)
-
+        
         if calendarFrame.maxY <= diaryPostButtonContainerView.frame.minY {
             diaryPostButtonContainerView.backgroundColor = .clear
         } else {
@@ -297,7 +303,12 @@ extension DiaryViewController: UIScrollViewDelegate {
 }
 
 extension DiaryViewController: DiaryCalendarViewControllerDelegate {
-    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, isWrited: Bool) {
+    func didSelectDate(
+        _ diaryCalendarViewController: DiaryCalendarViewController,
+        selectedDate: Date,
+        isWrited: Bool
+    ) {
+        self.selectedDate = selectedDate.normalized
         if isWrited && diarySegmentedControl.selectedIndex == 0 {
             diaryPostButtonContainerView.isHidden = true
         } else {

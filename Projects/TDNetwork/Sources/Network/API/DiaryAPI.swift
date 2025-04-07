@@ -1,13 +1,14 @@
 import Foundation
+import TDData
 import TDCore
 import TDDomain
 
 public enum DiaryAPI {
-    case fetchDiary(id: Int) // 특정 다이어리 조회
-    case fetchDiaryList(from: Date, to: Date) // 다이어리 리스트 조회
-    case addDiary(diary: Diary) // 다이어리 추가
-    case updateDiary(diary: Diary) // 다이어리 업데이트
+    case fetchDiaryList(yearMonth: String) // 다이어리 리스트 조회
+    case createDiary(diary: DiaryPostRequestDTO) // 다이어리 추가
+    case updateDiary(diary: DiaryPatchRequestDTO) // 다이어리 업데이트
     case deleteDiary(id: Int) // 다이어리 삭제
+    case compareDiaryCount(yearMonth: String) // 특정 연월과 전월의 일기 개수를 비교
 }
 
 extension DiaryAPI: MFTarget {
@@ -17,48 +18,70 @@ extension DiaryAPI: MFTarget {
     
     public var path: String {
         switch self {
-        case .fetchDiary(let id):
-            "/diary/\(id)"
         case .fetchDiaryList:
-            "/diary"
-        case .addDiary:
-            "/diary"
+            "v1/diary"
+        case .createDiary:
+            "v1/diary"
         case .updateDiary(let diary):
-            "/diary/\(diary.id)"
+            "v1/diary/\(diary.id)"
         case .deleteDiary(let id):
-            "/diary/\(id)"
+            "v1/diary/\(id)"
+        case .compareDiaryCount:
+            "v1/diary/count"
         }
     }
     
     public var method: MFHTTPMethod {
         switch self {
-        case .fetchDiary, .fetchDiaryList:
-            .get
-        case .addDiary:
-            .post
+        case .fetchDiaryList:
+                .get
+        case .createDiary:
+                .post
         case .updateDiary:
-            .put
+                .patch
         case .deleteDiary:
-            .delete
+                .delete
+        case .compareDiaryCount:
+                .get
         }
     }
     
     public var queries: Parameters? {
         switch self {
-        case .fetchDiary, .deleteDiary, .addDiary, .updateDiary:
+        case .deleteDiary, .createDiary, .updateDiary:
             return nil
-        case .fetchDiaryList(let from, let to):
-            let dateFormatter = ISO8601DateFormatter()
-            let queries: [String: String] = [
-                "from": dateFormatter.string(from: from),
-                "to": dateFormatter.string(from: to)
-            ]
-            return queries
+        case .fetchDiaryList(let yearMonth):
+            return ["yearMonth": yearMonth]
+        case .compareDiaryCount(let yearMonth):
+            return ["yearMonth": yearMonth]
         }
     }
     
     public var task: MFTask {
-        .requestPlain
+        switch self {
+        case .fetchDiaryList, .deleteDiary, .compareDiaryCount:
+                .requestPlain
+        case .createDiary(let diary):
+                .requestParameters(parameters:
+                    [
+                        "date": diary.date,
+                        "emotion": diary.emotion,
+                        "title": diary.title,
+                        "memo": diary.memo,
+                        "diaryImageUrls": diary.diaryImageUrls
+                    ]
+                )
+        case .updateDiary(let diary):
+            .requestParameters(parameters:
+                [
+                    "isChangeEmotion": diary.isChangeEmotion,
+                    "emotion": diary.emotion,
+                    "title": diary.title,
+                    "memo": diary.memo,
+                    "diaryImageUrls": diary.diaryImageUrls
+                ]
+            )
+        }
     }
     
     public var headers: MFHeaders? {
