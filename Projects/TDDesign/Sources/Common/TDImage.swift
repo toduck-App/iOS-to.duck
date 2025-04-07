@@ -52,6 +52,8 @@ public enum TDImage {
     public static let duplicateId = TDDesignAsset.Images.duplicateId.image
     public static let noEvent = TDDesignAsset.Images.noEventImage.image
     public static let clockFill = TDDesignAsset.Images.clockFill.image
+    public static let cycle = TDDesignAsset.Images.cycleImage.image
+    public static let checkNeutral = TDDesignAsset.Images.checkNeutral.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
