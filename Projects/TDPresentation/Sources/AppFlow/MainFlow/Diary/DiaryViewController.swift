@@ -296,9 +296,9 @@ extension DiaryViewController: UIScrollViewDelegate {
         guard diarySegmentedControl.selectedIndex == 0,
               let diaryCalendarVC = currentViewController as? DiaryCalendarViewController,
               let calendarContainerView = diaryCalendarVC.calendarContainerView.superview else { return }
-
+        
         let calendarFrame = calendarContainerView.convert(diaryCalendarVC.calendarContainerView.frame, to: view)
-
+        
         if calendarFrame.maxY <= diaryPostButtonContainerView.frame.minY {
             diaryPostButtonContainerView.backgroundColor = .clear
         } else {
@@ -308,7 +308,12 @@ extension DiaryViewController: UIScrollViewDelegate {
 }
 
 extension DiaryViewController: DiaryCalendarViewControllerDelegate {
-    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, isWrited: Bool) {
+    func didSelectDate(
+        _ diaryCalendarViewController: DiaryCalendarViewController,
+        selectedDate: Date,
+        isWrited: Bool
+    ) {
+        self.selectedDate = selectedDate.normalized
         if isWrited && diarySegmentedControl.selectedIndex == 0 {
             diaryPostButtonContainerView.isHidden = true
         } else {

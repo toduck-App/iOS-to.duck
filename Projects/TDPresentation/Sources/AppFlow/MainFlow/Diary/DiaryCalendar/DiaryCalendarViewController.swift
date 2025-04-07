@@ -7,7 +7,7 @@ import TDDomain
 import TDDesign
 
 protocol DiaryCalendarViewControllerDelegate: AnyObject {
-    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, isWrited: Bool)
+    func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, selectedDate: Date, isWrited: Bool)
 }
 
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
@@ -175,7 +175,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         noDiaryContainerView.isHidden = hasDiary
         
         if let diary {
-            delegate?.didSelectDate(self, isWrited: true)
+            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: true)
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
                 date: diary.date.convertToString(formatType: .monthDayWithWeekday),
@@ -184,7 +184,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                 photos: [TDImage.Mood.angry, TDImage.Mood.happy]
             )
         } else {
-            delegate?.didSelectDate(self, isWrited: false)
+            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: false)
         }
     }
     
