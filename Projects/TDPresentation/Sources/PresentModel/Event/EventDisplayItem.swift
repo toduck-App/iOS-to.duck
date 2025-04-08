@@ -16,6 +16,7 @@ struct EventDisplayItem: EventPresentable {
     let memo: String?
     let isFinished: Bool
     let isRepeating: Bool
+    let eventMode: TDEventMode
     
     init(
         id: Int?,
@@ -30,7 +31,8 @@ struct EventDisplayItem: EventPresentable {
         isPublic: Bool = false,
         memo: String?,
         isFinished: Bool,
-        isRepeating: Bool
+        isRepeating: Bool,
+        eventMode: TDEventMode
     ) {
         self.id = id
         self.title = title
@@ -45,6 +47,7 @@ struct EventDisplayItem: EventPresentable {
         self.memo = memo
         self.isFinished = isFinished
         self.isRepeating = isRepeating
+        self.eventMode = eventMode
     }
     
     init(
@@ -68,6 +71,7 @@ struct EventDisplayItem: EventPresentable {
         self.memo = event.memo
         self.isFinished = event.isFinished
         self.isRepeating = event.isRepeating
+        self.eventMode = event.eventMode
     }
     
     init(routine: Routine) {
@@ -84,6 +88,7 @@ struct EventDisplayItem: EventPresentable {
         self.memo = routine.memo
         self.isFinished = routine.isFinished
         self.isRepeating = routine.isRepeating
+        self.eventMode = routine.eventMode
     }
     
     init(schedule: Schedule) {
@@ -100,5 +105,6 @@ struct EventDisplayItem: EventPresentable {
         self.memo = schedule.memo
         self.isFinished = schedule.isFinished
         self.isRepeating = false
+        self.eventMode = schedule.eventMode
     }
 }

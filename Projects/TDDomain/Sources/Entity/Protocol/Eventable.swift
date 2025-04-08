@@ -8,4 +8,5 @@ public protocol Eventable {
     var memo: String? { get }
     var isFinished: Bool { get }
     var isRepeating: Bool { get }
+    var eventMode: TDEventMode { get }
 }
