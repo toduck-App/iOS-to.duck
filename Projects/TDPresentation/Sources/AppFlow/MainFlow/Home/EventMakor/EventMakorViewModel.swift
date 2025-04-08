@@ -25,7 +25,7 @@ final class EventMakorViewModel: BaseViewModel {
         case failureAPI(String)
     }
     
-    private let mode: TodoViewController.Mode
+    private let mode: EventMakorViewController.Mode
     private let output = PassthroughSubject<Output, Never>()
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
@@ -47,7 +47,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var memo: String?
     
     init(
-        mode: TodoViewController.Mode,
+        mode: EventMakorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase

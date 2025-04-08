@@ -4,8 +4,13 @@ import TDDesign
 import TDCore
 
 final class EventMakorViewController: BaseViewController<BaseView> {
+    enum Mode {
+        case schedule
+        case routine
+    }
+    
     // MARK: - Properties
-    private let mode: TodoViewController.Mode
+    private let mode: Mode
     private let viewModel: EventMakorViewModel
     private let eventMakorView: EventMakorView
     private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
@@ -14,7 +19,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     // MARK: - Initializer
     init(
-        mode: TodoViewController.Mode,
+        mode: Mode,
         viewModel: EventMakorViewModel
     ) {
         self.mode = mode

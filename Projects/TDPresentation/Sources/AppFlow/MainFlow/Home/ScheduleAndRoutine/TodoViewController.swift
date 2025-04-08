@@ -5,11 +5,6 @@ import UIKit
 import TDDesign
 
 final class TodoViewController: BaseViewController<BaseView> {
-    enum Mode {
-        case schedule
-        case routine
-    }
-    
     // MARK: - UI Components
     private let weekCalendarView = HomeCalendar()
     private let scheduleAndRoutineTableView = UITableView().then {
@@ -32,11 +27,8 @@ final class TodoViewController: BaseViewController<BaseView> {
         font: TDFont.boldHeader4.font
     )
     // MARK: - Properties
-    private let mode: Mode
-    private let scheduleViewModel: ScheduleViewModel
-    private let routineViewModel: RoutineViewModel
-    private let scheduleInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
-    private let routineInput = PassthroughSubject<RoutineViewModel.Input, Never>()
+    private let viewModel: TodoViewModel
+    private let input = PassthroughSubject<TodoViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var selectedDate: Date?
     private var isMenuVisible = false
@@ -45,13 +37,9 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     // MARK: - Initializer
     init(
-        scheduleViewModel: ScheduleViewModel,
-        routineViewModel: RoutineViewModel,
-        mode: Mode
+        viewModel: TodoViewModel
     ) {
-        self.scheduleViewModel = scheduleViewModel
-        self.routineViewModel = routineViewModel
-        self.mode = mode
+        self.viewModel = viewModel
         super.init()
     }
     
@@ -90,17 +78,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private func fetchTodayTodo() {
         if let startWeekDay = Date().startOfWeek()?.convertToString(formatType: .yearMonthDay),
            let endWeekDay = Date().endOfWeek()?.convertToString(formatType: .yearMonthDay) {
-            switch mode {
-            case .schedule:
-                scheduleInput.send(
-                    .fetchScheduleList(
-                        startDate: startWeekDay,
-                        endDate: endWeekDay
-                    )
-                )
-            case .routine:
-                break
-            }
+            input.send(.fetchTodoList(startDate: startWeekDay, endDate: endWeekDay))
         }
     }
     
@@ -185,24 +163,16 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     override func binding() {
-        let scheduleOutput = scheduleViewModel.transform(input: scheduleInput.eraseToAnyPublisher())
-        let routineOutput = routineViewModel.transform(input: routineInput.eraseToAnyPublisher())
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
         
-        scheduleOutput
+        output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .fetchedScheduleList:
+                case .fetchedTodoList:
                     self?.scheduleAndRoutineTableView.reloadData()
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
-                }
-            }.store(in: &cancellables)
-        
-        routineOutput
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] event in
-                switch event {
                 }
             }.store(in: &cancellables)
     }
@@ -285,17 +255,7 @@ extension TodoViewController: FSCalendarDelegate {
         
         if let startDate = startOfWeek?.convertToString(formatType: .yearMonthDay),
            let endDate = endOfWeek?.convertToString(formatType: .yearMonthDay) {
-            switch mode {
-            case .schedule:
-                scheduleInput.send(
-                    .fetchScheduleList(
-                        startDate: startDate,
-                        endDate: endDate
-                    )
-                )
-            case .routine:
-                break
-            }
+            input.send(.fetchTodoList(startDate: startDate, endDate: endDate))
         }
     }
     
@@ -355,12 +315,7 @@ extension TodoViewController: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        switch mode {
-        case .schedule:
-            return scheduleViewModel.timeSlots.reduce(0) { $0 + $1.events.count }
-        case .routine:
-            return routineViewModel.timeSlots.reduce(0) { $0 + $1.events.count }
-        }
+        viewModel.todoList.count
     }
     
     func tableView(
@@ -372,46 +327,6 @@ extension TodoViewController: UITableViewDataSource {
             for: indexPath
         ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
-        let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
-        guard let provider else { return cell }
-        
-        let isRepeating = provider.isEventRepeating(at: indexPath.row)
-        
-        cell.configureSwipeActions(
-            editAction: { [weak self] in
-                print("editAction")
-            },
-            deleteAction: { [weak self] in
-                let deleteEventViewController = DeleteEventViewController(
-                    isRepeating: isRepeating,
-                    isScheduleEvent: self?.mode == .schedule
-                )
-                self?.presentPopup(with: deleteEventViewController)
-            }
-        )
-        
-        var cumulative = 0
-        for slot in provider.timeSlots {
-            let count = slot.events.count
-            if indexPath.row < cumulative + count {
-                let eventIndexInSlot = indexPath.row - cumulative
-                let event = slot.events[eventIndexInSlot]
-                let eventDisplayItem = provider.convertEventToDisplayItem(event: event)
-                
-                let timeText: String? = (eventIndexInSlot == 0) ? slot.timeText : nil
-                
-                cell.configure(
-                    timeText: timeText,
-                    event: eventDisplayItem
-                )
-                cell.configureButtonAction {
-                    TDLogger.debug("체크박스 버튼눌림")
-                }
-                break
-            }
-            cumulative += count
-        }
-        
         return cell
     }
 }
@@ -422,23 +337,7 @@ extension TodoViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        let provider: TimeSlotProvider? = (mode == .schedule) ? scheduleViewModel : routineViewModel
-        guard let provider else { return }
-        
-        var cumulative = 0
-        for slot in provider.timeSlots {
-            let count = slot.events.count
-            if indexPath.row < cumulative + count {
-                let eventIndexInSlot = indexPath.row - cumulative
-                let event = slot.events[eventIndexInSlot]
-                let eventDisplayItem = provider.convertEventToDisplayItem(event: event)
-                let detailEventViewController = DetailEventViewController(mode: mode, event: eventDisplayItem)
-                presentPopup(with: detailEventViewController)
-                
-                return
-            }
-            cumulative += count
-        }
+
     }
 }
 

@@ -5,12 +5,12 @@ import UIKit
 
 final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     // MARK: - Properties
-    private let mode: TodoViewController.Mode
+    private let mode: TDEventMode
     private let event: EventDisplayItem
     
     // MARK: - Initializer
     init(
-        mode: TodoViewController.Mode,
+        mode: TDEventMode,
         event: EventDisplayItem
     ) {
         self.mode = mode

@@ -115,13 +115,8 @@ final class HomeViewController: BaseViewController<BaseView> {
             toduckViewController.delegate = self
             newViewController = toduckViewController
         case 1:
-            let scheduleViewModel = ScheduleViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
-            let routineViewModel = RoutineViewModel()
-            let todoViewController = TodoViewController(
-                scheduleViewModel: scheduleViewModel,
-                routineViewModel: routineViewModel,
-                mode: .routine
-            )
+            let viewModel = TodoViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
+            let todoViewController = TodoViewController(viewModel: viewModel)
             todoViewController.coordinator = coordinator
             newViewController = todoViewController
         default:
@@ -153,7 +148,7 @@ final class HomeViewController: BaseViewController<BaseView> {
 
 // MARK: - EventMakorDelegate
 extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor(mode: TodoViewController.Mode, selectedDate: Date?) {
+    func didTapEventMakor(mode: EventMakorViewController.Mode, selectedDate: Date?) {
         guard let selectedDate else { return }
         coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
     }
@@ -170,7 +165,7 @@ extension HomeViewController: ToduckViewDelegate {
 private extension HomeViewController {
     enum LayoutConstants {
         static let segmentedControlLeadingOffset: CGFloat = 16
-        static let segmentedControlWidth: CGFloat = 180
+        static let segmentedControlWidth: CGFloat = 120
         static let segmentedControlHeight: CGFloat = 44
     }
 }
