@@ -43,7 +43,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private var didAddDimmedView = false
     weak var coordinator: EventMakorDelegate?
     
-    // MARK: - Initialize
+    // MARK: - Initializer
     init(
         scheduleViewModel: ScheduleViewModel,
         routineViewModel: RoutineViewModel,
@@ -60,23 +60,11 @@ final class TodoViewController: BaseViewController<BaseView> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let startWeekDay = Date().startOfWeek()?.convertToString(formatType: .yearMonthDay),
-           let endWeekDay = Date().endOfWeek()?.convertToString(formatType: .yearMonthDay) {
-            switch mode {
-            case .schedule:
-                scheduleInput.send(
-                    .fetchScheduleList(
-                        startDate: startWeekDay,
-                        endDate: endWeekDay
-                    )
-                )
-            case .routine:
-                break
-            }
-        }
+        fetchTodayTodo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -99,24 +87,24 @@ final class TodoViewController: BaseViewController<BaseView> {
         hideFloatingViews()
     }
     
-    private func hideFloatingViews() {
-        eventMakorFloattingButton.isHidden = true
-        floatingActionMenuView.isHidden = true
-        dimmedView.isHidden = true
-        didAddDimmedView = false
-        isMenuVisible = false
-        resetFloatingButtonAppearance()
-    }
-
-    private func resetFloatingButtonAppearance() {
-        eventMakorFloattingButton.updateBackgroundColor(
-            buttonColor: TDColor.Primary.primary500,
-            imageColor: TDColor.baseWhite
-        )
-        let angle: CGFloat = 0
-        eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
+    private func fetchTodayTodo() {
+        if let startWeekDay = Date().startOfWeek()?.convertToString(formatType: .yearMonthDay),
+           let endWeekDay = Date().endOfWeek()?.convertToString(formatType: .yearMonthDay) {
+            switch mode {
+            case .schedule:
+                scheduleInput.send(
+                    .fetchScheduleList(
+                        startDate: startWeekDay,
+                        endDate: endWeekDay
+                    )
+                )
+            case .routine:
+                break
+            }
+        }
     }
     
+    // 뷰가 나타날 때 플로팅 버튼 처리
     private func setupFloatingUIInWindow() {
         guard !didAddDimmedView,
               let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -158,29 +146,26 @@ final class TodoViewController: BaseViewController<BaseView> {
         }
     }
     
-    // MARK: Base Method
-    override func configure() {
-        view.backgroundColor = TDColor.baseWhite
-        weekCalendarView.delegate = self
+    // 뷰가 사라질 때 플로팅 버튼 처리
+    private func hideFloatingViews() {
+        eventMakorFloattingButton.isHidden = true
         floatingActionMenuView.isHidden = true
-        floatingActionMenuView.delegate = self
-        configureEventMakorButton()
-        configureDimmedViewGesture()
-        
-        scheduleAndRoutineTableView.delegate = self
-        scheduleAndRoutineTableView.dataSource = self
-        scheduleAndRoutineTableView.register(
-            TimeSlotTableViewCell.self,
-            forCellReuseIdentifier: TimeSlotTableViewCell.identifier
+        dimmedView.isHidden = true
+        didAddDimmedView = false
+        isMenuVisible = false
+        resetFloatingButtonAppearance()
+    }
+
+    private func resetFloatingButtonAppearance() {
+        eventMakorFloattingButton.updateBackgroundColor(
+            buttonColor: TDColor.Primary.primary500,
+            imageColor: TDColor.baseWhite
         )
-        scheduleAndRoutineTableView.contentInset = UIEdgeInsets(
-            top: 12,
-            left: 0,
-            bottom: 0,
-            right: 0
-        )
+        let angle: CGFloat = 0
+        eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
     }
     
+    // MARK: Base Method
     override func addView() {
         view.addSubview(weekCalendarView)
         view.addSubview(scheduleAndRoutineTableView)
@@ -222,6 +207,29 @@ final class TodoViewController: BaseViewController<BaseView> {
             }.store(in: &cancellables)
     }
     
+    override func configure() {
+        view.backgroundColor = TDColor.baseWhite
+        weekCalendarView.delegate = self
+        floatingActionMenuView.isHidden = true
+        floatingActionMenuView.delegate = self
+        configureEventMakorButton()
+        configureDimmedViewGesture()
+        
+        scheduleAndRoutineTableView.delegate = self
+        scheduleAndRoutineTableView.dataSource = self
+        scheduleAndRoutineTableView.register(
+            TimeSlotTableViewCell.self,
+            forCellReuseIdentifier: TimeSlotTableViewCell.identifier
+        )
+        scheduleAndRoutineTableView.contentInset = UIEdgeInsets(
+            top: 12,
+            left: 0,
+            bottom: 0,
+            right: 0
+        )
+    }
+    
+    // MARK: 플로팅 버튼 액션 처리
     private func configureEventMakorButton() {
         buttonShadowWrapper.layer.shadowColor = TDColor.Neutral.neutral800.cgColor
         buttonShadowWrapper.layer.shadowOpacity = 0.3
@@ -265,15 +273,6 @@ final class TodoViewController: BaseViewController<BaseView> {
             updateFloatingView()
         }
     }
-    
-    private func colorForDate(_ date: Date) -> UIColor? {
-        // 오늘 날짜 확인
-        if Calendar.current.isDate(date, inSameDayAs: Date()) {
-            return TDColor.Primary.primary500
-        }
-        
-        return TDColor.Neutral.neutral600
-    }
 }
 
 // MARK: - FSCalendarDelegate
@@ -314,7 +313,15 @@ extension TodoViewController: FSCalendarDelegate {
 
 // MARK: - FSCalendarDelegateAppearance
 extension TodoViewController: FSCalendarDelegateAppearance {
-    // MARK: - 날짜 폰트 색상
+    private func colorForDate(_ date: Date) -> UIColor? {
+        // 오늘 날짜 확인
+        if Calendar.current.isDate(date, inSameDayAs: Date()) {
+            return TDColor.Primary.primary500
+        }
+        
+        return TDColor.Neutral.neutral600
+    }
+    
     // 기본 폰트 색
     func calendar(
         _ calendar: FSCalendar,
