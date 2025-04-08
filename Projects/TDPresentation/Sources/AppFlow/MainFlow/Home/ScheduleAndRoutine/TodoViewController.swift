@@ -143,6 +143,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
         floatingActionMenuView.isHidden = true
+        floatingActionMenuView.delegate = self
         configureEventMakorButton()
         configureDimmedViewGesture()
         
@@ -411,6 +412,16 @@ extension TodoViewController: UITableViewDelegate {
             }
             cumulative += count
         }
+    }
+}
+
+extension TodoViewController: FloatingActionMenuViewDelegate {
+    func didTapScheduleButton() {
+        coordinator?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate)
+    }
+    
+    func didTapRoutineButton() {
+        coordinator?.didTapEventMakor(mode: .routine, selectedDate: selectedDate)
     }
 }
 

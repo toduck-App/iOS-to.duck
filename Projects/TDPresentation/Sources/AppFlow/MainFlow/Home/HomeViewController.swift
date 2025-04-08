@@ -117,11 +117,13 @@ final class HomeViewController: BaseViewController<BaseView> {
         case 1:
             let scheduleViewModel = ScheduleViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
             let routineViewModel = RoutineViewModel()
-            newViewController = TodoViewController(
+            let todoViewController = TodoViewController(
                 scheduleViewModel: scheduleViewModel,
                 routineViewModel: routineViewModel,
                 mode: .routine
             )
+            todoViewController.coordinator = coordinator
+            newViewController = todoViewController
         default:
             newViewController = UIViewController()
         }

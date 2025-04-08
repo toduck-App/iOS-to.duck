@@ -1,7 +1,13 @@
 import UIKit
 import TDDesign
 
+protocol FloatingActionMenuViewDelegate: AnyObject {
+    func didTapScheduleButton()
+    func didTapRoutineButton()
+}
+
 final class FloatingActionMenuView: BaseView {
+    // MARK: UI Components
     private let scheduleContainerView = UIView()
     private let scheduleImageView = UIImageView()
     private let scheduleLabel = TDLabel(
@@ -18,6 +24,10 @@ final class FloatingActionMenuView: BaseView {
         toduckColor: TDColor.Neutral.neutral800
     )
     
+    // MARK: Properties
+    weak var delegate: FloatingActionMenuViewDelegate?
+    
+    // MARK: Common Methods
     override func addview() {
         addSubview(scheduleContainerView)
         addSubview(routineContainerView)
@@ -93,6 +103,7 @@ final class FloatingActionMenuView: BaseView {
             scheduleContainerView.backgroundColor = .clear
             scheduleImageView.tintColor = TDColor.Neutral.neutral400
             scheduleLabel.textColor = TDColor.Neutral.neutral800
+            delegate?.didTapScheduleButton()
         case .cancelled, .failed:
             scheduleContainerView.backgroundColor = .clear
         default:
@@ -111,6 +122,7 @@ final class FloatingActionMenuView: BaseView {
             routineContainerView.backgroundColor = .clear
             routineImageView.tintColor = TDColor.Neutral.neutral400
             routineLabel.textColor = TDColor.Neutral.neutral800
+            delegate?.didTapRoutineButton()
         case .cancelled, .failed:
             routineContainerView.backgroundColor = .clear
         default:
