@@ -1,11 +1,5 @@
 import Foundation
 
-struct RecommendedRoutine: Hashable {
-    let title: String
-    let time: Date? // AM 07:30
-    let memo: String?
-}
-
 public struct Routine: Eventable, Identifiable {
     public let id: Int?
     public let title: String
