@@ -89,12 +89,32 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         weekCalendarView.select(today)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
+        setupFloatingUIInWindow()
+        eventMakorFloattingButton.isHidden = false
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         
-        setupFloatingUIInWindow()
+        hideFloatingViews()
+    }
+    
+    private func hideFloatingViews() {
+        eventMakorFloattingButton.isHidden = true
+        floatingActionMenuView.isHidden = true
+        dimmedView.isHidden = true
+        didAddDimmedView = false
+        isMenuVisible = false
+        resetFloatingButtonAppearance()
+    }
+
+    private func resetFloatingButtonAppearance() {
+        eventMakorFloattingButton.updateBackgroundColor(
+            buttonColor: TDColor.Primary.primary500,
+            imageColor: TDColor.baseWhite
+        )
+        let angle: CGFloat = 0
+        eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
     }
     
     private func setupFloatingUIInWindow() {
