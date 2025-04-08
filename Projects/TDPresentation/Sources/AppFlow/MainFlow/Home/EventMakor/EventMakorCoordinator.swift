@@ -20,7 +20,7 @@ final class EventMakorCoordinator: Coordinator {
         self.selectedDate = selectedDate
     }
     
-    func start(mode: ScheduleAndRoutineViewController.Mode) {
+    func start(mode: TodoViewController.Mode) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)

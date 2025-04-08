@@ -100,12 +100,12 @@ final class EventMakorView: BaseView {
     private let dummyView = UIView()
     
     // MARK: - Properties
-    private let mode: ScheduleAndRoutineViewController.Mode
+    private let mode: TodoViewController.Mode
     var noticeSnackBarBottomConstraint: Constraint?
     var dummyViewHeightConstraint: Constraint?
     
     // MARK: - Initialize
-    init(mode: ScheduleAndRoutineViewController.Mode) {
+    init(mode: TodoViewController.Mode) {
         self.mode = mode
         super.init(frame: .zero)
     }

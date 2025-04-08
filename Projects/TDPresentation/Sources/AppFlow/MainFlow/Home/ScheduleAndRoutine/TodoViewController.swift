@@ -4,7 +4,7 @@ import Combine
 import UIKit
 import TDDesign
 
-final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
+final class TodoViewController: BaseViewController<BaseView> {
     enum Mode {
         case schedule
         case routine
@@ -33,8 +33,8 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     )
     // MARK: - Properties
     private let mode: Mode
-    private let scheduleViewModel: ScheduleViewModel?
-    private let routineViewModel: RoutineViewModel?
+    private let scheduleViewModel: ScheduleViewModel
+    private let routineViewModel: RoutineViewModel
     private let scheduleInput = PassthroughSubject<ScheduleViewModel.Input, Never>()
     private let routineInput = PassthroughSubject<RoutineViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -45,8 +45,8 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     
     // MARK: - Initialize
     init(
-        scheduleViewModel: ScheduleViewModel? = nil,
-        routineViewModel: RoutineViewModel? = nil,
+        scheduleViewModel: ScheduleViewModel,
+        routineViewModel: RoutineViewModel,
         mode: Mode
     ) {
         self.scheduleViewModel = scheduleViewModel
@@ -55,11 +55,9 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
         super.init()
     }
     
-    required init?(coder: NSCoder) {
-        scheduleViewModel = nil
-        routineViewModel = nil
-        mode = .schedule
-        super.init(coder: coder)
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -181,10 +179,10 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
     }
     
     override func binding() {
-        let scheduleOutput = scheduleViewModel?.transform(input: scheduleInput.eraseToAnyPublisher())
-        let routineOutput = routineViewModel?.transform(input: routineInput.eraseToAnyPublisher())
+        let scheduleOutput = scheduleViewModel.transform(input: scheduleInput.eraseToAnyPublisher())
+        let routineOutput = routineViewModel.transform(input: routineInput.eraseToAnyPublisher())
         
-        scheduleOutput?
+        scheduleOutput
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
@@ -195,7 +193,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
                 }
             }.store(in: &cancellables)
         
-        routineOutput?
+        routineOutput
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
@@ -258,7 +256,7 @@ final class ScheduleAndRoutineViewController: BaseViewController<BaseView> {
 }
 
 // MARK: - FSCalendarDelegate
-extension ScheduleAndRoutineViewController: FSCalendarDelegate {
+extension TodoViewController: FSCalendarDelegate {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let currentPage = calendar.currentPage
         let calendar = Calendar.current
@@ -294,7 +292,7 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegate {
 }
 
 // MARK: - FSCalendarDelegateAppearance
-extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
+extension TodoViewController: FSCalendarDelegateAppearance {
     // MARK: - 날짜 폰트 색상
     // 기본 폰트 색
     func calendar(
@@ -324,16 +322,16 @@ extension ScheduleAndRoutineViewController: FSCalendarDelegateAppearance {
 }
 
 // MARK: - UITableViewDataSource
-extension ScheduleAndRoutineViewController: UITableViewDataSource {
+extension TodoViewController: UITableViewDataSource {
     func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
         switch mode {
         case .schedule:
-            return scheduleViewModel?.timeSlots.reduce(0) { $0 + $1.events.count } ?? 0
+            return scheduleViewModel.timeSlots.reduce(0) { $0 + $1.events.count }
         case .routine:
-            return routineViewModel?.timeSlots.reduce(0) { $0 + $1.events.count } ?? 0
+            return routineViewModel.timeSlots.reduce(0) { $0 + $1.events.count }
         }
     }
     
@@ -391,7 +389,7 @@ extension ScheduleAndRoutineViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension ScheduleAndRoutineViewController: UITableViewDelegate {
+extension TodoViewController: UITableViewDelegate {
     func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
@@ -417,7 +415,7 @@ extension ScheduleAndRoutineViewController: UITableViewDelegate {
 }
 
 // MARK: - Layout Constants
-extension ScheduleAndRoutineViewController {
+extension TodoViewController {
     private enum LayoutConstants {
         static let calendarTopOffset: CGFloat = 20
         static let calendarHorizontalInset: CGFloat = 16

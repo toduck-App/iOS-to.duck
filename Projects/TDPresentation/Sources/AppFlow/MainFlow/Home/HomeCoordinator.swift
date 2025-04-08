@@ -2,7 +2,7 @@ import UIKit
 import TDCore
 
 protocol EventMakorDelegate: AnyObject {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?)
+    func didTapEventMakor(mode: TodoViewController.Mode, selectedDate: Date?)
 }
 
 final class HomeCoordinator: Coordinator {
@@ -35,7 +35,7 @@ extension HomeCoordinator: CoordinatorFinishDelegate {
 
 // MARK: - EventMakorDelegate
 extension HomeCoordinator: EventMakorDelegate {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
+    func didTapEventMakor(mode: TodoViewController.Mode, selectedDate: Date?) {
         guard let selectedDate else { return }
         let eventMakorCoordinator = EventMakorCoordinator(
             navigationController: navigationController,

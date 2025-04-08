@@ -15,6 +15,10 @@ final class RoutineViewModel: BaseViewModel {
     private var cancellables = Set<AnyCancellable>()
     private(set) var routines: [Routine] = []
     
+    init(
+    ) {
+    }
+    
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         
         return output.eraseToAnyPublisher()
