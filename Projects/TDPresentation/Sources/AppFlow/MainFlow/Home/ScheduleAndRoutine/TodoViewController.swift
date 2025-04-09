@@ -52,7 +52,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchTodayTodo()
+        fetchTodayTodo(with: Date())
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,11 +75,9 @@ final class TodoViewController: BaseViewController<BaseView> {
         hideFloatingViews()
     }
     
-    private func fetchTodayTodo() {
-        if let startWeekDay = Date().startOfWeek()?.convertToString(formatType: .yearMonthDay),
-           let endWeekDay = Date().endOfWeek()?.convertToString(formatType: .yearMonthDay) {
-            input.send(.fetchTodoList(startDate: startWeekDay, endDate: endWeekDay))
-        }
+    private func fetchTodayTodo(with date: Date) {
+        let formattedDate = date.convertToString(formatType: .yearMonthDay)
+        input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
     }
     
     // 뷰가 나타날 때 플로팅 버튼 처리
@@ -87,7 +85,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         guard !didAddDimmedView,
               let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
-
+        
         addFloatingViewsToWindow(window)
         setupFloatingConstraints(in: window)
         didAddDimmedView = true
@@ -104,21 +102,21 @@ final class TodoViewController: BaseViewController<BaseView> {
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         buttonShadowWrapper.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(LayoutConstants.buttonTrailingInset)
             $0.bottom.equalTo(window.safeAreaLayoutGuide.snp.bottom).offset(-84)
             $0.width.equalTo(LayoutConstants.buttonWidth)
             $0.height.equalTo(LayoutConstants.buttonHeight)
         }
-
+        
         floatingActionMenuView.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(buttonShadowWrapper.snp.top).offset(-18)
             $0.width.equalTo(120)
             $0.height.equalTo(88)
         }
-
+        
         eventMakorFloattingButton.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -133,7 +131,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         isMenuVisible = false
         resetFloatingButtonAppearance()
     }
-
+    
     private func resetFloatingButtonAppearance() {
         eventMakorFloattingButton.updateBackgroundColor(
             buttonColor: TDColor.Primary.primary500,
@@ -149,7 +147,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         view.addSubview(scheduleAndRoutineTableView)
     }
     
-    override func layout() {        
+    override func layout() {
         weekCalendarView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(LayoutConstants.calendarTopOffset)
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.calendarHorizontalInset)
@@ -247,16 +245,15 @@ final class TodoViewController: BaseViewController<BaseView> {
 
 // MARK: - FSCalendarDelegate
 extension TodoViewController: FSCalendarDelegate {
-    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        let currentPage = calendar.currentPage
-        let calendar = Calendar.current
-        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: currentPage)?.start
-        let endOfWeek = startOfWeek.flatMap { calendar.date(byAdding: .day, value: 6, to: $0) }
+    func calendar(
+        _ calendar: FSCalendar,
+        didSelect date: Date,
+        at monthPosition: FSCalendarMonthPosition
+    ) {
+        selectedDate = date
         
-        if let startDate = startOfWeek?.convertToString(formatType: .yearMonthDay),
-           let endDate = endOfWeek?.convertToString(formatType: .yearMonthDay) {
-            input.send(.fetchTodoList(startDate: startDate, endDate: endDate))
-        }
+        let formattedDate = date.convertToString(formatType: .yearMonthDay)
+        input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
     }
     
     func calendar(
@@ -299,14 +296,6 @@ extension TodoViewController: FSCalendarDelegateAppearance {
     ) -> UIColor? {
         colorForDate(date)
     }
-    
-    func calendar(
-        _ calendar: FSCalendar,
-        didSelect date: Date,
-        at monthPosition: FSCalendarMonthPosition
-    ) {
-        selectedDate = date
-    }
 }
 
 // MARK: - UITableViewDataSource
@@ -327,6 +316,21 @@ extension TodoViewController: UITableViewDataSource {
             for: indexPath
         ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
+        let currentTodo = viewModel.todoList[indexPath.row]
+        let eventDisplayItem = EventDisplayItem(from: currentTodo)
+        let roundedTimeText: String
+        
+        if let timeString = currentTodo.time,
+           let date = Date.convertFromString(timeString, format: .time24Hour) {
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: date)
+            roundedTimeText = String(format: "%02d:00", hour)
+        } else {
+            roundedTimeText = "종일"
+        }
+
+        cell.configure(timeText: roundedTimeText, event: eventDisplayItem)
+        
         return cell
     }
 }
@@ -337,7 +341,7 @@ extension TodoViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-
+        
     }
 }
 
