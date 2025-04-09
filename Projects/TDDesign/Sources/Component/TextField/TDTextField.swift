@@ -70,6 +70,10 @@ public final class TDTextField: UIView {
         textField.text = text
     }
     
+    public func setupPlaceholder(_ placeholder: String) {
+        textField.placeholder = placeholder
+    }
+    
     public func setupFont(_ font: TDFont) {
         textField.font = font.font
     }
