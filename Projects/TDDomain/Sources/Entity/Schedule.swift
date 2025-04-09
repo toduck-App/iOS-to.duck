@@ -51,7 +51,7 @@ public struct Schedule: Eventable {
     }
 }
 
-public struct ScheduleRecord {
+public struct ScheduleRecord: Hashable {
     public let id: Int
     public let isComplete: Bool
     public let recordDate: String

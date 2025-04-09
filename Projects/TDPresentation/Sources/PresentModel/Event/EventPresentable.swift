@@ -1,7 +1,7 @@
 import UIKit
 import TDDomain
 
-protocol EventPresentable {
+protocol EventPresentable: Hashable {
     var id: Int? { get }
     var title: String { get }
     var categoryIcon: UIImage? { get }

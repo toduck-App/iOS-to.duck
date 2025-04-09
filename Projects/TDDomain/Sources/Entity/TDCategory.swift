@@ -1,4 +1,4 @@
-public struct TDCategory {
+public struct TDCategory: Hashable {
     public let colorHex: String
     public let imageName: String
     

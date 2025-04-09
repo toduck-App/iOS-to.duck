@@ -5,6 +5,12 @@ import UIKit
 import TDDesign
 
 final class TodoViewController: BaseViewController<BaseView> {
+    enum TimeLineCellItem: Hashable {
+        case allDay(event: any EventPresentable, showTime: Bool)
+        case timeEvent(hour: Int, event: any EventPresentable, showTime: Bool)
+        case gap(startHour: Int, endHour: Int)
+    }
+    
     // MARK: - UI Components
     private let weekCalendarView = HomeCalendar()
     private let scheduleAndRoutineTableView = UITableView().then {
@@ -26,9 +32,11 @@ final class TodoViewController: BaseViewController<BaseView> {
         radius: 25,
         font: TDFont.boldHeader4.font
     )
+    
     // MARK: - Properties
     private let viewModel: TodoViewModel
     private let input = PassthroughSubject<TodoViewModel.Input, Never>()
+    private var timelineDataSource: UITableViewDiffableDataSource<Int, TimeLineCellItem>?
     private var cancellables = Set<AnyCancellable>()
     private var selectedDate: Date?
     private var isMenuVisible = false
@@ -168,7 +176,7 @@ final class TodoViewController: BaseViewController<BaseView> {
             .sink { [weak self] event in
                 switch event {
                 case .fetchedTodoList:
-                    self?.scheduleAndRoutineTableView.reloadData()
+                    self?.applyTimelineSnapshot()
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
                 }
@@ -182,12 +190,16 @@ final class TodoViewController: BaseViewController<BaseView> {
         floatingActionMenuView.delegate = self
         configureEventMakorButton()
         configureDimmedViewGesture()
+        configureTodoDataSource()
         
         scheduleAndRoutineTableView.delegate = self
-        scheduleAndRoutineTableView.dataSource = self
         scheduleAndRoutineTableView.register(
             TimeSlotTableViewCell.self,
             forCellReuseIdentifier: TimeSlotTableViewCell.identifier
+        )
+        scheduleAndRoutineTableView.register(
+            TimeSlotGapCell.self,
+            forCellReuseIdentifier: TimeSlotGapCell.identifier
         )
         scheduleAndRoutineTableView.contentInset = UIEdgeInsets(
             top: 12,
@@ -298,43 +310,6 @@ extension TodoViewController: FSCalendarDelegateAppearance {
     }
 }
 
-// MARK: - UITableViewDataSource
-extension TodoViewController: UITableViewDataSource {
-    func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
-        viewModel.todoList.count
-    }
-    
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: TimeSlotTableViewCell.identifier,
-            for: indexPath
-        ) as? TimeSlotTableViewCell else { return UITableViewCell() }
-        
-        let currentTodo = viewModel.todoList[indexPath.row]
-        let eventDisplayItem = EventDisplayItem(from: currentTodo)
-        let roundedTimeText: String
-        
-        if let timeString = currentTodo.time,
-           let date = Date.convertFromString(timeString, format: .time24Hour) {
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: date)
-            roundedTimeText = String(format: "%02d:00", hour)
-        } else {
-            roundedTimeText = "종일"
-        }
-
-        cell.configure(timeText: roundedTimeText, event: eventDisplayItem)
-        
-        return cell
-    }
-}
-
 // MARK: - UITableViewDelegate
 extension TodoViewController: UITableViewDelegate {
     func tableView(
@@ -352,6 +327,126 @@ extension TodoViewController: FloatingActionMenuViewDelegate {
     
     func didTapRoutineButton() {
         coordinator?.didTapEventMakor(mode: .routine, selectedDate: selectedDate)
+    }
+}
+
+// MARK: - TableView Diffable DataSource
+
+extension TodoViewController {
+    private func configureTodoDataSource() {
+        timelineDataSource = UITableViewDiffableDataSource<Int, TimeLineCellItem>(tableView: scheduleAndRoutineTableView) { tableView, indexPath, item in
+            switch item {
+            case .allDay(let event, let showTime):
+                guard
+                    let cell = tableView.dequeueReusableCell(withIdentifier: TimeSlotTableViewCell.identifier, for: indexPath) as? TimeSlotTableViewCell
+                else { return UITableViewCell() }
+                let event = EventDisplayItem(from: event)
+                cell.configure(hour: 0, showTime: showTime, event: event)
+                
+                return cell
+            case .timeEvent(let hour, let event, let showTime):
+                guard
+                    let cell = tableView.dequeueReusableCell(withIdentifier: TimeSlotTableViewCell.identifier, for: indexPath) as? TimeSlotTableViewCell
+                else { return UITableViewCell() }
+                let event = EventDisplayItem(from: event)
+                cell.configure(hour: hour, showTime: showTime, event: event)
+                
+                return cell
+            case .gap(let startHour, let endHour):
+                guard
+                    let cell = tableView.dequeueReusableCell(withIdentifier: TimeSlotGapCell.identifier, for: indexPath) as? TimeSlotGapCell
+                else { return UITableViewCell() }
+                cell.configure(startHour: startHour, endHour: endHour)
+                
+                return cell
+            }
+        }
+    }
+    
+    private func applyTimelineSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, TimeLineCellItem>()
+        snapshot.appendSections([0])
+        let items = makeTimelineItems()
+        snapshot.appendItems(items, toSection: 0)
+        timelineDataSource?.apply(snapshot, animatingDifferences: false)
+    }
+    
+    private func makeTimelineItems() -> [TimeLineCellItem] {
+        var items: [TimeLineCellItem] = []
+        let calendar = Calendar.current
+
+        // isAllDay가 true인 루틴이 있으면 최상단에 allDay 셀 추가
+        for (index, event) in viewModel.allDayTodoList.enumerated() {
+            let showTime = (index == 0)
+            items.append(.allDay(event: event, showTime: showTime))
+        }
+        
+        // 같은 시간(12시간제)별로 모든 루틴을 배열로 매핑
+        var eventMapping: [Int: [any EventPresentable]] = [:]
+        for event in viewModel.timedTodoList {
+            if let time = event.time {
+                let hourComponent = calendar.component(.hour, from: Date.convertFromString(time, format: .time24Hour) ?? Date())
+                let convertedHour = (hourComponent % 12 == 0) ? 12 : (hourComponent % 12)
+                eventMapping[convertedHour, default: []].append(event)
+            }
+        }
+        
+        var currentHour = 1
+        while currentHour <= 12 {
+            if let events = eventMapping[currentHour], !events.isEmpty {
+                // 같은 시간대에 여러 루틴이 있으면, 첫 번째 셀에만 타임라인 표시
+                for (index, event) in events.enumerated() {
+                    let showTime = (index == 0)
+                    items.append(.timeEvent(hour: currentHour, event: event, showTime: showTime))
+                }
+                currentHour += 1
+            } else {
+                // 해당 시간에 루틴이 없으면 연속된 빈 시간대를 gap 셀로 묶음
+                let gapStart = currentHour
+                while currentHour <= 12, eventMapping[currentHour] == nil {
+                    currentHour += 1
+                }
+                let gapEnd = currentHour - 1
+                items.append(.gap(startHour: gapStart, endHour: gapEnd))
+            }
+        }
+        
+        return items
+    }
+}
+
+extension TodoViewController.TimeLineCellItem: Equatable {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case let (.allDay(e1, s1), .allDay(e2, s2)):
+            return e1.id == e2.id && s1 == s2
+        case let (.timeEvent(h1, e1, s1), .timeEvent(h2, e2, s2)):
+            return h1 == h2 && s1 == s2 && e1.id == e2.id
+        case let (.gap(s1, e1), .gap(s2, e2)):
+            return s1 == s2 && e1 == e2
+        default:
+            return false
+        }
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .allDay(event, showTime):
+            hasher.combine("allDay")
+            hasher.combine(event.id)
+            hasher.combine(showTime)
+
+        case let .timeEvent(hour, event, showTime):
+            hasher.combine("routine")
+            hasher.combine(hour)
+            hasher.combine(event.id)
+            hasher.combine(showTime)
+
+        case let .gap(startHour, endHour):
+            hasher.combine("gap")
+            hasher.combine(startHour)
+            hasher.combine(endHour)
+        }
     }
 }
 

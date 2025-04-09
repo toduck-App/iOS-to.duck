@@ -77,31 +77,21 @@ final class TimeSlotTableViewCell: UITableViewCell {
     
     // MARK: - Configuration
     func configure(
-        timeText: String?,
+        hour: Int,
+        showTime: Bool,
         event: EventDisplayItem?
     ) {
         contentView.backgroundColor = TDColor.Neutral.neutral50
-        setupContentVisibility(timeText: timeText, event: event)
-    }
-    
-    func configureButtonAction(
-        checkBoxAction: @escaping () -> Void
-    ) {
-        eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
-    }
-    
-    func configureSwipeActions(
-        editAction: @escaping () -> Void,
-        deleteAction: @escaping () -> Void
-    ) {
-        self.editAction = editAction
-        self.deleteAction = deleteAction
-    }
-    
-    private func setupContentVisibility(timeText: String?, event: EventDisplayItem?) {
-        if let text = timeText, !text.isEmpty {
-            timeLabel.isHidden = false
-            timeLabel.setText(text)
+        
+        if hour == 0 && showTime {
+            timeLabel.text = "종일"
+        } else {
+            if showTime {
+                let period = (hour == 12) ? "PM" : "AM"
+                timeLabel.text = "\(hour) \(period)"
+            } else {
+                timeLabel.text = ""
+            }
         }
         
         guard let event = event else {
@@ -121,6 +111,20 @@ final class TimeSlotTableViewCell: UITableViewCell {
             isFinished: event.isFinished,
             place: event.place
         )
+    }
+    
+    func configureButtonAction(
+        checkBoxAction: @escaping () -> Void
+    ) {
+        eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
+    }
+    
+    func configureSwipeActions(
+        editAction: @escaping () -> Void,
+        deleteAction: @escaping () -> Void
+    ) {
+        self.editAction = editAction
+        self.deleteAction = deleteAction
     }
     
     private func configureCornerRadius() {

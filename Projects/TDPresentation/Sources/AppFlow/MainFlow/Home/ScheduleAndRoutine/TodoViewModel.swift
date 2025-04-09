@@ -15,7 +15,8 @@ final class TodoViewModel: BaseViewModel {
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var todoList: [EventPresentable] = []
+    private(set) var allDayTodoList: [any EventPresentable] = []
+    private(set) var timedTodoList: [any EventPresentable] = []
     
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase
@@ -37,7 +38,8 @@ final class TodoViewModel: BaseViewModel {
     private func fetchTodoList(startDate: String, endDate: String) async {
         do {
             let todoList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
-            self.todoList = todoList.sorted { timeSortKey($0.time) < timeSortKey($1.time) }
+            self.allDayTodoList = todoList.filter { $0.time == nil }
+            self.timedTodoList = todoList.filter { $0.time != nil }.sorted { timeSortKey($0.time) < timeSortKey($1.time) }
             output.send(.fetchedTodoList)
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
