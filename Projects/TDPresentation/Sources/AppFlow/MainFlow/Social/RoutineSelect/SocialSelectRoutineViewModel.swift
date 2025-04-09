@@ -13,14 +13,14 @@ final class SocialSelectRoutineViewModel: BaseViewModel {
         case failure(String)
     }
     
-    private let routineRepository: FetchRoutineListUseCase
+    private let fetchAvailableRoutineListUseCase: FetchAvailableRoutineListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var routines: [Routine] = []
     private(set) var selectedRoutine: Routine?
     
-    init(routineRepository: FetchRoutineListUseCase) {
-        self.routineRepository = routineRepository
+    init(fetchAvailableRoutineListUseCase: FetchAvailableRoutineListUseCase) {
+        self.fetchAvailableRoutineListUseCase = fetchAvailableRoutineListUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -39,7 +39,7 @@ final class SocialSelectRoutineViewModel: BaseViewModel {
     
     private func fetchRoutines() async {
         do {
-            let routines = try await routineRepository.execute()
+            let routines = try await fetchAvailableRoutineListUseCase.execute()
             self.routines = routines
             output.send(.fetchRoutines)
         } catch {

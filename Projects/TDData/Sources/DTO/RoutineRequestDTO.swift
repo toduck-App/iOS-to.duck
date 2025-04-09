@@ -2,20 +2,20 @@ import TDCore
 import TDDomain
 
 public struct RoutineRequestDTO: Encodable {
-    let title: String
-    let category: String
-    let color: String
-    let time: String?
-    let isPublic: Bool
-    let daysOfWeek: [String]
-    let reminderMinutes: Int?
-    let memo: String?
+    public let title: String
+    public let category: String
+    public let color: String
+    public let time: String?
+    public let isPublic: Bool
+    public let daysOfWeek: [String]?
+    public let reminderMinutes: Int?
+    public let memo: String?
     
-    init(from routine: Routine) {
+    public init(from routine: Routine) {
         self.title = routine.title
         self.category = routine.category.imageName
         self.color = routine.category.colorHex
-        self.time = routine.isAllDay ? nil : routine.time?.convertToString(formatType: .yearMonthDay)
+        self.time = routine.isAllDay ? nil : routine.time?.convertToString(formatType: .time24Hour)
         self.isPublic = routine.isPublic
         self.daysOfWeek = routine.repeatDays?.map { $0.rawValue } ?? []
         self.reminderMinutes = routine.alarmTime?.time

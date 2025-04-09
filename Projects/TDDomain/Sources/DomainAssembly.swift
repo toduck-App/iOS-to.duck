@@ -207,6 +207,13 @@ public struct DomainAssembly: Assembly {
         }
         
         // MARK: - Fetch UseCases
+        container.register(FetchAvailableRoutineListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchAvailableRoutineListUseCaseImpl(repository: repository)
+        }   
+        
         container.register(FetchCommentUseCase.self) { resolver in
             guard let repository = resolver.resolve(SocialRepository.self) else {
                 fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")

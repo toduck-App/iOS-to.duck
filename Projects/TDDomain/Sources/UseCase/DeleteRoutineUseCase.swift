@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DeleteRoutineUseCase {
-    func execute(routineID: Int) async throws
+    func execute(routineId: Int, keepRecords: Bool) async throws
 }
 
 public final class DeleteRoutineUseCaseImpl: DeleteRoutineUseCase {
@@ -11,7 +11,7 @@ public final class DeleteRoutineUseCaseImpl: DeleteRoutineUseCase {
         self.repository = repository
     }
     
-    public func execute(routineID: Int) async throws {
-        try await repository.deleteRoutine(routineId: routineID).get()
+    public func execute(routineId: Int, keepRecords: Bool) async throws {
+        try await repository.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
     }
 }

@@ -1,9 +1,10 @@
 import TDDomain
+import TDData
 import Foundation
 import TDCore
 
 public enum RoutineAPI {
-    case createRoutine(routine: Routine) // 루틴 생성
+    case createRoutine(routine: RoutineRequestDTO) // 루틴 생성
     case fetchRoutine(routineId: Int) // 하나의 루틴 상세 조회
     case fetchRoutineList(dateString: String) // 모든 루틴 조회
     case fetchAvailableRoutineList // 사용 가능한 루틴 조회
@@ -75,11 +76,11 @@ extension RoutineAPI: MFTarget {
             return .requestParameters(parameters: [
                 "title": routine.title,
                 "category": routine.category,
-                "color": routine.category.colorHex,
+                "color": routine.color,
                 "time": routine.time ?? "",
                 "isPublic": routine.isPublic,
-                "daysOfWeek": routine.repeatDays?.map { $0.rawValue } ?? [],
-                "reminderMinutes": routine.alarmTime?.rawValue ?? "",
+                "daysOfWeek": routine.daysOfWeek.map { $0 } ?? [],
+                "reminderMinutes": routine.reminderMinutes ?? 0,
                 "memo": routine.memo ?? ""
             ])
         case .updateCompleteRoutine(_, routineDateString: let routineDateString, isCompleted: let isCompleted):
