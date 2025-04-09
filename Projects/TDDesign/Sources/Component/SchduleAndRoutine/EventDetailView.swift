@@ -21,6 +21,11 @@ public final class EventDetailView: UIView {
     private let categoryImageView = TDCategoryCircleView()
     
     /// 일정 제목, 시간, 장소
+    private let scheduleVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.spacing = 4
+    }
     private let eventTopSpacer = UIView()
     private let eventBottomSpacer = UIView()
     private let titleLabel = TDLabel(
@@ -33,6 +38,7 @@ public final class EventDetailView: UIView {
         $0.image = TDImage.clockMedium
     }
 
+    /// 시간
     private let timeLabel = TDLabel(
         toduckFont: TDFont.mediumCaption1,
         alignment: .left,
@@ -44,11 +50,11 @@ public final class EventDetailView: UIView {
         $0.spacing = 4
     }
 
-    private let locationImageView = UIImageView().then {
+    /// 장소
+    private let placeImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = TDImage.locationMedium
     }
-
     private let placeLabel = TDLabel(
         toduckFont: TDFont.regularBody2,
         alignment: .left,
@@ -56,12 +62,6 @@ public final class EventDetailView: UIView {
     )
     private let placeHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.alignment = .leading
-        $0.spacing = 4
-    }
-
-    private let scheduleVerticalStackView = UIStackView().then {
-        $0.axis = .vertical
         $0.alignment = .leading
         $0.spacing = 4
     }
@@ -231,7 +231,7 @@ public final class EventDetailView: UIView {
         
         addSubview(checkBoxButton)
         
-        placeHorizontalStackView.addArrangedSubview(locationImageView)
+        placeHorizontalStackView.addArrangedSubview(placeImageView)
         placeHorizontalStackView.addArrangedSubview(placeLabel)
     }
     
@@ -251,7 +251,6 @@ public final class EventDetailView: UIView {
         categoryVerticalStackView.snp.makeConstraints {
             $0.width.equalTo(32)
         }
-        
         categoryImageView.snp.makeConstraints {
             $0.width.height.equalTo(32)
         }
@@ -262,6 +261,12 @@ public final class EventDetailView: UIView {
             $0.width.height.equalTo(22)
         }
         
+        scheduleVerticalStackView.snp.makeConstraints {
+            $0.leading.equalTo(categoryVerticalStackView.snp.trailing).offset(10)
+            $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
+            $0.top.bottom.equalToSuperview()
+        }
+        
         eventTopSpacer.snp.makeConstraints {
             $0.height.equalTo(8)
         }
@@ -269,11 +274,24 @@ public final class EventDetailView: UIView {
             $0.height.equalTo(8)
         }
         
+        timeDetailHorizontalStackView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(18)
+        }
         timeLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
         }
+        timeImageView.snp.makeConstraints {
+            $0.size.equalTo(18)
+        }
+        
+        placeHorizontalStackView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(18)
+        }
         placeLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+        }
+        placeImageView.snp.makeConstraints {
+            $0.size.equalTo(18)
         }
     }
 }
