@@ -20,6 +20,7 @@ public struct Routine: Eventable, Identifiable {
     public let isFinished: Bool
     public let shareCount: Int
     public let eventMode: TDEventMode = .routine
+    public let place: String? = nil
     
     public var isRepeating: Bool {
         repeatDays != nil
