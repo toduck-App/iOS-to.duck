@@ -140,6 +140,7 @@ public enum TDImage {
         public static let horizontalSmall = TDDesignAsset.Images.dotHorizontalSmall.image
         public static let verticalSmall = TDDesignAsset.Images.dotVerticalSmall.image
         public static let vertical2Small = TDDesignAsset.Images.dotVertical2Small.image
+        public static let verticalGap = TDDesignAsset.Images.dotVerticalGap.image
     }
     
     public enum Eye {
