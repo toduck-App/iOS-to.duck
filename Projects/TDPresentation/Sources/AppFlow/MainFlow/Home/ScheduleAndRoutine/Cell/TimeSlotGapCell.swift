@@ -51,16 +51,19 @@ final class TimeSlotGapCell: UITableViewCell {
     }
 
     func configure(startHour: Int, endHour: Int) {
-        let startPeriod = (startHour == 12) ? "PM" : "AM"
-        let endPeriod = (endHour == 12) ? "PM" : "AM"
+        let startPeriod = startHour >= 12 ? "PM" : "AM"
+        let endPeriod = endHour >= 12 ? "PM" : "AM"
+        
+        let displayStartHour = (startHour % 12 == 0) ? 12 : (startHour % 12)
+        let displayEndHour = (endHour % 12 == 0) ? 12 : (endHour % 12)
 
         if startHour == endHour {
-            startLabel.text = "\(startHour) \(startPeriod)"
+            startLabel.text = "\(displayStartHour) \(startPeriod)"
             endLabel.text = nil
             dotImageView.isHidden = true
         } else {
-            startLabel.text = "\(startHour) \(startPeriod)"
-            endLabel.text = "\(endHour) \(endPeriod)"
+            startLabel.text = "\(displayStartHour) \(startPeriod)"
+            endLabel.text = "\(displayEndHour) \(endPeriod)"
             dotImageView.isHidden = false
         }
     }
