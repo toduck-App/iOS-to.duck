@@ -9,6 +9,12 @@ public final class EventDetailView: UIView {
         $0.backgroundColor = TDColor.Schedule.text3
     }
     
+    private let containerHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+        $0.alignment = .center
+    }
+    
     /// 카테고리 이미지
     private let categoryVerticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -56,7 +62,7 @@ public final class EventDetailView: UIView {
         $0.image = TDImage.locationMedium
     }
     private let placeLabel = TDLabel(
-        toduckFont: TDFont.regularBody2,
+        toduckFont: TDFont.mediumCaption1,
         alignment: .left,
         toduckColor: TDColor.Neutral.neutral600
     )
@@ -69,12 +75,6 @@ public final class EventDetailView: UIView {
     private let checkBoxButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
         $0.setImage(TDImage.CheckBox.empty, for: .normal)
-    }
-
-    private let containerHorizontalStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 10
-        $0.alignment = .center
     }
     
     // MARK: - Properties
@@ -212,13 +212,14 @@ public final class EventDetailView: UIView {
         clipsToBounds = true
         addSubview(scheduleIdentyColorView)
         addSubview(containerHorizontalStackView)
+        addSubview(checkBoxButton)
+        
+        containerHorizontalStackView.addArrangedSubview(categoryVerticalStackView)
+        containerHorizontalStackView.addArrangedSubview(scheduleVerticalStackView)
         
         categoryVerticalStackView.addArrangedSubview(categoryTopSpacer)
         categoryVerticalStackView.addArrangedSubview(categoryImageView)
         categoryVerticalStackView.addArrangedSubview(categoryBottomSpacer)
-        
-        containerHorizontalStackView.addArrangedSubview(categoryVerticalStackView)
-        containerHorizontalStackView.addArrangedSubview(scheduleVerticalStackView)
         
         scheduleVerticalStackView.addArrangedSubview(eventTopSpacer)
         scheduleVerticalStackView.addArrangedSubview(titleLabel)
@@ -229,7 +230,6 @@ public final class EventDetailView: UIView {
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
         
-        addSubview(checkBoxButton)
         
         placeHorizontalStackView.addArrangedSubview(placeImageView)
         placeHorizontalStackView.addArrangedSubview(placeLabel)
@@ -241,18 +241,10 @@ public final class EventDetailView: UIView {
             $0.top.bottom.equalToSuperview()
             $0.width.equalTo(4)
         }
-        
         containerHorizontalStackView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.equalTo(scheduleIdentyColorView.snp.trailing).offset(16)
             $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
-        }
-        
-        categoryVerticalStackView.snp.makeConstraints {
-            $0.width.equalTo(32)
-        }
-        categoryImageView.snp.makeConstraints {
-            $0.width.height.equalTo(32)
         }
         
         checkBoxButton.snp.makeConstraints {
@@ -261,10 +253,25 @@ public final class EventDetailView: UIView {
             $0.width.height.equalTo(22)
         }
         
+        /// 카테고리 이미지
+        categoryVerticalStackView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+        }
+        categoryTopSpacer.snp.makeConstraints {
+            $0.height.equalTo(4)
+        }
+        categoryImageView.snp.makeConstraints {
+            $0.width.height.equalTo(32)
+        }
+        categoryBottomSpacer.snp.makeConstraints {
+            $0.height.equalTo(4)
+        }
+        
+        /// 이벤트 제목, 시간, 장소
         scheduleVerticalStackView.snp.makeConstraints {
             $0.leading.equalTo(categoryVerticalStackView.snp.trailing).offset(10)
             $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
-            $0.top.bottom.equalToSuperview()
+            $0.top.equalToSuperview()
         }
         
         eventTopSpacer.snp.makeConstraints {
@@ -273,9 +280,12 @@ public final class EventDetailView: UIView {
         eventBottomSpacer.snp.makeConstraints {
             $0.height.equalTo(8)
         }
+        titleLabel.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(18)
+        }
         
         timeDetailHorizontalStackView.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(18)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
         }
         timeLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -285,7 +295,7 @@ public final class EventDetailView: UIView {
         }
         
         placeHorizontalStackView.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(18)
+            $0.top.equalTo(timeDetailHorizontalStackView.snp.bottom).offset(4)
         }
         placeLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
