@@ -13,7 +13,7 @@ public struct RoutineRequestDTO: Encodable {
     
     public init(from routine: Routine) {
         self.title = routine.title
-        self.category = routine.category.imageName
+        self.category = routine.category.imageName.uppercased()
         self.color = routine.category.colorHex
         self.time = routine.isAllDay ? nil : routine.time?.convertToString(formatType: .time24Hour)
         self.isPublic = routine.isPublic
