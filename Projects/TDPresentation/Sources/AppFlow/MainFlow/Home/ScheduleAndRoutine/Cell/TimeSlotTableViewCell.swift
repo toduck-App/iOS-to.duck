@@ -83,8 +83,9 @@ final class TimeSlotTableViewCell: UITableViewCell {
             timeLabel.text = "종일"
         } else {
             if showTime {
-                let period = (hour == 12) ? "PM" : "AM"
-                timeLabel.text = "\(hour) \(period)"
+                let period = hour >= 12 ? "PM" : "AM"
+                let displayHour = (hour % 12 == 0) ? 12 : (hour % 12)
+                timeLabel.text = "\(displayHour) \(period)"
             } else {
                 timeLabel.text = ""
             }

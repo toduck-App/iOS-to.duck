@@ -386,13 +386,12 @@ extension TodoViewController {
         for event in viewModel.timedTodoList {
             if let time = event.time {
                 let hourComponent = calendar.component(.hour, from: Date.convertFromString(time, format: .time24Hour) ?? Date())
-                let convertedHour = (hourComponent % 12 == 0) ? 12 : (hourComponent % 12)
-                eventMapping[convertedHour, default: []].append(event)
+                eventMapping[hourComponent, default: []].append(event)
             }
         }
         
         var currentHour = 1
-        while currentHour <= 12 {
+        while currentHour < 24 {
             if let events = eventMapping[currentHour], !events.isEmpty {
                 // 같은 시간대에 여러 루틴이 있으면, 첫 번째 셀에만 타임라인 표시
                 for (index, event) in events.enumerated() {
@@ -403,7 +402,7 @@ extension TodoViewController {
             } else {
                 // 해당 시간에 루틴이 없으면 연속된 빈 시간대를 gap 셀로 묶음
                 let gapStart = currentHour
-                while currentHour <= 12, eventMapping[currentHour] == nil {
+                while currentHour < 24, eventMapping[currentHour] == nil {
                     currentHour += 1
                 }
                 let gapEnd = currentHour - 1
