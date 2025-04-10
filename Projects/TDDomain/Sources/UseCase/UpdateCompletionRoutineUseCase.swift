@@ -1,10 +1,10 @@
 import Foundation
 
-public protocol UpdateRoutineUseCase {
+public protocol UpdateCompletionRoutineUseCase {
     func execute(routineId: Int, routineDateString: String, isCompleted: Bool) async throws
 }
 
-public final class UpdateRoutineUseCaseImpl: UpdateRoutineUseCase {
+public final class UpdateCompletionRoutineUseCaseImpl: UpdateCompletionRoutineUseCase {
     private let repository: RoutineRepository
     
     public init(repository: RoutineRepository) {

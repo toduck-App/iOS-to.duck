@@ -1,6 +1,3 @@
-import TDCore
-
-// MARK: 루틴 하나 상세 불러오기
 public protocol RoutineRepository {
     func createRoutine(routine: Routine) async throws
     func fetchRoutine(routineId: Int) async throws -> Routine
