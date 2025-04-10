@@ -17,6 +17,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     private let maxButtonWidth: CGFloat = LayoutConstants.buttonContainerWidth
+    private var oldEventDetailViewBounds: CGRect = .zero
     private var didSetCornerRadius = false
     var editAction: (() -> Void)?
     var deleteAction: (() -> Void)?
@@ -51,7 +52,12 @@ final class TimeSlotTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        setupCornerRadiusIfNeeded()
+        
+        let newBounds = eventDetailView.bounds
+        if newBounds != .zero && newBounds != oldEventDetailViewBounds {
+            configureCornerRadius()
+            oldEventDetailViewBounds = newBounds
+        }
     }
     
     private func resetCellState() {
@@ -59,20 +65,10 @@ final class TimeSlotTableViewCell: UITableViewCell {
         eventDetailView.resetForReuse()
         shadowContainerView.transform = .identity
         timeLabel.transform = .identity
-    }
-    
-    private func setupCornerRadiusIfNeeded() {
-        if !didSetCornerRadius {
-            // eventDetailView의 bounds가 0이면 다음 runloop에서 재시도
-            if eventDetailView.bounds != .zero {
-                configureCornerRadius()
-                didSetCornerRadius = true
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.setupCornerRadiusIfNeeded()
-                }
-            }
-        }
+        didSetCornerRadius = false
+        oldEventDetailViewBounds = .zero
+        shadowContainerView.isHidden = false
+        eventDetailView.isHidden = false
     }
     
     // MARK: - Configuration
@@ -95,12 +91,13 @@ final class TimeSlotTableViewCell: UITableViewCell {
         }
         
         guard let event = event else {
-            eventDetailView.isHidden = true
+            shadowContainerView.isHidden = true
             timeLabel.setColor(TDColor.Neutral.neutral500)
             timeLabel.setFont(TDFont.boldButton)
             return
         }
         
+        shadowContainerView.isHidden = false
         let isNone = event.categoryIcon == TDImage.Category.none
         eventDetailView.configureCell(
             color: event.categoryColor,
