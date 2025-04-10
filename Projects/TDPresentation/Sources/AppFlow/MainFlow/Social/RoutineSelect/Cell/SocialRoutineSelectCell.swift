@@ -36,7 +36,7 @@ final class SocialRoutineSelectCell: UITableViewCell {
         )
     }
 
-    func configure(event: EventPresentable) {
+    func configure(event: any EventPresentable) {
         titleLabel.setText(event.title)
         memoLabel.setText(event.memo ?? "")
         categoryView.configure(
