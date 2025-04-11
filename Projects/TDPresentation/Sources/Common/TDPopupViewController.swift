@@ -8,6 +8,7 @@ class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<Base
     var isPopupPresent: Bool = false
     
     override func configure() {
+        isPopupPresent = true
         setupBackgroundDim()
         setupGestureRecognizer()
     }

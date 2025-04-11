@@ -111,7 +111,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         )
     }
     
-    func configureButtonAction(
+    func configureCheckBoxButtonAction(
         checkBoxAction: @escaping () -> Void
     ) {
         eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)

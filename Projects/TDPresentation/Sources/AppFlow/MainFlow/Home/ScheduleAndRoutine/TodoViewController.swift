@@ -347,33 +347,70 @@ extension TodoViewController: FloatingActionMenuViewDelegate {
 // MARK: - TableView Diffable DataSource
 extension TodoViewController {
     private func configureTodoDataSource() {
-        timelineDataSource = UITableViewDiffableDataSource<Int, TimeLineCellItem>(tableView: todoTableView) { tableView, indexPath, item in
+        timelineDataSource = UITableViewDiffableDataSource<Int, TimeLineCellItem>(
+            tableView: todoTableView
+        ) { tableView, indexPath, item in
             switch item {
             case .allDay(let event, let showTime):
-                guard
-                    let cell = tableView.dequeueReusableCell(withIdentifier: TimeSlotTableViewCell.identifier, for: indexPath) as? TimeSlotTableViewCell
-                else { return UITableViewCell() }
-                let event = EventDisplayItem(from: event)
-                cell.configure(hour: 0, showTime: showTime, event: event)
-                
-                return cell
+                return self.makeTimeSlotCell(
+                    tableView: tableView,
+                    indexPath: indexPath,
+                    hour: 0,
+                    event: event,
+                    showTime: showTime
+                )
+
             case .timeEvent(let hour, let event, let showTime):
-                guard
-                    let cell = tableView.dequeueReusableCell(withIdentifier: TimeSlotTableViewCell.identifier, for: indexPath) as? TimeSlotTableViewCell
-                else { return UITableViewCell() }
-                let event = EventDisplayItem(from: event)
-                cell.configure(hour: hour, showTime: showTime, event: event)
-                
-                return cell
+                return self.makeTimeSlotCell(
+                    tableView: tableView,
+                    indexPath: indexPath,
+                    hour: hour,
+                    event: event,
+                    showTime: showTime
+                )
+
             case .gap(let startHour, let endHour):
-                guard
-                    let cell = tableView.dequeueReusableCell(withIdentifier: TimeSlotGapCell.identifier, for: indexPath) as? TimeSlotGapCell
-                else { return UITableViewCell() }
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: TimeSlotGapCell.identifier,
+                    for: indexPath
+                ) as? TimeSlotGapCell else {
+                    return UITableViewCell()
+                }
+
                 cell.configure(startHour: startHour, endHour: endHour)
-                
                 return cell
             }
         }
+    }
+
+    private func makeTimeSlotCell(
+        tableView: UITableView,
+        indexPath: IndexPath,
+        hour: Int,
+        event: any EventPresentable,
+        showTime: Bool
+    ) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: TimeSlotTableViewCell.identifier,
+            for: indexPath
+        ) as? TimeSlotTableViewCell else {
+            return UITableViewCell()
+        }
+
+        let eventDisplay = EventDisplayItem(from: event)
+
+        cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
+        cell.configureSwipeActions {
+            print(123)
+        } deleteAction: {
+            let deleteEventViewController = DeleteEventViewController(
+                isRepeating: eventDisplay.isRepeating,
+                isScheduleEvent: eventDisplay.eventMode == .schedule
+            )
+            self.presentPopup(with: deleteEventViewController)
+        }
+
+        return cell
     }
     
     private func applyTimelineSnapshot() {

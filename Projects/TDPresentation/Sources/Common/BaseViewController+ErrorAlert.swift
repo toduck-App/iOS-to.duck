@@ -15,7 +15,6 @@ extension BaseViewController: TDPopupPresentable {
             errorMessage: errorMessage,
             image: image
         )
-        errorAlertViewController.isPopupPresent = true
         presentPopup(with: errorAlertViewController)
     }
 }
