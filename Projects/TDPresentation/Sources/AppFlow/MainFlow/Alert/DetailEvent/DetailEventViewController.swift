@@ -77,12 +77,18 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         popupContentView.categoryImageView.configure(
             radius: 12,
             backgroundColor: event.categoryColor,
-            category: event.categoryIcon ?? .add
+            category: event.categoryIcon ?? TDImage.Tomato.tomatoSmallEmtpy
         )
         popupContentView.eventTitleLabel.setText(event.title)
         
         popupContentView.timeDetailView.updateDescription(event.time ?? "-")
-        popupContentView.repeatDetailView.updateDescription(event.repeatDays ?? "-")
+        let repeatString: String
+        if let days = event.repeatDays {
+            repeatString = days.map { $0.title }.joined(separator: ", ")
+        } else {
+            repeatString = "-"
+        }
+        popupContentView.repeatDetailView.updateDescription(repeatString)
         popupContentView.memoContentLabel.setText(event.memo ?? "-")
     }
     

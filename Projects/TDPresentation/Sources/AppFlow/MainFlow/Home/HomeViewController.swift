@@ -117,7 +117,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         case 1:
             let viewModel = TodoViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
             let todoViewController = TodoViewController(viewModel: viewModel)
-            todoViewController.coordinator = coordinator
+            todoViewController.delegate = coordinator
             newViewController = todoViewController
         default:
             newViewController = UIViewController()
@@ -147,10 +147,14 @@ final class HomeViewController: BaseViewController<BaseView> {
 }
 
 // MARK: - EventMakorDelegate
-extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor(mode: EventMakorViewController.Mode, selectedDate: Date?) {
+extension HomeViewController: TodoViewControllerDelegate {
+    func didTapEventMakor(
+        mode: EventMakorViewController.Mode,
+        selectedDate: Date?,
+        preEvent: (any EventPresentable)?
+    ) {
         guard let selectedDate else { return }
-        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent)
     }
 }
 

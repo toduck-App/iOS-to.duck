@@ -20,7 +20,7 @@ final class EventMakorCoordinator: Coordinator {
         self.selectedDate = selectedDate
     }
     
-    func start(mode: EventMakorViewController.Mode) {
+    func start(mode: EventMakorViewController.Mode, preEvent: (any EventPresentable)?) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
@@ -36,6 +36,9 @@ final class EventMakorCoordinator: Coordinator {
         eventMakorViewController.hidesBottomBarWhenPushed = true
         eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
+        if let preEvent {
+            eventMakorViewController.updatePreEvent(preEvent: preEvent)
+        }
     }
     
     func start() { }

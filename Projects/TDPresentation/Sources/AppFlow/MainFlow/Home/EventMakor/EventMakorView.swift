@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import SnapKit
 import Then
 import TDDesign
@@ -160,7 +161,7 @@ final class EventMakorView: BaseView {
         if mode == .schedule {
             stackView.addArrangedSubview(locationForm)
         }
-            
+        
         // 메모
         stackView.addArrangedSubview(memoTextView)
         stackView.addArrangedSubview(dummyView)
@@ -253,6 +254,28 @@ final class EventMakorView: BaseView {
         
         dummyView.snp.makeConstraints { make in
             dummyViewHeightConstraint = make.height.equalTo(40).constraint
+        }
+    }
+    
+    func updatePreEvent(preEvent: (any EventPresentable)?) {
+        let event = preEvent as? EventDisplayItem
+        titleForm.setupTextField(event?.title ?? "")
+        saveButton.isEnabled = event?.title.isEmpty == false
+        noticeSnackBarView.isHidden = event?.title.isEmpty == false
+        categoryViewsForm.selectCategory(categoryImage: event?.categoryIcon ?? UIImage())
+        timeForm.updateDescription(event?.time ?? "")
+        let selectedRepeatDays = event?.repeatDays?.map { $0.title } ?? []
+        repeatDayForm.selectButtons(buttonStateNames: selectedRepeatDays)
+        let selectedAlarm = event?.alarmTime?.title ?? ""
+        alarmForm.selectButtons(buttonStateNames: [selectedAlarm])
+        memoTextView.setupTextView(text: event?.memo ?? "")
+        
+        if mode == .schedule {
+            dateForm.updateDescription(event?.date ?? "")
+            locationForm.setupTextField(event?.place ?? "")
+        }
+        else {
+            lockForm.setupSegmentedControlIndex(event?.isPublic ?? false ? 0 : 1)
         }
     }
 }

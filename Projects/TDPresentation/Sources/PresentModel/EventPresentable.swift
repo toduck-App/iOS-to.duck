@@ -7,6 +7,8 @@ protocol EventPresentable: Hashable {
     var categoryIcon: UIImage? { get }
     var categoryColor: UIColor { get }
     var time: String? { get }
+    var repeatDays: [TDWeekDay]? { get }
+    var alarmTime: AlarmType? { get }
     var place: String? { get }
     var memo: String? { get }
     var isFinished: Bool { get }

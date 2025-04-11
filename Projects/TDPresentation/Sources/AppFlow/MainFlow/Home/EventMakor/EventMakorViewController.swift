@@ -144,6 +144,10 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     // MARK: Delegate Method
+    func updatePreEvent(preEvent: (any EventPresentable)?) {
+        eventMakorView.updatePreEvent(preEvent: preEvent)
+    }
+    
     func reloadCategoryView() {
         input.send(.fetchCategories)
     }

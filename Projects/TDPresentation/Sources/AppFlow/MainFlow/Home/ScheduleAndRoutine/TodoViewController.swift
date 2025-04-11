@@ -41,7 +41,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private var selectedDate: Date?
     private var isMenuVisible = false
     private var didAddDimmedView = false
-    weak var coordinator: EventMakorDelegate?
+    weak var delegate: TodoViewControllerDelegate?
     
     // MARK: - Initializer
     init(
@@ -336,11 +336,11 @@ extension TodoViewController: UITableViewDelegate {
 // MARK: - FloatingActionMenuView Delegate
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
-        coordinator?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate)
+        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil)
     }
     
     func didTapRoutineButton() {
-        coordinator?.didTapEventMakor(mode: .routine, selectedDate: selectedDate)
+        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil)
     }
 }
 
@@ -396,12 +396,23 @@ extension TodoViewController {
         ) as? TimeSlotTableViewCell else {
             return UITableViewCell()
         }
-
-        let eventDisplay = EventDisplayItem(from: event)
+        
+        let dateString: String?
+        if event.eventMode == .schedule {
+            dateString = selectedDate?.convertToString(formatType: .monthDay)
+        } else {
+            dateString = nil
+        }
+        let eventDisplay = EventDisplayItem(from: event, date: dateString)
 
         cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
-        cell.configureSwipeActions {
-            print(123)
+        cell.configureSwipeActions { [weak self] in
+            let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
+            self?.delegate?.didTapEventMakor(
+                mode: mode,
+                selectedDate: self?.selectedDate,
+                preEvent: eventDisplay
+            )
         } deleteAction: {
             let deleteEventViewController = DeleteEventViewController(
                 isRepeating: eventDisplay.isRepeating,

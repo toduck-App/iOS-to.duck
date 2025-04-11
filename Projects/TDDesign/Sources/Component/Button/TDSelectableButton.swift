@@ -4,6 +4,7 @@ import UIKit
 public final class TDSelectableButton: TDBaseButton {
     private var selectedBackgroundColor: UIColor = TDColor.Primary.primary100
     private var selectedForegroundColor: UIColor = TDColor.Primary.primary500
+    let identifier: String
     
     // MARK: - Initializers
     
@@ -19,6 +20,7 @@ public final class TDSelectableButton: TDBaseButton {
         radius: CGFloat = 12,
         font: UIFont
     ) {
+        self.identifier = title
         super.init(
             title: title,
             backgroundColor: backgroundColor,
