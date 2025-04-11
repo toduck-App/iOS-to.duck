@@ -60,12 +60,6 @@ final class TodoViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchTodayTodo(with: Date())
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
         let today = Date()
         selectedDate = today
         let calendar = Calendar.current
@@ -73,6 +67,13 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         weekCalendarView.select(today)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
+        fetchTodayTodo(with: Date())
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchTodayTodo(with: selectedDate ?? Date())
         setupFloatingUIInWindow()
         eventMakorFloattingButton.isHidden = false
     }
