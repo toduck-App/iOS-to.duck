@@ -7,26 +7,31 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     // MARK: - Properties
     private let mode: TDEventMode
     private let event: EventDisplayItem
+    private let currentDate: String
     
     // MARK: - Initializer
     init(
         mode: TDEventMode,
-        event: EventDisplayItem
+        event: EventDisplayItem,
+        currentDate: String
     ) {
         self.mode = mode
         self.event = event
+        self.currentDate = currentDate
         super.init()
     }
     
     init(routine: Routine) {
         self.mode = .routine
         self.event = EventDisplayItem(routine: routine)
+        self.currentDate = ""
         super.init()
     }
     
     init(schedule: Schedule) {
         self.mode = .schedule
         self.event = EventDisplayItem(schedule: schedule)
+        self.currentDate = schedule.startDate
         super.init()
     }
     
@@ -64,7 +69,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     
     /// 이벤트 정보 설정
     private func configureEventDetails() {
-        popupContentView.dateLabel.setText(event.date ?? "-")
+        popupContentView.dateLabel.setText(currentDate)
         popupContentView.alarmImageView.image = event.alarmTime != nil
             ? TDImage.Bell.ringingMedium
             : TDImage.Bell.offMedium

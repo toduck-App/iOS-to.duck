@@ -13,7 +13,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     // MARK: - UI Components
     private let weekCalendarView = HomeCalendar()
-    private let scheduleAndRoutineTableView = UITableView().then {
+    private let todoTableView = UITableView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
@@ -152,7 +152,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     // MARK: Base Method
     override func addView() {
         view.addSubview(weekCalendarView)
-        view.addSubview(scheduleAndRoutineTableView)
+        view.addSubview(todoTableView)
     }
     
     override func layout() {
@@ -162,7 +162,7 @@ final class TodoViewController: BaseViewController<BaseView> {
             $0.height.equalTo(LayoutConstants.calendarHeight)
         }
         
-        scheduleAndRoutineTableView.snp.makeConstraints {
+        todoTableView.snp.makeConstraints {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(LayoutConstants.tableViewTopOffset)
             $0.leading.trailing.bottom.equalToSuperview()
         }
@@ -186,26 +186,24 @@ final class TodoViewController: BaseViewController<BaseView> {
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         weekCalendarView.delegate = self
+        todoTableView.delegate = self
         floatingActionMenuView.isHidden = true
         floatingActionMenuView.delegate = self
         configureEventMakorButton()
         configureDimmedViewGesture()
         configureTodoDataSource()
-        
-        scheduleAndRoutineTableView.delegate = self
-        scheduleAndRoutineTableView.register(
+        registerCell()
+        todoTableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+    }
+    
+    private func registerCell() {
+        todoTableView.register(
             TimeSlotTableViewCell.self,
             forCellReuseIdentifier: TimeSlotTableViewCell.identifier
         )
-        scheduleAndRoutineTableView.register(
+        todoTableView.register(
             TimeSlotGapCell.self,
             forCellReuseIdentifier: TimeSlotGapCell.identifier
-        )
-        scheduleAndRoutineTableView.contentInset = UIEdgeInsets(
-            top: 12,
-            left: 0,
-            bottom: 0,
-            right: 0
         )
     }
     
@@ -255,7 +253,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
 }
 
-// MARK: - FSCalendarDelegate
+// MARK: - FSCalendar Delegate
 extension TodoViewController: FSCalendarDelegate {
     func calendar(
         _ calendar: FSCalendar,
@@ -280,7 +278,7 @@ extension TodoViewController: FSCalendarDelegate {
     }
 }
 
-// MARK: - FSCalendarDelegateAppearance
+// MARK: - FSCalendar Delegate Appearance
 extension TodoViewController: FSCalendarDelegateAppearance {
     private func colorForDate(_ date: Date) -> UIColor? {
         // 오늘 날짜 확인
@@ -310,16 +308,32 @@ extension TodoViewController: FSCalendarDelegateAppearance {
     }
 }
 
-// MARK: - UITableViewDelegate
+// MARK: - UITableView Delegate
 extension TodoViewController: UITableViewDelegate {
     func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
+        guard let item = timelineDataSource?.itemIdentifier(for: indexPath) else { return }
+        let detailEventViewController: DetailEventViewController
+        let currentDate = selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
         
+        switch item {
+        case .allDay(let event, _):
+            let eventDisplayItem = EventDisplayItem(from: event)
+            detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+            presentPopup(with: detailEventViewController)
+        case .timeEvent(_, let event, _):
+            let eventDisplayItem = EventDisplayItem(from: event)
+            detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+            presentPopup(with: detailEventViewController)
+        case .gap(_, _):
+            break
+        }
     }
 }
 
+// MARK: - FloatingActionMenuView Delegate
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
         coordinator?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate)
@@ -331,10 +345,9 @@ extension TodoViewController: FloatingActionMenuViewDelegate {
 }
 
 // MARK: - TableView Diffable DataSource
-
 extension TodoViewController {
     private func configureTodoDataSource() {
-        timelineDataSource = UITableViewDiffableDataSource<Int, TimeLineCellItem>(tableView: scheduleAndRoutineTableView) { tableView, indexPath, item in
+        timelineDataSource = UITableViewDiffableDataSource<Int, TimeLineCellItem>(tableView: todoTableView) { tableView, indexPath, item in
             switch item {
             case .allDay(let event, let showTime):
                 guard

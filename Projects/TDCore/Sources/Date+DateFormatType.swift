@@ -4,6 +4,7 @@ import Then
 public enum DateFormatType {
     case yearMonth
     case yearMonthDay
+    case yearMonthDayKorean
     case time12Hour
     case time12HourEnglish
     case time24Hour
@@ -21,6 +22,10 @@ public enum DateFormatType {
         case .yearMonthDay:
             return DateFormatter().then {
                 $0.dateFormat = "yyyy-MM-dd"
+            }
+        case .yearMonthDayKorean:
+            return DateFormatter().then {
+                $0.dateFormat = "yyyy년 MM월 dd일"
             }
         case .time12Hour:
             return DateFormatter().then {
