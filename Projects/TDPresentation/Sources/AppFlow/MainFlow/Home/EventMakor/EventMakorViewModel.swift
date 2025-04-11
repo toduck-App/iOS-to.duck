@@ -32,6 +32,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
+    private let preEvent: (any EventPresentable)?
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
@@ -50,12 +51,14 @@ final class EventMakorViewModel: BaseViewModel {
         mode: EventMakorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
-        fetchCategoriesUseCase: FetchCategoriesUseCase
+        fetchCategoriesUseCase: FetchCategoriesUseCase,
+        preEvent: (any EventPresentable)?
     ) {
         self.mode = mode
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.preEvent = preEvent
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
