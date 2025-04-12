@@ -40,6 +40,15 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     
     override func configure() {
         layoutView.detailCollectionView.delegate = self
+        
+        layoutView.commentImageView.onRemove = { [weak self] in
+            self?.layoutView.removeCommentInputImage()
+            self?.didTapDeleteImage()
+        }
+        layoutView.commentReplyView.onRemove = { [weak self] in
+            self?.layoutView.removeReplyInputForm()
+        }
+        
         layoutView.commentInputForm.setTapSendButton(
             UIAction { [weak self] _ in
             self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
@@ -138,16 +147,12 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
         input.send(.likeComment(commentID))
     }
     
-    func didTapRegisterImage() {
-        
-    }
-    
     func didTapCancleComment() {
-        
+        print("DIDTAPCANCLECOMMENT")
     }
     
     func didTapDeleteImage() {
-        
+        self.input.send(.deleteRegisterImage)
     }
     
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {

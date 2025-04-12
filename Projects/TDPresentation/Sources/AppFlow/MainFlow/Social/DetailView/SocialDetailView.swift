@@ -52,12 +52,6 @@ final class SocialDetailView: BaseView, UITextViewDelegate {
         backgroundColor = TDColor.baseWhite
         detailCollectionView.register(with: SocialDetailPostCell.self)
         detailCollectionView.register(with: SocialDetailCommentCell.self)
-        commentImageView.onRemove = { [weak self] in
-            self?.removeCommentInputImage()
-        }
-        commentReplyView.onRemove = { [weak self] in
-            self?.removeReplyInputForm()
-        }
     }
     
     override func layout() {
