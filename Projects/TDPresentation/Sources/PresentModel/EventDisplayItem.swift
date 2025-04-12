@@ -7,67 +7,36 @@ struct EventDisplayItem: EventPresentable {
     let title: String
     let categoryIcon: UIImage?
     let categoryColor: UIColor
-    let alarmTime: String?
     let date: String?
     let time: String?
-    let repeatDays: String?
+    let repeatDays: [TDWeekDay]?
+    let alarmTime: AlarmType?
     let place: String?
     let isPublic: Bool
     let memo: String?
     let isFinished: Bool
     let isRepeating: Bool
+    let eventMode: TDEventMode
     
     init(
-        id: Int?,
-        title: String,
-        categoryIcon: UIImage?,
-        categoryColor: UIColor,
-        alarmTime: String?,
-        date: String?,
-        time: String?,
-        repeatDays: String?,
-        place: String?,
-        isPublic: Bool = false,
-        memo: String?,
-        isFinished: Bool,
-        isRepeating: Bool
-    ) {
-        self.id = id
-        self.title = title
-        self.categoryIcon = categoryIcon
-        self.categoryColor = categoryColor
-        self.alarmTime = alarmTime
-        self.date = date
-        self.time = time
-        self.repeatDays = repeatDays
-        self.place = place
-        self.isPublic = isPublic
-        self.memo = memo
-        self.isFinished = isFinished
-        self.isRepeating = isRepeating
-    }
-    
-    init(
-        from event: EventPresentable,
-        alarmTime: String? = nil,
+        from event: any EventPresentable,
         date: String? = nil,
-        repeatDays: String? = nil,
-        place: String? = nil,
         isPublic: Bool = false
     ) {
         self.id = event.id
         self.title = event.title
         self.categoryIcon = event.categoryIcon
         self.categoryColor = event.categoryColor
-        self.alarmTime = alarmTime
+        self.alarmTime = event.alarmTime
         self.date = date
         self.time = event.time
-        self.repeatDays = repeatDays
-        self.place = place
+        self.repeatDays = event.repeatDays
+        self.place = event.place
         self.isPublic = isPublic
         self.memo = event.memo
         self.isFinished = event.isFinished
         self.isRepeating = event.isRepeating
+        self.eventMode = event.eventMode
     }
     
     init(routine: Routine) {
@@ -75,15 +44,16 @@ struct EventDisplayItem: EventPresentable {
         self.title = routine.title
         self.categoryIcon = UIImage(named: routine.category.imageName)
         self.categoryColor = routine.category.colorHex.convertToUIColor() ?? .white
-        self.alarmTime = routine.alarmTime?.rawValue
+        self.alarmTime = routine.alarmTime
         self.date = nil
         self.time = routine.time?.convertToString()
-        self.repeatDays = routine.repeatDays?.map { $0.rawValue }.joined(separator: ", ")
+        self.repeatDays = routine.repeatDays
         self.place = nil
         self.isPublic = routine.isPublic
         self.memo = routine.memo
         self.isFinished = routine.isFinished
         self.isRepeating = routine.isRepeating
+        self.eventMode = routine.eventMode
     }
     
     init(schedule: Schedule) {
@@ -91,14 +61,15 @@ struct EventDisplayItem: EventPresentable {
         self.title = schedule.title
         self.categoryIcon = UIImage(named: schedule.category.imageName)
         self.categoryColor = schedule.category.colorHex.convertToUIColor() ?? .white
-        self.alarmTime = schedule.alarmTime?.rawValue
+        self.alarmTime = schedule.alarmTime
         self.date = nil
         self.time = schedule.time?.convertToString()
-        self.repeatDays = schedule.repeatDays?.map { $0.rawValue }.joined(separator: ", ")
+        self.repeatDays = schedule.repeatDays
         self.place = schedule.place
         self.isPublic = false
         self.memo = schedule.memo
         self.isFinished = schedule.isFinished
         self.isRepeating = false
+        self.eventMode = schedule.eventMode
     }
 }

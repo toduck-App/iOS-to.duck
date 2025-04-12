@@ -5,7 +5,7 @@ import UIKit
 
 final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
-    private let segmentedControl = TDSegmentedControl(items: ["토덕", "일정", "루틴"])
+    private let segmentedControl = TDSegmentedControl(items: ["토덕", "투두"])
     
     // MARK: - Properties
     private var cachedViewControllers = [Int: UIViewController]()
@@ -103,9 +103,9 @@ final class HomeViewController: BaseViewController<BaseView> {
         }
 
         let newViewController: UIViewController
+        let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
         switch index {
         case 0:
-            let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
             let shouldMarkAllDayUseCase = DIContainer.shared.resolve(ShouldMarkAllDayUseCase.self)
             let viewModel = ToduckViewModel(
                 fetchScheduleListUseCase: fetchScheduleListUseCase,
@@ -115,28 +115,16 @@ final class HomeViewController: BaseViewController<BaseView> {
             toduckViewController.delegate = self
             newViewController = toduckViewController
         case 1:
-            let useCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
-            let viewModel = ScheduleViewModel(fetchScheduleListUseCase: useCase)
-            newViewController = createScheduleAndRoutineViewController(viewModel: viewModel, mode: .schedule)
-        case 2:
-            let useCase = DIContainer.shared.resolve(FetchRoutineListUseCase.self)
-            let viewModel = RoutineViewModel()
-            newViewController = createScheduleAndRoutineViewController(viewModel: viewModel, mode: .routine)
+            let viewModel = TodoViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
+            let todoViewController = TodoViewController(viewModel: viewModel)
+            todoViewController.delegate = coordinator
+            newViewController = todoViewController
         default:
             newViewController = UIViewController()
         }
 
         cachedViewControllers[index] = newViewController
         return newViewController
-    }
-    
-    private func createScheduleAndRoutineViewController(viewModel: Any, mode: ScheduleAndRoutineViewController.Mode) -> ScheduleAndRoutineViewController {
-        let viewController = (mode == .schedule)
-        ? ScheduleAndRoutineViewController(scheduleViewModel: viewModel as? ScheduleViewModel, mode: mode)
-        : ScheduleAndRoutineViewController(routineViewModel: viewModel as? RoutineViewModel, mode: mode)
-        
-        viewController.coordinator = self
-        return viewController
     }
     
     private func replaceCurrentViewController(with newViewController: UIViewController) {
@@ -159,10 +147,14 @@ final class HomeViewController: BaseViewController<BaseView> {
 }
 
 // MARK: - EventMakorDelegate
-extension HomeViewController: EventMakorDelegate {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
+extension HomeViewController: TodoViewControllerDelegate {
+    func didTapEventMakor(
+        mode: EventMakorViewController.Mode,
+        selectedDate: Date?,
+        preEvent: (any EventPresentable)?
+    ) {
         guard let selectedDate else { return }
-        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate)
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent)
     }
 }
 
@@ -177,7 +169,7 @@ extension HomeViewController: ToduckViewDelegate {
 private extension HomeViewController {
     enum LayoutConstants {
         static let segmentedControlLeadingOffset: CGFloat = 16
-        static let segmentedControlWidth: CGFloat = 180
+        static let segmentedControlWidth: CGFloat = 120
         static let segmentedControlHeight: CGFloat = 44
     }
 }

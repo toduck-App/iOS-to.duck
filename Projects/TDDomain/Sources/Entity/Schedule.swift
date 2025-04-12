@@ -14,6 +14,7 @@ public struct Schedule: Eventable {
     public let memo: String?
     public let isFinished: Bool
     public let scheduleRecords: [ScheduleRecord]?
+    public let eventMode: TDEventMode = .schedule
     
     public var isRepeating: Bool {
         repeatDays != nil || startDate != endDate
@@ -50,7 +51,7 @@ public struct Schedule: Eventable {
     }
 }
 
-public struct ScheduleRecord {
+public struct ScheduleRecord: Hashable {
     public let id: Int
     public let isComplete: Bool
     public let recordDate: String

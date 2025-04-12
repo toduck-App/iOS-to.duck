@@ -25,13 +25,14 @@ final class EventMakorViewModel: BaseViewModel {
         case failureAPI(String)
     }
     
-    private let mode: ScheduleAndRoutineViewController.Mode
+    private let mode: EventMakorViewController.Mode
     private let output = PassthroughSubject<Output, Never>()
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
+    private let preEvent: (any EventPresentable)?
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
@@ -47,15 +48,17 @@ final class EventMakorViewModel: BaseViewModel {
     private var memo: String?
     
     init(
-        mode: ScheduleAndRoutineViewController.Mode,
+        mode: EventMakorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
-        fetchCategoriesUseCase: FetchCategoriesUseCase
+        fetchCategoriesUseCase: FetchCategoriesUseCase,
+        preEvent: (any EventPresentable)?
     ) {
         self.mode = mode
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.preEvent = preEvent
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {

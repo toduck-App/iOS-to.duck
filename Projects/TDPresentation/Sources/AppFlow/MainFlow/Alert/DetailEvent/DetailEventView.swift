@@ -11,7 +11,8 @@ final class DetailEventView: BaseView {
     private let navigationContainerView = UIView()
     let cancelButton = TDBaseButton(
         image: TDImage.X.x1Medium,
-        backgroundColor: TDColor.baseWhite
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700
     )
     let titleLabel = TDLabel(
         toduckFont: TDFont.boldHeader4,

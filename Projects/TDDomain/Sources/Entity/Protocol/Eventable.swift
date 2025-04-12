@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Eventable {
+public protocol Eventable: Hashable {
     var id: Int? { get }
     var title: String { get }
     var category: TDCategory { get }
@@ -8,4 +8,5 @@ public protocol Eventable {
     var memo: String? { get }
     var isFinished: Bool { get }
     var isRepeating: Bool { get }
+    var eventMode: TDEventMode { get }
 }

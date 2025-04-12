@@ -48,7 +48,7 @@ final class SignInViewModel: BaseViewModel {
             try await loginUseCase.execute(loginId: loginId, password: password)
             output.send(.validSignIn)
         } catch {
-            TDLogger.error("\(#function): \(error)")
+            output.send(.invalidSignIn)
         }
     }
 }

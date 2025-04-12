@@ -65,6 +65,22 @@ public final class TDCategoryCollectionView: UIView {
     }
     
     // MARK: - Public Method
+    public func selectCategory(categoryImage: UIImage) {
+        guard let index = categoryImages.firstIndex(of: categoryImage) else { return }
+        selectedIndex = index
+        
+        for cell in collectionView.visibleCells {
+            guard let indexPath = collectionView.indexPath(for: cell),
+                  let categoryCell = cell as? TDCategoryCell else { continue }
+            
+            let image = categoryImages[indexPath.row]
+            let color = categoryColors[indexPath.row]
+            let isSelected = (indexPath.item == selectedIndex)
+            
+            categoryCell.configure(image: image, backgroundColor: color, isSelected: isSelected)
+        }
+    }
+    
     public func setupCategoryView(colors: [UIColor]) {
         self.categoryColors = colors
         collectionView.reloadData()

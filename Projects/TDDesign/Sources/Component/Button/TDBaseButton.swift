@@ -77,6 +77,18 @@ public class TDBaseButton: UIButton {
     
     
     // MARK: - Public Methods
+    /// 버튼의 배경색을 설정합니다.
+    public func updateBackgroundColor(buttonColor: UIColor, imageColor: UIColor) {
+        self.backgroundToduckColor = buttonColor
+        self.foregroundToduckColor = imageColor
+        
+        if let originalImage = self.image {
+            self.image = originalImage.withRenderingMode(.alwaysTemplate)
+        }
+        
+        self.tintColor = imageColor
+        setupButton()
+    }
     
     /// 버튼의 `cornerRadius`를 설정합니다.
     public func setRadius(_ radius: CGFloat) {

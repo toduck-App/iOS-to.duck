@@ -52,6 +52,10 @@ public final class TDFormSegmentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func setupSegmentedControlIndex(_ index: Int) {
+        lockSegmentedControl.selectedSegmentIndex = index
+    }
+    
     private func setupLayout() {
         addSubview(titleImageView)
         addSubview(titleLabel)

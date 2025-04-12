@@ -1,8 +1,8 @@
 import UIKit
 import TDCore
 
-protocol EventMakorDelegate: AnyObject {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?)
+protocol TodoViewControllerDelegate: AnyObject {
+    func didTapEventMakor(mode: EventMakorViewController.Mode, selectedDate: Date?, preEvent: (any EventPresentable)?)
 }
 
 final class HomeCoordinator: Coordinator {
@@ -34,8 +34,12 @@ extension HomeCoordinator: CoordinatorFinishDelegate {
 }
 
 // MARK: - EventMakorDelegate
-extension HomeCoordinator: EventMakorDelegate {
-    func didTapEventMakor(mode: ScheduleAndRoutineViewController.Mode, selectedDate: Date?) {
+extension HomeCoordinator: TodoViewControllerDelegate {
+    func didTapEventMakor(
+        mode: EventMakorViewController.Mode,
+        selectedDate: Date?,
+        preEvent: (any EventPresentable)?
+    ) {
         guard let selectedDate else { return }
         let eventMakorCoordinator = EventMakorCoordinator(
             navigationController: navigationController,
@@ -44,7 +48,7 @@ extension HomeCoordinator: EventMakorDelegate {
         )
         eventMakorCoordinator.finishDelegate = self
         childCoordinators.append(eventMakorCoordinator)
-        eventMakorCoordinator.start(mode: mode)
+        eventMakorCoordinator.start(mode: mode, preEvent: preEvent)
     }
 }
 
