@@ -87,6 +87,11 @@ public final class TDFormTextField: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func setupLabel(title: String = "", placeholder: String = "") {
+        titleLabel.setTitleLabel(title)
+        textField.setupPlaceholder(placeholder)
+    }
+    
     public func setupTextField(_ text: String) {
         textField.setupTextField(text)
     }

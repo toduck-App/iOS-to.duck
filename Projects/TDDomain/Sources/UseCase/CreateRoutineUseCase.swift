@@ -12,6 +12,6 @@ public final class CreateRoutineUseCaseImpl: CreateRoutineUseCase {
     }
     
     public func execute(routine: Routine) async throws {
-        try await repository.createRoutine(routine: routine).get()
+        try await repository.createRoutine(routine: routine)
     }
 }

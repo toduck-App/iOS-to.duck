@@ -13,4 +13,15 @@ public enum AlarmType: String {
             return "1시간 전"
         }
     }
+    
+    public var time: Int {
+        switch self {
+        case .tenMinutesBefore:
+            return 10
+        case .thirtyMinutesBefore:
+            return 30
+        case .oneHourBefore:
+            return 60
+        }
+    }
 }

@@ -23,8 +23,8 @@ final class SocialSelectRoutineCoordinator: Coordinator {
     }
 
     func start() {
-        let fetchRoutineListUseCase = injector.resolve(FetchRoutineListUseCase.self)
-        let viewModel = SocialSelectRoutineViewModel(routineRepository: fetchRoutineListUseCase)
+        let fetchAvailableRoutineListUseCase = injector.resolve(FetchAvailableRoutineListUseCase.self)
+        let viewModel = SocialSelectRoutineViewModel(fetchAvailableRoutineListUseCase: fetchAvailableRoutineListUseCase)
         let controller = SocialSelectRoutineViewController(viewModel: viewModel)
         let sheetController = SheetViewController(
             controller: controller,

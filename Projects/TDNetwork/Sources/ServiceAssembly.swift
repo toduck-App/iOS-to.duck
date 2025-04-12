@@ -37,5 +37,9 @@ public struct ServiceAssembly: Assembly {
         container.register(UserService.self) { _ in
             return UserServiceImpl()
         }
+        
+        container.register(RoutineService.self) { _ in
+            return RoutineServiceImpl()
+        }
     }
 }
