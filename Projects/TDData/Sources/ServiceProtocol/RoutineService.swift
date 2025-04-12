@@ -1,0 +1,8 @@
+public protocol RoutineService {
+    func createRoutine(routine: RoutineRequestDTO) async throws
+    func fetchRoutine(routineId: Int) async throws -> RoutineResponseDTO
+    func fetchRoutineList(dateString: String) async throws -> RoutineListResponseDTO
+    func fetchAvailableRoutineList() async throws -> RoutineListResponseDTO
+    func updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) async throws
+    func deleteRoutine(routineId: Int, keepRecords: Bool) async throws
+}

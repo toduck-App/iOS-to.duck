@@ -13,10 +13,10 @@ final class EventMakorView: BaseView {
     
     // 제목
     let titleForm = TDFormTextField(
-        title: "일정",
+        title: "투두",
         isRequired: true,
         maxCharacter: 20,
-        placeholder: "일정을 입력해주세요"
+        placeholder: "투두를 입력해주세요"
     )
     
     // 카테고리
@@ -170,6 +170,11 @@ final class EventMakorView: BaseView {
         backgroundColor = TDColor.baseWhite
         scrollView.showsVerticalScrollIndicator = false
         saveButton.isEnabled = false
+        if mode == .schedule {
+            titleForm.setupLabel(title: "일정", placeholder: "일정을 입력해주세요")
+        } else {
+            titleForm.setupLabel(title: "루틴", placeholder: "루틴을 입력해주세요")
+        }
     }
     
     override func layout() {

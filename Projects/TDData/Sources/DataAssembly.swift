@@ -44,7 +44,10 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
         
         container.register(RoutineRepository.self) { _ in
-            return RoutineRepositoryImpl()
+            guard let service = container.resolve(RoutineService.self) else {
+                fatalError("RoutineService is not registered")
+            }
+            return RoutineRepositoryImpl(service: service)
         }.inObjectScope(.container)
         
         container.register(ScheduleRepository.self) { _ in

@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FetchRoutineUseCase {
-    func execute() async throws -> Routine
+    func execute(routineId: Int) async throws -> Routine
 }
 
 public final class FetchRoutineUseCaseImpl: FetchRoutineUseCase {
@@ -11,7 +11,7 @@ public final class FetchRoutineUseCaseImpl: FetchRoutineUseCase {
         self.repository = repository
     }
     
-    public func execute() async throws -> Routine {
-        try await repository.fetchRoutine().get()
+    public func execute(routineId: Int) async throws -> Routine {
+        try await repository.fetchRoutine(routineId: routineId)
     }
 }

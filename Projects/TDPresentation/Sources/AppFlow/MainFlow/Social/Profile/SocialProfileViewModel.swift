@@ -85,8 +85,8 @@ final class SocialProfileViewModel: BaseViewModel {
     
     private func fetchRoutines() async {
         do {
-            let routines = try await fetchRoutineListUseCase.execute(userId: userId)
-            self.routines = routines
+//            let routines = try await fetchRoutineListUseCase.execute(userId: userId)
+//            self.routines = routines
             output.send(.fetchRoutine)
         } catch {
             output.send(.failure("루틴을 불러오는데 실패했습니다."))
