@@ -28,6 +28,7 @@ final class SocialProfileViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
+    private var isLoadingMore: Bool = false
     private(set) var user: User?
     private(set) var userDetail: UserDetail?
     private(set) var posts: [Post] = []
@@ -49,17 +50,23 @@ final class SocialProfileViewModel: BaseViewModel {
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] input in
+            guard let self else { return }
             switch input {
             case .fetchRoutine:
-                Task { await self?.fetchRoutines() }
+                Task { await self.fetchRoutines() }
             case .fetchPosts:
-                Task { await self?.fetchPosts() }
+                Task { await self.fetchPosts() }
             case .fetchUser:
-                Task { await self?.fetchUser() }
+                Task { await self.fetchUser() }
             case .toggleFollow:
-                Task { await self?.toggleFollow() }
+                Task { await self.toggleFollow() }
             case .loadMorePosts:
-                Task { await self?.loadMorePosts() }
+                guard !isLoadingMore else { return }
+                isLoadingMore = true
+                Task {
+                    await self.loadMorePosts()
+                    self.isLoadingMore = false
+                }
             }
         }.store(in: &cancellables)
         
@@ -80,7 +87,6 @@ final class SocialProfileViewModel: BaseViewModel {
     private func fetchPosts() async {
         do {
             fetchCursor.reset()
-            
             let result = try await fetchUserPostUseCase.execute(userID: userId, cursor: fetchCursor.nextCursor, limit: 20)
             fetchCursor.update(with: (result.hasMore, result.nextCursor))
             self.posts = result.result

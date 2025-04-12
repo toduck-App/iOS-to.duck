@@ -175,6 +175,7 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
 extension SocialProfileViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
+        snapshot.deleteAllItems()
         snapshot.appendSections([0])
         snapshot.appendItems(posts.map(\.id))
         datasource?.apply(snapshot, animatingDifferences: false)
