@@ -25,4 +25,6 @@ public protocol SocialService {
     
     // 댓글 좋아요 취소
     func requestUnlikeComment(postID: Int, commentID: Int) async throws
+    
+    func requestRemoveComment(postID: Int, commentID: Int) async throws
 }

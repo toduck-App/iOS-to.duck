@@ -479,5 +479,12 @@ public struct DomainAssembly: Assembly {
         container.register(ShouldMarkAllDayUseCase.self) { _ in
             return ShouldMarkAllDayUseCaseImpl()
         }
+        
+        container.register(DeleteCommentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(SocialRepository.self) else {
+                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteCommentUseCaseImpl(repository: repository)
+        }
     }
 }

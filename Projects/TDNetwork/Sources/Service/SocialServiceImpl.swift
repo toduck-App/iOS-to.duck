@@ -80,4 +80,9 @@ public struct SocialServiceImpl: SocialService {
         let target = SocialAPI.unlikeComment(postId: postID, commentId: commentID)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func requestRemoveComment(postID: Int, commentID: Int) async throws {
+        let target = SocialAPI.deleteComment(postId: postID, commentId: commentID)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

@@ -21,7 +21,7 @@ public enum SocialAPI {
     case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
-    case deleteComment(commentId: String) // TODO: Comment 삭제 기능 구현 필요
+    case deleteComment(postId: Int, commentId: Int)
     case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
     case blockComment(commentId: String) // TODO: Comment 차단 기능 구현 필요
     
@@ -71,8 +71,8 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(socialId)/comments"
         case .updateComment(let comment):
             "/comments/\(comment.id)"
-        case .deleteComment(let commentId):
-            "/comments/\(commentId)"
+        case .deleteComment(let postId, let commentId):
+            "v1/socials/\(postId)/comments/\(commentId)"
         case .reportComment(let commentId):
             "/comments/\(commentId)/report"
         case .blockComment(let commentId):

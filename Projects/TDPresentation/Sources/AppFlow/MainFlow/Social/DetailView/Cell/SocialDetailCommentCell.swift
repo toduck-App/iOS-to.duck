@@ -265,6 +265,22 @@ private extension SocialDetailCommentCell {
                 guard let self else { return }
                 commentDelegate?.didTapNicknameLabel(self, comment.user.id)
             }
+            $0.onBlockTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapBlock(self, comment.user.id)
+            }
+            $0.onReportTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapReport(self, comment.id)
+            }
+            $0.onEditTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapEditComment(self, comment.id)
+            }
+            $0.onDeleteTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapDeleteComment(self, comment.id)
+            }
         }
         header.snp.makeConstraints { $0.height.equalTo(24) }
         return header

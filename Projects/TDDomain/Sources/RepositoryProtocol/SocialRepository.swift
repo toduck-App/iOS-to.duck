@@ -21,5 +21,5 @@ public protocol SocialRepository {
     func fetchUserCommentList(userID: User.ID) async throws -> [Comment]?
     func createComment( postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws
     func updateComment(comment: Comment) async throws -> Bool
-    func deleteComment(commentID: Comment.ID) async throws -> Bool
+    func deleteComment(postID: Post.ID, commentID: Comment.ID) async throws
 }

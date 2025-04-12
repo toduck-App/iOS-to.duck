@@ -110,6 +110,9 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     self?.layoutView.removeReplyInputForm()
                     self?.layoutView.clearText()
                     self?.layoutView.removeCommentInputImage()
+                case .deleteComment(let comment):
+                    let newItems = self?.viewModel.comments.map { Item.comment($0.id) } ?? []
+                    self?.applySnapshot(items: newItems, to: .comments)
                 default:
                     break
                 }
@@ -147,10 +150,6 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
         input.send(.likeComment(commentID))
     }
     
-    func didTapCancleComment() {
-        print("DIDTAPCANCLECOMMENT")
-    }
-    
     func didTapDeleteImage() {
         self.input.send(.deleteRegisterImage)
     }
@@ -168,12 +167,21 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
-        
+        TDLogger.debug("BLOCK USER")
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        
+        TDLogger.debug("REPORT POST")
     }
+    
+    func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
+        TDLogger.debug("EDIT COMMENT")
+    }
+    
+    func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
+        self.input.send(.deleteComment(commentID))
+    }
+
 }
 
 // MARK: Iternal Method

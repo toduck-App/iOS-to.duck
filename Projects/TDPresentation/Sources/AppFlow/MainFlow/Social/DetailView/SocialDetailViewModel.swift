@@ -15,6 +15,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case blockPost
         case blockCommet
         case didTapComment(Comment.ID)
+        case deleteComment(Comment.ID)
     }
     
     enum Output {
@@ -29,6 +30,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case blockPost
         case blockCommet
         case didTapComment(Comment)
+        case deleteComment(Comment)
         case failure(String)
     }
     
@@ -39,6 +41,7 @@ public final class SocialDetailViewModel: BaseViewModel {
     private let toggleCommentLikeUseCase: ToggleCommentLikeUseCase
     private let createCommentUseCase: CreateCommentUseCase
     private let reportPostUseCase: ReportPostUseCase
+    private let deleteCommentUseCase: DeleteCommentUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
@@ -56,6 +59,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         toggleCommentLikeUseCase: ToggleCommentLikeUseCase,
         createCommentUseCase: CreateCommentUseCase,
         reportPostUseCase: ReportPostUseCase,
+        deleteCommentUseCase: DeleteCommentUseCase,
         at postID: Post.ID
     ) {
         self.fetchPostUsecase = fetchPostUsecase
@@ -64,6 +68,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         self.toggleCommentLikeUseCase = toggleCommentLikeUseCase
         self.createCommentUseCase = createCommentUseCase
         self.reportPostUseCase = reportPostUseCase
+        self.deleteCommentUseCase = deleteCommentUseCase
         self.postID = postID
     }
     
@@ -96,6 +101,8 @@ public final class SocialDetailViewModel: BaseViewModel {
                 currentComment = comments.first(where: { $0.id == commentID })
                 guard let comment = currentComment else { return }
                 output.send(.didTapComment(comment))
+            case .deleteComment(let commentID):
+                Task { await self.deleteComment(commentID: commentID) }
             }
         
         }.store(in: &cancellables)
@@ -180,6 +187,22 @@ private extension SocialDetailViewModel {
             output.send(.failure("댓글 등록에 실패했습니다."))
         }
     }
+    
+    // MARK: 댓글 삭제
+    private func deleteComment(commentID: Comment.ID) async {
+        do {
+            try await deleteCommentUseCase.execute(postID: postID, commentID: commentID)
+            
+            if let parentComment = removeComment(in: &comments, for: commentID) {
+                output.send(.deleteComment(parentComment))
+            } else {
+                output.send(.failure("댓글 삭제 처리에 실패했습니다."))
+            }
+        } catch {
+            output.send(.failure("댓글 삭제에 실패했습니다."))
+        }
+    }
+
 }
 
 private extension SocialDetailViewModel {
@@ -231,4 +254,25 @@ private extension SocialDetailViewModel {
         }
         return false
     }
+    
+    /// 댓글 배열(inout)에서 주어진 commentID에 해당하는 댓글을 제거합니다.
+    /// - 만약 top-level 댓글이면, 배열에서 제거한 후 그 댓글을 반환합니다.
+    /// - 만약 nested reply에 있었다면, 해당 reply를 포함하고 있는 상위(top-level) 댓글을 반환합니다.
+    private func removeComment(in comments: inout [Comment], for commentID: Comment.ID) -> Comment? {
+        // top-level 댓글에서 찾는 경우
+        if let index = comments.firstIndex(where: { $0.id == commentID }) {
+            // 해당 댓글을 배열에서 제거한 후 반환
+            let removedComment = comments.remove(at: index)
+            return removedComment
+        }
+        // top-level 댓글에 없으면 각 댓글의 reply 배열에서 재귀적으로 찾기
+        for i in 0..<comments.count {
+            if let _ = removeComment(in: &comments[i].reply, for: commentID) {
+                // nested reply에서 삭제가 발생했다면, 상위(부모) 댓글을 반환
+                return comments[i]
+            }
+        }
+        return nil
+    }
+
 }
