@@ -23,7 +23,6 @@ public enum SocialAPI {
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
     case deleteComment(postId: Int, commentId: Int)
     case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
-    case blockComment(commentId: String) // TODO: Comment 차단 기능 구현 필요
     
     case fetchUser(userId: Int) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
@@ -75,8 +74,6 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(postId)/comments/\(commentId)"
         case .reportComment(let commentId):
             "/comments/\(commentId)/report"
-        case .blockComment(let commentId):
-            "/comments/\(commentId)/block"
         case .fetchUser(let userId):
             "v1/profiles/\(userId)"
         case .fetchUserPostList(let userId, _, _):
@@ -110,7 +107,6 @@ extension SocialAPI: MFTarget {
              .likeComment,
              .createComment,
              .reportComment,
-             .blockComment,
              .followUser:
             .post
         case .updatePost, .updateComment:
@@ -165,8 +161,7 @@ extension SocialAPI: MFTarget {
              .updateComment,
              .followUser,
              .unfollowUser,
-             .reportComment,
-             .blockComment:
+             .reportComment:
             // TODO: - API에 따라 이 부분도 구현되어야 합니다.
             return nil
         }
@@ -216,8 +211,6 @@ extension SocialAPI: MFTarget {
         case .updateComment(let comment):
             return .requestPlain
         case .reportComment(commentId: let commentId):
-            return .requestPlain
-        case .blockComment(commentId: let commentId):
             return .requestPlain
         }
     }
