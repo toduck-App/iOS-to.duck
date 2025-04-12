@@ -24,7 +24,7 @@ public enum SocialAPI {
     case deleteComment(postId: Int, commentId: Int)
     case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
     
-    case fetchUser(userId: Int) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUser(userId: Int)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
     case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
     
