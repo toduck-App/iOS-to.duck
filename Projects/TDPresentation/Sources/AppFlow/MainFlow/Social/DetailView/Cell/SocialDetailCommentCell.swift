@@ -115,7 +115,7 @@ private extension SocialDetailCommentCell {
     
     func setupConstraints() {
         containerView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(12)
+            make.top.equalToSuperview()
             make.bottom.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(10)
         }

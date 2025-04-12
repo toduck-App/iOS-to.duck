@@ -135,7 +135,13 @@ final class SocialDetailView: BaseView, UITextViewDelegate {
                                               heightDimension: .estimated(1))
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                heightDimension: .estimated(1))
+        let groupEdge = NSCollectionLayoutEdgeSpacing(leading: .fixed(0),
+                                                      top: .fixed(0),
+                                                      trailing: .fixed(0),
+                                                      bottom: .fixed(8))
+        
         return UICollectionViewCompositionalLayout.makeVerticalCompositionalLayout(itemSize: itemSize,
-                                                                                  groupSize: groupSize)
+                                                                                  groupSize: groupSize,
+                                                                                   groupEdgeSpacing: groupEdge)
     }
 }
