@@ -4,7 +4,7 @@ import TDDomain
 import TDDesign
 import UIKit
 
-final class SocialDetailViewController: BaseViewController<SocialDetailView> {
+final class SocialDetailViewController: BaseViewController<SocialDetailView>, TDPopupPresentable {
     private enum Section: Hashable, CaseIterable {
         case post
         case comments
@@ -167,7 +167,11 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
-        TDLogger.debug("BLOCK USER")
+        let controller = SocialBlockViewController()
+        controller.onBlock = { [weak self] in
+            self?.input.send(.blockUser(userID))
+        }
+        presentPopup(with: controller)
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
@@ -189,9 +193,12 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
 extension SocialDetailViewController {
     private func applySnapshot(items: [Item], to section: Section) {
         var snapshot = datasource.snapshot()
+        let existingItems = snapshot.itemIdentifiers(inSection: section)
+        snapshot.deleteItems(existingItems)
         snapshot.appendItems(items, toSection: section)
-        datasource.apply(snapshot, animatingDifferences: false)
+        datasource.apply(snapshot, animatingDifferences: true)
     }
+
     
     private func updateSnapshot(items: [Item], to section: Section) {
         var snapshot = datasource.snapshot()
