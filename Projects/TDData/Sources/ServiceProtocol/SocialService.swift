@@ -11,7 +11,7 @@ public protocol SocialService {
     // 소셜 게시글 수정
     func requestUpdatePost(postID: Int, isChangeTitle: Bool, title: String?, isChangeRoutine: Bool, routineID: Int?, content: String?, isAnonymous: Bool?, socialCategoryIds: [Int]?, socialImageURLs: [String]?) async throws
     // 게시글 검색
-    func requestSearchPosts(cursor: Int?, limit: Int, keyword: String) async throws -> TDPostListDTO
+    func requestSearchPosts(cursor: Int?, limit: Int, keyword: String, categoryIDs: [Int]?) async throws -> TDPostListDTO
     // 게시글 좋아요
     func requestLikePost(postID: Int) async throws
     // 게시글 좋아요 취소

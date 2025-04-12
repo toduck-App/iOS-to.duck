@@ -21,7 +21,7 @@ public final class SocialRepositoryImp: SocialRepository {
     
     public func searchPost(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
         let categoryIDs: [Int]? = category?.map(\.rawValue)
-        let postListDTO = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword)
+        let postListDTO = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword, categoryIDs: categoryIDs)
         let postList = postListDTO.results.compactMap { $0.convertToPost(category: category) }
         return (postList, postListDTO.hasMore, postListDTO.nextCursor)
         // TODO: 카테고리 필터 필요

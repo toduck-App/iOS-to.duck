@@ -5,7 +5,7 @@ import TDDomain
 
 public enum SocialAPI {
     case fetchPostList(curser: Int?, limit: Int, categoryIds: [Int]?)
-    case searchPost(keyword: String, curser: Int?, limit: Int) // TODO: Search 쪽 PageNation 구현 필요
+    case searchPost(keyword: String, curser: Int?, limit: Int, categoryIds: [Int]?)
     case likePost(postId: Int)
     case unlikePost(postId: Int)
     case createPost(post: TDPostCreateRequestDTO)
@@ -127,10 +127,13 @@ extension SocialAPI: MFTarget {
                 params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
             }
             return params
-        case .searchPost(let keyword, let cursor, let limit):
+        case .searchPost(let keyword, let cursor, let limit, let categoryIds):
             var params: [String: Any] = ["keyword": keyword, "limit": limit]
             if let cursor {
                 params["cursor"] = cursor
+            }
+            if let categoryIds {
+                params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
             }
             return params
         case .likePost,
