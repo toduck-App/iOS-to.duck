@@ -27,7 +27,6 @@ public enum SocialAPI {
     case fetchUser(userId: Int) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
     case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
-    case fetchUserShareUrl(userId: String) // 이게 뭐지?
     
     case followUser(targetUserId: Int)
     case unfollowUser(targetUserId: Int)
@@ -80,8 +79,6 @@ extension SocialAPI: MFTarget {
             "v1/profiles/\(userId)/socials"
         case .fetchUserRoutineList(let userId):
             "/users/\(userId)/routines"
-        case .fetchUserShareUrl(let userId):
-            "/users/\(userId)/share-url"
         case .followUser(let targetUserId):
             "v1/users/\(targetUserId)/follow"
         case .unfollowUser(let targetUserId):
@@ -97,8 +94,7 @@ extension SocialAPI: MFTarget {
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserPostList,
-             .fetchUserRoutineList,
-             .fetchUserShareUrl:
+             .fetchUserRoutineList:
             .get
         case .likePost,
              .createPost,
@@ -158,7 +154,6 @@ extension SocialAPI: MFTarget {
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserRoutineList,
-             .fetchUserShareUrl,
              .deletePost,
              .deleteComment,
              .createPost,
@@ -188,7 +183,6 @@ extension SocialAPI: MFTarget {
              .fetchUser,
              .fetchUserPostList,
              .fetchUserRoutineList,
-             .fetchUserShareUrl,
              .deletePost,
              .deleteComment,
              .followUser,
