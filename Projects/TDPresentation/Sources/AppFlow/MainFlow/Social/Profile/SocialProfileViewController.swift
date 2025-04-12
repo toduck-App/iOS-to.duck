@@ -105,7 +105,7 @@ private extension SocialProfileViewController {
 
 // MARK: UICollectionViewDelegate
 
-extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDelegate, UITableViewDelegate {
+extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDelegate, UITableViewDelegate, UIScrollViewDelegate {
     func didTapFollow() {
         input.send(.toggleFollow)
     }
@@ -157,6 +157,16 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
         let postId = viewModel.posts[indexPath.item].id
         // TODO: Detail View
         coordinator?.didTapPost(id: postId)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        if offsetY > contentHeight - frameHeight * 1.5 {
+            input.send(.loadMorePosts)
+        }
     }
 }
 

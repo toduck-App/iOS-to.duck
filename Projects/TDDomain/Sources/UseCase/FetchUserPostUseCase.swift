@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FetchUserPostUseCase {
-    func execute(id: User.ID) async throws -> [Post]?
+    func execute(userID: User.ID, cursor: Int?, limit: Int) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?)
 }
 
 public final class FetchUserPostUseCaseImpl: FetchUserPostUseCase {
@@ -11,7 +11,7 @@ public final class FetchUserPostUseCaseImpl: FetchUserPostUseCase {
         self.repostiory = repository
     }
 
-    public func execute(id: User.ID) async throws -> [Post]? {
-        return try await repostiory.fetchUserPostList(userID: id)
+    public func execute(userID: User.ID, cursor: Int?, limit: Int) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
+        return try await repostiory.fetchUserPostList(userID: userID, cursor: cursor, limit: limit)
     }
 }

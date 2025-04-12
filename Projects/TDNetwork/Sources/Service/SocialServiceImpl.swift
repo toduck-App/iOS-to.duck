@@ -51,7 +51,7 @@ public struct SocialServiceImpl: SocialService {
         keyword: String,
         categoryIDs: [Int]?
     ) async throws -> TDPostListDTO {
-        let target = SocialAPI.searchPost(keyword: keyword, curser: cursor, limit: limit, categoryIds: categoryIDs)
+        let target = SocialAPI.searchPost(keyword: keyword, cursor: cursor, limit: limit, categoryIds: categoryIDs)
         let response = try await provider.requestDecodable(of: TDPostListDTO.self, target)
         return response.value
     }

@@ -1,7 +1,7 @@
 public struct UserDetail {
     public var isFollowing: Bool
     public let followingCount: Int
-    public let followerCount: Int
+    public var followerCount: Int
     public let totalPostCount: Int
     public let totalRoutineCount: Int
     public let isMe: Bool

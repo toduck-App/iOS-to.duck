@@ -24,4 +24,10 @@ public struct UserServiceImpl: UserService {
     public func requestUnfollow(userId: Int) async throws {
         try await provider.requestDecodable(of: EmptyResponse.self, .unfollowUser(targetUserId: userId))
     }
+    
+    public func requestUserPosts(userId: Int, cursor: Int?, limit: Int) async throws -> TDPostListDTO {
+        let target = SocialAPI.fetchUserPostList(userId: userId, cursor: cursor, limit: limit)
+        let response = try await provider.requestDecodable(of: TDPostListDTO.self, target)
+        return response.value
+    }
 }

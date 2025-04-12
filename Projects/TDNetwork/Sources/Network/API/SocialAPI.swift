@@ -5,7 +5,7 @@ import TDDomain
 
 public enum SocialAPI {
     case fetchPostList(curser: Int?, limit: Int, categoryIds: [Int]?)
-    case searchPost(keyword: String, curser: Int?, limit: Int, categoryIds: [Int]?)
+    case searchPost(keyword: String, cursor: Int?, limit: Int, categoryIds: [Int]?)
     case likePost(postId: Int)
     case unlikePost(postId: Int)
     case createPost(post: TDPostCreateRequestDTO)
@@ -26,7 +26,7 @@ public enum SocialAPI {
     case blockComment(commentId: String) // TODO: Comment 차단 기능 구현 필요
     
     case fetchUser(userId: Int) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
-    case fetchUserPostList(userId: String) // TODO: 다른 유저의 Post List 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
     case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
     case fetchUserShareUrl(userId: String) // 이게 뭐지?
     
@@ -79,8 +79,8 @@ extension SocialAPI: MFTarget {
             "/comments/\(commentId)/block"
         case .fetchUser(let userId):
             "v1/profiles/\(userId)"
-        case .fetchUserPostList(let userId):
-            "/users/\(userId)/posts"
+        case .fetchUserPostList(let userId, _, _):
+            "v1/profiles/\(userId)/socials"
         case .fetchUserRoutineList(let userId):
             "/users/\(userId)/routines"
         case .fetchUserShareUrl(let userId):
@@ -140,6 +140,12 @@ extension SocialAPI: MFTarget {
                 params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
             }
             return params
+        case .fetchUserPostList(let userId, let cursor, let limit):
+            var params: [String: Any] = ["limit": limit]
+            if let cursor {
+                params["cursor"] = cursor
+            }
+            return params
         case .likePost,
              .unlikePost,
              .fetchPost,
@@ -149,7 +155,6 @@ extension SocialAPI: MFTarget {
              .unlikeComment,
              .fetchUserCommentList,
              .fetchUser,
-             .fetchUserPostList,
              .fetchUserRoutineList,
              .fetchUserShareUrl,
              .deletePost,

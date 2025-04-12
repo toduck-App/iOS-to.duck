@@ -15,8 +15,11 @@ public final class UserRepositoryImpl: UserRepository {
         return (user, userDetail)
     }
 
-    public func fetchUserPostList(userID: User.ID) async throws -> [Post]? {
-        Post.dummy.filter { $0.user.id == userID }
+    public func fetchUserPostList(userID: User.ID, cursor: Int?, limit: Int) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
+        let postListDTO = try await service.requestUserPosts(userId: userID, cursor: cursor, limit: limit)
+        let postList = postListDTO.results.compactMap { $0.convertToPost() }
+        
+        return (postList, postListDTO.hasMore, postListDTO.nextCursor)
     }
 
     public func fetchUserRoutineList(userID: User.ID) async throws -> [Routine]? {
