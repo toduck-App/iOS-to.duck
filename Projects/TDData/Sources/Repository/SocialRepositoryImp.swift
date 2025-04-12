@@ -72,8 +72,6 @@ public final class SocialRepositoryImp: SocialRepository {
     
     public func reportPost(postID: Post.ID) async throws {}
     
-    public func blockPost(postID: Post.ID) async throws {}
-    
     public func toggleCommentLike(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws {
         if currentLike {
             try await socialService.requestUnlikeComment(postID: postID, commentID: commentID)
@@ -111,10 +109,6 @@ public final class SocialRepositoryImp: SocialRepository {
     }
     
     public func reportComment(commentID: Comment.ID) async throws -> Bool {
-        false
-    }
-    
-    public func blockComment(commentID: Comment.ID) async throws -> Bool {
         false
     }
 }

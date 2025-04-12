@@ -16,6 +16,8 @@ public protocol SocialService {
     func requestLikePost(postID: Int) async throws
     // 게시글 좋아요 취소
     func requestUnlikePost(postID: Int) async throws
+    // 게시글 신고
+    func requestReportPost(postID: Int, reportType: String, reason: String?, blockAuthor: Bool) async throws
     
     // 댓글 생성
     func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws

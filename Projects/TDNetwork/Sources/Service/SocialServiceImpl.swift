@@ -66,6 +66,11 @@ public struct SocialServiceImpl: SocialService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
+    public func requestReportPost(postID: Int, reportType: String, reason: String?, blockAuthor: Bool) async throws {
+        let target = SocialAPI.reportPost(postId: postID, reportType: reportType, reason: reason, blockAuthor: blockAuthor)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
     public func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws {
         let target = SocialAPI.createComment(socialId: socialId, parentCommentId: parentId, content: content, imageUrl: imageUrl)
         try await provider.requestDecodable(of: TDCommentCreateResponseDTO.self, target)

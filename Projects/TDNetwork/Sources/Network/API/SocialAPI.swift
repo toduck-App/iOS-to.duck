@@ -12,7 +12,7 @@ public enum SocialAPI {
     case updatePost(post: Post) // TODO: Post 수정기능 필요
     case deletePost(postId: Int)
     case fetchPost(postId: String)
-    case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool) // MARK: RequestBody가 이상하여 잠시 보류
+    case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool)
     case blockUser(userId: Int) // TODO: 유저 차단
     
     case likeComment(postId: Int, commentId: Int)
@@ -57,7 +57,7 @@ extension SocialAPI: MFTarget {
         case .fetchPost(let postId):
             "v1/socials/\(postId)"
         case .reportPost(let postId):
-            "/posts/\(postId)/report"
+            "v1/socials/\(postId)/report"
         case .blockUser(let blockUser):
             "v1/users/\(blockUser)/block"
         case .likeComment(let postId, let commentId):
@@ -142,10 +142,16 @@ extension SocialAPI: MFTarget {
                 params["cursor"] = cursor
             }
             return params
+        case .reportPost(_, let reportType, let reason, let blockAuthor):
+            var params: [String: Any] = ["reportType": reportType]
+            if let reason {
+                params["reason"] = reason
+            }
+            params["blockAuthor"] = blockAuthor
+            return params
         case .likePost,
              .unlikePost,
              .fetchPost,
-             .reportPost,
              .blockUser,
              .likeComment,
              .unlikeComment,
