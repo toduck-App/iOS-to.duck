@@ -11,7 +11,7 @@ public final class UserRepositoryImpl: UserRepository {
     public func fetchUser(userID: User.ID) async throws -> (User, UserDetail) {
         let dto = try await service.requestUserProfile(userId: userID)
         let user = User(id: userID, name: dto.nickname, icon: dto.profileImageUrl, title: "작심삼일")
-        let userDetail = UserDetail(isFollowing: false, followingCount: dto.followingCount, followerCount: dto.followerCount, totalPostCount: dto.postCount, totalRoutineCount: 0, isMe: dto.isMe)
+        let userDetail = UserDetail(isFollowing: dto.isFollowing, followingCount: dto.followingCount, followerCount: dto.followerCount, totalPostCount: dto.postCount, totalRoutineCount: dto.totalRoutineShareCount, isMe: dto.isMe)
         return (user, userDetail)
     }
 

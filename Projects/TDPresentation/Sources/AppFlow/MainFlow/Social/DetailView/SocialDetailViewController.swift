@@ -185,7 +185,10 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
         self.input.send(.deleteComment(commentID))
     }
-
+    
+    func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
+        coordinator?.didTapUserProfile(id: userID)
+    }
 }
 
 // MARK: Iternal Method

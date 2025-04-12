@@ -2,7 +2,7 @@ import TDCore
 import TDDomain
 import UIKit
 
-final class SocialDetailCoordinator: Coordinator {
+final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -18,7 +18,7 @@ final class SocialDetailCoordinator: Coordinator {
         self.injector = injector
         self.postID = id
     }
-
+    
     func start() {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
@@ -46,5 +46,20 @@ final class SocialDetailCoordinator: Coordinator {
         )
         socialDetailViewController.coordinator = self
         navigationController.pushTDViewController(socialDetailViewController, animated: true)
+    }
+    
+    func didTapUserProfile(id: User.ID) {
+        let socialProfileViewCoordinator = SocialProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: id
+        )
+        childCoordinators.append(socialProfileViewCoordinator)
+        socialProfileViewCoordinator.finishDelegate = self
+        socialProfileViewCoordinator.start()
+    }
+    
+    func didFinish(childCoordinator: any Coordinator) {
+        finish(by: .pop)
     }
 }
