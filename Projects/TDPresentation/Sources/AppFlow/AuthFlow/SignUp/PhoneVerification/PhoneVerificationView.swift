@@ -49,6 +49,7 @@ final class PhoneVerificationView: BaseView {
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
+        $0.textContentType = .oneTimeCode
         $0.adjustsFontSizeToFitWidth = true
     }
     let postButton = TDBaseButton(
