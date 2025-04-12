@@ -74,8 +74,12 @@ public final class SocialRepositoryImp: SocialRepository {
     
     public func blockPost(postID: Post.ID) async throws {}
     
-    public func toggleCommentLike(commentID: Comment.ID) async throws -> Result<Comment, Error> {
-        return .failure(NSError(domain: "CommentRepositoryImpl", code: 0, userInfo: nil))
+    public func toggleCommentLike(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws {
+        if currentLike {
+            try await socialService.requestUnlikeComment(postID: postID, commentID: commentID)
+        } else {
+            try await socialService.requestLikeComment(postID: postID, commentID: commentID)
+        }
     }
     
     public func fetchUserCommentList(userID: User.ID) async throws -> [Comment]? {

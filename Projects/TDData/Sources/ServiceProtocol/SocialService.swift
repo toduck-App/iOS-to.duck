@@ -19,4 +19,10 @@ public protocol SocialService {
     
     // 댓글 생성
     func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws
+    
+    // 댓글 좋아요
+    func requestLikeComment(postID: Int, commentID: Int) async throws
+    
+    // 댓글 좋아요 취소
+    func requestUnlikeComment(postID: Int, commentID: Int) async throws
 }

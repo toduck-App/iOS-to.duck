@@ -70,4 +70,14 @@ public struct SocialServiceImpl: SocialService {
         let target = SocialAPI.createComment(socialId: socialId, parentCommentId: parentId, content: content, imageUrl: imageUrl)
         try await provider.requestDecodable(of: TDCommentCreateResponseDTO.self, target)
     }
+    
+    public func requestLikeComment(postID: Int, commentID: Int) async throws {
+        let target = SocialAPI.likeComment(postId: postID, commentId: commentID)
+        try await provider.requestDecodable(of: TDCommentLikeResponseDTO.self, target)
+    }
+    
+    public func requestUnlikeComment(postID: Int, commentID: Int) async throws {
+        let target = SocialAPI.unlikeComment(postId: postID, commentId: commentID)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

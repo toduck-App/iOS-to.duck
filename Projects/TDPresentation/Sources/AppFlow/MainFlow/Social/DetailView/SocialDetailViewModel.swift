@@ -135,20 +135,37 @@ private extension SocialDetailViewModel {
             output.send(.failure("게시글 좋아요에 실패했습니다."))
         }
     }
-    
-    // MARK: Reply에 대한 Like
+
+    // MARK: - Reply에 대한 Like 구현
 
     private func likeComment(commentID: Comment.ID) async {
         do {
-            let updatedComment = try await toggleCommentLikeUseCase.execute(commentID: commentID)
-            comments = comments.map { $0.id == updatedComment.id ? updatedComment : $0 }
+            guard let post else {
+                output.send(.failure("게시글 정보가 없습니다."))
+                return
+            }
             
-            output.send(.likeComment(updatedComment))
+            guard let currentComment = getComment(by: commentID, from: comments) else {
+                output.send(.failure("해당 댓글을 찾을 수 없습니다."))
+                return
+            }
+            
+            try await toggleCommentLikeUseCase.execute(
+                postID: post.id,
+                commentID: commentID,
+                currentLike: currentComment.isLike
+            )
+            
+            if let parentComment = updateComment(in: &comments, for: commentID) {
+                output.send(.likeComment(parentComment))
+            } else {
+                output.send(.failure("댓글 상태 업데이트에 실패했습니다."))
+            }
         } catch {
             output.send(.failure("댓글 좋아요에 실패했습니다."))
         }
     }
-    
+
     // MARK: 댓글 달기
     
     private func registerComment(content: String) async {
@@ -162,5 +179,56 @@ private extension SocialDetailViewModel {
         } catch {
             output.send(.failure("댓글 등록에 실패했습니다."))
         }
+    }
+}
+
+private extension SocialDetailViewModel {
+    /// 전체 댓글(중첩 reply 포함) 에서 주어진 commentID에 해당하는 댓글을 검색
+    private func getComment(by id: Comment.ID, from comments: [Comment]) -> Comment? {
+        for comment in comments {
+            if comment.id == id {
+                return comment
+            }
+            if let found = getComment(by: id, from: comment.reply) {
+                return found
+            }
+        }
+        return nil
+    }
+
+    /// 댓글 배열(inout)을 순회하며 주어진 commentID를 가진 댓글을 업데이트하는 함수
+    /// 만약 top-level 댓글이면 바로 업데이트한 후 반환하고,
+    /// nested reply인 경우, 해당 reply를 포함하고 있는 top-level 댓글을 반환합니다.
+    private func updateComment(in comments: inout [Comment], for commentID: Comment.ID) -> Comment? {
+        // 1. top-level 댓글에 해당 commentID가 있다면 업데이트 후 반환
+        if let index = comments.firstIndex(where: { $0.id == commentID }) {
+            comments[index].toggleLike()
+            return comments[index]
+        }
+        
+        // 2. top-level 댓글에 없고 nested reply에 있는 경우,
+        //    각 top-level 댓글의 reply 배열을 순회하면서 업데이트
+        for i in 0..<comments.count {
+            if updateNestedComment(in: &comments[i].reply, for: commentID) {
+                // 해당 댓글이 nested reply에 있었다면, 부모인 top-level 댓글을 반환
+                return comments[i]
+            }
+        }
+        return nil
+    }
+
+    /// 댓글 배열 내에서 주어진 commentID를 가진 댓글을 재귀적으로 검색하여 업데이트 (toggleLike)
+    /// 발견하면 true, 업데이트가 없으면 false를 반환합니다.
+    private func updateNestedComment(in replies: inout [Comment], for commentID: Comment.ID) -> Bool {
+        if let index = replies.firstIndex(where: { $0.id == commentID }) {
+            replies[index].toggleLike()
+            return true
+        }
+        for i in 0..<replies.count {
+            if updateNestedComment(in: &replies[i].reply, for: commentID) {
+                return true
+            }
+        }
+        return false
     }
 }

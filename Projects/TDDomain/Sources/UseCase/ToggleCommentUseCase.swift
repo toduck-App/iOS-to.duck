@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol ToggleCommentLikeUseCase {
-    func execute(commentID: Comment.ID) async throws -> Comment
+    func execute(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws
 }
 
 public final class ToggleCommentLikeUseCaseImpl: ToggleCommentLikeUseCase {
@@ -11,7 +11,7 @@ public final class ToggleCommentLikeUseCaseImpl: ToggleCommentLikeUseCase {
         self.repository = repository
     }
     
-    public func execute(commentID: Comment.ID) async throws -> Comment {
-        return try await repository.toggleCommentLike(commentID: commentID).get()
+    public func execute(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws {
+        try await repository.toggleCommentLike(postID: postID, commentID: commentID, currentLike: currentLike)
     }
 }

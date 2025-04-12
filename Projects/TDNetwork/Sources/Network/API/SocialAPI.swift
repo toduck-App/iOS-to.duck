@@ -15,7 +15,9 @@ public enum SocialAPI {
     case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool) // MARK: RequestBody가 이상하여 잠시 보류
     case blockUser(userId: Int) // TODO: 유저 차단
     
-    case toggleCommentLike(commentId: String) // TODO: Comment 구현 기능 필요
+    case likeComment(postId: Int, commentId: Int)
+    case unlikeComment(postId: Int, commentId: Int)
+    
     case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
@@ -59,8 +61,10 @@ extension SocialAPI: MFTarget {
             "/posts/\(postId)/report"
         case .blockUser(let blockUser):
             "v1/users/\(blockUser)/block"
-        case .toggleCommentLike(let commentId):
-            "/comments/\(commentId)/like"
+        case .likeComment(let postId, let commentId):
+            "v1/socials/\(postId)/comments/\(commentId)/likes"
+        case .unlikeComment(let postId, let commentId):
+            "v1/socials/\(postId)/comments/\(commentId)/likes"
         case .fetchUserCommentList(let userId):
             "/users/\(userId)/comments"
         case .createComment(let socialId, _, _, _):
@@ -103,7 +107,7 @@ extension SocialAPI: MFTarget {
              .createPost,
              .reportPost,
              .blockUser,
-             .toggleCommentLike,
+             .likeComment,
              .createComment,
              .reportComment,
              .blockComment,
@@ -111,7 +115,7 @@ extension SocialAPI: MFTarget {
             .post
         case .updatePost, .updateComment:
             .put
-        case .deletePost, .deleteComment, .unlikePost, .unfollowUser:
+        case .deletePost, .deleteComment, .unlikePost, .unfollowUser, .unlikeComment:
             .delete
         }
     }
@@ -141,7 +145,8 @@ extension SocialAPI: MFTarget {
              .fetchPost,
              .reportPost,
              .blockUser,
-             .toggleCommentLike,
+             .likeComment,
+             .unlikeComment,
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserPostList,
@@ -171,7 +176,8 @@ extension SocialAPI: MFTarget {
              .fetchPost,
              .reportPost,
              .blockUser,
-             .toggleCommentLike,
+             .likeComment,
+             .unlikeComment,
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserPostList,
