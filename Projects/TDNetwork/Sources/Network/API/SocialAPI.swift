@@ -13,7 +13,7 @@ public enum SocialAPI {
     case deletePost(postId: Int)
     case fetchPost(postId: String)
     case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool)
-    case blockUser(userId: Int) // TODO: 유저 차단
+    case blockUser(userId: Int)
     
     case likeComment(postId: Int, commentId: Int)
     case unlikeComment(postId: Int, commentId: Int)
