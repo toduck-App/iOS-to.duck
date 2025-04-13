@@ -99,8 +99,7 @@ final class SocialListViewController: BaseViewController<SocialListView> {
                 case .likePost(let post):
                     self?.updateSnapshot(post)
                 case .failure(let message):
-                    // TODO: Error Alert
-                    self?.layoutView.showErrorView()
+                    self?.showErrorAlert(errorMessage: message)
                 case .searchPosts(let posts):
                     // TODO: Search
                     self?.layoutView.showFinishView()

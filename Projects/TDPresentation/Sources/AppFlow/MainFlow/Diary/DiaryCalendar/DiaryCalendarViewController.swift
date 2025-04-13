@@ -177,21 +177,47 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     private func updateDiaryView(with diary: Diary? = nil) {
-        let hasDiary = diary != nil
-        diaryDetailContainerView.isHidden = !hasDiary
-        noDiaryContainerView.isHidden = hasDiary
+        diaryDetailContainerView.isHidden = diary == nil
+        noDiaryContainerView.isHidden = diary != nil
+        delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: diary != nil)
         
-        if let diary {
-            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: true)
+        guard let diary = diary else { return }
+        
+        if let imageURLs = diary.diaryImageUrls {
+            let group = DispatchGroup()
+            var loadedImages: [UIImage] = []
+
+            for imageURL in imageURLs {
+                guard let url = URL(string: imageURL) else { continue }
+                group.enter()
+                DispatchQueue.global().async {
+                    defer { group.leave() }
+                    if let data = try? Data(contentsOf: url),
+                       let image = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            loadedImages.append(image)
+                        }
+                    }
+                }
+            }
+
+            group.notify(queue: .main) {
+                self.diaryDetailView.configure(
+                    emotionImage: diary.emotion.circleImage,
+                    date: diary.date.convertToString(formatType: .monthDayWithWeekday),
+                    title: diary.title,
+                    memo: diary.memo,
+                    photos: loadedImages
+                )
+            }
+        } else {
             diaryDetailView.configure(
                 emotionImage: diary.emotion.circleImage,
                 date: diary.date.convertToString(formatType: .monthDayWithWeekday),
                 title: diary.title,
-                        memo: diary.memo,
-                photos: [TDImage.Mood.angry, TDImage.Mood.happy]
+                memo: diary.memo,
+                photos: []
             )
-        } else {
-            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: false)
         }
     }
     
