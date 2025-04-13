@@ -70,6 +70,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        viewModel.selectedDate = selectedDate
         fetchDiaryList(for: calendar.currentPage)
     }
     
@@ -317,6 +318,7 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {
+        viewModel.selectedDate = date
         selectedDate = date.normalized
         let normalizedDate = date.normalized
         
@@ -364,7 +366,7 @@ extension DiaryCalendarViewController: TDFormPhotoDelegate, TDPhotoPickerDelegat
 
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
         var maximumSelectablePhotos = 2
-        if viewModel.selectedDiary?.diaryImageUrls?.count == 1 {
+        if viewModel.monthDiaryList[selectedDate]?.diaryImageUrls?.count == 1 {
             maximumSelectablePhotos = 1
         }
         

@@ -26,6 +26,7 @@ final class DiaryCalendarViewModel: BaseViewModel {
     private var cancellables = Set<AnyCancellable>()
     private(set) var monthDiaryList = [Date: Diary]()
     var selectedDiary: Diary?
+    var selectedDate: Date?
     
     init(
         fetchDiaryListUseCase: FetchDiaryListUseCase,
@@ -70,11 +71,13 @@ final class DiaryCalendarViewModel: BaseViewModel {
         }
         
         do {
-            guard let selectedDiary else { return }
-            let existingImageCount = selectedDiary.diaryImageUrls?.count ?? 0
+            guard let currentDiary = monthDiaryList[selectedDate ?? Date()] else {
+                throw NSError(domain: "Diary not found", code: 404, userInfo: nil)
+            }
+            let existingImageCount = currentDiary.diaryImageUrls?.count ?? 0
             
             // 기존 이미지가 1개일 때만 1장만 추가 가능
-            if existingImageCount + images.count > 2 {
+            if existingImageCount + (currentDiary.diaryImageUrls?.count ?? 1) > 2 {
                 output.send(.failureAPI("기존 이미지가 있어서 최대 2장까지만 첨부할 수 있습니다."))
                 return
             }
@@ -82,12 +85,12 @@ final class DiaryCalendarViewModel: BaseViewModel {
             let newImageTuples = images.map { ("\(UUID().uuidString).jpg", $0) }
             
             let updatedDiary = Diary(
-                id: selectedDiary.id,
-                date: selectedDiary.date,
-                emotion: selectedDiary.emotion,
-                title: selectedDiary.title,
-                memo: selectedDiary.memo,
-                diaryImageUrls: selectedDiary.diaryImageUrls
+                id: currentDiary.id,
+                date: currentDiary.date,
+                emotion: currentDiary.emotion,
+                title: currentDiary.title,
+                memo: currentDiary.memo,
+                diaryImageUrls: currentDiary.diaryImageUrls
             )
             
             try await updateDiaryUseCase.execute(isChangeEmotion: false, diary: updatedDiary, image: newImageTuples)
