@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 import Combine
 import FSCalendar
 import SnapKit
@@ -185,29 +186,30 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         
         if let imageURLs = diary.diaryImageUrls {
             let group = DispatchGroup()
-            var loadedImages: [UIImage] = []
-
-            for imageURL in imageURLs {
-                guard let url = URL(string: imageURL) else { continue }
+            var loadedImages: [UIImage] = Array(repeating: UIImage(), count: imageURLs.count)
+            
+            for (index, imageURLString) in imageURLs.enumerated() {
+                guard let url = URL(string: imageURLString) else { continue }
+                
                 group.enter()
-                DispatchQueue.global().async {
-                    defer { group.leave() }
-                    if let data = try? Data(contentsOf: url),
-                       let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            loadedImages.append(image)
-                        }
+                KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
+                    switch result {
+                    case .success(let value):
+                        loadedImages[index] = value.image
+                    case .failure(let error):
+                        self?.showErrorAlert(errorMessage: error.localizedDescription)
                     }
+                    group.leave()
                 }
             }
-
+            
             group.notify(queue: .main) {
                 self.diaryDetailView.configure(
                     emotionImage: diary.emotion.circleImage,
                     date: diary.date.convertToString(formatType: .monthDayWithWeekday),
                     title: diary.title,
                     memo: diary.memo,
-                    photos: loadedImages
+                    photos: loadedImages.filter { $0.size != .zero }
                 )
             }
         } else {
