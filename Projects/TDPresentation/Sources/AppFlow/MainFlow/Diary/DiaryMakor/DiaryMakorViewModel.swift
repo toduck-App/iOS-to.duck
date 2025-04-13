@@ -87,6 +87,7 @@ final class DiaryMakorViewModel: BaseViewModel {
     
     private func saveDiary() async {
         do {
+            setTitleIfNeeded()
             let diary = createDiaryObject()
             let image = images.map { ("\(UUID().uuidString).jpg", $0) }
             try await createDiaryUseCase.execute(diary: diary, image: image)
@@ -94,6 +95,31 @@ final class DiaryMakorViewModel: BaseViewModel {
         } catch {
             output.send(.failure(error.localizedDescription))
         }
+    }
+    
+    private func setTitleIfNeeded() {
+        guard title?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true else {
+            return
+        }
+        
+        guard let mood = selectedMood else {
+            title = "무제"
+            return
+        }
+        
+        let moodToKorean: [String: String] = [
+            "HAPPY": "기분 좋은 하루",
+            "GOOD": "마음이 평온했던 하루",
+            "LOVE": "따뜻함이 느껴진 하루",
+            "SOSO": "평범하게 흘러간 하루",
+            "SICK": "몸과 마음이 힘들었던 하루",
+            "SAD": "울컥했던 하루",
+            "ANGRY": "신경이 곤두섰던 하루",
+            "ANXIOUS": "마음이 불안했던 하루",
+            "TIRED": "기운이 빠졌던 하루"
+        ]
+        
+        title = moodToKorean[mood] ?? "좋아용"
     }
 
     private func editDiary() async {
