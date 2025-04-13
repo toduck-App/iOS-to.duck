@@ -355,7 +355,12 @@ extension DiaryCalendarViewController: TDFormPhotoDelegate, TDPhotoPickerDelegat
     }
 
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
-        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: 2)
+        var maximumSelectablePhotos = 2
+        if viewModel.selectedDiary?.diaryImageUrls?.count == 1 {
+            maximumSelectablePhotos = 1
+        }
+        
+        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: maximumSelectablePhotos)
         photoPickerController.pickerDelegate = self
         navigationController?.pushTDViewController(photoPickerController, animated: true)
     }

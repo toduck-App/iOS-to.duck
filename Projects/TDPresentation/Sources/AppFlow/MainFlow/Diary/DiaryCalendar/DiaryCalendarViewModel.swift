@@ -71,9 +71,26 @@ final class DiaryCalendarViewModel: BaseViewModel {
         
         do {
             guard let selectedDiary else { return }
+            let existingImageCount = selectedDiary.diaryImageUrls?.count ?? 0
             
-            let image = images.map { ("\(UUID().uuidString).jpg", $0) }
-            try await updateDiaryUseCase.execute(isChangeEmotion: false, diary: selectedDiary, image: image)
+            // 기존 이미지가 1개일 때만 1장만 추가 가능
+            if existingImageCount + images.count > 2 {
+                output.send(.failureAPI("기존 이미지가 있어서 최대 2장까지만 첨부할 수 있습니다."))
+                return
+            }
+            
+            let newImageTuples = images.map { ("\(UUID().uuidString).jpg", $0) }
+            
+            let updatedDiary = Diary(
+                id: selectedDiary.id,
+                date: selectedDiary.date,
+                emotion: selectedDiary.emotion,
+                title: selectedDiary.title,
+                memo: selectedDiary.memo,
+                diaryImageUrls: selectedDiary.diaryImageUrls
+            )
+            
+            try await updateDiaryUseCase.execute(isChangeEmotion: false, diary: updatedDiary, image: newImageTuples)
             output.send(.setImage)
         } catch {
             output.send(.failureAPI(error.localizedDescription))
