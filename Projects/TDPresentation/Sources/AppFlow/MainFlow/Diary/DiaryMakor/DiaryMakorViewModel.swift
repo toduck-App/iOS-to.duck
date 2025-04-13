@@ -88,7 +88,8 @@ final class DiaryMakorViewModel: BaseViewModel {
     private func saveDiary() async {
         do {
             let diary = createDiaryObject()
-            try await createDiaryUseCase.execute(diary: diary)
+            let image = images.map { ("\(UUID().uuidString).jpg", $0) }
+            try await createDiaryUseCase.execute(diary: diary, image: image)
             output.send(.savedDiary)
         } catch {
             output.send(.failure(error.localizedDescription))

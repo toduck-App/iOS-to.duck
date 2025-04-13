@@ -20,10 +20,13 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
         
         container.register(DiaryRepository.self) { _ in
-            guard let service = container.resolve(DiaryService.self) else {
+            guard let diaryService = container.resolve(DiaryService.self) else {
                 fatalError("DiaryService is not registered")
             }
-            return DiaryRepositoryImpl(service: service)
+            guard let awsService = container.resolve(AwsService.self) else {
+                fatalError("awsService is not registered")
+            }
+            return DiaryRepositoryImpl(diaryService: diaryService, awsService: awsService)
         }.inObjectScope(.container)
         
         container.register(MyPageRepository.self) { _ in
