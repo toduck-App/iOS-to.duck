@@ -37,6 +37,7 @@ final class SignInView: BaseView {
         $0.placeholder = "아이디를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.autocapitalizationType = .none
     }
     
     let passwordContainerView = UIView().then {
@@ -51,6 +52,8 @@ final class SignInView: BaseView {
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.isSecureTextEntry = true
+        $0.autocapitalizationType = .none
+        $0.rightViewMode = .always
     }
     
     /// 아이디 · 비밀번호 찾기

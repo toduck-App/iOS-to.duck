@@ -46,6 +46,7 @@ final class AccountView: BaseView {
         $0.placeholder = "아이디를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.autocapitalizationType = .none
     }
     let duplicateVerificationButton = TDBaseButton(
         title: "중복확인",
@@ -83,6 +84,7 @@ final class AccountView: BaseView {
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.isSecureTextEntry = true
+        $0.autocapitalizationType = .none
     }
     // TODO: 오토레이아웃 조정해서 애니메이션으로 Invalid 표시
     private let invaildPasswordHorizontalStackView = UIStackView().then {
