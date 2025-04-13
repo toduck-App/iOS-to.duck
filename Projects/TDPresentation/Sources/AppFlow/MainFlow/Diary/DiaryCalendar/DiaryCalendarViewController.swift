@@ -210,7 +210,8 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             date: diary.date.convertToString(formatType: .monthDayWithWeekday),
             title: diary.title,
             memo: diary.memo,
-            photos: images
+            photos: images,
+            imageURLs: diary.diaryImageUrls
         )
     }
 

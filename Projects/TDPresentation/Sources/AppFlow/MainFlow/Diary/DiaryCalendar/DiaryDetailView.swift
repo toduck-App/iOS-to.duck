@@ -1,4 +1,5 @@
 import UIKit
+import TDDesign
 import Then
 
 public final class DiaryDetailView: UIView {
@@ -82,6 +83,8 @@ public final class DiaryDetailView: UIView {
         $0.distribution = .fillEqually
     }
     
+    private var currentImageURLs: [String] = []
+    
     // MARK: - Initializers
     
     override init(frame: CGRect) {
@@ -155,7 +158,8 @@ public final class DiaryDetailView: UIView {
         date: String,
         title: String,
         memo: String? = nil,
-        photos: [UIImage]? = nil
+        photos: [UIImage]? = nil,
+        imageURLs: [String]? = nil
     ) {
         emotionImageView.image = emotionImage
         dateLabel.setText(date)
@@ -172,6 +176,7 @@ public final class DiaryDetailView: UIView {
         }
         
         photoContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        currentImageURLs = imageURLs ?? []
         
         if let photos, !photos.isEmpty {
             configurePhotos(photos)
@@ -189,23 +194,43 @@ public final class DiaryDetailView: UIView {
     private func configurePhotos(_ photos: [UIImage]) {
         photoContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        switch photos.count {
-        case 1:
-            photoContentStackView.addArrangedSubview(createPhotoView(photos[0]))
+        for (index, photo) in photos.prefix(2).enumerated() {
+            let imageView = createPhotoView(photo, index: index)
+            photoContentStackView.addArrangedSubview(imageView)
+        }
+
+        if photos.count == 1 {
             photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
-        case 2...:
-            photos.prefix(2).forEach { photoContentStackView.addArrangedSubview(createPhotoView($0)) }
-        default:
-            break
         }
     }
     
-    private func createPhotoView(_ image: UIImage) -> UIImageView {
-        return UIImageView().then {
+    private func createPhotoView(_ image: UIImage, index: Int) -> UIImageView {
+        let imageView = UIImageView().then {
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 12
             $0.image = image
+            $0.isUserInteractionEnabled = true
+            $0.tag = index
+        }
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        imageView.addGestureRecognizer(tapGesture)
+        
+        return imageView
+    }
+
+    @objc
+    private func handleImageTap(_ sender: UITapGestureRecognizer) {
+        guard let tappedView = sender.view else { return }
+        let index = tappedView.tag
+
+        guard currentImageURLs.indices.contains(index) else { return }
+
+        let detailVC = DetailImageViewController(imageUrlList: currentImageURLs, selectedIndex: index)
+
+        if let parentVC = findViewController() {
+            parentVC.navigationController?.pushTDViewController(detailVC, animated: true)
         }
     }
     

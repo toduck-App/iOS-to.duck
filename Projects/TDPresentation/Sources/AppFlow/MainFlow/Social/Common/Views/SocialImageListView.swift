@@ -145,7 +145,7 @@ private extension SocialImageListView {
     }
 }
 
-private extension UIView {
+extension UIView {
     func findViewController() -> UIViewController? {
         var nextResponder: UIResponder? = self
         while nextResponder != nil {
