@@ -100,7 +100,7 @@ extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate
     }
 
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        // TODO: 권한 없을때 ? ALERT 필요
+        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
     }
 
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {

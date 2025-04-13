@@ -7,12 +7,14 @@ final class DiaryMakorViewModel: BaseViewModel {
         case tapCategoryCell(String)
         case updateTitleTextField(String)
         case updateMemoTextView(String)
+        case setImages([Data])
         case tapSaveButton
         case tapEditButton
     }
     
     enum Output {
-        case saveDiary
+        case setImage
+        case savedDiary
         case failure(String)
     }
     
@@ -24,6 +26,7 @@ final class DiaryMakorViewModel: BaseViewModel {
     private(set) var selectedDate: Date?
     private(set) var title: String?
     private(set) var memo: String?
+    private(set) var images: [Data] = []
     private(set) var preDiary: Diary?
     
     init(
@@ -50,6 +53,8 @@ final class DiaryMakorViewModel: BaseViewModel {
                 self?.title = title
             case .updateMemoTextView(let memo):
                 self?.memo = memo
+            case .setImages(let datas):
+                self?.setImages(datas)
             case .tapSaveButton:
                 Task { await self?.saveDiary() }
             case .tapEditButton:
@@ -70,12 +75,21 @@ final class DiaryMakorViewModel: BaseViewModel {
             diaryImageUrls: nil
         )
     }
-
+    
+    private func setImages(_ images: [Data]) {
+        if images.count > 5 {
+            output.send(.failure("이미지는 최대 5개까지 첨부 가능합니다."))
+            return
+        }
+        self.images = images
+        output.send(.setImage)
+    }
+    
     private func saveDiary() async {
         do {
             let diary = createDiaryObject()
             try await createDiaryUseCase.execute(diary: diary)
-            output.send(.saveDiary)
+            output.send(.savedDiary)
         } catch {
             output.send(.failure(error.localizedDescription))
         }
@@ -92,7 +106,7 @@ final class DiaryMakorViewModel: BaseViewModel {
                 isChangeEmotion: isChangeEmotion,
                 diary: updatedDiary
             )
-            output.send(.saveDiary)
+            output.send(.savedDiary)
         } catch {
             output.send(.failure(error.localizedDescription))
         }
