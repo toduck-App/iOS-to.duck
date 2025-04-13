@@ -265,6 +265,7 @@ public enum TDImage {
     public enum Analyze {
         public static let bookIncrease = TDDesignAsset.Images.bookIncrease.image
         public static let bookDecrease = TDDesignAsset.Images.bookDecrease.image
+        public static let bookZero = TDDesignAsset.Images.bookZero.image
     }
     
     public enum Category {

@@ -127,7 +127,7 @@ final class DiaryAnalyzeDetailView: BaseView {
         case let x where x < 0:
             analyzeImageView.image = TDImage.Analyze.bookDecrease
         default:
-            analyzeImageView.image = TDImage.toduckLogo // TODO: 이미지 변경
+            analyzeImageView.image = TDImage.Analyze.bookZero
         }
     }
 }
