@@ -20,6 +20,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     let calendarContainerView = UIView()
+    let calendarHeaderContainerView = UIView()
     let calendarHeader = CalendarHeaderStackView(type: .diary)
     let calendar = DiaryCalendar()
     
@@ -80,8 +81,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         contentStackView.addArrangedSubview(noDiaryContainerView)
         contentStackView.addArrangedSubview(diaryDetailContainerView)
         
-        calendarContainerView.addSubview(calendarHeader)
+        calendarContainerView.addSubview(calendarHeaderContainerView)
         calendarContainerView.addSubview(calendar)
+        calendarHeaderContainerView.addSubview(calendarHeader)
         
         noDiaryContainerView.addSubview(noDiaryImageView)
         noDiaryContainerView.addSubview(noDiaryLabel)
@@ -101,10 +103,13 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         calendarContainerView.snp.makeConstraints {
             $0.height.equalTo(400)
         }
-        calendarHeader.snp.makeConstraints {
+        calendarHeaderContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.equalToSuperview().offset(20)
-            $0.height.equalTo(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(40)
+        }
+        calendarHeader.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(12)
         }
         calendar.snp.makeConstraints {
             $0.top.equalTo(calendarHeader.snp.bottom).offset(30)
@@ -142,6 +147,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         layoutView.backgroundColor = TDColor.baseWhite
         noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral50
         diaryDetailContainerView.backgroundColor = TDColor.Neutral.neutral50
+        calendarHeaderContainerView.layer.borderWidth = 1
+        calendarHeaderContainerView.layer.borderColor = TDColor.Neutral.neutral200.cgColor
+        calendarHeaderContainerView.layer.cornerRadius = 8
         diaryDetailView.dropDownHoverView.delegate = self
         diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
         diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
