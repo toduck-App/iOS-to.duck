@@ -177,56 +177,65 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         input.send(.selectDay(date.normalized))
     }
     
-    private func updateDiaryView(with diary: Diary? = nil) {
-        diaryDetailContainerView.isHidden = diary == nil
-        noDiaryContainerView.isHidden = diary != nil
-        delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: diary != nil)
-        
-        guard let diary = diary else { return }
-        
-        if let imageURLs = diary.diaryImageUrls {
-            let group = DispatchGroup()
-            var loadedImages: [UIImage] = Array(repeating: UIImage(), count: imageURLs.count)
-            
-            for (index, imageURLString) in imageURLs.enumerated() {
-                guard let url = URL(string: imageURLString) else { continue }
-                
-                group.enter()
-                KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
-                    switch result {
-                    case .success(let value):
-                        loadedImages[index] = value.image
-                    case .failure(let error):
-                        self?.showErrorAlert(errorMessage: error.localizedDescription)
-                    }
-                    group.leave()
-                }
-            }
-            
-            group.notify(queue: .main) {
-                self.diaryDetailView.configure(
-                    emotionImage: diary.emotion.circleImage,
-                    date: diary.date.convertToString(formatType: .monthDayWithWeekday),
-                    title: diary.title,
-                    memo: diary.memo,
-                    photos: loadedImages.filter { $0.size != .zero }
-                )
-            }
-        } else {
-            diaryDetailView.configure(
-                emotionImage: diary.emotion.circleImage,
-                date: diary.date.convertToString(formatType: .monthDayWithWeekday),
-                title: diary.title,
-                memo: diary.memo,
-                photos: []
-            )
-        }
-    }
-    
     private func fetchDiaryList(for date: Date) {
         let components = Calendar.current.dateComponents([.year, .month], from: date)
         guard let year = components.year, let month = components.month else { return }
         input.send(.fetchDiaryList(year, month))
+    }
+    
+    // MARK: 일기 불러온 후 이미지 불러오기
+    private func updateDiaryView(with diary: Diary? = nil) {
+        updateContainerVisibility(for: diary)
+        delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: diary != nil)
+        
+        guard let diary = diary else { return }
+        
+        if let imageURLs = diary.diaryImageUrls, !imageURLs.isEmpty {
+            loadImages(from: imageURLs) { [weak self] loadedImages in
+                self?.configureDiaryDetailView(diary: diary, images: loadedImages)
+            }
+        } else {
+            configureDiaryDetailView(diary: diary, images: [])
+        }
+    }
+    
+    private func updateContainerVisibility(for diary: Diary?) {
+        diaryDetailContainerView.isHidden = diary == nil
+        noDiaryContainerView.isHidden = diary != nil
+    }
+
+    private func configureDiaryDetailView(diary: Diary, images: [UIImage]) {
+        diaryDetailView.configure(
+            emotionImage: diary.emotion.circleImage,
+            date: diary.date.convertToString(formatType: .monthDayWithWeekday),
+            title: diary.title,
+            memo: diary.memo,
+            photos: images
+        )
+    }
+
+    private func loadImages(from imageURLs: [String], completion: @escaping ([UIImage]) -> Void) {
+        let group = DispatchGroup()
+        var loadedImages: [UIImage] = Array(repeating: UIImage(), count: imageURLs.count)
+        
+        for (index, urlString) in imageURLs.enumerated() {
+            guard let url = URL(string: urlString) else { continue }
+            
+            group.enter()
+            KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
+                switch result {
+                case .success(let value):
+                    loadedImages[index] = value.image
+                case .failure(let error):
+                    self?.showErrorAlert(errorMessage: error.localizedDescription)
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(loadedImages.filter { $0.size != .zero })
+        }
     }
 }
 
