@@ -83,9 +83,11 @@ public final class DiaryDetailView: UIView {
         $0.distribution = .fillEqually
     }
     
+    // MARK: Properties
     private var currentImageURLs: [String] = []
+    weak var delegate: TDFormPhotoDelegate?
     
-    // MARK: - Initializers
+    // MARK: Initializers
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -198,7 +200,7 @@ public final class DiaryDetailView: UIView {
             let imageView = createPhotoView(photo, index: index)
             photoContentStackView.addArrangedSubview(imageView)
         }
-
+        
         if photos.count == 1 {
             photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
         }
@@ -213,29 +215,29 @@ public final class DiaryDetailView: UIView {
             $0.isUserInteractionEnabled = true
             $0.tag = index
         }
-
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
         imageView.addGestureRecognizer(tapGesture)
         
         return imageView
     }
-
+    
     @objc
     private func handleImageTap(_ sender: UITapGestureRecognizer) {
         guard let tappedView = sender.view else { return }
         let index = tappedView.tag
-
+        
         guard currentImageURLs.indices.contains(index) else { return }
-
+        
         let detailVC = DetailImageViewController(imageUrlList: currentImageURLs, selectedIndex: index)
-
+        
         if let parentVC = findViewController() {
             parentVC.navigationController?.pushTDViewController(detailVC, animated: true)
         }
     }
     
     private func createAddPhotoButton(isEmpty: Bool) -> UIButton {
-        return UIButton().then {
+        let button = UIButton().then {
             $0.setImage(TDImage.plus, for: .normal)
             $0.setTitle(isEmpty ? "사진 추가" : nil, for: .normal)
             $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
@@ -246,5 +248,11 @@ public final class DiaryDetailView: UIView {
             $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
             $0.snp.makeConstraints { $0.height.equalTo(52) }
         }
+        
+        button.addAction(UIAction { [weak self] _ in
+            self?.delegate?.didTapAddPhotoButton(nil)
+        }, for: .touchUpInside)
+        
+        return button
     }
 }

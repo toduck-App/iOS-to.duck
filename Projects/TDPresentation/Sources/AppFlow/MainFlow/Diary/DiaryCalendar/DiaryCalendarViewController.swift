@@ -160,6 +160,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                     self?.updateDiaryView(with: diary)
                 case .fetchedDiaryList:
                     self?.calendar.reloadData()
+                    self?.updateDiaryView(with: self?.viewModel.monthDiaryList[self?.selectedDate ?? Date()])
+                case .setImage:
+                    self?.fetchDiaryList(for: self?.selectedDate ?? Date())
                 case .notFoundDiary:
                     self?.updateDiaryView()
                 case .deletedDiary:
@@ -213,6 +216,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             photos: images,
             imageURLs: diary.diaryImageUrls
         )
+        diaryDetailView.delegate = self
     }
 
     private func loadImages(from imageURLs: [String], completion: @escaping ([UIImage]) -> Void) {
@@ -274,6 +278,8 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
     }
 }
 
+// MARK: - DiaryCalendarConfigurable
+
 extension DiaryCalendarViewController: TDCalendarConfigurable {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         updateHeaderLabel(for: calendar.currentPage)
@@ -329,10 +335,28 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
     }
 }
 
-// MARK: DeleteEventViewControllerDelegate
+// MARK: - DeleteEventViewControllerDelegate
+
 extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
     func didTapDeleteButton() {
         input.send(.deleteDiary(viewModel.selectedDiary?.id ?? 0))
         dismiss(animated: true)
+    }
+}
+
+// MARK: - SocialAddPhotoViewDelegate
+extension DiaryCalendarViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
+    func didSelectPhotos(_ picker: TDPhotoPickerController, photos: [Data]) {
+        input.send(.setImages(photos))
+    }
+
+    func deniedPhotoAccess(_ picker: TDPhotoPickerController) {
+        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
+    }
+
+    func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
+        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: 2)
+        photoPickerController.pickerDelegate = self
+        navigationController?.pushTDViewController(photoPickerController, animated: true)
     }
 }

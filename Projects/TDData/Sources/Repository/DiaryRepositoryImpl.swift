@@ -32,8 +32,20 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         return response.convertToDiaryList()
     }
     
-    public func updateDiary(isChangeEmotion: Bool, diary: TDDomain.Diary) async throws {
-        let diary = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
+    public func updateDiary(isChangeEmotion: Bool, diary: TDDomain.Diary, image: [(fileName: String, imageData: Data)]?) async throws {
+        
+            var imageUrls: [String] = []
+            if let image {
+                for (fileName, imageData) in image {
+                    let urls = try await awsService.requestPresignedUrl(fileName: fileName)
+                    try await awsService.requestUploadImage(url: urls.presignedUrl, data: imageData)
+                    imageUrls.append(urls.fileUrl.absoluteString)
+                }
+            }
+        
+        
+        var diary = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
+        diary.diaryImageUrls = imageUrls
         try await diaryService.updateDiary(diary: diary)
     }
     

@@ -11,7 +11,10 @@ final class CreateDiaryUseCaseImpl: CreateDiaryUseCase {
         self.repository = repository
     }
 
-    func execute(diary: Diary, image: [(fileName: String, imageData: Data)]?) async throws {
+    func execute(
+        diary: Diary,
+        image: [(fileName: String, imageData: Data)]?
+    ) async throws {
         try await repository.createDiary(diary: diary, image: image)
     }
 }

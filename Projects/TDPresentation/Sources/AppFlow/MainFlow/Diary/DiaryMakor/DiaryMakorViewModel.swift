@@ -77,8 +77,8 @@ final class DiaryMakorViewModel: BaseViewModel {
     }
     
     private func setImages(_ images: [Data]) {
-        if images.count > 5 {
-            output.send(.failure("이미지는 최대 5개까지 첨부 가능합니다."))
+        if images.count > 2 {
+            output.send(.failure("이미지는 최대 2개까지 첨부 가능합니다."))
             return
         }
         self.images = images
@@ -105,7 +105,8 @@ final class DiaryMakorViewModel: BaseViewModel {
 
             try await updateDiaryUseCase.execute(
                 isChangeEmotion: isChangeEmotion,
-                diary: updatedDiary
+                diary: updatedDiary,
+                image: nil
             )
             output.send(.savedDiary)
         } catch {

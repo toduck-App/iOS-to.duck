@@ -7,10 +7,12 @@ final class DiaryCalendarViewModel: BaseViewModel {
         case selectDay(Date)
         case fetchDiaryList(Int, Int)
         case deleteDiary(Int)
+        case setImages([Data])
     }
     
     enum Output {
         case selectedDiary(Diary)
+        case setImage
         case fetchedDiaryList
         case deletedDiary
         case notFoundDiary
@@ -18,6 +20,7 @@ final class DiaryCalendarViewModel: BaseViewModel {
     }
     
     private let fetchDiaryListUseCase: FetchDiaryListUseCase
+    private let updateDiaryUseCase: UpdateDiaryUseCase
     private let deleteDiaryUseCase: DeleteDiaryUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -26,9 +29,11 @@ final class DiaryCalendarViewModel: BaseViewModel {
     
     init(
         fetchDiaryListUseCase: FetchDiaryListUseCase,
+        updateDiaryUseCase: UpdateDiaryUseCase,
         deleteDiaryUseCase: DeleteDiaryUseCase
     ) {
         self.fetchDiaryListUseCase = fetchDiaryListUseCase
+        self.updateDiaryUseCase = updateDiaryUseCase
         self.deleteDiaryUseCase = deleteDiaryUseCase
     }
     
@@ -37,6 +42,8 @@ final class DiaryCalendarViewModel: BaseViewModel {
             switch event {
             case .selectDay(let date):
                 self?.selecteDay(date: date)
+            case .setImages(let datas):
+                Task { await self?.setImages(datas) }
             case .fetchDiaryList(let year, let month):
                 Task { await self?.fetchDiaryList(year: year, month: month) }
             case .deleteDiary(let id):
@@ -53,6 +60,23 @@ final class DiaryCalendarViewModel: BaseViewModel {
             output.send(.selectedDiary(selectedDiary))
         } else {
             output.send(.notFoundDiary)
+        }
+    }
+    
+    private func setImages(_ images: [Data]) async {
+        if images.count > 2 {
+            output.send(.failureAPI("이미지는 최대 2개까지 첨부 가능합니다."))
+            return
+        }
+        
+        do {
+            guard let selectedDiary else { return }
+            
+            let image = images.map { ("\(UUID().uuidString).jpg", $0) }
+            try await updateDiaryUseCase.execute(isChangeEmotion: false, diary: selectedDiary, image: image)
+            output.send(.setImage)
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
         }
     }
     
