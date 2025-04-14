@@ -1,16 +1,35 @@
+import Foundation
+import TDCore
+import TDDomain
+
 public struct FocusListResponseDTO: Decodable {
     public let concentrationDtos: [FocusDTO]
+    
+    public func convertToFocusList() -> [Focus] {
+        concentrationDtos.compactMap { $0.convertToFocus() }
+    }
 }
 
 public struct FocusDTO: Decodable {
-    let id: Int
-    let date: String
-    let targetCount: Int
-    let settingCount: Int
-    let time: Int
-    let percentage: Int
+    public let id: Int
+    public let date: String
+    public let targetCount: Int
+    public let settingCount: Int
+    public let time: Int
+    public let percentage: Int
     
-    enum CodingKeys: String, CodingKey {
-        case id, date, targetCount, settingCount, time, percentage
+    public func convertToFocus() -> Focus? {
+        guard let date = Date.convertFromString(date, format: .yearMonthDay) else {
+            return nil
+        }
+        
+        return Focus(
+            id: id,
+            date: date,
+            targetCount: targetCount,
+            settingCount: settingCount,
+            time: time,
+            percentage: percentage
+        )
     }
 }

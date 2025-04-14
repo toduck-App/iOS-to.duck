@@ -207,7 +207,8 @@ final class DiaryViewController: BaseViewController<BaseView> {
             newViewController = diaryCalendarViewController
             
         case 1:
-            let viewModel = FocusCalendarViewModel()
+            let fetchFocusListUseCase = DIContainer.shared.resolve(FetchFocusListUseCase.self)
+            let viewModel = FocusCalendarViewModel(fetchFocusListUseCase: fetchFocusListUseCase)
             let focusCalendarViewController = FocusCalendarViewController(viewModel: viewModel)
             newViewController = focusCalendarViewController
             
