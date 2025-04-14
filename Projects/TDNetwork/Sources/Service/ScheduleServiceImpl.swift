@@ -14,11 +14,7 @@ public struct ScheduleServiceImpl: ScheduleService {
     public func create(schedule: ScheduleRequestDTO) async throws {
         let target = ScheduleAPI.createSchedule(schedule: schedule)
         
-        do {
-            try await provider.requestDecodable(of: EmptyResponse.self, target)
-        } catch {
-            throw TDDataError.createRequestFailure
-        }
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
     public func fetchScheduleList(startDate: String, endDate: String) async throws -> ScheduleListContentDTO {

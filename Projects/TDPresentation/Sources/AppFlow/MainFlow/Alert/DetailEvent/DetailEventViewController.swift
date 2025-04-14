@@ -42,6 +42,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     
     override func configure() {
         super.configure()
+        
         setupView()
         setupButtonActions()
     }

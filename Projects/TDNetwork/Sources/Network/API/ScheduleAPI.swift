@@ -4,7 +4,7 @@ import TDData
 import TDDomain
 
 public enum ScheduleAPI {
-    case fetchSchedule(scheduleRecordId: Int) // 특정 일정 조회
+    case fetchScheduleDetail(scheduleRecordId: Int) // 특정 일정 조회
     case fetchScheduleList(startDate: String, endDate: String) // 모든 일정 조회
     case moveTomorrowSchedule(scheduleId: Int) // 일정 내일로 이동
     case createSchedule(schedule: ScheduleRequestDTO) // 일정 생성
@@ -19,9 +19,10 @@ extension ScheduleAPI: MFTarget {
     
     public var path: String {
         switch self {
-        case .fetchSchedule,
-                .fetchScheduleList:
+        case .fetchScheduleList:
             "v1/schedules"
+        case .fetchScheduleDetail(let scheduleRecordId):
+            "v1/schedules/\(scheduleRecordId)"
         case .moveTomorrowSchedule(let scheduleId):
             "v1/schedules/\(scheduleId)/move-tomorrow"
         case .createSchedule:
@@ -35,7 +36,7 @@ extension ScheduleAPI: MFTarget {
     
     public var method: MFHTTPMethod {
         switch self {
-        case .fetchSchedule,
+        case .fetchScheduleDetail,
                 .fetchScheduleList:
                 .get
         case .moveTomorrowSchedule,
@@ -50,7 +51,7 @@ extension ScheduleAPI: MFTarget {
     
     public var queries: Parameters? {
         switch self {
-        case .fetchSchedule(let scheduleRecordId):
+        case .fetchScheduleDetail(let scheduleRecordId):
             return ["scheduleRecordId": scheduleRecordId]
         case .fetchScheduleList(let startDate, let endDate):
             return ["startDate": startDate, "endDate": endDate]
@@ -64,9 +65,8 @@ extension ScheduleAPI: MFTarget {
     }
     
     public var task: MFTask {
-        // TODO: - 아직 구현 전?
         switch self {
-        case .fetchSchedule,
+        case .fetchScheduleDetail,
                 .fetchScheduleList:
                 .requestPlain
             
@@ -97,7 +97,6 @@ extension ScheduleAPI: MFTarget {
             .contentType("application/json"),
             .authorization(bearerToken: TDTokenManager.shared.accessToken ?? "")
         ]
-        // TODO: - 나중에 회의 후 결정
         return jsonHeaders
     }
 }
