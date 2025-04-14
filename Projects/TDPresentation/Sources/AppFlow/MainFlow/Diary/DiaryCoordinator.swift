@@ -24,9 +24,11 @@ final class DiaryCoordinator: Coordinator {
     func start() {
         let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
         let fetchDiaryCompareCountUseCase = injector.resolve(FetchDiaryCompareCountUseCase.self)
+        let fetchFocusPercentUseCase = injector.resolve(FetchFocusPercentUseCase.self)
         let viewModel = DiaryViewModel(
             fetchUserNicknameUseCase: fetchUserNicknameUseCase,
-            fetchDiaryCompareCountUseCase: fetchDiaryCompareCountUseCase
+            fetchDiaryCompareCountUseCase: fetchDiaryCompareCountUseCase,
+            fetchFocusPercentUseCase: fetchFocusPercentUseCase
         )
         let diaryViewController = DiaryViewController(viewModel: viewModel)
         diaryViewController.coordinator = self

@@ -82,6 +82,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         setupNavigationAppearance()
         input.send(.fetchUserNickname)
         input.send(.fetchDiaryCompareCount)
+        input.send(.fetchFocusPercent)
     }
     
     
@@ -153,6 +154,8 @@ final class DiaryViewController: BaseViewController<BaseView> {
                     self?.analyzeView.configure(nickname: nickname)
                 case .fetchedCompareCount(let count):
                     self?.analyzeView.diaryAnalyzeView.updateDiaryCount(count)
+                case .fetchedFocusPercent(let percent):
+                    self?.analyzeView.focusAnalyzeView.updateFocusPercent(percent)
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
