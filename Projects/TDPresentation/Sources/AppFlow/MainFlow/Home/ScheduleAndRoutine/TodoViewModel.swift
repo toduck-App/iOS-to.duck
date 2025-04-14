@@ -13,15 +13,18 @@ final class TodoViewModel: BaseViewModel {
     }
     
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let fetchRoutineListUseCase: FetchRoutineListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var allDayTodoList: [any EventPresentable] = []
     private(set) var timedTodoList: [any EventPresentable] = []
     
     init(
-        fetchScheduleListUseCase: FetchScheduleListUseCase
+        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        fetchRoutineListUseCase: FetchRoutineListUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
+        self.fetchRoutineListUseCase = fetchRoutineListUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -37,9 +40,16 @@ final class TodoViewModel: BaseViewModel {
     
     private func fetchTodoList(startDate: String, endDate: String) async {
         do {
-            let todoList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
+            let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
+            let routineList = try await fetchRoutineListUseCase.execute(dateString: startDate)
+            
+            let todoList: [any EventPresentable] = (scheduleList as [any EventPresentable]) + (routineList as [any EventPresentable])
+            
             self.allDayTodoList = todoList.filter { $0.time == nil }
-            self.timedTodoList = todoList.filter { $0.time != nil }.sorted { timeSortKey($0.time) < timeSortKey($1.time) }
+            self.timedTodoList = todoList
+                .filter { $0.time != nil }
+                .sorted { timeSortKey($0.time) < timeSortKey($1.time) }
+            
             output.send(.fetchedTodoList)
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
@@ -56,7 +66,7 @@ final class TodoViewModel: BaseViewModel {
             
             return hour * 60 + minute
         }
-
+        
         return Int.max
     }
 }
