@@ -125,7 +125,7 @@ final class EventMakorViewModel: BaseViewModel {
             TDLogger.info("일정 생성 성공: \(schedule)")
             output.send(.savedEvent)
         } catch {
-            output.send(.failureAPI("종일 여부 설정 시, 알람은 설정할 수 없습니다."))
+            output.send(.failureAPI(error.localizedDescription))
         }
     }
     

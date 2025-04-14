@@ -19,6 +19,7 @@ public struct ScheduleHeadDTO: Decodable {
     public let daysOfWeek: [String]?
     public let time: String?
     public let location: String?
+    public let memo: String?
 }
 
 public struct ScheduleRecordDTO: Decodable {
@@ -54,7 +55,7 @@ public extension ScheduleHeadDTO {
             repeatDays: repeatDays.isEmpty ? nil : repeatDays,
             alarmTime: nil,
             place: location,
-            memo: nil,
+            memo: memo,
             isFinished: isFinished,
             scheduleRecords: records
         )

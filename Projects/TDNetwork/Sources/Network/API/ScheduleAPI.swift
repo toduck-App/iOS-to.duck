@@ -6,7 +6,6 @@ import TDDomain
 public enum ScheduleAPI {
     case createSchedule(schedule: ScheduleRequestDTO) // 일정 생성
     case finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) // 일정 완료 처리
-    case fetchScheduleDetail(scheduleRecordId: Int) // 특정 일정 조회
     case fetchScheduleList(startDate: String, endDate: String) // 모든 일정 조회
     case moveTomorrowSchedule(scheduleId: Int) // 일정 내일로 이동
     case updateSchedule(scheduleId: Int, schedule: ScheduleRequestDTO) // 일정 업데이트
@@ -26,8 +25,6 @@ extension ScheduleAPI: MFTarget {
             "v1/schedules/is-complete"
         case .fetchScheduleList:
             "v1/schedules"
-        case .fetchScheduleDetail(let scheduleRecordId):
-            "v1/schedules/\(scheduleRecordId)"
         case .moveTomorrowSchedule(let scheduleId):
             "v1/schedules/\(scheduleId)/move-tomorrow"
         case .updateSchedule(let scheduleId, _):
@@ -39,8 +36,7 @@ extension ScheduleAPI: MFTarget {
     
     public var method: MFHTTPMethod {
         switch self {
-        case .fetchScheduleDetail,
-                .fetchScheduleList:
+        case .fetchScheduleList:
                 .get
         case .moveTomorrowSchedule,
                 .createSchedule,
@@ -55,8 +51,6 @@ extension ScheduleAPI: MFTarget {
     
     public var queries: Parameters? {
         switch self {
-        case .fetchScheduleDetail(let scheduleRecordId):
-            return ["scheduleRecordId": scheduleRecordId]
         case .fetchScheduleList(let startDate, let endDate):
             return ["startDate": startDate, "endDate": endDate]
             
@@ -71,8 +65,7 @@ extension ScheduleAPI: MFTarget {
     
     public var task: MFTask {
         switch self {
-        case .fetchScheduleDetail,
-                .fetchScheduleList:
+        case .fetchScheduleList:
                 .requestPlain
             
         case .moveTomorrowSchedule,
