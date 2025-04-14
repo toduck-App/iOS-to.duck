@@ -59,7 +59,16 @@ final class DiaryCalendarViewModel: BaseViewModel {
     private func fetchDiaryList(year: Int, month: Int) async {
         do {
             let diaryList = try await fetchDiaryListUseCase.execute(year: year, month: month)
-            let diaryItems = diaryList.map { Diary(id: $0.id, date: $0.date, emotion: $0.emotion, title: $0.title, memo: $0.memo, diaryImageUrls: $0.diaryImageUrls) }
+            let diaryItems = diaryList.map {
+                Diary(
+                    id: $0.id,
+                    date: $0.date,
+                    emotion: $0.emotion,
+                    title: $0.title,
+                    memo: $0.memo,
+                    diaryImageUrls: $0.diaryImageUrls
+                )
+            }
             monthDiaryList = Dictionary(uniqueKeysWithValues: diaryItems.map { ($0.date.normalized, $0) })
             output.send(.fetchedDiaryList)
         } catch {
