@@ -5,17 +5,20 @@ import TDDomain
 final class TodoViewModel: BaseViewModel {
     enum Input {
         case fetchTodoList(startDate: String, endDate: String)
+        case fetchRoutineDetail(any EventPresentable)
         case checkBoxTapped(todo: any EventPresentable)
     }
     
     enum Output {
         case fetchedTodoList
+        case fetchedRoutineDetail(Routine)
         case successFinishSchedule
         case failure(error: String)
     }
     
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let fetchRoutineListUseCase: FetchRoutineListUseCase
+    private let fetchRoutineUseCase: FetchRoutineUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let output = PassthroughSubject<Output, Never>()
@@ -27,11 +30,13 @@ final class TodoViewModel: BaseViewModel {
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase,
         fetchRoutineListUseCase: FetchRoutineListUseCase,
+        fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         finishRoutineUseCase: FinishRoutineUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
         self.fetchRoutineListUseCase = fetchRoutineListUseCase
+        self.fetchRoutineUseCase = fetchRoutineUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
     }
@@ -41,6 +46,8 @@ final class TodoViewModel: BaseViewModel {
             switch event {
             case .fetchTodoList(let startDate, let endDate):
                 Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
+            case .fetchRoutineDetail(let todo):
+                Task { await self?.fetchRoutineDetail(with: todo) }
             case .checkBoxTapped(let todo):
                 Task { await self?.finishSchedule(with: todo) }
             }
@@ -79,6 +86,17 @@ final class TodoViewModel: BaseViewModel {
         }
         
         return Int.max
+    }
+    
+    private func fetchRoutineDetail(with todo: any EventPresentable) async {
+        guard let todo = todo as? Routine else { return }
+        
+        do {
+            let routine = try await fetchRoutineUseCase.execute(routineId: todo.id ?? 0)
+            output.send(.fetchedRoutineDetail(routine))
+        } catch {
+            output.send(.failure(error: "루틴을 불러오는데 실패했습니다."))
+        }
     }
     
     private func finishTodo(with todo: any EventPresentable) async {

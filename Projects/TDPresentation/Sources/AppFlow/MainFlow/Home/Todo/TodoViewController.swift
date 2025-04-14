@@ -186,6 +186,11 @@ final class TodoViewController: BaseViewController<BaseView> {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
                         self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
                     }
+                case .fetchedRoutineDetail(let routine):
+                    let eventDisplayItem = EventDisplayItem(routine: routine)
+                    let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
+                    let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
+                    self?.presentPopup(with: detailEventViewController)
                 }
             }.store(in: &cancellables)
     }
@@ -326,15 +331,26 @@ extension TodoViewController: UITableViewDelegate {
         let detailEventViewController: DetailEventViewController
         let currentDate = selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
         
+        // TODO: 로직 개선하기
+        /// 현재 로직에서 일정은 그냥 바로 팝업 띄우고,
+        /// 루틴은 추가 정보가 필요해서 루틴 상세 API를 조회하고, binding 메소드에서 팝업 띄우게 해뒀음
         switch item {
         case .allDay(let event, _):
-            let eventDisplayItem = EventDisplayItem(from: event)
-            detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
-            presentPopup(with: detailEventViewController)
+            if event.eventMode == .schedule {
+                let eventDisplayItem = EventDisplayItem(from: event)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                presentPopup(with: detailEventViewController)
+            } else {
+                input.send(.fetchRoutineDetail(event))
+            }
         case .timeEvent(_, let event, _):
-            let eventDisplayItem = EventDisplayItem(from: event)
-            detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
-            presentPopup(with: detailEventViewController)
+            if event.eventMode == .schedule {
+                let eventDisplayItem = EventDisplayItem(from: event)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                presentPopup(with: detailEventViewController)
+            } else {
+                input.send(.fetchRoutineDetail(event))
+            }
         case .gap(_, _):
             break
         }
