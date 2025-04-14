@@ -60,10 +60,8 @@ final class DiaryViewModel: BaseViewModel {
     
     private func fetchDiaryCompareCount() async {
         do {
-            let currentDate = Date()
-            let year = Calendar.current.component(.year, from: currentDate)
-            let month = Calendar.current.component(.month, from: currentDate)
-            let count = try await fetchDiaryCompareCountUseCase.execute(year: year, month: month)
+            let yearMonth = getCurrentYearMonth()
+            let count = try await fetchDiaryCompareCountUseCase.execute(yearMonth: yearMonth)
             output.send(.fetchedCompareCount(count))
         } catch {
             output.send(.failureAPI(error.localizedDescription))
