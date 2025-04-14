@@ -8,7 +8,7 @@ struct FocusRepositoryImpl: FocusRepository {
     }
     
     func fetchFocusPercent(yearMonth: String) async throws -> Int {
-        let response = try await service.fetchFocusPrecent(yearMonth: yearMonth)
+        let response = try await service.fetchFocusPercent(yearMonth: yearMonth)
         return response.percent
     }
     
