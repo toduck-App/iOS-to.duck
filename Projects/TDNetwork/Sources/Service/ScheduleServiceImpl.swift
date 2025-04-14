@@ -4,7 +4,6 @@ import TDData
 import TDDomain
 
 public struct ScheduleServiceImpl: ScheduleService {
-    
     private let provider: MFProvider<ScheduleAPI>
     
     public init(provider: MFProvider<ScheduleAPI> = MFProvider<ScheduleAPI>()) {
@@ -13,7 +12,6 @@ public struct ScheduleServiceImpl: ScheduleService {
     
     public func create(schedule: ScheduleRequestDTO) async throws {
         let target = ScheduleAPI.createSchedule(schedule: schedule)
-        
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
@@ -22,5 +20,10 @@ public struct ScheduleServiceImpl: ScheduleService {
         
         let response = try await provider.requestDecodable(of: ScheduleListContentDTO.self, target).value
         return response
+    }
+    
+    public func finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) async throws {
+        let target = ScheduleAPI.finishSchedule(scheduleId: scheduleId, isComplete: isComplete, queryDate: queryDate)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
 }

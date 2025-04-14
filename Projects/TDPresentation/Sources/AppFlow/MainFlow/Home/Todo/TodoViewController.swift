@@ -62,6 +62,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         let today = Date()
         selectedDate = today
+        viewModel.selectedDate = today
         let calendar = Calendar.current
         let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
         
@@ -180,6 +181,11 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.applyTimelineSnapshot()
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
+                case .successFinishSchedule:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                    }
                 }
             }.store(in: &cancellables)
     }
@@ -262,6 +268,7 @@ extension TodoViewController: FSCalendarDelegate {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDate = date
+        viewModel.selectedDate = date
         
         let formattedDate = date.convertToString(formatType: .yearMonthDay)
         input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
@@ -407,6 +414,9 @@ extension TodoViewController {
         let eventDisplay = EventDisplayItem(from: event, date: dateString)
 
         cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
+        cell.configureCheckBoxButtonAction { [weak self] in
+            self?.input.send(.checkBoxTapped(todo: event))
+        }
         cell.configureSwipeActions { [weak self] in
             let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
             self?.delegate?.didTapEventMakor(

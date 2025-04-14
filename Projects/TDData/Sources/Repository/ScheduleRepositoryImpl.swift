@@ -38,6 +38,10 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
             )
     }
     
+    public func finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) async throws {
+        try await service.finishSchedule(scheduleId: scheduleId, isComplete: isComplete, queryDate: queryDate)
+    }
+    
     public func updateSchedule(scheduleId: Int) async throws {
         
     }

@@ -5,26 +5,32 @@ import TDDomain
 final class TodoViewModel: BaseViewModel {
     enum Input {
         case fetchTodoList(startDate: String, endDate: String)
+        case checkBoxTapped(todo: any EventPresentable)
     }
     
     enum Output {
         case fetchedTodoList
+        case successFinishSchedule
         case failure(error: String)
     }
     
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let fetchRoutineListUseCase: FetchRoutineListUseCase
+    private let finishScheduleUseCase: FinishScheduleUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var allDayTodoList: [any EventPresentable] = []
     private(set) var timedTodoList: [any EventPresentable] = []
+    var selectedDate: Date?
     
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase,
-        fetchRoutineListUseCase: FetchRoutineListUseCase
+        fetchRoutineListUseCase: FetchRoutineListUseCase,
+        finishScheduleUseCase: FinishScheduleUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
         self.fetchRoutineListUseCase = fetchRoutineListUseCase
+        self.finishScheduleUseCase = finishScheduleUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -32,6 +38,8 @@ final class TodoViewModel: BaseViewModel {
             switch event {
             case .fetchTodoList(let startDate, let endDate):
                 Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
+            case .checkBoxTapped(let todo):
+                Task { await self?.finishSchedule(with: todo) }
             }
         }.store(in: &cancellables)
         
@@ -68,5 +76,18 @@ final class TodoViewModel: BaseViewModel {
         }
         
         return Int.max
+    }
+    
+    private func finishSchedule(with todo: any EventPresentable) async {
+        do {
+            try await finishScheduleUseCase.execute(
+                scheduleId: todo.id ?? 0,
+                isComplete: !todo.isFinished,
+                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+            )
+            output.send(.successFinishSchedule)
+        } catch {
+            output.send(.failure(error: "일정을 완료할 수 없습니다."))
+        }
     }
 }

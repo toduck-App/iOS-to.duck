@@ -4,10 +4,11 @@ import TDData
 import TDDomain
 
 public enum ScheduleAPI {
+    case createSchedule(schedule: ScheduleRequestDTO) // 일정 생성
+    case finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) // 일정 완료 처리
     case fetchScheduleDetail(scheduleRecordId: Int) // 특정 일정 조회
     case fetchScheduleList(startDate: String, endDate: String) // 모든 일정 조회
     case moveTomorrowSchedule(scheduleId: Int) // 일정 내일로 이동
-    case createSchedule(schedule: ScheduleRequestDTO) // 일정 생성
     case updateSchedule(scheduleId: Int, schedule: ScheduleRequestDTO) // 일정 업데이트
     case deleteSchedule(scheduleId: Int) // 일정 삭제
 }
@@ -19,14 +20,16 @@ extension ScheduleAPI: MFTarget {
     
     public var path: String {
         switch self {
+        case .createSchedule:
+            "v1/schedules"
+        case .finishSchedule:
+            "v1/schedules/is-complete"
         case .fetchScheduleList:
             "v1/schedules"
         case .fetchScheduleDetail(let scheduleRecordId):
             "v1/schedules/\(scheduleRecordId)"
         case .moveTomorrowSchedule(let scheduleId):
             "v1/schedules/\(scheduleId)/move-tomorrow"
-        case .createSchedule:
-            "v1/schedules"
         case .updateSchedule(let scheduleId, _):
             "v1/schedules/\(scheduleId)"
         case .deleteSchedule(let scheduleId):
@@ -40,7 +43,8 @@ extension ScheduleAPI: MFTarget {
                 .fetchScheduleList:
                 .get
         case .moveTomorrowSchedule,
-                .createSchedule:
+                .createSchedule,
+                .finishSchedule:
                 .post
         case .updateSchedule:
                 .put
@@ -59,7 +63,8 @@ extension ScheduleAPI: MFTarget {
         case .moveTomorrowSchedule,
                 .createSchedule,
                 .updateSchedule,
-                .deleteSchedule:
+                .deleteSchedule,
+                .finishSchedule:
             return nil
         }
     }
@@ -73,6 +78,13 @@ extension ScheduleAPI: MFTarget {
         case .moveTomorrowSchedule,
                 .deleteSchedule:
                 .requestPlain
+            
+        case .finishSchedule(let scheduleId, let isComplete, let queryDate):
+            .requestParameters(parameters: [
+                "scheduleId": scheduleId,
+                "isComplete": isComplete,
+                "queryDate": queryDate
+            ])
             
         case .createSchedule(let schedule),
              .updateSchedule(_, let schedule):

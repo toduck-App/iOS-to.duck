@@ -116,9 +116,11 @@ final class HomeViewController: BaseViewController<BaseView> {
             newViewController = toduckViewController
         case 1:
             let fetchRoutineListUseCase = DIContainer.shared.resolve(FetchRoutineListUseCase.self)
+            let finishScheduleUseCase = DIContainer.shared.resolve(FinishScheduleUseCase.self)
             let viewModel = TodoViewModel(
                 fetchScheduleListUseCase: fetchScheduleListUseCase,
-                fetchRoutineListUseCase: fetchRoutineListUseCase
+                fetchRoutineListUseCase: fetchRoutineListUseCase,
+                finishScheduleUseCase: finishScheduleUseCase
             )
             let todoViewController = TodoViewController(viewModel: viewModel)
             todoViewController.delegate = coordinator
