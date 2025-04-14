@@ -13,4 +13,11 @@ public struct FocusServiceImpl: FocusService {
         
         return response.value
     }
+    
+    public func fetchFocusList(yearMonth: String) async throws -> FocusListResponseDTO {
+        let target = FocusAPI.fetchFocusList(yearMonth: yearMonth)
+        let response = try await provider.requestDecodable(of: FocusListResponseDTO.self, target)
+        
+        return response.value
+    }
 }

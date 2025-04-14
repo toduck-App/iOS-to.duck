@@ -5,7 +5,7 @@ import TDDomain
 
 public enum FocusAPI {
     case fetchFocusPercent(yearMonth: String)
-    case fetchDiaryList(yearMonth: String)
+    case fetchFocusList(yearMonth: String)
 }
 
 extension FocusAPI: MFTarget {
@@ -17,7 +17,7 @@ extension FocusAPI: MFTarget {
         switch self {
         case .fetchFocusPercent:
             return "v1/concentration/percent"
-        case .fetchDiaryList:
+        case .fetchFocusList:
             return "v1/concentration/monthly"
         }
     }
@@ -25,7 +25,7 @@ extension FocusAPI: MFTarget {
     public var method: MFHTTPMethod {
         switch self {
         case .fetchFocusPercent,
-                .fetchDiaryList:
+                .fetchFocusList:
             return .get
         }
     }
@@ -36,7 +36,7 @@ extension FocusAPI: MFTarget {
             return [
                 "yearMonth": yearMonth
             ]
-        case .fetchDiaryList(let yearMonth):
+        case .fetchFocusList(let yearMonth):
             return [
                 "yearMonth": yearMonth
             ]
@@ -46,7 +46,7 @@ extension FocusAPI: MFTarget {
     public var task: MFTask {
         switch self {
         case .fetchFocusPercent,
-                .fetchDiaryList:
+                .fetchFocusList:
             return .requestPlain
         }
     }
