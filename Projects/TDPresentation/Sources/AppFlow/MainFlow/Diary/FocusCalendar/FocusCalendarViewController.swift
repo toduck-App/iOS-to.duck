@@ -50,6 +50,16 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let normalizedToday = Date().normalized
+        viewModel.selectedFocus = viewModel.monthFocusList[normalizedToday]
+        input.send(.selectDay(normalizedToday))
+        fetchDiaryList(for: Date())
+        calendarDidSelect(date: Date())
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -147,6 +157,12 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
                     self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
+    }
+    
+    private func calendarDidSelect(date: Date) {
+        selectedDate = date.normalized
+        viewModel.selectedFocus = viewModel.monthFocusList[date.normalized]
+        input.send(.selectDay(date.normalized))
     }
     
     private func fetchDiaryList(for date: Date) {
