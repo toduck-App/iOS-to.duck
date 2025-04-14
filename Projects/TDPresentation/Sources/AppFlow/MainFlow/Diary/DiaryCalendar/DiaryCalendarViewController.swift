@@ -55,16 +55,6 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let normalizedToday = Date().normalized
-        viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
-        input.send(.selectDay(normalizedToday))
-        fetchDiaryList(for: Date())
-        calendarDidSelect(date: Date())
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
