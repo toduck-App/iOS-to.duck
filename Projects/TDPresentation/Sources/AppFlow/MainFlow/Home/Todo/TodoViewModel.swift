@@ -17,6 +17,7 @@ final class TodoViewModel: BaseViewModel {
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let fetchRoutineListUseCase: FetchRoutineListUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
+    private let finishRoutineUseCase: FinishRoutineUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var allDayTodoList: [any EventPresentable] = []
@@ -26,11 +27,13 @@ final class TodoViewModel: BaseViewModel {
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase,
         fetchRoutineListUseCase: FetchRoutineListUseCase,
-        finishScheduleUseCase: FinishScheduleUseCase
+        finishScheduleUseCase: FinishScheduleUseCase,
+        finishRoutineUseCase: FinishRoutineUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
         self.fetchRoutineListUseCase = fetchRoutineListUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
+        self.finishRoutineUseCase = finishRoutineUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -78,6 +81,14 @@ final class TodoViewModel: BaseViewModel {
         return Int.max
     }
     
+    private func finishTodo(with todo: any EventPresentable) async {
+        if todo.eventMode == .schedule {
+            await finishSchedule(with: todo)
+        } else {
+            await finishRoutine(with: todo)
+        }
+    }
+    
     private func finishSchedule(with todo: any EventPresentable) async {
         do {
             try await finishScheduleUseCase.execute(
@@ -88,6 +99,19 @@ final class TodoViewModel: BaseViewModel {
             output.send(.successFinishSchedule)
         } catch {
             output.send(.failure(error: "일정을 완료할 수 없습니다."))
+        }
+    }
+    
+    private func finishRoutine(with todo: any EventPresentable) async {
+        do {
+            try await finishRoutineUseCase.execute(
+                routineId: todo.id ?? 0,
+                routineDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
+                isCompleted: !todo.isFinished
+            )
+            output.send(.successFinishSchedule)
+        } catch {
+            output.send(.failure(error: "루틴을 완료할 수 없습니다."))
         }
     }
 }

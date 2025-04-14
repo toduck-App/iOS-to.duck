@@ -5,6 +5,7 @@ import TDCore
 
 public enum RoutineAPI {
     case createRoutine(routine: RoutineRequestDTO) // 루틴 생성
+    case finishRoutine(routineId: Int, routineDate: String, isCompleted: Bool) // 루틴 완료
     case fetchRoutine(routineId: Int) // 하나의 루틴 상세 조회
     case fetchRoutineList(dateString: String) // 모든 루틴 조회
     case fetchAvailableRoutineList // 사용 가능한 루틴 조회
@@ -21,6 +22,8 @@ extension RoutineAPI: MFTarget {
         switch self {
         case .createRoutine:
             return "v1/routines"
+        case .finishRoutine(let routineId, _, _):
+            return "v1/routines/\(routineId)/completion"
         case .fetchRoutine(let routineId):
             return "v1/routines/\(routineId)"
         case .fetchRoutineList:
@@ -36,10 +39,12 @@ extension RoutineAPI: MFTarget {
     
     public var method: MFHTTPMethod {
         switch self {
-        case .fetchRoutineList, .fetchRoutine, .fetchAvailableRoutineList:
-            return .get
         case .createRoutine:
             return .post
+        case .finishRoutine:
+            return .put
+        case .fetchRoutineList, .fetchRoutine, .fetchAvailableRoutineList:
+            return .get
         case .updateCompleteRoutine:
             return .put
         case .deleteRoutine:
@@ -50,6 +55,7 @@ extension RoutineAPI: MFTarget {
     public var queries: Parameters? {
         switch self {
         case .createRoutine,
+                .finishRoutine,
                 .fetchRoutine,
                 .fetchAvailableRoutineList,
                 .updateCompleteRoutine:
@@ -72,6 +78,11 @@ extension RoutineAPI: MFTarget {
              .fetchAvailableRoutineList,
              .deleteRoutine:
             return .requestPlain
+        case .finishRoutine(_, let routineDate, let isCompleted):
+            return .requestParameters(parameters: [
+                "routineDate": routineDate,
+                "isCompleted": isCompleted	
+            ])
         case .createRoutine(let routine):
             return .requestParameters(parameters: [
                 "title": routine.title,

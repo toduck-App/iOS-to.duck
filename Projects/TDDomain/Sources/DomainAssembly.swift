@@ -319,6 +319,13 @@ public struct DomainAssembly: Assembly {
             return FinishScheduleUseCaseImpl(repository: repository)
         }
         
+        container.register(FinishRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FinishRoutineUseCaseImpl(repository: repository)
+        }
+        
         container.register(MoveTomorrowScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")

@@ -13,6 +13,10 @@ public final class RoutineRepositoryImpl: RoutineRepository {
         try await service.createRoutine(routine: requestDTO)
     }
     
+    public func finishRoutine(routineId: Int, routineDate: String, isCompleted: Bool) async throws {
+        try await service.finishRoutine(routineId: routineId, routineDate: routineDate, isCompleted: isCompleted)
+    }
+    
     public func fetchRoutine(routineId: Int) async throws -> Routine {
         let response = try await service.fetchRoutine(routineId: routineId)
         return response.convertToRoutine()
