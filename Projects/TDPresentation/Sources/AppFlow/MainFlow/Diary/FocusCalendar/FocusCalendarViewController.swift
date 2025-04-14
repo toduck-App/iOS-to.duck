@@ -247,24 +247,10 @@ extension FocusCalendarViewController: TDCalendarConfigurable {
         ) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
         
         let normalized = date.normalized
-        guard let focus = viewModel.monthFocusList[normalized]?.percentage else { return cell }
-        switch focus {
-        case 0:
-            cell.configure(with: nil)
-        case 1...20:
-            cell.configure(with: TDImage.FocusPercent.percent1to20)
-        case 21...40:
-            cell.configure(with: TDImage.FocusPercent.percent21to40)
-        case 41...60:
-            cell.configure(with: TDImage.FocusPercent.percent41to60)
-        case 61...80:
-            cell.configure(with: TDImage.FocusPercent.percent61to80)
-        case 81...100:
-            cell.configure(with: TDImage.FocusPercent.percent81to100)
-        default:
-            break
-        }
-        
+        let percentage = viewModel.monthFocusList[normalized]?.percentage
+        let focusImage = getFocusImage(for: percentage)
+        cell.configure(with: focusImage)
+
         return cell
     }
     
