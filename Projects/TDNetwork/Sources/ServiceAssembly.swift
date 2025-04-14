@@ -14,6 +14,10 @@ public struct ServiceAssembly: Assembly {
             return DiaryServiceImpl()
         }
         
+        container.register(FocusService.self) { _ in
+            return FocusServiceImpl()
+        }
+        
         container.register(ScheduleService.self) { _ in
             return ScheduleServiceImpl()
         }

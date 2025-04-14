@@ -1,3 +1,3 @@
 public protocol FocusService {
-    func fetchFocusPrecent() async throws -> Int
+    func fetchFocusPrecent(yearMonth: String) async throws -> FocusPercentResponseDTO
 }

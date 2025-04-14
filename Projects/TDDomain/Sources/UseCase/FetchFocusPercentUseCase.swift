@@ -1,5 +1,5 @@
 public protocol FetchFocusPercentUseCase {
-    func execute() async throws -> Int
+    func execute(yearMonth: String) async throws -> Int
 }
 
 public final class FetchFocusPercentUseCaseImpl: FetchFocusPercentUseCase {
@@ -9,7 +9,7 @@ public final class FetchFocusPercentUseCaseImpl: FetchFocusPercentUseCase {
         self.repository = repository
     }
     
-    public func execute() async throws -> Int {
-        try await repository.fetchFocusPercent()
+    public func execute(yearMonth: String) async throws -> Int {
+        try await repository.fetchFocusPercent(yearMonth: yearMonth)
     }
 }
