@@ -70,7 +70,9 @@ public final class SocialRepositoryImp: SocialRepository {
         return (post, comments)
     }
     
-    public func reportPost(postID: Post.ID) async throws {}
+    public func reportPost(postID: Post.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws {
+        try await socialService.requestReportPost(postID: postID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
+    }
     
     public func toggleCommentLike(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws {
         if currentLike {

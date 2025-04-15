@@ -26,7 +26,7 @@ public enum SocialAPI {
     
     case fetchUser(userId: Int)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
-    case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
+    case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요
     
     case followUser(targetUserId: Int)
     case unfollowUser(targetUserId: Int)
@@ -138,14 +138,8 @@ extension SocialAPI: MFTarget {
                 params["cursor"] = cursor
             }
             return params
-        case .reportPost(_, let reportType, let reason, let blockAuthor):
-            var params: [String: Any] = ["reportType": reportType]
-            if let reason {
-                params["reason"] = reason
-            }
-            params["blockAuthor"] = blockAuthor
-            return params
-        case .likePost,
+        case .reportPost,
+             .likePost,
              .unlikePost,
              .fetchPost,
              .blockUser,
@@ -175,7 +169,6 @@ extension SocialAPI: MFTarget {
              .likePost,
              .unlikePost,
              .fetchPost,
-             .reportPost,
              .blockUser,
              .likeComment,
              .unlikeComment,
@@ -205,9 +198,16 @@ extension SocialAPI: MFTarget {
             let params: [String: Any?] = [
                 "imageUrl": imageUrl,
                 "parentId": parentCommentId,
-                "content": content,
+                "content": content
             ]
             return .requestParameters(parameters: params.compactMapValues { $0 })
+        case .reportPost(_, let reportType, let reason, let blockAuthor):
+            var params: [String: Any] = ["reportType": reportType]
+            if let reason {
+                params["reason"] = reason
+            }
+            params["blockAuthor"] = blockAuthor
+            return .requestParameters(parameters: params)
         case .updateComment(let comment):
             return .requestPlain
         case .reportComment(commentId: let commentId):
