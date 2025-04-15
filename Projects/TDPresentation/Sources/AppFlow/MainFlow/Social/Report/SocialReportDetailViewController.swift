@@ -33,8 +33,8 @@ final class SocialReportDetailViewController: BaseViewController<SocialReportDet
                 switch event {
                 case .reportPostSuccess:
                     self?.coordinator?.didTapReport()
-                case .failure(let _):
-                    break
+                case .failure(let errorMessage):
+                    self?.showErrorAlert(errorMessage: errorMessage)
                 }
             }
             .store(in: &cancellables)

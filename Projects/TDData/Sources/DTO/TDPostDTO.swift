@@ -163,3 +163,7 @@ public struct TDCommentCreateResponseDTO: Decodable {
 public struct TDCommentLikeResponseDTO: Decodable {
     public let commentLikeId: Int
 }
+
+public struct TDReportResponseDTO: Decodable {
+    public let reportId: Int
+}

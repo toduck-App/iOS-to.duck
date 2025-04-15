@@ -55,7 +55,7 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(postId)"
         case .fetchPost(let postId):
             "v1/socials/\(postId)"
-        case .reportPost(let postId):
+        case .reportPost(let postId, _, _, _):
             "v1/socials/\(postId)/report"
         case .blockUser(let blockUser):
             "v1/users/\(blockUser)/block"
@@ -207,7 +207,7 @@ extension SocialAPI: MFTarget {
                 params["reason"] = reason
             }
             params["blockAuthor"] = blockAuthor
-            return .requestParameters(parameters: params)
+            return .requestParameters(parameters: params.compactMapValues { $0 })
         case .updateComment(let comment):
             return .requestPlain
         case .reportComment(commentId: let commentId):

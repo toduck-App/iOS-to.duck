@@ -80,8 +80,7 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView> {
                         routineCount: routineCount
                     )
                 case .failure(let errorDescription):
-                    // TODO: Error Alert
-                    break
+                    self?.showErrorAlert(errorMessage: errorDescription)
                 }
             }
             .store(in: &cancellables)

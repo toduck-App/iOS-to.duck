@@ -174,8 +174,6 @@ extension SocialListView {
     
     func showEmptyView() {}
     
-    func showErrorView() {}
-    
     func updateLayoutForSegmentedControl(index: Int) {
         chipCollectionView.isHidden = false
         let animationIndex = index

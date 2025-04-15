@@ -4,7 +4,7 @@ import TDDomain
 import TDDesign
 import UIKit
 
-final class SocialDetailViewController: BaseViewController<SocialDetailView>, TDPopupPresentable {
+final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     private enum Section: Hashable, CaseIterable {
         case post
         case comments
@@ -113,6 +113,8 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView>, TD
                 case .deleteComment(let comment):
                     let newItems = self?.viewModel.comments.map { Item.comment($0.id) } ?? []
                     self?.applySnapshot(items: newItems, to: .comments)
+                case .failure(let message):
+                    self?.showErrorAlert(errorMessage: message)
                 default:
                     break
                 }
