@@ -52,6 +52,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var memo: String?
     
     // 수정에 필요한 정보
+    private let selectedDate: Date?
     private var isOneDayDeleted: Bool = false
     
     init(
@@ -60,7 +61,8 @@ final class EventMakorViewModel: BaseViewModel {
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
         updateScheduleUseCase: UpdateScheduleUseCase,
-        preEvent: (any EventPresentable)?
+        preEvent: (any EventPresentable)?,
+        selectedDate: Date? = nil
     ) {
         self.mode = mode
         self.createScheduleUseCase = createScheduleUseCase
@@ -68,6 +70,35 @@ final class EventMakorViewModel: BaseViewModel {
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
         self.updateScheduleUseCase = updateScheduleUseCase
         self.preEvent = preEvent
+        self.selectedDate = selectedDate
+        initialValueSetup()
+    }
+    
+    private func initialValueSetup() {
+        if let preEvent = preEvent {
+            // TODO: 타입 캐스팅할 자료형 선택 수정
+            if mode == .schedule, let schedule = preEvent as? Schedule {
+                title = schedule.title
+                selectedCategory = schedule.category
+                startDate = schedule.startDate
+                endDate = schedule.endDate
+                isAllDay = schedule.isAllDay
+                time = schedule.time
+                repeatDays = schedule.repeatDays
+                alarm = schedule.alarmTime
+                location = schedule.place
+                memo = schedule.memo
+            } else if mode == .routine, let routine = preEvent as? Routine {
+                title = routine.title
+                selectedCategory = routine.category
+                isAllDay = routine.isAllDay
+                isPublic = routine.isPublic
+                time = routine.time
+                repeatDays = routine.repeatDays
+                alarm = routine.alarmTime
+                memo = routine.memo
+            }
+        }
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -101,10 +132,10 @@ final class EventMakorViewModel: BaseViewModel {
             self.isPublic = isPublic
         case .tapScheduleEditTodayButton:
             self.isOneDayDeleted = true
-            self.updateSchedule()
+            Task { await self.updateSchedule() }
         case .tapScheduleEditAllButton:
             self.isOneDayDeleted = false
-            self.updateSchedule()
+            Task { await self.updateSchedule() }
         case .tapEditRoutineButton:
             self.updateRoutine()
         case .tapSaveTodoButton:
@@ -122,8 +153,18 @@ final class EventMakorViewModel: BaseViewModel {
         }
     }
     
-    private func updateSchedule() {
-        
+    private func updateSchedule() async {
+        do {
+            guard let scheduleId = preEvent?.id else { return }
+            try await updateScheduleUseCase.execute(
+                scheduleId: scheduleId,
+                isOneDayDeleted: isOneDayDeleted,
+                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
+                scheduleData: createSchedule()
+            )
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
+        }
     }
     
     private func updateRoutine() {

@@ -31,7 +31,8 @@ final class EventMakorCoordinator: Coordinator {
             createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase,
             updateScheduleUseCase: updateScheduleUseCase,
-            preEvent: preEvent
+            preEvent: preEvent,
+            selectedDate: selectedDate
         )
         viewModel.setupInitialDate(with: selectedDate)
         let eventMakorViewController = EventMakorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)

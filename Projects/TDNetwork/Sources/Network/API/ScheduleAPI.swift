@@ -8,7 +8,7 @@ public enum ScheduleAPI {
     case finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) // 일정 완료 처리
     case fetchScheduleList(startDate: String, endDate: String) // 모든 일정 조회
     case moveTomorrowSchedule(scheduleId: Int) // 일정 내일로 이동
-    case updateSchedule(scheduleId: Int, schedule: ScheduleRequestDTO) // 일정 업데이트
+    case updateSchedule(schedule: ScheduleUpdateRequestDTO) // 일정 업데이트
     case deleteSchedule(scheduleId: Int) // 일정 삭제
 }
 
@@ -27,8 +27,8 @@ extension ScheduleAPI: MFTarget {
             "v1/schedules"
         case .moveTomorrowSchedule(let scheduleId):
             "v1/schedules/\(scheduleId)/move-tomorrow"
-        case .updateSchedule(let scheduleId, _):
-            "v1/schedules/\(scheduleId)"
+        case .updateSchedule:
+            "v1/schedules"
         case .deleteSchedule(let scheduleId):
             "v1/schedules/\(scheduleId)"
         }
@@ -79,8 +79,7 @@ extension ScheduleAPI: MFTarget {
                 "queryDate": queryDate
             ])
             
-        case .createSchedule(let schedule),
-             .updateSchedule(_, let schedule):
+        case .createSchedule(let schedule):
                 .requestParameters(parameters: [
                 "title": schedule.title,
                 "category": schedule.category,
@@ -88,13 +87,34 @@ extension ScheduleAPI: MFTarget {
                 "startDate": schedule.startDate,
                 "endDate": schedule.endDate,
                 "isAllDay": schedule.isAllDay,
-                "time": schedule.time,
-                "alarm": schedule.alarm,
-                "daysOfWeek": schedule.daysOfWeek,
-                "location": schedule.location,
-                "memo": schedule.memo
+                "time": schedule.time as Any,
+                "alarm": schedule.alarm as Any,
+                "daysOfWeek": schedule.daysOfWeek as Any,
+                "location": schedule.location as Any,
+                "memo": schedule.memo as Any
+            ])
+            
+        case .updateSchedule(let schedule):
+            .requestParameters(parameters: [
+                "scheduleId": schedule.scheduleId,
+                "isOneDayDeleted": schedule.isOneDayDeleted,
+                "queryDate": schedule.queryDate,
+                "scheduleData": [
+                    "title": schedule.scheduleData.title,
+                    "category": schedule.scheduleData.category,
+                    "color": schedule.scheduleData.color,
+                    "startDate": schedule.scheduleData.startDate,
+                    "endDate": schedule.scheduleData.endDate,
+                    "isAllDay": schedule.scheduleData.isAllDay,
+                    "time": schedule.scheduleData.time as Any,
+                    "alarm": schedule.scheduleData.alarm as Any,
+                    "daysOfWeek": schedule.scheduleData.daysOfWeek as Any,
+                    "location": schedule.scheduleData.location as Any,
+                    "memo": schedule.scheduleData.memo as Any
+                ]
             ])
         }
+        
     }
     
     public var headers: MFHeaders? {
