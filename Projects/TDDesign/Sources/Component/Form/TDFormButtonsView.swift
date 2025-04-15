@@ -36,7 +36,14 @@ public final class TDFormButtonsView: UIView {
         $0.alignment = .center
     }
     private var titleImageView: UIImageView?
+    private let titleLabelContainerView = UIView()
     private let titleLabel = TDLabel(toduckFont: .boldBody1)
+    private let requiredLabel = TDLabel(
+        labelText: "*",
+        toduckFont: .boldBody1,
+        alignment: .left,
+        toduckColor: TDColor.Primary.primary500
+    )
     
     private let buttonHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -58,6 +65,7 @@ public final class TDFormButtonsView: UIView {
         setupView()
         setupLayout()
         setupActions()
+        requiredLabel.isHidden = true
     }
     
     @available(*, unavailable)
@@ -83,6 +91,10 @@ public final class TDFormButtonsView: UIView {
                 }
             }
         }
+    }
+    
+    public func showRequiredLabel() {
+        requiredLabel.isHidden = false
     }
     
     // MARK: - Setup
@@ -155,7 +167,19 @@ public final class TDFormButtonsView: UIView {
                 $0.size.equalTo(20)
             }
         }
-        titleHorizontalStackView.addArrangedSubview(titleLabel)
+        titleHorizontalStackView.addArrangedSubview(titleLabelContainerView)
+        titleLabelContainerView.addSubview(titleLabel)
+        titleLabelContainerView.addSubview(requiredLabel)
+        
+        titleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview()
+            $0.top.bottom.equalToSuperview()
+        }
+        
+        requiredLabel.snp.makeConstraints {
+            $0.leading.equalTo(titleLabel.snp.trailing).offset(4)
+            $0.top.bottom.equalToSuperview()
+        }
         
         // 버튼 추가
         buttons.forEach { buttonHorizontalStackView.addArrangedSubview($0) }
