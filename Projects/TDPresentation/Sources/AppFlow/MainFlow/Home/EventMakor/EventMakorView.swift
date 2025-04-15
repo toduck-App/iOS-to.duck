@@ -279,8 +279,7 @@ final class EventMakorView: BaseView {
         if mode == .schedule {
             dateForm.updateDescription(event?.date ?? "")
             locationForm.setupTextField(event?.place ?? "")
-        }
-        else {
+        } else {
             lockForm.setupSegmentedControlIndex(event?.isPublic ?? false ? 0 : 1)
         }
     }

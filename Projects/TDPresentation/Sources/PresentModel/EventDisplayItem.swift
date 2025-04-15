@@ -42,11 +42,11 @@ struct EventDisplayItem: EventPresentable {
     init(routine: Routine) {
         self.id = routine.id
         self.title = routine.title
-        self.categoryIcon = UIImage(named: routine.category.imageName)
+        self.categoryIcon = routine.categoryIcon
         self.categoryColor = routine.category.colorHex.convertToUIColor() ?? .white
         self.alarmTime = routine.alarmTime
         self.date = nil
-        self.time = routine.time?.convertToString()
+        self.time = routine.time?.convertToString(formatType: .time24Hour)
         self.repeatDays = routine.repeatDays
         self.place = nil
         self.isPublic = routine.isPublic
@@ -59,11 +59,11 @@ struct EventDisplayItem: EventPresentable {
     init(schedule: Schedule) {
         self.id = schedule.id
         self.title = schedule.title
-        self.categoryIcon = UIImage(named: schedule.category.imageName)
+        self.categoryIcon = schedule.categoryIcon
         self.categoryColor = schedule.category.colorHex.convertToUIColor() ?? .white
         self.alarmTime = schedule.alarmTime
         self.date = nil
-        self.time = schedule.time?.convertToString()
+        self.time = schedule.time?.convertToString(formatType: .time24Hour)
         self.repeatDays = schedule.repeatDays
         self.place = schedule.place
         self.isPublic = false
