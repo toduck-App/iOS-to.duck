@@ -9,7 +9,10 @@ final class EventMakorViewModel: BaseViewModel {
         case selectCategory(String, String)
         case selectDate(String, String)
         case selectTime(Bool, Date?)
-        case saveEvent
+        case tapScheduleEditTodayButton
+        case tapScheduleEditAllButton
+        case tapEditRoutineButton
+        case tapSaveTodoButton
         case updateTitleTextField(String)
         case updateLocationTextField(String)
         case updateMemoTextView(String)
@@ -30,6 +33,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
+    private let updateScheduleUseCase: UpdateScheduleUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
     private let preEvent: (any EventPresentable)?
@@ -47,17 +51,22 @@ final class EventMakorViewModel: BaseViewModel {
     private var location: String?
     private var memo: String?
     
+    // 수정에 필요한 정보
+    private var isOneDayDeleted: Bool = false
+    
     init(
         mode: EventMakorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
+        updateScheduleUseCase: UpdateScheduleUseCase,
         preEvent: (any EventPresentable)?
     ) {
         self.mode = mode
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.updateScheduleUseCase = updateScheduleUseCase
         self.preEvent = preEvent
     }
     
@@ -90,7 +99,15 @@ final class EventMakorViewModel: BaseViewModel {
             self.time = time
         case .selectLockType(let isPublic):
             self.isPublic = isPublic
-        case .saveEvent:
+        case .tapScheduleEditTodayButton:
+            self.isOneDayDeleted = true
+            self.updateSchedule()
+        case .tapScheduleEditAllButton:
+            self.isOneDayDeleted = false
+            self.updateSchedule()
+        case .tapEditRoutineButton:
+            self.updateRoutine()
+        case .tapSaveTodoButton:
             saveEvent()
         case .updateTitleTextField(let title):
             self.title = title
@@ -103,6 +120,14 @@ final class EventMakorViewModel: BaseViewModel {
         case .selectAlarm(let index, let isSelected):
             handleAlarmSelection(at: index, isSelected: isSelected)
         }
+    }
+    
+    private func updateSchedule() {
+        
+    }
+    
+    private func updateRoutine() {
+        
     }
     
     private func saveEvent() {

@@ -1,4 +1,5 @@
 import UIKit
+import FittedSheets
 import Combine
 import TDDesign
 import TDCore
@@ -11,6 +12,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     // MARK: - Properties
     private let mode: Mode
+    private let isEdit: Bool
     private let viewModel: EventMakorViewModel
     private let eventMakorView: EventMakorView
     private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
@@ -20,9 +22,11 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     // MARK: - Initializer
     init(
         mode: Mode,
+        isEdit: Bool,
         viewModel: EventMakorViewModel
     ) {
         self.mode = mode
+        self.isEdit = isEdit
         self.viewModel = viewModel
         self.eventMakorView = EventMakorView(mode: mode)
         super.init()
@@ -65,7 +69,13 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         setupDelegate()
         setupCategory()
         eventMakorView.saveButton.addAction(UIAction { [weak self] _ in
-            self?.input.send(.saveEvent)
+            if self?.isEdit == true && self?.mode == .schedule {
+                self?.presentSheetEditMode()
+            } else if self?.isEdit == true && self?.mode == .routine {
+                self?.input.send(.tapEditRoutineButton)
+            } else {
+                self?.input.send(.tapSaveTodoButton)
+            }
         }, for: .touchUpInside)
     }
     
@@ -123,6 +133,25 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             self.eventMakorView.dummyViewHeightConstraint?.update(offset: 40)
             keyboardAdjustableView.transform = .identity
         }
+    }
+    
+    private func presentSheetEditMode() {
+        let editScheduleModeViewController = EditScheduleModeViewController()
+        editScheduleModeViewController.delegate = self
+        let sheetController = SheetViewController(
+            controller: editScheduleModeViewController,
+            sizes: [.fixed(340)],
+            options: .init(
+                pullBarHeight: 0,
+                shouldExtendBackground: false,
+                setIntrinsicHeightOnNavigationControllers: false,
+                useFullScreenMode: false,
+                shrinkPresentingViewController: false,
+                isRubberBandEnabled: false
+            )
+        )
+        sheetController.cornerRadius = 28
+        present(sheetController, animated: true, completion: nil)
     }
     
     private func setupDelegate() {
@@ -292,5 +321,15 @@ extension EventMakorViewController: UIScrollViewDelegate {
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.view.layoutIfNeeded()
         }
+    }
+}
+
+extension EventMakorViewController: EditScheduleModeDelegate {
+    func didTapTodayScheduleApply() {
+        input.send(.tapScheduleEditTodayButton)
+    }
+    
+    func didTapAllScheduleApply() {
+        input.send(.tapScheduleEditAllButton)
     }
 }
