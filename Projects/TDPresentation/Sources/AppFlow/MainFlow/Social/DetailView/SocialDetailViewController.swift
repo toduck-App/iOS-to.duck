@@ -40,6 +40,15 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
     
     override func configure() {
         layoutView.detailCollectionView.delegate = self
+        
+        layoutView.commentImageView.onRemove = { [weak self] in
+            self?.layoutView.removeCommentInputImage()
+            self?.didTapDeleteImage()
+        }
+        layoutView.commentReplyView.onRemove = { [weak self] in
+            self?.layoutView.removeReplyInputForm()
+        }
+        
         layoutView.commentInputForm.setTapSendButton(
             UIAction { [weak self] _ in
             self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
@@ -101,6 +110,11 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     self?.layoutView.removeReplyInputForm()
                     self?.layoutView.clearText()
                     self?.layoutView.removeCommentInputImage()
+                case .deleteComment(let comment):
+                    let newItems = self?.viewModel.comments.map { Item.comment($0.id) } ?? []
+                    self?.applySnapshot(items: newItems, to: .comments)
+                case .failure(let message):
+                    self?.showErrorAlert(errorMessage: message)
                 default:
                     break
                 }
@@ -138,16 +152,8 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
         input.send(.likeComment(commentID))
     }
     
-    func didTapRegisterImage() {
-        
-    }
-    
-    func didTapCancleComment() {
-        
-    }
-    
     func didTapDeleteImage() {
-        
+        self.input.send(.deleteRegisterImage)
     }
     
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
@@ -163,11 +169,27 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
-        
+        let controller = SocialBlockViewController()
+        controller.onBlock = { [weak self] in
+            self?.input.send(.blockUser(userID))
+        }
+        presentPopup(with: controller)
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        
+        TDLogger.debug("REPORT POST")
+    }
+    
+    func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
+        TDLogger.debug("EDIT COMMENT")
+    }
+    
+    func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
+        self.input.send(.deleteComment(commentID))
+    }
+    
+    func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
+        coordinator?.didTapUserProfile(id: userID)
     }
 }
 
@@ -176,9 +198,12 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
 extension SocialDetailViewController {
     private func applySnapshot(items: [Item], to section: Section) {
         var snapshot = datasource.snapshot()
+        let existingItems = snapshot.itemIdentifiers(inSection: section)
+        snapshot.deleteItems(existingItems)
         snapshot.appendItems(items, toSection: section)
-        datasource.apply(snapshot, animatingDifferences: false)
+        datasource.apply(snapshot, animatingDifferences: true)
     }
+
     
     private func updateSnapshot(items: [Item], to section: Section) {
         var snapshot = datasource.snapshot()

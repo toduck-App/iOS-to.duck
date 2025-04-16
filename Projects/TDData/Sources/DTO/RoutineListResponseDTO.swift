@@ -2,7 +2,7 @@ import TDDomain
 import Foundation
 
 public struct RoutineListResponseDTO: Decodable {
-    let queryDate: String
+    let queryDate: String?
     let routines: [RoutineListDetail]
     
     func convertToRoutineList() -> [Routine] {
@@ -18,9 +18,10 @@ public struct RoutineListResponseDTO: Decodable {
                 time: routineTime,
                 repeatDays: nil,
                 alarmTime: nil,
-                memo: nil,
+                memo: routine.memo,
                 recommendedRoutines: nil,
-                isFinished: routine.isCompleted
+                isFinished: routine.isCompleted ?? false,
+                shareCount: routine.sharedCount ?? 0
             )
         }
     }
@@ -32,5 +33,7 @@ public struct RoutineListDetail: Decodable {
     let category: String
     let time: String?
     let title: String
-    let isCompleted: Bool
+    let memo: String?
+    let isCompleted: Bool?
+    let sharedCount: Int?
 }

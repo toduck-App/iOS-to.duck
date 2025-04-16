@@ -60,8 +60,8 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                     layoutView.socialSelectRoutineView.setRoutine(string: viewModel.selectedRoutine?.title ?? "")
                 case .setImage:
                     layoutView.formPhotoView.addPhotos(viewModel.images)
-                case .failure:
-                    break
+                case .failure(let errorMessage):
+                    self.showErrorAlert(errorMessage: errorMessage)
                 case .success:
                     coordinator?.didTapDoneButton()
                 case .canCreatePost(let isEnabled):

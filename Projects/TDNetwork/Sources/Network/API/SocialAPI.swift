@@ -5,31 +5,33 @@ import TDDomain
 
 public enum SocialAPI {
     case fetchPostList(curser: Int?, limit: Int, categoryIds: [Int]?)
-    case searchPost(keyword: String, curser: Int?, limit: Int) // TODO: Search 쪽 PageNation 구현 필요
+    case searchPost(keyword: String, cursor: Int?, limit: Int, categoryIds: [Int]?)
     case likePost(postId: Int)
     case unlikePost(postId: Int)
     case createPost(post: TDPostCreateRequestDTO)
     case updatePost(post: Post) // TODO: Post 수정기능 필요
     case deletePost(postId: Int)
     case fetchPost(postId: String)
-    case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool) // MARK: RequestBody가 이상하여 잠시 보류
-    case blockUser(userId: Int) // TODO: 유저 차단
+    case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool)
+    case blockUser(userId: Int)
     
-    case toggleCommentLike(commentId: String) // TODO: Comment 구현 기능 필요
+    case likeComment(postId: Int, commentId: Int)
+    case unlikeComment(postId: Int, commentId: Int)
+    
     case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
-    case deleteComment(commentId: String) // TODO: Comment 삭제 기능 구현 필요
+    case deleteComment(postId: Int, commentId: Int)
     case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
-    case blockComment(commentId: String) // TODO: Comment 차단 기능 구현 필요
     
-    case fetchUser(userId: Int) // TODO: 다른 유저의 정보 가져오는 기능 구현 필요 (NEED BACKEND)
-    case fetchUserPostList(userId: String) // TODO: 다른 유저의 Post List 가져오는 기능 구현 필요 (NEED BACKEND)
-    case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요 (NEED BACKEND)
-    case fetchUserShareUrl(userId: String) // 이게 뭐지?
+    case fetchUser(userId: Int)
+    case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
+    case fetchUserRoutineList(userId: Int)
     
     case followUser(targetUserId: Int)
     case unfollowUser(targetUserId: Int)
+    
+    case shareRoutine(routineId: Int, dto: RoutineRequestDTO)
 }
 
 extension SocialAPI: MFTarget {
@@ -55,36 +57,36 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(postId)"
         case .fetchPost(let postId):
             "v1/socials/\(postId)"
-        case .reportPost(let postId):
-            "/posts/\(postId)/report"
+        case .reportPost(let postId, _, _, _):
+            "v1/socials/\(postId)/report"
         case .blockUser(let blockUser):
             "v1/users/\(blockUser)/block"
-        case .toggleCommentLike(let commentId):
-            "/comments/\(commentId)/like"
+        case .likeComment(let postId, let commentId):
+            "v1/socials/\(postId)/comments/\(commentId)/likes"
+        case .unlikeComment(let postId, let commentId):
+            "v1/socials/\(postId)/comments/\(commentId)/likes"
         case .fetchUserCommentList(let userId):
             "/users/\(userId)/comments"
         case .createComment(let socialId, _, _, _):
             "v1/socials/\(socialId)/comments"
         case .updateComment(let comment):
             "/comments/\(comment.id)"
-        case .deleteComment(let commentId):
-            "/comments/\(commentId)"
+        case .deleteComment(let postId, let commentId):
+            "v1/socials/\(postId)/comments/\(commentId)"
         case .reportComment(let commentId):
             "/comments/\(commentId)/report"
-        case .blockComment(let commentId):
-            "/comments/\(commentId)/block"
         case .fetchUser(let userId):
             "v1/profiles/\(userId)"
-        case .fetchUserPostList(let userId):
-            "/users/\(userId)/posts"
+        case .fetchUserPostList(let userId, _, _):
+            "v1/profiles/\(userId)/socials"
         case .fetchUserRoutineList(let userId):
-            "/users/\(userId)/routines"
-        case .fetchUserShareUrl(let userId):
-            "/users/\(userId)/share-url"
+            "v1/profiles/\(userId)/routines"
         case .followUser(let targetUserId):
             "v1/users/\(targetUserId)/follow"
         case .unfollowUser(let targetUserId):
             "v1/users/\(targetUserId)/follow"
+        case .shareRoutine(let routineId, _):
+            "v1/profiles/shared-routines/\(routineId)"
         }
     }
     
@@ -96,22 +98,21 @@ extension SocialAPI: MFTarget {
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserPostList,
-             .fetchUserRoutineList,
-             .fetchUserShareUrl:
+             .fetchUserRoutineList:
             .get
         case .likePost,
              .createPost,
              .reportPost,
              .blockUser,
-             .toggleCommentLike,
+             .likeComment,
              .createComment,
              .reportComment,
-             .blockComment,
-             .followUser:
+             .followUser,
+             .shareRoutine:
             .post
         case .updatePost, .updateComment:
             .put
-        case .deletePost, .deleteComment, .unlikePost, .unfollowUser:
+        case .deletePost, .deleteComment, .unlikePost, .unfollowUser, .unlikeComment:
             .delete
         }
     }
@@ -127,23 +128,32 @@ extension SocialAPI: MFTarget {
                 params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
             }
             return params
-        case .searchPost(let keyword, let cursor, let limit):
+        case .searchPost(let keyword, let cursor, let limit, let categoryIds):
             var params: [String: Any] = ["keyword": keyword, "limit": limit]
             if let cursor {
                 params["cursor"] = cursor
             }
+            if let categoryIds {
+                params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
+            }
             return params
-        case .likePost,
+        case .fetchUserPostList(let userId, let cursor, let limit):
+            var params: [String: Any] = ["limit": limit]
+            if let cursor {
+                params["cursor"] = cursor
+            }
+            return params
+        case .shareRoutine,
+             .reportPost,
+             .likePost,
              .unlikePost,
              .fetchPost,
-             .reportPost,
              .blockUser,
-             .toggleCommentLike,
+             .likeComment,
+             .unlikeComment,
              .fetchUserCommentList,
              .fetchUser,
-             .fetchUserPostList,
              .fetchUserRoutineList,
-             .fetchUserShareUrl,
              .deletePost,
              .deleteComment,
              .createPost,
@@ -152,8 +162,7 @@ extension SocialAPI: MFTarget {
              .updateComment,
              .followUser,
              .unfollowUser,
-             .reportComment,
-             .blockComment:
+             .reportComment:
             // TODO: - API에 따라 이 부분도 구현되어야 합니다.
             return nil
         }
@@ -166,14 +175,13 @@ extension SocialAPI: MFTarget {
              .likePost,
              .unlikePost,
              .fetchPost,
-             .reportPost,
              .blockUser,
-             .toggleCommentLike,
+             .likeComment,
+             .unlikeComment,
              .fetchUserCommentList,
              .fetchUser,
              .fetchUserPostList,
              .fetchUserRoutineList,
-             .fetchUserShareUrl,
              .deletePost,
              .deleteComment,
              .followUser,
@@ -196,15 +204,31 @@ extension SocialAPI: MFTarget {
             let params: [String: Any?] = [
                 "imageUrl": imageUrl,
                 "parentId": parentCommentId,
-                "content": content,
+                "content": content
             ]
+            return .requestParameters(parameters: params.compactMapValues { $0 })
+        case .reportPost(_, let reportType, let reason, let blockAuthor):
+            var params: [String: Any] = ["reportType": reportType]
+            if let reason {
+                params["reason"] = reason
+            }
+            params["blockAuthor"] = blockAuthor
             return .requestParameters(parameters: params.compactMapValues { $0 })
         case .updateComment(let comment):
             return .requestPlain
         case .reportComment(commentId: let commentId):
             return .requestPlain
-        case .blockComment(commentId: let commentId):
-            return .requestPlain
+        case .shareRoutine(_ , let routine):
+            return .requestParameters(parameters: [
+                "title": routine.title,
+                "category": routine.category,
+                "color": routine.color,
+                "time": routine.time ?? "",
+                "isPublic": routine.isPublic,
+                "daysOfWeek": routine.daysOfWeek.map { $0 } ?? [],
+                "reminderMinutes": routine.reminderMinutes ?? 0,
+                "memo": routine.memo ?? ""
+            ])
         }
     }
     

@@ -1,5 +1,6 @@
 import SnapKit
 import TDDesign
+import TDDomain
 import Then
 import UIKit
 
@@ -12,7 +13,7 @@ final class SocialReportDetailView: BaseView {
     
     private let descriptionLabel = TDLabel(labelText: "해당 댓글 작성자 차단하기", toduckFont: .boldBody2, toduckColor: TDColor.Neutral.neutral600)
     
-    private let socialTextField = TDFormTextView(
+    let socialTextField = TDFormTextView(
         title: "신고 내용",
         isRequired: false,
         maxCharacter: 300,
@@ -30,7 +31,7 @@ final class SocialReportDetailView: BaseView {
         $0.numberOfLines = 0
     }
 
-    private let checkBoxButton = TDCheckbox()
+    let checkBoxButton = TDCheckbox()
     
     private let captionLabel = TDLabel(
         labelText: "(마이페이지 > 차단 관리 > 게시글 미노출 사용자 관리에서 취소할 수 있습니다.)",

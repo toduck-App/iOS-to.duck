@@ -1,6 +1,6 @@
+import Combine
 import Foundation
 import TDDomain
-import Combine
 
 final class RoutineShareViewModel: BaseViewModel {
     enum Input {
@@ -28,12 +28,12 @@ final class RoutineShareViewModel: BaseViewModel {
     private var memo: String?
     
     private let output = PassthroughSubject<Output, Never>()
-    private let createRoutineUseCase: CreateRoutineUseCase
+    private let shareRoutineUseCase: ShareRoutineUseCase
     private var cancellables = Set<AnyCancellable>()
     
     init(
         routine: Routine,
-        createRoutineUseCase: CreateRoutineUseCase
+        shareRoutineUseCase: ShareRoutineUseCase
     ) {
         self.existingRoutine = routine
         self.title = routine.title
@@ -44,7 +44,7 @@ final class RoutineShareViewModel: BaseViewModel {
         self.repeatDays = routine.repeatDays
         self.alarm = routine.alarmTime
         self.memo = routine.memo
-        self.createRoutineUseCase = createRoutineUseCase
+        self.shareRoutineUseCase = shareRoutineUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -56,9 +56,9 @@ final class RoutineShareViewModel: BaseViewModel {
             case .createRoutine:
                 Task { await self.createRoutine() }
             case .updateCategory(let category):
-                self.updateCategory(category: category)
+                updateCategory(category: category)
             case .updateMemo(let memo):
-                self.updateMemo(memo: memo)
+                updateMemo(memo: memo)
             }
         }.store(in: &cancellables)
         
@@ -66,7 +66,7 @@ final class RoutineShareViewModel: BaseViewModel {
     }
     
     private func updateCategory(category: TDCategory) {
-        self.selectedCategory = category
+        selectedCategory = category
     }
     
     private func updateMemo(memo: String) {
@@ -75,7 +75,7 @@ final class RoutineShareViewModel: BaseViewModel {
     
     private func createRoutine() async {
         do {
-            try await createRoutineUseCase.execute(routine: Routine(
+            try await shareRoutineUseCase.execute(routineID: existingRoutine.id, routine: Routine(
                 id: nil,
                 title: title,
                 category: selectedCategory,
@@ -91,7 +91,7 @@ final class RoutineShareViewModel: BaseViewModel {
             output.send(.success)
         }
         catch {
-            output.send(.failure("루틴 생성에 실패했습니다."))
+            output.send(.failure("루틴 공유에 실패했습니다."))
         }
     }
 }

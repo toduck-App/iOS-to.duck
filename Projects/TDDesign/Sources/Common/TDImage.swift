@@ -101,6 +101,8 @@ public enum TDImage {
         public static let large = TDDesignAsset.Images.profileLarge.image
         public static let medium = TDDesignAsset.Images.profileMedium.image
         public static let small = TDDesignAsset.Images.profileSmall.image
+        public static let background1 = TDDesignAsset.Images.profileBackground1.image
+        public static let background2 = TDDesignAsset.Images.profileBackground2.image
     }
     
     public enum Repeat {

@@ -48,9 +48,14 @@ final class SocialReportCoordinator: Coordinator {
 extension SocialReportCoordinator: SocialReportDelegate {
     func didTapReportType(_ type: ReportType) {
         navigationController.viewControllers.last?.dismiss(animated: true, completion: nil)
-
+        let reportPostUseCase = injector.resolve(ReportPostUseCase.self)
+        let viewModel = SocialReportViewModel(
+            postID: postID,
+            reportType: type,
+            reportPostUseCase: reportPostUseCase
+        )
         let sizes: [SheetSize] = type == .custom ? [.fixed(412)] : [.fixed(320)]
-        let controller = SocialReportDetailViewController(reason: type)
+        let controller = SocialReportDetailViewController(viewModel: viewModel)
         let sheetController = SheetViewController(
             controller: controller,
             sizes: sizes,

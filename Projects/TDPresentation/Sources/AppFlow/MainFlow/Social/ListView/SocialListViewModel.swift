@@ -1,7 +1,7 @@
 import Combine
+import Foundation
 import TDDesign
 import TDDomain
-import UIKit
 
 final class SocialListViewModel: BaseViewModel {
     enum Input {

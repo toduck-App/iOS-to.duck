@@ -21,7 +21,7 @@ public final class SocialRepositoryImp: SocialRepository {
     
     public func searchPost(keyword: String, cursor: Int?, limit: Int, category: [PostCategory]?) async throws -> (result: [Post], hasMore: Bool, nextCursor: Int?) {
         let categoryIDs: [Int]? = category?.map(\.rawValue)
-        let postListDTO = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword)
+        let postListDTO = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword, categoryIDs: categoryIDs)
         let postList = postListDTO.results.compactMap { $0.convertToPost(category: category) }
         return (postList, postListDTO.hasMore, postListDTO.nextCursor)
         // TODO: 카테고리 필터 필요
@@ -70,12 +70,16 @@ public final class SocialRepositoryImp: SocialRepository {
         return (post, comments)
     }
     
-    public func reportPost(postID: Post.ID) async throws {}
+    public func reportPost(postID: Post.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws {
+        try await socialService.requestReportPost(postID: postID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
+    }
     
-    public func blockPost(postID: Post.ID) async throws {}
-    
-    public func toggleCommentLike(commentID: Comment.ID) async throws -> Result<Comment, Error> {
-        return .failure(NSError(domain: "CommentRepositoryImpl", code: 0, userInfo: nil))
+    public func toggleCommentLike(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws {
+        if currentLike {
+            try await socialService.requestUnlikeComment(postID: postID, commentID: commentID)
+        } else {
+            try await socialService.requestLikeComment(postID: postID, commentID: commentID)
+        }
     }
     
     public func fetchUserCommentList(userID: User.ID) async throws -> [Comment]? {
@@ -102,15 +106,11 @@ public final class SocialRepositoryImp: SocialRepository {
         false
     }
     
-    public func deleteComment(commentID: Comment.ID) async throws -> Bool {
-        false
+    public func deleteComment(postID: Post.ID, commentID: Comment.ID) async throws {
+        try await socialService.requestRemoveComment(postID: postID, commentID: commentID)
     }
     
     public func reportComment(commentID: Comment.ID) async throws -> Bool {
-        false
-    }
-    
-    public func blockComment(commentID: Comment.ID) async throws -> Bool {
         false
     }
 }

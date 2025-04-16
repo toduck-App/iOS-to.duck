@@ -159,3 +159,11 @@ public struct TDPostCreateRequestDTO: Encodable {
 public struct TDCommentCreateResponseDTO: Decodable {
     public let commentId: Int
 }
+
+public struct TDCommentLikeResponseDTO: Decodable {
+    public let commentLikeId: Int
+}
+
+public struct TDReportResponseDTO: Decodable {
+    public let reportId: Int
+}

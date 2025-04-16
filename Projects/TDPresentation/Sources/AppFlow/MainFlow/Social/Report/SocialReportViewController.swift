@@ -1,4 +1,5 @@
 import FittedSheets
+import TDDomain
 import UIKit
 
 final class SocialReportViewController: BaseViewController<SocialReportView> {
@@ -20,7 +21,7 @@ extension SocialReportViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SocialReportTableViewCell.identifier, for: indexPath) as! SocialReportTableViewCell
         let reportType = dataSource[indexPath.row]
-        cell.configure(with: reportType.rawValue)
+        cell.configure(with: reportType.title)
         return cell
     }
     
