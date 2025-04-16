@@ -83,12 +83,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         popupContentView.eventTitleLabel.setText(event.title)
         
         popupContentView.timeDetailView.updateDescription(event.time ?? "-")
-        let repeatString: String
-        if let days = event.repeatDays {
-            repeatString = days.map { $0.title }.joined(separator: ", ")
-        } else {
-            repeatString = "-"
-        }
+        let repeatString = event.repeatDays == nil ? "-" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
         popupContentView.repeatDetailView.updateDescription(repeatString)
         popupContentView.memoContentLabel.setText(event.memo ?? "-")
     }

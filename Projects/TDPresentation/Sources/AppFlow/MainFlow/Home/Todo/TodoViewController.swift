@@ -421,12 +421,7 @@ extension TodoViewController {
             return UITableViewCell()
         }
         
-        let dateString: String?
-        if event.eventMode == .schedule {
-            dateString = selectedDate?.convertToString(formatType: .monthDay)
-        } else {
-            dateString = nil
-        }
+        let dateString = event.eventMode == .schedule ? selectedDate?.convertToString(formatType: .monthDay) : nil
         let eventDisplay = EventDisplayItem(from: event, date: dateString)
 
         cell.configure(hour: hour, showTime: showTime, event: eventDisplay)

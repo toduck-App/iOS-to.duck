@@ -75,30 +75,7 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func initialValueSetup() {
-        if let preEvent = preEvent {
-            // TODO: 타입 캐스팅할 자료형 선택 수정
-            if mode == .schedule, let schedule = preEvent as? Schedule {
-                title = schedule.title
-                selectedCategory = schedule.category
-                startDate = schedule.startDate
-                endDate = schedule.endDate
-                isAllDay = schedule.isAllDay
-                time = schedule.time
-                repeatDays = schedule.repeatDays
-                alarm = schedule.alarmTime
-                location = schedule.place
-                memo = schedule.memo
-            } else if mode == .routine, let routine = preEvent as? Routine {
-                title = routine.title
-                selectedCategory = routine.category
-                isAllDay = routine.isAllDay
-                isPublic = routine.isPublic
-                time = routine.time
-                repeatDays = routine.repeatDays
-                alarm = routine.alarmTime
-                memo = routine.memo
-            }
-        }
+        // TODO: preEvent가 nil이 아닐 때, preEvent의 정보로 초기화
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
