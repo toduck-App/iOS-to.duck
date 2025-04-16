@@ -42,7 +42,7 @@ public struct TDRoutineDTO: Codable {
             category: TDCategory.init(colorHex: color, imageName: category),
             isAllDay: isInDeletedState,
             isPublic: isPublic,
-            time: Date.convertFromString(time ?? "", format: .serverDate),
+            time: Date.convertFromString(time ?? "", format: .time24Hour),
             repeatDays: nil,
             alarmTime: nil,
             memo: memo,
