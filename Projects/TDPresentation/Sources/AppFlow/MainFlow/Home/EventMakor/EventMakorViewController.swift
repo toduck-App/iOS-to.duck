@@ -206,6 +206,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         if isAllDay {
             // "종일"로 표시 및 입력 이벤트 전송
             eventMakorView.timeForm.updateDescription("종일")
+            eventMakorView.alarmForm.updateAlarmContent(isAllDay: true)
             input.send(.selectTime(isAllDay, nil))
         } else {
             // 선택된 Date 생성
@@ -218,6 +219,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             
             let displayTime = selectedDate.convertToString(formatType: .time12HourEnglish)
             eventMakorView.timeForm.updateDescription(displayTime)
+            eventMakorView.alarmForm.updateAlarmContent(isAllDay: false)
             input.send(.selectTime(isAllDay, selectedDate))
             TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
         }

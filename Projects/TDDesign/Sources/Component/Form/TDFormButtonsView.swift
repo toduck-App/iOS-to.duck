@@ -55,6 +55,8 @@ public final class TDFormButtonsView: UIView {
     
     // MARK: - Properties
     private let type: TDFormButtonsViewType
+    private var daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"]
+    private var alarmTimeList = ["10분 전", "30분 전", "1시간 전"]
     public weak var delegate: TDFormButtonsViewDelegate?
     
     // MARK: - Initialize
@@ -97,10 +99,41 @@ public final class TDFormButtonsView: UIView {
         requiredLabel.isHidden = false
     }
     
+    public func updateAlarmContent(isAllDay: Bool) {
+        alarmTimeList = isAllDay ? ["1일 전"] : ["10분 전", "30분 전", "1시간 전"]
+    
+        buttonHorizontalStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        buttons.removeAll()
+
+        buttons = alarmTimeList.enumerated().map { index, title in
+            let button = TDSelectableButton(
+                title: title,
+                backgroundColor: TDColor.Neutral.neutral50,
+                foregroundColor: TDColor.Neutral.neutral800,
+                font: TDFont.mediumBody2.font
+            )
+            button.tag = index
+            button.setInset()
+            return button
+        }
+
+        buttons.forEach {
+            buttonHorizontalStackView.addArrangedSubview($0)
+            $0.addAction(UIAction { [weak self] action in
+                guard let sender = action.sender as? TDSelectableButton else { return }
+                self?.buttonTapped(sender)
+            }, for: .touchUpInside)
+        }
+    }
+    
     // MARK: - Setup
     private func setupView() {
         configureTitle()
-        configureButtons()
+        if type == .alarm {
+            updateAlarmContent(isAllDay: true)
+        } else {
+            configureButtons()
+        }
     }
     
     private func configureTitle() {
@@ -120,9 +153,9 @@ public final class TDFormButtonsView: UIView {
         let buttonTitles: [String] = {
             switch type {
             case .repeatDay:
-                return ["월", "화", "수", "목", "금", "토", "일"]
+                return daysOfWeek
             case .alarm:
-                return ["10분 전", "30분 전", "1시간 전"]
+                return alarmTimeList
             }
         }()
         
