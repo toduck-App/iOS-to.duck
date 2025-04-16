@@ -15,6 +15,13 @@ final class SocialProfileView: BaseView {
         $0.layer.cornerRadius = 45
         $0.clipsToBounds = true
         $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.baseWhite.cgColor
+    }
+    
+    private let profileBackgroundView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+        $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
     private let nickNameLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
@@ -85,6 +92,7 @@ final class SocialProfileView: BaseView {
     }
     
     override func addview() {
+        addSubview(profileBackgroundView)
         addSubview(whiteBackgroundView)
         whiteBackgroundView.addSubview(avatarView)
         whiteBackgroundView.addSubview(followButton)
@@ -105,6 +113,10 @@ final class SocialProfileView: BaseView {
     }
 
     override func layout() {
+        profileBackgroundView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(avatarView.snp.bottom).offset(20)
+        }
         whiteBackgroundView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(100)
             make.leading.trailing.bottom.equalToSuperview()
@@ -202,6 +214,7 @@ final class SocialProfileView: BaseView {
     }
     
     public func configureFollowingButton(isFollowing: Bool, isMe: Bool) {
+        profileBackgroundView.image = isFollowing ? TDImage.Profile.background2 : TDImage.Profile.background1
         if isMe {
             followButton.isHidden = true
             return
