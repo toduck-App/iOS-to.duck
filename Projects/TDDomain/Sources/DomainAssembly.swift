@@ -402,14 +402,7 @@ public struct DomainAssembly: Assembly {
             }
             return UpdatePostUseCaseImpl(repository: repository)
         }
-
-        container.register(UpdateCompletionRoutineUseCase.self) { resolver in
-            guard let repository = resolver.resolve(RoutineRepository.self) else {
-                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
-            }
-            return UpdateCompletionRoutineUseCaseImpl(repository: repository)
-        }
-
+        
         container.register(UpdateScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")

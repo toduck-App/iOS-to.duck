@@ -32,10 +32,6 @@ public final class RoutineRepositoryImpl: RoutineRepository {
         return response.convertToRoutineList()
     }
     
-    public func updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) async throws {
-        try await service.updateCompleteRoutine(routineId: routineId, routineDateString: routineDateString, isCompleted: isCompleted)
-    }
-    
     public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
         try await service.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
     }
