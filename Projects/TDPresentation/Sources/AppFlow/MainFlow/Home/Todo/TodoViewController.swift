@@ -181,7 +181,7 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.applyTimelineSnapshot()
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
-                case .successFinishSchedule:
+                case .successFinishTodo:
                     if let formattedDate = self?.selectedDate {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
                         self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))

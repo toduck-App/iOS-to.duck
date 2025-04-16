@@ -12,7 +12,7 @@ final class TodoViewModel: BaseViewModel {
     enum Output {
         case fetchedTodoList
         case fetchedRoutineDetail(Routine)
-        case successFinishSchedule
+        case successFinishTodo
         case failure(error: String)
     }
     
@@ -115,7 +115,7 @@ final class TodoViewModel: BaseViewModel {
                 isComplete: !todo.isFinished,
                 queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
             )
-            output.send(.successFinishSchedule)
+            output.send(.successFinishTodo)
         } catch {
             output.send(.failure(error: "일정을 완료할 수 없습니다."))
         }
@@ -128,7 +128,7 @@ final class TodoViewModel: BaseViewModel {
                 routineDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
                 isCompleted: !todo.isFinished
             )
-            output.send(.successFinishSchedule)
+            output.send(.successFinishTodo)
         } catch {
             output.send(.failure(error: "루틴을 완료할 수 없습니다."))
         }
