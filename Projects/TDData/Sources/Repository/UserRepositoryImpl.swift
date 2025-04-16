@@ -23,7 +23,8 @@ public final class UserRepositoryImpl: UserRepository {
     }
 
     public func fetchUserRoutineList(userID: User.ID) async throws -> [Routine]? {
-        Routine.dummy
+        let routineListDTO = try await service.requestUserRoutines(userId: userID)
+        return routineListDTO.convertToRoutineList()
     }
 
     public func fetchUserShareUrl(userID: User.ID) async throws -> String {

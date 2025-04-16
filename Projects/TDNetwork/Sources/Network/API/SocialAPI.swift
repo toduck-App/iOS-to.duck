@@ -26,7 +26,7 @@ public enum SocialAPI {
     
     case fetchUser(userId: Int)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
-    case fetchUserRoutineList(userId: String) // TODO: 다른 유저의 Routine List 가져오는 기능 구현 필요
+    case fetchUserRoutineList(userId: Int)
     
     case followUser(targetUserId: Int)
     case unfollowUser(targetUserId: Int)
@@ -78,7 +78,7 @@ extension SocialAPI: MFTarget {
         case .fetchUserPostList(let userId, _, _):
             "v1/profiles/\(userId)/socials"
         case .fetchUserRoutineList(let userId):
-            "/users/\(userId)/routines"
+            "v1/profiles/\(userId)/routines"
         case .followUser(let targetUserId):
             "v1/users/\(targetUserId)/follow"
         case .unfollowUser(let targetUserId):

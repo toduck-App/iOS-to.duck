@@ -30,4 +30,10 @@ public struct UserServiceImpl: UserService {
         let response = try await provider.requestDecodable(of: TDPostListDTO.self, target)
         return response.value
     }
+    
+    public func requestUserRoutines(userId: Int) async throws -> RoutineListResponseDTO {
+        let target = SocialAPI.fetchUserRoutineList(userId: userId)
+        let response = try await provider.requestDecodable(of: RoutineListResponseDTO.self, target)
+        return response.value
+    }
 }

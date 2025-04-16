@@ -21,7 +21,7 @@ final class SocialProfileViewModel: BaseViewModel {
     private let fetchUserUseCase: FetchUserUseCase
     private let fetchUserPostUseCase: FetchUserPostUseCase
     private let toggleUserFollowUseCase: ToggleUserFollowUseCase
-    private let fetchRoutineListUseCase: FetchRoutineListUseCase
+    private let fetchUserRoutineUseCase: FetchUserRoutineUseCase
     private let userId: User.ID
     private var fetchCursor = SocialCursor()
     
@@ -39,13 +39,13 @@ final class SocialProfileViewModel: BaseViewModel {
         fetchUserUseCase: FetchUserUseCase,
         fetchUserPostUseCase: FetchUserPostUseCase,
         toggleUserFollowUseCase: ToggleUserFollowUseCase,
-        fetchRoutineListUseCase: FetchRoutineListUseCase
+        fetchUserRoutineUseCase: FetchUserRoutineUseCase
     ) {
         self.userId = id
         self.fetchUserUseCase = fetchUserUseCase
         self.fetchUserPostUseCase = fetchUserPostUseCase
         self.toggleUserFollowUseCase = toggleUserFollowUseCase
-        self.fetchRoutineListUseCase = fetchRoutineListUseCase
+        self.fetchUserRoutineUseCase = fetchUserRoutineUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -98,8 +98,8 @@ final class SocialProfileViewModel: BaseViewModel {
     
     private func fetchRoutines() async {
         do {
-//            let routines = try await fetchRoutineListUseCase.execute(userId: userId)
-//            self.routines = routines
+            let routines = try await fetchUserRoutineUseCase.execute(userID: userId)
+            self.routines = routines ?? []
             output.send(.fetchRoutine)
         } catch {
             output.send(.failure("루틴을 불러오는데 실패했습니다."))

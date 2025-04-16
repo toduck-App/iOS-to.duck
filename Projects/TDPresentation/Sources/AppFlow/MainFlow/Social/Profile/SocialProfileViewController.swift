@@ -159,6 +159,7 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView == layoutView.socialFeedCollectionView else { return }
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let frameHeight = scrollView.frame.size.height

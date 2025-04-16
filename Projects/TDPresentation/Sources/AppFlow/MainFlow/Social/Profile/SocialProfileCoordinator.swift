@@ -28,13 +28,13 @@ final class SocialProfileCoordinator: Coordinator, CoordinatorFinishDelegate {
         let fetchUserUseCase = injector.resolve(FetchUserUseCase.self)
         let fetchUserPostUseCase = injector.resolve(FetchUserPostUseCase.self)
         let toggleUserFollowUseCase = injector.resolve(ToggleUserFollowUseCase.self)
-        let fetchRoutineListUseCase = injector.resolve(FetchRoutineListUseCase.self)
+        let fetchUserRoutineUseCase = injector.resolve(FetchUserRoutineUseCase.self)
         let viewModel = SocialProfileViewModel(
             id: userID,
             fetchUserUseCase: fetchUserUseCase,
             fetchUserPostUseCase: fetchUserPostUseCase,
             toggleUserFollowUseCase: toggleUserFollowUseCase,
-            fetchRoutineListUseCase: fetchRoutineListUseCase
+            fetchUserRoutineUseCase: fetchUserRoutineUseCase
         )
         let controller = SocialProfileViewController(viewModel: viewModel)
         controller.coordinator = self
