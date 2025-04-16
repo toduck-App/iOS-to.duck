@@ -11,7 +11,7 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
     
     public func createSchedule(schedule: Schedule) async throws {
         let scheduleRequestDTO = ScheduleRequestDTO(schedule: schedule)
-        try await service.create(schedule: scheduleRequestDTO)
+        try await service.createSchedule(schedule: scheduleRequestDTO)
     }
     
     public func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
@@ -38,8 +38,20 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
             )
     }
     
-    public func updateSchedule(scheduleId: Int) async throws {
-        
+    public func finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) async throws {
+        try await service.finishSchedule(scheduleId: scheduleId, isComplete: isComplete, queryDate: queryDate)
+    }
+    
+    
+    public func updateSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: Schedule) async throws {
+        let scheduleData = ScheduleDataDTO(schedule: scheduleData)
+        let scheduleUpdateRequestDTO = ScheduleUpdateRequestDTO(
+            scheduleId: scheduleId,
+            isOneDayDeleted: isOneDayDeleted,
+            queryDate: queryDate,
+            scheduleData: scheduleData
+        )
+        try await service.updateSchedule(schedule: scheduleUpdateRequestDTO)
     }
     
     public func deleteSchedule(scheduleId: Int) async throws {

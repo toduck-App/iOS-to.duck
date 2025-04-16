@@ -62,6 +62,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         let today = Date()
         selectedDate = today
+        viewModel.selectedDate = today
         let calendar = Calendar.current
         let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
         
@@ -180,6 +181,16 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.applyTimelineSnapshot()
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
+                case .successFinishTodo:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                    }
+                case .fetchedRoutineDetail(let routine):
+                    let eventDisplayItem = EventDisplayItem(routine: routine)
+                    let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
+                    let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
+                    self?.presentPopup(with: detailEventViewController)
                 }
             }.store(in: &cancellables)
     }
@@ -262,6 +273,7 @@ extension TodoViewController: FSCalendarDelegate {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDate = date
+        viewModel.selectedDate = date
         
         let formattedDate = date.convertToString(formatType: .yearMonthDay)
         input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
@@ -319,15 +331,26 @@ extension TodoViewController: UITableViewDelegate {
         let detailEventViewController: DetailEventViewController
         let currentDate = selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
         
+        // TODO: 로직 개선하기
+        /// 현재 로직에서 일정은 그냥 바로 팝업 띄우고,
+        /// 루틴은 추가 정보가 필요해서 루틴 상세 API를 조회하고, binding 메소드에서 팝업 띄우게 해뒀음
         switch item {
         case .allDay(let event, _):
-            let eventDisplayItem = EventDisplayItem(from: event)
-            detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
-            presentPopup(with: detailEventViewController)
+            if event.eventMode == .schedule {
+                let eventDisplayItem = EventDisplayItem(from: event)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                presentPopup(with: detailEventViewController)
+            } else {
+                input.send(.fetchRoutineDetail(event))
+            }
         case .timeEvent(_, let event, _):
-            let eventDisplayItem = EventDisplayItem(from: event)
-            detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
-            presentPopup(with: detailEventViewController)
+            if event.eventMode == .schedule {
+                let eventDisplayItem = EventDisplayItem(from: event)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                presentPopup(with: detailEventViewController)
+            } else {
+                input.send(.fetchRoutineDetail(event))
+            }
         case .gap(_, _):
             break
         }
@@ -398,15 +421,13 @@ extension TodoViewController {
             return UITableViewCell()
         }
         
-        let dateString: String?
-        if event.eventMode == .schedule {
-            dateString = selectedDate?.convertToString(formatType: .monthDay)
-        } else {
-            dateString = nil
-        }
+        let dateString = event.eventMode == .schedule ? selectedDate?.convertToString(formatType: .monthDay) : nil
         let eventDisplay = EventDisplayItem(from: event, date: dateString)
 
         cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
+        cell.configureCheckBoxButtonAction { [weak self] in
+            self?.input.send(.checkBoxTapped(todo: event))
+        }
         cell.configureSwipeActions { [weak self] in
             let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
             self?.delegate?.didTapEventMakor(

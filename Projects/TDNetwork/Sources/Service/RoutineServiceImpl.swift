@@ -15,6 +15,11 @@ public struct RoutineServiceImpl: RoutineService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
+    public func finishRoutine(routineId: Int, routineDate: String, isCompleted: Bool) async throws {
+        let target = RoutineAPI.finishRoutine(routineId: routineId, routineDate: routineDate, isCompleted: isCompleted)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
     public func fetchRoutine(routineId: Int) async throws -> RoutineResponseDTO {
         let target = RoutineAPI.fetchRoutine(routineId: routineId)
         return try await provider.requestDecodable(of: RoutineResponseDTO.self, target).value

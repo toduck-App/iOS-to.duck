@@ -200,7 +200,7 @@ public final class EventDetailView: UIView {
                 return TDImage.CheckBox.empty
             } else {
                 let key = ColorValue(color: identifierColor)
-                return TDColor.colorCheckBox[key] ?? TDImage.CheckBox.empty
+                return TDColor.colorCheckBox[key] ?? TDImage.CheckBox.back15
             }
         }()
         

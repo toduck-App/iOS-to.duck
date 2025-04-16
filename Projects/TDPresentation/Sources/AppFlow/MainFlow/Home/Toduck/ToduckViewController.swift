@@ -187,6 +187,7 @@ extension ToduckViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
         
+        // TODO: 투두에서 일정 완료하고 '토덕'에 돌아와 '남은 투두'에서 스와이프하면 인덱스 문제로 크래시 발생
         let currentSchedule = viewModel.currentDisplaySchedules[indexPath.row]
         cell.eventDetailView.configureCell(
             isHomeToduck: true,

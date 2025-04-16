@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol UpdateScheduleUseCase {
-    func execute(scheduleId: Int) async throws
+    func execute(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: Schedule) async throws
 }
 
 public final class UpdateScheduleUseCaseImpl: UpdateScheduleUseCase {
@@ -11,7 +11,12 @@ public final class UpdateScheduleUseCaseImpl: UpdateScheduleUseCase {
         self.scheduleRepository = repository
     }
     
-    public func execute(scheduleId: Int) async throws {
-        try await scheduleRepository.updateSchedule(scheduleId: scheduleId)
+    public func execute(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: Schedule) async throws {
+        try await scheduleRepository.updateSchedule(
+            scheduleId: scheduleId,
+            isOneDayDeleted: isOneDayDeleted,
+            queryDate: queryDate,
+            scheduleData: scheduleData
+        )
     }
 }

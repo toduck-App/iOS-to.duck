@@ -33,7 +33,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let dateForm = TDFormMoveView(type: .date, isRequired: false)
+    let dateForm = TDFormMoveView(type: .date, isRequired: true)
     private let dividedLine1 = UIView.dividedLine()
     
     // 시간
@@ -41,7 +41,7 @@ final class EventMakorView: BaseView {
         $0.axis = .vertical
         $0.spacing = 16
     }
-    let timeForm = TDFormMoveView(type: .time, isRequired: false)
+    let timeForm = TDFormMoveView(type: .time, isRequired: true)
     private let dividedLine2 = UIView.dividedLine()
     
     // 공개여부 (루틴에서만 사용됨)
@@ -173,8 +173,11 @@ final class EventMakorView: BaseView {
         saveButton.isEnabled = false
         if mode == .schedule {
             titleForm.setupLabel(title: "일정", placeholder: "일정을 입력해주세요")
+            noticeSnackBarLabel.setText("일정 제목, 날짜, 시간은 필수 입력이에요!")
         } else {
             titleForm.setupLabel(title: "루틴", placeholder: "루틴을 입력해주세요")
+            noticeSnackBarLabel.setText("루틴 제목, 시간, 반복일은 필수 입력이에요!")
+            repeatDayForm.showRequiredLabel()
         }
     }
     
@@ -278,8 +281,7 @@ final class EventMakorView: BaseView {
         if mode == .schedule {
             dateForm.updateDescription(event?.date ?? "")
             locationForm.setupTextField(event?.place ?? "")
-        }
-        else {
+        } else {
             lockForm.setupSegmentedControlIndex(event?.isPublic ?? false ? 0 : 1)
         }
     }
