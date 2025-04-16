@@ -106,6 +106,9 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                     self?.showErrorAlert(errorMessage: "\(missing)이(가) 입력되지 않았어요.")
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
+                case .canSaveEvent(let isEnabled):
+                    self?.eventMakorView.saveButton.isEnabled = isEnabled
+                    self?.eventMakorView.noticeSnackBarView.isHidden = isEnabled
                 }
             }.store(in: &cancellables)
     }
@@ -243,13 +246,6 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == eventMakorView.titleForm {
             input.send(.updateTitleTextField(text))
-            if text.isEmpty {
-                eventMakorView.saveButton.isEnabled = false
-                eventMakorView.noticeSnackBarView.isHidden = false
-            } else {
-                eventMakorView.saveButton.isEnabled = true
-                eventMakorView.noticeSnackBarView.isHidden = true
-            }
         }
         
         if textField == eventMakorView.memoTextView {

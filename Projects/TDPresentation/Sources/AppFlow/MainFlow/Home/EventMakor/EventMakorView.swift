@@ -173,8 +173,10 @@ final class EventMakorView: BaseView {
         saveButton.isEnabled = false
         if mode == .schedule {
             titleForm.setupLabel(title: "일정", placeholder: "일정을 입력해주세요")
+            noticeSnackBarLabel.setText("일정 제목, 날짜, 시간은 필수 입력이에요!")
         } else {
             titleForm.setupLabel(title: "루틴", placeholder: "루틴을 입력해주세요")
+            noticeSnackBarLabel.setText("루틴 제목, 시간, 반복일은 필수 입력이에요!")
             repeatDayForm.showRequiredLabel()
         }
     }

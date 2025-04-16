@@ -24,6 +24,7 @@ final class EventMakorViewModel: BaseViewModel {
     enum Output {
         case fetchedCategories
         case savedEvent
+        case canSaveEvent(Bool)
         case failedToSaveEvent(missingFields: [String])
         case failureAPI(String)
     }
@@ -119,12 +120,14 @@ final class EventMakorViewModel: BaseViewModel {
             saveEvent()
         case .updateTitleTextField(let title):
             self.title = title
+            validateCanSave()
         case .updateLocationTextField(let location):
             self.location = location
         case .updateMemoTextView(let memo):
             self.memo = memo
         case .selectRepeatDay(let index, let isSelected):
             handleRepeatDaySelection(at: index, isSelected: isSelected)
+            validateCanSave()
         case .selectAlarm(let index, let isSelected):
             handleAlarmSelection(at: index, isSelected: isSelected)
         }
@@ -302,5 +305,16 @@ final class EventMakorViewModel: BaseViewModel {
             alarm = nil
             TDLogger.info("알람 해제됨")
         }
+    }
+    
+    private func validateCanSave() {
+        var canSave = false
+        switch mode {
+        case .schedule:
+            canSave = !(title?.isEmpty ?? true)
+        case .routine:
+            canSave = !(title?.isEmpty ?? true) && !(repeatDays?.isEmpty ?? true)
+        }
+        output.send(.canSaveEvent(canSave))
     }
 }
