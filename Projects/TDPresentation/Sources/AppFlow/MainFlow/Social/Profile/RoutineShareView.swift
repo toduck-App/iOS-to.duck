@@ -75,7 +75,7 @@ final class RoutineShareView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     
-    let delayToTomorrowButton = TDBaseButton(
+    let doneButton = TDBaseButton(
         title: "저장",
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral700,
@@ -115,7 +115,7 @@ final class RoutineShareView: BaseView {
         /// 버튼
         containerView.addSubview(buttonContainerHorizontalStackView)
         buttonContainerHorizontalStackView.addArrangedSubview(cancelButton)
-        buttonContainerHorizontalStackView.addArrangedSubview(delayToTomorrowButton)
+        buttonContainerHorizontalStackView.addArrangedSubview(doneButton)
     }
     
     override func layout() {

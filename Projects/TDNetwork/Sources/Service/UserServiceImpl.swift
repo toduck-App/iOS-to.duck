@@ -36,4 +36,9 @@ public struct UserServiceImpl: UserService {
         let response = try await provider.requestDecodable(of: RoutineListResponseDTO.self, target)
         return response.value
     }
+    
+    public func requestShareRoutine(routineID: Int, routine: RoutineRequestDTO) async throws {
+        let target = SocialAPI.shareRoutine(routineId: routineID, dto: routine)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

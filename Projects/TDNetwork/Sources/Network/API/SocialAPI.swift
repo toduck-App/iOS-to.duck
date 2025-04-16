@@ -30,6 +30,8 @@ public enum SocialAPI {
     
     case followUser(targetUserId: Int)
     case unfollowUser(targetUserId: Int)
+    
+    case shareRoutine(routineId: Int, dto: RoutineRequestDTO)
 }
 
 extension SocialAPI: MFTarget {
@@ -83,6 +85,8 @@ extension SocialAPI: MFTarget {
             "v1/users/\(targetUserId)/follow"
         case .unfollowUser(let targetUserId):
             "v1/users/\(targetUserId)/follow"
+        case .shareRoutine(let routineId, _):
+            "v1/profiles/shared-routines/\(routineId)"
         }
     }
     
@@ -103,7 +107,8 @@ extension SocialAPI: MFTarget {
              .likeComment,
              .createComment,
              .reportComment,
-             .followUser:
+             .followUser,
+             .shareRoutine:
             .post
         case .updatePost, .updateComment:
             .put
@@ -138,7 +143,8 @@ extension SocialAPI: MFTarget {
                 params["cursor"] = cursor
             }
             return params
-        case .reportPost,
+        case .shareRoutine,
+             .reportPost,
              .likePost,
              .unlikePost,
              .fetchPost,
@@ -212,6 +218,17 @@ extension SocialAPI: MFTarget {
             return .requestPlain
         case .reportComment(commentId: let commentId):
             return .requestPlain
+        case .shareRoutine(_ , let routine):
+            return .requestParameters(parameters: [
+                "title": routine.title,
+                "category": routine.category,
+                "color": routine.color,
+                "time": routine.time ?? "",
+                "isPublic": routine.isPublic,
+                "daysOfWeek": routine.daysOfWeek.map { $0 } ?? [],
+                "reminderMinutes": routine.reminderMinutes ?? 0,
+                "memo": routine.memo ?? ""
+            ])
         }
     }
     

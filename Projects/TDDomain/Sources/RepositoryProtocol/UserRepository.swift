@@ -8,4 +8,6 @@ public protocol UserRepository {
     func followUser(targetUserID: User.ID) async throws
     func unFollowUser(targetUserID: User.ID) async throws
     func blockUser(userID: User.ID) async throws
+    
+    func shareRoutine(routineID: Routine.ID, routine: Routine) async throws
 }

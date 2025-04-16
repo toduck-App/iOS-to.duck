@@ -42,4 +42,10 @@ public final class UserRepositoryImpl: UserRepository {
     public func blockUser(userID: User.ID) async throws {
         try await service.requestUserBlock(userId: userID)
     }
+    
+    public func shareRoutine(routineID: Routine.ID, routine: Routine) async throws {
+        guard let routineID else { return }
+        let requestDTO = RoutineRequestDTO(from: routine)
+        try await service.requestShareRoutine(routineID: routineID, routine: requestDTO)
+    }
 }

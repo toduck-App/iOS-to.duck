@@ -6,4 +6,5 @@ public protocol UserService {
     func requestUnfollow(userId: Int) async throws
     func requestUserPosts(userId: Int, cursor: Int?, limit: Int) async throws -> TDPostListDTO
     func requestUserRoutines(userId: Int) async throws -> RoutineListResponseDTO
+    func requestShareRoutine(routineID: Int, routine: RoutineRequestDTO) async throws
 }

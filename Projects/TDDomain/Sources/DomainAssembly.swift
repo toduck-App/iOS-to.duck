@@ -471,5 +471,12 @@ public struct DomainAssembly: Assembly {
             }
             return DeleteCommentUseCaseImpl(repository: repository)
         }
+        
+        container.register(ShareRoutineUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return ShareRoutineUseCaseImpl(repository: repository)
+        }
     }
 }

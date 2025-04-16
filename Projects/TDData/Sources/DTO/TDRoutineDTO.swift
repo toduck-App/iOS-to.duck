@@ -6,7 +6,7 @@ public struct TDRoutineDTO: Codable {
     let category: String
     let color: String
     let title: String
-    let time: String
+    let time: String?
     let isPublic: Bool
     let isInDeletedState: Bool
     let daysOfWeek: [String]
@@ -36,14 +36,13 @@ public struct TDRoutineDTO: Codable {
     
     func convertToEntity() -> Routine {
         // 루틴 카테고리 가져오는 부분이 이상함
-        
         return Routine(
             id: routineId,
             title: title,
             category: TDCategory.init(colorHex: color, imageName: category),
             isAllDay: isInDeletedState,
             isPublic: isPublic,
-            time: Date.convertFromString(time, format: .serverDate) ?? Date(),
+            time: Date.convertFromString(time ?? "", format: .serverDate),
             repeatDays: nil,
             alarmTime: nil,
             memo: memo,
