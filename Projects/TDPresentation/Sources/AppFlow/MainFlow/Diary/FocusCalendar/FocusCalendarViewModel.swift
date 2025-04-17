@@ -15,10 +15,17 @@ final class FocusCalendarViewModel: BaseViewModel {
         case failureAPI(String)
     }
     
+    private let fetchFocusListUseCase: FetchFocusListUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var monthFocusList = [Date: Focus]()
     var selectedFocus: Focus?
+    
+    init(
+        fetchFocusListUseCase: FetchFocusListUseCase
+    ) {
+        self.fetchFocusListUseCase = fetchFocusListUseCase
+    }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
@@ -26,7 +33,7 @@ final class FocusCalendarViewModel: BaseViewModel {
             case .selectDay(let date):
                 self?.selecteDay(date: date)
             case .fetchFocusList(let year, let month):
-                self?.fetchFocusList(year: year, month: month)
+                Task { await self?.fetchFocusList(year: year, month: month) }
             }
         }.store(in: &cancellables)
         
@@ -42,33 +49,25 @@ final class FocusCalendarViewModel: BaseViewModel {
         }
     }
     
-    func fetchFocusList(year: Int, month: Int) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        
-        let marchDiaries: [Focus] = [
-            Focus(id: 1, date: formatter.date(from: "2025-03-12")!, targetCount: 3, settingCount: 5, time: 921, percentage: 30),
-            Focus(id: 2, date: formatter.date(from: "2025-03-15")!, targetCount: 5, settingCount: 5, time: 123, percentage: 100),
-            Focus(id: 3, date: formatter.date(from: "2025-03-20")!, targetCount: 3, settingCount: 5, time: 456, percentage: 60),
-        ]
-        
-        let februaryDiaries: [Focus] = [
-            Focus(id: 1, date: formatter.date(from: "2025-02-12")!, targetCount: 3, settingCount: 5, time: 921, percentage: 30),
-            Focus(id: 2, date: formatter.date(from: "2025-02-15")!, targetCount: 5, settingCount: 5, time: 123, percentage: 100),
-            Focus(id: 3, date: formatter.date(from: "2025-02-20")!, targetCount: 3, settingCount: 5, time: 456, percentage: 60),
-        ]
-        
-        let selectedMonthDiaries: [Focus]
-        
-        switch month {
-        case 2:
-            selectedMonthDiaries = februaryDiaries
-        case 3:
-            selectedMonthDiaries = marchDiaries
-        default:
-            selectedMonthDiaries = []
+    func fetchFocusList(year: Int, month: Int) async {
+        do {
+            let monthString = String(format: "%02d", month)
+            let yearMonth = "\(year)-\(monthString)"
+            let focusList = try await fetchFocusListUseCase.execute(yearMonth: yearMonth)
+            let focusItems = focusList.map {
+                Focus(
+                    id: $0.id,
+                    date: $0.date,
+                    targetCount: $0.targetCount,
+                    settingCount: $0.settingCount,
+                    time: $0.time,
+                    percentage: $0.percentage
+                )
+            }
+            monthFocusList = Dictionary(uniqueKeysWithValues: focusItems.map { ($0.date, $0) })
+            output.send(.fetchedFocusList)
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
         }
-        
-        monthFocusList = Dictionary(uniqueKeysWithValues: selectedMonthDiaries.map { ($0.date.normalized, $0) })
     }
 }

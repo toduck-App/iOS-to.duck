@@ -34,9 +34,7 @@ public struct DiaryServiceImpl: DiaryService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
-    public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
-        let monthString = String(format: "%02d", month)
-        let yearMonth = "\(year)-\(monthString)"
+    public func fetchDiaryCompareCount(yearMonth: String) async throws -> Int {
         let target = DiaryAPI.compareDiaryCount(yearMonth: yearMonth)
         let response = try await provider.requestDecodable(of: DiaryCompareCountResponseDTO.self, target)
         return response.value.count

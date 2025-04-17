@@ -27,7 +27,7 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         try await service.deleteDiary(id: id)
     }
     
-    public func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int {
-        try await service.fetchDiaryCompareCount(year: year, month: month)
+    public func fetchDiaryCompareCount(yearMonth: String) async throws -> Int {
+        try await service.fetchDiaryCompareCount(yearMonth: yearMonth)
     }
 }

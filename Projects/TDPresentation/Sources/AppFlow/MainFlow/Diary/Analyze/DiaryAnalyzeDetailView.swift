@@ -130,4 +130,28 @@ final class DiaryAnalyzeDetailView: BaseView {
             analyzeImageView.image = TDImage.toduckLogo // TODO: 이미지 변경
         }
     }
+    
+    func updateFocusPercent(_ percent: Int) {
+        description1Label.setText("이번 달 평균")
+        
+        description2Label.attributedText = makeColoredText(
+            mainText: "집중도는 \(percent)% 에요",
+            coloredPart: "\(percent)%"
+        )
+        
+        switch percent {
+        case 0:
+            analyzeImageView.image = TDImage.Analyze.focusZero
+        case 1...20:
+            analyzeImageView.image = TDImage.Analyze.focus1to20
+        case 21...40:
+            analyzeImageView.image = TDImage.Analyze.focus21to40
+        case 41...70:
+            analyzeImageView.image = TDImage.Analyze.focus41to70
+        case 71...100:
+            analyzeImageView.image = TDImage.Analyze.focus71to100
+        default:
+            analyzeImageView.image = TDImage.Analyze.focus71to100
+        }
+    }
 }

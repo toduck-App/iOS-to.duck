@@ -6,5 +6,5 @@ public protocol DiaryService {
     func fetchDiaryList(year: Int, month: Int) async throws -> DiaryListResponseDTO
     func updateDiary(diary: DiaryPatchRequestDTO) async throws
     func deleteDiary(id: Int) async throws
-    func fetchDiaryCompareCount(year: Int, month: Int) async throws -> Int
+    func fetchDiaryCompareCount(yearMonth: String) async throws -> Int
 }
