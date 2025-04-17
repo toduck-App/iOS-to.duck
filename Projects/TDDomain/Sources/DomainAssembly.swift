@@ -234,6 +234,20 @@ public struct DomainAssembly: Assembly {
             return FetchRoutineListUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchFocusListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(FocusRepository.self) else {
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchFocusListUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchFocusPercentUseCase.self) { resolver in
+            guard let repository = resolver.resolve(FocusRepository.self) else {
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchFocusPercentUseCaseImpl(repository: repository)
+        }
+        
         container.register(FetchRoutineUseCase.self) { resolver in
             guard let repository = resolver.resolve(RoutineRepository.self) else {
                 fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")

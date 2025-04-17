@@ -1,5 +1,5 @@
 public protocol FetchDiaryCompareCountUseCase {
-    func execute(year: Int, month: Int) async throws -> Int
+    func execute(yearMonth: String) async throws -> Int
 }
 
 public final class FetchDiaryCompareCountUseCaseImpl: FetchDiaryCompareCountUseCase {
@@ -9,8 +9,8 @@ public final class FetchDiaryCompareCountUseCaseImpl: FetchDiaryCompareCountUseC
         self.repository = repository
     }
 
-    public func execute(year: Int, month: Int) async throws -> Int {
-        try await repository.fetchDiaryCompareCount(year: year, month: month)
+    public func execute(yearMonth: String) async throws -> Int {
+        try await repository.fetchDiaryCompareCount(yearMonth: yearMonth)
     }
 }
 

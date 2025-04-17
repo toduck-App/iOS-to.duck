@@ -60,6 +60,12 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         calendarDidSelect(date: Date())
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchDiaryList(for: calendar.currentPage)
+    }
+    
     // MARK: - Common Methods
     override func addView() {
         view.addSubview(contentStackView)
@@ -141,8 +147,8 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .selectedFocus(let diary):
-                    self?.updateDiaryView(with: diary)
+                case .selectedFocus(let focus):
+                    self?.updateDiaryView(with: focus)
                 case .fetchedFocusList:
                     self?.calendar.reloadData()
                 case .notFoundFocus:
@@ -159,26 +165,55 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         input.send(.selectDay(date.normalized))
     }
     
-    private func updateDiaryView(with focus: Focus? = nil) {
-        let hasDiary = focus != nil
-        diaryDetailContainerView.isHidden = !hasDiary
-        noFocusContainerView.isHidden = hasDiary
-        
-        if focus != nil {
-            focusDetailView.configure(
-                focusImage: TDImage.FocusPercent.percent21to40,
-                date: "2025-03-25",
-                percent: 58,
-                userHour: 5,
-                userMinute: 20
-            )
-        }
-    }
-    
     private func fetchDiaryList(for date: Date) {
         let components = Calendar.current.dateComponents([.year, .month], from: date)
         guard let year = components.year, let month = components.month else { return }
         input.send(.fetchFocusList(year, month))
+    }
+    
+    private func updateDiaryView(with focus: Focus? = nil) {
+        diaryDetailContainerView.isHidden = focus == nil
+        noFocusContainerView.isHidden = focus != nil
+        
+        if let focus {
+            let focusImage = getFocusImage(for: focus.percentage) ?? UIImage()
+            let (userHour, userMinute) = calculateTime(from: focus.time)
+            focusDetailView.configure(
+                focusImage: focusImage,
+                date: focus.date.convertToString(formatType: .yearMonth),
+                percent: focus.percentage,
+                userHour: userHour,
+                userMinute: userMinute
+            )
+        }
+    }
+    
+    private func getFocusImage(for percentage: Int?) -> UIImage? {
+        guard let percentage else { return nil }
+        switch percentage {
+        case 0:
+            return nil
+        case 1...20:
+            return TDImage.FocusPercent.percent1to20
+        case 21...40:
+            return TDImage.FocusPercent.percent21to40
+        case 41...60:
+            return TDImage.FocusPercent.percent41to60
+        case 61...80:
+            return TDImage.FocusPercent.percent61to80
+        case 81...100:
+            return TDImage.FocusPercent.percent81to100
+        default:
+            return nil
+        }
+    }
+    
+    private func calculateTime(from time: Int?) -> (Int, Int) {
+        guard let time else { return (0, 0) }
+        let hour = time / 60
+        let minute = time % 60
+        
+        return (hour, minute)
     }
 }
 
@@ -212,24 +247,10 @@ extension FocusCalendarViewController: TDCalendarConfigurable {
         ) as? DiaryCalendarSelectDateCell else { return FSCalendarCell() }
         
         let normalized = date.normalized
-        guard let focus = viewModel.monthFocusList[normalized]?.percentage else { return cell }
-        switch focus {
-        case 0:
-            cell.configure(with: nil)
-        case 1...20:
-            cell.configure(with: TDImage.FocusPercent.percent1to20)
-        case 21...40:
-            cell.configure(with: TDImage.FocusPercent.percent21to40)
-        case 41...60:
-            cell.configure(with: TDImage.FocusPercent.percent41to60)
-        case 61...80:
-            cell.configure(with: TDImage.FocusPercent.percent61to80)
-        case 81...100:
-            cell.configure(with: TDImage.FocusPercent.percent81to100)
-        default:
-            break
-        }
-        
+        let percentage = viewModel.monthFocusList[normalized]?.percentage
+        let focusImage = getFocusImage(for: percentage)
+        cell.configure(with: focusImage)
+
         return cell
     }
     
