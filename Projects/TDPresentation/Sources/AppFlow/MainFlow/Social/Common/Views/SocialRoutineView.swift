@@ -10,15 +10,29 @@ final class SocialRoutineView: UIView {
         $0.contentMode = .scaleAspectFit
     }
     
-    private var routineTitleLabel = TDLabel(toduckFont: .boldBody1, toduckColor: TDColor.Neutral.neutral800).then {
+    private var stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.distribution = .equalSpacing
+        $0.spacing = 4
+    }
+    
+    private var routineTitleLabel = TDLabel(toduckFont: .boldBody2, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 2
     }
     
-    private var routineContentLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800).then {
+    private var dateContainerView = UIView()
+    
+    private var timerImage = UIImageView().then {
+        $0.image = TDImage.clockMedium.withRenderingMode(.alwaysOriginal).withTintColor(TDColor.Neutral.neutral600)
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private var routineContentLabel = TDLabel(toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600).then {
         $0.numberOfLines = 0
     }
     
-    private var routineDateLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral500)
+    private var routineDateLabel = TDLabel(toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,15 +41,36 @@ final class SocialRoutineView: UIView {
     // TODO: Presentation Model
     convenience init(with routine: Routine) {
         self.init()
-        categoryImage.image = routine.categoryIcon
-        routineTitleLabel.setText(routine.title)
-        routineContentLabel.setText(routine.memo ?? "")
-        if let routineDate = routine.time {
-            routineDateLabel.setText(routineDate.convertToString(formatType: .time12HourEnglish))
-        }
         setupUI()
         setupLayout()
         setupRecognizer()
+        categoryImage.image = routine.categoryIcon
+        routineTitleLabel.setText(routine.title)
+        
+        if let memo = routine.memo, !memo.isEmpty {
+            stackView.addArrangedSubview(routineContentLabel)
+            routineContentLabel.setText(memo)
+        }
+        
+        if let routineDate = routine.time {
+            dateContainerView.snp.makeConstraints { make in
+                make.height.equalTo(18)
+            }
+            dateContainerView.addSubview(timerImage)
+            dateContainerView.addSubview(routineDateLabel)
+            timerImage.snp.makeConstraints { make in
+                make.leading.equalToSuperview()
+                make.centerY.equalToSuperview()
+                make.size.equalTo(16)
+            }
+            routineDateLabel.snp.makeConstraints { make in
+                make.leading.equalTo(timerImage.snp.trailing).offset(4)
+                make.trailing.equalToSuperview()
+                make.centerY.equalToSuperview()
+            }
+            stackView.addArrangedSubview(dateContainerView)
+            routineDateLabel.setText(routineDate.convertToString(formatType: .time24Hour))
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -48,41 +83,29 @@ final class SocialRoutineView: UIView {
 
 private extension SocialRoutineView {
     func setupUI() {
-        backgroundColor = TDColor.Neutral.neutral100
-        layer.cornerRadius = 8
+        backgroundColor = .white
+        layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        layer.borderWidth = 1
+        layer.cornerRadius = 16
         clipsToBounds = true
     }
     
     func setupLayout() {
         addSubview(categoryImage)
-        addSubview(routineTitleLabel)
-        addSubview(routineContentLabel)
-        addSubview(routineDateLabel)
+        addSubview(stackView)
+        
+        stackView.addArrangedSubview(routineTitleLabel)
         
         categoryImage.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(14)
-            make.leading.equalToSuperview().inset(20)
+            make.leading.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
         
-        routineTitleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(14)
+        stackView.snp.makeConstraints { make in
             make.leading.equalTo(categoryImage.snp.trailing).offset(10)
-            make.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(24)
-        }
-        
-        routineContentLabel.snp.makeConstraints { make in
-            make.top.equalTo(routineTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(categoryImage)
-            make.trailing.equalTo(routineTitleLabel)
-        }
-        
-        routineDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(routineContentLabel.snp.bottom).offset(18)
-            make.trailing.leading.equalTo(routineContentLabel)
-            make.bottom.equalToSuperview().inset(14)
-            make.height.equalTo(24)
+            make.trailing.equalToSuperview().inset(16)
+            make.top.bottom.equalToSuperview().inset(16)
         }
     }
     

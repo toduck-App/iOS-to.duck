@@ -9,7 +9,10 @@ final class EventMakorViewModel: BaseViewModel {
         case selectCategory(String, String)
         case selectDate(String, String)
         case selectTime(Bool, Date?)
-        case saveEvent
+        case tapScheduleEditTodayButton
+        case tapScheduleEditAllButton
+        case tapEditRoutineButton
+        case tapSaveTodoButton
         case updateTitleTextField(String)
         case updateLocationTextField(String)
         case updateMemoTextView(String)
@@ -21,6 +24,7 @@ final class EventMakorViewModel: BaseViewModel {
     enum Output {
         case fetchedCategories
         case savedEvent
+        case canSaveEvent(Bool)
         case failedToSaveEvent(missingFields: [String])
         case failureAPI(String)
     }
@@ -30,6 +34,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
+    private let updateScheduleUseCase: UpdateScheduleUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
     private let preEvent: (any EventPresentable)?
@@ -47,18 +52,31 @@ final class EventMakorViewModel: BaseViewModel {
     private var location: String?
     private var memo: String?
     
+    // 수정에 필요한 정보
+    private let selectedDate: Date?
+    private var isOneDayDeleted: Bool = false
+    
     init(
         mode: EventMakorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
-        preEvent: (any EventPresentable)?
+        updateScheduleUseCase: UpdateScheduleUseCase,
+        preEvent: (any EventPresentable)?,
+        selectedDate: Date? = nil
     ) {
         self.mode = mode
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.updateScheduleUseCase = updateScheduleUseCase
         self.preEvent = preEvent
+        self.selectedDate = selectedDate
+        initialValueSetup()
+    }
+    
+    private func initialValueSetup() {
+        // TODO: preEvent가 nil이 아닐 때, preEvent의 정보로 초기화
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -90,19 +108,47 @@ final class EventMakorViewModel: BaseViewModel {
             self.time = time
         case .selectLockType(let isPublic):
             self.isPublic = isPublic
-        case .saveEvent:
+        case .tapScheduleEditTodayButton:
+            self.isOneDayDeleted = true
+            Task { await self.updateSchedule() }
+        case .tapScheduleEditAllButton:
+            self.isOneDayDeleted = false
+            Task { await self.updateSchedule() }
+        case .tapEditRoutineButton:
+            self.updateRoutine()
+        case .tapSaveTodoButton:
             saveEvent()
         case .updateTitleTextField(let title):
             self.title = title
+            validateCanSave()
         case .updateLocationTextField(let location):
             self.location = location
         case .updateMemoTextView(let memo):
             self.memo = memo
         case .selectRepeatDay(let index, let isSelected):
             handleRepeatDaySelection(at: index, isSelected: isSelected)
+            validateCanSave()
         case .selectAlarm(let index, let isSelected):
             handleAlarmSelection(at: index, isSelected: isSelected)
         }
+    }
+    
+    private func updateSchedule() async {
+        do {
+            guard let scheduleId = preEvent?.id else { return }
+            try await updateScheduleUseCase.execute(
+                scheduleId: scheduleId,
+                isOneDayDeleted: isOneDayDeleted,
+                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
+                scheduleData: createSchedule()
+            )
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
+        }
+    }
+    
+    private func updateRoutine() {
+        
     }
     
     private func saveEvent() {
@@ -125,7 +171,7 @@ final class EventMakorViewModel: BaseViewModel {
             TDLogger.info("일정 생성 성공: \(schedule)")
             output.send(.savedEvent)
         } catch {
-            output.send(.failureAPI("종일 여부 설정 시, 알람은 설정할 수 없습니다."))
+            output.send(.failureAPI(error.localizedDescription))
         }
     }
     
@@ -259,5 +305,16 @@ final class EventMakorViewModel: BaseViewModel {
             alarm = nil
             TDLogger.info("알람 해제됨")
         }
+    }
+    
+    private func validateCanSave() {
+        var canSave = false
+        switch mode {
+        case .schedule:
+            canSave = !(title?.isEmpty ?? true)
+        case .routine:
+            canSave = !(title?.isEmpty ?? true) && !(repeatDays?.isEmpty ?? true)
+        }
+        output.send(.canSaveEvent(canSave))
     }
 }

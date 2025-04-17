@@ -7,10 +7,10 @@ import TDCore
 final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
     // MARK: - Properties
     private let viewModel: DiaryMakorViewModel
+    private let isEdit: Bool
     private let input = PassthroughSubject<DiaryMakorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var isMoodSelected = false
-    private var isEdit: Bool
     weak var coordinator: DiaryMakorCoordinator?
     
     // MARK: - Initializer

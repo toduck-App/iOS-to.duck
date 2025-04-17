@@ -1,4 +1,5 @@
 import UIKit
+import FittedSheets
 import Combine
 import TDDesign
 import TDCore
@@ -11,6 +12,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     // MARK: - Properties
     private let mode: Mode
+    private let isEdit: Bool
     private let viewModel: EventMakorViewModel
     private let eventMakorView: EventMakorView
     private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
@@ -20,9 +22,11 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     // MARK: - Initializer
     init(
         mode: Mode,
+        isEdit: Bool,
         viewModel: EventMakorViewModel
     ) {
         self.mode = mode
+        self.isEdit = isEdit
         self.viewModel = viewModel
         self.eventMakorView = EventMakorView(mode: mode)
         super.init()
@@ -65,7 +69,13 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         setupDelegate()
         setupCategory()
         eventMakorView.saveButton.addAction(UIAction { [weak self] _ in
-            self?.input.send(.saveEvent)
+            if self?.isEdit == true && self?.mode == .schedule {
+                self?.presentSheetEditMode()
+            } else if self?.isEdit == true && self?.mode == .routine {
+                self?.input.send(.tapEditRoutineButton)
+            } else {
+                self?.input.send(.tapSaveTodoButton)
+            }
         }, for: .touchUpInside)
     }
     
@@ -96,6 +106,9 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                     self?.showErrorAlert(errorMessage: "\(missing)이(가) 입력되지 않았어요.")
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
+                case .canSaveEvent(let isEnabled):
+                    self?.eventMakorView.saveButton.isEnabled = isEnabled
+                    self?.eventMakorView.noticeSnackBarView.isHidden = isEnabled
                 }
             }.store(in: &cancellables)
     }
@@ -123,6 +136,25 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             self.eventMakorView.dummyViewHeightConstraint?.update(offset: 40)
             keyboardAdjustableView.transform = .identity
         }
+    }
+    
+    private func presentSheetEditMode() {
+        let editScheduleModeViewController = EditScheduleModeViewController()
+        editScheduleModeViewController.delegate = self
+        let sheetController = SheetViewController(
+            controller: editScheduleModeViewController,
+            sizes: [.fixed(340)],
+            options: .init(
+                pullBarHeight: 0,
+                shouldExtendBackground: false,
+                setIntrinsicHeightOnNavigationControllers: false,
+                useFullScreenMode: false,
+                shrinkPresentingViewController: false,
+                isRubberBandEnabled: false
+            )
+        )
+        sheetController.cornerRadius = 28
+        present(sheetController, animated: true, completion: nil)
     }
     
     private func setupDelegate() {
@@ -174,6 +206,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
         if isAllDay {
             // "종일"로 표시 및 입력 이벤트 전송
             eventMakorView.timeForm.updateDescription("종일")
+            eventMakorView.alarmForm.updateAlarmContent(isAllDay: true)
             input.send(.selectTime(isAllDay, nil))
         } else {
             // 선택된 Date 생성
@@ -186,6 +219,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             
             let displayTime = selectedDate.convertToString(formatType: .time12HourEnglish)
             eventMakorView.timeForm.updateDescription(displayTime)
+            eventMakorView.alarmForm.updateAlarmContent(isAllDay: false)
             input.send(.selectTime(isAllDay, selectedDate))
             TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
         }
@@ -214,13 +248,6 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == eventMakorView.titleForm {
             input.send(.updateTitleTextField(text))
-            if text.isEmpty {
-                eventMakorView.saveButton.isEnabled = false
-                eventMakorView.noticeSnackBarView.isHidden = false
-            } else {
-                eventMakorView.saveButton.isEnabled = true
-                eventMakorView.noticeSnackBarView.isHidden = true
-            }
         }
         
         if textField == eventMakorView.memoTextView {
@@ -292,5 +319,15 @@ extension EventMakorViewController: UIScrollViewDelegate {
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.view.layoutIfNeeded()
         }
+    }
+}
+
+extension EventMakorViewController: EditScheduleModeDelegate {
+    func didTapTodayScheduleApply() {
+        input.send(.tapScheduleEditTodayButton)
+    }
+    
+    func didTapAllScheduleApply() {
+        input.send(.tapScheduleEditAllButton)
     }
 }

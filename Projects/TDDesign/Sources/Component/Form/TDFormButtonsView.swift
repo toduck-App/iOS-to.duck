@@ -36,7 +36,14 @@ public final class TDFormButtonsView: UIView {
         $0.alignment = .center
     }
     private var titleImageView: UIImageView?
+    private let titleLabelContainerView = UIView()
     private let titleLabel = TDLabel(toduckFont: .boldBody1)
+    private let requiredLabel = TDLabel(
+        labelText: "*",
+        toduckFont: .boldBody1,
+        alignment: .left,
+        toduckColor: TDColor.Primary.primary500
+    )
     
     private let buttonHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -48,6 +55,8 @@ public final class TDFormButtonsView: UIView {
     
     // MARK: - Properties
     private let type: TDFormButtonsViewType
+    private var daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"]
+    private var alarmTimeList = ["10분 전", "30분 전", "1시간 전"]
     public weak var delegate: TDFormButtonsViewDelegate?
     
     // MARK: - Initialize
@@ -58,6 +67,7 @@ public final class TDFormButtonsView: UIView {
         setupView()
         setupLayout()
         setupActions()
+        requiredLabel.isHidden = true
     }
     
     @available(*, unavailable)
@@ -85,10 +95,45 @@ public final class TDFormButtonsView: UIView {
         }
     }
     
+    public func showRequiredLabel() {
+        requiredLabel.isHidden = false
+    }
+    
+    public func updateAlarmContent(isAllDay: Bool) {
+        alarmTimeList = isAllDay ? ["1일 전"] : ["10분 전", "30분 전", "1시간 전"]
+    
+        buttonHorizontalStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        buttons.removeAll()
+
+        buttons = alarmTimeList.enumerated().map { index, title in
+            let button = TDSelectableButton(
+                title: title,
+                backgroundColor: TDColor.Neutral.neutral50,
+                foregroundColor: TDColor.Neutral.neutral800,
+                font: TDFont.mediumBody2.font
+            )
+            button.tag = index
+            button.setInset()
+            return button
+        }
+
+        buttons.forEach {
+            buttonHorizontalStackView.addArrangedSubview($0)
+            $0.addAction(UIAction { [weak self] action in
+                guard let sender = action.sender as? TDSelectableButton else { return }
+                self?.buttonTapped(sender)
+            }, for: .touchUpInside)
+        }
+    }
+    
     // MARK: - Setup
     private func setupView() {
         configureTitle()
-        configureButtons()
+        if type == .alarm {
+            updateAlarmContent(isAllDay: true)
+        } else {
+            configureButtons()
+        }
     }
     
     private func configureTitle() {
@@ -108,9 +153,9 @@ public final class TDFormButtonsView: UIView {
         let buttonTitles: [String] = {
             switch type {
             case .repeatDay:
-                return ["월", "화", "수", "목", "금", "토", "일"]
+                return daysOfWeek
             case .alarm:
-                return ["10분 전", "30분 전", "1시간 전"]
+                return alarmTimeList
             }
         }()
         
@@ -155,7 +200,19 @@ public final class TDFormButtonsView: UIView {
                 $0.size.equalTo(20)
             }
         }
-        titleHorizontalStackView.addArrangedSubview(titleLabel)
+        titleHorizontalStackView.addArrangedSubview(titleLabelContainerView)
+        titleLabelContainerView.addSubview(titleLabel)
+        titleLabelContainerView.addSubview(requiredLabel)
+        
+        titleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview()
+            $0.top.bottom.equalToSuperview()
+        }
+        
+        requiredLabel.snp.makeConstraints {
+            $0.leading.equalTo(titleLabel.snp.trailing).offset(4)
+            $0.top.bottom.equalToSuperview()
+        }
         
         // 버튼 추가
         buttons.forEach { buttonHorizontalStackView.addArrangedSubview($0) }

@@ -2,7 +2,7 @@ import TDCore
 import TDDomain
 import UIKit
 
-final class SocialDetailCoordinator: Coordinator {
+final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -18,7 +18,7 @@ final class SocialDetailCoordinator: Coordinator {
         self.injector = injector
         self.postID = id
     }
-
+    
     func start() {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
@@ -26,6 +26,8 @@ final class SocialDetailCoordinator: Coordinator {
         let fetchCommentUseCase = injector.resolve(FetchCommentUseCase.self)
         let createCommentUseCase =  injector.resolve(CreateCommentUseCase.self)
         let reportPostUseCase = injector.resolve(ReportPostUseCase.self)
+        let delteCommentUseCase = injector.resolve(DeleteCommentUseCase.self)
+        let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
         
         let socialDetailViewModel = SocialDetailViewModel(
             fetchPostUsecase: fetchPostUseCase,
@@ -34,6 +36,8 @@ final class SocialDetailCoordinator: Coordinator {
             toggleCommentLikeUseCase: toggleCommentLikeUseCase,
             createCommentUseCase: createCommentUseCase,
             reportPostUseCase: reportPostUseCase,
+            deleteCommentUseCase: delteCommentUseCase,
+            blockUserUseCase: blockUserUseCase,
             at: postID
         )
         
@@ -42,5 +46,20 @@ final class SocialDetailCoordinator: Coordinator {
         )
         socialDetailViewController.coordinator = self
         navigationController.pushTDViewController(socialDetailViewController, animated: true)
+    }
+    
+    func didTapUserProfile(id: User.ID) {
+        let socialProfileViewCoordinator = SocialProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: id
+        )
+        childCoordinators.append(socialProfileViewCoordinator)
+        socialProfileViewCoordinator.finishDelegate = self
+        socialProfileViewCoordinator.start()
+    }
+    
+    func didFinish(childCoordinator: any Coordinator) {
+        finish(by: .pop)
     }
 }

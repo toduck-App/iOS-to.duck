@@ -115,7 +115,7 @@ private extension SocialDetailCommentCell {
     
     func setupConstraints() {
         containerView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(12)
+            make.top.equalToSuperview()
             make.bottom.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(10)
         }
@@ -264,6 +264,22 @@ private extension SocialDetailCommentCell {
             $0.onNicknameTapped = { [weak self] in
                 guard let self else { return }
                 commentDelegate?.didTapNicknameLabel(self, comment.user.id)
+            }
+            $0.onBlockTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapBlock(self, comment.user.id)
+            }
+            $0.onReportTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapReport(self, comment.id)
+            }
+            $0.onEditTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapEditComment(self, comment.id)
+            }
+            $0.onDeleteTapped = { [weak self] in
+                guard let self else { return }
+                commentDelegate?.didTapDeleteComment(self, comment.id)
             }
         }
         header.snp.makeConstraints { $0.height.equalTo(24) }

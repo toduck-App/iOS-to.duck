@@ -24,10 +24,10 @@ final class RoutineShareCoordinator: Coordinator {
     }
 
     func start() {
-        let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
+        let shareRoutineUseCase = injector.resolve(ShareRoutineUseCase.self)
         let viewModel = RoutineShareViewModel(
             routine: routine,
-            createRoutineUseCase: createRoutineUseCase
+            shareRoutineUseCase: shareRoutineUseCase
         )
         let controller = RoutineShareViewController(viewModel: viewModel)
         controller.coordinator = self
@@ -58,5 +58,16 @@ extension RoutineShareCoordinator: RoutineShareCoordinatorDelegate, CoordinatorF
         sheetColorCoordinator.delegate = self
         childCoordinators.append(sheetColorCoordinator)
         sheetColorCoordinator.start()
+    }
+    
+    func showErrorAlert(message: String) {
+        if let viewController = navigationController.presentedViewController {
+            viewController.dismiss(animated: true)
+        }
+        guard let currentViewController = navigationController.topViewController as? BaseViewController<SocialProfileView> else {
+            return
+        }
+        currentViewController.showErrorAlert(errorMessage: message)
+        didFinish(childCoordinator: self)
     }
 }

@@ -24,15 +24,18 @@ final class EventMakorCoordinator: Coordinator {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
+        let updateScheduleUseCase = injector.resolve(UpdateScheduleUseCase.self)
         let viewModel = EventMakorViewModel(
             mode: mode,
             createScheduleUseCase: createScheduleUseCase,
             createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase,
-            preEvent: preEvent
+            updateScheduleUseCase: updateScheduleUseCase,
+            preEvent: preEvent,
+            selectedDate: selectedDate
         )
         viewModel.setupInitialDate(with: selectedDate)
-        let eventMakorViewController = EventMakorViewController(mode: mode, viewModel: viewModel)
+        let eventMakorViewController = EventMakorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         eventMakorViewController.hidesBottomBarWhenPushed = true
         eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)

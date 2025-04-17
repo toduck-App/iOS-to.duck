@@ -37,7 +37,10 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
         popupContentView.cancelButton.addAction(UIAction { [weak self] _ in
             self?.dismissPopup()
         }, for: .touchUpInside)
-    }
+        popupContentView.doneButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.createRoutine)
+        }, for: .touchUpInside)
+    } 
     
     private func setupTapGestureForCategoryImageView() {
         popupContentView.categoryImageView.isUserInteractionEnabled = true
@@ -64,7 +67,7 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
                 case .success:
                     dismissPopup()
                 case .failure(let description):
-                    TDLogger.debug(description)
+                    coordinator?.showErrorAlert(message: description)
                 }
             }
             .store(in: &cancellables)

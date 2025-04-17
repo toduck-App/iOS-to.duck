@@ -80,8 +80,7 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView> {
                         routineCount: routineCount
                     )
                 case .failure(let errorDescription):
-                    // TODO: Error Alert
-                    break
+                    self?.showErrorAlert(errorMessage: errorDescription)
                 }
             }
             .store(in: &cancellables)
@@ -105,7 +104,7 @@ private extension SocialProfileViewController {
 
 // MARK: UICollectionViewDelegate
 
-extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDelegate, UITableViewDelegate {
+extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDelegate, UITableViewDelegate, UIScrollViewDelegate {
     func didTapFollow() {
         input.send(.toggleFollow)
     }
@@ -158,6 +157,17 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
         // TODO: Detail View
         coordinator?.didTapPost(id: postId)
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView == layoutView.socialFeedCollectionView else { return }
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        if offsetY > contentHeight - frameHeight * 1.5 {
+            input.send(.loadMorePosts)
+        }
+    }
 }
 
 // MARK: Collection View Datastore Apply
@@ -165,6 +175,7 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
 extension SocialProfileViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
+        snapshot.deleteAllItems()
         snapshot.appendSections([0])
         snapshot.appendItems(posts.map(\.id))
         datasource?.apply(snapshot, animatingDifferences: false)

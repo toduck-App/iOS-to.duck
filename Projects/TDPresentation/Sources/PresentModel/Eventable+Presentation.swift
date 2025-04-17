@@ -12,9 +12,7 @@ extension Eventable {
     
     var time: String? {
         guard let eventTime = self.time else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "hh:mm a"
-        return formatter.string(from: eventTime)
+        return eventTime.convertToString(formatType: .time24Hour)
     }
 }
 
