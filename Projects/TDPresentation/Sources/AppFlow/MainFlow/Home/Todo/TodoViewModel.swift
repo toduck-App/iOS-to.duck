@@ -103,7 +103,6 @@ final class TodoViewModel: BaseViewModel {
         if todo.eventMode == .schedule {
             await finishSchedule(with: todo)
         } else {
-            // TODO: 백엔드에서 루틴 완료 로직이 문제가 있음
             await finishRoutine(with: todo)
         }
     }

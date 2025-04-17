@@ -17,7 +17,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private let selectedDayScheduleView = SelectedDayScheduleView()
     
     // MARK: - Properties
-    private let viewModel: ToduckCalendarViewModel!
+    private let viewModel: ToduckCalendarViewModel
     private let input = PassthroughSubject<ToduckCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var calendarHeightConstraint: Constraint?
@@ -28,34 +28,44 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
+    private var selectedDate: Date?
     weak var coordinator: ToduckCalendarCoordinator?
     
     init(viewModel: ToduckCalendarViewModel) {
         self.viewModel = viewModel
         super.init()
     }
-    
-    required init?(coder: NSCoder) {
-        viewModel = nil
-        super.init(coder: coder)
+
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Life Cycle
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
+        // 이번 달 일정들 조회
         let startDate = Date().startOfMonth()
         let endDate = Date().endOfMonth()
         input.send(
-            .fetchScheduleList(
+            .fetchSchedule(
                 startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay)
+                endDate: endDate.convertToString(formatType: .yearMonthDay),
+                isMonth: true
             )
         )
         setupCalendar()
         setupGesture()
         selectToday()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let dateString = selectedDate?.convertToString(formatType: .yearMonthDay) {
+            input.send(.fetchSchedule(startDate: dateString, endDate: dateString, isMonth: false))
+        }
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -102,6 +112,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     override func configure() {
+        view.backgroundColor = .white
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     }
@@ -115,6 +126,11 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedScheduleList:
                     self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                case .successFinishSchedule:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchSchedule(startDate: dateString, endDate: dateString, isMonth: false))
+                    }
                 case .failure(let errorMessage):
                     self?.showErrorAlert(errorMessage: errorMessage)
                 }
@@ -124,6 +140,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private func selectToday() {
         let today = Date()
         calendar.select(today)
+        selectedDate = today
+        viewModel.selectedDate = today
         selectedDayScheduleView.updateDateLabel(date: today)
     }
 }
@@ -225,6 +243,10 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDayScheduleView.updateDateLabel(date: date)
+        
+        let dateString = date.convertToString(formatType: .yearMonthDay)
+        viewModel.selectedDate = date
+        input.send(.fetchSchedule(startDate: dateString, endDate: dateString, isMonth: false))
     }
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
@@ -238,7 +260,6 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         appearance: FSCalendarAppearance,
         titleDefaultColorFor date: Date
     ) -> UIColor? {
-        // TODO: 인접한 달 Neutral600 색상 표시
         colorForDate(date)
     }
     
@@ -255,7 +276,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
 // MARK: - UITableViewDataSource
 extension ToduckCalendarViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.scheduleList.count
+        return viewModel.currentDayScheduleList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -268,17 +289,17 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             make.edges.equalToSuperview()
         }
         
-        let dummyData = viewModel.scheduleList[indexPath.row]
+        let schedule = viewModel.currentDayScheduleList[indexPath.row]
         detailView.configureCell(
-            color: .black,
-            title: dummyData.title,
-            time: nil,
-            category: nil,
-            isFinished: dummyData.isFinished,
-            place: dummyData.place
+            color: schedule.categoryColor,
+            title: schedule.title,
+            time: schedule.time,
+            category: schedule.categoryIcon,
+            isFinished: schedule.isFinished,
+            place: schedule.place
         )
-        detailView.configureButtonAction {
-            print("체크박스 클릭")
+        detailView.configureButtonAction { [weak self] in
+            self?.input.send(.checkBoxTapped(schedule))
         }
         
         return cell
