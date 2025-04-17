@@ -32,6 +32,7 @@ public enum DateFormatType {
                 $0.dateFormat = "a h시 m분"
                 $0.amSymbol = "오전"
                 $0.pmSymbol = "오후"
+                $0.locale = Locale(identifier: "ko_KR")
             }
         case .time12HourEnglish:
             return DateFormatter().then {

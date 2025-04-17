@@ -196,7 +196,7 @@ public final class EventDetailView: UIView {
     
     private func changeCheckBoxButtonImage(isFinished: Bool) {
         let checkBoxImage: UIImage = {
-            if isFinished {
+            if !isFinished {
                 return TDImage.CheckBox.empty
             } else {
                 let key = ColorValue(color: identifierColor)
