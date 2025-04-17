@@ -20,6 +20,11 @@ final class SelectedDayScheduleView: BaseView {
     let scheduleTableView = UITableView().then {
         $0.backgroundColor = .white
     }
+    let noScheduleLabel = TDLabel(
+        labelText: "기록한 일정이 없는 날이에요",
+        toduckFont: .mediumBody3,
+        toduckColor: TDColor.Neutral.neutral500
+    )
     
     func updateDateLabel(date: Date) {
         let dateFormatter = DateFormatter()
@@ -30,9 +35,10 @@ final class SelectedDayScheduleView: BaseView {
     
     // MARK: - Setup & Configuration
     override func configure() {
+        noScheduleLabel.isHidden = true
         scheduleTableView.register(
-            UITableViewCell.self,
-            forCellReuseIdentifier: UITableViewCell.identifier
+            ScheduleDetailCell.self,
+            forCellReuseIdentifier: ScheduleDetailCell.identifier
         )
     }
     
@@ -42,6 +48,7 @@ final class SelectedDayScheduleView: BaseView {
         headerView.addSubview(calendarImageView)
         headerView.addSubview(dateLabel)
         headerView.addSubview(downDirectionImageView)
+        addSubview(noScheduleLabel)
     }
     
     override func layout() {
@@ -72,6 +79,11 @@ final class SelectedDayScheduleView: BaseView {
             $0.leading.equalTo(22)
             $0.trailing.equalTo(-16)
             $0.bottom.equalToSuperview()
+        }
+        
+        noScheduleLabel.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom).offset(36)
+            $0.centerX.equalToSuperview()
         }
     }
 }

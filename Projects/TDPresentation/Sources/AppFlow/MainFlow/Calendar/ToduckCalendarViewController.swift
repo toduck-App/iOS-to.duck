@@ -97,12 +97,12 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func layout() {
         calendarHeader.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
-            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(18)
         }
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(8)
             self.calendarHeightConstraint = $0.height.equalTo(Constant.calendarHeight).constraint
         }
         selectedDayScheduleView.snp.makeConstraints {
@@ -212,7 +212,6 @@ private extension ToduckCalendarViewController {
         }
     }
     
-    // FIXME: FSCalendarCollectionView가 아니라 UIView가 늘어나고 있음
     private func adjustCalendarHeight(for detailViewState: DetailViewState) {
         let newCalendarHeight: CGFloat = Constant.calendarHeight
         
@@ -275,33 +274,29 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
 
 // MARK: - UITableViewDataSource
 extension ToduckCalendarViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         return viewModel.currentDayScheduleList.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
-        
-        let detailView = EventDetailView()
-        cell.contentView.addSubview(detailView)
-        
-        detailView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ScheduleDetailCell.identifier,
+            for: indexPath
+        ) as? ScheduleDetailCell else {
+            return UITableViewCell()
         }
-        
+
         let schedule = viewModel.currentDayScheduleList[indexPath.row]
-        detailView.configureCell(
-            color: schedule.categoryColor,
-            title: schedule.title,
-            time: schedule.time,
-            category: schedule.categoryIcon,
-            isFinished: schedule.isFinished,
-            place: schedule.place
-        )
-        detailView.configureButtonAction { [weak self] in
+        cell.configure(with: schedule) { [weak self] in
             self?.input.send(.checkBoxTapped(schedule))
         }
-        
+
         return cell
     }
 }
