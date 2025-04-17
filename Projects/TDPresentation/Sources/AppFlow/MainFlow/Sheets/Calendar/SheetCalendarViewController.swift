@@ -15,7 +15,7 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         $0.tintColor = TDColor.Neutral.neutral700
     }
     private let titleLabel = TDLabel(
-        labelText: "날짜 선택",
+        labelText: "날짜 설정",
         toduckFont: TDFont.boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
     )

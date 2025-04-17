@@ -99,6 +99,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                             case "title": return "제목"
                             case "category": return "카테고리"
                             case "startDate": return "시작 날짜"
+                            case "isAllDay": return "시간 선택"
                             default: return $0
                             }
                         }

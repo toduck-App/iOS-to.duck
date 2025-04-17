@@ -97,7 +97,7 @@ public final class TDFormMoveView: UIView {
             titleImageView = UIImageView(image: TDImage.timeSmall)
             titleImageView?.contentMode = .scaleAspectFit
             titleLabel.setTitleLabel("시간")
-            descriptionLabel.setText("종일")
+            descriptionLabel.setText("없음")
         case .cycle:
             titleImageView = UIImageView(image: TDImage.Repeat.cycleMedium)
             titleImageView?.contentMode = .scaleAspectFit
