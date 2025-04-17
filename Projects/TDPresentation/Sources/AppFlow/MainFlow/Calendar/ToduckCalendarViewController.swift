@@ -1,10 +1,3 @@
-//
-//  CalendarViewController.swift
-//  toduck
-//
-//  Created by 박효준 on 9/29/24.
-//
-
 import FSCalendar
 import SnapKit
 import TDDesign
@@ -106,7 +99,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
-            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
+            $0.leading.trailing.equalToSuperview()
             self.calendarHeightConstraint = $0.height.equalTo(Constant.calendarHeight).constraint
         }
         selectedDayScheduleView.snp.makeConstraints {

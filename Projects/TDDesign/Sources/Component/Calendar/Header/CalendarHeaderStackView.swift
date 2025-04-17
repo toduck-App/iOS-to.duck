@@ -2,6 +2,10 @@ import UIKit
 import SnapKit
 import Then
 
+public protocol CalendarHeaderStackViewDelegate: AnyObject {
+    func calendarHeader(_ header: CalendarHeaderStackView, didSelect date: Date)
+}
+
 public final class CalendarHeaderStackView: UIStackView {
     private let titleLabel = TDLabel(
         labelText: "2024년 8월",
@@ -9,42 +13,49 @@ public final class CalendarHeaderStackView: UIStackView {
         alignment: .center,
         toduckColor: TDColor.Neutral.neutral700
     )
-    public let pickerButton: PickerButton
-    
+    public let pickerImageView: PickerImageView
+    public weak var delegate: CalendarHeaderStackViewDelegate?
+
+    private lazy var datePicker = UIDatePicker().then {
+        if #available(iOS 17.4, *) {
+            $0.datePickerMode = .yearAndMonth
+        } else {
+            $0.datePickerMode = .date
+        }
+        $0.preferredDatePickerStyle = .wheels
+        $0.locale = Locale(identifier: "ko_KR")
+    }
+
     public init(type: CalendarType) {
-        self.pickerButton = PickerButton(type: type == .sheet ? .sheet : .toduck)
+        self.pickerImageView = PickerImageView(type: type == .sheet ? .sheet : .toduck)
         super.init(frame: .zero)
         commonInit(type: type)
+        setupTapGesture()
     }
-    
+
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func commonInit(type: CalendarType) {
         axis = .horizontal
         spacing = type == .sheet ? 4 : 8
+        pickerImageView.snp.makeConstraints { $0.size.equalTo(18) }
         
         switch type {
-        case .toduck, .focus:
+        case .toduck, .focus, .diary:
             setupDefaultHeader()
-        case .diary:
-            setupDiaryHeader()
         case .sheet:
             setupSheetHeader()
         }
     }
-    
+
     private func setupDefaultHeader() {
         addArrangedSubview(titleLabel)
-        addArrangedSubview(pickerButton)
+        addArrangedSubview(pickerImageView)
     }
-    
-    private func setupDiaryHeader() {
-        setupDefaultHeader()
-    }
-    
+
     private func setupSheetHeader() {
         let calendarImage = UIImageView(image: TDImage.Calendar.top3Medium)
         let label = TDLabel(
@@ -55,6 +66,52 @@ public final class CalendarHeaderStackView: UIStackView {
         
         addArrangedSubview(calendarImage)
         addArrangedSubview(label)
-        addArrangedSubview(pickerButton)
+        addArrangedSubview(pickerImageView)
+    }
+
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(headerTapped))
+        isUserInteractionEnabled = true
+        addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func headerTapped() {
+        let alert = UIAlertController(
+            title: "원하는 년/월을 선택해주세요",
+            message: "\n\n\n\n\n\n\n\n\n\n\n\n",
+            preferredStyle: .actionSheet
+        )
+
+        datePicker.frame = CGRect(x: 0, y: 50, width: alert.view.bounds.width, height: 250)
+        alert.view.addSubview(datePicker)
+
+        let selectAction = UIAlertAction(title: "선택", style: .default) { [weak self] _ in
+            guard let self else { return }
+            delegate?.calendarHeader(self, didSelect: datePicker.date)
+        }
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        
+        alert.addAction(selectAction)
+        alert.addAction(cancelAction)
+        
+        if let topVC = getTopViewController() {
+            topVC.present(alert, animated: true)
+        }
+    }
+
+    private func getTopViewController() -> UIViewController? {
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene }).first,
+              let window = windowScene.windows.first,
+              let rootVC = window.rootViewController else {
+            return nil
+        }
+
+        var topVC = rootVC
+        while let presentedVC = topVC.presentedViewController {
+            topVC = presentedVC
+        }
+        return topVC
     }
 }
