@@ -181,7 +181,7 @@ extension SocialFeedCollectionViewCell {
         
         headerView.onEditTapped = { [weak self] in
             guard let self else { return }
-            socialFeedCellDelegate?.didTapEditPost(self, item.id)
+            socialFeedCellDelegate?.didTapEditPost(self, item)
         }
         
         headerView.onDeleteTapped = { [weak self] in

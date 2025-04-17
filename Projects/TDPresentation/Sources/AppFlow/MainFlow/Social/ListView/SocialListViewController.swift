@@ -220,9 +220,9 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
         presentPopup(with: controller)
     }
     
-    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+    func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post) {
         TDLogger.debug("EDIT POST")
-//        coordinator?.didTapEditPost(id: postID)
+        coordinator?.didTapEditPost(post: post)
     }
     
     func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {

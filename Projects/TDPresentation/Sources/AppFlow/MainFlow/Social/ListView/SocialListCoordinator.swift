@@ -102,6 +102,17 @@ extension SocialListCoordinator: SocialListDelegate {
         createCoordinator.start()
     }
     
+    func didTapEditPost(post: Post) {
+        let createCoordinator = SocialCreateCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            post: post
+        )
+        createCoordinator.finishDelegate = self
+        childCoordinators.append(createCoordinator)
+        createCoordinator.start()
+    }
+    
     func didTapRoutine(routine: Routine) {
         let coordinator = RoutineShareCoordinator(
             navigationController: navigationController,

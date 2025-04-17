@@ -18,7 +18,7 @@ protocol SocialPostDelegate: AnyObject {
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
     
-    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID)
+    func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post)
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
     
@@ -44,7 +44,7 @@ extension SocialPostDelegate {
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
     
-    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
+    func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post) {}
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
     

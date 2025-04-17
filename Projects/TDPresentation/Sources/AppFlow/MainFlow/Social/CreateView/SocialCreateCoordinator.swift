@@ -7,13 +7,16 @@ final class SocialCreateCoordinator: Coordinator {
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    var post: Post?
 
     init(
         navigationController: UINavigationController,
-        injector: DependencyResolvable
+        injector: DependencyResolvable,
+        post: Post? = nil
     ) {
         self.navigationController = navigationController
         self.injector = injector
+        self.post = post
     }
 
     func start() {
@@ -22,6 +25,7 @@ final class SocialCreateCoordinator: Coordinator {
         let socialCreateViewController = SocialCreateViewController(
             viewModel: socialCreateViewModel
         )
+        socialCreateViewController.post = post
         socialCreateViewController.coordinator = self
         navigationController.pushTDViewController(socialCreateViewController, animated: true)
     }

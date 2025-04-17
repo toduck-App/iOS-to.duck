@@ -7,11 +7,11 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
     weak var coordinator: SocialCreateCoordinator?
 
     private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
-
     private let input = PassthroughSubject<SocialCreateViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var isAtBottom = false
     let viewModel: SocialCreateViewModel!
+    var post: Post? = nil
 
     init(viewModel: SocialCreateViewModel) {
         self.viewModel = viewModel
@@ -44,6 +44,10 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             self?.didTapRegisterButton()
         }, for: .touchUpInside)
+        
+        if let post = post {
+            editPost(post)
+        }
     }
 
     override func binding() {
@@ -69,6 +73,26 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    func editPost(_ post: Post, images: [Data] = []) {
+        if let title = post.titleText {
+            layoutView.titleTextFieldView.setupTextField(title)
+            input.send(.setTitle(title))
+        }
+        if !post.contentText.isEmpty {
+            layoutView.descriptionTextFieldView.setupTextView(text: post.contentText)
+            input.send(.setContent(post.contentText))
+        }
+        
+        if images.count > 0 {
+            layoutView.formPhotoView.addPhotos(images)
+            input.send(.setImages(images))
+        }
+        if let routine = post.routine {
+            layoutView.socialSelectRoutineView.setRoutine(string: routine.title)
+            input.send(.setRoutine(routine))
+        }
     }
 }
 

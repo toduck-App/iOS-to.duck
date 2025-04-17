@@ -189,7 +189,7 @@ extension SocialDetailPostCell {
         
         headerView.onEditTapped = { [weak self] in
             guard let self else { return }
-            socialDetailPostCellDelegate?.didTapEditPost(self, item.id)
+            socialDetailPostCellDelegate?.didTapEditPost(self, item)
         }
         
         headerView.onDeleteTapped = { [weak self] in
