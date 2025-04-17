@@ -53,6 +53,6 @@ public final class DiaryRepositoryImpl: DiaryRepository {
     }
     
     public func fetchDiaryCompareCount(yearMonth: String) async throws -> Int {
-        try await service.fetchDiaryCompareCount(yearMonth: yearMonth)
+        try await diaryService.fetchDiaryCompareCount(yearMonth: yearMonth)
     }
 }
