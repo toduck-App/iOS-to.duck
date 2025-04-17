@@ -77,7 +77,7 @@ final class DiaryCalendarViewModel: BaseViewModel {
             let existingImageCount = currentDiary.diaryImageUrls?.count ?? 0
             
             // 기존 이미지가 1개일 때만 1장만 추가 가능
-            if existingImageCount + (currentDiary.diaryImageUrls?.count ?? 1) > 2 {
+            if existingImageCount + images.count > 2 {
                 output.send(.failureAPI("기존 이미지가 있어서 최대 2장까지만 첨부할 수 있습니다."))
                 return
             }
