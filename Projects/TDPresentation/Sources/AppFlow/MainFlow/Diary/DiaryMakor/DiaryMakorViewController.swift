@@ -36,7 +36,9 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .saveDiary:
+                case .setImage:
+                    self?.layoutView.formPhotoView.addPhotos(self?.viewModel.images ?? [])
+                case .savedDiary:
                     self?.coordinator?.finish(by: .pop)
                 case .failure(let message):
                     self?.showErrorAlert(errorMessage: message)
@@ -48,6 +50,7 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         layoutView.isEdit = isEdit
         layoutView.scrollView.delegate = self
         layoutView.titleForm.delegate = self
+        layoutView.formPhotoView.delegate = self
         layoutView.recordTextView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
         
@@ -128,5 +131,22 @@ extension DiaryMakorViewController: TDFormTextFieldDelegate {
 extension DiaryMakorViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
         input.send(.updateMemoTextView(text))
+    }
+}
+
+// MARK: - SocialAddPhotoViewDelegate
+extension DiaryMakorViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
+    func didSelectPhotos(_ picker: TDPhotoPickerController, photos: [Data]) {
+        input.send(.setImages(photos))
+    }
+
+    func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
+        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
+    }
+
+    func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
+        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: 2)
+        photoPickerController.pickerDelegate = self
+        navigationController?.pushTDViewController(photoPickerController, animated: true)
     }
 }

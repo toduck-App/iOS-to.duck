@@ -267,6 +267,7 @@ public enum TDImage {
     public enum Analyze {
         public static let bookIncrease = TDDesignAsset.Images.bookIncrease.image
         public static let bookDecrease = TDDesignAsset.Images.bookDecrease.image
+        public static let bookZero = TDDesignAsset.Images.bookZero.image
         public static let focusZero = TDDesignAsset.Images.focusZero.image
         public static let focus1to20 = TDDesignAsset.Images.focus1to20.image
         public static let focus21to40 = TDDesignAsset.Images.focus21to40.image

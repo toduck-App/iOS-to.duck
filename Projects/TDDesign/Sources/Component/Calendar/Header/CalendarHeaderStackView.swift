@@ -5,7 +5,7 @@ import Then
 public final class CalendarHeaderStackView: UIStackView {
     private let titleLabel = TDLabel(
         labelText: "2024년 8월",
-        toduckFont: TDFont.boldHeader4,
+        toduckFont: TDFont.boldHeader5,
         alignment: .center,
         toduckColor: TDColor.Neutral.neutral700
     )
@@ -25,10 +25,12 @@ public final class CalendarHeaderStackView: UIStackView {
     private func commonInit(type: CalendarType) {
         axis = .horizontal
         spacing = type == .sheet ? 4 : 8
-
+        
         switch type {
-        case .toduck, .diary, .focus:
+        case .toduck, .focus:
             setupDefaultHeader()
+        case .diary:
+            setupDiaryHeader()
         case .sheet:
             setupSheetHeader()
         }
@@ -39,6 +41,10 @@ public final class CalendarHeaderStackView: UIStackView {
         addArrangedSubview(pickerButton)
     }
     
+    private func setupDiaryHeader() {
+        setupDefaultHeader()
+    }
+    
     private func setupSheetHeader() {
         let calendarImage = UIImageView(image: TDImage.Calendar.top3Medium)
         let label = TDLabel(
@@ -46,7 +52,7 @@ public final class CalendarHeaderStackView: UIStackView {
             alignment: .center,
             toduckColor: TDColor.Neutral.neutral600
         )
-
+        
         addArrangedSubview(calendarImage)
         addArrangedSubview(label)
         addArrangedSubview(pickerButton)

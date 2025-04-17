@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 import Combine
 import FSCalendar
 import SnapKit
@@ -19,6 +20,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     let calendarContainerView = UIView()
+    let calendarHeaderContainerView = UIView()
     let calendarHeader = CalendarHeaderStackView(type: .diary)
     let calendar = DiaryCalendar()
     
@@ -68,6 +70,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        viewModel.selectedDate = selectedDate
         fetchDiaryList(for: calendar.currentPage)
     }
     
@@ -79,8 +82,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         contentStackView.addArrangedSubview(noDiaryContainerView)
         contentStackView.addArrangedSubview(diaryDetailContainerView)
         
-        calendarContainerView.addSubview(calendarHeader)
+        calendarContainerView.addSubview(calendarHeaderContainerView)
         calendarContainerView.addSubview(calendar)
+        calendarHeaderContainerView.addSubview(calendarHeader)
         
         noDiaryContainerView.addSubview(noDiaryImageView)
         noDiaryContainerView.addSubview(noDiaryLabel)
@@ -100,10 +104,13 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         calendarContainerView.snp.makeConstraints {
             $0.height.equalTo(400)
         }
-        calendarHeader.snp.makeConstraints {
+        calendarHeaderContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.equalToSuperview().offset(20)
-            $0.height.equalTo(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(40)
+        }
+        calendarHeader.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(12)
         }
         calendar.snp.makeConstraints {
             $0.top.equalTo(calendarHeader.snp.bottom).offset(30)
@@ -141,6 +148,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         layoutView.backgroundColor = TDColor.baseWhite
         noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral50
         diaryDetailContainerView.backgroundColor = TDColor.Neutral.neutral50
+        calendarHeaderContainerView.layer.borderWidth = 1
+        calendarHeaderContainerView.layer.borderColor = TDColor.Neutral.neutral200.cgColor
+        calendarHeaderContainerView.layer.cornerRadius = 8
         diaryDetailView.dropDownHoverView.delegate = self
         diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
         diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
@@ -159,6 +169,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                     self?.updateDiaryView(with: diary)
                 case .fetchedDiaryList:
                     self?.calendar.reloadData()
+                    self?.updateDiaryView(with: self?.viewModel.monthDiaryList[self?.selectedDate ?? Date()])
+                case .setImage:
+                    self?.fetchDiaryList(for: self?.selectedDate ?? Date())
                 case .notFoundDiary:
                     self?.updateDiaryView()
                 case .deletedDiary:
@@ -176,29 +189,67 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         input.send(.selectDay(date.normalized))
     }
     
-    private func updateDiaryView(with diary: Diary? = nil) {
-        let hasDiary = diary != nil
-        diaryDetailContainerView.isHidden = !hasDiary
-        noDiaryContainerView.isHidden = hasDiary
-        
-        if let diary {
-            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: true)
-            diaryDetailView.configure(
-                emotionImage: diary.emotion.circleImage,
-                date: diary.date.convertToString(formatType: .monthDayWithWeekday),
-                title: diary.title,
-                        memo: diary.memo,
-                photos: [TDImage.Mood.angry, TDImage.Mood.happy]
-            )
-        } else {
-            delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: false)
-        }
-    }
-    
     private func fetchDiaryList(for date: Date) {
         let components = Calendar.current.dateComponents([.year, .month], from: date)
         guard let year = components.year, let month = components.month else { return }
         input.send(.fetchDiaryList(year, month))
+    }
+    
+    // MARK: 일기 불러온 후 이미지 불러오기
+    private func updateDiaryView(with diary: Diary? = nil) {
+        updateContainerVisibility(for: diary)
+        delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: diary != nil)
+        
+        guard let diary = diary else { return }
+        
+        if let imageURLs = diary.diaryImageUrls, !imageURLs.isEmpty {
+            loadImages(from: imageURLs) { [weak self] loadedImages in
+                self?.configureDiaryDetailView(diary: diary, images: loadedImages)
+            }
+        } else {
+            configureDiaryDetailView(diary: diary, images: [])
+        }
+    }
+    
+    private func updateContainerVisibility(for diary: Diary?) {
+        diaryDetailContainerView.isHidden = diary == nil
+        noDiaryContainerView.isHidden = diary != nil
+    }
+
+    private func configureDiaryDetailView(diary: Diary, images: [UIImage]) {
+        diaryDetailView.configure(
+            emotionImage: diary.emotion.circleImage,
+            date: diary.date.convertToString(formatType: .monthDayWithWeekday),
+            title: diary.title,
+            memo: diary.memo,
+            photos: images,
+            imageURLs: diary.diaryImageUrls
+        )
+        diaryDetailView.delegate = self
+    }
+
+    private func loadImages(from imageURLs: [String], completion: @escaping ([UIImage]) -> Void) {
+        let group = DispatchGroup()
+        var loadedImages: [UIImage] = Array(repeating: UIImage(), count: imageURLs.count)
+        
+        for (index, urlString) in imageURLs.enumerated() {
+            guard let url = URL(string: urlString) else { continue }
+            
+            group.enter()
+            KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
+                switch result {
+                case .success(let value):
+                    loadedImages[index] = value.image
+                case .failure(let error):
+                    self?.showErrorAlert(errorMessage: error.localizedDescription)
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(loadedImages.filter { $0.size != .zero })
+        }
     }
 }
 
@@ -236,6 +287,8 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
     }
 }
 
+// MARK: - DiaryCalendarConfigurable
+
 extension DiaryCalendarViewController: TDCalendarConfigurable {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         updateHeaderLabel(for: calendar.currentPage)
@@ -265,6 +318,7 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {
+        viewModel.selectedDate = date
         selectedDate = date.normalized
         let normalizedDate = date.normalized
         
@@ -291,10 +345,33 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
     }
 }
 
-// MARK: DeleteEventViewControllerDelegate
+// MARK: - DeleteEventViewControllerDelegate
+
 extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
     func didTapDeleteButton() {
         input.send(.deleteDiary(viewModel.selectedDiary?.id ?? 0))
         dismiss(animated: true)
+    }
+}
+
+// MARK: - SocialAddPhotoViewDelegate
+extension DiaryCalendarViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
+    func didSelectPhotos(_ picker: TDPhotoPickerController, photos: [Data]) {
+        input.send(.setImages(photos))
+    }
+
+    func deniedPhotoAccess(_ picker: TDPhotoPickerController) {
+        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
+    }
+
+    func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
+        var maximumSelectablePhotos = 2
+        if viewModel.monthDiaryList[selectedDate]?.diaryImageUrls?.count == 1 {
+            maximumSelectablePhotos = 1
+        }
+        
+        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: maximumSelectablePhotos)
+        photoPickerController.pickerDelegate = self
+        navigationController?.pushTDViewController(photoPickerController, animated: true)
     }
 }

@@ -49,6 +49,7 @@ final class PhoneVerificationView: BaseView {
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
         $0.keyboardType = .numberPad
+        $0.textContentType = .telephoneNumber
         $0.adjustsFontSizeToFitWidth = true
     }
     let postButton = TDBaseButton(
@@ -74,6 +75,7 @@ final class PhoneVerificationView: BaseView {
         $0.placeholder = "인증 번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.textContentType = .oneTimeCode
         $0.keyboardType = .numberPad
     }
     let verificationNumberTimerLabel = TDLabel(

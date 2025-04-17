@@ -7,10 +7,12 @@ final class DiaryCalendarViewModel: BaseViewModel {
         case selectDay(Date)
         case fetchDiaryList(Int, Int)
         case deleteDiary(Int)
+        case setImages([Data])
     }
     
     enum Output {
         case selectedDiary(Diary)
+        case setImage
         case fetchedDiaryList
         case deletedDiary
         case notFoundDiary
@@ -18,17 +20,21 @@ final class DiaryCalendarViewModel: BaseViewModel {
     }
     
     private let fetchDiaryListUseCase: FetchDiaryListUseCase
+    private let updateDiaryUseCase: UpdateDiaryUseCase
     private let deleteDiaryUseCase: DeleteDiaryUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var monthDiaryList = [Date: Diary]()
     var selectedDiary: Diary?
+    var selectedDate: Date?
     
     init(
         fetchDiaryListUseCase: FetchDiaryListUseCase,
+        updateDiaryUseCase: UpdateDiaryUseCase,
         deleteDiaryUseCase: DeleteDiaryUseCase
     ) {
         self.fetchDiaryListUseCase = fetchDiaryListUseCase
+        self.updateDiaryUseCase = updateDiaryUseCase
         self.deleteDiaryUseCase = deleteDiaryUseCase
     }
     
@@ -37,6 +43,8 @@ final class DiaryCalendarViewModel: BaseViewModel {
             switch event {
             case .selectDay(let date):
                 self?.selecteDay(date: date)
+            case .setImages(let datas):
+                Task { await self?.setImages(datas) }
             case .fetchDiaryList(let year, let month):
                 Task { await self?.fetchDiaryList(year: year, month: month) }
             case .deleteDiary(let id):
@@ -53,6 +61,42 @@ final class DiaryCalendarViewModel: BaseViewModel {
             output.send(.selectedDiary(selectedDiary))
         } else {
             output.send(.notFoundDiary)
+        }
+    }
+    
+    private func setImages(_ images: [Data]) async {
+        if images.count > 2 {
+            output.send(.failureAPI("이미지는 최대 2개까지 첨부 가능합니다."))
+            return
+        }
+        
+        do {
+            guard let currentDiary = monthDiaryList[selectedDate ?? Date()] else {
+                throw NSError(domain: "Diary not found", code: 404, userInfo: nil)
+            }
+            let existingImageCount = currentDiary.diaryImageUrls?.count ?? 0
+            
+            // 기존 이미지가 1개일 때만 1장만 추가 가능
+            if existingImageCount + images.count > 2 {
+                output.send(.failureAPI("기존 이미지가 있어서 최대 2장까지만 첨부할 수 있습니다."))
+                return
+            }
+            
+            let newImageTuples = images.map { ("\(UUID().uuidString).jpg", $0) }
+            
+            let updatedDiary = Diary(
+                id: currentDiary.id,
+                date: currentDiary.date,
+                emotion: currentDiary.emotion,
+                title: currentDiary.title,
+                memo: currentDiary.memo,
+                diaryImageUrls: currentDiary.diaryImageUrls
+            )
+            
+            try await updateDiaryUseCase.execute(isChangeEmotion: false, diary: updatedDiary, image: newImageTuples)
+            output.send(.setImage)
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
         }
     }
     

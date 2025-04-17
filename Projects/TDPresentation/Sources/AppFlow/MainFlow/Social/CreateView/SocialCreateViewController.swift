@@ -60,8 +60,8 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
                     layoutView.socialSelectRoutineView.setRoutine(string: viewModel.selectedRoutine?.title ?? "")
                 case .setImage:
                     layoutView.formPhotoView.addPhotos(viewModel.images)
-                case .failure(let errorMessage):
-                    self.showErrorAlert(errorMessage: errorMessage)
+                case .failure(let message):
+                    showErrorAlert(errorMessage: message)
                 case .success:
                     coordinator?.didTapDoneButton()
                 case .canCreatePost(let isEnabled):
@@ -100,7 +100,7 @@ extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate
     }
 
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        // TODO: 권한 없을때 ? ALERT 필요
+        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
     }
 
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
