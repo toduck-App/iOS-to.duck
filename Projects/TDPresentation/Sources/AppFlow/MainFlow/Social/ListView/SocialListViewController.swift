@@ -233,9 +233,8 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
         coordinator?.didTapReport(id: postID)
     }
     
-    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID) {
-        // TODO: Routine 공유 View
-        TDLogger.debug("Routine Tap!")
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {
+        coordinator?.didTapRoutine(routine: routine)
     }
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {

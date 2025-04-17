@@ -101,6 +101,17 @@ extension SocialListCoordinator: SocialListDelegate {
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
     }
+    
+    func didTapRoutine(routine: Routine) {
+        let coordinator = RoutineShareCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            routine: routine
+        )
+        childCoordinators.append(coordinator)
+        coordinator.finishDelegate = self
+        coordinator.start()
+    }
 }
 
 // MARK: - Navigation Delegate

@@ -149,7 +149,7 @@ extension SocialFeedCollectionViewCell {
         let routineView = SocialRoutineView(with: routine)
         routineView.onTapperRoutine = { [weak self] in
             guard let self else { return }
-            socialFeedCellDelegate?.didTapRoutineView(self, routine.id)
+            socialFeedCellDelegate?.didTapRoutineView(self, routine)
         }
         bodyStackView.addArrangedSubview(routineView)
     }

@@ -88,12 +88,13 @@ public struct TDPostDTO: Codable {
         Post(
             id: socialId,
             user: owner.convertToEntity(),
+            titleText: title,
             contentText: content ?? "",
             imageList: images.map(\.url),
             timestamp: Date.convertFromString(createdAt, format: .serverDate) ?? Date(),
             likeCount: socialLikeInfo.likeCount,
             isLike: socialLikeInfo.isLikedByMe,
-            commentCount: commentCount,
+            commentCount: commentCount ?? comments?.count,
             shareCount: nil,
             routine: routine?.convertToEntity(),
             category: category

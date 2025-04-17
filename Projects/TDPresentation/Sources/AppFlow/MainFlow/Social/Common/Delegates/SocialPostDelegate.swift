@@ -6,7 +6,7 @@ protocol SocialPostDelegate: AnyObject {
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID)
     
-    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID)
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine)
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID)
     
@@ -32,7 +32,7 @@ extension SocialPostDelegate {
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {}
     
-    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID) {}
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {}
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
     
