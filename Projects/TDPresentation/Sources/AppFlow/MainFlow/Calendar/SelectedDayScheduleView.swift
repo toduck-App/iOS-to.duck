@@ -1,10 +1,3 @@
-//
-//  SelectedDayScheduleView.swift
-//  toduck
-//
-//  Created by 박효준 on 9/29/24.
-//
-
 import TDDesign
 import UIKit
 
@@ -14,11 +7,10 @@ final class SelectedDayScheduleView: BaseView {
         $0.image = TDImage.Calendar.top3Medium
         $0.contentMode = .scaleAspectFill
     }
-    private let dateLabel = UILabel().then {
-        $0.text = "9월 29일 (일)"
-        $0.font = TDFont.boldHeader5.font
-        $0.textColor = TDColor.Neutral.neutral700
-    }
+    private let dateLabel = TDLabel(
+        toduckFont: .boldHeader5,
+        toduckColor: TDColor.Neutral.neutral700
+    )
     private let downDirectionImageView = UIImageView().then {
         $0.image = TDImage.Direction.downMedium
     }
@@ -33,7 +25,7 @@ final class SelectedDayScheduleView: BaseView {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "M월 d일 (E)"
-        dateLabel.text = dateFormatter.string(from: date)
+        dateLabel.setText(dateFormatter.string(from: date))
     }
     
     // MARK: - Setup & Configuration

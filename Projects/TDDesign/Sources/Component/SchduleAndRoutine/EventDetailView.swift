@@ -41,7 +41,7 @@ public final class EventDetailView: UIView {
     )
     private let timeImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.clockMedium
+        $0.image = TDImage.clockMedium.withTintColor(TDColor.Neutral.neutral600)
     }
 
     /// 시간

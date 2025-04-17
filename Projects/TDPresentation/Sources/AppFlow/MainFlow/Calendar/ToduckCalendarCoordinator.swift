@@ -21,7 +21,7 @@ final class ToduckCalendarCoordinator: Coordinator {
         let toduckCalendarViewModel = ToduckCalendarViewModel(fetchScheduleListUseCase: fetchScheduleListUseCase)
         let toduckCalendarViewController = ToduckCalendarViewController(viewModel: toduckCalendarViewModel)
         toduckCalendarViewController.coordinator = self
-        navigationController.pushViewController(toduckCalendarViewController, animated: true)
+        navigationController.pushTDViewController(toduckCalendarViewController, animated: true)
     }
 }
 
