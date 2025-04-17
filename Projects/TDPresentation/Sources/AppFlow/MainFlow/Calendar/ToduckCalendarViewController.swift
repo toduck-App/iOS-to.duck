@@ -4,13 +4,11 @@ import TDDesign
 import UIKit
 import Combine
 
-// FIXME: 실 기기에서 빌드할 경우 캘린더 깨짐 현상 발생
 final class ToduckCalendarViewController: BaseViewController<BaseView> {
     // MARK: Nested Types
     private enum DetailViewState {
         case topExpanded
         case topCollapsed
-        case topHidden
     }
     
     // MARK: - UI Components
@@ -26,7 +24,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
     private var selectedDayViewTopCollapsed: CGFloat = 0
-    private var selectedDayViewTopHidden: CGFloat = 0
     private var isInitialLayoutDone = false  // 첫 실행 때만 레이아웃 업데이트
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
@@ -73,15 +70,11 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     private func updateConstants() {
-        let safeAreaTop = view.safeAreaInsets.top
         let calendarHeaderHeight = calendarHeader.frame.height
         let calendarHeight = calendar.frame.height
-        let dragViewHeight = selectedDayScheduleView.headerView.frame.height
-        let tabBarHeight = tabBarController?.tabBar.frame.height ?? 0
         
-        selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset
+        selectedDayViewTopExpanded = view.safeAreaInsets.top
         selectedDayViewTopCollapsed = calendarHeaderHeight + selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
-        selectedDayViewTopHidden = view.bounds.height - dragViewHeight - tabBarHeight
     }
     
     // MARK: - Setup
@@ -109,7 +102,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     override func configure() {
-        selectedDayScheduleView.scheduleTableView.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     }
@@ -152,57 +144,43 @@ private extension ToduckCalendarViewController {
     func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view).y
         let velocity = gesture.velocity(in: view).y
-        
+
         switch gesture.state {
         case .began:
             initialDetailViewState = self.currentDetailViewState
-            
+
         case .changed:
             var newTop = (selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed) + translation
-            newTop = max(selectedDayViewTopExpanded, min(selectedDayViewTopHidden, newTop))
+            newTop = max(selectedDayViewTopExpanded, min(selectedDayViewTopCollapsed, newTop))
             selectedDayViewTopConstraint?.update(offset: newTop)
             gesture.setTranslation(.zero, in: view)
-            
+
         case .ended, .cancelled:
             let currentTop = selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed
-            let shouldExpand: Bool
-            let shouldHide: Bool
             let targetTop: CGFloat
             let detailViewState: DetailViewState
-            
-            switch initialDetailViewState {
-            case .topHidden:
-                // TopHidden 상태에서는 위로 스와이프하면 무조건 TopCollapsed로 이동
+
+            if abs(velocity) > 500 {
+                // 빠른 스와이프 → 방향에 따라 결정
                 if velocity < 0 {
-                    targetTop = selectedDayViewTopCollapsed
-                    detailViewState = .topCollapsed
-                } else {
-                    // 아래로 스와이프하면 그대로 TopHidden 유지
-                    targetTop = selectedDayViewTopHidden
-                    detailViewState = .topHidden
-                }
-            default:
-                if abs(velocity) > 500 {
-                    shouldExpand = velocity < 0
-                    shouldHide = velocity > 0 && currentTop > selectedDayViewTopCollapsed + 100
-                } else {
-                    let middlePosition = (selectedDayViewTopCollapsed + selectedDayViewTopExpanded) / 2
-                    shouldExpand = currentTop < middlePosition
-                    shouldHide = currentTop >= selectedDayViewTopHidden - 100
-                }
-                
-                if shouldExpand {
                     targetTop = selectedDayViewTopExpanded
                     detailViewState = .topExpanded
-                } else if shouldHide {
-                    targetTop = selectedDayViewTopHidden
-                    detailViewState = .topHidden
+                } else {
+                    targetTop = selectedDayViewTopCollapsed
+                    detailViewState = .topCollapsed
+                }
+            } else {
+                // 느린 스와이프 → 중간 위치 기준
+                let middlePosition = (selectedDayViewTopCollapsed + selectedDayViewTopExpanded) / 2
+                if currentTop < middlePosition {
+                    targetTop = selectedDayViewTopExpanded
+                    detailViewState = .topExpanded
                 } else {
                     targetTop = selectedDayViewTopCollapsed
                     detailViewState = .topCollapsed
                 }
             }
-            
+
             UIView.animate(withDuration: 0.3, animations: {
                 self.selectedDayViewTopConstraint?.update(offset: targetTop)
                 self.view.layoutIfNeeded()
@@ -210,7 +188,7 @@ private extension ToduckCalendarViewController {
                 self.adjustCalendarHeight(for: detailViewState)
                 self.currentDetailViewState = detailViewState
             })
-            
+
         default:
             break
         }
@@ -218,14 +196,7 @@ private extension ToduckCalendarViewController {
     
     // FIXME: FSCalendarCollectionView가 아니라 UIView가 늘어나고 있음
     private func adjustCalendarHeight(for detailViewState: DetailViewState) {
-        let newCalendarHeight: CGFloat
-        
-        switch detailViewState {
-        case .topHidden:
-            newCalendarHeight = selectedDayViewTopHidden - (calendarHeader.frame.maxY + view.safeAreaInsets.bottom)
-        case .topExpanded, .topCollapsed:
-            newCalendarHeight = Constant.calendarHeight
-        }
+        let newCalendarHeight: CGFloat = Constant.calendarHeight
         
         // 먼저 rowHeight를 계산
         let headerHeight = calendar.headerHeight
@@ -278,59 +249,6 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         titleSelectionColorFor date: Date
     ) -> UIColor? {
         colorForDate(date)
-    }
-    
-    // MARK: - 날짜 아래의 이벤트
-    // 날짜 아래 점 개수 지정
-    func calendar(
-        _ calendar: FSCalendar,
-        numberOfEventsFor date: Date
-    ) -> Int {
-        0
-    }
-    
-    // 날짜 아래 점 색상 지정 (이벤트 색상)
-    func calendar(
-        _ calendar: FSCalendar,
-        appearance: FSCalendarAppearance,
-        eventDefaultColorsFor date: Date
-    ) -> [UIColor]? {
-        colorFromEvent(for: date)
-    }
-    
-    // 선택된 날짜에도 동일한 이벤트 색상을 유지하도록 설정
-    func calendar(
-        _ calendar: FSCalendar,
-        appearance: FSCalendarAppearance,
-        eventSelectionColorsFor date: Date
-    ) -> [UIColor]? {
-        colorFromEvent(for: date)
-    }
-    
-    // TODO: 나중에 TDCalendarConfigurable로 옮겨야 함, tempSchedules 생각하기
-    // 날짜에 대한 일정 색상을 반환하는 헬퍼 메서드
-    func colorFromEvent(for date: Date) -> [UIColor]? {
-        return nil
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension ToduckCalendarViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
-    }
-    
-    // TODO: 셀 좌측 색상 바와 우측 삭제 버튼 Radius 처리
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(
-            style: .destructive,
-            title: nil
-        ) { _, _, _ in
-            
-        }
-        deleteAction.image = TDImage.trashWhiteMedium
-        
-        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
 

@@ -8,7 +8,6 @@ public protocol CalendarHeaderStackViewDelegate: AnyObject {
 
 public final class CalendarHeaderStackView: UIStackView {
     private let titleLabel = TDLabel(
-        labelText: "2024년 8월",
         toduckFont: TDFont.boldHeader5,
         alignment: .center,
         toduckColor: TDColor.Neutral.neutral700
@@ -29,6 +28,7 @@ public final class CalendarHeaderStackView: UIStackView {
     public init(type: CalendarType) {
         self.pickerImageView = PickerImageView(type: type == .sheet ? .sheet : .toduck)
         super.init(frame: .zero)
+        titleLabel.setFont(type == .toduck ? .boldHeader4 : .boldHeader5)
         commonInit(type: type)
         setupTapGesture()
     }

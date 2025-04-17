@@ -12,7 +12,7 @@ final class SelectedDayScheduleView: BaseView {
         toduckColor: TDColor.Neutral.neutral700
     )
     private let downDirectionImageView = UIImageView().then {
-        $0.image = TDImage.Direction.downMedium
+        $0.image = TDImage.Direction.downMedium.withTintColor(TDColor.Neutral.neutral700)
     }
     let headerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
