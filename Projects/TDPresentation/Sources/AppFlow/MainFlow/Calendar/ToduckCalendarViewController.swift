@@ -127,6 +127,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedScheduleList:
                     self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                    self?.calendar.reloadData()
                 case .successFinishSchedule:
                     if let formattedDate = self?.selectedDate {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
@@ -281,6 +282,40 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         titleSelectionColorFor date: Date
     ) -> UIColor? {
         colorForDate(date)
+    }
+    
+    // MARK: 날짜 아래 점 표시
+    func calendar(
+        _ calendar: FSCalendar,
+        numberOfEventsFor date: Date
+    ) -> Int {
+        let key = Calendar.current.startOfDay(for: date)
+        let schedules = viewModel.monthScheduleDict[key] ?? []
+        return min(3, schedules.count)
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        eventDefaultColorsFor date: Date
+    ) -> [UIColor]? {
+        let key = Calendar.current.startOfDay(for: date)
+        let schedules = viewModel.monthScheduleDict[key] ?? []
+        let categoryColors = schedules.prefix(3).map { $0.categoryColor }
+        let colors = categoryColors.map { TDColor.reversedPair[ColorValue(color: $0)]! }
+        return colors
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
+        appearance: FSCalendarAppearance,
+        eventSelectionColorsFor date: Date
+    ) -> [UIColor]? {
+        let key = Calendar.current.startOfDay(for: date)
+        let schedules = viewModel.monthScheduleDict[key] ?? []
+        let categoryColors = schedules.prefix(3).map { $0.categoryColor }
+        let colors = categoryColors.map { TDColor.reversedPair[ColorValue(color: $0)]! }
+        return colors
     }
 }
 

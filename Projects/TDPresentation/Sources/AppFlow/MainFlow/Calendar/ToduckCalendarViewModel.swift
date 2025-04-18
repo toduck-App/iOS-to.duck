@@ -16,20 +16,23 @@ final class ToduckCalendarViewModel: BaseViewModel {
     
     // MARK: - Properties
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let buildMonthScheduleDictUseCase: BuildMonthScheduleDictUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let output = PassthroughSubject<Output, Never>()
-    private(set) var monthScheduleList: [Schedule] = []
+    private(set) var monthScheduleDict: [Date: [Schedule]] = [:]
     private(set) var currentDayScheduleList: [Schedule] = []
     private var cancellables = Set<AnyCancellable>()
     var selectedDate: Date?
     
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase,
+        buildMonthScheduleDictUseCase: BuildMonthScheduleDictUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         finishRoutineUseCase: FinishRoutineUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
+        self.buildMonthScheduleDictUseCase = buildMonthScheduleDictUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
     }
@@ -47,15 +50,20 @@ final class ToduckCalendarViewModel: BaseViewModel {
         return output.eraseToAnyPublisher()
     }
     
+    // TODO: buildMonthScheduleDictUseCase를 fetchScheduleListUseCase 구현체에 합치도록 리팩토링하기
+    @MainActor
     private func fetchScheduleList(startDate: String, endDate: String, isMonth: Bool) async {
         do {
             let fetchedSchedule = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
-            
-            if isMonth {
-                monthScheduleList = fetchedSchedule
+            if isMonth,
+               let monthStart = Date.convertFromString(startDate, format: .yearMonthDay),
+               let monthEnd = Date.convertFromString(endDate, format: .yearMonthDay) {
+                let monthScheduleDict = buildMonthScheduleDictUseCase.execute(schedules: fetchedSchedule, monthStart: monthStart, monthEnd: monthEnd)
+                self.monthScheduleDict = monthScheduleDict
             } else {
-                currentDayScheduleList = fetchedSchedule
+                self.currentDayScheduleList = fetchedSchedule.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
             }
+            
             output.send(.fetchedScheduleList)
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
