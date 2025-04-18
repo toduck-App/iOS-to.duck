@@ -262,7 +262,20 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     }
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        updateHeaderLabel(for: calendar.currentPage)
+        let currentPage = calendar.currentPage
+
+        guard let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: currentPage)),
+              let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate) else {
+            return
+        }
+
+        input.send(
+            .fetchSchedule(
+                startDate: startDate.convertToString(formatType: .yearMonthDay),
+                endDate: endDate.convertToString(formatType: .yearMonthDay),
+                isMonth: true
+            )
+        )
     }
     
     // MARK: - 날짜 폰트 색상
