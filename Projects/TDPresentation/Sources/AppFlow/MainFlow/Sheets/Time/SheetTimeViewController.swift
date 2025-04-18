@@ -12,7 +12,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     // MARK: - Properties
     private var isAllDay: Bool = false {
         didSet {
-            layoutView.allDaySwitch.isOn = isAllDay
+            layoutView.allDaySwitch.setOn(isAllDay, animated: true)
             handleAllDaySwitch(isOn: isAllDay)
             updateSaveButtonState()
         }
@@ -75,10 +75,12 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         
         /// 오전/오후 설정
         layoutView.amButton.addAction(UIAction { [weak self] _ in
+            self?.isAllDay = false
             self?.isAM = true
         }, for: .touchUpInside)
-        
+
         layoutView.pmButton.addAction(UIAction { [weak self] _ in
+            self?.isAllDay = false
             self?.isAM = false
         }, for: .touchUpInside)
         
@@ -104,14 +106,10 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     // MARK: - Action Handlers
     private func handleAllDaySwitch(isOn: Bool) {
         // 오전/오후 설정
-        layoutView.amButton.isUserInteractionEnabled = !isOn
-        layoutView.pmButton.isUserInteractionEnabled = !isOn
         layoutView.amButton.alpha = isOn ? 0.5 : 1.0
         layoutView.pmButton.alpha = isOn ? 0.5 : 1.0
         
         // 시간 설정
-        layoutView.hourCollectionView.isUserInteractionEnabled = !isOn
-        layoutView.minuteCollectionView.isUserInteractionEnabled = !isOn
         layoutView.hourCollectionView.alpha = isOn ? 0.5 : 1.0
         layoutView.minuteCollectionView.alpha = isOn ? 0.5 : 1.0
         
@@ -152,11 +150,16 @@ extension SheetTimeViewController: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
+        if isAllDay {
+            isAllDay = false
+        }
+        
         if collectionView == layoutView.hourCollectionView {
             selectedHour = indexPath.row + 1
         } else {
             selectedMinute = indexPath.row * 5
         }
+
         collectionView.reloadData()
     }
 }
