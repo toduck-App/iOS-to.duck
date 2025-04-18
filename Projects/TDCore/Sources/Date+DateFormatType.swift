@@ -22,6 +22,7 @@ public enum DateFormatType {
         case .yearMonthDay:
             return DateFormatter().then {
                 $0.dateFormat = "yyyy-MM-dd"
+                $0.locale = Locale(identifier: "ko_KR")
             }
         case .yearMonthDayKorean:
             return DateFormatter().then {
