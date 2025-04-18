@@ -68,15 +68,21 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         }
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if !isInitialLayoutDone {
-            updateConstants()
-            selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
-            isInitialLayoutDone = true
-        }
         view.bringSubviewToFront(selectedDayScheduleView)
+    }
+    
+    override func viewDidLayoutSubviews() {
+      super.viewDidLayoutSubviews()
+
+      if !isInitialLayoutDone {
+        updateConstants()
+        selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
+        view.layoutIfNeeded()
+        isInitialLayoutDone = true
+      }
     }
     
     private func updateConstants() {
