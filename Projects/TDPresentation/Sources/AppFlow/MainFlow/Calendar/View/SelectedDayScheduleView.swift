@@ -35,6 +35,7 @@ final class SelectedDayScheduleView: BaseView {
     
     // MARK: - Setup & Configuration
     override func configure() {
+        backgroundColor = .white
         noScheduleLabel.isHidden = true
         scheduleTableView.register(
             ScheduleDetailCell.self,

@@ -2,6 +2,14 @@ import TDDomain
 import Foundation
 
 final class MockScheduleRepository: ScheduleRepository {
+    func finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) async throws {
+        
+    }
+    
+    func updateSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: TDDomain.Schedule) async throws {
+        
+    }
+    
     
     var mockScheduleList: [Schedule] = []
     

@@ -51,7 +51,6 @@ final class ToduckCalendarViewModel: BaseViewModel {
     }
     
     // TODO: buildMonthScheduleDictUseCase를 fetchScheduleListUseCase 구현체에 합치도록 리팩토링하기
-    @MainActor
     private func fetchScheduleList(startDate: String, endDate: String, isMonth: Bool) async {
         do {
             let fetchedSchedule = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
