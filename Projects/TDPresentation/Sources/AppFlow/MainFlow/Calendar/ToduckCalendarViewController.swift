@@ -321,7 +321,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         let key = Calendar.current.startOfDay(for: date)
         let schedules = viewModel.monthScheduleDict[key] ?? []
         let categoryColors = schedules.prefix(3).map { $0.categoryColor }
-        let colors = categoryColors.map { TDColor.reversedPair[ColorValue(color: $0)]! }
+        let colors = categoryColors.compactMap { TDColor.reversedPair[ColorValue(color: $0)] }
         return colors
     }
     
@@ -333,7 +333,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         let key = Calendar.current.startOfDay(for: date)
         let schedules = viewModel.monthScheduleDict[key] ?? []
         let categoryColors = schedules.prefix(3).map { $0.categoryColor }
-        let colors = categoryColors.map { TDColor.reversedPair[ColorValue(color: $0)]! }
+        let colors = categoryColors.compactMap { TDColor.reversedPair[ColorValue(color: $0)] }
         return colors
     }
 }

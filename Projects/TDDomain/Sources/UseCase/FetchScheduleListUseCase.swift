@@ -64,8 +64,9 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
             case (true, true):
                 // 4. 기간 O + 반복 O → 기간 내의 반복 요일에만 표시
                 for date in allDates {
+                    guard let scheduleRepeatDays = schedule.repeatDays else { continue }
                     if (scheduleStart...scheduleEnd).contains(date),
-                       schedule.repeatDays!.contains(date.weekdayEnum()) {
+                       scheduleRepeatDays.contains(date.weekdayEnum()) {
                         filteredSchedules.insert(schedule)
                         break
                     }
