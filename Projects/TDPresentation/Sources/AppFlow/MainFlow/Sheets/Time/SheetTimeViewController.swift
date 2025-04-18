@@ -83,6 +83,10 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         }, for: .touchUpInside)
         
         /// 취소/저장 버튼
+        layoutView.cancelButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.finish(by: .modal)
+        }, for: .touchUpInside)
+        
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             if self.layoutView.saveButton.isEnabled {
@@ -188,10 +192,11 @@ extension SheetTimeViewController: UICollectionViewDataSource {
             make.edges.equalToSuperview()
         }
         
-        let label = UILabel()
-        label.text = text
-        label.font = TDFont.mediumBody2.font
-        label.textAlignment = .center
+        let label = TDLabel(
+            labelText: text,
+            toduckFont: .mediumBody2,
+            alignment: .center
+        )
         containerView.addSubview(label)
         label.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -201,10 +206,10 @@ extension SheetTimeViewController: UICollectionViewDataSource {
         if (collectionView == layoutView.hourCollectionView && indexPath.row + 1 == selectedHour) ||
             (collectionView == layoutView.minuteCollectionView && indexPath.row * 5 == selectedMinute) {
             containerView.backgroundColor = TDColor.Primary.primary100
-            label.textColor = TDColor.Primary.primary500
+            label.setColor(TDColor.Primary.primary500)
         } else {
             containerView.backgroundColor = TDColor.Neutral.neutral50
-            label.textColor = TDColor.Neutral.neutral500
+            label.setColor(TDColor.Neutral.neutral800)
         }
         
         return cell

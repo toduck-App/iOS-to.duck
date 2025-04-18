@@ -16,7 +16,7 @@ final class DynamicFlowLayout: UICollectionViewFlowLayout {
         let totalSpacing = spacing * (numberOfItemsPerRow - 1)
         let cellWidth = (collectionView.bounds.width - totalSpacing) / numberOfItemsPerRow
         
-        itemSize = CGSize(width: cellWidth, height: 50)
+        itemSize = CGSize(width: cellWidth, height: 40)
     }
     
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
