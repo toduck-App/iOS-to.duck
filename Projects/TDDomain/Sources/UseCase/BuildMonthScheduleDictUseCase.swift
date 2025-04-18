@@ -5,7 +5,6 @@ public protocol BuildMonthScheduleDictUseCase {
     func execute(schedules: [Schedule], monthStart: Date, monthEnd: Date) -> [Date: [Schedule]]
 }
 
-
 public final class BuildMonthScheduleDictUseCaseImpl: BuildMonthScheduleDictUseCase {
     public init() {}
 
@@ -14,35 +13,54 @@ public final class BuildMonthScheduleDictUseCaseImpl: BuildMonthScheduleDictUseC
         let calendar = Calendar.current
 
         for schedule in schedules {
-            guard let start = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
-                  let end = Date.convertFromString(schedule.endDate, format: .yearMonthDay) else {
-                continue
-            }
+            guard
+                let start = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
+                let end = Date.convertFromString(schedule.endDate, format: .yearMonthDay)
+            else { continue }
 
             let effectiveStart = max(start, monthStart)
             let effectiveEnd = min(end, monthEnd)
+            let allDates = calendar.generateDates(from: effectiveStart, to: effectiveEnd)
 
-            let datesInRange = calendar.generateDates(from: effectiveStart, to: effectiveEnd)
+            // 날짜별 ScheduleRecord 매핑
+            let recordMap: [Date: ScheduleRecord] = schedule.scheduleRecords?.reduce(into: [:]) { dict, record in
+                if let date = Date.convertFromString(record.recordDate, format: .yearMonthDay),
+                   record.deletedAt == nil {
+                    dict[date] = record
+                }
+            } ?? [:]
 
-            if let repeatDays = schedule.repeatDays, !repeatDays.isEmpty {
-                // 반복 일정 처리
-                for date in datesInRange {
-                    if repeatDays.contains(date.weekdayEnum()) {
-                        scheduleDict[date, default: []].append(schedule)
-                    }
+            for date in allDates {
+                // 반복 요일 체크 (있는 경우만)
+                if let repeatDays = schedule.repeatDays, !repeatDays.contains(date.weekdayEnum()) {
+                    continue
                 }
-            } else {
-                // 반복 없음 (그냥 날짜 범위만 채움)
-                for date in datesInRange {
-                    scheduleDict[date, default: []].append(schedule)
-                }
+
+                let isFinished = recordMap[date]?.isComplete ?? false
+                let clonedSchedule = Schedule(
+                    id: schedule.id,
+                    title: schedule.title,
+                    category: schedule.category,
+                    startDate: schedule.startDate,
+                    endDate: schedule.endDate,
+                    isAllDay: schedule.isAllDay,
+                    time: schedule.time,
+                    repeatDays: schedule.repeatDays,
+                    alarmTime: schedule.alarmTime,
+                    place: schedule.place,
+                    memo: schedule.memo,
+                    isFinished: isFinished,
+                    scheduleRecords: schedule.scheduleRecords
+                )
+
+                let key = calendar.startOfDay(for: date)
+                scheduleDict[key, default: []].append(clonedSchedule)
             }
         }
 
         return scheduleDict
     }
 }
-
 
 extension Date {
     func weekdayEnum() -> TDWeekDay {

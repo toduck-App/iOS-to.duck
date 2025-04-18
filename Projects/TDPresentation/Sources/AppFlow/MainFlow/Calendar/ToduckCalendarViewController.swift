@@ -35,7 +35,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         self.viewModel = viewModel
         super.init()
     }
-
+    
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -51,8 +51,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         input.send(
             .fetchSchedule(
                 startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay),
-                isMonth: true
+                endDate: endDate.convertToString(formatType: .yearMonthDay)
             )
         )
         setupCalendar()
@@ -60,29 +59,22 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         selectToday()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if let dateString = selectedDate?.convertToString(formatType: .yearMonthDay) {
-            input.send(.fetchSchedule(startDate: dateString, endDate: dateString, isMonth: false))
-        }
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         view.bringSubviewToFront(selectedDayScheduleView)
+        input.send(.fetchDetailSchedule(date: selectedDate ?? Date()))
     }
     
     override func viewDidLayoutSubviews() {
-      super.viewDidLayoutSubviews()
-
-      if !isInitialLayoutDone {
-        updateConstants()
-        selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
-        view.layoutIfNeeded()
-        isInitialLayoutDone = true
-      }
+        super.viewDidLayoutSubviews()
+        
+        if !isInitialLayoutDone {
+            updateConstants()
+            selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
+            view.layoutIfNeeded()
+            isInitialLayoutDone = true
+        }
     }
     
     private func updateConstants() {
@@ -132,13 +124,9 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
             .sink { [weak self] event in
                 switch event {
                 case .fetchedScheduleList:
-                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
                     self?.calendar.reloadData()
-                case .successFinishSchedule:
-                    if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchSchedule(startDate: dateString, endDate: dateString, isMonth: false))
-                    }
+                case .fetchedDetailSchedule, .successFinishSchedule:
+                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
                     self?.showErrorAlert(errorMessage: errorMessage)
                 }
@@ -170,22 +158,22 @@ private extension ToduckCalendarViewController {
     func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view).y
         let velocity = gesture.velocity(in: view).y
-
+        
         switch gesture.state {
         case .began:
             initialDetailViewState = self.currentDetailViewState
-
+            
         case .changed:
             var newTop = (selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed) + translation
             newTop = max(selectedDayViewTopExpanded, min(selectedDayViewTopCollapsed, newTop))
             selectedDayViewTopConstraint?.update(offset: newTop)
             gesture.setTranslation(.zero, in: view)
-
+            
         case .ended, .cancelled:
             let currentTop = selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed
             let targetTop: CGFloat
             let detailViewState: DetailViewState
-
+            
             if abs(velocity) > 500 {
                 // 빠른 스와이프 → 방향에 따라 결정
                 if velocity < 0 {
@@ -206,7 +194,7 @@ private extension ToduckCalendarViewController {
                     detailViewState = .topCollapsed
                 }
             }
-
+            
             UIView.animate(withDuration: 0.3, animations: {
                 self.selectedDayViewTopConstraint?.update(offset: targetTop)
                 self.view.layoutIfNeeded()
@@ -214,7 +202,7 @@ private extension ToduckCalendarViewController {
                 self.adjustCalendarHeight(for: detailViewState)
                 self.currentDetailViewState = detailViewState
             })
-
+            
         default:
             break
         }
@@ -261,25 +249,22 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDayScheduleView.updateDateLabel(date: date)
-        
-        let dateString = date.convertToString(formatType: .yearMonthDay)
         viewModel.selectedDate = date
-        input.send(.fetchSchedule(startDate: dateString, endDate: dateString, isMonth: false))
+        input.send(.fetchDetailSchedule(date: date))
     }
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let currentPage = calendar.currentPage
-
+        
         guard let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: currentPage)),
               let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate) else {
             return
         }
-
+        
         input.send(
             .fetchSchedule(
                 startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay),
-                isMonth: true
+                endDate: endDate.convertToString(formatType: .yearMonthDay)
             )
         )
     }
@@ -354,15 +339,13 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ScheduleDetailCell.identifier,
             for: indexPath
-        ) as? ScheduleDetailCell else {
-            return UITableViewCell()
-        }
-
+        ) as? ScheduleDetailCell else { return UITableViewCell() }
+        
         let schedule = viewModel.currentDayScheduleList[indexPath.row]
         cell.configure(with: schedule) { [weak self] in
             self?.input.send(.checkBoxTapped(schedule))
         }
-
+        
         return cell
     }
 }
