@@ -125,7 +125,10 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedScheduleList:
                     self?.calendar.reloadData()
-                case .fetchedDetailSchedule, .successFinishSchedule:
+                case .fetchedDetailSchedule:
+                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                    self?.selectedDayScheduleView.noScheduleLabel.isHidden = !(self?.viewModel.currentDayScheduleList.isEmpty ?? true)
+                case .successFinishSchedule:
                     self?.selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
                     self?.showErrorAlert(errorMessage: errorMessage)
@@ -329,7 +332,7 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        return viewModel.currentDayScheduleList.count
+        viewModel.currentDayScheduleList.count
     }
     
     func tableView(
