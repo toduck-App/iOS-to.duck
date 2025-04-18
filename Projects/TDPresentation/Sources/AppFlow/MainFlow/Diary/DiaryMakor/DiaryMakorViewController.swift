@@ -90,17 +90,17 @@ extension DiaryMakorViewController: UIScrollViewDelegate {
     
     private func showSnackBar() {
         guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
-        constraint.update(offset: -20)
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            self?.view.layoutIfNeeded()
+        constraint.update(offset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
         }
     }
     
     private func hideSnackBar() {
         guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
         constraint.update(offset: 50)
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            self?.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
         }
     }
 }

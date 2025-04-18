@@ -210,7 +210,7 @@ final class DiaryMakorView: BaseView {
         noticeSnackBarView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalInset)
             make.height.equalTo(LayoutConstants.snackBarHeight)
-            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(LayoutConstants.snackBarBottomSpacing).constraint
+            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).constraint
         }
         noticeSnackBarLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -268,7 +268,6 @@ private extension DiaryMakorView {
         static let formPhotoViewHeight: CGFloat = 160
         static let descriptionStackViewHeight: CGFloat = 40
         static let snackBarHeight: CGFloat = 42
-        static let snackBarBottomSpacing: CGFloat = -16
         static let buttonContainerHeight: CGFloat = 112
         static let buttonHeight: CGFloat = 56
     }
