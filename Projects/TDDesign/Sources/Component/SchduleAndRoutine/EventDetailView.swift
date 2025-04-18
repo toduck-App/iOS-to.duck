@@ -186,6 +186,8 @@ public final class EventDetailView: UIView {
     }
     
     public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
+        checkBoxButton.removeTarget(nil, action: nil, for: .allEvents)
+        
         checkBoxButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             checkBoxAction()
