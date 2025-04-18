@@ -56,7 +56,7 @@ final class ToduckViewModel: BaseViewModel {
                 endDate: todayFormat
             )
             isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
-            self.todaySchedules = todaySchedules
+            self.todaySchedules = todaySchedules.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
             self.uncompletedSchedules = todaySchedules.filter { schedule in
                 guard let records = schedule.scheduleRecords, !records.isEmpty else {
                     // 기록이 없으면 완료 안 했으므로 "남은일정"

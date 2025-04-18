@@ -30,10 +30,10 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
         var filteredSchedules: Set<Schedule> = []
 
         for schedule in scheduleList {
-            guard let scheduleStart = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
-                  let scheduleEnd = Date.convertFromString(schedule.endDate, format: .yearMonthDay) else {
-                continue
-            }
+            guard
+                let scheduleStart = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
+                let scheduleEnd = Date.convertFromString(schedule.endDate, format: .yearMonthDay)
+            else { continue }
 
             let hasPeriod = scheduleStart != scheduleEnd
             let hasRepeat = (schedule.repeatDays?.isEmpty == false)

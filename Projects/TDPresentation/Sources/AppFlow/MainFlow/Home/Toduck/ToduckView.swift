@@ -144,10 +144,10 @@ private extension ToduckView {
         static let containerHeight: CGFloat = 200
         static let containerCornerRadius: CGFloat = 16
         
-        static let segmentedControlTopOffset: CGFloat = 12
+        static let segmentedControlTopOffset: CGFloat = 20
         static let segmentedControlLeadingOffset: CGFloat = 16
         static let segmentedControlWidth: CGFloat = 183
-        static let segmentedControlHeight: CGFloat = 40
+        static let segmentedControlHeight: CGFloat = 20
         
         static let collectionViewHorizontalInset: CGFloat = 8
         static let collectionViewBottomOffset: CGFloat = 8

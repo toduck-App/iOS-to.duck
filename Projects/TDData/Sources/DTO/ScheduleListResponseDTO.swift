@@ -33,8 +33,6 @@ public extension ScheduleHeadDTO {
     func convertToSchedule() -> Schedule {
         let category = TDCategory(colorHex: color, imageName: category)
         let repeatDays = daysOfWeek?.compactMap { TDWeekDay(rawValue: $0) } ?? []
-        let isFinished = scheduleRecordDto.contains(where: { $0.isComplete })
-
         let records: [ScheduleRecord] = scheduleRecordDto.map {
             ScheduleRecord(
                 id: $0.scheduleRecordId,
@@ -56,7 +54,7 @@ public extension ScheduleHeadDTO {
             alarmTime: nil,
             place: location,
             memo: memo,
-            isFinished: isFinished,
+            isFinished: false,
             scheduleRecords: records
         )
     }
