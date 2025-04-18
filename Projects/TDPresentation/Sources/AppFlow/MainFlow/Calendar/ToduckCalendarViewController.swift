@@ -42,7 +42,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Life Cycle
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         // 이번 달 일정들 조회
@@ -113,6 +113,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     
     override func configure() {
         view.backgroundColor = .white
+        calendarHeader.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     }
@@ -231,6 +232,17 @@ private extension ToduckCalendarViewController {
             self.calendar.setNeedsLayout()
             self.calendar.layoutIfNeeded()
         })
+    }
+}
+
+// MARK: - CalendarHeaderStackViewDelegate
+extension ToduckCalendarViewController: CalendarHeaderStackViewDelegate {
+    func calendarHeader(
+        _ header: CalendarHeaderStackView,
+        didSelect date: Date
+    ) {
+        calendar.setCurrentPage(date, animated: true)
+        updateHeaderLabel(for: calendar.currentPage)
     }
 }
 
