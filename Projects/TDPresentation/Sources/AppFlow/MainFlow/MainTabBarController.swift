@@ -1,8 +1,14 @@
 import TDDesign
 import UIKit
 
-class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
+protocol MainTabBarControllerDelegate: AnyObject {
+    func didReselectHomeTab()
+}
+
+final class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
+    private var lastSelectedIndex: Int = 0
     weak var coordinator: MainTabBarCoordinator?
+    weak var tabDelegate: MainTabBarControllerDelegate?
     
     init(coordinator: MainTabBarCoordinator? = nil) {
         self.coordinator = coordinator
@@ -21,5 +27,15 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         tabBar.tintColor = TDColor.Primary.primary400
         tabBar.unselectedItemTintColor = TDColor.Neutral.neutral600
         tabBar.isTranslucent = false
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if selectedIndex == MainTabbarItem.home.index,
+           lastSelectedIndex == MainTabbarItem.home.index,
+           let navigationController = viewController as? UINavigationController,
+           navigationController.viewControllers.first is HomeViewController {
+            tabDelegate?.didReselectHomeTab()
+        }
+        lastSelectedIndex = selectedIndex
     }
 }

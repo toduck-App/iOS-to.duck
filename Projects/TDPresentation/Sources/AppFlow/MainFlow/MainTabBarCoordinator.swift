@@ -9,7 +9,9 @@ final class MainTabBarCoordinator: Coordinator {
     var injector: DependencyResolvable
 
     private lazy var tabBarController: MainTabBarController = {
-        MainTabBarController(coordinator: self)
+        let controller = MainTabBarController(coordinator: self)
+        controller.tabDelegate = self
+        return controller
     }()
 
     // MARK: - Initializer
@@ -79,5 +81,14 @@ extension MainTabBarCoordinator: CoordinatorFinishDelegate {
 extension MainTabBarCoordinator {
     func switchToHomeTab() {
         tabBarController.selectedIndex = MainTabbarItem.home.index
+    }
+}
+
+extension MainTabBarCoordinator: MainTabBarControllerDelegate {
+    func didReselectHomeTab() {
+        if let navigationController = tabBarController.viewControllers?[MainTabbarItem.home.index] as? UINavigationController,
+           let homeViewController = navigationController.viewControllers.first as? HomeViewController {
+            homeViewController.resetToToduck()
+        }
     }
 }

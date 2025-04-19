@@ -154,6 +154,11 @@ final class HomeViewController: BaseViewController<BaseView> {
         newViewController.didMove(toParent: self)
         currentViewController = newViewController
     }
+    
+    func resetToToduck() {
+        segmentedControl.setSelectedIndex(0)
+        updateView()
+    }
 }
 
 // MARK: - EventMakorDelegate
