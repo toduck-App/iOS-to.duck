@@ -21,6 +21,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         didSet {
             layoutView.amButton.isSelected = isAM
             layoutView.pmButton.isSelected = !isAM
+            layoutView.hourCollectionView.reloadData()
             updateSaveButtonState()
         }
     }
@@ -180,9 +181,10 @@ extension SheetTimeViewController: UICollectionViewDataSource {
         let reuseIdentifier = collectionView == layoutView.hourCollectionView ? "HourCell" : "MinuteCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
-        let text = collectionView == layoutView.hourCollectionView
-        ? "\(indexPath.row + 1)"
-        : String(format: "%02d", indexPath.row * 5)
+        let isHourCollection = collectionView == layoutView.hourCollectionView
+        let text = isHourCollection
+            ? "\(indexPath.row + 1)"
+            : String(format: "%02d", indexPath.row * 5)
         
         // 기존 서브뷰 제거
         cell.contentView.subviews.forEach { $0.removeFromSuperview() }
@@ -200,19 +202,41 @@ extension SheetTimeViewController: UICollectionViewDataSource {
             toduckFont: .mediumBody2,
             alignment: .center
         )
-        containerView.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         
-        // 선택 상태에 따라 UI 업데이트
-        if (collectionView == layoutView.hourCollectionView && indexPath.row + 1 == selectedHour) ||
-            (collectionView == layoutView.minuteCollectionView && indexPath.row * 5 == selectedMinute) {
-            containerView.backgroundColor = TDColor.Primary.primary100
-            label.setColor(TDColor.Primary.primary500)
+        // 시간 컬렉션 뷰에서 12시 셀일 경우 해/달 이미지 적용
+        if isHourCollection, indexPath.row + 1 == 12 {
+            containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
+            
+            let imageView = UIImageView()
+            imageView.image = isAM ? TDImage.SunMoon.moon : TDImage.SunMoon.sun
+            imageView.contentMode = .scaleAspectFit
+            containerView.addSubview(imageView)
+            
+            let imageSize: CGFloat = isAM ? 28 : 32
+            
+            imageView.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(imageSize)
+            }
+            
+            containerView.addSubview(label)
+            label.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
         } else {
-            containerView.backgroundColor = TDColor.Neutral.neutral50
-            label.setColor(TDColor.Neutral.neutral800)
+            containerView.addSubview(label)
+            label.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            
+            if (isHourCollection && indexPath.row + 1 == selectedHour) ||
+                (!isHourCollection && indexPath.row * 5 == selectedMinute) {
+                containerView.backgroundColor = TDColor.Primary.primary100
+                label.setColor(TDColor.Primary.primary500)
+            } else {
+                containerView.backgroundColor = TDColor.Neutral.neutral50
+                label.setColor(TDColor.Neutral.neutral800)
+            }
         }
         
         return cell

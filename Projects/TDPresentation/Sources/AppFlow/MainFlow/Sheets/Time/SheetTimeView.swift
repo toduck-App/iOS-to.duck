@@ -35,7 +35,7 @@ final class SheetTimeView: BaseView {
         $0.spacing = LayoutConstants.ampmSpacing
     }
     private let ampmLabel = TDLabel(
-        labelText: "오전/오후",
+        labelText: "시간대",
         toduckFont: TDFont.mediumBody2
     )
     private let ampmButtonStackView = UIStackView().then {
