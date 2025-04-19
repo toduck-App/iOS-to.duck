@@ -79,12 +79,12 @@ final class TimeSlotTableViewCell: UITableViewCell {
     ) {
         contentView.backgroundColor = TDColor.Neutral.neutral50
         
-        if hour == 0 && showTime {
+        if hour == Int.max && showTime {
             timeLabel.setText("종일")
         } else {
             if showTime {
                 let period = hour >= 12 ? "PM" : "AM"
-                let displayHour = (hour % 12 == 0) ? 12 : (hour % 12)
+                let displayHour = (hour == 0) ? 0 : (hour % 12 == 0 ? 12 : hour % 12)
                 timeLabel.setText("\(displayHour) \(period)")
             } else {
                 timeLabel.setText("")

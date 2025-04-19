@@ -54,8 +54,8 @@ final class TimeSlotGapCell: UITableViewCell {
         let startPeriod = startHour >= 12 ? "PM" : "AM"
         let endPeriod = endHour >= 12 ? "PM" : "AM"
         
-        let displayStartHour = (startHour % 12 == 0) ? 12 : (startHour % 12)
-        let displayEndHour = (endHour % 12 == 0) ? 12 : (endHour % 12)
+        let displayStartHour = (startHour == 0) ? 0 : (startHour % 12 == 0 ? 12 : startHour % 12)
+        let displayEndHour = (endHour == 0) ? 0 : (endHour % 12 == 0 ? 12 : endHour % 12)
 
         if startHour == endHour {
             startLabel.setText("\(displayStartHour) \(startPeriod)")

@@ -379,7 +379,7 @@ extension TodoViewController {
                 return self.makeTimeSlotCell(
                     tableView: tableView,
                     indexPath: indexPath,
-                    hour: 0,
+                    hour: Int.max,
                     event: event,
                     showTime: showTime
                 )
@@ -473,7 +473,7 @@ extension TodoViewController {
             }
         }
         
-        var currentHour = 1
+        var currentHour = 0
         while currentHour < 24 {
             if let events = eventMapping[currentHour], !events.isEmpty {
                 // 같은 시간대에 여러 루틴이 있으면, 첫 번째 셀에만 타임라인 표시
