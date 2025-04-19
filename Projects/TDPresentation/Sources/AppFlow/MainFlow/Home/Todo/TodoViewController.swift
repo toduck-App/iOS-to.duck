@@ -26,7 +26,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private let floatingActionMenuView = FloatingActionMenuView()
     private let buttonShadowWrapper = UIView()
     private let eventMakorFloattingButton = TDBaseButton(
-        image: TDImage.addSmall,
+        image: TDImage.addLarge,
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
         radius: 25,
