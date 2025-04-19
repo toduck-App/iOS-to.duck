@@ -45,6 +45,23 @@ public enum TDColor {
         public static let textPH = TDDesignAsset.Colors.ph.color
     }
     
+    public enum ScheduleOpacity {
+        public static let back1 = TDDesignAsset.Colors.opacityBack1.color
+        public static let back2 = TDDesignAsset.Colors.opacityBack2.color
+        public static let back3 = TDDesignAsset.Colors.opacityBack3.color
+        public static let back4 = TDDesignAsset.Colors.opacityBack4.color
+        public static let back5 = TDDesignAsset.Colors.opacityBack5.color
+        public static let back6 = TDDesignAsset.Colors.opacityBack6.color
+        public static let back7 = TDDesignAsset.Colors.opacityBack7.color
+        public static let back8 = TDDesignAsset.Colors.opacityBack8.color
+        public static let back9 = TDDesignAsset.Colors.opacityBack9.color
+        public static let back10 = TDDesignAsset.Colors.opacityBack10.color
+        public static let back11 = TDDesignAsset.Colors.opacityBack11.color
+        public static let back12 = TDDesignAsset.Colors.opacityBack12.color
+        public static let back13 = TDDesignAsset.Colors.opacityBack13.color
+        public static let back14 = TDDesignAsset.Colors.opacityBack14.color        
+    }
+    
     public enum Neutral {
         public static let neutral50 = TDDesignAsset.Colors.neutral50.color
         public static let neutral100 = TDDesignAsset.Colors.neutral100.color
