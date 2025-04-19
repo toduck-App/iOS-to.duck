@@ -3,52 +3,6 @@ import UIKit
 public typealias TDColorPair = (text: UIColor, back: UIColor)
 
 extension TDColor {
-    public static let pair: [UIColor: UIColor] = [
-        TDColor.Schedule.text1: TDColor.Schedule.back1,
-        TDColor.Schedule.text2: TDColor.Schedule.back2,
-        TDColor.Schedule.text3: TDColor.Schedule.back3,
-        TDColor.Schedule.text4: TDColor.Schedule.back4,
-        TDColor.Schedule.text5: TDColor.Schedule.back5,
-        TDColor.Schedule.text6: TDColor.Schedule.back6,
-        TDColor.Schedule.text7: TDColor.Schedule.back7,
-        TDColor.Schedule.text8: TDColor.Schedule.back8,
-        TDColor.Schedule.text9: TDColor.Schedule.back9,
-        TDColor.Schedule.text10: TDColor.Schedule.back10,
-        TDColor.Schedule.text11: TDColor.Schedule.back11,
-        TDColor.Schedule.text12: TDColor.Schedule.back12,
-        TDColor.Schedule.text13: TDColor.Schedule.back13,
-        TDColor.Schedule.text14: TDColor.Schedule.back14,
-        TDColor.Schedule.text15: TDColor.Schedule.back15,
-        .white: TDColor.Schedule.back16,
-        .white: TDColor.Schedule.back17,
-        .white: TDColor.Schedule.back18,
-        .white: TDColor.Schedule.back19,
-        .white: TDColor.Schedule.back20
-    ]
-    
-    public static let reversedPair: [ColorValue: UIColor] = [
-        ColorValue(color: TDColor.Schedule.back1): TDColor.Schedule.text1,
-        ColorValue(color: TDColor.Schedule.back2): TDColor.Schedule.text2,
-        ColorValue(color: TDColor.Schedule.back3): TDColor.Schedule.text3,
-        ColorValue(color: TDColor.Schedule.back4): TDColor.Schedule.text4,
-        ColorValue(color: TDColor.Schedule.back5): TDColor.Schedule.text5,
-        ColorValue(color: TDColor.Schedule.back6): TDColor.Schedule.text6,
-        ColorValue(color: TDColor.Schedule.back7): TDColor.Schedule.text7,
-        ColorValue(color: TDColor.Schedule.back8): TDColor.Schedule.text8,
-        ColorValue(color: TDColor.Schedule.back9): TDColor.Schedule.text9,
-        ColorValue(color: TDColor.Schedule.back10): TDColor.Schedule.text10,
-        ColorValue(color: TDColor.Schedule.back11): TDColor.Schedule.text11,
-        ColorValue(color: TDColor.Schedule.back12): TDColor.Schedule.text12,
-        ColorValue(color: TDColor.Schedule.back13): TDColor.Schedule.text13,
-        ColorValue(color: TDColor.Schedule.back14): TDColor.Schedule.text14,
-        ColorValue(color: TDColor.Schedule.back15): TDColor.Schedule.text15,
-        ColorValue(color: TDColor.Schedule.back16): .white,
-        ColorValue(color: TDColor.Schedule.back17): .white,
-        ColorValue(color: TDColor.Schedule.back18): .white,
-        ColorValue(color: TDColor.Schedule.back19): .white,
-        ColorValue(color: TDColor.Schedule.back20): .white
-    ]
-    
     public static let opacityPair: [ColorValue: UIColor] = [
         ColorValue(color: TDColor.Schedule.back1): TDColor.ScheduleOpacity.back1,
         ColorValue(color: TDColor.Schedule.back2): TDColor.ScheduleOpacity.back2,
@@ -64,12 +18,29 @@ extension TDColor {
         ColorValue(color: TDColor.Schedule.back12): TDColor.ScheduleOpacity.back12,
         ColorValue(color: TDColor.Schedule.back13): TDColor.ScheduleOpacity.back13,
         ColorValue(color: TDColor.Schedule.back14): TDColor.ScheduleOpacity.back14,
-        ColorValue(color: TDColor.Schedule.back15): .white,
+        ColorValue(color: TDColor.Schedule.back15): TDColor.ScheduleOpacity.back10,
         ColorValue(color: TDColor.Schedule.back16): .white,
         ColorValue(color: TDColor.Schedule.back17): .white,
         ColorValue(color: TDColor.Schedule.back18): .white,
         ColorValue(color: TDColor.Schedule.back19): .white,
         ColorValue(color: TDColor.Schedule.back20): .white
+    ]
+    
+    public static let reversedOpacityPair: [ColorValue: UIColor] = [
+        ColorValue(color: TDColor.ScheduleOpacity.back1): TDColor.Schedule.text1,
+        ColorValue(color: TDColor.ScheduleOpacity.back2): TDColor.Schedule.text2,
+        ColorValue(color: TDColor.ScheduleOpacity.back3): TDColor.Schedule.text3,
+        ColorValue(color: TDColor.ScheduleOpacity.back4): TDColor.Schedule.text4,
+        ColorValue(color: TDColor.ScheduleOpacity.back5): TDColor.Schedule.text5,
+        ColorValue(color: TDColor.ScheduleOpacity.back6): TDColor.Schedule.text6,
+        ColorValue(color: TDColor.ScheduleOpacity.back7): TDColor.Schedule.text7,
+        ColorValue(color: TDColor.ScheduleOpacity.back8): TDColor.Schedule.text8,
+        ColorValue(color: TDColor.ScheduleOpacity.back9): TDColor.Schedule.text9,
+        ColorValue(color:  TDColor.ScheduleOpacity.back10): TDColor.Schedule.text10,
+        ColorValue(color:  TDColor.ScheduleOpacity.back11): TDColor.Schedule.text11,
+        ColorValue(color:  TDColor.ScheduleOpacity.back12): TDColor.Schedule.text12,
+        ColorValue(color:  TDColor.ScheduleOpacity.back13): TDColor.Schedule.text13,
+        ColorValue(color:  TDColor.ScheduleOpacity.back14): TDColor.Schedule.text14,
     ]
     
     public static let colorPair: [Int: TDColorPair] = [

@@ -84,7 +84,7 @@ public final class TDCategoryCollectionView: UIView {
     }
     
     public func setupCategoryView(colors: [UIColor]) {
-        self.categoryColors = colors
+        self.categoryColors = colors.map { TDColor.opacityPair[ColorValue(color: $0)] ?? $0 }
         collectionView.reloadData()
     }
     
