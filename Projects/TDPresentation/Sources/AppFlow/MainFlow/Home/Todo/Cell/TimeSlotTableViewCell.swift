@@ -6,7 +6,7 @@ import Then
 final class TimeSlotTableViewCell: UITableViewCell {
     // MARK: - UI Components
     private let timeLabel = TDLabel(
-        toduckFont: TDFont.mediumBody2,
+        toduckFont: TDFont.mediumBody3,
         toduckColor: TDColor.Neutral.neutral800
     )
     private let shadowContainerView = UIView()
@@ -80,14 +80,14 @@ final class TimeSlotTableViewCell: UITableViewCell {
         contentView.backgroundColor = TDColor.Neutral.neutral50
         
         if hour == 0 && showTime {
-            timeLabel.text = "종일"
+            timeLabel.setText("종일")
         } else {
             if showTime {
                 let period = hour >= 12 ? "PM" : "AM"
                 let displayHour = (hour % 12 == 0) ? 12 : (hour % 12)
-                timeLabel.text = "\(displayHour) \(period)"
+                timeLabel.setText("\(displayHour) \(period)")
             } else {
-                timeLabel.text = ""
+                timeLabel.setText("")
             }
         }
         

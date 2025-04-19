@@ -5,13 +5,13 @@ import TDDesign
 
 final class TimeSlotGapCell: UITableViewCell {
     private let startLabel = TDLabel(
-        toduckFont: .mediumCaption3,
+        toduckFont: .mediumButton,
         alignment: .center,
         toduckColor: TDColor.Neutral.neutral500
     )
     
     private let endLabel = TDLabel(
-        toduckFont: .mediumCaption3,
+        toduckFont: .mediumButton,
         alignment: .center,
         toduckColor: TDColor.Neutral.neutral500
     )
@@ -58,12 +58,12 @@ final class TimeSlotGapCell: UITableViewCell {
         let displayEndHour = (endHour % 12 == 0) ? 12 : (endHour % 12)
 
         if startHour == endHour {
-            startLabel.text = "\(displayStartHour) \(startPeriod)"
+            startLabel.setText("\(displayStartHour) \(startPeriod)")
             endLabel.text = nil
             dotImageView.isHidden = true
         } else {
-            startLabel.text = "\(displayStartHour) \(startPeriod)"
-            endLabel.text = "\(displayEndHour) \(endPeriod)"
+            startLabel.setText("\(displayStartHour) \(startPeriod)")
+            endLabel.setText("\(displayEndHour) \(endPeriod)")
             dotImageView.isHidden = false
         }
     }

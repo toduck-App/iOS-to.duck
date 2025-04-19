@@ -12,7 +12,7 @@ final class FloatingActionMenuView: BaseView {
     private let scheduleImageView = UIImageView()
     private let scheduleLabel = TDLabel(
         labelText: "일정 추가",
-        toduckFont: .boldBody2,
+        toduckFont: .mediumBody2,
         toduckColor: TDColor.Neutral.neutral800
     )
     
@@ -20,7 +20,7 @@ final class FloatingActionMenuView: BaseView {
     private let routineImageView = UIImageView()
     private let routineLabel = TDLabel(
         labelText: "루틴 추가",
-        toduckFont: .boldBody2,
+        toduckFont: .mediumBody2,
         toduckColor: TDColor.Neutral.neutral800
     )
     
