@@ -9,7 +9,7 @@ public struct Schedule: Eventable {
     public let isAllDay: Bool
     public let time: Date?
     public let repeatDays: [TDWeekDay]?
-    public let alarmTime: AlarmType?
+    public let alarmTime: AlarmTime?
     public let place: String?
     public let memo: String?
     public let isFinished: Bool
@@ -29,7 +29,7 @@ public struct Schedule: Eventable {
         isAllDay: Bool,
         time: Date?,
         repeatDays: [TDWeekDay]?,
-        alarmTime: AlarmType?,
+        alarmTime: AlarmTime?,
         place: String?,
         memo: String?,
         isFinished: Bool,

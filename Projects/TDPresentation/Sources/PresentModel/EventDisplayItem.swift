@@ -10,7 +10,7 @@ struct EventDisplayItem: EventPresentable {
     let date: String?
     let time: String?
     let repeatDays: [TDWeekDay]?
-    let alarmTime: AlarmType?
+    let alarmTime: AlarmTime?
     let place: String?
     let isPublic: Bool
     let memo: String?

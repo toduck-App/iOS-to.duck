@@ -48,7 +48,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
-    private var alarm: AlarmType?
+    private var alarm: AlarmTime?
     private var location: String?
     private var memo: String?
     
@@ -287,7 +287,7 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func handleAlarmSelection(at index: Int, isSelected: Bool) {
-        let alarmTypesArray: [AlarmType] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
+        let alarmTypesArray: [AlarmTime] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
         
         guard index >= 0, index < alarmTypesArray.count else {
             TDLogger.error("Invalid alarm index: \(index)")

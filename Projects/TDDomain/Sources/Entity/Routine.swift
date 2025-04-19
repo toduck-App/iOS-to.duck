@@ -8,7 +8,7 @@ public struct Routine: Eventable, Identifiable {
     public let isPublic: Bool
     public let time: Date?
     public let repeatDays: [TDWeekDay]?
-    public let alarmTime: AlarmType?
+    public let alarmTime: AlarmTime?
     public let memo: String?
     public let recommendedRoutines: [String]?
     public let isFinished: Bool
@@ -28,7 +28,7 @@ public struct Routine: Eventable, Identifiable {
         isPublic: Bool,
         time: Date?,
         repeatDays: [TDWeekDay]?,
-        alarmTime: AlarmType?,
+        alarmTime: AlarmTime?,
         memo: String?,
         recommendedRoutines: [String]?,
         isFinished: Bool,
