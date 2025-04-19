@@ -14,17 +14,17 @@ final class CategoryStorageImpl: CategoryStorage {
         guard let data = userDefaults.data(forKey: key) else {
             // 기본값을 반환
             return [
-                TDCategoryDTO(colorHex: "#DADADA", imageName: "computer"),
-                TDCategoryDTO(colorHex: "#EAECFF", imageName: "food"),
-                TDCategoryDTO(colorHex: "#FFE3CC", imageName: "pencil"),
-                TDCategoryDTO(colorHex: "#FFD6E2", imageName: "redBook"),
-                TDCategoryDTO(colorHex: "#DEEEFC", imageName: "sleep"),
-                TDCategoryDTO(colorHex: "#F3E6D6", imageName: "power"),
-                TDCategoryDTO(colorHex: "#E4E9F3", imageName: "people"),
-                TDCategoryDTO(colorHex: "#F0DFDF", imageName: "medicine"),
-                TDCategoryDTO(colorHex: "#E3EEEA", imageName: "talk"),
-                TDCategoryDTO(colorHex: "#FFE3CC", imageName: "heart"),
-                TDCategoryDTO(colorHex: "#F0F4BF", imageName: "vehicle"),
+                TDCategoryDTO(colorHex: "#F0F0F0", imageName: "computer"),
+                TDCategoryDTO(colorHex: "#F7F7FF", imageName: "food"),
+                TDCategoryDTO(colorHex: "#FFF4EB", imageName: "pencil"),
+                TDCategoryDTO(colorHex: "#FFEFF3", imageName: "redBook"),
+                TDCategoryDTO(colorHex: "#F2F8FE", imageName: "sleep"),
+                TDCategoryDTO(colorHex: "#FAF5EF", imageName: "power"),
+                TDCategoryDTO(colorHex: "#F4F6FA", imageName: "people"),
+                TDCategoryDTO(colorHex: "#F9F2F2", imageName: "medicine"),
+                TDCategoryDTO(colorHex: "#F4F8F7", imageName: "talk"),
+                TDCategoryDTO(colorHex: "#FFF4EB", imageName: "heart"),
+                TDCategoryDTO(colorHex: "#F9FBE5", imageName: "vehicle"),
             ]
         }
         let decoder = JSONDecoder()
