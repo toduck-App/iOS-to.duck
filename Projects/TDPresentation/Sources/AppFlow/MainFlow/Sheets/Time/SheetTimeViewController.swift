@@ -93,15 +93,27 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             if self.layoutView.saveButton.isEnabled {
+                let hour = self.selectedHour ?? 0
+                let minute = self.selectedMinute ?? 0
+                let finalHour = self.convertedHour(from: hour, isAM: self.isAM)
+                
                 self.delegate?.didTapSaveButton(
                     isAllDay: self.isAllDay,
                     isAM: self.isAM,
-                    hour: self.selectedHour ?? 0,
-                    minute: self.selectedMinute ?? 0
+                    hour: finalHour,
+                    minute: minute
                 )
             }
             self.coordinator?.finish(by: .modal)
         }, for: .touchUpInside)
+    }
+    
+    private func convertedHour(from hour: Int, isAM: Bool) -> Int {
+        if hour == 12 {
+            return isAM ? 0 : 12
+        } else {
+            return isAM ? hour : hour + 12
+        }
     }
     
     // MARK: - Action Handlers
@@ -186,7 +198,6 @@ extension SheetTimeViewController: UICollectionViewDataSource {
             ? "\(indexPath.row + 1)"
             : String(format: "%02d", indexPath.row * 5)
         
-        // 기존 서브뷰 제거
         cell.contentView.subviews.forEach { $0.removeFromSuperview() }
         
         let containerView = UIView()
@@ -203,34 +214,71 @@ extension SheetTimeViewController: UICollectionViewDataSource {
             alignment: .center
         )
         
-        // 시간 컬렉션 뷰에서 12시 셀일 경우 해/달 이미지 적용
-        if isHourCollection, indexPath.row + 1 == 12 {
-            containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
+        let isSelected =
+            (isHourCollection && indexPath.row + 1 == selectedHour) ||
+            (!isHourCollection && indexPath.row * 5 == selectedMinute)
+        
+        // MARK: - Hour Cell
+        if isHourCollection {
+            let hour = indexPath.row + 1
             
-            let imageView = UIImageView()
-            imageView.image = isAM ? TDImage.SunMoon.moon : TDImage.SunMoon.sun
-            imageView.contentMode = .scaleAspectFit
-            containerView.addSubview(imageView)
-            
-            let imageSize: CGFloat = isAM ? 28 : 32
-            
-            imageView.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.width.height.equalTo(imageSize)
+            if hour == 12 {
+                if isSelected {
+                    // 12시 + 선택됨: 해/달 이미지 + 이미지 위에 텍스트
+                    containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
+                    
+                    let imageView = UIImageView()
+                    imageView.image = isAM ? TDImage.SunMoon.moon : TDImage.SunMoon.sun
+                    imageView.contentMode = .scaleAspectFit
+                    containerView.addSubview(imageView)
+                    
+                    let imageSize: CGFloat = isAM ? 28 : 32
+                    imageView.snp.makeConstraints { make in
+                        make.center.equalToSuperview()
+                        make.width.height.equalTo(imageSize)
+                    }
+                    
+                    containerView.addSubview(label)
+                    label.snp.makeConstraints { make in
+                        make.center.equalToSuperview()
+                    }
+                    
+                    label.setColor(TDColor.Neutral.neutral800)
+                } else {
+                    // 12시 + 선택 안 됨: 일반 셀처럼 표시
+                    containerView.addSubview(label)
+                    label.snp.makeConstraints { make in
+                        make.edges.equalToSuperview()
+                    }
+                    
+                    containerView.backgroundColor = TDColor.Neutral.neutral50
+                    label.setColor(TDColor.Neutral.neutral800)
+                }
+            } else {
+                // 1~11시
+                containerView.addSubview(label)
+                label.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                
+                if isSelected {
+                    containerView.backgroundColor = TDColor.Primary.primary100
+                    label.setColor(TDColor.Primary.primary500)
+                } else {
+                    containerView.backgroundColor = TDColor.Neutral.neutral50
+                    label.setColor(TDColor.Neutral.neutral800)
+                }
             }
-            
-            containerView.addSubview(label)
-            label.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-        } else {
+        }
+        
+        // MARK: - Minute Cell
+        else {
             containerView.addSubview(label)
             label.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
             
-            if (isHourCollection && indexPath.row + 1 == selectedHour) ||
-                (!isHourCollection && indexPath.row * 5 == selectedMinute) {
+            if isSelected {
                 containerView.backgroundColor = TDColor.Primary.primary100
                 label.setColor(TDColor.Primary.primary500)
             } else {
