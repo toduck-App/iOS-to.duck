@@ -158,7 +158,7 @@ public final class EventDetailView: UIView {
             identifierColor = TDColor.baseWhite
         } else {
             let key = ColorValue(color: color)
-            let frontColor = TDColor.reversedOpacityPair[key] ?? color
+            let frontColor = TDColor.reversedOpacityFrontPair[key] ?? color
             let backColor = color
             scheduleIdentyColorView.backgroundColor = frontColor
             categoryImageView.configure(backgroundColor: backColor, category: category ?? TDImage.Category.none)

@@ -197,7 +197,7 @@ final class TimelineRoutineCell: UITableViewCell {
         categoryImageView.configure(backgroundColor: color, category: category)
         
         let key = ColorValue(color: color)
-        routineColorView.backgroundColor = TDColor.reversedOpacityPair[key] ?? color
+        routineColorView.backgroundColor = TDColor.reversedOpacityFrontPair[key] ?? color
         contentLabel.setText(routine.title)
         
         if let time = routine.time?.convertToString(formatType: .time24Hour) {
