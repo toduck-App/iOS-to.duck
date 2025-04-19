@@ -98,6 +98,11 @@ public enum TDImage {
         public static let emptyMedium = TDDesignAsset.Images.commentEmptyMedium.image
     }
     
+    public enum SunMoon {
+        public static let sunMedium = TDDesignAsset.Images.sun.image
+        public static let moonMedium = TDDesignAsset.Images.moon.image
+    }
+    
     public enum Profile {
         public static let large = TDDesignAsset.Images.profileLarge.image
         public static let medium = TDDesignAsset.Images.profileMedium.image

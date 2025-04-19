@@ -73,6 +73,11 @@ public enum TDColor {
         public static let primary950 = TDDesignAsset.Colors.primary950.color
     }
     
+    public enum SunMoon {
+        public static let sun = TDDesignAsset.Colors.semanticSunColor.color
+        public static let moon = TDDesignAsset.Colors.semanticMoonColor.color
+    }
+    
     public enum Diary {
         public static let angry = TDDesignAsset.Colors.diaryAngryColor.color
         public static let anxiety = TDDesignAsset.Colors.diaryAnxietyColor.color
