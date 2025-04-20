@@ -15,6 +15,7 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
     }
     
     let calendarContainerView = UIView()
+    let calendarHeaderContainerView = UIView()
     let calendarHeader = CalendarHeaderStackView(type: .focus)
     let calendar = DiaryCalendar()
     
@@ -74,8 +75,9 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         contentStackView.addArrangedSubview(noFocusContainerView)
         contentStackView.addArrangedSubview(diaryDetailContainerView)
         
-        calendarContainerView.addSubview(calendarHeader)
+        calendarContainerView.addSubview(calendarHeaderContainerView)
         calendarContainerView.addSubview(calendar)
+        calendarHeaderContainerView.addSubview(calendarHeader)
         
         noFocusContainerView.addSubview(noFocusImageView)
         noFocusContainerView.addSubview(noFocusLabel)
@@ -83,7 +85,7 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         diaryDetailContainerView.addSubview(focusDetailView)
         diaryDetailContainerView.addSubview(dummyView)
         
-        calendarHeader.pickerButton.delegate = self
+        calendarHeader.delegate = self
         calendar.delegate = self
     }
     
@@ -95,10 +97,13 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         calendarContainerView.snp.makeConstraints {
             $0.height.equalTo(400)
         }
-        calendarHeader.snp.makeConstraints {
+        calendarHeaderContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.equalToSuperview().offset(20)
-            $0.height.equalTo(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(40)
+        }
+        calendarHeader.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(12)
         }
         calendar.snp.makeConstraints {
             $0.top.equalTo(calendarHeader.snp.bottom).offset(30)
@@ -137,6 +142,9 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
         layoutView.backgroundColor = TDColor.baseWhite
         noFocusContainerView.backgroundColor = TDColor.Neutral.neutral50
         diaryDetailContainerView.backgroundColor = TDColor.Neutral.neutral50
+        calendarHeaderContainerView.layer.borderWidth = 1
+        calendarHeaderContainerView.layer.borderColor = TDColor.Neutral.neutral200.cgColor
+        calendarHeaderContainerView.layer.cornerRadius = 8
         focusDetailView.backgroundColor = TDColor.baseWhite
     }
     
@@ -218,9 +226,9 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
 }
 
 // MARK: - PickerButtonDelegate
-extension FocusCalendarViewController: PickerButtonDelegate {
-    func pickerButton(
-        _ pickerButton: PickerButton,
+extension FocusCalendarViewController: CalendarHeaderStackViewDelegate {
+    func calendarHeader(
+        _ header: CalendarHeaderStackView,
         didSelect date: Date
     ) {
         calendar.setCurrentPage(date, animated: true)

@@ -129,11 +129,7 @@ public final class TDFormButtonsView: UIView {
     // MARK: - Setup
     private func setupView() {
         configureTitle()
-        if type == .alarm {
-            updateAlarmContent(isAllDay: true)
-        } else {
-            configureButtons()
-        }
+        configureButtons()
     }
     
     private func configureTitle() {

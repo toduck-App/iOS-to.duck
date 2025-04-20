@@ -44,7 +44,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var selectedCategory: TDCategory? = TDCategory(colorHex: "#FFFFFF", imageName: "None")
     private var startDate: String? // YYYY-MM-DD
     private var endDate: String? // YYYY-MM-DD
-    private var isAllDay: Bool = true
+    private var isAllDay: Bool?
     private var time: Date? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
@@ -106,6 +106,7 @@ final class EventMakorViewModel: BaseViewModel {
         case .selectTime(let isAllDay, let time):
             self.isAllDay = isAllDay
             self.time = time
+            self.validateCanSave()
         case .selectLockType(let isPublic):
             self.isPublic = isPublic
         case .tapScheduleEditTodayButton:
@@ -194,9 +195,17 @@ final class EventMakorViewModel: BaseViewModel {
     
     private func validateScheduleInputs() -> [String] {
         var missingFields: [String] = []
+        
         if title == nil { missingFields.append("title") }
         if selectedCategory == nil { missingFields.append("category") }
         if startDate == nil { missingFields.append("startDate") }
+        
+        let isAllDaySet = isAllDay != nil
+        let isTimeSet = time != nil
+        if !(isAllDaySet || isTimeSet) {
+            missingFields.append("timeOrIsAllDay")
+        }
+        
         return missingFields
     }
     
@@ -213,6 +222,7 @@ final class EventMakorViewModel: BaseViewModel {
             endDate = startDate
         }
         
+        let isAllDay = time == nil
         let schedule = Schedule(
             id: nil,
             title: title!,
@@ -233,7 +243,8 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func createRoutine() -> Routine {
-        Routine(
+        let isAllDay = time == nil
+        let routine = Routine(
             id: nil,
             title: title!,
             category: selectedCategory!,
@@ -246,6 +257,8 @@ final class EventMakorViewModel: BaseViewModel {
             recommendedRoutines: nil,
             isFinished: false
         )
+        
+        return routine
     }
     
     // MARK: - Fetch 카테고리 목록
@@ -308,12 +321,16 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     private func validateCanSave() {
+        let hasTitle = !(title?.isEmpty ?? true)
+        let hasValidTime = isAllDay != nil || time != nil
+        let hasRepeatDays = !(repeatDays?.isEmpty ?? true)
         var canSave = false
+        
         switch mode {
         case .schedule:
-            canSave = !(title?.isEmpty ?? true)
+            canSave = hasTitle && hasValidTime
         case .routine:
-            canSave = !(title?.isEmpty ?? true) && !(repeatDays?.isEmpty ?? true)
+            canSave = hasTitle && hasValidTime && hasRepeatDays
         }
         output.send(.canSaveEvent(canSave))
     }

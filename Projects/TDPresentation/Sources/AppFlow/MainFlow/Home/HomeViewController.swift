@@ -12,6 +12,11 @@ final class HomeViewController: BaseViewController<BaseView> {
     private var currentViewController: UIViewController?
     weak var coordinator: HomeCoordinator?
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateNavigationBarColor(for: segmentedControl.selectedIndex)
+    }
+    
     // MARK: - Base Methods
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
@@ -153,6 +158,11 @@ final class HomeViewController: BaseViewController<BaseView> {
         
         newViewController.didMove(toParent: self)
         currentViewController = newViewController
+    }
+    
+    func resetToToduck() {
+        segmentedControl.setSelectedIndex(0)
+        updateView()
     }
 }
 

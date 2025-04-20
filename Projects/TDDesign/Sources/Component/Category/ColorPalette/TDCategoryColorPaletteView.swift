@@ -33,7 +33,8 @@ public final class TDCategoryColorPaletteView: UIView {
     }
     
     public func setSelectedColor(_ color: UIColor) {
-        selectedIndex = categoryColors.firstIndex(where: { $0.back.isEqualToColor(color) })
+        let removeOpacityColor = TDColor.reversedOpacityBackPair[ColorValue(color: color)] ?? color
+        selectedIndex = categoryColors.firstIndex(where: { $0.back.isEqualToColor(removeOpacityColor) })
         collectionView.reloadData()
     }
     
@@ -102,7 +103,8 @@ extension TDCategoryColorPaletteView: UICollectionViewDelegate {
         
         // 선택된 색상 정보를 Delegate에 전달
         let selectedColor = categoryColors[indexPath.row].back
-        delegate?.didSelectColor(selectedColor)
+        let opacityColor = TDColor.opacityPair[ColorValue(color: selectedColor)] ?? selectedColor
+        delegate?.didSelectColor(opacityColor)
     }
 }
 

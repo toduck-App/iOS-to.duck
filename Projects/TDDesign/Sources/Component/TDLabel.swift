@@ -108,7 +108,9 @@ public final class TDLabel: UILabel {
         
         // 문단 스타일(줄간격, 정렬 등) 적용
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = toduckFont.lineHeightMultiple
+        let lineHeight = toduckFont.size * toduckFont.lineHeightMultiple
+        paragraphStyle.minimumLineHeight = lineHeight
+        paragraphStyle.maximumLineHeight = lineHeight
         paragraphStyle.alignment = alignment
         
         attributedString.addAttribute(
@@ -159,7 +161,9 @@ public final class TDLabel: UILabel {
         let attributedString = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: labelText))
         let range = NSRange(location: 0, length: labelText.count)
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        let lineHeight = toduckFont.size * toduckFont.lineHeightMultiple
+        paragraphStyle.minimumLineHeight = lineHeight
+        paragraphStyle.maximumLineHeight = lineHeight
         paragraphStyle.alignment = alignment
         
         attributedString.addAttribute(

@@ -10,7 +10,7 @@ final class SheetTimeView: BaseView {
         $0.tintColor = TDColor.Neutral.neutral700
     }
     private let titleLabel = TDLabel(
-        labelText: "날짜 선택",
+        labelText: "시간 설정",
         toduckFont: TDFont.boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
     )
@@ -23,7 +23,8 @@ final class SheetTimeView: BaseView {
     private let allDayContainerView = UIView()
     private let allDayLabel = TDLabel(
         labelText: "종일",
-        toduckFont: TDFont.mediumBody2
+        toduckFont: TDFont.mediumBody2,
+        toduckColor: TDColor.Neutral.neutral800
     )
     let allDaySwitch = UISwitch().then {
         $0.onTintColor = TDColor.Primary.primary500
@@ -34,7 +35,7 @@ final class SheetTimeView: BaseView {
         $0.spacing = LayoutConstants.ampmSpacing
     }
     private let ampmLabel = TDLabel(
-        labelText: "오전/오후",
+        labelText: "시간대",
         toduckFont: TDFont.mediumBody2
     )
     private let ampmButtonStackView = UIStackView().then {
@@ -44,14 +45,14 @@ final class SheetTimeView: BaseView {
     let amButton = TDSelectableButton(
         title: "오전",
         backgroundColor: TDColor.Neutral.neutral50,
-        foregroundColor: TDColor.Neutral.neutral700,
+        foregroundColor: TDColor.Neutral.neutral800,
         radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.mediumBody2.font
     )
     let pmButton = TDSelectableButton(
         title: "오후",
         backgroundColor: TDColor.Neutral.neutral50,
-        foregroundColor: TDColor.Neutral.neutral700,
+        foregroundColor: TDColor.Neutral.neutral800,
         radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.mediumBody2.font
     )

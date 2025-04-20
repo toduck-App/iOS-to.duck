@@ -12,7 +12,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     // MARK: - Properties
     private var isAllDay: Bool = false {
         didSet {
-            layoutView.allDaySwitch.isOn = isAllDay
+            layoutView.allDaySwitch.setOn(isAllDay, animated: true)
             handleAllDaySwitch(isOn: isAllDay)
             updateSaveButtonState()
         }
@@ -21,6 +21,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         didSet {
             layoutView.amButton.isSelected = isAM
             layoutView.pmButton.isSelected = !isAM
+            layoutView.hourCollectionView.reloadData()
             updateSaveButtonState()
         }
     }
@@ -75,39 +76,53 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         
         /// 오전/오후 설정
         layoutView.amButton.addAction(UIAction { [weak self] _ in
+            self?.isAllDay = false
             self?.isAM = true
         }, for: .touchUpInside)
-        
+
         layoutView.pmButton.addAction(UIAction { [weak self] _ in
+            self?.isAllDay = false
             self?.isAM = false
         }, for: .touchUpInside)
         
         /// 취소/저장 버튼
+        layoutView.cancelButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.finish(by: .modal)
+        }, for: .touchUpInside)
+        
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             if self.layoutView.saveButton.isEnabled {
+                let hour = self.selectedHour ?? 0
+                let minute = self.selectedMinute ?? 0
+                let finalHour = self.convertedHour(from: hour, isAM: self.isAM)
+                
                 self.delegate?.didTapSaveButton(
                     isAllDay: self.isAllDay,
                     isAM: self.isAM,
-                    hour: self.selectedHour ?? 0,
-                    minute: self.selectedMinute ?? 0
+                    hour: finalHour,
+                    minute: minute
                 )
             }
             self.coordinator?.finish(by: .modal)
         }, for: .touchUpInside)
     }
     
+    private func convertedHour(from hour: Int, isAM: Bool) -> Int {
+        if hour == 12 {
+            return isAM ? 0 : 12
+        } else {
+            return isAM ? hour : hour + 12
+        }
+    }
+    
     // MARK: - Action Handlers
     private func handleAllDaySwitch(isOn: Bool) {
         // 오전/오후 설정
-        layoutView.amButton.isUserInteractionEnabled = !isOn
-        layoutView.pmButton.isUserInteractionEnabled = !isOn
         layoutView.amButton.alpha = isOn ? 0.5 : 1.0
         layoutView.pmButton.alpha = isOn ? 0.5 : 1.0
         
         // 시간 설정
-        layoutView.hourCollectionView.isUserInteractionEnabled = !isOn
-        layoutView.minuteCollectionView.isUserInteractionEnabled = !isOn
         layoutView.hourCollectionView.alpha = isOn ? 0.5 : 1.0
         layoutView.minuteCollectionView.alpha = isOn ? 0.5 : 1.0
         
@@ -148,11 +163,16 @@ extension SheetTimeViewController: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
+        if isAllDay {
+            isAllDay = false
+        }
+        
         if collectionView == layoutView.hourCollectionView {
             selectedHour = indexPath.row + 1
         } else {
             selectedMinute = indexPath.row * 5
         }
+
         collectionView.reloadData()
     }
 }
@@ -173,11 +193,11 @@ extension SheetTimeViewController: UICollectionViewDataSource {
         let reuseIdentifier = collectionView == layoutView.hourCollectionView ? "HourCell" : "MinuteCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
-        let text = collectionView == layoutView.hourCollectionView
-        ? "\(indexPath.row + 1)"
-        : String(format: "%02d", indexPath.row * 5)
+        let isHourCollection = collectionView == layoutView.hourCollectionView
+        let text = isHourCollection
+            ? "\(indexPath.row + 1)"
+            : String(format: "%02d", indexPath.row * 5)
         
-        // 기존 서브뷰 제거
         cell.contentView.subviews.forEach { $0.removeFromSuperview() }
         
         let containerView = UIView()
@@ -188,23 +208,83 @@ extension SheetTimeViewController: UICollectionViewDataSource {
             make.edges.equalToSuperview()
         }
         
-        let label = UILabel()
-        label.text = text
-        label.font = TDFont.mediumBody2.font
-        label.textAlignment = .center
-        containerView.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        let label = TDLabel(
+            labelText: text,
+            toduckFont: .mediumBody2,
+            alignment: .center
+        )
+        
+        let isSelected =
+            (isHourCollection && indexPath.row + 1 == selectedHour) ||
+            (!isHourCollection && indexPath.row * 5 == selectedMinute)
+        
+        // MARK: - Hour Cell
+        if isHourCollection {
+            let hour = indexPath.row + 1
+            
+            if hour == 12 {
+                if isSelected {
+                    // 12시 + 선택됨: 해/달 이미지 + 이미지 위에 텍스트
+                    containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
+                    
+                    let imageView = UIImageView()
+                    imageView.image = isAM ? TDImage.SunMoon.moon : TDImage.SunMoon.sun
+                    imageView.contentMode = .scaleAspectFit
+                    containerView.addSubview(imageView)
+                    
+                    let imageSize: CGFloat = isAM ? 28 : 32
+                    imageView.snp.makeConstraints { make in
+                        make.center.equalToSuperview()
+                        make.width.height.equalTo(imageSize)
+                    }
+                    
+                    containerView.addSubview(label)
+                    label.snp.makeConstraints { make in
+                        make.center.equalToSuperview()
+                    }
+                    
+                    label.setColor(TDColor.Neutral.neutral800)
+                } else {
+                    // 12시 + 선택 안 됨: 일반 셀처럼 표시
+                    containerView.addSubview(label)
+                    label.snp.makeConstraints { make in
+                        make.edges.equalToSuperview()
+                    }
+                    
+                    containerView.backgroundColor = TDColor.Neutral.neutral50
+                    label.setColor(TDColor.Neutral.neutral800)
+                }
+            } else {
+                // 1~11시
+                containerView.addSubview(label)
+                label.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                
+                if isSelected {
+                    containerView.backgroundColor = TDColor.Primary.primary100
+                    label.setColor(TDColor.Primary.primary500)
+                } else {
+                    containerView.backgroundColor = TDColor.Neutral.neutral50
+                    label.setColor(TDColor.Neutral.neutral800)
+                }
+            }
         }
         
-        // 선택 상태에 따라 UI 업데이트
-        if (collectionView == layoutView.hourCollectionView && indexPath.row + 1 == selectedHour) ||
-            (collectionView == layoutView.minuteCollectionView && indexPath.row * 5 == selectedMinute) {
-            containerView.backgroundColor = TDColor.Primary.primary100
-            label.textColor = TDColor.Primary.primary500
-        } else {
-            containerView.backgroundColor = TDColor.Neutral.neutral50
-            label.textColor = TDColor.Neutral.neutral500
+        // MARK: - Minute Cell
+        else {
+            containerView.addSubview(label)
+            label.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            
+            if isSelected {
+                containerView.backgroundColor = TDColor.Primary.primary100
+                label.setColor(TDColor.Primary.primary500)
+            } else {
+                containerView.backgroundColor = TDColor.Neutral.neutral50
+                label.setColor(TDColor.Neutral.neutral800)
+            }
         }
         
         return cell

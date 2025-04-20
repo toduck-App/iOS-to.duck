@@ -80,10 +80,16 @@ public final class TDFormSegmentView: UIView {
     }
     
     private func setupActions() {
-        lockSegmentedControl.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            let isPublic = lockSegmentedControl.selectedSegmentIndex == 0
-            delegate?.segmentView(self, didChangeToPublic: isPublic)
-        }, for: .valueChanged)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapSegment))
+        lockSegmentedControl.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc
+    private func didTapSegment(_ gesture: UITapGestureRecognizer) {
+        let newIndex = lockSegmentedControl.selectedSegmentIndex == 0 ? 1 : 0
+        lockSegmentedControl.selectedSegmentIndex = newIndex
+
+        let isPublic = newIndex == 0
+        delegate?.segmentView(self, didChangeToPublic: isPublic)
     }
 }

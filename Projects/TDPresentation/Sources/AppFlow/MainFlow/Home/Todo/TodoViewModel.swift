@@ -66,26 +66,12 @@ final class TodoViewModel: BaseViewModel {
             self.allDayTodoList = todoList.filter { $0.time == nil }
             self.timedTodoList = todoList
                 .filter { $0.time != nil }
-                .sorted { timeSortKey($0.time) < timeSortKey($1.time) }
+                .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
             
             output.send(.fetchedTodoList)
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
         }
-    }
-    
-    func timeSortKey(_ time: String?) -> Int {
-        guard let time, time != "종일" else { return 0 }
-        
-        if let date = Date.convertFromString(time, format: .time24Hour) {
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: date)
-            let minute = calendar.component(.minute, from: date)
-            
-            return hour * 60 + minute
-        }
-        
-        return Int.max
     }
     
     private func fetchRoutineDetail(with todo: any EventPresentable) async {
@@ -103,7 +89,6 @@ final class TodoViewModel: BaseViewModel {
         if todo.eventMode == .schedule {
             await finishSchedule(with: todo)
         } else {
-            // TODO: 백엔드에서 루틴 완료 로직이 문제가 있음
             await finishRoutine(with: todo)
         }
     }

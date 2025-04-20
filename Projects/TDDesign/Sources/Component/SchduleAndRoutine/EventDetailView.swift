@@ -8,11 +8,14 @@ public final class EventDetailView: UIView {
     private var scheduleIdentyColorView = UIView().then {
         $0.backgroundColor = TDColor.Schedule.text3
     }
-    
     private let containerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 10
         $0.alignment = .center
+    }
+    private let checkBoxButton = UIButton().then {
+        $0.contentMode = .scaleAspectFit
+        $0.setImage(TDImage.CheckBox.empty, for: .normal)
     }
     
     /// 카테고리 이미지
@@ -41,7 +44,7 @@ public final class EventDetailView: UIView {
     )
     private let timeImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.clockMedium
+        $0.image = TDImage.clockMedium.withTintColor(TDColor.Neutral.neutral600)
     }
 
     /// 시간
@@ -59,7 +62,7 @@ public final class EventDetailView: UIView {
     /// 장소
     private let placeImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = TDImage.locationMedium
+        $0.image = TDImage.locationMedium.withTintColor(TDColor.Neutral.neutral600)
     }
     private let placeLabel = TDLabel(
         toduckFont: TDFont.mediumCaption1,
@@ -70,11 +73,6 @@ public final class EventDetailView: UIView {
         $0.axis = .horizontal
         $0.alignment = .leading
         $0.spacing = 4
-    }
-
-    private let checkBoxButton = UIButton().then {
-        $0.contentMode = .scaleAspectFit
-        $0.setImage(TDImage.CheckBox.empty, for: .normal)
     }
     
     // MARK: - Properties
@@ -92,12 +90,6 @@ public final class EventDetailView: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setup()
-        setupLayout()
-    }
-    
-    override public func prepareForInterfaceBuilder() {
-        super.prepareForInterfaceBuilder()
         setup()
         setupLayout()
     }
@@ -158,8 +150,10 @@ public final class EventDetailView: UIView {
             identifierColor = TDColor.baseWhite
         } else {
             let key = ColorValue(color: color)
-            scheduleIdentyColorView.backgroundColor = TDColor.reversedPair[key] ?? color
-            categoryImageView.configure(backgroundColor: color, category: category ?? TDImage.Category.none)
+            let frontColor = TDColor.reversedOpacityFrontPair[key] ?? color
+            let backColor = color
+            scheduleIdentyColorView.backgroundColor = frontColor
+            categoryImageView.configure(backgroundColor: backColor, category: category ?? TDImage.Category.none)
             identifierColor = color
         }
     }
@@ -168,8 +162,13 @@ public final class EventDetailView: UIView {
         if isHomeToduck {
             titleLabel.setFont(.boldHeader5)
             timeLabel.setFont(.regularBody2)
+            timeLabel.setColor(TDColor.Neutral.neutral800)
+            timeImageView.image = TDImage.clockMedium.withTintColor(TDColor.Neutral.neutral800)
             placeLabel.setFont(.regularBody2)
+            placeLabel.setColor(TDColor.Neutral.neutral500)
+            placeImageView.image = TDImage.locationMedium.withTintColor(TDColor.Neutral.neutral500)
 
+            containerHorizontalStackView.spacing = 16
             categoryVerticalStackView.snp.remakeConstraints { $0.width.equalTo(64) }
             categoryImageView.snp.remakeConstraints { $0.width.height.equalTo(64) }
             categoryImageView.setCategoryImageInsets(18)
@@ -186,6 +185,8 @@ public final class EventDetailView: UIView {
     }
     
     public func configureButtonAction(checkBoxAction: @escaping () -> Void) {
+        checkBoxButton.removeTarget(nil, action: nil, for: .allEvents)
+        
         checkBoxButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             checkBoxAction()
@@ -196,7 +197,7 @@ public final class EventDetailView: UIView {
     
     private func changeCheckBoxButtonImage(isFinished: Bool) {
         let checkBoxImage: UIImage = {
-            if isFinished {
+            if !isFinished {
                 return TDImage.CheckBox.empty
             } else {
                 let key = ColorValue(color: identifierColor)
@@ -254,25 +255,17 @@ public final class EventDetailView: UIView {
         }
         
         /// 카테고리 이미지
-        categoryVerticalStackView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-        }
         categoryTopSpacer.snp.makeConstraints {
             $0.height.equalTo(4)
         }
         categoryImageView.snp.makeConstraints {
-            $0.width.height.equalTo(32)
+            $0.size.equalTo(32)
         }
         categoryBottomSpacer.snp.makeConstraints {
             $0.height.equalTo(4)
         }
         
         /// 이벤트 제목, 시간, 장소
-        scheduleVerticalStackView.snp.makeConstraints {
-            $0.leading.equalTo(categoryVerticalStackView.snp.trailing).offset(10)
-            $0.trailing.equalTo(checkBoxButton.snp.leading).offset(-16)
-            $0.top.equalToSuperview()
-        }
         
         eventTopSpacer.snp.makeConstraints {
             $0.height.equalTo(8)
@@ -281,7 +274,7 @@ public final class EventDetailView: UIView {
             $0.height.equalTo(8)
         }
         titleLabel.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(18)
+            $0.height.equalTo(18)
         }
         
         timeDetailHorizontalStackView.snp.makeConstraints {

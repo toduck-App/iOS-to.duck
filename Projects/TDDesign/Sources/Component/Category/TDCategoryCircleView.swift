@@ -35,8 +35,9 @@ public final class TDCategoryCircleView: UIView {
         backgroundColor: UIColor,
         category: UIImage
     ) {
+        let backColor = TDColor.opacityPair[ColorValue(color: backgroundColor)] ?? backgroundColor
         categoryImageContainerView.layer.cornerRadius = radius
-        categoryImageContainerView.backgroundColor = backgroundColor
+        categoryImageContainerView.backgroundColor = backColor
         categoryImageView.image = category
     }
     

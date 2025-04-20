@@ -28,6 +28,7 @@ public enum TDImage {
     public static let warningMedium = TDDesignAsset.Images.warningMedium.image
     public static let warningCheckMedium = TDDesignAsset.Images.warningCheckMedium.image
     public static let addSmall = TDDesignAsset.Images.addSmall.image
+    public static let addLarge = TDDesignAsset.Images.addLarge.image
     public static let alarmSmall = TDDesignAsset.Images.alarmSmall.image
     public static let badSmall = TDDesignAsset.Images.badSmall.image
     public static let chartSmall = TDDesignAsset.Images.chartSmall.image
@@ -95,6 +96,11 @@ public enum TDImage {
         public static let rightMedium = TDDesignAsset.Images.commentRightMedium.image
         public static let leftMedium = TDDesignAsset.Images.commentLeftMedium.image
         public static let emptyMedium = TDDesignAsset.Images.commentEmptyMedium.image
+    }
+    
+    public enum SunMoon {
+        public static let sun = TDDesignAsset.Images.sun.image
+        public static let moon = TDDesignAsset.Images.moon.image
     }
     
     public enum Profile {

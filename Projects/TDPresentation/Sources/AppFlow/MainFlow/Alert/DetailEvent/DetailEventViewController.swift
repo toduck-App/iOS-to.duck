@@ -21,20 +21,6 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         super.init()
     }
     
-    init(routine: Routine) {
-        self.mode = .routine
-        self.event = EventDisplayItem(routine: routine)
-        self.currentDate = ""
-        super.init()
-    }
-    
-    init(schedule: Schedule) {
-        self.mode = .schedule
-        self.event = EventDisplayItem(schedule: schedule)
-        self.currentDate = schedule.startDate
-        super.init()
-    }
-    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -82,10 +68,12 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         )
         popupContentView.eventTitleLabel.setText(event.title)
         
-        popupContentView.timeDetailView.updateDescription(event.time ?? "-")
-        let repeatString = event.repeatDays == nil ? "-" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
+        let timeDate = Date.convertFromString(event.time ?? "", format: .time24Hour)
+        let timeString = timeDate?.convertToString(formatType: .time12Hour)
+        popupContentView.timeDetailView.updateDescription(timeString ?? "없음")
+        let repeatString = event.repeatDays == nil ? "없음" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
         popupContentView.repeatDetailView.updateDescription(repeatString)
-        popupContentView.memoContentLabel.setText(event.memo ?? "-")
+        popupContentView.memoContentLabel.setText(event.memo ?? "없음")
     }
     
     /// 루틴과 일정에 따라 UI를 다르게 설정
@@ -95,7 +83,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
             popupContentView.lockDetailView.updateDescription(event.isPublic ? "공개" : "비공개")
         } else {
             popupContentView.lockDetailView.isHidden = true
-            popupContentView.placeDetailView.updateDescription(event.place ?? "-")
+            popupContentView.placeDetailView.updateDescription(event.place ?? "없음")
         }
     }
 }
