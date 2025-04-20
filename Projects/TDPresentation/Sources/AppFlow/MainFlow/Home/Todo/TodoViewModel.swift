@@ -5,8 +5,8 @@ import TDDomain
 final class TodoViewModel: BaseViewModel {
     enum Input {
         case fetchTodoList(startDate: String, endDate: String)
-        case fetchRoutineDetail(any EventPresentable)
-        case checkBoxTapped(todo: any EventPresentable)
+        case fetchRoutineDetail(any Eventable)
+        case checkBoxTapped(todo: any Eventable)
     }
     
     enum Output {
@@ -23,8 +23,8 @@ final class TodoViewModel: BaseViewModel {
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var allDayTodoList: [any EventPresentable] = []
-    private(set) var timedTodoList: [any EventPresentable] = []
+    private(set) var allDayTodoList: [any Eventable] = []
+    private(set) var timedTodoList: [any Eventable] = []
     var selectedDate: Date?
     
     init(
@@ -61,7 +61,7 @@ final class TodoViewModel: BaseViewModel {
             let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
             let routineList = try await fetchRoutineListUseCase.execute(dateString: startDate)
             
-            let todoList: [any EventPresentable] = (scheduleList as [any EventPresentable]) + (routineList as [any EventPresentable])
+            let todoList: [any Eventable] = (scheduleList as [any Eventable]) + (routineList as [any Eventable])
             
             self.allDayTodoList = todoList.filter { $0.time == nil }
             self.timedTodoList = todoList
@@ -74,7 +74,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func fetchRoutineDetail(with todo: any EventPresentable) async {
+    private func fetchRoutineDetail(with todo: any Eventable) async {
         guard let todo = todo as? Routine else { return }
         
         do {
@@ -85,7 +85,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func finishTodo(with todo: any EventPresentable) async {
+    private func finishTodo(with todo: any Eventable) async {
         if todo.eventMode == .schedule {
             await finishSchedule(with: todo)
         } else {
@@ -93,7 +93,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func finishSchedule(with todo: any EventPresentable) async {
+    private func finishSchedule(with todo: any Eventable) async {
         do {
             try await finishScheduleUseCase.execute(
                 scheduleId: todo.id ?? 0,
@@ -106,7 +106,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func finishRoutine(with todo: any EventPresentable) async {
+    private func finishRoutine(with todo: any Eventable) async {
         do {
             try await finishRoutineUseCase.execute(
                 routineId: todo.id ?? 0,

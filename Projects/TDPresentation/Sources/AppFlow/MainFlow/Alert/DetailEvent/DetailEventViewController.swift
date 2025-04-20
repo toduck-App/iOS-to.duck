@@ -68,9 +68,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         )
         popupContentView.eventTitleLabel.setText(event.title)
         
-        let timeDate = Date.convertFromString(event.time ?? "", format: .time24Hour)
-        let timeString = timeDate?.convertToString(formatType: .time12Hour)
-        popupContentView.timeDetailView.updateDescription(timeString ?? "없음")
+        popupContentView.timeDetailView.updateDescription(event.time ?? "없음")
         let repeatString = event.repeatDays == nil ? "없음" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
         popupContentView.repeatDetailView.updateDescription(repeatString)
         popupContentView.memoContentLabel.setText(event.memo ?? "없음")

@@ -68,9 +68,7 @@ final class ToduckViewModel: BaseViewModel {
                 endDate: todayFormat
             )
             isAllDays = shouldMarkAllDayUseCase.execute(with: fetchedTodaySchedules)
-            todaySchedules = fetchedTodaySchedules.sorted {
-                Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
-            }
+            todaySchedules = fetchedTodaySchedules.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
 
             // 오늘 날짜에 완료 안 한 일정만 필터링
             uncompletedSchedules = fetchedTodaySchedules

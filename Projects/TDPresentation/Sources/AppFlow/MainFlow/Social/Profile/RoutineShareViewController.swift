@@ -84,10 +84,10 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
         )
         
         popupContentView.routineTitleLabel.setText(routine.title)
-        popupContentView.timeDetailView.updateDescription(routine.time ?? "-")
-        let repeatDaysString = routine.repeatDays?.compactMap(\.title).joined(separator: ", ") ?? "-"
+        popupContentView.timeDetailView.updateDescription(routine.time ?? "없음")
+        let repeatDaysString = routine.repeatDays?.compactMap(\.title).joined(separator: ", ") ?? "없음"
         popupContentView.repeatDetailView.updateDescription(repeatDaysString)
-        popupContentView.memoContentLabel.setText(routine.memo ?? "-")
+        popupContentView.memoContentLabel.setText(routine.memo ?? "없음")
     }
     
     /// 루틴과 일정에 따라 UI를 다르게 설정

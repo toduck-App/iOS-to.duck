@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import FittedSheets
 import Combine
 import TDDesign
@@ -177,7 +178,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     // MARK: Delegate Method
-    func updatePreEvent(preEvent: (any EventPresentable)?) {
+    func updatePreEvent(preEvent: (any Eventable)?) {
         eventMakorView.updatePreEvent(preEvent: preEvent)
     }
     

@@ -200,7 +200,7 @@ final class TimelineRoutineCell: UITableViewCell {
         routineColorView.backgroundColor = TDColor.reversedOpacityFrontPair[key] ?? color
         contentLabel.setText(routine.title)
         
-        if let time = routine.time?.convertToString(formatType: .time24Hour) {
+        if let time = routine.time {
             timeLabel.setText(time)
             timeHorizontalStackView.isHidden = false
         } else {

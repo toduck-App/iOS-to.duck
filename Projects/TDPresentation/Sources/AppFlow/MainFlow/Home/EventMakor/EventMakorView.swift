@@ -265,7 +265,7 @@ final class EventMakorView: BaseView {
         }
     }
     
-    func updatePreEvent(preEvent: (any EventPresentable)?) {
+    func updatePreEvent(preEvent: (any Eventable)?) {
         let event = preEvent as? EventDisplayItem
         titleForm.setupTextField(event?.title ?? "")
         saveButton.isEnabled = event?.title.isEmpty == false

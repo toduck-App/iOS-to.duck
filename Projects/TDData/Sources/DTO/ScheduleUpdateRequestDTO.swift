@@ -72,17 +72,13 @@ public struct ScheduleDataDTO: Encodable {
     }
 
     public init(schedule: Schedule) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        let timeString = schedule.time.map { formatter.string(from: $0) }
-
         self.title = schedule.title
         self.category = schedule.category.imageName
         self.color = schedule.category.colorHex
         self.startDate = schedule.startDate
         self.endDate = schedule.endDate
         self.isAllDay = schedule.isAllDay
-        self.time = timeString
+        self.time = schedule.time
         self.alarm = schedule.alarmTime?.rawValue
         self.daysOfWeek = schedule.repeatDays?.map { $0.rawValue }
         self.location = schedule.place

@@ -1,4 +1,5 @@
 import FSCalendar
+import TDDomain
 import TDCore
 import Combine
 import UIKit
@@ -6,8 +7,8 @@ import TDDesign
 
 final class TodoViewController: BaseViewController<BaseView> {
     enum TimeLineCellItem: Hashable {
-        case allDay(event: any EventPresentable, showTime: Bool)
-        case timeEvent(hour: Int, event: any EventPresentable, showTime: Bool)
+        case allDay(event: any Eventable, showTime: Bool)
+        case timeEvent(hour: Int, event: any Eventable, showTime: Bool)
         case gap(startHour: Int, endHour: Int)
     }
     
@@ -411,7 +412,7 @@ extension TodoViewController {
         tableView: UITableView,
         indexPath: IndexPath,
         hour: Int,
-        event: any EventPresentable,
+        event: any Eventable,
         showTime: Bool
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
@@ -465,10 +466,10 @@ extension TodoViewController {
         }
         
         // 같은 시간(12시간제)별로 모든 루틴을 배열로 매핑
-        var eventMapping: [Int: [any EventPresentable]] = [:]
+        var eventMapping: [Int: [any Eventable]] = [:]
         for event in viewModel.timedTodoList {
-            if let time = event.time {
-                let hourComponent = calendar.component(.hour, from: Date.convertFromString(time, format: .time24Hour) ?? Date())
+            if let time = event.time, let dateTime = Date.convertFromString(time, format: .time24Hour) {
+                let hourComponent = calendar.component(.hour, from: dateTime)
                 eventMapping[hourComponent, default: []].append(event)
             }
         }

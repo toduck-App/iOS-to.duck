@@ -21,7 +21,7 @@ final class RoutineShareViewModel: BaseViewModel {
     private var title: String
     private var selectedCategory: TDCategory
     private var isAllDay: Bool = false
-    private var time: Date? // hh:mm
+    private var time: String? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
     private var alarm: AlarmTime?

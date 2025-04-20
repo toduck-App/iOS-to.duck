@@ -171,7 +171,7 @@ extension HomeViewController: TodoViewControllerDelegate {
     func didTapEventMakor(
         mode: EventMakorViewController.Mode,
         selectedDate: Date?,
-        preEvent: (any EventPresentable)?
+        preEvent: (any Eventable)?
     ) {
         guard let selectedDate else { return }
         coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent)

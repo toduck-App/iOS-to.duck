@@ -69,7 +69,7 @@ final class SocialRoutineView: UIView {
                 make.centerY.equalToSuperview()
             }
             stackView.addArrangedSubview(dateContainerView)
-            routineDateLabel.setText(routineDate.convertToString(formatType: .time24Hour))
+            routineDateLabel.setText(routineDate)
         }
     }
     

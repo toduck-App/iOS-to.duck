@@ -5,7 +5,7 @@ public protocol Eventable: Hashable {
     var title: String { get }
     var category: TDCategory { get }
     var isAllDay: Bool { get }
-    var time: Date? { get }
+    var time: String? { get }
     var isRepeating: Bool { get }
     var repeatDays: [TDWeekDay]? { get }
     var alarmTime: AlarmTime? { get }

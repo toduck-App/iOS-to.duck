@@ -37,7 +37,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let updateScheduleUseCase: UpdateScheduleUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
-    private let preEvent: (any EventPresentable)?
+    private let preEvent: (any Eventable)?
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
@@ -62,7 +62,7 @@ final class EventMakorViewModel: BaseViewModel {
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
         updateScheduleUseCase: UpdateScheduleUseCase,
-        preEvent: (any EventPresentable)?,
+        preEvent: (any Eventable)?,
         selectedDate: Date? = nil
     ) {
         self.mode = mode
@@ -230,7 +230,7 @@ final class EventMakorViewModel: BaseViewModel {
             startDate: startDate!,
             endDate: endDate!,
             isAllDay: isAllDay,
-            time: time,
+            time: time?.convertToString(formatType: .time24Hour),
             repeatDays: repeatDays,
             alarmTime: alarm,
             place: location,
@@ -250,7 +250,7 @@ final class EventMakorViewModel: BaseViewModel {
             category: selectedCategory!,
             isAllDay: isAllDay,
             isPublic: isPublic,
-            time: time,
+            time: time?.convertToString(formatType: .time24Hour),
             repeatDays: repeatDays,
             alarmTime: alarm,
             memo: memo,

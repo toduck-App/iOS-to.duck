@@ -203,8 +203,8 @@ extension SocialProfileViewController {
 
         var routineMapping: [Int: [Routine]] = [:]
         for routine in timedRoutines {
-            if let time = routine.time {
-                let hourComponent = calendar.component(.hour, from: time)
+            if let time = routine.time, let dateTime = Date.convertFromString(time, format: .time24Hour) {
+                let hourComponent = calendar.component(.hour, from: dateTime)
                 routineMapping[hourComponent, default: []].append(routine)
             }
         }
