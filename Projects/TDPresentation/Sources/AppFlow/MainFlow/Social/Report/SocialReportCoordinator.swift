@@ -8,25 +8,34 @@ protocol SocialReportDelegate {
     func didTapReport()
 }
 
+enum ReportViewType {
+    case post
+    case comment
+}
+
 final class SocialReportCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
-    let postID: Post.ID
+    var postID: Post.ID
+    var commentID: Comment.ID?
 
     init(
         navigationController: UINavigationController,
         injector: DependencyResolvable,
-        id: Post.ID
+        postID: Post.ID,
+        commentID: Comment.ID? = nil
     ) {
         self.navigationController = navigationController
         self.injector = injector
-        self.postID = id
+        self.postID = postID
+        self.commentID = commentID
     }
 
     func start() {
-        let controller = SocialReportViewController()
+        let reportViewType: ReportViewType = commentID == nil ? .post : .comment
+        let controller = SocialReportViewController(reportViewType: reportViewType)
         let sheetController = SheetViewController(
             controller: controller,
             sizes: [.fixed(410)],
@@ -49,12 +58,15 @@ extension SocialReportCoordinator: SocialReportDelegate {
     func didTapReportType(_ type: ReportType) {
         navigationController.viewControllers.last?.dismiss(animated: true, completion: nil)
         let reportPostUseCase = injector.resolve(ReportPostUseCase.self)
+        let reportCommentUseCase = injector.resolve(ReportCommentUseCase.self)
         let viewModel = SocialReportViewModel(
             postID: postID,
+            commentID: commentID,
             reportType: type,
-            reportPostUseCase: reportPostUseCase
+            reportPostUseCase: reportPostUseCase,
+            reportCommentUseCase: reportCommentUseCase
         )
-        let sizes: [SheetSize] = type == .custom ? [.fixed(412)] : [.fixed(320)]
+        let sizes: [SheetSize] = type == .custom ? [.fixed(480)] : [.fixed(320)]
         let controller = SocialReportDetailViewController(viewModel: viewModel)
         let sheetController = SheetViewController(
             controller: controller,

@@ -22,8 +22,7 @@ public enum SocialAPI {
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
     case deleteComment(postId: Int, commentId: Int)
-    case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
-    
+    case reportComment(postId: Int, commentId: Int, reportType: String, reason: String?, blockAuthor: Bool)
     case fetchUser(userId: Int)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
     case fetchUserRoutineList(userId: Int)
@@ -73,8 +72,8 @@ extension SocialAPI: MFTarget {
             "/comments/\(comment.id)"
         case .deleteComment(let postId, let commentId):
             "v1/socials/\(postId)/comments/\(commentId)"
-        case .reportComment(let commentId):
-            "/comments/\(commentId)/report"
+        case .reportComment(let postId, let commentId, _, _, _):
+            "v1/socials/\(postId)/comments/\(commentId)/report"
         case .fetchUser(let userId):
             "v1/profiles/\(userId)"
         case .fetchUserPostList(let userId, _, _):
@@ -216,8 +215,13 @@ extension SocialAPI: MFTarget {
             return .requestParameters(parameters: params.compactMapValues { $0 })
         case .updateComment(let comment):
             return .requestPlain
-        case .reportComment(commentId: let commentId):
-            return .requestPlain
+        case .reportComment(_, _, let reportType, let reason, let blockAuthor):
+            var params: [String: Any] = ["reportType": reportType]
+            if let reason {
+                params["reason"] = reason
+            }
+            params["blockAuthor"] = blockAuthor
+            return .requestParameters(parameters: params.compactMapValues { $0 })
         case .shareRoutine(_ , let routine):
             return .requestParameters(parameters: [
                 "title": routine.title,

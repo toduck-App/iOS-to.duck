@@ -176,8 +176,8 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
         presentPopup(with: controller)
     }
     
-    func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        TDLogger.debug("REPORT POST")
+    func didTapReportComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
+        coordinator?.didTapReportComment(id: commentID)
     }
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {

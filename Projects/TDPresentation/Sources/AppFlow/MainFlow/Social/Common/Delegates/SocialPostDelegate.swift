@@ -10,6 +10,8 @@ protocol SocialPostDelegate: AnyObject {
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID)
     
+    func didTapReportComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
+    
     func didTapScrapPost(_ cell: UICollectionViewCell, _ postID: Post.ID)
     
     func didTapSharePost(_ cell: UICollectionViewCell, _ postID: Post.ID)
@@ -35,6 +37,8 @@ extension SocialPostDelegate {
     func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {}
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
+    
+    func didTapReportComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
     
     func didTapScrapPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
     

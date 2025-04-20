@@ -74,7 +74,7 @@ extension SocialListCoordinator: SocialListDelegate {
         let socialReportCoordinator = SocialReportCoordinator(
             navigationController: navigationController,
             injector: injector,
-            id: id
+            postID: id
         )
         childCoordinators.append(socialReportCoordinator)
         socialReportCoordinator.finishDelegate = self

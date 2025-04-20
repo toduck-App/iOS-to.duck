@@ -59,6 +59,13 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
         socialProfileViewCoordinator.start()
     }
     
+    func didTapReportComment(id: Comment.ID) {
+        let coordinator = SocialReportCoordinator(navigationController: navigationController, injector: injector, postID: postID, commentID: id)
+        childCoordinators.append(coordinator)
+        coordinator.finishDelegate = self
+        coordinator.start()
+    }
+    
     func didFinish(childCoordinator: any Coordinator) {
         finish(by: .pop)
     }

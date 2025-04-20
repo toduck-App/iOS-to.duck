@@ -161,7 +161,7 @@ private extension SocialDetailCommentCell {
         }
         headerView.onReportTapped = { [weak self] in
             guard let self else { return }
-            commentDelegate?.didTapReport(self, item.id)
+            commentDelegate?.didTapReportComment(self, item.id)
         }
         headerView.onEditTapped = { [weak self] in
             guard let self else { return }
@@ -271,7 +271,7 @@ private extension SocialDetailCommentCell {
             }
             $0.onReportTapped = { [weak self] in
                 guard let self else { return }
-                commentDelegate?.didTapReport(self, comment.id)
+                commentDelegate?.didTapReportComment(self, comment.id)
             }
             $0.onEditTapped = { [weak self] in
                 guard let self else { return }

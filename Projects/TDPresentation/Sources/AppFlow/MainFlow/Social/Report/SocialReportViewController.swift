@@ -5,6 +5,21 @@ import UIKit
 final class SocialReportViewController: BaseViewController<SocialReportView> {
     weak var coordinator: SocialReportCoordinator?
     private var dataSource: [ReportType] = ReportType.allCases
+    
+    init(reportViewType: ReportViewType) {
+        super.init()
+        switch reportViewType {
+        case .post:
+            layoutView.setTitle("게시글")
+        case .comment:
+            layoutView.setTitle("댓글")
+        }
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +41,7 @@ extension SocialReportViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 52
+        52
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

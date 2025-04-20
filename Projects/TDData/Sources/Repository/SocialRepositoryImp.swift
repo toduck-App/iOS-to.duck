@@ -110,7 +110,8 @@ public final class SocialRepositoryImp: SocialRepository {
         try await socialService.requestRemoveComment(postID: postID, commentID: commentID)
     }
     
-    public func reportComment(commentID: Comment.ID) async throws -> Bool {
-        false
+    public func reportComment(postID: Post.ID, commentID: Comment.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws
+    {
+        try await socialService.requestReportComment(postID: postID, commentID: commentID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
     }
 }
