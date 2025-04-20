@@ -40,6 +40,11 @@ public struct RoutineServiceImpl: RoutineService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
+    public func updateRoutine(routineId: Int, routine: TDData.RoutineUpdateRequestDTO) async throws {
+        let target = RoutineAPI.updateRoutine(routineId: routineId, routine: routine)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
     public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
         let target = RoutineAPI.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
