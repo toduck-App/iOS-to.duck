@@ -1,23 +1,14 @@
-//
-//  CalendarViewController.swift
-//  toduck
-//
-//  Created by 박효준 on 9/29/24.
-//
-
 import FSCalendar
 import SnapKit
 import TDDesign
 import UIKit
 import Combine
 
-// FIXME: 실 기기에서 빌드할 경우 캘린더 깨짐 현상 발생
 final class ToduckCalendarViewController: BaseViewController<BaseView> {
     // MARK: Nested Types
     private enum DetailViewState {
         case topExpanded
         case topCollapsed
-        case topHidden
     }
     
     // MARK: - UI Components
@@ -26,18 +17,18 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private let selectedDayScheduleView = SelectedDayScheduleView()
     
     // MARK: - Properties
-    private let viewModel: ToduckCalendarViewModel!
+    private let viewModel: ToduckCalendarViewModel
     private let input = PassthroughSubject<ToduckCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var calendarHeightConstraint: Constraint?
     private var selectedDayViewTopConstraint: Constraint?
     private var selectedDayViewTopExpanded: CGFloat = 0
     private var selectedDayViewTopCollapsed: CGFloat = 0
-    private var selectedDayViewTopHidden: CGFloat = 0
     private var isInitialLayoutDone = false  // 첫 실행 때만 레이아웃 업데이트
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
+    private var selectedDate: Date?
     weak var coordinator: ToduckCalendarCoordinator?
     
     init(viewModel: ToduckCalendarViewModel) {
@@ -45,20 +36,20 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         super.init()
     }
     
-    required init?(coder: NSCoder) {
-        viewModel = nil
-        super.init(coder: coder)
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Life Cycle
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
+        // 이번 달 일정들 조회
         let startDate = Date().startOfMonth()
         let endDate = Date().endOfMonth()
         input.send(
-            .fetchScheduleList(
+            .fetchSchedule(
                 startDate: startDate.convertToString(formatType: .yearMonthDay),
                 endDate: endDate.convertToString(formatType: .yearMonthDay)
             )
@@ -68,27 +59,30 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         selectToday()
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        view.bringSubviewToFront(selectedDayScheduleView)
+        input.send(.fetchDetailSchedule(date: selectedDate ?? Date()))
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
         if !isInitialLayoutDone {
             updateConstants()
             selectedDayViewTopConstraint?.update(offset: selectedDayViewTopCollapsed)
+            view.layoutIfNeeded()
             isInitialLayoutDone = true
         }
-        view.bringSubviewToFront(selectedDayScheduleView)
     }
     
     private func updateConstants() {
-        let safeAreaTop = view.safeAreaInsets.top
         let calendarHeaderHeight = calendarHeader.frame.height
         let calendarHeight = calendar.frame.height
-        let dragViewHeight = selectedDayScheduleView.headerView.frame.height
-        let tabBarHeight = tabBarController?.tabBar.frame.height ?? 0
         
-        selectedDayViewTopExpanded = safeAreaTop + Constant.calendarHeaderTopOffset
+        selectedDayViewTopExpanded = view.safeAreaInsets.top
         selectedDayViewTopCollapsed = calendarHeaderHeight + selectedDayViewTopExpanded + Constant.calendarTopOffset + calendarHeight
-        selectedDayViewTopHidden = view.bounds.height - dragViewHeight - tabBarHeight
     }
     
     // MARK: - Setup
@@ -101,12 +95,12 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func layout() {
         calendarHeader.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
-            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
+            $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(18)
         }
         calendar.snp.makeConstraints {
             $0.centerX.equalTo(view)
             $0.top.equalTo(calendarHeader.snp.bottom).offset(20)
-            $0.width.equalTo(view.safeAreaLayoutGuide).multipliedBy(0.95)
+            $0.leading.trailing.equalToSuperview().inset(8)
             self.calendarHeightConstraint = $0.height.equalTo(Constant.calendarHeight).constraint
         }
         selectedDayScheduleView.snp.makeConstraints {
@@ -116,7 +110,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     override func configure() {
-        selectedDayScheduleView.scheduleTableView.delegate = self
+        view.backgroundColor = .white
+        calendarHeader.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     }
@@ -129,6 +124,11 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
             .sink { [weak self] event in
                 switch event {
                 case .fetchedScheduleList:
+                    self?.calendar.reloadData()
+                case .fetchedDetailSchedule:
+                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                    self?.selectedDayScheduleView.noScheduleLabel.isHidden = !(self?.viewModel.currentDayScheduleList.isEmpty ?? true)
+                case .successFinishSchedule:
                     self?.selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
                     self?.showErrorAlert(errorMessage: errorMessage)
@@ -139,6 +139,8 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private func selectToday() {
         let today = Date()
         calendar.select(today)
+        selectedDate = today
+        viewModel.selectedDate = today
         selectedDayScheduleView.updateDateLabel(date: today)
     }
 }
@@ -166,44 +168,30 @@ private extension ToduckCalendarViewController {
             
         case .changed:
             var newTop = (selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed) + translation
-            newTop = max(selectedDayViewTopExpanded, min(selectedDayViewTopHidden, newTop))
+            newTop = max(selectedDayViewTopExpanded, min(selectedDayViewTopCollapsed, newTop))
             selectedDayViewTopConstraint?.update(offset: newTop)
             gesture.setTranslation(.zero, in: view)
             
         case .ended, .cancelled:
             let currentTop = selectedDayViewTopConstraint?.layoutConstraints.first?.constant ?? selectedDayViewTopCollapsed
-            let shouldExpand: Bool
-            let shouldHide: Bool
             let targetTop: CGFloat
             let detailViewState: DetailViewState
             
-            switch initialDetailViewState {
-            case .topHidden:
-                // TopHidden 상태에서는 위로 스와이프하면 무조건 TopCollapsed로 이동
+            if abs(velocity) > 500 {
+                // 빠른 스와이프 → 방향에 따라 결정
                 if velocity < 0 {
-                    targetTop = selectedDayViewTopCollapsed
-                    detailViewState = .topCollapsed
-                } else {
-                    // 아래로 스와이프하면 그대로 TopHidden 유지
-                    targetTop = selectedDayViewTopHidden
-                    detailViewState = .topHidden
-                }
-            default:
-                if abs(velocity) > 500 {
-                    shouldExpand = velocity < 0
-                    shouldHide = velocity > 0 && currentTop > selectedDayViewTopCollapsed + 100
-                } else {
-                    let middlePosition = (selectedDayViewTopCollapsed + selectedDayViewTopExpanded) / 2
-                    shouldExpand = currentTop < middlePosition
-                    shouldHide = currentTop >= selectedDayViewTopHidden - 100
-                }
-                
-                if shouldExpand {
                     targetTop = selectedDayViewTopExpanded
                     detailViewState = .topExpanded
-                } else if shouldHide {
-                    targetTop = selectedDayViewTopHidden
-                    detailViewState = .topHidden
+                } else {
+                    targetTop = selectedDayViewTopCollapsed
+                    detailViewState = .topCollapsed
+                }
+            } else {
+                // 느린 스와이프 → 중간 위치 기준
+                let middlePosition = (selectedDayViewTopCollapsed + selectedDayViewTopExpanded) / 2
+                if currentTop < middlePosition {
+                    targetTop = selectedDayViewTopExpanded
+                    detailViewState = .topExpanded
                 } else {
                     targetTop = selectedDayViewTopCollapsed
                     detailViewState = .topCollapsed
@@ -223,16 +211,8 @@ private extension ToduckCalendarViewController {
         }
     }
     
-    // FIXME: FSCalendarCollectionView가 아니라 UIView가 늘어나고 있음
     private func adjustCalendarHeight(for detailViewState: DetailViewState) {
-        let newCalendarHeight: CGFloat
-        
-        switch detailViewState {
-        case .topHidden:
-            newCalendarHeight = selectedDayViewTopHidden - (calendarHeader.frame.maxY + view.safeAreaInsets.bottom)
-        case .topExpanded, .topCollapsed:
-            newCalendarHeight = Constant.calendarHeight
-        }
+        let newCalendarHeight: CGFloat = Constant.calendarHeight
         
         // 먼저 rowHeight를 계산
         let headerHeight = calendar.headerHeight
@@ -253,6 +233,17 @@ private extension ToduckCalendarViewController {
     }
 }
 
+// MARK: - CalendarHeaderStackViewDelegate
+extension ToduckCalendarViewController: CalendarHeaderStackViewDelegate {
+    func calendarHeader(
+        _ header: CalendarHeaderStackView,
+        didSelect date: Date
+    ) {
+        calendar.setCurrentPage(date, animated: true)
+        updateHeaderLabel(for: calendar.currentPage)
+    }
+}
+
 // MARK: - FSCalendarDelegateAppearance, FSCalendarDataSource, FSCalendarDelegate
 extension ToduckCalendarViewController: TDCalendarConfigurable {
     func calendar(
@@ -261,10 +252,24 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDayScheduleView.updateDateLabel(date: date)
+        viewModel.selectedDate = date
+        input.send(.fetchDetailSchedule(date: date))
     }
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        updateHeaderLabel(for: calendar.currentPage)
+        let currentPage = calendar.currentPage
+        
+        guard let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: currentPage)),
+              let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate) else {
+            return
+        }
+        
+        input.send(
+            .fetchSchedule(
+                startDate: startDate.convertToString(formatType: .yearMonthDay),
+                endDate: endDate.convertToString(formatType: .yearMonthDay)
+            )
+        )
     }
     
     // MARK: - 날짜 폰트 색상
@@ -274,7 +279,6 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         appearance: FSCalendarAppearance,
         titleDefaultColorFor date: Date
     ) -> UIColor? {
-        // TODO: 인접한 달 Neutral600 색상 표시
         colorForDate(date)
     }
     
@@ -287,87 +291,62 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
         colorForDate(date)
     }
     
-    // MARK: - 날짜 아래의 이벤트
-    // 날짜 아래 점 개수 지정
+    // MARK: 날짜 아래 점 표시
     func calendar(
         _ calendar: FSCalendar,
         numberOfEventsFor date: Date
     ) -> Int {
-        0
+        let key = Calendar.current.startOfDay(for: date)
+        let schedules = viewModel.monthScheduleDict[key] ?? []
+        return min(3, schedules.count)
     }
     
-    // 날짜 아래 점 색상 지정 (이벤트 색상)
     func calendar(
         _ calendar: FSCalendar,
         appearance: FSCalendarAppearance,
         eventDefaultColorsFor date: Date
     ) -> [UIColor]? {
-        colorFromEvent(for: date)
+        let key = Calendar.current.startOfDay(for: date)
+        let schedules = viewModel.monthScheduleDict[key] ?? []
+        let categoryColors = schedules.prefix(3).map { $0.categoryColor }
+        let colors = categoryColors.compactMap { TDColor.reversedPair[ColorValue(color: $0)] }
+        return colors
     }
     
-    // 선택된 날짜에도 동일한 이벤트 색상을 유지하도록 설정
     func calendar(
         _ calendar: FSCalendar,
         appearance: FSCalendarAppearance,
         eventSelectionColorsFor date: Date
     ) -> [UIColor]? {
-        colorFromEvent(for: date)
-    }
-    
-    // TODO: 나중에 TDCalendarConfigurable로 옮겨야 함, tempSchedules 생각하기
-    // 날짜에 대한 일정 색상을 반환하는 헬퍼 메서드
-    func colorFromEvent(for date: Date) -> [UIColor]? {
-        return nil
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension ToduckCalendarViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
-    }
-    
-    // TODO: 셀 좌측 색상 바와 우측 삭제 버튼 Radius 처리
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(
-            style: .destructive,
-            title: nil
-        ) { _, _, _ in
-            
-        }
-        deleteAction.image = TDImage.trashWhiteMedium
-        
-        return UISwipeActionsConfiguration(actions: [deleteAction])
+        let key = Calendar.current.startOfDay(for: date)
+        let schedules = viewModel.monthScheduleDict[key] ?? []
+        let categoryColors = schedules.prefix(3).map { $0.categoryColor }
+        let colors = categoryColors.compactMap { TDColor.reversedPair[ColorValue(color: $0)] }
+        return colors
     }
 }
 
 // MARK: - UITableViewDataSource
 extension ToduckCalendarViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.scheduleList.count
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
+        viewModel.currentDayScheduleList.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ScheduleDetailCell.identifier,
+            for: indexPath
+        ) as? ScheduleDetailCell else { return UITableViewCell() }
         
-        let detailView = EventDetailView()
-        cell.contentView.addSubview(detailView)
-        
-        detailView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        let dummyData = viewModel.scheduleList[indexPath.row]
-        detailView.configureCell(
-            color: .black,
-            title: dummyData.title,
-            time: nil,
-            category: nil,
-            isFinished: dummyData.isFinished,
-            place: dummyData.place
-        )
-        detailView.configureButtonAction {
-            print("체크박스 클릭")
+        let schedule = viewModel.currentDayScheduleList[indexPath.row]
+        cell.configure(with: schedule) { [weak self] in
+            self?.input.send(.checkBoxTapped(schedule))
         }
         
         return cell

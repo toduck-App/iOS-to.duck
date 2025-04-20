@@ -2,6 +2,11 @@ import Combine
 import Foundation
 import TDDomain
 
+enum ScheduleSegmentType {
+    case today
+    case uncompleted
+}
+
 final class ToduckViewModel: BaseViewModel {
     enum Input {
         case fetchScheduleList
@@ -17,14 +22,21 @@ final class ToduckViewModel: BaseViewModel {
     private let shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
     private(set) var isAllDays = false
     private(set) var todaySchedules: [Schedule] = []
     private(set) var uncompletedSchedules: [Schedule] = []
-    private(set) var isShowingRemaining: Bool = false
+    private(set) var selectedSegment: ScheduleSegmentType = .today
     
     var currentDisplaySchedules: [Schedule] {
-        isShowingRemaining ? uncompletedSchedules : todaySchedules
+        switch selectedSegment {
+        case .today:
+            return todaySchedules
+        case .uncompleted:
+            return uncompletedSchedules
+        }
     }
+    
     var categoryImages: [TDCategoryImageType] {
         currentDisplaySchedules.map { TDCategoryImageType.init(rawValue: $0.category.imageName) }
     }
@@ -51,25 +63,33 @@ final class ToduckViewModel: BaseViewModel {
     private func fetchScheduleList() async {
         do {
             let todayFormat = Date().convertToString(formatType: .yearMonthDay)
-            let todaySchedules = try await fetchScheduleListUseCase.execute(
+            let fetchedTodaySchedules = try await fetchScheduleListUseCase.execute(
                 startDate: todayFormat,
                 endDate: todayFormat
             )
-            isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
-            self.todaySchedules = todaySchedules
-            self.uncompletedSchedules = todaySchedules.filter { schedule in
-                guard let records = schedule.scheduleRecords, !records.isEmpty else {
-                    // 기록이 없으면 완료 안 했으므로 "남은일정"
-                    return true
+            isAllDays = shouldMarkAllDayUseCase.execute(with: fetchedTodaySchedules)
+            todaySchedules = fetchedTodaySchedules.sorted {
+                Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
+            }
+
+            // 오늘 날짜에 완료 안 한 일정만 필터링
+            uncompletedSchedules = fetchedTodaySchedules
+                .filter { schedule in
+                    guard let records = schedule.scheduleRecords, !records.isEmpty else {
+                        return true // 오늘 기록이 없으면 완료 안한 상태
+                    }
+                    
+                    if let todayRecord = records.first(where: { $0.recordDate == todayFormat }) {
+                        return !todayRecord.isComplete // 기록이 있다면, 완료안된 것만 포함
+                    } else {
+                        return true // 오늘 기록이 없으면 완료 안한 상태
+                    }
+                }
+                .sorted {
+                    Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
                 }
 
-                // 기록이 있는 경우, 오늘 날짜에 완료 안 한 게 있다면 "남은일정"
-                return records.contains { record in
-                    record.recordDate == schedule.startDate && !record.isComplete
-                }
-            }
-            
-            if todaySchedules.isEmpty {
+            if fetchedTodaySchedules.isEmpty {
                 output.send(.fetchedEmptyScheduleList)
             } else {
                 output.send(.fetchedScheduleList)
@@ -79,11 +99,7 @@ final class ToduckViewModel: BaseViewModel {
         }
     }
     
-    func switchToRemainingSchedules() {
-        isShowingRemaining = true
-    }
-
-    func switchToTodaySchedules() {
-        isShowingRemaining = false
+    func setSegment(_ type: ScheduleSegmentType) {
+        self.selectedSegment = type
     }
 }
