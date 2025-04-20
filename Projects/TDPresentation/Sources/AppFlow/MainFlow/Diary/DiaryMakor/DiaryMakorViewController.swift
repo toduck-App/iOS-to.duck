@@ -68,6 +68,7 @@ final class DiaryMakorViewController: BaseViewController<DiaryMakorView> {
         layoutView.saveButton.isEnabled = true
         layoutView.saveButton.layer.borderWidth = 0
         layoutView.titleForm.setupTextField(preDiary.title)
+        layoutView.noticeSnackBarView.isHidden = true
         layoutView.recordTextView.setupTextView(text: preDiary.memo)
     }
 }
