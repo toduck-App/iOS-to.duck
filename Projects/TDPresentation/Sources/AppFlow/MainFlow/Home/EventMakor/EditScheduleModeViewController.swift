@@ -74,6 +74,7 @@ final class EditScheduleModeViewController: BaseViewController<BaseView> {
         }
         todayScheduleApplyLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.height.equalTo(20)
             $0.leading.equalToSuperview().inset(16)
         }
         
@@ -83,6 +84,7 @@ final class EditScheduleModeViewController: BaseViewController<BaseView> {
         }
         allScheduleApplyLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.height.equalTo(20)
             $0.leading.equalToSuperview().inset(16)
         }
         

@@ -41,7 +41,7 @@ final class EventMakorCoordinator: Coordinator {
         eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
         if let preEvent {
-            eventMakorViewController.updatePreEvent(preEvent: preEvent)
+            eventMakorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
         }
     }
     

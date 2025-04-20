@@ -56,6 +56,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let selectedDate: Date?
     private var isOneDayDeleted: Bool = false
     
+    // MARK: - Initializer
     init(
         mode: EventMakorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
@@ -72,16 +73,75 @@ final class EventMakorViewModel: BaseViewModel {
         self.updateScheduleUseCase = updateScheduleUseCase
         self.preEvent = preEvent
         self.selectedDate = selectedDate
-        initialValueSetup()
+        initialValueSetupForEditMode()
     }
     
-    private func initialValueSetup() {
-        // TODO: preEvent가 nil이 아닐 때, preEvent의 정보로 초기화
+    private func initialValueSetupForEditMode() {
+        guard let preEvent else { return }
+        
+        if let schedule = preEvent as? Schedule {
+            self.title = schedule.title
+            self.selectedCategory = schedule.category
+            self.startDate = schedule.startDate
+            self.endDate = schedule.endDate
+            self.isAllDay = schedule.isAllDay
+            self.time = schedule.time
+            self.repeatDays = schedule.repeatDays
+            self.alarm = schedule.alarmTime
+            self.location = schedule.place
+            self.memo = schedule.memo
+        } else if let routine = preEvent as? Routine {
+            self.title = routine.title
+            self.selectedCategory = routine.category
+            self.isAllDay = routine.isAllDay
+            self.time = routine.time
+            self.isPublic = routine.isPublic
+            self.repeatDays = routine.repeatDays
+            self.alarm = routine.alarmTime
+            self.memo = routine.memo
+        }
     }
     
+    // MARK: - Input / Output
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
-            self?.handleInput(event)
+            switch event {
+            case .fetchCategories:
+                Task { await self?.fetchCategories() }
+            case .selectCategory(let colorHex, let imageName):
+                self?.selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
+            case .selectDate(let startDay, let endDay):
+                self?.startDate = startDay
+                self?.endDate = endDay
+            case .selectTime(let isAllDay, let time):
+                self?.isAllDay = isAllDay
+                self?.time = time
+                self?.validateCanSave()
+            case .selectLockType(let isPublic):
+                self?.isPublic = isPublic
+            case .tapScheduleEditTodayButton:
+                self?.isOneDayDeleted = true
+                Task { await self?.updateSchedule() }
+            case .tapScheduleEditAllButton:
+                self?.isOneDayDeleted = false
+                Task { await self?.updateSchedule() }
+            case .tapEditRoutineButton:
+                self?.updateRoutine()
+            case .tapSaveTodoButton:
+                self?.saveEvent()
+            case .updateTitleTextField(let title):
+                self?.title = title
+                self?.validateCanSave()
+            case .updateLocationTextField(let location):
+                self?.location = location
+            case .updateMemoTextView(let memo):
+                self?.memo = memo
+            case .selectRepeatDay(let index, let isSelected):
+                self?.handleRepeatDaySelection(at: index, isSelected: isSelected)
+                self?.validateCanSave()
+            case .selectAlarm(let index, let isSelected):
+                self?.handleAlarmSelection(at: index, isSelected: isSelected)
+            }
         }.store(in: &cancellables)
         return output.eraseToAnyPublisher()
     }
@@ -92,46 +152,6 @@ final class EventMakorViewModel: BaseViewModel {
         
         let initialDate = dateFormatter.string(from: date)
         startDate = initialDate
-    }
-    
-    private func handleInput(_ event: Input) {
-        switch event {
-        case .fetchCategories:
-            Task { await fetchCategories() }
-        case .selectCategory(let colorHex, let imageName):
-            selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
-        case .selectDate(let startDay, let endDay):
-            startDate = startDay
-            endDate = endDay
-        case .selectTime(let isAllDay, let time):
-            self.isAllDay = isAllDay
-            self.time = time
-            self.validateCanSave()
-        case .selectLockType(let isPublic):
-            self.isPublic = isPublic
-        case .tapScheduleEditTodayButton:
-            self.isOneDayDeleted = true
-            Task { await self.updateSchedule() }
-        case .tapScheduleEditAllButton:
-            self.isOneDayDeleted = false
-            Task { await self.updateSchedule() }
-        case .tapEditRoutineButton:
-            self.updateRoutine()
-        case .tapSaveTodoButton:
-            saveEvent()
-        case .updateTitleTextField(let title):
-            self.title = title
-            validateCanSave()
-        case .updateLocationTextField(let location):
-            self.location = location
-        case .updateMemoTextView(let memo):
-            self.memo = memo
-        case .selectRepeatDay(let index, let isSelected):
-            handleRepeatDaySelection(at: index, isSelected: isSelected)
-            validateCanSave()
-        case .selectAlarm(let index, let isSelected):
-            handleAlarmSelection(at: index, isSelected: isSelected)
-        }
     }
     
     private func updateSchedule() async {

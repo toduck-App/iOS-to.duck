@@ -71,7 +71,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         popupContentView.timeDetailView.updateDescription(event.time ?? "없음")
         let repeatString = event.repeatDays == nil ? "없음" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
         popupContentView.repeatDetailView.updateDescription(repeatString)
-        popupContentView.memoContentLabel.setText(event.memo ?? "없음")
+        popupContentView.memoContentLabel.setText(event.memo ?? "등록된 메모가 없어요")
     }
     
     /// 루틴과 일정에 따라 UI를 다르게 설정

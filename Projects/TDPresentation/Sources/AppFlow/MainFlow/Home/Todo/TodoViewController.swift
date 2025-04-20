@@ -418,13 +418,10 @@ extension TodoViewController {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: TimeSlotTableViewCell.identifier,
             for: indexPath
-        ) as? TimeSlotTableViewCell else {
-            return UITableViewCell()
-        }
+        ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
         let place = event.eventMode == .schedule ? (event as? Schedule)?.place : nil
-        let dateString = event.eventMode == .schedule ? selectedDate?.convertToString(formatType: .monthDay) : nil
-        let eventDisplay = EventDisplayItem(from: event, place: place, date: dateString)
+        let eventDisplay = EventDisplayItem(from: event, place: place)
 
         cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
         cell.configureCheckBoxButtonAction { [weak self] in
@@ -435,14 +432,14 @@ extension TodoViewController {
             self?.delegate?.didTapEventMakor(
                 mode: mode,
                 selectedDate: self?.selectedDate,
-                preEvent: eventDisplay
+                preEvent: event
             )
-        } deleteAction: {
+        } deleteAction: { [weak self] in
             let deleteEventViewController = DeleteEventViewController(
                 isRepeating: eventDisplay.isRepeating,
                 isScheduleEvent: eventDisplay.eventMode == .schedule
             )
-            self.presentPopup(with: deleteEventViewController)
+            self?.presentPopup(with: deleteEventViewController)
         }
 
         return cell

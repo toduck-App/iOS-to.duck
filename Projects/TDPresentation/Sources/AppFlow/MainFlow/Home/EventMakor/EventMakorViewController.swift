@@ -178,8 +178,9 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     // MARK: Delegate Method
-    func updatePreEvent(preEvent: (any Eventable)?) {
-        eventMakorView.updatePreEvent(preEvent: preEvent)
+    func updatePreEvent(preEvent: (any Eventable)?, selectedDate: Date?) {
+        let selectedDateString = selectedDate?.convertToString(formatType: .monthDay) ?? ""
+        eventMakorView.updatePreEvent(preEvent: preEvent, selectedDateString: selectedDateString)
     }
     
     func reloadCategoryView() {
