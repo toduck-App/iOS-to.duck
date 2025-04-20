@@ -70,16 +70,14 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private func setupSegmentedControl() {
         layoutView.scheduleSegmentedControl.addAction(UIAction { [weak self] action in
             guard let segmentedControl = action.sender as? UISegmentedControl else { return }
+            
             let selectedIndex = segmentedControl.selectedSegmentIndex
+            let selectedType: ScheduleSegmentType = (selectedIndex == 0) ? .today : .uncompleted
             
-            if selectedIndex == 0 {
-                self?.viewModel.switchToTodaySchedules()
-            } else {
-                self?.viewModel.switchToRemainingSchedules()
-            }
-            
+            self?.viewModel.setSegment(selectedType)
             self?.layoutView.scheduleCollectionView.reloadData()
             self?.updateAutoScroll()
+            
         }, for: .valueChanged)
     }
     
@@ -175,7 +173,7 @@ extension ToduckViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        viewModel.todaySchedules.count
+        viewModel.currentDisplaySchedules.count
     }
     
     func collectionView(
@@ -187,14 +185,15 @@ extension ToduckViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? ScheduleCollectionViewCell else { return UICollectionViewCell() }
         
-        // TODO: 투두에서 일정 완료하고 '토덕'에 돌아와 '남은 투두'에서 스와이프하면 인덱스 문제로 크래시 발생
         let currentSchedule = viewModel.currentDisplaySchedules[indexPath.row]
+        let categoryImage = viewModel.categoryImages[safe: indexPath.row]?.image
+        
         cell.eventDetailView.configureCell(
             isHomeToduck: true,
             color: currentSchedule.categoryColor,
             title: currentSchedule.title,
             time: currentSchedule.time,
-            category: viewModel.categoryImages[indexPath.row].image,
+            category: categoryImage,
             isFinished: currentSchedule.isFinished,
             place: currentSchedule.place
         )

@@ -92,7 +92,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         diaryDetailContainerView.addSubview(diaryDetailView)
         diaryDetailContainerView.addSubview(dummyView)
         
-        calendarHeader.pickerButton.delegate = self
+        calendarHeader.delegate = self
         calendar.delegate = self
     }
     
@@ -253,9 +253,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
 }
 
-extension DiaryCalendarViewController: PickerButtonDelegate {
-    func pickerButton(
-        _ pickerButton: PickerButton,
+extension DiaryCalendarViewController: CalendarHeaderStackViewDelegate {
+    func calendarHeader(
+        _ header: CalendarHeaderStackView,
         didSelect date: Date
     ) {
         calendar.setCurrentPage(date, animated: true)

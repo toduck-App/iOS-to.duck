@@ -20,35 +20,60 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
     }
     
     func filterScheduleList(with scheduleList: [Schedule], startDate: String, endDate: String) -> [Schedule] {
-        guard let queryDate = Date.convertFromString(startDate, format: .yearMonthDay) else { return [] }
-        let weekdayString = queryDate.convertToString(formatType: .weekday).uppercased()
-
-        guard let weekday = TDWeekDay(rawValue: weekdayString) else {
-            TDLogger.error("잘못된 요일 변환: \(weekdayString)")
+        guard let start = Date.convertFromString(startDate, format: .yearMonthDay),
+              let end = Date.convertFromString(endDate, format: .yearMonthDay) else {
             return []
         }
 
-        return scheduleList.filter { schedule in
-            guard let scheduleStart = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
-                  let scheduleEnd = Date.convertFromString(schedule.endDate, format: .yearMonthDay) else {
-                return false
-            }
+        let calendar = Calendar.current
+        let allDates = calendar.generateDates(from: start, to: end)
+        var filteredSchedules: Set<Schedule> = []
 
-            let isWithinPeriod = scheduleStart <= queryDate && queryDate <= scheduleEnd
+        for schedule in scheduleList {
+            guard
+                let scheduleStart = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
+                let scheduleEnd = Date.convertFromString(schedule.endDate, format: .yearMonthDay)
+            else { continue }
 
-            if let repeatDays = schedule.repeatDays {
-                // 반복 일정 처리
-                // - 기간 반복: start ~ end 사이에 있고 요일 포함
-                // - 하루 반복: queryDate >= startDate && 요일 포함
-                if scheduleStart == scheduleEnd {
-                    return queryDate >= scheduleStart && repeatDays.contains(weekday)
-                } else {
-                    return isWithinPeriod && repeatDays.contains(weekday)
+            let hasPeriod = scheduleStart != scheduleEnd
+            let hasRepeat = (schedule.repeatDays?.isEmpty == false)
+
+            switch (hasPeriod, hasRepeat) {
+            case (false, false):
+                // 1. 기간 X + 반복 X → 하루만 표시
+                if allDates.contains(scheduleStart) {
+                    filteredSchedules.insert(schedule)
                 }
-            } else {
-                // 일반 일정 (반복 없음): 단순 포함 여부
-                return isWithinPeriod
+
+            case (false, true):
+                // 2. 기간 X + 반복 O → 모든 날짜 중 반복 요일에 포함된 날만
+                for date in allDates {
+                    if schedule.repeatDays!.contains(date.weekdayEnum()) {
+                        filteredSchedules.insert(schedule)
+                        break
+                    }
+                }
+
+            case (true, false):
+                // 3. 기간 O + 반복 X → 기간 내 모든 날짜
+                if scheduleEnd < start || scheduleStart > end {
+                    continue
+                }
+                filteredSchedules.insert(schedule)
+
+            case (true, true):
+                // 4. 기간 O + 반복 O → 기간 내의 반복 요일에만 표시
+                for date in allDates {
+                    guard let scheduleRepeatDays = schedule.repeatDays else { continue }
+                    if (scheduleStart...scheduleEnd).contains(date),
+                       scheduleRepeatDays.contains(date.weekdayEnum()) {
+                        filteredSchedules.insert(schedule)
+                        break
+                    }
+                }
             }
         }
+
+        return Array(filteredSchedules)
     }
 }
