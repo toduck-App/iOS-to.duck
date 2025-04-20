@@ -84,20 +84,19 @@ extension TDColor {
     ]
     
     public static let colorCheckBox: [ColorValue: UIImage] = [
-        ColorValue(color: TDColor.Schedule.back1): TDImage.CheckBox.back1,
-        ColorValue(color: TDColor.Schedule.back2): TDImage.CheckBox.back2,
-        ColorValue(color: TDColor.Schedule.back3): TDImage.CheckBox.back3,
-        ColorValue(color: TDColor.Schedule.back4): TDImage.CheckBox.back4,
-        ColorValue(color: TDColor.Schedule.back5): TDImage.CheckBox.back5,
-        ColorValue(color: TDColor.Schedule.back6): TDImage.CheckBox.back6,
-        ColorValue(color: TDColor.Schedule.back7): TDImage.CheckBox.back7,
-        ColorValue(color: TDColor.Schedule.back8): TDImage.CheckBox.back8,
-        ColorValue(color: TDColor.Schedule.back9): TDImage.CheckBox.back9,
-        ColorValue(color: TDColor.Schedule.back10): TDImage.CheckBox.back10,
-        ColorValue(color: TDColor.Schedule.back11): TDImage.CheckBox.back11,
-        ColorValue(color: TDColor.Schedule.back12): TDImage.CheckBox.back12,
-        ColorValue(color: TDColor.Schedule.back13): TDImage.CheckBox.back13,
-        ColorValue(color: TDColor.Schedule.back14): TDImage.CheckBox.back14,
-        ColorValue(color: TDColor.Schedule.back15): TDImage.CheckBox.back15
+        ColorValue(color: TDColor.ScheduleOpacity.back1):  TDImage.CheckBox.back1,
+        ColorValue(color: TDColor.ScheduleOpacity.back2):  TDImage.CheckBox.back2,
+        ColorValue(color: TDColor.ScheduleOpacity.back3):  TDImage.CheckBox.back3,
+        ColorValue(color: TDColor.ScheduleOpacity.back4):  TDImage.CheckBox.back4,
+        ColorValue(color: TDColor.ScheduleOpacity.back5):  TDImage.CheckBox.back5,
+        ColorValue(color: TDColor.ScheduleOpacity.back6):  TDImage.CheckBox.back6,
+        ColorValue(color: TDColor.ScheduleOpacity.back7):  TDImage.CheckBox.back7,
+        ColorValue(color: TDColor.ScheduleOpacity.back8):  TDImage.CheckBox.back8,
+        ColorValue(color: TDColor.ScheduleOpacity.back9):  TDImage.CheckBox.back9,
+        ColorValue(color: TDColor.ScheduleOpacity.back10): TDImage.CheckBox.back10,
+        ColorValue(color: TDColor.ScheduleOpacity.back11): TDImage.CheckBox.back11,
+        ColorValue(color: TDColor.ScheduleOpacity.back12): TDImage.CheckBox.back12,
+        ColorValue(color: TDColor.ScheduleOpacity.back13): TDImage.CheckBox.back13,
+        ColorValue(color: TDColor.ScheduleOpacity.back14): TDImage.CheckBox.back14,
     ]
 }
