@@ -7,12 +7,15 @@ final class TodoViewModel: BaseViewModel {
         case fetchTodoList(startDate: String, endDate: String)
         case fetchRoutineDetail(any Eventable)
         case checkBoxTapped(todo: any Eventable)
+        case deleteTodayTodo(todoId: Int, isSchedule: Bool)
+        case deleteAllTodo(todoId: Int, isSchedule: Bool)
     }
     
     enum Output {
         case fetchedTodoList
         case fetchedRoutineDetail(Routine)
         case successFinishTodo
+        case deletedTodo
         case failure(error: String)
     }
     
@@ -21,10 +24,12 @@ final class TodoViewModel: BaseViewModel {
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
+    private let deleteScheduleUseCase: DeleteScheduleUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var allDayTodoList: [any Eventable] = []
     private(set) var timedTodoList: [any Eventable] = []
+    private var isOneDayDeleted: Bool = false
     var selectedDate: Date?
     
     init(
@@ -32,13 +37,15 @@ final class TodoViewModel: BaseViewModel {
         fetchRoutineListUseCase: FetchRoutineListUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
-        finishRoutineUseCase: FinishRoutineUseCase
+        finishRoutineUseCase: FinishRoutineUseCase,
+        deleteScheduleUseCase: DeleteScheduleUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
         self.fetchRoutineListUseCase = fetchRoutineListUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
+        self.deleteScheduleUseCase = deleteScheduleUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -48,6 +55,12 @@ final class TodoViewModel: BaseViewModel {
                 Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
             case .fetchRoutineDetail(let todo):
                 Task { await self?.fetchRoutineDetail(with: todo) }
+            case .deleteTodayTodo(let todoId, let isSchedule):
+                self?.isOneDayDeleted = true
+                self?.deleteEvent(todoId: todoId, isSchedule: isSchedule)
+            case .deleteAllTodo(let todoId, let isSchedule):
+                self?.isOneDayDeleted = false
+                self?.deleteEvent(todoId: todoId, isSchedule: isSchedule)
             case .checkBoxTapped(let todo):
                 Task { await self?.finishTodo(with: todo) }
             }
@@ -116,6 +129,35 @@ final class TodoViewModel: BaseViewModel {
             output.send(.successFinishTodo)
         } catch {
             output.send(.failure(error: "루틴을 완료할 수 없습니다."))
+        }
+    }
+    
+    private func deleteEvent(todoId: Int, isSchedule: Bool) {
+        if isSchedule {
+            Task { await deleteSchedule(scheduleId: todoId) }
+        } else {
+            Task { await deleteRoutine(routineId: todoId) }
+        }
+    }
+    
+    private func deleteSchedule(scheduleId: Int) async {
+        do {
+            try await deleteScheduleUseCase.execute(
+                scheduleId: scheduleId,
+                isOneDayDeleted: isOneDayDeleted,
+                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+            )
+            output.send(.deletedTodo)
+        } catch {
+            output.send(.failure(error: "일정을 삭제할 수 없습니다."))
+        }
+    }
+    
+    private func deleteRoutine(routineId: Int) async {
+        do {
+            
+        } catch {
+            output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
         }
     }
 }

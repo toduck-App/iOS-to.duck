@@ -215,7 +215,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         diaryDetailContainerView.isHidden = diary == nil
         noDiaryContainerView.isHidden = diary != nil
     }
-
+    
     private func configureDiaryDetailView(diary: Diary, images: [UIImage]) {
         diaryDetailView.configure(
             emotionImage: diary.emotion.circleImage,
@@ -227,7 +227,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         )
         diaryDetailView.delegate = self
     }
-
+    
     private func loadImages(from imageURLs: [String], completion: @escaping ([UIImage]) -> Void) {
         let group = DispatchGroup()
         var loadedImages: [UIImage] = Array(repeating: UIImage(), count: imageURLs.count)
@@ -278,8 +278,9 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
             coordinator?.didTapEditDiaryButton(diary: diary)
         case .delete:
             let deleteDiaryViewController = DeleteEventViewController(
+                eventId: viewModel.selectedDiary?.id,
                 isRepeating: false,
-                isScheduleEvent: false
+                eventMode: .diary
             )
             deleteDiaryViewController.delegate = self
             self.presentPopup(with: deleteDiaryViewController)
@@ -348,10 +349,12 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
 // MARK: - DeleteEventViewControllerDelegate
 
 extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
-    func didTapDeleteButton() {
+    func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
         input.send(.deleteDiary(viewModel.selectedDiary?.id ?? 0))
         dismiss(animated: true)
     }
+    
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) { }
 }
 
 // MARK: - SocialAddPhotoViewDelegate
@@ -359,11 +362,11 @@ extension DiaryCalendarViewController: TDFormPhotoDelegate, TDPhotoPickerDelegat
     func didSelectPhotos(_ picker: TDPhotoPickerController, photos: [Data]) {
         input.send(.setImages(photos))
     }
-
+    
     func deniedPhotoAccess(_ picker: TDPhotoPickerController) {
         showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
     }
-
+    
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
         var maximumSelectablePhotos = 2
         if viewModel.monthDiaryList[selectedDate]?.diaryImageUrls?.count == 1 {

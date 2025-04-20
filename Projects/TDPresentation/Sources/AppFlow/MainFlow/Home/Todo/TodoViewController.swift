@@ -192,6 +192,11 @@ final class TodoViewController: BaseViewController<BaseView> {
                     let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
                     let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
                     self?.presentPopup(with: detailEventViewController)
+                case .deletedTodo:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                    }
                 }
             }.store(in: &cancellables)
     }
@@ -439,10 +444,13 @@ extension TodoViewController {
                 )
             },
             deleteAction: { [weak self] in
+                let isSchedule = eventDisplay.eventMode == .schedule
                 let deleteEventViewController = DeleteEventViewController(
+                    eventId: eventDisplay.id,
                     isRepeating: eventDisplay.isRepeating,
-                    isScheduleEvent: eventDisplay.eventMode == .schedule
+                    eventMode: isSchedule ? .schedule : .routine
                 )
+                deleteEventViewController.delegate = self
                 self?.presentPopup(with: deleteEventViewController)
             }
         )
@@ -498,6 +506,22 @@ extension TodoViewController {
         }
         
         return items
+    }
+}
+
+extension TodoViewController: DeleteEventViewControllerDelegate {
+    func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
+        if let eventId = eventId {
+            let isSchedule = eventMode == .schedule
+            input.send(.deleteTodayTodo(todoId: eventId, isSchedule: isSchedule))
+        }
+    }
+    
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
+        if let eventId = eventId {
+            let isSchedule = eventMode == .schedule
+            input.send(.deleteAllTodo(todoId: eventId, isSchedule: isSchedule))
+        }
     }
 }
 
