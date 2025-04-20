@@ -26,7 +26,7 @@ extension UINavigationController {
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 0)
         ]
 
-        topViewController.navigationController?.navigationBar.tintColor = TDColor.Neutral.neutral600
+        topViewController.navigationController?.navigationBar.tintColor = TDColor.Neutral.neutral800
         
         appearance.shadowColor = .clear
         appearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
