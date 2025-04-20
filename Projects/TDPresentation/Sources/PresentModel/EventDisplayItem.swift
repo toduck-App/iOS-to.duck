@@ -20,6 +20,7 @@ struct EventDisplayItem: EventPresentable {
     
     init(
         from event: any EventPresentable,
+        place: String? = nil,
         date: String? = nil,
         isPublic: Bool = false
     ) {
@@ -31,7 +32,7 @@ struct EventDisplayItem: EventPresentable {
         self.date = date
         self.time = event.time
         self.repeatDays = event.repeatDays
-        self.place = event.place
+        self.place = place
         self.isPublic = isPublic
         self.memo = event.memo
         self.isFinished = event.isFinished

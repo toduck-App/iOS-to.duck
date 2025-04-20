@@ -9,7 +9,6 @@ protocol EventPresentable: Hashable {
     var time: String? { get }
     var repeatDays: [TDWeekDay]? { get }
     var alarmTime: AlarmTime? { get }
-    var place: String? { get }
     var memo: String? { get }
     var isFinished: Bool { get }
     var isRepeating: Bool { get }
