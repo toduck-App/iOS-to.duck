@@ -8,7 +8,7 @@ final class EventMakorViewModel: BaseViewModel {
         case fetchCategories
         case selectCategory(String, String)
         case selectDate(String, String)
-        case selectTime(Bool, Date?)
+        case selectTime(Bool, String?)
         case tapScheduleEditTodayButton
         case tapScheduleEditAllButton
         case tapEditRoutineButton
@@ -45,7 +45,7 @@ final class EventMakorViewModel: BaseViewModel {
     private var startDate: String? // YYYY-MM-DD
     private var endDate: String? // YYYY-MM-DD
     private var isAllDay: Bool?
-    private var time: Date? // hh:mm
+    private var time: String? // hh:mm
     private var isPublic: Bool = true
     private var repeatDays: [TDWeekDay]?
     private var alarm: AlarmTime?
@@ -213,6 +213,14 @@ final class EventMakorViewModel: BaseViewModel {
         var missingFields: [String] = []
         if title == nil { missingFields.append("title") }
         if selectedCategory == nil { missingFields.append("category") }
+        if repeatDays == nil || repeatDays?.isEmpty == true { missingFields.append("repeatDays") }
+        
+        let isAllDaySet = isAllDay != nil
+        let isTimeSet = time != nil
+        if !(isAllDaySet || isTimeSet) {
+            missingFields.append("timeOrIsAllDay")
+        }
+        
         return missingFields
     }
     
@@ -230,7 +238,7 @@ final class EventMakorViewModel: BaseViewModel {
             startDate: startDate!,
             endDate: endDate!,
             isAllDay: isAllDay,
-            time: time?.convertToString(formatType: .time24Hour),
+            time: time,
             repeatDays: repeatDays,
             alarmTime: alarm,
             place: location,
@@ -250,7 +258,7 @@ final class EventMakorViewModel: BaseViewModel {
             category: selectedCategory!,
             isAllDay: isAllDay,
             isPublic: isPublic,
-            time: time?.convertToString(formatType: .time24Hour),
+            time: time,
             repeatDays: repeatDays,
             alarmTime: alarm,
             memo: memo,

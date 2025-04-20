@@ -222,7 +222,8 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             let displayTime = selectedDate.convertToString(formatType: .time12HourEnglish)
             eventMakorView.timeForm.updateDescription(displayTime)
             eventMakorView.alarmForm.updateAlarmContent(isAllDay: false)
-            input.send(.selectTime(isAllDay, selectedDate))
+            let selectedTimeString = selectedDate.convertToString(formatType: .time24Hour)
+            input.send(.selectTime(isAllDay, selectedTimeString))
             TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
         }
     }
