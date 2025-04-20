@@ -70,8 +70,10 @@ public final class TDCategoryCollectionView: UIView {
         selectedIndex = index
         
         for cell in collectionView.visibleCells {
-            guard let indexPath = collectionView.indexPath(for: cell),
-                  let categoryCell = cell as? TDCategoryCell else { continue }
+            guard
+                let indexPath = collectionView.indexPath(for: cell),
+                let categoryCell = cell as? TDCategoryCell
+            else { continue }
             
             let image = categoryImages[indexPath.row]
             let color = categoryColors[indexPath.row]
@@ -82,7 +84,7 @@ public final class TDCategoryCollectionView: UIView {
     }
     
     public func setupCategoryView(colors: [UIColor]) {
-        self.categoryColors = colors
+        self.categoryColors = colors.map { TDColor.opacityPair[ColorValue(color: $0)] ?? $0 }
         collectionView.reloadData()
     }
     
@@ -93,7 +95,7 @@ public final class TDCategoryCollectionView: UIView {
     public func updateColor(at index: Int, with color: UIColor) {
         guard index >= 0 && index < categoryColors.count else { return }
         categoryColors[index] = color
-        // 2) "이미 표시 중인" 셀을 직접 찾아서, 컬러만 갱신
+        
         if let cell = collectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? TDCategoryCell {
             cell.configure(
                 image: categoryImages[index],

@@ -110,7 +110,7 @@ final class SocialCreateView: BaseView {
         noticeSnackBarView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(42)
-            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).offset(-16).constraint
+            noticeSnackBarBottomConstraint = make.bottom.equalTo(buttonContainerView.snp.top).constraint
         }
         noticeSnackBarLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

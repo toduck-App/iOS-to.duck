@@ -50,7 +50,7 @@ public final class TDFormTextView: UIView {
     private let currentCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800)
     private let maxCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral600)
     
-    private lazy var textView = UITextView().then {
+    private lazy var textView = UITextView(usingTextLayoutManager: false).then {
         $0.layer.cornerRadius = 8
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         $0.layer.borderWidth = 1
