@@ -384,7 +384,7 @@ extension TodoViewController {
                     event: event,
                     showTime: showTime
                 )
-
+                
             case .timeEvent(let hour, let event, let showTime):
                 return self.makeTimeSlotCell(
                     tableView: tableView,
@@ -393,7 +393,7 @@ extension TodoViewController {
                     event: event,
                     showTime: showTime
                 )
-
+                
             case .gap(let startHour, let endHour):
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: TimeSlotGapCell.identifier,
@@ -401,13 +401,13 @@ extension TodoViewController {
                 ) as? TimeSlotGapCell else {
                     return UITableViewCell()
                 }
-
+                
                 cell.configure(startHour: startHour, endHour: endHour)
                 return cell
             }
         }
     }
-
+    
     private func makeTimeSlotCell(
         tableView: UITableView,
         indexPath: IndexPath,
@@ -422,26 +422,31 @@ extension TodoViewController {
         
         let place = event.eventMode == .schedule ? (event as? Schedule)?.place : nil
         let eventDisplay = EventDisplayItem(from: event, place: place)
-
-        cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
-        cell.configureCheckBoxButtonAction { [weak self] in
-            self?.input.send(.checkBoxTapped(todo: event))
-        }
-        cell.configureSwipeActions { [weak self] in
-            let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
-            self?.delegate?.didTapEventMakor(
-                mode: mode,
-                selectedDate: self?.selectedDate,
-                preEvent: event
-            )
-        } deleteAction: { [weak self] in
-            let deleteEventViewController = DeleteEventViewController(
-                isRepeating: eventDisplay.isRepeating,
-                isScheduleEvent: eventDisplay.eventMode == .schedule
-            )
-            self?.presentPopup(with: deleteEventViewController)
-        }
-
+        
+        cell.configure(
+            hour: hour,
+            showTime: showTime,
+            event: eventDisplay,
+            checkBoxAction: { [weak self] in
+                self?.input.send(.checkBoxTapped(todo: event))
+            },
+            editAction: { [weak self] in
+                let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
+                self?.delegate?.didTapEventMakor(
+                    mode: mode,
+                    selectedDate: self?.selectedDate,
+                    preEvent: event
+                )
+            },
+            deleteAction: { [weak self] in
+                let deleteEventViewController = DeleteEventViewController(
+                    isRepeating: eventDisplay.isRepeating,
+                    isScheduleEvent: eventDisplay.eventMode == .schedule
+                )
+                self?.presentPopup(with: deleteEventViewController)
+            }
+        )
+        
         return cell
     }
     
@@ -456,7 +461,7 @@ extension TodoViewController {
     private func makeTimelineItems() -> [TimeLineCellItem] {
         var items: [TimeLineCellItem] = []
         let calendar = Calendar.current
-
+        
         // isAllDay가 true인 루틴이 있으면 최상단에 allDay 셀 추가
         for (index, event) in viewModel.allDayTodoList.enumerated() {
             let showTime = (index == 0)
@@ -516,13 +521,13 @@ extension TodoViewController.TimeLineCellItem: Equatable {
             hasher.combine("allDay")
             hasher.combine(event.id)
             hasher.combine(showTime)
-
+            
         case let .timeEvent(hour, event, showTime):
             hasher.combine("routine")
             hasher.combine(hour)
             hasher.combine(event.id)
             hasher.combine(showTime)
-
+            
         case let .gap(startHour, endHour):
             hasher.combine("gap")
             hasher.combine(startHour)
