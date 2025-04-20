@@ -337,16 +337,16 @@ extension TodoViewController: UITableViewDelegate {
         /// 루틴은 추가 정보가 필요해서 루틴 상세 API를 조회하고, binding 메소드에서 팝업 띄우게 해뒀음
         switch item {
         case .allDay(let event, _):
-            if event.eventMode == .schedule {
-                let eventDisplayItem = EventDisplayItem(from: event)
+            if event.eventMode == .schedule, let schedule = event as? Schedule {
+                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
                 detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
                 presentPopup(with: detailEventViewController)
             } else {
                 input.send(.fetchRoutineDetail(event))
             }
         case .timeEvent(_, let event, _):
-            if event.eventMode == .schedule {
-                let eventDisplayItem = EventDisplayItem(from: event)
+            if event.eventMode == .schedule, let schedule = event as? Schedule {
+                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
                 detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
                 presentPopup(with: detailEventViewController)
             } else {
@@ -422,8 +422,9 @@ extension TodoViewController {
             return UITableViewCell()
         }
         
+        let place = event.eventMode == .schedule ? (event as? Schedule)?.place : nil
         let dateString = event.eventMode == .schedule ? selectedDate?.convertToString(formatType: .monthDay) : nil
-        let eventDisplay = EventDisplayItem(from: event, date: dateString)
+        let eventDisplay = EventDisplayItem(from: event, place: place, date: dateString)
 
         cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
         cell.configureCheckBoxButtonAction { [weak self] in

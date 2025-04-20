@@ -91,7 +91,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
             }
         }
         
-        guard let event = event else {
+        guard let event else {
             shadowContainerView.isHidden = true
             timeLabel.setColor(TDColor.Neutral.neutral500)
             timeLabel.setFont(TDFont.boldButton)
