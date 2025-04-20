@@ -31,4 +31,9 @@ public struct ScheduleServiceImpl: ScheduleService {
         let target = ScheduleAPI.updateSchedule(schedule: schedule)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String) async throws {
+        let target = ScheduleAPI.deleteSchedule(scheduleId: scheduleId, isOneDayDeleted: isOneDayDeleted, queryDate: queryDate)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

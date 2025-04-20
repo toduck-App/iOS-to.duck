@@ -7,6 +7,6 @@ public protocol ScheduleRepository {
     func fetchSchedule() async throws -> Schedule
     func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule]
     func updateSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: Schedule) async throws
-    func deleteSchedule(scheduleId: Int) async throws
+    func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String) async throws
     func moveTomorrowSchedule(scheduleId: Int) async throws
 }

@@ -54,8 +54,12 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
         try await service.updateSchedule(schedule: scheduleUpdateRequestDTO)
     }
     
-    public func deleteSchedule(scheduleId: Int) async throws {
-        
+    public func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String) async throws {
+        try await service.deleteSchedule(
+            scheduleId: scheduleId,
+            isOneDayDeleted: isOneDayDeleted,
+            queryDate: queryDate
+        )
     }
     
     public func moveTomorrowSchedule(scheduleId: Int) async throws {
