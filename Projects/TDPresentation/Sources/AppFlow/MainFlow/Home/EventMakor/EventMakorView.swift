@@ -270,7 +270,7 @@ final class EventMakorView: BaseView {
         saveButton.isEnabled = preEvent?.title.isEmpty == false
         noticeSnackBarView.isHidden = preEvent?.title.isEmpty == false
         categoryViewsForm.selectCategory(categoryImage: preEvent?.categoryIcon ?? UIImage())
-        timeForm.updateDescription(preEvent?.time ?? "")
+        timeForm.updateDescription(preEvent?.time ?? "종일")
         let selectedRepeatDays = preEvent?.repeatDays?.map { $0.title } ?? []
         repeatDayForm.selectButtons(buttonStateNames: selectedRepeatDays)
         let selectedAlarm = preEvent?.alarmTime?.title ?? ""

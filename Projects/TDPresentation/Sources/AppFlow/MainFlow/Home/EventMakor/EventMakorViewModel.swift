@@ -38,7 +38,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let updateRoutineUseCase: UpdateRoutineUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
-    private let preEvent: (any Eventable)?
+    let preEvent: (any Eventable)?
     
     // 생성할 일정 & 루틴 정보
     private var title: String?

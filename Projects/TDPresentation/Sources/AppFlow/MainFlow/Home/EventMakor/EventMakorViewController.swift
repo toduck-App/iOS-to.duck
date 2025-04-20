@@ -142,6 +142,11 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     private func presentSheetEditMode() {
+        guard (viewModel.preEvent?.repeatDays) != nil else {
+            input.send(.tapScheduleEditTodayButton)
+            return
+        }
+        
         let editScheduleModeViewController = EditScheduleModeViewController()
         editScheduleModeViewController.delegate = self
         let sheetController = SheetViewController(
