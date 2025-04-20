@@ -32,6 +32,11 @@ public final class RoutineRepositoryImpl: RoutineRepository {
         return response.convertToRoutineList()
     }
     
+    public func updateRoutine(routineId: Int, routine: Routine, preRoutine: Routine) async throws {
+        let requestDTO = RoutineUpdateRequestDTO(from: preRoutine, to: routine)
+        try await service.updateRoutine(routineId: routineId, routine: requestDTO)
+    }
+    
     public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
         try await service.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
     }

@@ -35,6 +35,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let createRoutineUseCase: CreateRoutineUseCase
     private let fetchCategoriesUseCase: FetchCategoriesUseCase
     private let updateScheduleUseCase: UpdateScheduleUseCase
+    private let updateRoutineUseCase: UpdateRoutineUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
     private let preEvent: (any Eventable)?
@@ -63,6 +64,7 @@ final class EventMakorViewModel: BaseViewModel {
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
         updateScheduleUseCase: UpdateScheduleUseCase,
+        updateRoutineUseCase: UpdateRoutineUseCase,
         preEvent: (any Eventable)?,
         selectedDate: Date? = nil
     ) {
@@ -71,6 +73,7 @@ final class EventMakorViewModel: BaseViewModel {
         self.createRoutineUseCase = createRoutineUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
         self.updateScheduleUseCase = updateScheduleUseCase
+        self.updateRoutineUseCase = updateRoutineUseCase
         self.preEvent = preEvent
         self.selectedDate = selectedDate
         initialValueSetupForEditMode()
@@ -126,7 +129,7 @@ final class EventMakorViewModel: BaseViewModel {
                 self?.isOneDayDeleted = false
                 Task { await self?.updateSchedule() }
             case .tapEditRoutineButton:
-                self?.updateRoutine()
+                Task { await self?.updateRoutine() }
             case .tapSaveTodoButton:
                 self?.saveEvent()
             case .updateTitleTextField(let title):
@@ -168,8 +171,17 @@ final class EventMakorViewModel: BaseViewModel {
         }
     }
     
-    private func updateRoutine() {
-        
+    private func updateRoutine() async {
+        do {
+            guard let routineId = preEvent?.id, let routine = preEvent as? Routine else { return }
+            try await updateRoutineUseCase.execute(
+                routineId: routineId,
+                routine: createRoutine(),
+                preRoutine: routine
+            )
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
+        }
     }
     
     private func saveEvent() {

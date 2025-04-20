@@ -25,12 +25,14 @@ final class EventMakorCoordinator: Coordinator {
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
         let updateScheduleUseCase = injector.resolve(UpdateScheduleUseCase.self)
+        let updateRoutineUseCase = injector.resolve(UpdateRoutineUseCase.self)
         let viewModel = EventMakorViewModel(
             mode: mode,
             createScheduleUseCase: createScheduleUseCase,
             createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase,
             updateScheduleUseCase: updateScheduleUseCase,
+            updateRoutineUseCase: updateRoutineUseCase,
             preEvent: preEvent,
             selectedDate: selectedDate
         )
