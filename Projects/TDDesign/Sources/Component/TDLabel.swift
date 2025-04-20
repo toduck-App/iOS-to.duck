@@ -111,6 +111,7 @@ public final class TDLabel: UILabel {
         let lineHeight = toduckFont.size * toduckFont.lineHeightMultiple
         paragraphStyle.minimumLineHeight = lineHeight
         paragraphStyle.maximumLineHeight = lineHeight
+        paragraphStyle.alignment = alignment
         
         attributedString.addAttribute(
             .paragraphStyle,
