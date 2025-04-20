@@ -31,6 +31,17 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = TDColor.Neutral.neutral100
     }
     
+    private var textContainerView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 8
+        $0.alignment = .fill
+        $0.distribution = .fill
+    }
+    
+    private var titleLabel = TDLabel(toduckFont: .boldHeader5, toduckColor: TDColor.Neutral.neutral800).then {
+        $0.numberOfLines = 0
+    }
+    
     private var contentLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral800).then {
         $0.numberOfLines = 0
     }
@@ -55,6 +66,11 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     func configure(with item: Post) {
         headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp, isMyPost: item.user.id == TDTokenManager.shared.userId)
+        if let titleText = item.titleText, !titleText.isEmpty {
+            titleLabel.setText(titleText)
+        } else {
+            titleLabel.isHidden = true
+        }
         contentLabel.setText(item.contentText)
         footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount)
         configureAction(item)
@@ -87,7 +103,9 @@ private extension SocialFeedCollectionViewCell {
         contentView.addSubview(avatarView)
         contentView.addSubview(verticalStackView)
         contentView.addSubview(separatorView)
-        bodyStackView.addArrangedSubview(contentLabel)
+        textContainerView.addArrangedSubview(titleLabel)
+        textContainerView.addArrangedSubview(contentLabel)
+        bodyStackView.addArrangedSubview(textContainerView)
         verticalStackView.addArrangedSubview(headerView)
         verticalStackView.addArrangedSubview(bodyStackView)
         verticalStackView.addArrangedSubview(footerView)
