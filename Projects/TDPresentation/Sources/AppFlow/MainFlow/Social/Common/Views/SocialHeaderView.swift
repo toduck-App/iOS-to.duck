@@ -58,7 +58,9 @@ final class SocialHeaderView: UIView {
     func configure(titleBadge: String, nickname: String, date: Date, isMyPost: Bool) {
         self.isMyPost = isMyPost
         if isMyPost {
-            dropDownHoverView.dataSource = [SocialFeedMoreType.edit.dropdownItem, SocialFeedMoreType.delete.dropdownItem]
+            dropDownHoverView.dataSource = [SocialFeedMoreType.delete.dropdownItem]
+            // MARK: 일단 댓글 수정은 보류
+//            dropDownHoverView.dataSource = [SocialFeedMoreType.edit.dropdownItem, SocialFeedMoreType.delete.dropdownItem]
         } else {
             dropDownHoverView.dataSource = [SocialFeedMoreType.report.dropdownItem, SocialFeedMoreType.block.dropdownItem]
         }
@@ -119,7 +121,9 @@ extension SocialHeaderView: TDDropDownDelegate {
     func dropDown(_ dropDownView: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
         if isMyPost {
             if indexPath.row == 0 {
-                onEditTapped?()
+                // MARK: 일단 댓글 수정은 보류
+//                onEditTapped?()
+                onDeleteTapped?()
             } else {
                 onDeleteTapped?()
             }
