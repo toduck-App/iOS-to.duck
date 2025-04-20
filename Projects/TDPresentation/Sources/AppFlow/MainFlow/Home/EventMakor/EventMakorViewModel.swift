@@ -149,7 +149,8 @@ final class EventMakorViewModel: BaseViewModel {
         return output.eraseToAnyPublisher()
     }
     
-    func setupInitialDate(with date: Date) {
+    func setupInitialDate(with date: Date, isEditMode: Bool) {
+        guard !isEditMode else { return }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
@@ -166,6 +167,7 @@ final class EventMakorViewModel: BaseViewModel {
                 queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
                 scheduleData: createSchedule()
             )
+            output.send(.savedEvent)
         } catch {
             output.send(.failureAPI(error.localizedDescription))
         }
@@ -179,6 +181,7 @@ final class EventMakorViewModel: BaseViewModel {
                 routine: createRoutine(),
                 preRoutine: routine
             )
+            output.send(.savedEvent)
         } catch {
             output.send(.failureAPI(error.localizedDescription))
         }

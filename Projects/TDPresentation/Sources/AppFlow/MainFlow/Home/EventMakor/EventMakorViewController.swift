@@ -92,7 +92,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                         } ?? [])
                 case .savedEvent:
-                    self?.navigationController?.popViewController(animated: true)
+                    self?.coordinator?.finish(by: .pop)
                 case .failedToSaveEvent(let missingFields):
                     let missing = missingFields
                         .map {
@@ -100,7 +100,8 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                             case "title": return "제목"
                             case "category": return "카테고리"
                             case "startDate": return "시작 날짜"
-                            case "isAllDay": return "시간 선택"
+                            case "timeOrIsAllDay": return "시간 선택"
+                            case "repeatDays": return "반복 요일"
                             default: return $0
                             }
                         }

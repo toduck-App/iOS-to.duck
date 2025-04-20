@@ -36,7 +36,7 @@ final class EventMakorCoordinator: Coordinator {
             preEvent: preEvent,
             selectedDate: selectedDate
         )
-        viewModel.setupInitialDate(with: selectedDate)
+        viewModel.setupInitialDate(with: selectedDate, isEditMode: preEvent != nil)
         let eventMakorViewController = EventMakorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         eventMakorViewController.hidesBottomBarWhenPushed = true
