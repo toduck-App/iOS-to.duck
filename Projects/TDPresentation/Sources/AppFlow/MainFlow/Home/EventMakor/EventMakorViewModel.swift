@@ -83,14 +83,13 @@ final class EventMakorViewModel: BaseViewModel {
         let shared = input.share()
 
         shared
-            .filter { event in
-                if case .tapSaveTodoButton = event {
+            .filter {
+                switch $0 {
+                case .tapSaveTodoButton, .tapEditRoutineButton:
                     return false
+                default:
+                    return true
                 }
-                if case .tapEditRoutineButton = event {
-                    return false
-                }
-                return true
             }
             .sink { [weak self] event in
                 switch event {
@@ -134,14 +133,13 @@ final class EventMakorViewModel: BaseViewModel {
             .store(in: &cancellables)
 
         shared
-            .filter { event in
-                if case .tapSaveTodoButton = event {
+            .filter {
+                switch $0 {
+                case .tapSaveTodoButton, .tapEditRoutineButton:
                     return true
+                default:
+                    return false
                 }
-                if case .tapEditRoutineButton = event {
-                    return true
-                }
-                return false
             }
             .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
             .sink { [weak self] event in

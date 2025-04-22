@@ -48,14 +48,13 @@ final class DiaryMakorViewModel: BaseViewModel {
         let shared = input.share()
         
         shared
-            .filter { event in
-                if case .tapSaveButton = event {
+            .filter {
+                switch $0 {
+                case .tapSaveButton, .tapEditButton:
                     return false
+                default:
+                    return true
                 }
-                if case .tapEditButton = event {
-                    return false
-                }
-                return true
             }
             .sink { [weak self] event in
                 switch event {
@@ -73,14 +72,13 @@ final class DiaryMakorViewModel: BaseViewModel {
             }.store(in: &cancellables)
         
         shared
-            .filter { event in
-                if case .tapSaveButton = event {
+            .filter {
+                switch $0 {
+                case .tapSaveButton, .tapEditButton:
                     return true
+                default:
+                    return false
                 }
-                if case .tapEditButton = event {
-                    return true
-                }
-                return false
             }
             .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
             .sink { [weak self] event in
