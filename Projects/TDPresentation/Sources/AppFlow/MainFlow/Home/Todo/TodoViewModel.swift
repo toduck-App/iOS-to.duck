@@ -57,8 +57,8 @@ final class TodoViewModel: BaseViewModel {
                     Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
                 case .fetchRoutineDetail(let todo):
                     Task { await self?.fetchRoutineDetail(with: todo) }
-                case .checkBoxTapped(let todo):
-                    Task { await self?.finishTodo(with: todo) }
+                default:
+                    break
                 }
             }
             .store(in: &cancellables)
