@@ -187,6 +187,11 @@ final class TodoViewController: BaseViewController<BaseView> {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
                         self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
                     }
+                case .tomorrowTodoCreated:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                    }
                 case .fetchedRoutineDetail(let routine):
                     let eventDisplayItem = EventDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
@@ -539,6 +544,12 @@ extension TodoViewController: DetailEventViewControllerDelegate {
         )
         deleteEventViewController.delegate = self
         presentPopup(with: deleteEventViewController)
+    }
+    
+    func didTapTomorrowButton(event: EventDisplayItem) {
+        if let id = event.id {
+            input.send(.moveToTomorrow(todoId: id, event: event))
+        }
     }
 }
 
