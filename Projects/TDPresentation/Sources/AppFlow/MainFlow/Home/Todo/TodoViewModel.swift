@@ -80,6 +80,102 @@ final class TodoViewModel: BaseViewModel {
         return output.eraseToAnyPublisher()
     }
     
+    // MARK: - 투두 리스트 가져오기
+    private func fetchTodoList(startDate: String, endDate: String) async {
+        do {
+            let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
+            let routineList = try await fetchRoutineListUseCase.execute(dateString: startDate)
+            
+            let todoList: [any Eventable] = (scheduleList as [any Eventable]) + (routineList as [any Eventable])
+            
+            self.allDayTodoList = todoList.filter { $0.time == nil }
+            self.timedTodoList = todoList
+                .filter { $0.time != nil }
+                .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
+            
+            output.send(.fetchedTodoList)
+        } catch {
+            output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
+        }
+    }
+    
+    private func fetchRoutineDetail(with todo: any Eventable) async {
+        guard let todo = todo as? Routine else { return }
+        
+        do {
+            let routine = try await fetchRoutineUseCase.execute(routineId: todo.id ?? 0)
+            output.send(.fetchedRoutineDetail(routine))
+        } catch {
+            output.send(.failure(error: "루틴을 불러오는데 실패했습니다."))
+        }
+    }
+    
+    // MARK: - 투두 완료
+    private func finishTodo(with todo: any Eventable) async {
+        if todo.eventMode == .schedule {
+            await finishSchedule(with: todo)
+        } else {
+            await finishRoutine(with: todo)
+        }
+    }
+    
+    private func finishSchedule(with todo: any Eventable) async {
+        do {
+            try await finishScheduleUseCase.execute(
+                scheduleId: todo.id ?? 0,
+                isComplete: !todo.isFinished,
+                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+            )
+            output.send(.successFinishTodo)
+        } catch {
+            output.send(.failure(error: "일정을 완료할 수 없습니다."))
+        }
+    }
+    
+    private func finishRoutine(with todo: any Eventable) async {
+        do {
+            try await finishRoutineUseCase.execute(
+                routineId: todo.id ?? 0,
+                routineDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
+                isCompleted: !todo.isFinished
+            )
+            output.send(.successFinishTodo)
+        } catch {
+            output.send(.failure(error: "루틴을 완료할 수 없습니다."))
+        }
+    }
+    
+    // MARK: - 투두 삭제
+    private func deleteEvent(todoId: Int, isSchedule: Bool) {
+        if isSchedule {
+            Task { await deleteSchedule(scheduleId: todoId) }
+        } else {
+            Task { await deleteRoutine(routineId: todoId) }
+        }
+    }
+    
+    private func deleteSchedule(scheduleId: Int) async {
+        do {
+            try await deleteScheduleUseCase.execute(
+                scheduleId: scheduleId,
+                isOneDayDeleted: isOneDayDeleted,
+                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+            )
+            output.send(.deletedTodo)
+        } catch {
+            output.send(.failure(error: "일정을 삭제할 수 없습니다."))
+        }
+    }
+    
+    private func deleteRoutine(routineId: Int) async {
+        do {
+            
+        } catch {
+            output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
+        }
+    }
+    
+    // MARK: - 내일로 미루기
     private func handleMoveToTomorrow(todoId: Int, event: any Eventable) {
         let isSchedule = event.eventMode == .schedule
         let isAllDay = event.isAllDay
@@ -139,95 +235,4 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func fetchTodoList(startDate: String, endDate: String) async {
-        do {
-            let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
-            let routineList = try await fetchRoutineListUseCase.execute(dateString: startDate)
-            
-            let todoList: [any Eventable] = (scheduleList as [any Eventable]) + (routineList as [any Eventable])
-            
-            self.allDayTodoList = todoList.filter { $0.time == nil }
-            self.timedTodoList = todoList
-                .filter { $0.time != nil }
-                .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
-            
-            output.send(.fetchedTodoList)
-        } catch {
-            output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
-        }
-    }
-    
-    private func fetchRoutineDetail(with todo: any Eventable) async {
-        guard let todo = todo as? Routine else { return }
-        
-        do {
-            let routine = try await fetchRoutineUseCase.execute(routineId: todo.id ?? 0)
-            output.send(.fetchedRoutineDetail(routine))
-        } catch {
-            output.send(.failure(error: "루틴을 불러오는데 실패했습니다."))
-        }
-    }
-    
-    private func finishTodo(with todo: any Eventable) async {
-        if todo.eventMode == .schedule {
-            await finishSchedule(with: todo)
-        } else {
-            await finishRoutine(with: todo)
-        }
-    }
-    
-    private func finishSchedule(with todo: any Eventable) async {
-        do {
-            try await finishScheduleUseCase.execute(
-                scheduleId: todo.id ?? 0,
-                isComplete: !todo.isFinished,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
-            )
-            output.send(.successFinishTodo)
-        } catch {
-            output.send(.failure(error: "일정을 완료할 수 없습니다."))
-        }
-    }
-    
-    private func finishRoutine(with todo: any Eventable) async {
-        do {
-            try await finishRoutineUseCase.execute(
-                routineId: todo.id ?? 0,
-                routineDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
-                isCompleted: !todo.isFinished
-            )
-            output.send(.successFinishTodo)
-        } catch {
-            output.send(.failure(error: "루틴을 완료할 수 없습니다."))
-        }
-    }
-    
-    private func deleteEvent(todoId: Int, isSchedule: Bool) {
-        if isSchedule {
-            Task { await deleteSchedule(scheduleId: todoId) }
-        } else {
-            Task { await deleteRoutine(routineId: todoId) }
-        }
-    }
-    
-    private func deleteSchedule(scheduleId: Int) async {
-        do {
-            try await deleteScheduleUseCase.execute(
-                scheduleId: scheduleId,
-                isOneDayDeleted: isOneDayDeleted,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
-            )
-            output.send(.deletedTodo)
-        } catch {
-            output.send(.failure(error: "일정을 삭제할 수 없습니다."))
-        }
-    }
-    
-    private func deleteRoutine(routineId: Int) async {
-        do {
-            
-        } catch {
-            output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
-        }
-    }
 }
