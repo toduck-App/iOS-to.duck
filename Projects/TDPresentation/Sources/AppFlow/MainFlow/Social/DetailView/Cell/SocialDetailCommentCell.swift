@@ -21,7 +21,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    private lazy var headerView = SocialHeaderView()
+    private lazy var headerView = SocialHeaderView(style: .list, isComment: true)
     
     private var bodyStackView = UIStackView().then {
         $0.axis = .vertical

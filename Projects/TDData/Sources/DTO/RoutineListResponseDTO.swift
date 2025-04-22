@@ -14,7 +14,7 @@ public struct RoutineListResponseDTO: Decodable {
                 title: routine.title,
                 category: TDCategory(colorHex: routine.color, imageName: routine.category),
                 isAllDay: routine.time == nil,
-                isPublic: false,
+                isPublic: true,
                 time: routineTime,
                 repeatDays: routine.daysOfWeek?.compactMap { TDWeekDay(rawValue: $0) },
                 alarmTime: nil,

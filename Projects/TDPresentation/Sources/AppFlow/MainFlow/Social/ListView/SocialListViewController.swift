@@ -24,8 +24,12 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        input.send(.fetchPosts)
         setupDefaultNavigationBar()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        input.send(.fetchPosts)
     }
     
     private func setupDefaultNavigationBar() {
@@ -221,7 +225,6 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post) {
-        TDLogger.debug("EDIT POST")
         coordinator?.didTapEditPost(post: post)
     }
     
@@ -310,9 +313,9 @@ extension SocialListViewController: UISearchBarDelegate, CancleTagCellDelegate, 
 extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
-        snapshot.deleteAllItems()
         snapshot.appendSections([0])
-        snapshot.appendItems(posts.map(\.id))
+        snapshot.appendItems(posts.map(\.id), toSection: 0)
+        snapshot.reloadItems(posts.map(\.id))
         datasource?.apply(snapshot, animatingDifferences: false)
     }
     

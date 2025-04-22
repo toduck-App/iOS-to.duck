@@ -18,6 +18,7 @@ public struct TDPostDTO: Codable {
     let socialLikeInfo: TDSocialLikeInfoDTO
     let comments: [TDSocialCommentDTO]?
     let commentCount: Int?
+    let categories: [TDSocialCategoryDTO]?
     let createdAt: String
     
     public struct TDOwnerDTO: Codable {
@@ -58,6 +59,11 @@ public struct TDPostDTO: Codable {
         let createdAt: String
     }
     
+    public struct TDSocialCategoryDTO: Codable {
+        public let socialCategoryId: Int
+        public let name: String
+    }
+    
     public init(
         socialId: Int,
         owner: TDOwnerDTO,
@@ -69,6 +75,7 @@ public struct TDPostDTO: Codable {
         socialLikeInfo: TDSocialLikeInfoDTO,
         comments: [TDSocialCommentDTO]?,
         commentCount: Int?,
+        categories: [TDSocialCategoryDTO]?,
         createdAt: String
     ) {
         self.socialId = socialId
@@ -81,10 +88,11 @@ public struct TDPostDTO: Codable {
         self.socialLikeInfo = socialLikeInfo
         self.comments = comments
         self.commentCount = commentCount
+        self.categories = categories
         self.createdAt = createdAt
     }
     
-    func convertToPost(category: [PostCategory]? = nil) -> Post {
+    func convertToPost() -> Post {
         Post(
             id: socialId,
             user: owner.convertToEntity(),
@@ -97,7 +105,7 @@ public struct TDPostDTO: Codable {
             commentCount: commentCount ?? comments?.count,
             shareCount: nil,
             routine: routine?.convertToEntity(),
-            category: category
+            category: categories?.map { PostCategory(rawValue: $0.socialCategoryId) ?? .normal } ?? []
         )
     }
     
@@ -154,6 +162,49 @@ public struct TDPostCreateRequestDTO: Encodable {
     public let routineId: Int?
     public let isAnonymous: Bool
     public let socialCategoryIds: [Int]
+    public let socialImageUrls: [String]?
+}
+
+public struct TDPostUpdateRequestDTO: Encodable {
+    public let id: Int
+    public let isChangeTitle: Bool
+    /// 변경할 제목.
+    /// - `isChangeTitle == true` 이면
+    ///   - `title != nil` : 해당 문자열로 제목 변경
+    ///   - `title == nil` : 제목 삭제
+    /// - `isChangeTitle == false` 이면
+    ///   - `title` 은 무시 (`null` 이거나 미포함)
+    public let title: String?
+
+    /// 루틴 변경 여부 (필수)
+    public let isChangeRoutine: Bool
+    /// 변경할 루틴 ID.
+    /// - 루틴 제거: `isChangeRoutine = true`, `routineId = nil`
+    /// - 루틴 유지: `isChangeRoutine = false`, `routineId = nil`
+    /// - 루틴 변경: `isChangeRoutine = true`, `routineId = 새 ID`
+    public let routineId: Int?
+
+    /// 본문 내용.
+    /// - `nil` 이면 본문 유지
+    /// - 문자열이 있으면 해당 문자열로 교체
+    public let content: String?
+
+    /// 익명 여부.
+    /// - `nil` 이면 기존 값 유지
+    /// - `true`/`false` 이면 변경
+    public let isAnonymous: Bool?
+
+    /// 카테고리 ID 리스트.
+    /// - `nil` 이면 카테고리 유지
+    /// - 빈 배열 → 예외
+    /// - 1개 이상 배열 → 해당 ID로 변경
+    public let socialCategoryIds: [Int]?
+
+    /// 이미지 URL 리스트.
+    /// - `nil` 이면 이미지 유지
+    /// - 빈 배열 `[]` → 기존 이미지 모두 제거
+    /// - 1개 이상 배열 → 해당 URL 리스트로 교체
+    /// - 6개 이상 배열 → 예외
     public let socialImageUrls: [String]?
 }
 

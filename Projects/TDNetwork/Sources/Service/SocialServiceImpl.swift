@@ -31,18 +31,9 @@ public struct SocialServiceImpl: SocialService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
-    public func requestUpdatePost(
-        postID: Int,
-        isChangeTitle: Bool,
-        title: String?,
-        isChangeRoutine: Bool,
-        routineID: Int?,
-        content: String?,
-        isAnonymous: Bool?,
-        socialCategoryIds: [Int]?,
-        socialImageURLs: [String]?
-    ) async throws {
-        return
+    public func requestUpdatePost(requestDTO: TDPostUpdateRequestDTO) async throws {
+        let target = SocialAPI.updatePost(post: requestDTO)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
     public func requestSearchPosts(

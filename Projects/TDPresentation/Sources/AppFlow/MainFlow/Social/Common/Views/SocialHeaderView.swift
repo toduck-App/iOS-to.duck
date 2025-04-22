@@ -1,6 +1,6 @@
-import TDCore
 import Kingfisher
 import SnapKit
+import TDCore
 import TDDesign
 import UIKit
 
@@ -12,8 +12,11 @@ final class SocialHeaderView: UIView {
     var onDeleteTapped: (() -> Void)?
     
     private var isMyPost: Bool = false
+    private var isComment: Bool = false
     
-    private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
+    private var titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500).then {
+        $0.isHidden = true // MARK: 아직 미구현 상태
+    }
     
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
     
@@ -38,7 +41,7 @@ final class SocialHeaderView: UIView {
         setupRecognizer()
     }
     
-    convenience init(style: SocialPostStyle) {
+    convenience init(style: SocialPostStyle, isComment: Bool = false) {
         self.init(frame: .zero)
         switch style {
         case .list:
@@ -47,6 +50,7 @@ final class SocialHeaderView: UIView {
             dotIconView.isHidden = true
             dropDownHoverView.isHidden = true
         }
+        self.isComment = isComment
     }
     
     required init?(coder: NSCoder) {
@@ -58,9 +62,11 @@ final class SocialHeaderView: UIView {
     func configure(titleBadge: String, nickname: String, date: Date, isMyPost: Bool) {
         self.isMyPost = isMyPost
         if isMyPost {
-            dropDownHoverView.dataSource = [SocialFeedMoreType.delete.dropdownItem]
-            // MARK: 일단 댓글 수정은 보류
-//            dropDownHoverView.dataSource = [SocialFeedMoreType.edit.dropdownItem, SocialFeedMoreType.delete.dropdownItem]
+            if isComment {
+                dropDownHoverView.dataSource = [SocialFeedMoreType.delete.dropdownItem]
+            } else {
+                dropDownHoverView.dataSource = [SocialFeedMoreType.edit.dropdownItem, SocialFeedMoreType.delete.dropdownItem]
+            }
         } else {
             dropDownHoverView.dataSource = [SocialFeedMoreType.report.dropdownItem, SocialFeedMoreType.block.dropdownItem]
         }
@@ -79,7 +85,7 @@ private extension SocialHeaderView {
     }
     
     func setupLayout() {
-        addSubview(titleBagde)
+//        addSubview(titleBagde)
         addSubview(nicknameLabel)
         addSubview(dateLabel)
         addSubview(dropDownHoverView)
@@ -90,19 +96,19 @@ private extension SocialHeaderView {
             make.centerY.equalToSuperview()
             make.top.leading.equalToSuperview()
         }
+//        
+//        titleBagde.snp.makeConstraints { make in
+//            make.centerY.equalTo(nicknameLabel)
+//            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
+//        }
         
-        titleBagde.snp.makeConstraints { make in
+        dateLabel.snp.makeConstraints { make in
             make.centerY.equalTo(nicknameLabel)
             make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
         }
         
-        dateLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(titleBagde)
-            make.leading.equalTo(titleBagde.snp.trailing).offset(10)
-        }
-        
         dotIconView.snp.makeConstraints { make in
-            make.centerY.equalTo(titleBagde)
+            make.centerY.equalTo(nicknameLabel)
             make.trailing.equalTo(self)
             make.width.height.equalTo(24)
         }
@@ -120,12 +126,16 @@ private extension SocialHeaderView {
 extension SocialHeaderView: TDDropDownDelegate {
     func dropDown(_ dropDownView: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
         if isMyPost {
-            if indexPath.row == 0 {
-                // MARK: 일단 댓글 수정은 보류
-//                onEditTapped?()
-                onDeleteTapped?()
+            if isComment {
+                if indexPath.row == 0 {
+                    onDeleteTapped?()
+                }
             } else {
-                onDeleteTapped?()
+                if indexPath.row == 0 {
+                    onEditTapped?()
+                } else {
+                    onDeleteTapped?()
+                }
             }
         } else {
             if indexPath.row == 0 {

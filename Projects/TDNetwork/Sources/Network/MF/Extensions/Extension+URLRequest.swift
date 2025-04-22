@@ -85,7 +85,7 @@ extension URLRequest {
     
     private static func convertToValidString(_ value: Any) -> String? {
         if let stringValue = value as? String {
-            return stringValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            return stringValue
         } else if let numberValue = value as? NSNumber {
             return "\(numberValue)"
         } else if let boolValue = value as? Bool {

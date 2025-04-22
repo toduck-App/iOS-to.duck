@@ -1,4 +1,5 @@
 import Combine
+import Kingfisher
 import TDDesign
 import TDDomain
 import UIKit
@@ -32,6 +33,13 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         }
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if let post {
+            editPost(post)
+        }
+    }
+
     override func configure() {
         layoutView.formPhotoView.delegate = self
         layoutView.socialSelectRoutineView.delegate = self
@@ -40,14 +48,10 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
         layoutView.socialSelectCategoryView.categorySelectView.chipDelegate = self
         layoutView.socialSelectCategoryView.categorySelectView.setChips(chips)
         layoutView.scrollView.delegate = self
-        
+
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             self?.didTapRegisterButton()
         }, for: .touchUpInside)
-        
-        if let post = post {
-            editPost(post)
-        }
     }
 
     override func binding() {
@@ -74,8 +78,15 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
             }
             .store(in: &cancellables)
     }
-    
-    func editPost(_ post: Post, images: [Data] = []) {
+
+    func editPost(_ post: Post) {
+        if let category = post.category {
+            layoutView.socialSelectCategoryView.categorySelectView.setSelectChips(chips, selectChipIndexs: category.map { $0.rawValue - 1 })
+            for category in category {
+                input.send(.chipSelect(at: category.rawValue - 1))
+            }
+        }
+
         if let title = post.titleText {
             layoutView.titleTextFieldView.setupTextField(title)
             input.send(.setTitle(title))
@@ -84,10 +95,33 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
             layoutView.descriptionTextFieldView.setupTextView(text: post.contentText)
             input.send(.setContent(post.contentText))
         }
-        
-        if images.count > 0 {
-            layoutView.formPhotoView.addPhotos(images)
-            input.send(.setImages(images))
+
+        if let urlStrings = post.imageList, !urlStrings.isEmpty {
+            let urls = urlStrings
+                .compactMap { URL(string: $0) }
+            var imageDatas: [Data] = []
+            let group = DispatchGroup()
+
+            for url in urls {
+                group.enter()
+                KingfisherManager.shared.retrieveImage(with: url) { result in
+                    defer { group.leave() }
+                    switch result {
+                    case .success(let value):
+                        if let data = value.image.jpegData(compressionQuality: 1.0) {
+                            imageDatas.append(data)
+                        }
+                    case .failure(let error):
+                        print("이미지 로드 실패:", error)
+                    }
+                }
+            }
+
+            group.notify(queue: .main) { [weak self] in
+                guard let self else { return }
+                input.send(.setImages(imageDatas, false))
+                layoutView.formPhotoView.addPhotos(imageDatas)
+            }
         }
         if let routine = post.routine {
             layoutView.socialSelectRoutineView.setRoutine(string: routine.title)
@@ -120,7 +154,7 @@ extension SocialCreateViewController: TDChipCollectionViewDelegate {
 
 extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
-        input.send(.setImages(photos))
+        input.send(.setImages(photos, true))
     }
 
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
@@ -162,17 +196,18 @@ extension SocialCreateViewController {
 
 extension SocialCreateViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if viewModel.canCreatePost { hideSnackBar(); return }
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
-        
+
         if offsetY + height >= contentHeight - 10 {
             showSnackBar()
         } else {
             hideSnackBar()
         }
     }
-    
+
     private func showSnackBar() {
         guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
         constraint.update(offset: 0)
