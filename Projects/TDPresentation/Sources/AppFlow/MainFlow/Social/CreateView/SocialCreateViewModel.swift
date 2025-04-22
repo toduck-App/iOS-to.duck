@@ -40,7 +40,16 @@ final class SocialCreateViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
+        let shared = input.share()
+
+        shared
+            .filter { event in
+                if case .createPost = event {
+                    return false
+                }
+                return true
+            }
+            .sink { [weak self] event in
             guard let self else { return }
             switch event {
             case .chipSelect(let index):
@@ -53,10 +62,25 @@ final class SocialCreateViewModel: BaseViewModel {
                 setImages(data)
             case .setTitle(let title):
                 setTitle(title)
-            case .createPost:
-                Task { await self.createPost() }
+            default:
+                break
             }
         }.store(in: &cancellables)
+        
+        shared
+            .filter { event in
+                if case .createPost = event {
+                    return true
+                }
+                return false
+            }
+            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] event in
+                if case .createPost = event {
+                    Task { await self?.createPost() }
+                }
+            }
+            .store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
