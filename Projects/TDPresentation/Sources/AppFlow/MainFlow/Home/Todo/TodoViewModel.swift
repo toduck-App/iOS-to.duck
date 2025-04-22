@@ -72,37 +72,33 @@ final class TodoViewModel: BaseViewModel {
             case .checkBoxTapped(let todo):
                 Task { await self?.finishTodo(with: todo) }
             case .moveToTomorrow(let todoId, let event):
-                let isSchedule = event.eventMode == .schedule
-                let isAllDay = event.isAllDay
                 self?.isOneDayDeleted = true
-                self?.deleteEvent(todoId: todoId, isSchedule: isSchedule)
-                self?.createEvent(todoId: todoId, isSchedule: isSchedule, isAllDay: isAllDay)
+                self?.handleMoveToTomorrow(todoId: todoId, event: event)
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
     
-    private func createEvent(todoId: Int, isSchedule: Bool, isAllDay: Bool) {
-        let event: any Eventable
-        if isAllDay {
-            event = allDayTodoList.first { $0.id == todoId }!
-        } else {
-            event = timedTodoList.first { $0.id == todoId }!
-        }
+    private func handleMoveToTomorrow(todoId: Int, event: any Eventable) {
+        let isSchedule = event.eventMode == .schedule
+        let isAllDay = event.isAllDay
         
-        guard let selectedDate = selectedDate else {
-            return
-        }
+        deleteEvent(todoId: todoId, isSchedule: isSchedule)
+        updateEventToNextDay(todoId: todoId, isSchedule: isSchedule, isAllDay: isAllDay)
+    }
+    
+    private func updateEventToNextDay(todoId: Int, isSchedule: Bool, isAllDay: Bool) {
+        guard let event = getEvent(for: todoId, isAllDay: isAllDay) else { return }
+        guard let selectedDate = selectedDate else { return }
         
-        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate)!
-        let nextDayString = nextDay.convertToString(formatType: .yearMonthDay)
+        let nextDay = getNextDay(from: selectedDate)
         
         if isSchedule {
             if let schedule = event as? Schedule {
                 var updatedSchedule = schedule
-                updatedSchedule.startDate = nextDayString
-                updatedSchedule.endDate = nextDayString
+                updatedSchedule.startDate = nextDay
+                updatedSchedule.endDate = nextDay
                 Task { await createSchedule(todoId: todoId, schedule: updatedSchedule) }
             }
         } else {
@@ -112,6 +108,19 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
+    private func getEvent(for todoId: Int, isAllDay: Bool) -> (any Eventable)? {
+        if isAllDay {
+            return allDayTodoList.first { $0.id == todoId }
+        } else {
+            return timedTodoList.first { $0.id == todoId }
+        }
+    }
+
+    private func getNextDay(from date: Date) -> String {
+        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: date)!
+        return nextDay.convertToString(formatType: .yearMonthDay)
+    }
+
     private func createSchedule(todoId: Int, schedule: Schedule) async {
         do {
             try await createScheduleUseCase.execute(schedule: schedule)
@@ -120,7 +129,7 @@ final class TodoViewModel: BaseViewModel {
             output.send(.failure(error: "일정을 생성할 수 없습니다."))
         }
     }
-    
+
     private func createRoutine(with todoId: Int, routine: Routine) async {
         do {
             try await createRoutineUseCase.execute(routine: routine)
