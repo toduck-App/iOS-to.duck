@@ -45,22 +45,54 @@ final class DiaryMakorViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            switch event {
-            case .tapCategoryCell(let mood):
-                self?.selectedMood = mood
-            case .updateTitleTextField(let title):
-                self?.title = title
-            case .updateMemoTextView(let memo):
-                self?.memo = memo
-            case .setImages(let datas):
-                self?.setImages(datas)
-            case .tapSaveButton:
-                Task { await self?.saveDiary() }
-            case .tapEditButton:
-                Task { await self?.editDiary() }
+        let shared = input.share()
+        
+        shared
+            .filter { event in
+                if case .tapSaveButton = event {
+                    return false
+                }
+                if case .tapEditButton = event {
+                    return false
+                }
+                return true
             }
-        }.store(in: &cancellables)
+            .sink { [weak self] event in
+                switch event {
+                case .tapCategoryCell(let mood):
+                    self?.selectedMood = mood
+                case .updateTitleTextField(let title):
+                    self?.title = title
+                case .updateMemoTextView(let memo):
+                    self?.memo = memo
+                case .setImages(let datas):
+                    self?.setImages(datas)
+                default:
+                    break
+                }
+            }.store(in: &cancellables)
+        
+        shared
+            .filter { event in
+                if case .tapSaveButton = event {
+                    return true
+                }
+                if case .tapEditButton = event {
+                    return true
+                }
+                return false
+            }
+            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] event in
+                switch event {
+                case .tapSaveButton:
+                    Task { await self?.saveDiary() }
+                case .tapEditButton:
+                    Task { await self?.editDiary() }
+                default:
+                    break
+                }
+            }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
@@ -121,14 +153,14 @@ final class DiaryMakorViewModel: BaseViewModel {
         
         title = moodToKorean[mood] ?? "좋아용"
     }
-
+    
     private func editDiary() async {
         guard let preDiary else { return }
-
+        
         do {
             let isChangeEmotion = preDiary.emotion.rawValue != selectedMood
             let updatedDiary = createDiaryObject(id: preDiary.id)
-
+            
             try await updateDiaryUseCase.execute(
                 isChangeEmotion: isChangeEmotion,
                 diary: updatedDiary,
