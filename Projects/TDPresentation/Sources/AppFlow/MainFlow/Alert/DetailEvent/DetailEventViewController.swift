@@ -3,11 +3,16 @@ import TDDomain
 import TDDesign
 import UIKit
 
+protocol DetailEventViewControllerDelegate: AnyObject {
+    func didTapDeleteButton(event: EventDisplayItem)
+}
+
 final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     // MARK: - Properties
     private let mode: TDEventMode
     private let event: EventDisplayItem
     private let currentDate: String
+    weak var delegate: DetailEventViewControllerDelegate?
     
     // MARK: - Initializer
     init(
@@ -44,6 +49,12 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     private func setupButtonActions() {
         popupContentView.cancelButton.addAction(UIAction { [weak self] _ in
             self?.dismissPopup()
+        }, for: .touchUpInside)
+        
+        popupContentView.deleteButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            delegate?.didTapDeleteButton(event: event)
+            dismissPopup()
         }, for: .touchUpInside)
     }
     

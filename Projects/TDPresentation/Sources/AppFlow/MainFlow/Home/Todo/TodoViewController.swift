@@ -191,6 +191,7 @@ final class TodoViewController: BaseViewController<BaseView> {
                     let eventDisplayItem = EventDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
                     let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
+                    detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
                 case .deletedTodo:
                     if let formattedDate = self?.selectedDate {
@@ -345,6 +346,7 @@ extension TodoViewController: UITableViewDelegate {
             if event.eventMode == .schedule, let schedule = event as? Schedule {
                 let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
                 detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
                 input.send(.fetchRoutineDetail(event))
@@ -353,6 +355,7 @@ extension TodoViewController: UITableViewDelegate {
             if event.eventMode == .schedule, let schedule = event as? Schedule {
                 let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
                 detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
                 input.send(.fetchRoutineDetail(event))
@@ -509,6 +512,7 @@ extension TodoViewController {
     }
 }
 
+// MARK: - DeleteEventViewControllerDelegate
 extension TodoViewController: DeleteEventViewControllerDelegate {
     func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
         if let eventId = eventId {
@@ -522,6 +526,19 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
             let isSchedule = eventMode == .schedule
             input.send(.deleteAllTodo(todoId: eventId, isSchedule: isSchedule))
         }
+    }
+}
+
+// MARK: - DetailEventViewControllerDelegate
+extension TodoViewController: DetailEventViewControllerDelegate {
+    func didTapDeleteButton(event: EventDisplayItem) {
+        let deleteEventViewController = DeleteEventViewController(
+            eventId: event.id,
+            isRepeating: event.isRepeating,
+            eventMode: event.eventMode == .schedule ? .schedule : .routine
+        )
+        deleteEventViewController.delegate = self
+        presentPopup(with: deleteEventViewController)
     }
 }
 

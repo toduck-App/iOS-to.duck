@@ -72,7 +72,7 @@ struct EventDisplayItem: Eventable {
         self.category = schedule.category
         self.isAllDay = schedule.isAllDay
         self.time = schedule.time
-        self.isRepeating = false
+        self.isRepeating = schedule.isRepeating
         self.repeatDays = schedule.repeatDays
         self.alarmTime = schedule.alarmTime
         self.memo = schedule.memo
