@@ -41,7 +41,7 @@ public struct TDRoutineDTO: Codable {
             category: TDCategory.init(colorHex: color, imageName: category),
             isAllDay: isInDeletedState,
             isPublic: isPublic,
-            time: Date.convertFromString(time ?? "", format: .time24Hour),
+            time: time,
             repeatDays: daysOfWeek.compactMap { TDWeekDay(rawValue: $0) },
             alarmTime: nil,
             memo: memo,

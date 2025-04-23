@@ -15,7 +15,7 @@ public struct RoutineRequestDTO: Encodable {
         self.title = routine.title
         self.category = routine.category.imageName.uppercased()
         self.color = routine.category.colorHex
-        self.time = routine.isAllDay ? nil : routine.time?.convertToString(formatType: .time24Hour)
+        self.time = routine.isAllDay ? nil : routine.time
         self.isPublic = routine.isPublic
         self.daysOfWeek = routine.repeatDays?.map { $0.rawValue } ?? []
         self.reminderMinutes = routine.alarmTime?.time

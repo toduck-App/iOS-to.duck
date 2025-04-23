@@ -77,21 +77,9 @@ public final class TDFormButtonsView: UIView {
     
     // MARK: - Cofigure
     public func selectButtons(buttonStateNames: [String]) {
-        switch type {
-        case .repeatDay:
-            for button in buttons {
-                let isSelected = buttonStateNames.contains(button.identifier)
-                button.isSelected = isSelected
-            }
-
-        case .alarm:
-            for button in buttons {
-                if buttonStateNames.contains(button.identifier) {
-                    button.isSelected = true
-                } else {
-                    button.isSelected = false
-                }
-            }
+        for button in buttons {
+            let isSelected = buttonStateNames.contains(button.identifier)
+            button.isSelected = isSelected
         }
     }
     

@@ -1,4 +1,4 @@
-public enum AlarmType: String {
+public enum AlarmTime: String {
     case tenMinutesBefore = "TEN_MINUTE"
     case thirtyMinutesBefore = "THIRTY_MINUTE"
     case oneHourBefore = "ONE_HOUR"

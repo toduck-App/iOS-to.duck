@@ -20,28 +20,30 @@ final class EventMakorCoordinator: Coordinator {
         self.selectedDate = selectedDate
     }
     
-    func start(mode: EventMakorViewController.Mode, preEvent: (any EventPresentable)?) {
+    func start(mode: EventMakorViewController.Mode, preEvent: (any Eventable)?) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
         let updateScheduleUseCase = injector.resolve(UpdateScheduleUseCase.self)
+        let updateRoutineUseCase = injector.resolve(UpdateRoutineUseCase.self)
         let viewModel = EventMakorViewModel(
             mode: mode,
             createScheduleUseCase: createScheduleUseCase,
             createRoutineUseCase: createRoutineUseCase,
             fetchCategoriesUseCase: fetchRoutineListUseCase,
             updateScheduleUseCase: updateScheduleUseCase,
+            updateRoutineUseCase: updateRoutineUseCase,
             preEvent: preEvent,
             selectedDate: selectedDate
         )
-        viewModel.setupInitialDate(with: selectedDate)
+        viewModel.setupInitialDate(with: selectedDate, isEditMode: preEvent != nil)
         let eventMakorViewController = EventMakorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
         eventMakorViewController.coordinator = self
         eventMakorViewController.hidesBottomBarWhenPushed = true
         eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
         if let preEvent {
-            eventMakorViewController.updatePreEvent(preEvent: preEvent)
+            eventMakorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
         }
     }
     

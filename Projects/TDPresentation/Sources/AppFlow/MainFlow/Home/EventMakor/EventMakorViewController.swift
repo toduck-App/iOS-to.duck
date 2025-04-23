@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import FittedSheets
 import Combine
 import TDDesign
@@ -91,7 +92,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                         } ?? [])
                 case .savedEvent:
-                    self?.navigationController?.popViewController(animated: true)
+                    self?.coordinator?.finish(by: .pop)
                 case .failedToSaveEvent(let missingFields):
                     let missing = missingFields
                         .map {
@@ -99,7 +100,8 @@ final class EventMakorViewController: BaseViewController<BaseView> {
                             case "title": return "제목"
                             case "category": return "카테고리"
                             case "startDate": return "시작 날짜"
-                            case "isAllDay": return "시간 선택"
+                            case "timeOrIsAllDay": return "시간 선택"
+                            case "repeatDays": return "반복 요일"
                             default: return $0
                             }
                         }
@@ -140,6 +142,11 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     private func presentSheetEditMode() {
+        guard (viewModel.preEvent?.repeatDays) != nil else {
+            input.send(.tapScheduleEditTodayButton)
+            return
+        }
+        
         let editScheduleModeViewController = EditScheduleModeViewController()
         editScheduleModeViewController.delegate = self
         let sheetController = SheetViewController(
@@ -177,8 +184,9 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     // MARK: Delegate Method
-    func updatePreEvent(preEvent: (any EventPresentable)?) {
-        eventMakorView.updatePreEvent(preEvent: preEvent)
+    func updatePreEvent(preEvent: (any Eventable)?, selectedDate: Date?) {
+        let selectedDateString = selectedDate?.convertToString(formatType: .monthDay) ?? ""
+        eventMakorView.updatePreEvent(preEvent: preEvent, selectedDateString: selectedDateString)
     }
     
     func reloadCategoryView() {
@@ -221,7 +229,8 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             let displayTime = selectedDate.convertToString(formatType: .time12HourEnglish)
             eventMakorView.timeForm.updateDescription(displayTime)
             eventMakorView.alarmForm.updateAlarmContent(isAllDay: false)
-            input.send(.selectTime(isAllDay, selectedDate))
+            let selectedTimeString = selectedDate.convertToString(formatType: .time24Hour)
+            input.send(.selectTime(isAllDay, selectedTimeString))
             TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
         }
     }

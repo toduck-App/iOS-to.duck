@@ -6,15 +6,14 @@ public struct Routine: Eventable, Identifiable {
     public let category: TDCategory
     public let isAllDay: Bool
     public let isPublic: Bool
-    public let time: Date?
+    public let time: String?
     public let repeatDays: [TDWeekDay]?
-    public let alarmTime: AlarmType?
+    public let alarmTime: AlarmTime?
     public let memo: String?
     public let recommendedRoutines: [String]?
     public let isFinished: Bool
     public let shareCount: Int
     public let eventMode: TDEventMode = .routine
-    public let place: String? = nil
     
     public var isRepeating: Bool {
         repeatDays != nil
@@ -26,9 +25,9 @@ public struct Routine: Eventable, Identifiable {
         category: TDCategory,
         isAllDay: Bool,
         isPublic: Bool,
-        time: Date?,
+        time: String?,
         repeatDays: [TDWeekDay]?,
-        alarmTime: AlarmType?,
+        alarmTime: AlarmTime?,
         memo: String?,
         recommendedRoutines: [String]?,
         isFinished: Bool,
@@ -67,7 +66,7 @@ extension Routine {
             category: TDCategory(colorHex: "#FFD6E2 ", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            time: Date(),
+            time: "11:00",
             repeatDays: nil,
             alarmTime: nil,
             memo: "물만 마셔도 피부가 좋아진다나, 뭐라나,, ~~",
@@ -80,7 +79,7 @@ extension Routine {
             category: TDCategory(colorHex: "#FFE3CC", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            time: Date(),
+            time: "11:00",
             repeatDays: [.friday, .saturday],
             alarmTime: .oneHourBefore,
             memo: "감정 기록으로 오늘 하루를 되돌아보며 마무리",
@@ -93,7 +92,7 @@ extension Routine {
             category: TDCategory(colorHex: "#FFD6E2", imageName: "computer"),
             isAllDay: false,
             isPublic: false,
-            time: Date().addingTimeInterval(60 * 60 * 2),
+            time: "12:00",
             repeatDays: [.saturday],
             alarmTime: nil,
             memo: "눈 뜨자마자 이부자리 정리하는 사람은 성공한다더라..",
@@ -106,7 +105,7 @@ extension Routine {
             category: TDCategory(colorHex: "#E4E9F3", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            time: Date(),
+            time: "12:00",
             repeatDays: nil,
             alarmTime: nil,
             memo: "찌뿌둥한 아침, 스트레칭으로 몸도 정신도 깨우기!",
@@ -132,7 +131,7 @@ extension Routine {
             category: TDCategory(colorHex: "#FFD6E2", imageName: "computer"),
             isAllDay: false,
             isPublic: true,
-            time: Date().addingTimeInterval(60 * 60 * 7),
+            time: "12:00",
             repeatDays: nil,
             alarmTime: nil,
             memo: "시간 날 때 마다 틈틈히 읽어두기!",

@@ -49,7 +49,7 @@ public extension ScheduleHeadDTO {
             startDate: startDate,
             endDate: endDate,
             isAllDay: isAllDay,
-            time: time.flatMap { Date.convertFromString($0, format: .time24Hour) },
+            time: time,
             repeatDays: repeatDays.isEmpty ? nil : repeatDays,
             alarmTime: nil,
             place: location,

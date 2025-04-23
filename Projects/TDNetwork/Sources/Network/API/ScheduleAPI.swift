@@ -9,7 +9,7 @@ public enum ScheduleAPI {
     case fetchScheduleList(startDate: String, endDate: String) // 모든 일정 조회
     case moveTomorrowSchedule(scheduleId: Int) // 일정 내일로 이동
     case updateSchedule(schedule: ScheduleUpdateRequestDTO) // 일정 업데이트
-    case deleteSchedule(scheduleId: Int) // 일정 삭제
+    case deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String) // 일정 삭제
 }
 
 extension ScheduleAPI: MFTarget {
@@ -29,8 +29,8 @@ extension ScheduleAPI: MFTarget {
             "v1/schedules/\(scheduleId)/move-tomorrow"
         case .updateSchedule:
             "v1/schedules"
-        case .deleteSchedule(let scheduleId):
-            "v1/schedules/\(scheduleId)"
+        case .deleteSchedule:
+            "v1/schedules"
         }
     }
     
@@ -68,8 +68,7 @@ extension ScheduleAPI: MFTarget {
         case .fetchScheduleList:
                 .requestPlain
             
-        case .moveTomorrowSchedule,
-                .deleteSchedule:
+        case .moveTomorrowSchedule:
                 .requestPlain
             
         case .finishSchedule(let scheduleId, let isComplete, let queryDate):
@@ -113,8 +112,13 @@ extension ScheduleAPI: MFTarget {
                     "memo": schedule.scheduleData.memo as Any
                 ]
             ])
+        case .deleteSchedule(let scheduleId, let isOneDayDeleted, let queryDate):
+            .requestParameters(parameters: [
+                "scheduleId": scheduleId,
+                "isOneDayDeleted": isOneDayDeleted,
+                "queryDate": queryDate
+            ])
         }
-        
     }
     
     public var headers: MFHeaders? {

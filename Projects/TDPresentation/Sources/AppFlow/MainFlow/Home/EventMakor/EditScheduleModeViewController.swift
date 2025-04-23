@@ -23,13 +23,13 @@ final class EditScheduleModeViewController: BaseViewController<BaseView> {
     }
     private let todayScheduleApplyContainerView = UIView()
     private let todayScheduleApplyLabel = TDLabel(
-        labelText: "오늘 일정에 적용",
+        labelText: "이 일정에만 적용",
         toduckFont: TDFont.mediumHeader5,
         toduckColor: TDColor.Neutral.neutral600
     )
     private let allScheduleApplyContainerView = UIView()
     private let allScheduleApplyLabel = TDLabel(
-        labelText: "모든 일정에 적용",
+        labelText: "이후 모든 일정에도 적용",
         toduckFont: TDFont.mediumHeader5,
         toduckColor: TDColor.Neutral.neutral600
     )
@@ -74,6 +74,7 @@ final class EditScheduleModeViewController: BaseViewController<BaseView> {
         }
         todayScheduleApplyLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.height.equalTo(20)
             $0.leading.equalToSuperview().inset(16)
         }
         
@@ -83,6 +84,7 @@ final class EditScheduleModeViewController: BaseViewController<BaseView> {
         }
         allScheduleApplyLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.height.equalTo(20)
             $0.leading.equalToSuperview().inset(16)
         }
         

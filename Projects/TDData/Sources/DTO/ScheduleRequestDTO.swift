@@ -21,7 +21,7 @@ public struct ScheduleRequestDTO: Encodable {
         self.startDate = schedule.startDate
         self.endDate = schedule.endDate
         self.isAllDay = schedule.isAllDay
-        self.time = schedule.time?.convertToString(formatType: .time24Hour)
+        self.time = schedule.time
         self.alarm = schedule.alarmTime?.rawValue
         self.daysOfWeek = schedule.repeatDays?.map { $0.rawValue }
         self.location = schedule.place

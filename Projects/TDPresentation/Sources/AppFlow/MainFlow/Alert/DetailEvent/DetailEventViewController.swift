@@ -3,11 +3,17 @@ import TDDomain
 import TDDesign
 import UIKit
 
+protocol DetailEventViewControllerDelegate: AnyObject {
+    func didTapDeleteButton(event: EventDisplayItem)
+    func didTapTomorrowButton(event: EventDisplayItem)
+}
+
 final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     // MARK: - Properties
     private let mode: TDEventMode
     private let event: EventDisplayItem
     private let currentDate: String
+    weak var delegate: DetailEventViewControllerDelegate?
     
     // MARK: - Initializer
     init(
@@ -45,6 +51,18 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         popupContentView.cancelButton.addAction(UIAction { [weak self] _ in
             self?.dismissPopup()
         }, for: .touchUpInside)
+        
+        popupContentView.deleteButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            delegate?.didTapDeleteButton(event: event)
+            dismissPopup()
+        }, for: .touchUpInside)
+        
+        popupContentView.delayToTomorrowButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            delegate?.didTapTomorrowButton(event: event)
+            dismissPopup()
+        }, for: .touchUpInside)
     }
     
     // MARK: - UI Configuration
@@ -68,12 +86,16 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         )
         popupContentView.eventTitleLabel.setText(event.title)
         
-        let timeDate = Date.convertFromString(event.time ?? "", format: .time24Hour)
-        let timeString = timeDate?.convertToString(formatType: .time12Hour)
-        popupContentView.timeDetailView.updateDescription(timeString ?? "없음")
+        popupContentView.timeDetailView.updateDescription(event.time ?? "없음")
         let repeatString = event.repeatDays == nil ? "없음" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
         popupContentView.repeatDetailView.updateDescription(repeatString)
-        popupContentView.memoContentLabel.setText(event.memo ?? "없음")
+        if let memo = event.memo {
+            popupContentView.memoContentLabel.setText(memo)
+            popupContentView.memoContentLabel.setColor(TDColor.Neutral.neutral800)
+        } else {
+            popupContentView.memoContentLabel.setText("등록된 메모가 없어요")
+            popupContentView.memoContentLabel.setColor(TDColor.Neutral.neutral500)
+        }
     }
     
     /// 루틴과 일정에 따라 UI를 다르게 설정

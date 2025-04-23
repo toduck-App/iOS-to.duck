@@ -7,15 +7,13 @@ public struct RoutineListResponseDTO: Decodable {
     
     func convertToRoutineList() -> [Routine] {
         routines.map { routine in
-            let routineTime: Date? = routine.time != nil ? Date.convertFromString(routine.time!, format: .time24Hour) : nil
-            
             return Routine(
                 id: routine.routineId,
                 title: routine.title,
                 category: TDCategory(colorHex: routine.color, imageName: routine.category),
                 isAllDay: routine.time == nil,
-                isPublic: true,
-                time: routineTime,
+                isPublic: false,
+                time: routine.time,
                 repeatDays: routine.daysOfWeek?.compactMap { TDWeekDay(rawValue: $0) },
                 alarmTime: nil,
                 memo: routine.memo,

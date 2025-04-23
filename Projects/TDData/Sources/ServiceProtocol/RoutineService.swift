@@ -5,5 +5,6 @@ public protocol RoutineService {
     func fetchRoutineList(dateString: String) async throws -> RoutineListResponseDTO
     func fetchAvailableRoutineList() async throws -> RoutineListResponseDTO
     func updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) async throws
+    func updateRoutine(routineId: Int, routine: RoutineUpdateRequestDTO) async throws
     func deleteRoutine(routineId: Int, keepRecords: Bool) async throws
 }

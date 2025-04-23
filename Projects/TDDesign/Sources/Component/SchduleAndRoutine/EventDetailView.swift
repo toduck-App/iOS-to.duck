@@ -42,12 +42,12 @@ public final class EventDetailView: UIView {
         alignment: .left,
         toduckColor: TDColor.Neutral.neutral800
     )
+
+    /// 시간
     private let timeImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = TDImage.clockMedium.withTintColor(TDColor.Neutral.neutral600)
     }
-
-    /// 시간
     private let timeLabel = TDLabel(
         toduckFont: TDFont.mediumCaption1,
         alignment: .left,

@@ -1,9 +1,11 @@
 import TDCore
+import Combine
 import TDDesign
 import UIKit
 
 protocol DeleteEventViewControllerDelegate: AnyObject {
-    func didTapDeleteButton()
+    func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode)
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode)
 }
 
 final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
@@ -12,19 +14,28 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
         case repeating
     }
     
+    enum EventMode {
+        case schedule
+        case routine
+        case diary
+    }
+    
+    private let eventId: Int?
     private let mode: EventRepeatingMode
-    private let isScheduleEvent: Bool
+    private let eventMode: EventMode
     weak var delegate: DeleteEventViewControllerDelegate?
 
     /// - Parameters:
     ///   - isScheduleEvent: 일정인지 루틴인지 여부 (`true`: 일정, `false`: 루틴)
-    ///   - isRepeating: 반복 여부 (`true`: 반복 이벤트, `false`: 단일 이벤트)
+    ///   - eventType: 이벤트 타입 (일정, 루틴, 다이어리)
     init(
+        eventId: Int?,
         isRepeating: Bool,
-        isScheduleEvent: Bool
+        eventMode: EventMode
     ) {
+        self.eventId = eventId
         self.mode = isRepeating ? .repeating : .single
-        self.isScheduleEvent = isScheduleEvent
+        self.eventMode = eventMode
         super.init()
     }
     
@@ -42,8 +53,8 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
 
     /// 일정 or 루틴에 맞는 버튼 타이틀을 설정
     private func updateButtonTitles() {
-        let singleTitle = isScheduleEvent ? "이 일정만 삭제" : "이 루틴만 삭제"
-        let repeatingTitle = isScheduleEvent ? "이후 일정 모두 삭제" : "이후 루틴 모두 삭제"
+        let singleTitle = eventMode == .schedule ? "이 일정만 삭제" : "이 루틴만 삭제"
+        let repeatingTitle = eventMode == .schedule ? "이후 일정 모두 삭제" : "이후 루틴 모두 삭제"
 
         popupContentView.currentEventDeleteButton.setTitle(singleTitle, for: .normal)
         popupContentView.afterEventDeleteButton.setTitle(repeatingTitle, for: .normal)
@@ -59,7 +70,11 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
 
     private func setupButtonAction() {
         popupContentView.currentEventDeleteButton.addAction(UIAction { [weak self] _ in
-            self?.delegate?.didTapDeleteButton()
+            self?.delegate?.didTapTodayDeleteButton(eventId: self?.eventId, eventMode: self?.eventMode ?? .schedule)
+        }, for: .touchUpInside)
+        
+        popupContentView.afterEventDeleteButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.didTapAllDeleteButton(eventId: self?.eventId, eventMode: self?.eventMode ?? .schedule)
         }, for: .touchUpInside)
         
         popupContentView.cancelButton.addAction(UIAction { [weak self] _ in

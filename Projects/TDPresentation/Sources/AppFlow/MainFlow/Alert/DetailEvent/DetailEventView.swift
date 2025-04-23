@@ -161,6 +161,7 @@ final class DetailEventView: BaseView {
         dateLabel.snp.makeConstraints {
             $0.top.equalTo(navigationContainerView.snp.bottom)
             $0.leading.equalToSuperview().inset(LayoutConstants.dateLeadingInset)
+            $0.height.equalTo(20)
         }
         categoryImageView.snp.makeConstraints {
             $0.top.equalTo(dateLabel.snp.bottom).offset(LayoutConstants.categoryTopOffset)

@@ -75,29 +75,33 @@ final class TimeSlotTableViewCell: UITableViewCell {
     func configure(
         hour: Int,
         showTime: Bool,
-        event: EventDisplayItem?
+        event: EventDisplayItem?,
+        checkBoxAction: (() -> Void)? = nil,
+        editAction: (() -> Void)? = nil,
+        deleteAction: (() -> Void)? = nil
     ) {
         contentView.backgroundColor = TDColor.Neutral.neutral50
-        
+
+        // 시간 표시
         if hour == Int.max && showTime {
             timeLabel.setText("종일")
+        } else if showTime {
+            let period = hour >= 12 ? "PM" : "AM"
+            let displayHour = (hour == 0) ? 0 : (hour % 12 == 0 ? 12 : hour % 12)
+            timeLabel.setText("\(displayHour) \(period)")
         } else {
-            if showTime {
-                let period = hour >= 12 ? "PM" : "AM"
-                let displayHour = (hour == 0) ? 0 : (hour % 12 == 0 ? 12 : hour % 12)
-                timeLabel.setText("\(displayHour) \(period)")
-            } else {
-                timeLabel.setText("")
-            }
+            timeLabel.setText("")
         }
-        
-        guard let event = event else {
+
+        // 이벤트 없을 경우
+        guard let event else {
             shadowContainerView.isHidden = true
             timeLabel.setColor(TDColor.Neutral.neutral500)
             timeLabel.setFont(TDFont.boldButton)
             return
         }
-        
+
+        // 이벤트 있을 경우
         shadowContainerView.isHidden = false
         let isNone = event.categoryIcon == TDImage.Category.none
         eventDetailView.configureCell(
@@ -109,20 +113,16 @@ final class TimeSlotTableViewCell: UITableViewCell {
             isFinished: event.isFinished,
             place: event.place
         )
-    }
-    
-    func configureCheckBoxButtonAction(
-        checkBoxAction: @escaping () -> Void
-    ) {
-        eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
-    }
-    
-    func configureSwipeActions(
-        editAction: @escaping () -> Void,
-        deleteAction: @escaping () -> Void
-    ) {
-        self.editAction = editAction
-        self.deleteAction = deleteAction
+
+        // 액션 설정
+        if let checkBoxAction {
+            eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
+        }
+
+        if let editAction, let deleteAction {
+            self.editAction = editAction
+            self.deleteAction = deleteAction
+        }
     }
     
     private func configureCornerRadius() {

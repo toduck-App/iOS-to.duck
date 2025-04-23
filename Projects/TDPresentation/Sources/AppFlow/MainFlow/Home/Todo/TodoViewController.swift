@@ -1,4 +1,5 @@
 import FSCalendar
+import TDDomain
 import TDCore
 import Combine
 import UIKit
@@ -6,8 +7,8 @@ import TDDesign
 
 final class TodoViewController: BaseViewController<BaseView> {
     enum TimeLineCellItem: Hashable {
-        case allDay(event: any EventPresentable, showTime: Bool)
-        case timeEvent(hour: Int, event: any EventPresentable, showTime: Bool)
+        case allDay(event: any Eventable, showTime: Bool)
+        case timeEvent(hour: Int, event: any Eventable, showTime: Bool)
         case gap(startHour: Int, endHour: Int)
     }
     
@@ -186,11 +187,22 @@ final class TodoViewController: BaseViewController<BaseView> {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
                         self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
                     }
+                case .tomorrowTodoCreated:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                    }
                 case .fetchedRoutineDetail(let routine):
                     let eventDisplayItem = EventDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
                     let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
+                    detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
+                case .deletedTodo:
+                    if let formattedDate = self?.selectedDate {
+                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
+                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                    }
                 }
             }.store(in: &cancellables)
     }
@@ -336,17 +348,19 @@ extension TodoViewController: UITableViewDelegate {
         /// 루틴은 추가 정보가 필요해서 루틴 상세 API를 조회하고, binding 메소드에서 팝업 띄우게 해뒀음
         switch item {
         case .allDay(let event, _):
-            if event.eventMode == .schedule {
-                let eventDisplayItem = EventDisplayItem(from: event)
+            if event.eventMode == .schedule, let schedule = event as? Schedule {
+                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
                 detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
                 input.send(.fetchRoutineDetail(event))
             }
         case .timeEvent(_, let event, _):
-            if event.eventMode == .schedule {
-                let eventDisplayItem = EventDisplayItem(from: event)
+            if event.eventMode == .schedule, let schedule = event as? Schedule {
+                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
                 detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
                 input.send(.fetchRoutineDetail(event))
@@ -383,7 +397,7 @@ extension TodoViewController {
                     event: event,
                     showTime: showTime
                 )
-
+                
             case .timeEvent(let hour, let event, let showTime):
                 return self.makeTimeSlotCell(
                     tableView: tableView,
@@ -392,7 +406,7 @@ extension TodoViewController {
                     event: event,
                     showTime: showTime
                 )
-
+                
             case .gap(let startHour, let endHour):
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: TimeSlotGapCell.identifier,
@@ -400,49 +414,55 @@ extension TodoViewController {
                 ) as? TimeSlotGapCell else {
                     return UITableViewCell()
                 }
-
+                
                 cell.configure(startHour: startHour, endHour: endHour)
                 return cell
             }
         }
     }
-
+    
     private func makeTimeSlotCell(
         tableView: UITableView,
         indexPath: IndexPath,
         hour: Int,
-        event: any EventPresentable,
+        event: any Eventable,
         showTime: Bool
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: TimeSlotTableViewCell.identifier,
             for: indexPath
-        ) as? TimeSlotTableViewCell else {
-            return UITableViewCell()
-        }
+        ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
-        let dateString = event.eventMode == .schedule ? selectedDate?.convertToString(formatType: .monthDay) : nil
-        let eventDisplay = EventDisplayItem(from: event, date: dateString)
-
-        cell.configure(hour: hour, showTime: showTime, event: eventDisplay)
-        cell.configureCheckBoxButtonAction { [weak self] in
-            self?.input.send(.checkBoxTapped(todo: event))
-        }
-        cell.configureSwipeActions { [weak self] in
-            let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
-            self?.delegate?.didTapEventMakor(
-                mode: mode,
-                selectedDate: self?.selectedDate,
-                preEvent: eventDisplay
-            )
-        } deleteAction: {
-            let deleteEventViewController = DeleteEventViewController(
-                isRepeating: eventDisplay.isRepeating,
-                isScheduleEvent: eventDisplay.eventMode == .schedule
-            )
-            self.presentPopup(with: deleteEventViewController)
-        }
-
+        let place = event.eventMode == .schedule ? (event as? Schedule)?.place : nil
+        let eventDisplay = EventDisplayItem(from: event, place: place)
+        
+        cell.configure(
+            hour: hour,
+            showTime: showTime,
+            event: eventDisplay,
+            checkBoxAction: { [weak self] in
+                self?.input.send(.checkBoxTapped(todo: event))
+            },
+            editAction: { [weak self] in
+                let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
+                self?.delegate?.didTapEventMakor(
+                    mode: mode,
+                    selectedDate: self?.selectedDate,
+                    preEvent: event
+                )
+            },
+            deleteAction: { [weak self] in
+                let isSchedule = eventDisplay.eventMode == .schedule
+                let deleteEventViewController = DeleteEventViewController(
+                    eventId: eventDisplay.id,
+                    isRepeating: eventDisplay.isRepeating,
+                    eventMode: isSchedule ? .schedule : .routine
+                )
+                deleteEventViewController.delegate = self
+                self?.presentPopup(with: deleteEventViewController)
+            }
+        )
+        
         return cell
     }
     
@@ -457,7 +477,7 @@ extension TodoViewController {
     private func makeTimelineItems() -> [TimeLineCellItem] {
         var items: [TimeLineCellItem] = []
         let calendar = Calendar.current
-
+        
         // isAllDay가 true인 루틴이 있으면 최상단에 allDay 셀 추가
         for (index, event) in viewModel.allDayTodoList.enumerated() {
             let showTime = (index == 0)
@@ -465,10 +485,10 @@ extension TodoViewController {
         }
         
         // 같은 시간(12시간제)별로 모든 루틴을 배열로 매핑
-        var eventMapping: [Int: [any EventPresentable]] = [:]
+        var eventMapping: [Int: [any Eventable]] = [:]
         for event in viewModel.timedTodoList {
-            if let time = event.time {
-                let hourComponent = calendar.component(.hour, from: Date.convertFromString(time, format: .time24Hour) ?? Date())
+            if let time = event.time, let dateTime = Date.convertFromString(time, format: .time24Hour) {
+                let hourComponent = calendar.component(.hour, from: dateTime)
                 eventMapping[hourComponent, default: []].append(event)
             }
         }
@@ -497,6 +517,42 @@ extension TodoViewController {
     }
 }
 
+// MARK: - DeleteEventViewControllerDelegate
+extension TodoViewController: DeleteEventViewControllerDelegate {
+    func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
+        if let eventId = eventId {
+            let isSchedule = eventMode == .schedule
+            input.send(.deleteTodayTodo(todoId: eventId, isSchedule: isSchedule))
+        }
+    }
+    
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
+        if let eventId = eventId {
+            let isSchedule = eventMode == .schedule
+            input.send(.deleteAllTodo(todoId: eventId, isSchedule: isSchedule))
+        }
+    }
+}
+
+// MARK: - DetailEventViewControllerDelegate
+extension TodoViewController: DetailEventViewControllerDelegate {
+    func didTapDeleteButton(event: EventDisplayItem) {
+        let deleteEventViewController = DeleteEventViewController(
+            eventId: event.id,
+            isRepeating: event.isRepeating,
+            eventMode: event.eventMode == .schedule ? .schedule : .routine
+        )
+        deleteEventViewController.delegate = self
+        presentPopup(with: deleteEventViewController)
+    }
+    
+    func didTapTomorrowButton(event: EventDisplayItem) {
+        if let id = event.id {
+            input.send(.moveToTomorrow(todoId: id, event: event))
+        }
+    }
+}
+
 extension TodoViewController.TimeLineCellItem: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
@@ -517,13 +573,13 @@ extension TodoViewController.TimeLineCellItem: Equatable {
             hasher.combine("allDay")
             hasher.combine(event.id)
             hasher.combine(showTime)
-
+            
         case let .timeEvent(hour, event, showTime):
             hasher.combine("routine")
             hasher.combine(hour)
             hasher.combine(event.id)
             hasher.combine(showTime)
-
+            
         case let .gap(startHour, endHour):
             hasher.combine("gap")
             hasher.combine(startHour)

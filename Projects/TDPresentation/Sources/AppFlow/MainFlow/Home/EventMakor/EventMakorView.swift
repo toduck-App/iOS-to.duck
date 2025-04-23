@@ -265,24 +265,23 @@ final class EventMakorView: BaseView {
         }
     }
     
-    func updatePreEvent(preEvent: (any EventPresentable)?) {
-        let event = preEvent as? EventDisplayItem
-        titleForm.setupTextField(event?.title ?? "")
-        saveButton.isEnabled = event?.title.isEmpty == false
-        noticeSnackBarView.isHidden = event?.title.isEmpty == false
-        categoryViewsForm.selectCategory(categoryImage: event?.categoryIcon ?? UIImage())
-        timeForm.updateDescription(event?.time ?? "")
-        let selectedRepeatDays = event?.repeatDays?.map { $0.title } ?? []
+    func updatePreEvent(preEvent: (any Eventable)?, selectedDateString: String?) {
+        titleForm.setupTextField(preEvent?.title ?? "")
+        saveButton.isEnabled = preEvent?.title.isEmpty == false
+        noticeSnackBarView.isHidden = preEvent?.title.isEmpty == false
+        categoryViewsForm.selectCategory(categoryImage: preEvent?.categoryIcon ?? UIImage())
+        timeForm.updateDescription(preEvent?.time ?? "종일")
+        let selectedRepeatDays = preEvent?.repeatDays?.map { $0.title } ?? []
         repeatDayForm.selectButtons(buttonStateNames: selectedRepeatDays)
-        let selectedAlarm = event?.alarmTime?.title ?? ""
+        let selectedAlarm = preEvent?.alarmTime?.title ?? ""
         alarmForm.selectButtons(buttonStateNames: [selectedAlarm])
-        memoTextView.setupTextView(text: event?.memo ?? "")
+        memoTextView.setupTextView(text: preEvent?.memo ?? "")
         
-        if mode == .schedule {
-            dateForm.updateDescription(event?.date ?? "")
-            locationForm.setupTextField(event?.place ?? "")
-        } else {
-            lockForm.setupSegmentedControlIndex(event?.isPublic ?? false ? 0 : 1)
+        if mode == .schedule, let schedule = preEvent as? Schedule {
+            dateForm.updateDescription(selectedDateString ?? "")
+            locationForm.setupTextField(schedule.place ?? "")
+        } else if mode == .routine, let routine = preEvent as? Routine {
+            lockForm.setupSegmentedControlIndex(routine.isPublic ? 0 : 1)
         }
     }
 }

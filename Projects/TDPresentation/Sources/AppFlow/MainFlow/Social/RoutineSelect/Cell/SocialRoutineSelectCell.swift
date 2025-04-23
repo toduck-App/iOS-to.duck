@@ -1,4 +1,5 @@
 import SnapKit
+import TDDomain
 import TDDesign
 import UIKit
 
@@ -37,7 +38,7 @@ final class SocialRoutineSelectCell: UITableViewCell {
         )
     }
 
-    func configure(event: any EventPresentable) {
+    func configure(event: any Eventable) {
         titleLabel.setText(event.title)
         memoLabel.setText(event.memo ?? "")
         categoryView.configure(
