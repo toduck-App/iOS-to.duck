@@ -94,6 +94,7 @@ public final class TDFormTextField: UIView {
     
     public func setupTextField(_ text: String) {
         textField.setupTextField(text)
+        textDidChange(textField.getCoreTextField() ?? UITextField())
     }
     
     public func setupFont(_ font: TDFont) {

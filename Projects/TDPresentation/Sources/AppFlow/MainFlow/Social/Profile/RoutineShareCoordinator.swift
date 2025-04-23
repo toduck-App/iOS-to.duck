@@ -64,7 +64,7 @@ extension RoutineShareCoordinator: RoutineShareCoordinatorDelegate, CoordinatorF
         if let viewController = navigationController.presentedViewController {
             viewController.dismiss(animated: true)
         }
-        guard let currentViewController = navigationController.topViewController as? BaseViewController<SocialProfileView> else {
+        guard let currentViewController = navigationController.topViewController as? ErrorAlertDisplayable else {
             return
         }
         currentViewController.showErrorAlert(errorMessage: message)

@@ -28,7 +28,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case shareRoutine
         case reportPost
         case didTapComment(Comment)
-        case deleteComment(Comment)
+        case reloadParentComment(Comment)
         case failure(String)
     }
     
@@ -181,9 +181,12 @@ private extension SocialDetailViewModel {
             let image: (fileName: String, imageData: Data)? = registerImage != nil ? (fileName: "\(UUID().uuidString).jpg", imageData: registerImage!) : nil
             try await createCommentUseCase.execute(postID: postID, parentId: currentComment?.id, content: content, image: image)
             
-            currentComment = nil
             output.send(.createComment)
             await fetchPost()
+            if let currentComment {
+                output.send(.reloadParentComment(currentComment))
+            }
+            currentComment = nil
         } catch {
             output.send(.failure("댓글 등록에 실패했습니다."))
         }
@@ -193,11 +196,11 @@ private extension SocialDetailViewModel {
     private func deleteComment(commentID: Comment.ID) async {
         do {
             try await deleteCommentUseCase.execute(postID: postID, commentID: commentID)
-            
+            self.comments = comments.filter { $0.id != commentID }
             if let parentComment = removeComment(in: &comments, for: commentID) {
-                output.send(.deleteComment(parentComment))
+                output.send(.reloadParentComment(parentComment))
             } else {
-                output.send(.failure("댓글 삭제 처리에 실패했습니다."))
+                output.send(.comments(comments))
             }
         } catch {
             output.send(.failure("댓글 삭제에 실패했습니다."))
@@ -209,7 +212,6 @@ private extension SocialDetailViewModel {
         do {
             try await blockUserUseCase.execute(userID: userID)
             removeAllComments(by: userID, in: &comments)
-            print(comments)
             output.send(.comments(comments))
         } catch {
             output.send(.failure("사용자 차단에 실패했습니다."))

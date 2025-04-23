@@ -24,8 +24,12 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        input.send(.fetchPosts)
         setupDefaultNavigationBar()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        input.send(.fetchPosts)
     }
     
     private func setupDefaultNavigationBar() {
@@ -124,7 +128,9 @@ extension SocialListViewController: UICollectionViewDelegate {
             guard let post = self.viewModel.posts.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
             cell.socialFeedCellDelegate = self
-            cell.configure(with: post)
+            let highlight: String? = self.viewModel.isSearching ? self.viewModel.searchTerm : nil
+                        
+            cell.configure(with: post, highlightTerm: highlight)
             
             return cell
         })
@@ -220,9 +226,8 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
         presentPopup(with: controller)
     }
     
-    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        TDLogger.debug("EDIT POST")
-//        coordinator?.didTapEditPost(id: postID)
+    func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post) {
+        coordinator?.didTapEditPost(post: post)
     }
     
     func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
@@ -233,9 +238,8 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
         coordinator?.didTapReport(id: postID)
     }
     
-    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID) {
-        // TODO: Routine 공유 View
-        TDLogger.debug("Routine Tap!")
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {
+        coordinator?.didTapRoutine(routine: routine)
     }
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
@@ -311,9 +315,9 @@ extension SocialListViewController: UISearchBarDelegate, CancleTagCellDelegate, 
 extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
-        snapshot.deleteAllItems()
         snapshot.appendSections([0])
-        snapshot.appendItems(posts.map(\.id))
+        snapshot.appendItems(posts.map(\.id), toSection: 0)
+        snapshot.reloadItems(posts.map(\.id))
         datasource?.apply(snapshot, animatingDifferences: false)
     }
     

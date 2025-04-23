@@ -2,9 +2,7 @@ import TDDesign
 import UIKit
 
 final class SocialReportView: BaseView {
-    private let titleLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800).then {
-        $0.setText("게시글을 신고하는 이유를 알려주세요.")
-    }
+    private let titleLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
     
     private(set) lazy var tableView = UITableView().then {
         $0.register(SocialReportTableViewCell.self, forCellReuseIdentifier: SocialReportTableViewCell.identifier)
@@ -27,6 +25,10 @@ final class SocialReportView: BaseView {
         backgroundColor = TDColor.baseWhite
         addSubview(titleLabel)
         addSubview(tableView)
+    }
+    
+    func setTitle(_ title: String) {
+        titleLabel.setText("\(title)을 신고하는 이유를 알려주세요.")
     }
     
     private func setupConstraints() {

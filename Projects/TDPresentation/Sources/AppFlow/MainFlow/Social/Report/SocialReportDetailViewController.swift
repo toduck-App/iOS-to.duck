@@ -31,7 +31,7 @@ final class SocialReportDetailViewController: BaseViewController<SocialReportDet
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .reportPostSuccess:
+                case .success:
                     self?.coordinator?.didTapReport()
                 case .failure(let errorMessage):
                     self?.showErrorAlert(errorMessage: errorMessage)
@@ -41,7 +41,7 @@ final class SocialReportDetailViewController: BaseViewController<SocialReportDet
     }
 
     @objc private func reportAction() {
-        input.send(.reportPost)
+        input.send(.report)
     }
     
     override func configure() {

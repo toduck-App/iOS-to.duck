@@ -1,21 +1,44 @@
-import UIKit
-import TDDesign
 import SnapKit
+import TDDesign
 import Then
+import UIKit
+
+protocol ErrorAlertDisplayable: AnyObject {
+    func showErrorAlert(errorMessage: String)
+    func showErrorAlert(titleError: String, errorMessage: String, image: UIImage)
+}
 
 extension BaseViewController: TDPopupPresentable {
+    func presentErrorPopup(
+        titleError: String = "앗 !! 일시적인 오류가 발생했어요",
+        errorMessage: String,
+        image: UIImage = TDImage.errorAlert
+    ) {
+        let vc = TDErrorAlertViewController()
+        vc.configureErrorMessage(
+            titleError: titleError,
+            errorMessage: errorMessage,
+            image: image
+        )
+        presentPopup(with: vc)
+    }
+}
+
+extension BaseViewController: ErrorAlertDisplayable where BaseViewController: TDPopupPresentable {
+    func showErrorAlert(errorMessage: String) {
+        presentErrorPopup(errorMessage: errorMessage)
+    }
+    
     func showErrorAlert(
         titleError: String = "앗 !! 일시적인 오류가 발생했어요",
         errorMessage: String,
         image: UIImage = TDImage.errorAlert
     ) {
-        let errorAlertViewController = TDErrorAlertViewController()
-        errorAlertViewController.configureErrorMessage(
+        presentErrorPopup(
             titleError: titleError,
             errorMessage: errorMessage,
             image: image
         )
-        presentPopup(with: errorAlertViewController)
     }
 }
 
@@ -47,6 +70,7 @@ final class TDErrorAlertView: BaseView {
         $0.image = TDImage.errorAlert
         $0.contentMode = .scaleAspectFit
     }
+
     let deleteLabel = TDLabel(
         toduckFont: .boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
