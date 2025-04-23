@@ -105,7 +105,7 @@ final class TodoViewModel: BaseViewModel {
             let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
             let routineList = try await fetchRoutineListUseCase.execute(dateString: startDate)
             
-            let todoList: [any Eventable] = (scheduleList as [any Eventable]) + (routineList as [any Eventable])
+            let todoList: [any Eventable] = (routineList as [any Eventable])
             
             self.allDayTodoList = todoList.filter { $0.time == nil }
             self.timedTodoList = todoList

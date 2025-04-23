@@ -402,10 +402,6 @@ public struct DomainAssembly: Assembly {
             return UpdatePostUseCaseImpl(repository: repository)
         }
         
-        container.register(BuildMonthScheduleDictUseCase.self) { _ in
-            return BuildMonthScheduleDictUseCaseImpl()
-        }
-        
         container.register(UpdateScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")

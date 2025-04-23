@@ -18,7 +18,6 @@ final class ToduckCalendarViewModel: BaseViewModel {
     
     // MARK: - Properties
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
-    private let buildMonthScheduleDictUseCase: BuildMonthScheduleDictUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let output = PassthroughSubject<Output, Never>()
@@ -29,12 +28,10 @@ final class ToduckCalendarViewModel: BaseViewModel {
     
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase,
-        buildMonthScheduleDictUseCase: BuildMonthScheduleDictUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         finishRoutineUseCase: FinishRoutineUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
-        self.buildMonthScheduleDictUseCase = buildMonthScheduleDictUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
     }
@@ -81,17 +78,11 @@ final class ToduckCalendarViewModel: BaseViewModel {
         return output.eraseToAnyPublisher()
     }
     
-    // TODO: buildMonthScheduleDictUseCase를 fetchScheduleListUseCase 구현체에 합치도록 리팩토링하기
     private func fetchScheduleList(startDate: String, endDate: String) async {
         do {
             let fetchedSchedule = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
-            guard
-                let monthStart = Date.convertFromString(startDate, format: .yearMonthDay),
-                let monthEnd = Date.convertFromString(endDate, format: .yearMonthDay)
-            else { return }
+            self.monthScheduleDict = fetchedSchedule
             
-            let monthScheduleDict = buildMonthScheduleDictUseCase.execute(schedules: fetchedSchedule, monthStart: monthStart, monthEnd: monthEnd)
-            self.monthScheduleDict = monthScheduleDict
             let key = Calendar.current.startOfDay(for: selectedDate ?? Date())
             let scheduleList = monthScheduleDict[key] ?? []
             self.currentDayScheduleList = scheduleList.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
