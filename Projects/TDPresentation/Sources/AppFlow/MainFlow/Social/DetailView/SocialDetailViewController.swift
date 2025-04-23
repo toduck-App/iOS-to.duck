@@ -1,7 +1,7 @@
 import Combine
 import TDCore
-import TDDomain
 import TDDesign
+import TDDomain
 import UIKit
 
 final class SocialDetailViewController: BaseViewController<SocialDetailView> {
@@ -51,14 +51,14 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         
         layoutView.commentInputForm.setTapSendButton(
             UIAction { [weak self] _ in
-            self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
-        })
+                self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
+            })
         layoutView.commentInputForm.setTapImageButton(
             UIAction { [weak self] _ in
                 let picker = TDPhotoPickerController(maximumSelectablePhotos: 1)
                 picker.pickerDelegate = self
                 self?.navigationController?.pushTDViewController(picker, animated: true)
-        })
+            })
         
         datasource = .init(collectionView: layoutView.detailCollectionView, cellProvider: { collectionView, indexPath, item in
             switch item {
@@ -73,7 +73,6 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
             case .comment(let id):
                 let cell: SocialDetailCommentCell = collectionView.dequeueReusableCell(for: indexPath)
                 if let comment = self.viewModel.comments.first(where: { $0.id == id }) {
-                    TDLogger.debug("Comment: \(comment.reply)")
                     cell.configure(with: comment)
                     cell.commentDelegate = self
                     return cell
@@ -110,9 +109,8 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     self?.layoutView.removeReplyInputForm()
                     self?.layoutView.clearText()
                     self?.layoutView.removeCommentInputImage()
-                case .deleteComment(let comment):
-                    let newItems = self?.viewModel.comments.map { Item.comment($0.id) } ?? []
-                    self?.applySnapshot(items: newItems, to: .comments)
+                case .reloadParentComment(let comment):
+                    self?.reloadParentComment(parentID: comment.id)
                 case .failure(let message):
                     self?.showErrorAlert(errorMessage: message)
                 default:
@@ -125,7 +123,6 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
 // MARK: User Action
 
 extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate, UICollectionViewDelegate {
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = datasource.itemIdentifier(for: indexPath) else { return }
         switch item {
@@ -153,12 +150,12 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapDeleteImage() {
-        self.input.send(.deleteRegisterImage)
+        input.send(.deleteRegisterImage)
     }
     
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
         guard let photo = photos.first else { return }
-        self.input.send(.registerImage(photo))
+        input.send(.registerImage(photo))
     }
     
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
@@ -176,8 +173,8 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
         presentPopup(with: controller)
     }
     
-    func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        TDLogger.debug("REPORT POST")
+    func didTapReportComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
+        coordinator?.didTapReportComment(id: commentID)
     }
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
@@ -185,7 +182,7 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
-        self.input.send(.deleteComment(commentID))
+        input.send(.deleteComment(commentID))
     }
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
@@ -204,10 +201,22 @@ extension SocialDetailViewController {
         datasource.apply(snapshot, animatingDifferences: true)
     }
 
-    
     private func updateSnapshot(items: [Item], to section: Section) {
         var snapshot = datasource.snapshot()
         snapshot.reloadItems(items)
         datasource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    private func reloadParentComment(parentID: Comment.ID) {
+        var snapshot = datasource.snapshot()
+        let items = snapshot.itemIdentifiers(inSection: .comments)
+        let newItems = items.filter { item in
+            if case .comment(let id) = item {
+                return id == parentID
+            }
+            return false
+        }
+        snapshot.reloadItems(newItems)
+        datasource.apply(snapshot, animatingDifferences: true)
     }
 }

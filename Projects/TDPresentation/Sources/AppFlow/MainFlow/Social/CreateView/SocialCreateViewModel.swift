@@ -9,7 +9,7 @@ final class SocialCreateViewModel: BaseViewModel {
         case setRoutine(Routine)
         case setTitle(String)
         case setContent(String)
-        case setImages([Data])
+        case setImages([Data], Bool)
         case createPost
     }
     
@@ -28,15 +28,28 @@ final class SocialCreateViewModel: BaseViewModel {
     private(set) var images: [Data] = []
     private(set) var title: String = ""
     private(set) var content: String = ""
+    private(set) var prevPost: Post? = nil
+    private var isEditMode: Bool {
+        prevPost != nil
+    }
+    private var isChangeImage: Bool = false
+
+    private(set) var canCreatePost: Bool = false
     
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var category: [PostCategory] = []
     
     private let createPostUseCase: CreatePostUseCase
+    private let UpdatePostUseCase: UpdatePostUseCase
     
-    init(createPostUseCase: CreatePostUseCase) {
+    init(createPostUseCase: CreatePostUseCase,
+         UpdatePostUseCase: UpdatePostUseCase,
+         prevPost: Post? = nil)
+    {
         self.createPostUseCase = createPostUseCase
+        self.UpdatePostUseCase = UpdatePostUseCase
+        self.prevPost = prevPost
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -58,8 +71,8 @@ final class SocialCreateViewModel: BaseViewModel {
                 setRoutine(routine)
             case .setContent(let content):
                 setContent(content)
-            case .setImages(let data):
-                setImages(data)
+            case .setImages(let data, let isEditImage):
+                setImages(data, isEditImage)
             case .setTitle(let title):
                 setTitle(title)
             default:
@@ -77,7 +90,7 @@ final class SocialCreateViewModel: BaseViewModel {
             .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
             .sink { [weak self] event in
                 if case .createPost = event {
-                    Task { await self?.createPost() }
+                    Task { self.isEditMode ? await self.editPost() : await self.createPost() }
                 }
             }
             .store(in: &cancellables)
@@ -102,13 +115,25 @@ extension SocialCreateViewModel {
         } catch {
             output.send(.failure(error.localizedDescription))
         }
-
+    }
+    
+    private func editPost() async {
+        do {
+            guard let prevPost else { return }
+            let imageList = isChangeImage ? images.map { ("\(UUID().uuidString).jpg", $0) } : nil
+            let updatePost = Post(title: title, content: content, routine: selectedRoutine, category: category)
+            try await UpdatePostUseCase.execute(prevPost: prevPost, updatePost: updatePost, image: imageList)
+            output.send(.success)
+        } catch {
+            output.send(.failure(error.localizedDescription))
+        }
     }
     
     private func setTitle(_ title: String) {
         self.title = title
         validateCreatePost()
     }
+
     private func setCategory(at index: Int) {
         let category = PostCategory.allCases[index]
         
@@ -133,20 +158,25 @@ extension SocialCreateViewModel {
         validateCreatePost()
     }
     
-    private func setImages(_ images: [Data]) {
+    private func setImages(_ images: [Data], _ isEditImage: Bool = false) {
         if images.count > 5 {
             output.send(.failure("이미지는 최대 5개까지 첨부 가능합니다."))
             return
         }
         self.images = images
+        if isEditImage {
+            isChangeImage = true
+        }
         output.send(.setImage)
     }
     
     private func validateCreatePost() {
         if title.isEmpty || content.isEmpty || category.isEmpty {
-            output.send(.canCreatePost(false))
+            canCreatePost = false
+            output.send(.canCreatePost(canCreatePost))
             return
         }
-        output.send(.canCreatePost(true))
+        canCreatePost = true
+        output.send(.canCreatePost(canCreatePost))
     }
 }

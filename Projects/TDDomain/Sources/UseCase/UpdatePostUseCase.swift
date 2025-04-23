@@ -1,9 +1,8 @@
 import Foundation
 
 public protocol UpdatePostUseCase{
-    func execute(post: Post) async throws
+    func execute(prevPost: Post, updatePost: Post, image: [(fileName: String, imageData: Data)]?) async throws
 }
-
 public final class UpdatePostUseCaseImpl: UpdatePostUseCase {
     private let repository: SocialRepository
     
@@ -11,7 +10,7 @@ public final class UpdatePostUseCaseImpl: UpdatePostUseCase {
         self.repository = repository
     }
     
-    public func execute(post: Post) async throws  {
-        return try await repository.updatePost(post: post)
+    public func execute(prevPost: Post, updatePost: Post, image: [(fileName: String, imageData: Data)]?) async throws  {
+        return try await repository.updatePost(prevPost: prevPost, updatePost: updatePost, image: image)
     }
 }

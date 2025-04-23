@@ -9,7 +9,7 @@ public protocol SocialService {
     // 소셜 게시글 삭제
     func requestDeletePost(postID: Int) async throws
     // 소셜 게시글 수정
-    func requestUpdatePost(postID: Int, isChangeTitle: Bool, title: String?, isChangeRoutine: Bool, routineID: Int?, content: String?, isAnonymous: Bool?, socialCategoryIds: [Int]?, socialImageURLs: [String]?) async throws
+    func requestUpdatePost(requestDTO: TDPostUpdateRequestDTO) async throws
     // 게시글 검색
     func requestSearchPosts(cursor: Int?, limit: Int, keyword: String, categoryIDs: [Int]?) async throws -> TDPostListDTO
     // 게시글 좋아요
@@ -18,7 +18,8 @@ public protocol SocialService {
     func requestUnlikePost(postID: Int) async throws
     // 게시글 신고
     func requestReportPost(postID: Int, reportType: String, reason: String?, blockAuthor: Bool) async throws
-    
+    // 댓글 신고
+    func requestReportComment(postID: Int, commentID: Int, reportType: String, reason: String?, blockAuthor: Bool) async throws
     // 댓글 생성
     func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws
     

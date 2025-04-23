@@ -8,13 +8,13 @@ public protocol SocialRepository {
     // MARK: - Post CRUD
 
     func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws
-    func updatePost(post: Post) async throws
+    func updatePost(prevPost: Post, updatePost: Post, image: [(fileName: String, imageData: Data)]?) async throws
     func deletePost(postID: Post.ID) async throws
     func fetchPost(postID: Post.ID) async throws -> (Post, [Comment])
     func reportPost(postID: Post.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws
     
     func toggleCommentLike(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws
-    func reportComment(commentID: Comment.ID) async throws -> Bool
+    func reportComment(postID: Post.ID, commentID: Comment.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws
     
     func fetchUserCommentList(userID: User.ID) async throws -> [Comment]?
     func createComment( postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws
