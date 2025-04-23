@@ -140,7 +140,7 @@ final class EventMakorViewModel: BaseViewModel {
                     self?.isOneDayDeleted = false
                     Task { await self?.updateSchedule() }
                 case .tapEditRoutineButton:
-                    self?.updateRoutine()
+                    Task { await self?.updateRoutine() }
                 case .updateTitleTextField(let title):
                     self?.title = title
                     self?.validateCanSave()
@@ -174,7 +174,7 @@ final class EventMakorViewModel: BaseViewModel {
                 case .tapSaveTodoButton:
                     self?.saveEvent()
                 case .tapEditRoutineButton:
-                    self?.updateRoutine()
+                    Task { await self?.updateRoutine() }
                 default:
                     break
                 }
