@@ -90,7 +90,7 @@ final class SocialCreateViewModel: BaseViewModel {
             .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
             .sink { [weak self] event in
                 if case .createPost = event {
-                    Task { self.isEditMode ? await self.editPost() : await self.createPost() }
+                    Task { self?.isEditMode ?? false ? await self?.editPost() : await self?.createPost() }
                 }
             }
             .store(in: &cancellables)
