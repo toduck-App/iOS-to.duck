@@ -155,7 +155,7 @@ extension SocialDetailPostCell {
             let routineView = SocialRoutineView(with: routine)
             routineView.onTapperRoutine = { [weak self] in
                 guard let self else { return }
-                socialDetailPostCellDelegate?.didTapRoutineView(self, routine.id)
+                socialDetailPostCellDelegate?.didTapRoutineView(self, routine)
             }
             bodyStackView.addArrangedSubview(routineView)
         }
@@ -189,7 +189,7 @@ extension SocialDetailPostCell {
         
         headerView.onEditTapped = { [weak self] in
             guard let self else { return }
-            socialDetailPostCellDelegate?.didTapEditPost(self, item.id)
+            socialDetailPostCellDelegate?.didTapEditPost(self, item)
         }
         
         headerView.onDeleteTapped = { [weak self] in

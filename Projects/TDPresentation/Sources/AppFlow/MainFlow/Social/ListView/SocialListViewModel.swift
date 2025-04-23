@@ -37,8 +37,8 @@ final class SocialListViewModel: BaseViewModel {
     private var currentSegment: Int = 0 // 0이 전체, 1이 주제별
     private var currentChip: TDChipItem?
     private var currentSort: SocialSortType = .recent
-    private var searchTerm: String = ""
-    private var isSearching: Bool { !searchTerm.isEmpty }
+    private(set) var searchTerm: String = ""
+    var isSearching: Bool { !searchTerm.isEmpty }
 
     var posts: [Post] { isSearching ? searchPosts : defaultPosts }
 

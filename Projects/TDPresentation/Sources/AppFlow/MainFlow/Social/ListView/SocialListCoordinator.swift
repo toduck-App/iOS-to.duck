@@ -74,7 +74,7 @@ extension SocialListCoordinator: SocialListDelegate {
         let socialReportCoordinator = SocialReportCoordinator(
             navigationController: navigationController,
             injector: injector,
-            id: id
+            postID: id
         )
         childCoordinators.append(socialReportCoordinator)
         socialReportCoordinator.finishDelegate = self
@@ -100,6 +100,28 @@ extension SocialListCoordinator: SocialListDelegate {
         createCoordinator.finishDelegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
+    }
+    
+    func didTapEditPost(post: Post) {
+        let createCoordinator = SocialCreateCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            post: post
+        )
+        createCoordinator.finishDelegate = self
+        childCoordinators.append(createCoordinator)
+        createCoordinator.start()
+    }
+    
+    func didTapRoutine(routine: Routine) {
+        let coordinator = RoutineShareCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            routine: routine
+        )
+        childCoordinators.append(coordinator)
+        coordinator.finishDelegate = self
+        coordinator.start()
     }
 }
 

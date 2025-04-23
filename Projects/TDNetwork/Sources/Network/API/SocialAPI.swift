@@ -9,7 +9,7 @@ public enum SocialAPI {
     case likePost(postId: Int)
     case unlikePost(postId: Int)
     case createPost(post: TDPostCreateRequestDTO)
-    case updatePost(post: Post) // TODO: Post 수정기능 필요
+    case updatePost(post: TDPostUpdateRequestDTO)
     case deletePost(postId: Int)
     case fetchPost(postId: String)
     case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool)
@@ -22,8 +22,7 @@ public enum SocialAPI {
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
     case deleteComment(postId: Int, commentId: Int)
-    case reportComment(commentId: String) // TODO: Comment 신고 기능 구현 필 (NEED BACKEND)
-    
+    case reportComment(postId: Int, commentId: Int, reportType: String, reason: String?, blockAuthor: Bool)
     case fetchUser(userId: Int)
     case fetchUserPostList(userId: Int, cursor: Int?, limit: Int)
     case fetchUserRoutineList(userId: Int)
@@ -52,7 +51,7 @@ extension SocialAPI: MFTarget {
         case .createPost:
             "/v1/socials"
         case .updatePost(let post):
-            "/posts/\(post.id)"
+            "v1/socials/\(post.id)"
         case .deletePost(let postId):
             "v1/socials/\(postId)"
         case .fetchPost(let postId):
@@ -73,8 +72,8 @@ extension SocialAPI: MFTarget {
             "/comments/\(comment.id)"
         case .deleteComment(let postId, let commentId):
             "v1/socials/\(postId)/comments/\(commentId)"
-        case .reportComment(let commentId):
-            "/comments/\(commentId)/report"
+        case .reportComment(let postId, let commentId, _, _, _):
+            "v1/socials/\(postId)/comments/\(commentId)/report"
         case .fetchUser(let userId):
             "v1/profiles/\(userId)"
         case .fetchUserPostList(let userId, _, _):
@@ -111,7 +110,7 @@ extension SocialAPI: MFTarget {
              .shareRoutine:
             .post
         case .updatePost, .updateComment:
-            .put
+            .patch
         case .deletePost, .deleteComment, .unlikePost, .unfollowUser, .unlikeComment:
             .delete
         }
@@ -137,7 +136,7 @@ extension SocialAPI: MFTarget {
                 params["categoryIds"] = categoryIds.map { String($0) }.joined(separator: ",")
             }
             return params
-        case .fetchUserPostList(let userId, let cursor, let limit):
+        case .fetchUserPostList(_, let cursor, let limit):
             var params: [String: Any] = ["limit": limit]
             if let cursor {
                 params["cursor"] = cursor
@@ -198,8 +197,18 @@ extension SocialAPI: MFTarget {
             ]
             
             return .requestParameters(parameters: params.compactMapValues { $0 })
-        case .updatePost(let post):
-            return .requestPlain
+        case .updatePost(let dto):
+            let params: [String: Any?] = [
+                "isChangeTitle": dto.isChangeTitle,
+                "title": dto.title,
+                "isChangeRoutine": dto.isChangeRoutine,
+                "routineId": dto.routineId,
+                "content": dto.content,
+                "isAnonymous": dto.isAnonymous,
+                "socialCategoryIds": dto.socialCategoryIds,
+                "socialImageUrls": dto.socialImageUrls
+            ]
+            return .requestParameters(parameters: params.compactMapValues { $0 })
         case .createComment(let socialId, let parentCommentId, let content, let imageUrl):
             let params: [String: Any?] = [
                 "imageUrl": imageUrl,
@@ -216,9 +225,14 @@ extension SocialAPI: MFTarget {
             return .requestParameters(parameters: params.compactMapValues { $0 })
         case .updateComment(let comment):
             return .requestPlain
-        case .reportComment(commentId: let commentId):
-            return .requestPlain
-        case .shareRoutine(_ , let routine):
+        case .reportComment(_, _, let reportType, let reason, let blockAuthor):
+            var params: [String: Any] = ["reportType": reportType]
+            if let reason {
+                params["reason"] = reason
+            }
+            params["blockAuthor"] = blockAuthor
+            return .requestParameters(parameters: params.compactMapValues { $0 })
+        case .shareRoutine(_, let routine):
             return .requestParameters(parameters: [
                 "title": routine.title,
                 "category": routine.category,

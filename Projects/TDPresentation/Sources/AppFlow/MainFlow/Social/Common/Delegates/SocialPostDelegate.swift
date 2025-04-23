@@ -6,9 +6,11 @@ protocol SocialPostDelegate: AnyObject {
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID)
     
-    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID)
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine)
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID)
+    
+    func didTapReportComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
     
     func didTapScrapPost(_ cell: UICollectionViewCell, _ postID: Post.ID)
     
@@ -18,7 +20,7 @@ protocol SocialPostDelegate: AnyObject {
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
     
-    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID)
+    func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post)
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID)
     
@@ -32,9 +34,11 @@ extension SocialPostDelegate {
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {}
     
-    func didTapRoutineView(_ cell: UICollectionViewCell, _ routineID: Routine.ID) {}
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {}
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
+    
+    func didTapReportComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
     
     func didTapScrapPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
     
@@ -44,7 +48,7 @@ extension SocialPostDelegate {
     
     func didTapReplyLikeButton(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
     
-    func didTapEditPost(_ cell: UICollectionViewCell, _ postID: Post.ID) {}
+    func didTapEditPost(_ cell: UICollectionViewCell, _ post: Post) {}
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {}
     

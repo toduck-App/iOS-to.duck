@@ -29,6 +29,23 @@ final class SocialProfileViewController: BaseViewController<SocialProfileView> {
         super.viewDidLoad()
         input.send(.fetchUser)
         input.send(.fetchRoutine)
+        let transparentAppearance = UINavigationBarAppearance()
+        transparentAppearance.configureWithTransparentBackground()
+        transparentAppearance.shadowColor = .clear
+        transparentAppearance.titleTextAttributes = [.foregroundColor: TDColor.baseBlack]
+        let backButtonImage = TDImage.Direction.leftMedium
+            .withRenderingMode(.alwaysTemplate)
+
+        let backButtonAppearance = UIBarButtonItemAppearance()
+        backButtonAppearance.normal.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.clear,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 0)
+        ]
+        navigationController?.navigationBar.tintColor = TDColor.Neutral.neutral800
+        transparentAppearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
+        transparentAppearance.backButtonAppearance = backButtonAppearance
+        navigationItem.standardAppearance = transparentAppearance
+        navigationItem.scrollEdgeAppearance = transparentAppearance
     }
 
     override func configure() {
@@ -108,7 +125,7 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
     func didTapFollow() {
         input.send(.toggleFollow)
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let item = timelineDataSource?.itemIdentifier(for: indexPath) else { return }
         switch item {
@@ -157,7 +174,7 @@ extension SocialProfileViewController: UICollectionViewDelegate, SocialProfileDe
         // TODO: Detail View
         coordinator?.didTapPost(id: postId)
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView == layoutView.socialFeedCollectionView else { return }
         let offsetY = scrollView.contentOffset.y

@@ -52,6 +52,21 @@ public final class TDChipCollectionView: UICollectionView {
         self.selectedStates.append(contentsOf: Array(repeating: false, count: chips.count))
         self.reloadData()
     }
+    
+    public func setSelectChips(_ chips: [TDChipItem], selectChipIndexs: [Int]) {
+        self.chips = chips
+        self.selectedStates = Array(repeating: false, count: chips.count)
+        for index in selectChipIndexs {
+            if index < chips.count {
+                self.selectedStates[index] = true
+            }
+        }
+        if hasAllSelectChip {
+            self.chips.insert(allSelectChipItem, at: 0)
+            self.selectedStates.insert(true, at: 0)
+        }
+        self.reloadData()
+    }
 }
 
 extension TDChipCollectionView: UICollectionViewDataSource{

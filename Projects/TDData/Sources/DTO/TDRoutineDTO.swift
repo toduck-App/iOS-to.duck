@@ -35,7 +35,6 @@ public struct TDRoutineDTO: Codable {
     }
     
     func convertToEntity() -> Routine {
-        // 루틴 카테고리 가져오는 부분이 이상함
         return Routine(
             id: routineId,
             title: title,
@@ -43,7 +42,7 @@ public struct TDRoutineDTO: Codable {
             isAllDay: isInDeletedState,
             isPublic: isPublic,
             time: time,
-            repeatDays: nil,
+            repeatDays: daysOfWeek.compactMap { TDWeekDay(rawValue: $0) },
             alarmTime: nil,
             memo: memo,
             recommendedRoutines: nil,
