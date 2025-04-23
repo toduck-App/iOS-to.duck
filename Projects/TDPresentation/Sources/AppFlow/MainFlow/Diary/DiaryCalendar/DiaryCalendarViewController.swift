@@ -130,7 +130,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         }
         
         diaryDetailContainerView.snp.makeConstraints {
-            $0.height.equalTo(450)
+            $0.height.equalTo(500)
         }
         diaryDetailView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)

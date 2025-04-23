@@ -57,25 +57,44 @@ final class TodoViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            switch event {
-            case .fetchTodoList(let startDate, let endDate):
-                Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
-            case .fetchRoutineDetail(let todo):
-                Task { await self?.fetchRoutineDetail(with: todo) }
-            case .deleteTodayTodo(let todoId, let isSchedule):
-                self?.isOneDayDeleted = true
-                self?.deleteEvent(todoId: todoId, isSchedule: isSchedule)
-            case .deleteAllTodo(let todoId, let isSchedule):
-                self?.isOneDayDeleted = false
-                self?.deleteEvent(todoId: todoId, isSchedule: isSchedule)
-            case .checkBoxTapped(let todo):
-                Task { await self?.finishTodo(with: todo) }
-            case .moveToTomorrow(let todoId, let event):
-                self?.isOneDayDeleted = true
-                self?.handleMoveToTomorrow(todoId: todoId, event: event)
+        let shared = input.share()
+        
+        shared
+            .filter { event in
+                if case .checkBoxTapped = event {
+                    return false
+                }
+                return true
             }
-        }.store(in: &cancellables)
+            .sink { [weak self] event in
+                switch event {
+                case .fetchTodoList(let startDate, let endDate):
+                    Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
+                case .fetchRoutineDetail(let todo):
+                    Task { await self?.fetchRoutineDetail(with: todo) }
+                case .moveToTomorrow(let todoId, let event):
+                    self?.isOneDayDeleted = true
+                    self?.handleMoveToTomorrow(todoId: todoId, event: event)
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+        
+        shared
+            .filter { event in
+                if case .checkBoxTapped = event {
+                    return true
+                }
+                return false
+            }
+            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] event in
+                if case .checkBoxTapped(let todo) = event {
+                    Task { await self?.finishTodo(with: todo) }
+                }
+            }
+            .store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
@@ -211,12 +230,12 @@ final class TodoViewModel: BaseViewModel {
             return timedTodoList.first { $0.id == todoId }
         }
     }
-
+    
     private func getNextDay(from date: Date) -> String {
         let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: date)!
         return nextDay.convertToString(formatType: .yearMonthDay)
     }
-
+    
     private func createSchedule(todoId: Int, schedule: Schedule) async {
         do {
             try await createScheduleUseCase.execute(schedule: schedule)
@@ -225,7 +244,7 @@ final class TodoViewModel: BaseViewModel {
             output.send(.failure(error: "일정을 생성할 수 없습니다."))
         }
     }
-
+    
     private func createRoutine(with todoId: Int, routine: Routine) async {
         do {
             try await createRoutineUseCase.execute(routine: routine)

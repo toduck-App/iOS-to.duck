@@ -40,7 +40,16 @@ final class ToduckCalendarViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
+        let shared = input.share()
+
+        shared
+            .filter { event in
+                if case .checkBoxTapped = event {
+                    return false
+                }
+                return true
+            }
+            .sink { [weak self] event in
             switch event {
             case .fetchSchedule(let startDate, let endDate):
                 Task { await self?.fetchScheduleList(startDate: startDate, endDate: endDate) }
@@ -49,10 +58,25 @@ final class ToduckCalendarViewModel: BaseViewModel {
                 let scheduleList = self?.monthScheduleDict[key] ?? []
                 self?.currentDayScheduleList = scheduleList.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
                 self?.output.send(.fetchedDetailSchedule)
-            case .checkBoxTapped(let schedule):
-                Task { await self?.finishSchedule(with: schedule) }
+            default:
+                break
             }
         }.store(in: &cancellables)
+        
+        shared
+            .filter { event in
+                if case .checkBoxTapped = event {
+                    return true
+                }
+                return false
+            }
+            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] event in
+                if case .checkBoxTapped(let schedule) = event {
+                    Task { await self?.finishSchedule(with: schedule) }
+                }
+            }
+            .store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
