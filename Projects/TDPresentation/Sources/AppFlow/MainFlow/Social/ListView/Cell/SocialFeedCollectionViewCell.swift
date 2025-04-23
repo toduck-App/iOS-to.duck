@@ -64,15 +64,58 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
     
-    func configure(with item: Post) {
-        headerView.configure(titleBadge: item.user.title, nickname: item.user.name, date: item.timestamp, isMyPost: item.user.id == TDTokenManager.shared.userId)
+    public func configure(with item: Post, highlightTerm: String? = nil) {
+        headerView.configure(
+            titleBadge: item.user.title,
+            nickname: item.user.name,
+            date: item.timestamp,
+            isMyPost: item.user.id == TDTokenManager.shared.userId
+        )
+        
         if let titleText = item.titleText, !titleText.isEmpty {
-            titleLabel.setText(titleText)
+            titleLabel.isHidden = false
+            
+            if let term = highlightTerm,
+               !term.isEmpty,
+               let range = titleText.range(of: term, options: .caseInsensitive)
+            {
+                let nsRange = NSRange(range, in: titleText)
+                let attributed = NSMutableAttributedString(string: titleText)
+                attributed.addAttribute(
+                    .foregroundColor,
+                    value: TDColor.Primary.primary400,
+                    range: nsRange
+                )
+                titleLabel.attributedText = attributed
+            } else {
+                titleLabel.setText(titleText)
+            }
         } else {
             titleLabel.isHidden = true
         }
-        contentLabel.setText(item.contentText)
-        footerView.configure(isLike: item.isLike, likeCount: item.likeCount, commentCount: item.commentCount)
+        
+        let bodyText = item.contentText
+        if let term = highlightTerm,
+           !term.isEmpty,
+           let range = bodyText.range(of: term, options: .caseInsensitive)
+        {
+            let nsRange = NSRange(range, in: bodyText)
+            let attributed = NSMutableAttributedString(string: bodyText)
+            attributed.addAttribute(
+                .foregroundColor,
+                value: UIColor.orange,
+                range: nsRange
+            )
+            contentLabel.attributedText = attributed
+        } else {
+            contentLabel.setText(bodyText)
+        }
+        
+        footerView.configure(
+            isLike: item.isLike,
+            likeCount: item.likeCount,
+            commentCount: item.commentCount
+        )
         configureAction(item)
         configureUserImage(with: item.user.icon)
         configureRoutine(with: item.routine)
@@ -174,7 +217,12 @@ extension SocialFeedCollectionViewCell {
     
     private func configureImageList(with imageList: [String]?) {
         guard let imageList else { return }
-        bodyStackView.addArrangedSubview(SocialImageListView(style: .regular(maxImagesToShow: 3), images: imageList))
+        bodyStackView.addArrangedSubview(
+            SocialImageListView(
+                style: .regular(maxImagesToShow: 3),
+                images: imageList
+            )
+        )
     }
 }
 

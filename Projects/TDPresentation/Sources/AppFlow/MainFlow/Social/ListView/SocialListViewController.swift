@@ -128,7 +128,9 @@ extension SocialListViewController: UICollectionViewDelegate {
             guard let post = self.viewModel.posts.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
             cell.socialFeedCellDelegate = self
-            cell.configure(with: post)
+            let highlight: String? = self.viewModel.isSearching ? self.viewModel.searchTerm : nil
+                        
+            cell.configure(with: post, highlightTerm: highlight)
             
             return cell
         })
