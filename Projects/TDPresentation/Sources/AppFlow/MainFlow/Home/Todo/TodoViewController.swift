@@ -69,13 +69,12 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         weekCalendarView.select(today)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
-        fetchTodayTodo(with: Date())
+        fetchWeekTodo(for: Date())
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        fetchTodayTodo(with: selectedDate ?? Date())
         setupFloatingUIInWindow()
         eventMakorFloattingButton.isHidden = false
     }
@@ -86,9 +85,17 @@ final class TodoViewController: BaseViewController<BaseView> {
         hideFloatingViews()
     }
     
-    private func fetchTodayTodo(with date: Date) {
-        let formattedDate = date.convertToString(formatType: .yearMonthDay)
-        input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
+    private func fetchWeekTodo(for date: Date) {
+        guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date) else { return }
+        
+        let startDate = weekInterval.start.convertToString(formatType: .yearMonthDay)
+        let endDate = Calendar.current.date(
+            byAdding: .day,
+            value: 6,
+            to: weekInterval.start
+        )?.convertToString(formatType: .yearMonthDay) ?? startDate
+        
+        input.send(.fetchWeeklyScheduleList(startDate: startDate, endDate: endDate))
     }
     
     // 뷰가 나타날 때 플로팅 버튼 처리
@@ -185,12 +192,12 @@ final class TodoViewController: BaseViewController<BaseView> {
                 case .successFinishTodo:
                     if let formattedDate = self?.selectedDate {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                        self?.input.send(.fetchWeeklyScheduleList(startDate: dateString, endDate: dateString))
                     }
                 case .tomorrowTodoCreated:
                     if let formattedDate = self?.selectedDate {
                         let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                        self?.input.send(.fetchWeeklyScheduleList(startDate: dateString, endDate: dateString))
                     }
                 case .fetchedRoutineDetail(let routine):
                     let eventDisplayItem = EventDisplayItem(routine: routine)
@@ -200,8 +207,7 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.presentPopup(with: detailEventViewController)
                 case .deletedTodo:
                     if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
+                        self?.input.send(.didSelectedDate(date: formattedDate))
                     }
                 }
             }.store(in: &cancellables)
@@ -286,9 +292,7 @@ extension TodoViewController: FSCalendarDelegate {
     ) {
         selectedDate = date
         viewModel.selectedDate = date
-        
-        let formattedDate = date.convertToString(formatType: .yearMonthDay)
-        input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
+        input.send(.didSelectedDate(date: date))
     }
     
     func calendar(
@@ -300,6 +304,10 @@ extension TodoViewController: FSCalendarDelegate {
             make.height.equalTo(bounds.height)
         }
         self.view.layoutIfNeeded()
+    }
+    
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        fetchWeekTodo(for: calendar.currentPage)
     }
 }
 
