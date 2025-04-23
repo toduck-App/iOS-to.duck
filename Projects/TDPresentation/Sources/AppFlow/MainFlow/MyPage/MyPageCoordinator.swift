@@ -5,9 +5,9 @@
 //  Created by 박효준 on 7/16/24.
 //
 
-import UIKit
 import TDCore
 import TDDomain
+import UIKit
 
 final class MyPageCoordinator: Coordinator {
     var navigationController: UINavigationController
@@ -26,12 +26,17 @@ final class MyPageCoordinator: Coordinator {
     func start() {
         let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
         let userLogoutUseCase = injector.resolve(UserLogoutUseCase.self)
-        let viewModel = MyPageViewModel(fetchUserNicknameUseCase: fetchUserNicknameUseCase, userLogoutUseCase: userLogoutUseCase)
+        let fetchUserDetailUseCase = injector.resolve(FetchUserUseCase.self)
+        let viewModel = MyPageViewModel(
+            fetchUserNicknameUseCase: fetchUserNicknameUseCase,
+            fetchUserDetailUseCase: fetchUserDetailUseCase,
+            userLogoutUseCase: userLogoutUseCase
+        )
         let myPageViewController = MyPageViewController(viewModel: viewModel)
         myPageViewController.coordinator = self
         navigationController.pushViewController(myPageViewController, animated: false)
     }
-    
+
     func didTapWithdrawButton() {
         let withdrawCoordinator = WithdrawCoordinator(
             navigationController: navigationController,
@@ -41,13 +46,14 @@ final class MyPageCoordinator: Coordinator {
         childCoordinators.append(withdrawCoordinator)
         withdrawCoordinator.start()
     }
-    
+
     func didTapLogoutButton() {
         finishDelegate?.didFinish(childCoordinator: self)
     }
 }
 
 // MARK: - Coordinator Finish Delegate
+
 extension MyPageCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
@@ -55,6 +61,7 @@ extension MyPageCoordinator: CoordinatorFinishDelegate {
 }
 
 // MARK: - Navigation Delegate
+
 extension MyPageCoordinator: NavigationDelegate {
     func didTapCalendarButton() {
         let toduckCalendarCoordinator = ToduckCalendarCoordinator(navigationController: navigationController, injector: injector)
@@ -62,7 +69,7 @@ extension MyPageCoordinator: NavigationDelegate {
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
     }
-    
+
     func didTapProfileButton() {
         let editProfileMenuCoordinator = EditProfileMenuCoordinator(
             navigationController: navigationController,

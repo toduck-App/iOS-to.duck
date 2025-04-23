@@ -91,6 +91,14 @@ final class MyPageProfileView: BaseView {
         isProfileImageTapped = false
     }
     
+    func configure(followingCount: Int, followerCount: Int, postCount: Int) {
+        guard let followInfoStackView = followInfoStackView.arrangedSubviews as? [FollowInfoView] else { return }
+        
+        followInfoStackView[0].configure(type: "팔로잉", number: followingCount)
+        followInfoStackView[1].configure(type: "팔로워", number: followerCount)
+        followInfoStackView[2].configure(type: "작성한 글", number: postCount)
+    }
+    
     override func configure() {
         badgeLabels.forEach { $0.isHidden = true }
     }
@@ -105,10 +113,9 @@ private extension MyPageProfileView {
         [usernameLabel].forEach { userInfoStackView.addArrangedSubview($0) }
         badgeLabels.forEach { userInfoStackView.addArrangedSubview($0) }
         [
-            // TODO: Mock 데이터 제거
-            FollowInfoView(type: "팔로잉", number: 12),
-            FollowInfoView(type: "팔로워", number: 261),
-            FollowInfoView(type: "작성한 글", number: 315)
+            FollowInfoView(type: "팔로잉", number: 0),
+            FollowInfoView(type: "팔로워", number: 0),
+            FollowInfoView(type: "작성한 글", number: 0)
         ].forEach { followInfoStackView.addArrangedSubview($0) }
     }
     

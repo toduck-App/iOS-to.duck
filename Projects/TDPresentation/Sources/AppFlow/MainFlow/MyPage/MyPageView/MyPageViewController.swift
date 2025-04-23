@@ -25,7 +25,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        input.send(.fetchUserDetail)
         input.send(.fetchUserNickname)
     }
     
@@ -56,6 +56,11 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                     self?.showErrorAlert(errorMessage: message)
                 case .logoutFinished:
                     self?.coordinator?.didTapLogoutButton() // TODO: 로그인 화면으로 이동
+                case .fetchedUserDetail(let userDetail):
+                    let followingCount = userDetail.followingCount
+                    let followerCount = userDetail.followerCount
+                    let postCount = userDetail.totalPostCount
+                    self?.layoutView.profileView.configure(followingCount: followingCount, followerCount: followerCount, postCount: postCount)
                 }
             }.store(in: &cancellables)
     }
