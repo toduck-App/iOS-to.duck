@@ -292,8 +292,43 @@ final class DiaryViewController: BaseViewController<BaseView> {
 
 // MARK: - UIScrollViewDelegate
 extension DiaryViewController: UIScrollViewDelegate {
-    /// Scroll 감지하여 버튼 배경색 변경
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let totalTopInset = getTotalTopInset()
+        let triggerPoint = getTriggerPoint(totalTopInset)
+        
+        updateNavigationBarAppearance(for: triggerPoint)
+        updateDiaryPostButtonBackground()
+    }
+    
+    private func getTotalTopInset() -> CGFloat {
+        let navigationBarHeight = navigationController?.navigationBar.frame.height ?? 0
+        let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+        return navigationBarHeight + statusBarHeight
+    }
+    
+    private func getTriggerPoint(_ totalTopInset: CGFloat) -> CGFloat {
+        let analyzeViewFrame = analyzeView.convert(analyzeView.bounds, to: view)
+        return analyzeViewFrame.maxY - totalTopInset
+    }
+    
+    private func updateNavigationBarAppearance(for triggerPoint: CGFloat) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.shadowColor = .clear
+        
+        if triggerPoint < -24 {
+            appearance.backgroundColor = .white
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.black] // 타이틀 색상 변경 필요시
+        } else {
+            appearance.backgroundColor = TDColor.Neutral.neutral50
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        }
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+    
+    private func updateDiaryPostButtonBackground() {
         guard diarySegmentedControl.selectedIndex == 0,
               let diaryCalendarVC = currentViewController as? DiaryCalendarViewController,
               let calendarContainerView = diaryCalendarVC.calendarContainerView.superview else { return }

@@ -80,9 +80,80 @@ final class EventMakorViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            self?.handleInput(event)
-        }.store(in: &cancellables)
+        let shared = input.share()
+
+        shared
+            .filter {
+                switch $0 {
+                case .tapSaveTodoButton, .tapEditRoutineButton:
+                    return false
+                default:
+                    return true
+                }
+            }
+            .sink { [weak self] event in
+                switch event {
+                case .fetchCategories:
+                    Task { await self?.fetchCategories() }
+                case .selectCategory(let colorHex, let imageName):
+                    self?.selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
+                case .selectDate(let startDay, let endDay):
+                    self?.startDate = startDay
+                    self?.endDate = endDay
+                case .selectTime(let isAllDay, let time):
+                    self?.isAllDay = isAllDay
+                    self?.time = time
+                    self?.validateCanSave()
+                case .selectLockType(let isPublic):
+                    self?.isPublic = isPublic
+                case .tapScheduleEditTodayButton:
+                    self?.isOneDayDeleted = true
+                    Task { await self?.updateSchedule() }
+                case .tapScheduleEditAllButton:
+                    self?.isOneDayDeleted = false
+                    Task { await self?.updateSchedule() }
+                case .tapEditRoutineButton:
+                    self?.updateRoutine()
+                case .updateTitleTextField(let title):
+                    self?.title = title
+                    self?.validateCanSave()
+                case .updateLocationTextField(let location):
+                    self?.location = location
+                case .updateMemoTextView(let memo):
+                    self?.memo = memo
+                case .selectRepeatDay(let index, let isSelected):
+                    self?.handleRepeatDaySelection(at: index, isSelected: isSelected)
+                    self?.validateCanSave()
+                case .selectAlarm(let index, let isSelected):
+                    self?.handleAlarmSelection(at: index, isSelected: isSelected)
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+
+        shared
+            .filter {
+                switch $0 {
+                case .tapSaveTodoButton, .tapEditRoutineButton:
+                    return true
+                default:
+                    return false
+                }
+            }
+            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] event in
+                switch event {
+                case .tapSaveTodoButton:
+                    self?.saveEvent()
+                case .tapEditRoutineButton:
+                    self?.updateRoutine()
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+
         return output.eraseToAnyPublisher()
     }
     
@@ -92,46 +163,6 @@ final class EventMakorViewModel: BaseViewModel {
         
         let initialDate = dateFormatter.string(from: date)
         startDate = initialDate
-    }
-    
-    private func handleInput(_ event: Input) {
-        switch event {
-        case .fetchCategories:
-            Task { await fetchCategories() }
-        case .selectCategory(let colorHex, let imageName):
-            selectedCategory = TDCategory(colorHex: colorHex, imageName: imageName)
-        case .selectDate(let startDay, let endDay):
-            startDate = startDay
-            endDate = endDay
-        case .selectTime(let isAllDay, let time):
-            self.isAllDay = isAllDay
-            self.time = time
-            self.validateCanSave()
-        case .selectLockType(let isPublic):
-            self.isPublic = isPublic
-        case .tapScheduleEditTodayButton:
-            self.isOneDayDeleted = true
-            Task { await self.updateSchedule() }
-        case .tapScheduleEditAllButton:
-            self.isOneDayDeleted = false
-            Task { await self.updateSchedule() }
-        case .tapEditRoutineButton:
-            self.updateRoutine()
-        case .tapSaveTodoButton:
-            saveEvent()
-        case .updateTitleTextField(let title):
-            self.title = title
-            validateCanSave()
-        case .updateLocationTextField(let location):
-            self.location = location
-        case .updateMemoTextView(let memo):
-            self.memo = memo
-        case .selectRepeatDay(let index, let isSelected):
-            handleRepeatDaySelection(at: index, isSelected: isSelected)
-            validateCanSave()
-        case .selectAlarm(let index, let isSelected):
-            handleAlarmSelection(at: index, isSelected: isSelected)
-        }
     }
     
     private func updateSchedule() async {

@@ -42,17 +42,42 @@ final class TodoViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        input.sink { [weak self] event in
-            switch event {
-            case .fetchTodoList(let startDate, let endDate):
-                Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
-            case .fetchRoutineDetail(let todo):
-                Task { await self?.fetchRoutineDetail(with: todo) }
-            case .checkBoxTapped(let todo):
-                Task { await self?.finishTodo(with: todo) }
+        let shared = input.share()
+
+        shared
+            .filter { event in
+                if case .checkBoxTapped = event {
+                    return false
+                }
+                return true
             }
-        }.store(in: &cancellables)
-        
+            .sink { [weak self] event in
+                switch event {
+                case .fetchTodoList(let startDate, let endDate):
+                    Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
+                case .fetchRoutineDetail(let todo):
+                    Task { await self?.fetchRoutineDetail(with: todo) }
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+
+        shared
+            .filter { event in
+                if case .checkBoxTapped = event {
+                    return true
+                }
+                return false
+            }
+            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] event in
+                if case .checkBoxTapped(let todo) = event {
+                    Task { await self?.finishTodo(with: todo) }
+                }
+            }
+            .store(in: &cancellables)
+
         return output.eraseToAnyPublisher()
     }
     
