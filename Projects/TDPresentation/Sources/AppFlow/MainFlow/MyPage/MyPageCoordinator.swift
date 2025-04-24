@@ -34,7 +34,7 @@ final class MyPageCoordinator: Coordinator {
         )
         let myPageViewController = MyPageViewController(viewModel: viewModel)
         myPageViewController.coordinator = self
-        navigationController.pushViewController(myPageViewController, animated: false)
+        navigationController.pushTDViewController(myPageViewController, animated: false)
     }
 
     func didTapWithdrawButton() {

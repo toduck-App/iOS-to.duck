@@ -6,7 +6,7 @@ final class MyPageView: BaseView {
     private let scrollView = CustomScrollView()
     private let containerView = UIView()
     let profileView = MyPageProfileView()
-    private let socialButtonView = MyPageSocialButtonView()
+    let socialButtonView = MyPageSocialButtonView()
     private let menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical

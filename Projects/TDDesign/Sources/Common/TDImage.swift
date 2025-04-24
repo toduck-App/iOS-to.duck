@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 
 public enum TDImage {
+    public static let appIcon = TDDesignAsset.Images.appIcon.image
     public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
     public static let toduckPrimaryLogo = TDDesignAsset.Images.toduckPrimaryLogo.image
     public static let loginBackGround = TDDesignAsset.Images.loginBackGround.image

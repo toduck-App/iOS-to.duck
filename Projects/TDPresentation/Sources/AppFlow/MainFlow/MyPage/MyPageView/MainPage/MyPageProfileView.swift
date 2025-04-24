@@ -5,14 +5,22 @@
 //  Created by 정지용 on 1/7/25.
 //
 
-import UIKit
 import SnapKit
-
+import UIKit
 import TDDesign
 
 final class MyPageProfileView: BaseView {
     private let containerView = UIView()
-    private let profileImageView = TDImageView()
+    
+    // MARK: 기존 Profile Avatar View가 사용되지 않고 있습니다.
+    // private let profileImageView = TDImageView()
+
+    private let profileImageView = UIImageView().then {
+        $0.clipsToBounds = true
+        $0.contentMode = .scaleAspectFill
+        $0.image = TDImage.Profile.large
+    }
+
     private let innerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -82,7 +90,7 @@ final class MyPageProfileView: BaseView {
         let touchLocation = touch.location(in: self)
         let profileFrame = profileImageView.convert(profileImageView.bounds, to: self)
         
-        if isProfileImageTapped && profileFrame.contains(touchLocation) {
+        if isProfileImageTapped, profileFrame.contains(touchLocation) {
             prepareTouchEvent(.profileImageTapped, touches: touches, event: event)
         } else {
             prepareTouchEvent(.unknown, touches: touches, event: event)
@@ -105,6 +113,7 @@ final class MyPageProfileView: BaseView {
 }
 
 // MARK: - Private Methods
+
 private extension MyPageProfileView {
     func setupViews() {
         addSubview(containerView)
@@ -127,8 +136,8 @@ private extension MyPageProfileView {
                 .inset(LayoutConstants.containerHorizontalPadding)
         }
         
-        badgeLabels.forEach {
-            $0.snp.makeConstraints {
+        for badgeLabel in badgeLabels {
+            badgeLabel.snp.makeConstraints {
                 $0.height.equalTo(LayoutConstants.badgeIntrinsicContentSize)
             }
         }
@@ -150,6 +159,7 @@ private extension MyPageProfileView {
 }
 
 // MARK: - Constants
+
 private extension MyPageProfileView {
     enum LayoutConstants {
         static let containerVerticalPadding: CGFloat = 12
