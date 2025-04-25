@@ -46,6 +46,10 @@ final class SocialListCoordinator: Coordinator {
         socialViewController.coordinator = self
         navigationController.pushViewController(socialViewController, animated: false)
     }
+    
+    func didTapHomeTomatoIcon() {
+        (finishDelegate as? MainTabBarCoordinator)?.switchToHomeTab()
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
