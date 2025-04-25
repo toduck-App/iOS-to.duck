@@ -1,8 +1,10 @@
-import UIKit
 import SnapKit
 import TDDesign
+import UIKit
 
 final class MyPageView: BaseView {
+    var didSelectMenuItem: ((IndexPath) -> Void)?
+    
     private let scrollView = CustomScrollView()
     private let containerView = UIView()
     let profileView = MyPageProfileView()
@@ -18,9 +20,11 @@ final class MyPageView: BaseView {
             right: LayoutConstants.sectionHorizontalInset
         )
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.allowsSelection = true
         collectionView.isScrollEnabled = false
         return collectionView
     }()
+
     let logoutButton = TDBaseButton(
         title: "로그아웃",
         backgroundColor: TDColor.baseWhite,
@@ -35,6 +39,7 @@ final class MyPageView: BaseView {
     )
     
     // MARK: - Default Methods
+
     override func addview() {
         addSubview(scrollView)
         scrollView.addSubview(containerView)
@@ -92,7 +97,7 @@ final class MyPageView: BaseView {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(
                 LayoutConstants.contentViewHeight +
-                LayoutConstants.containerVerticalPadding * 2
+                    LayoutConstants.containerVerticalPadding * 2
             )
             $0.width.equalToSuperview()
         }
@@ -130,14 +135,14 @@ extension MyPageView: UICollectionViewDataSource {
     func numberOfSections(
         in collectionView: UICollectionView
     ) -> Int {
-        return Constants.mockDataSource.count
+        Constants.mockDataSource.count
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return Constants.mockDataSource[section].value.count
+        Constants.mockDataSource[section].value.count
     }
     
     func collectionView(
@@ -192,7 +197,7 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(
+        CGSize(
             width: collectionView.bounds.width - LayoutConstants.sectionHorizontalInset * 2,
             height: LayoutConstants.customCellHeight
         )
@@ -203,7 +208,7 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        return CGSize(
+        CGSize(
             width: collectionView.bounds.width,
             height: LayoutConstants.sectionHeaderHeight
         )
@@ -214,10 +219,18 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
-        return CGSize(
+        CGSize(
             width: collectionView.bounds.width,
             height: LayoutConstants.sectionFooterHeight
         )
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        didSelectMenuItem?(indexPath)
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
 
@@ -233,6 +246,7 @@ extension MyPageView: UIScrollViewDelegate {
 }
 
 // MARK: - Constants
+
 private extension MyPageView {
     enum LayoutConstants {
         static let sectionHorizontalInset: CGFloat = 16
@@ -250,6 +264,7 @@ private extension MyPageView {
     enum Constants {
         static let mockDataSource: [(key: String, value: [String])] = [
             ("계정 관리", ["알림 설정", "작성 글 관리", "나의 댓글", "차단 관리"]),
+            ("고객 센터", ["문의 하기", "문의 내역", "공지사항", "토덕 이용 가이드"]),
             ("서비스 약관", ["이용 약관", "개인정보 처리방침"])
         ]
     }
