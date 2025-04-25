@@ -11,12 +11,12 @@ final class DeleteEventView: BaseView {
         $0.image = TDImage.Alert.deleteEvent
         $0.contentMode = .scaleAspectFit
     }
-    private let deleteLabel = TDLabel(
+    let deleteLabel = TDLabel(
         labelText: "앗 !! 정말 삭제하시겠어요?",
         toduckFont: .boldHeader4,
         toduckColor: TDColor.Neutral.neutral800
     )
-    private let descriptionLabel = TDLabel(
+    let descriptionLabel = TDLabel(
         labelText: "한번 삭제한 내용은 다시 복구할 수 없어요",
         toduckFont: .mediumHeader5,
         toduckColor: TDColor.Neutral.neutral800
@@ -94,6 +94,7 @@ final class DeleteEventView: BaseView {
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(deleteLabel.snp.bottom).offset(8)
             $0.centerX.equalToSuperview()
+            $0.height.equalTo(20)
         }
         
         buttonContainerVerticalStackView.snp.makeConstraints {

@@ -34,17 +34,17 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     
     private func setupDefaultNavigationBar() {
         // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
-        let calendarButton = UIButton(type: .custom)
-        calendarButton.setImage(TDImage.Calendar.top2Medium, for: .normal)
-        calendarButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.didTapCalendarButton()
+        let tomatoButton = UIButton(type: .custom)
+        tomatoButton.setImage(TDImage.Diary.navigationImage, for: .normal)
+        tomatoButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapHomeTomatoIcon()
         }, for: .touchUpInside)
         
         let toduckLogoImageView = UIImageView(image: TDImage.toduckLogo)
         toduckLogoImageView.contentMode = .scaleAspectFit
         
         let leftBarButtonItems = [
-            UIBarButtonItem(customView: calendarButton),
+            UIBarButtonItem(customView: tomatoButton),
             UIBarButtonItem(customView: toduckLogoImageView)
         ]
         
@@ -231,7 +231,13 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        input.send(.deletePost(postID))
+        let deleteDiaryViewController = DeleteEventViewController(
+            eventId: postID,
+            isRepeating: false,
+            eventMode: .socialPost
+        )
+        deleteDiaryViewController.delegate = self
+        presentPopup(with: deleteDiaryViewController)
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
@@ -278,6 +284,17 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
             input.send(.loadMorePosts)
         }
     }
+}
+
+// MARK: - DeleteEventViewControllerDelegate
+
+extension SocialListViewController: DeleteEventViewControllerDelegate {
+    func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
+        input.send(.deletePost(eventId ?? 0))
+        dismiss(animated: true)
+    }
+    
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) { }
 }
 
 // MARK: - 검색 및 삭제버튼 처리
