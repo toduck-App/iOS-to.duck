@@ -95,7 +95,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private func setupFloatingUIInWindow() {
         guard !didAddDimmedView,
               let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else { return }
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
         
         addFloatingViewsToWindow(window)
         setupFloatingConstraints(in: window)
@@ -135,9 +135,10 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     // 뷰가 사라질 때 플로팅 버튼 처리
     private func hideFloatingViews() {
-        eventMakorFloattingButton.isHidden = true
-        floatingActionMenuView.isHidden = true
-        dimmedView.isHidden = true
+        dimmedView.removeFromSuperview()
+        floatingActionMenuView.removeFromSuperview()
+        buttonShadowWrapper.removeFromSuperview()
+        
         didAddDimmedView = false
         isMenuVisible = false
         resetFloatingButtonAppearance()
