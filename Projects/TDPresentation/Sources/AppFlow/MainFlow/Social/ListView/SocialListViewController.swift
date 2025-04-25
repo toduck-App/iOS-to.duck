@@ -231,7 +231,13 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     func didTapDeletePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        input.send(.deletePost(postID))
+        let deleteDiaryViewController = DeleteEventViewController(
+            eventId: postID,
+            isRepeating: false,
+            eventMode: .socialPost
+        )
+        deleteDiaryViewController.delegate = self
+        presentPopup(with: deleteDiaryViewController)
     }
     
     func didTapReport(_ cell: UICollectionViewCell, _ postID: Post.ID) {
@@ -278,6 +284,17 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
             input.send(.loadMorePosts)
         }
     }
+}
+
+// MARK: - DeleteEventViewControllerDelegate
+
+extension SocialListViewController: DeleteEventViewControllerDelegate {
+    func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
+        input.send(.deletePost(eventId ?? 0))
+        dismiss(animated: true)
+    }
+    
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) { }
 }
 
 // MARK: - 검색 및 삭제버튼 처리
