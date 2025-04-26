@@ -35,7 +35,7 @@ public final class TDLabel: UILabel {
         frame: CGRect = .zero,
         labelText: String = "",
         toduckFont: TDFont,
-        alignment: NSTextAlignment = .center,
+        alignment: NSTextAlignment = .justified,
         toduckColor: UIColor = TDColor.Neutral.neutral800
     ) {
         self.toduckFont = toduckFont

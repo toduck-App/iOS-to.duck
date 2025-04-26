@@ -120,6 +120,7 @@ final class SocialListView: BaseView {
         
         searchView.snp.makeConstraints { make in
             make.edges.equalTo(safeAreaLayoutGuide)
+            make.height.equalTo(44)
         }
     }
     

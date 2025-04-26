@@ -20,7 +20,7 @@ final class SocialHeaderView: UIView {
     
     private var nicknameLabel = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral700)
     
-    private var dateLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral500)
+    private var dateLabel = TDLabel(toduckFont: .regularCaption1, toduckColor: TDColor.Neutral.neutral500)
     
     private var dotIconView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -95,6 +95,7 @@ private extension SocialHeaderView {
         nicknameLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.top.leading.equalToSuperview()
+            make.height.equalTo(21)
         }
 //        
 //        titleBagde.snp.makeConstraints { make in
@@ -105,6 +106,7 @@ private extension SocialHeaderView {
         dateLabel.snp.makeConstraints { make in
             make.centerY.equalTo(nicknameLabel)
             make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
+            make.height.equalTo(12)
         }
         
         dotIconView.snp.makeConstraints { make in
