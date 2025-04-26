@@ -155,8 +155,10 @@ extension TDFont {
     
     var lineHeightMultiple: CGFloat {
         switch self {
+        case .regularBody4:
+            return 1.6
         default:
-            return 1.0
+            return 1.1
         }
     }
 }
