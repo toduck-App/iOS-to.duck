@@ -30,7 +30,7 @@ final class MainTabBarController: UITabBarController, UITabBarControllerDelegate
     }
     
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        HapticManager.selection()
+        HapticManager.impact(.soft)
         
         if selectedIndex == MainTabbarItem.home.index,
            lastSelectedIndex == MainTabbarItem.home.index,
