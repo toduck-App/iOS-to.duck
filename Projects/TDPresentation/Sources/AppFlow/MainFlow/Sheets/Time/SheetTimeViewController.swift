@@ -223,7 +223,7 @@ extension SheetTimeViewController: UICollectionViewDataSource {
             let hour = indexPath.row + 1
             
             if hour == 12 {
-                if isSelected {
+                if isSelected && (layoutView.amButton.isSelected || layoutView.pmButton.isSelected) {
                     // 12시 + 선택됨: 해/달 이미지 + 이미지 위에 텍스트
                     containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
                     
@@ -251,8 +251,13 @@ extension SheetTimeViewController: UICollectionViewDataSource {
                         make.edges.equalToSuperview()
                     }
                     
-                    containerView.backgroundColor = TDColor.Neutral.neutral50
-                    label.setColor(TDColor.Neutral.neutral800)
+                    if isSelected {
+                        containerView.backgroundColor = TDColor.Primary.primary100
+                        label.setColor(TDColor.Primary.primary500)
+                    } else {
+                        containerView.backgroundColor = TDColor.Neutral.neutral50
+                        label.setColor(TDColor.Neutral.neutral800)
+                    }
                 }
             } else {
                 // 1~11시
