@@ -3,6 +3,7 @@ import Foundation
 public enum TDColor {
     public static let baseBlack = TDDesignAsset.Colors.baseBlack.color
     public static let baseWhite = TDDesignAsset.Colors.baseWhite.color
+    public static let baseShadow = TDDesignAsset.Colors.baseShadow.color
     
     public enum Schedule {
         public static let back1 = TDDesignAsset.Colors.back1.color

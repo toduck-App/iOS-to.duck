@@ -155,18 +155,6 @@ extension TDFont {
     
     var lineHeightMultiple: CGFloat {
         switch self {
-        case .boldHeader3,
-                .boldHeader5,
-                .boldBody3:
-            return 1.2
-        case .mediumBody3:
-            return 1.3
-        case .boldBody2,
-                .regularCaption1,
-                .regularBody2:
-            return 1.5
-        case .regularBody4:
-            return 1.6
         default:
             return 1.0
         }
