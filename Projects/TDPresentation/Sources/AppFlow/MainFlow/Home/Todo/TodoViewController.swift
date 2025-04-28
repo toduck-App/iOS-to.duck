@@ -99,7 +99,14 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         addFloatingViewsToWindow(window)
         setupFloatingConstraints(in: window)
+        resetDimmedView()
+    }
+
+    private func resetDimmedView() {
+        dimmedView.alpha = 0
+        dimmedView.isHidden = true
         didAddDimmedView = true
+        floatingActionMenuView.isHidden = true
     }
     
     private func addFloatingViewsToWindow(_ window: UIWindow) {
