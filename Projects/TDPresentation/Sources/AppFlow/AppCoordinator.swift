@@ -11,6 +11,7 @@ public final class AppCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
     public var finishDelegate: CoordinatorFinishDelegate?
     public var injector: DependencyResolvable
+    private var splashViewController: SplashViewController?
     
     public init(
         navigationController: UINavigationController,
@@ -21,17 +22,24 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
+        showSplash()
         observeTokenExpired()
+        
         Task {
             do {
                 try await TDTokenManager.shared.loadTokenFromKC()
                 let authRepository = injector.resolve(AuthRepository.self)
                 try await authRepository.refreshToken()
+                
                 await MainActor.run {
-                    TDTokenManager.shared.accessToken == nil ? startAuthFlow() : startTabBarFlow()
+                    removeSplash()
+                    TDTokenManager.shared.accessToken == nil
+                    ? startAuthFlow()
+                    : startTabBarFlow()
                 }
             } catch {
                 await MainActor.run {
+                    removeSplash()
                     startAuthFlow()
                 }
             }
@@ -68,6 +76,20 @@ public final class AppCoordinator: Coordinator {
         authCoordinator.finishDelegate = self
         authCoordinator.delegate = self
         childCoordinators.append(authCoordinator)
+    }
+    
+    // MARK: – Skeleton helpers
+    private func showSplash() {
+        let splashViewController = SplashViewController()
+        navigationController.setViewControllers([splashViewController], animated: false)
+    }
+
+    private func removeSplash() {
+        guard let splashViewController else { return }
+        if navigationController.viewControllers.first === splashViewController {
+            navigationController.viewControllers.removeFirst()
+        }
+        self.splashViewController = nil
     }
 }
 
