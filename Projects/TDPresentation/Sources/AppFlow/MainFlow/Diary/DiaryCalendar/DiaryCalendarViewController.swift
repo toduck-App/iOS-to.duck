@@ -61,7 +61,6 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         super.viewDidLoad()
         
         let normalizedToday = Date().normalized
-        viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
         input.send(.selectDay(normalizedToday))
         fetchDiaryList(for: Date())
         calendarDidSelect(date: Date())
