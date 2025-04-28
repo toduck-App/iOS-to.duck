@@ -33,9 +33,11 @@ public final class AppCoordinator: Coordinator {
                 
                 await MainActor.run {
                     removeSplash()
-                    TDTokenManager.shared.accessToken == nil
-                    ? startAuthFlow()
-                    : startTabBarFlow()
+                    if TDTokenManager.shared.accessToken == nil {
+                        startAuthFlow()
+                    } else {
+                        startTabBarFlow()
+                    }
                 }
             } catch {
                 await MainActor.run {
@@ -81,6 +83,7 @@ public final class AppCoordinator: Coordinator {
     // MARK: – Skeleton helpers
     private func showSplash() {
         let splashViewController = SplashViewController()
+        self.splashViewController = splashViewController
         navigationController.setViewControllers([splashViewController], animated: false)
     }
 
