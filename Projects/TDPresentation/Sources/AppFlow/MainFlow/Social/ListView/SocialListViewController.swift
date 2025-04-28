@@ -266,6 +266,7 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     @objc func didTapCreateButton() {
+        HapticManager.impact(.soft)
         coordinator?.didTapCreateButton()
     }
     

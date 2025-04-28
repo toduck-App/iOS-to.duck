@@ -248,6 +248,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         buttonShadowWrapper.layer.masksToBounds = false
         
         eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
             self?.updateFloatingView()
         }, for: .touchUpInside)
     }
@@ -449,6 +450,7 @@ extension TodoViewController {
             showTime: showTime,
             event: eventDisplay,
             checkBoxAction: { [weak self] in
+                HapticManager.impact(.soft)
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in

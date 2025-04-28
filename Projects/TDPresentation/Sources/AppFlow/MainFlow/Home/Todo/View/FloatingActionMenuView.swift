@@ -96,6 +96,7 @@ final class FloatingActionMenuView: BaseView {
     private func handleSchedulePress(_ gesture: UILongPressGestureRecognizer) {
         switch gesture.state {
         case .began:
+            HapticManager.impact(.soft)
             scheduleContainerView.backgroundColor = TDColor.Primary.primary50
             scheduleImageView.tintColor = TDColor.Primary.primary400
             scheduleLabel.textColor = TDColor.Primary.primary500
@@ -115,6 +116,7 @@ final class FloatingActionMenuView: BaseView {
     private func handleRoutinePress(_ gesture: UILongPressGestureRecognizer) {
         switch gesture.state {
         case .began:
+            HapticManager.impact(.soft)
             routineContainerView.backgroundColor = TDColor.Primary.primary50
             routineImageView.tintColor = TDColor.Primary.primary400
             routineLabel.textColor = TDColor.Primary.primary500
