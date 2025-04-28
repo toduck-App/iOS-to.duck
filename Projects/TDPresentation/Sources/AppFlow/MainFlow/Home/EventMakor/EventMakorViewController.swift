@@ -118,26 +118,26 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     
     @objc
     override func keyboardWillShow(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-              let keyboardAdjustableView else { return }
+        guard
+            let userInfo = notification.userInfo,
+            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+            let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        else { return }
         
         UIView.animate(withDuration: duration) {
-            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 250)
-            keyboardAdjustableView.transform = CGAffineTransform(translationX: 0, y: -keyboardFrame.height + 30)
+            self.eventMakorView.dummyViewHeightConstraint?.update(offset: keyboardFrame.height)
         }
     }
     
     @objc
     override func keyboardWillHide(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-              let keyboardAdjustableView else { return }
+        guard
+            let userInfo = notification.userInfo,
+            let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        else { return }
 
         UIView.animate(withDuration: duration) {
-            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 40)
-            keyboardAdjustableView.transform = .identity
+            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 112)
         }
     }
     
