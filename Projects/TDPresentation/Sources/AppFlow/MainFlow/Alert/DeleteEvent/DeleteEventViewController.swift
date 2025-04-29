@@ -18,6 +18,7 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
         case schedule
         case routine
         case diary
+        case socialPost
     }
     
     private let eventId: Int?
@@ -25,9 +26,6 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     private let eventMode: EventMode
     weak var delegate: DeleteEventViewControllerDelegate?
 
-    /// - Parameters:
-    ///   - isScheduleEvent: 일정인지 루틴인지 여부 (`true`: 일정, `false`: 루틴)
-    ///   - eventType: 이벤트 타입 (일정, 루틴, 다이어리)
     init(
         eventId: Int?,
         isRepeating: Bool,
@@ -55,9 +53,11 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     private func updateButtonTitles() {
         let singleTitle = eventMode == .schedule ? "이 일정만 삭제" : "이 루틴만 삭제"
         let repeatingTitle = eventMode == .schedule ? "이후 일정 모두 삭제" : "이후 루틴 모두 삭제"
+        let description = eventMode == .socialPost ? "삭제한 글은 다시 복구할 수 없어요" : "한번 삭제한 내용은 다시 복구할 수 없어요"
 
         popupContentView.currentEventDeleteButton.setTitle(singleTitle, for: .normal)
         popupContentView.afterEventDeleteButton.setTitle(repeatingTitle, for: .normal)
+        popupContentView.descriptionLabel.setText(description)
     }
     
     private func setupRepeatingMode() {

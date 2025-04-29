@@ -6,6 +6,7 @@ import UIKit
 final class SocialRoutineView: UIView {
     var onTapperRoutine: (() -> Void)?
     
+    private let categoryImageContainerView = UIView()
     private let categoryImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
     }
@@ -45,6 +46,7 @@ final class SocialRoutineView: UIView {
         setupLayout()
         setupRecognizer()
         categoryImage.image = routine.categoryIcon
+        categoryImageContainerView.backgroundColor = TDColor.reversedOpacityBackPair[ColorValue(color: routine.categoryColor)]
         routineTitleLabel.setText(routine.title)
         
         if let memo = routine.memo, !memo.isEmpty {
@@ -88,22 +90,29 @@ private extension SocialRoutineView {
         layer.borderWidth = 1
         layer.cornerRadius = 16
         clipsToBounds = true
+        
+        categoryImageContainerView.layer.cornerRadius = 18
     }
     
     func setupLayout() {
-        addSubview(categoryImage)
+        addSubview(categoryImageContainerView)
+        categoryImageContainerView.addSubview(categoryImage)
         addSubview(stackView)
         
         stackView.addArrangedSubview(routineTitleLabel)
         
-        categoryImage.snp.makeConstraints { make in
+        categoryImageContainerView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
-            make.size.equalTo(24)
+            make.size.equalTo(36)
+        }
+        
+        categoryImage.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
         }
         
         stackView.snp.makeConstraints { make in
-            make.leading.equalTo(categoryImage.snp.trailing).offset(10)
+            make.leading.equalTo(categoryImageContainerView.snp.trailing).offset(10)
             make.trailing.equalToSuperview().inset(16)
             make.top.bottom.equalToSuperview().inset(16)
         }

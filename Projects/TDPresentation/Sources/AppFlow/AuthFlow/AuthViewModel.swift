@@ -89,6 +89,6 @@ extension AuthViewModel: ASAuthorizationControllerDelegate {
     }
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        output.send(.loginFailure(error: error.localizedDescription))
+        output.send(.loginFailure(error: "Apple 로그인에 실패했습니다."))
     }
 }

@@ -141,7 +141,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
     }
     
     private func configureShadow() {
-        shadowContainerView.layer.shadowColor = UIColor.black.cgColor
+        shadowContainerView.layer.shadowColor = TDColor.baseShadow.cgColor
         shadowContainerView.layer.shadowOpacity = LayoutConstants.shadowOpacity
         shadowContainerView.layer.shadowOffset = LayoutConstants.shadowOffset
         shadowContainerView.layer.shadowRadius = LayoutConstants.shadowRadius
@@ -291,7 +291,7 @@ private extension TimeSlotTableViewCell {
         static let shadowTrailing: CGFloat = -16
         static let shadowOffset = CGSize(width: 2, height: 2)
         static let shadowRadius: CGFloat = 2
-        static let shadowOpacity: Float = 0.1
+        static let shadowOpacity: Float = 0.05
         static let eventDetailInset: CGFloat = 4
         static let eventDetailCornerRadius: CGFloat = 8
         static let buttonContainerWidth: CGFloat = 120

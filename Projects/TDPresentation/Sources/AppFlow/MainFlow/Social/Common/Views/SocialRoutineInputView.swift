@@ -73,6 +73,7 @@ extension SocialRoutineInputView {
     private func setConstraints() {
         title.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(16)
         }
         
         routineSelectView.snp.makeConstraints { make in

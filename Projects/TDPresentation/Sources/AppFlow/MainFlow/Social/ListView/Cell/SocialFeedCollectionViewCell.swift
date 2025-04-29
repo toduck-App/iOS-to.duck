@@ -174,6 +174,10 @@ private extension SocialFeedCollectionViewCell {
             make.leading.trailing.equalToSuperview()
         }
         
+        titleLabel.snp.makeConstraints { make in
+            make.height.equalTo(19)
+        }
+        
         footerView.snp.makeConstraints { make in
             make.height.equalTo(24)
         }

@@ -81,7 +81,7 @@ final class SignInView: BaseView {
         toduckColor: TDColor.baseWhite
     )
     
-    let nextButton = TDBaseButton(
+    let signInButton = TDBaseButton(
         title: "로그인",
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
@@ -108,7 +108,7 @@ final class SignInView: BaseView {
             passwordContainerView,
             findAccountContainerView,
             failedContainerView,
-            nextButton
+            signInButton
         ].forEach(addSubview)
     }
     
@@ -168,7 +168,7 @@ final class SignInView: BaseView {
         
         failedContainerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalInset)
-            make.bottom.equalTo(nextButton.snp.top).offset(-LayoutConstants.errorContainerSpacing)
+            make.bottom.equalTo(signInButton.snp.top).offset(-LayoutConstants.errorContainerSpacing)
             make.height.equalTo(LayoutConstants.errorContainerHeight)
         }
         
@@ -177,7 +177,7 @@ final class SignInView: BaseView {
             make.leading.equalToSuperview().offset(LayoutConstants.horizontalInset)
         }
         
-        nextButton.snp.makeConstraints { make in
+        signInButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalInset)
             make.bottom.equalTo(safeAreaLayoutGuide).offset(-LayoutConstants.buttonBottomSpacing)
             make.height.equalTo(LayoutConstants.buttonHeight)
@@ -186,7 +186,7 @@ final class SignInView: BaseView {
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
-        nextButton.isEnabled = false
+        signInButton.isEnabled = false
         failedContainerView.alpha = 0
     }
 }

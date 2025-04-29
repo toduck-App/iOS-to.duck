@@ -19,6 +19,7 @@ final class TDChipCell: UICollectionViewCell {
         $0.distribution = .equalSpacing
     }
     
+    private let titleLabelContainerView = UIView()
     private let titleLabel = TDLabel(labelText: "", toduckFont: TDFont.regularBody2, toduckColor: TDColor.Neutral.neutral200)
     
     private let leftImageView = UIImageView().then {
@@ -43,6 +44,11 @@ final class TDChipCell: UICollectionViewCell {
         self.isActive = isActive
         self.item = item
         self.titleLabel.setText(item.title)
+        self.titleLabel.setFont(.mediumBody2)
+        
+        self.titleLabel.snp.makeConstraints { make in
+            make.height.equalTo(16)
+        }
         if let leftImage = item.leftImage {
             leftImageView.image = leftImage.image
             stackView.addArrangedSubview(leftImageView)

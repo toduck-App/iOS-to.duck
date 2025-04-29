@@ -231,7 +231,6 @@ public final class EventDetailView: UIView {
         timeDetailHorizontalStackView.addArrangedSubview(timeImageView)
         timeDetailHorizontalStackView.addArrangedSubview(timeLabel)
         
-        
         placeHorizontalStackView.addArrangedSubview(placeImageView)
         placeHorizontalStackView.addArrangedSubview(placeLabel)
     }
@@ -268,10 +267,14 @@ public final class EventDetailView: UIView {
         /// 이벤트 제목, 시간, 장소
         
         eventTopSpacer.snp.makeConstraints {
-            $0.height.equalTo(8)
+            $0.leading.equalToSuperview()
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(15)
         }
         eventBottomSpacer.snp.makeConstraints {
-            $0.height.equalTo(8)
+            $0.leading.equalToSuperview()
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(15)
         }
         titleLabel.snp.makeConstraints {
             $0.height.equalTo(18)

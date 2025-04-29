@@ -149,7 +149,7 @@ final class SocialFooterView: UIView {
             likeLabel.isHidden = true
         }
         
-        if let commentCount, commentCount > 0 {
+        if let commentCount, commentCount >= 0 {
             commentLabel.setText("\(commentCount)")
             commentIconView.isHidden = false
             commentLabel.isHidden = false

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ic=Location, Size=Medium.png",
+      "filename" : "locationMedium.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ic=Location, Size=Medium@2x.png",
+      "filename" : "locationMedium@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ic=Location, Size=Medium@3x.png",
+      "filename" : "locationMedium@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

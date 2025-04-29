@@ -30,6 +30,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        layoutView.scheduleSegmentedControl.selectedSegmentIndex = 0
         input.send(.fetchScheduleList)
     }
     

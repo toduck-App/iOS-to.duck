@@ -61,7 +61,6 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         super.viewDidLoad()
         
         let normalizedToday = Date().normalized
-        viewModel.selectedDiary = viewModel.monthDiaryList[normalizedToday]
         input.send(.selectDay(normalizedToday))
         fetchDiaryList(for: Date())
         calendarDidSelect(date: Date())
@@ -283,7 +282,7 @@ extension DiaryCalendarViewController: TDDropDownDelegate {
                 eventMode: .diary
             )
             deleteDiaryViewController.delegate = self
-            self.presentPopup(with: deleteDiaryViewController)
+            presentPopup(with: deleteDiaryViewController)
         }
     }
 }

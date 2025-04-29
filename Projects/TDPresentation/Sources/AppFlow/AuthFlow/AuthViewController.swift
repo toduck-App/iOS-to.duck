@@ -40,10 +40,12 @@ final class AuthViewController: BaseViewController<AuthView> {
     // MARK: Base Methods
     override func configure() {
         layoutView.kakaoLoginButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.kakaoLoginButton.isEnabled = false
             self?.input.send(.signInWithKakao)
         }, for: .touchUpInside)
         
         layoutView.appleLoginButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.appleLoginButton.isEnabled = false
             self?.input.send(.signInWithApple)
         }, for: .touchUpInside)
         
@@ -66,6 +68,8 @@ final class AuthViewController: BaseViewController<AuthView> {
                 case .loginSuccess:
                     self?.coordinator?.didLogin()
                 case .loginFailure(let error):
+                    self?.layoutView.kakaoLoginButton.isEnabled = true
+                    self?.layoutView.appleLoginButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
