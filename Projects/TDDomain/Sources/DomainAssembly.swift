@@ -289,6 +289,13 @@ public struct DomainAssembly: Assembly {
             }
             return FetchUserShareUrlUseCaseImpl(repository: repository)
         }
+        
+        container.register(FetchRoutineListForDatesUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchRoutineListForDatesUseCaseImpl(repository: repository)
+        }
 
         container.register(FetchUserUseCase.self) { resolver in
             guard let repository = resolver.resolve(UserRepository.self) else {

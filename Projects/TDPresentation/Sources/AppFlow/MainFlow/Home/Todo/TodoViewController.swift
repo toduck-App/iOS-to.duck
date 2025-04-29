@@ -92,7 +92,7 @@ final class TodoViewController: BaseViewController<BaseView> {
             to: weekInterval.start
         )?.convertToString(formatType: .yearMonthDay) ?? startDate
         
-        input.send(.fetchWeeklyScheduleList(startDate: startDate, endDate: endDate))
+        input.send(.fetchWeeklyTodoList(startDate: startDate, endDate: endDate))
     }
     
     // 뷰가 나타날 때 플로팅 버튼 처리
