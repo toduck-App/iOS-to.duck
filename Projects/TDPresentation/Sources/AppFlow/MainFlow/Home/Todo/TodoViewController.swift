@@ -99,7 +99,14 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         addFloatingViewsToWindow(window)
         setupFloatingConstraints(in: window)
+        resetDimmedView()
+    }
+
+    private func resetDimmedView() {
+        dimmedView.alpha = 0
+        dimmedView.isHidden = true
         didAddDimmedView = true
+        floatingActionMenuView.isHidden = true
     }
     
     private func addFloatingViewsToWindow(_ window: UIWindow) {
@@ -241,6 +248,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         buttonShadowWrapper.layer.masksToBounds = false
         
         eventMakorFloattingButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
             self?.updateFloatingView()
         }, for: .touchUpInside)
     }
@@ -442,6 +450,7 @@ extension TodoViewController {
             showTime: showTime,
             event: eventDisplay,
             checkBoxAction: { [weak self] in
+                HapticManager.impact(.soft)
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in

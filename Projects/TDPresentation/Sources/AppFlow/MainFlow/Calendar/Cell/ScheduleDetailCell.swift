@@ -21,7 +21,8 @@ final class ScheduleDetailCell: UITableViewCell {
         selectionStyle = .none
         contentView.addSubview(eventDetailView)
         eventDetailView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(10)
+            $0.top.bottom.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview()
         }
     }
 

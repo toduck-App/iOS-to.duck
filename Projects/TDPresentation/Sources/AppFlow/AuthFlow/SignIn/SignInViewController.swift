@@ -22,14 +22,15 @@ final class SignInViewController: BaseViewController<SignInView> {
     }
     
     override func configure() {
-        keyboardAdjustableView = layoutView.nextButton
+        keyboardAdjustableView = layoutView.signInButton
         layoutView.idTextField.delegate = self
         layoutView.passwordTextField.delegate = self
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapFindIdPassword))
         layoutView.findAccountContainerView.addGestureRecognizer(tapGesture)
         
-        layoutView.nextButton.addAction(UIAction { [weak self] _ in
+        layoutView.signInButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.signInButton.isEnabled = false
             self?.input.send(.didTapSignIn)
         }, for: .touchUpInside)
     }
@@ -49,6 +50,7 @@ final class SignInViewController: BaseViewController<SignInView> {
                 case .validSignIn:
                     self?.coordinator?.finish(by: .pop)
                 case .invalidSignIn:
+                    self?.layoutView.signInButton.isEnabled = true
                     UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
                         self?.layoutView.failedContainerView.alpha = 1
                     } completion: { _ in
@@ -87,7 +89,7 @@ extension SignInViewController: UITextFieldDelegate {
         
         let isFormValid = isIdValid && isPasswordValid
         
-        layoutView.nextButton.isEnabled = isFormValid
-        layoutView.nextButton.layer.borderWidth = 0
+        layoutView.signInButton.isEnabled = isFormValid
+        layoutView.signInButton.layer.borderWidth = 0
     }
 }

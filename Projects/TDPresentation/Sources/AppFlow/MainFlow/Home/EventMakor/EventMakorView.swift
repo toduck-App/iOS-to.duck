@@ -7,7 +7,7 @@ import TDDesign
 final class EventMakorView: BaseView {
     // MARK: - UI Components
     let scrollView = UIScrollView()
-    private let stackView = UIStackView().then {
+    let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 24
     }
@@ -21,7 +21,7 @@ final class EventMakorView: BaseView {
     )
     
     // 카테고리
-    private let categoryVerticalStackView = UIStackView().then {
+    let categoryVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
     }
@@ -29,34 +29,34 @@ final class EventMakorView: BaseView {
     let categoryViewsForm = TDCategoryCollectionView()
     
     // 날짜 (일정에서만 사용됨)
-    private let dataVerticalStackView = UIStackView().then {
+    let dataVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
     }
     let dateForm = TDFormMoveView(type: .date, isRequired: true)
-    private let dividedLine1 = UIView.dividedLine()
+    let dividedLine1 = UIView.dividedLine()
     
     // 시간
-    private let timeVerticalStackView = UIStackView().then {
+    let timeVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
     }
     let timeForm = TDFormMoveView(type: .time, isRequired: true)
-    private let dividedLine2 = UIView.dividedLine()
+    let dividedLine2 = UIView.dividedLine()
     
     // 공개여부 (루틴에서만 사용됨)
-    private let lockVerticalStackView = UIStackView().then {
+    let lockVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
     }
     let lockForm = TDFormSegmentView()
-    private let dividedLine3 = UIView.dividedLine()
+    let dividedLine3 = UIView.dividedLine()
     
     // 반복일, 알람
     let repeatDayForm = TDFormButtonsView(type: .repeatDay)
-    private let dividedLine4 = UIView.dividedLine()
+    let dividedLine4 = UIView.dividedLine()
     let alarmForm = TDFormButtonsView(type: .alarm)
-    private let dividedLine5 = UIView.dividedLine()
+    let dividedLine5 = UIView.dividedLine()
     
     // 장소 (일정에서만 사용됨)
     let locationForm = TDFormTextField(
@@ -98,7 +98,8 @@ final class EventMakorView: BaseView {
         radius: 12,
         font: TDFont.boldHeader3.font
     )
-    private let dummyView = UIView()
+    let dummyViewForKeyboard = UIView()
+    let dummyViewForStackView = UIView()
     
     // MARK: - Properties
     private let mode: EventMakorViewController.Mode
@@ -119,6 +120,7 @@ final class EventMakorView: BaseView {
     // MARK: - Base Method
     override func addview() {
         addSubview(scrollView)
+        addSubview(dummyViewForKeyboard)
         addSubview(noticeSnackBarView)
         addSubview(buttonContainerView)
         scrollView.addSubview(stackView)
@@ -164,7 +166,7 @@ final class EventMakorView: BaseView {
         
         // 메모
         stackView.addArrangedSubview(memoTextView)
-        stackView.addArrangedSubview(dummyView)
+        stackView.addArrangedSubview(dummyViewForStackView)
     }
     
     override func configure() {
@@ -184,7 +186,7 @@ final class EventMakorView: BaseView {
     override func layout() {
         scrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(buttonContainerView.snp.top)
+            make.bottom.equalTo(dummyViewForKeyboard.snp.top)
         }
         noticeSnackBarView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
@@ -260,8 +262,14 @@ final class EventMakorView: BaseView {
             make.height.equalTo(140)
         }
         
-        dummyView.snp.makeConstraints { make in
-            dummyViewHeightConstraint = make.height.equalTo(40).constraint
+        dummyViewForStackView.snp.makeConstraints { make in
+            make.height.equalTo(40)
+        }
+        
+        dummyViewForKeyboard.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+            dummyViewHeightConstraint = make.height.equalTo(112).constraint
         }
     }
     

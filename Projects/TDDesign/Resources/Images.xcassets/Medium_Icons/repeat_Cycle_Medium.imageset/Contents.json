@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ic=Repeat, Size=Medium.png",
+      "filename" : "repeatCycleMedium.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ic=Repeat, Size=Medium@2x.png",
+      "filename" : "repeatCycleMedium@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ic=Repeat, Size=Medium@3x.png",
+      "filename" : "repeatCycleMedium@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

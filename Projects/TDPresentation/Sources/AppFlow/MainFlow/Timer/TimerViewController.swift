@@ -46,24 +46,28 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         // timer buttons
         layoutView.playButton.addAction(
             UIAction { _ in
+                HapticManager.impact(.soft)
                 self.input.send(.startTimer)
             }, for: .touchUpInside
         )
         
         layoutView.pauseButton.addAction(
             UIAction { _ in
+                HapticManager.impact(.soft)
                 self.input.send(.pauseTimer)
             }, for: .touchUpInside
         )
         
         layoutView.resetButton.addAction(
             UIAction { _ in
+                HapticManager.impact(.soft)
                 self.input.send(.resetTimer)
             }, for: .touchUpInside
         )
 
         layoutView.stopButton.addAction(
             UIAction { _ in
+                HapticManager.impact(.soft)
                 self.input.send(.stopTimer)
             }, for: .touchUpInside
         )

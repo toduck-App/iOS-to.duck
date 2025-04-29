@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ic=memo_l, Size=Medium.png",
+      "filename" : "memoLineMedium.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ic=memo_l, Size=Medium@2x.png",
+      "filename" : "memoLineMedium@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ic=memo_l, Size=Medium@3x.png",
+      "filename" : "memoLineMedium@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

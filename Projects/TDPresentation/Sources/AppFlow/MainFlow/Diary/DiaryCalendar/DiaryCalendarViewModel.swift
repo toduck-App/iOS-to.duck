@@ -114,6 +114,7 @@ final class DiaryCalendarViewModel: BaseViewModel {
                 )
             }
             monthDiaryList = Dictionary(uniqueKeysWithValues: diaryItems.map { ($0.date.normalized, $0) })
+            selectedDiary = monthDiaryList[selectedDate ?? Date()]
             output.send(.fetchedDiaryList)
         } catch {
             output.send(.failureAPI(error.localizedDescription))

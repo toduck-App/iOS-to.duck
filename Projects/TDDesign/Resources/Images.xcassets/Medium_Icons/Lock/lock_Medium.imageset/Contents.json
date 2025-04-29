@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ic=Lock, Size=Medium.png",
+      "filename" : "lockMedium.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ic=Lock, Size=Medium@2x.png",
+      "filename" : "lockMedium@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ic=Lock, Size=Medium@3x.png",
+      "filename" : "lockMedium@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
