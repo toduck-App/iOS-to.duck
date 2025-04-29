@@ -110,6 +110,18 @@ final class SocialFooterView: UIView {
         mainStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+        likeButton.snp.makeConstraints { make in
+            make.size.equalTo(24)
+        }
+        
+        likeLabel.snp.makeConstraints { make in
+            make.height.equalTo(24)
+        }
+        
+        commentLabel.snp.makeConstraints { make in
+            make.height.equalTo(24)
+        }
     }
     
     private func setupCompactLayout() {
@@ -129,6 +141,18 @@ final class SocialFooterView: UIView {
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
             make.trailing.lessThanOrEqualToSuperview()
+        }
+        
+        likeButton.snp.makeConstraints { make in
+            make.size.equalTo(24)
+        }
+        
+        likeLabel.snp.makeConstraints { make in
+            make.height.equalTo(24)
+        }
+        
+        commentLabel.snp.makeConstraints { make in
+            make.height.equalTo(24)
         }
     }
     
