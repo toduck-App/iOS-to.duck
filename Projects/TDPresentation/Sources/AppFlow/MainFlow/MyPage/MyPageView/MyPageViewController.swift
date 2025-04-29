@@ -9,6 +9,25 @@ final class MyPageViewController: BaseViewController<MyPageView> {
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: MyPageCoordinator?
 
+    private let menuSections: [MenuSection] = [
+        MenuSection(
+            header: "계정 관리",
+            items: [
+                .notificationSettings,
+                .postManagement,
+                .myComments,
+                .blockManagement
+            ]
+        ),
+        MenuSection(
+            header: "서비스 약관",
+            items: [
+                .termsOfUse,
+                .privacyPolicy
+            ]
+        )
+    ]
+
     // MARK: - Initialize
 
     init(
@@ -46,44 +65,23 @@ final class MyPageViewController: BaseViewController<MyPageView> {
             self?.coordinator?.didTapWithdrawButton()
         }, for: .touchUpInside)
 
-        layoutView.didSelectMenuItem = { [weak self] indexPath in
+        layoutView.setMenuSections(menuSections)
+
+        layoutView.didSelectMenuItem = { [weak self] menu in
             guard let self else { return }
-            switch (indexPath.section, indexPath.item) {
-            // 계정 관리
-            case (0, 0):
-                print("알림 설정")
-//                coordinator?.didTapNotificationSettings() // ex. 알림 설정
-            case (0, 1):
-                print("작성 글 관리")
-//                coordinator?.didTapPostManagement() // 작성 글 관리
-            case (0, 2):
-                print("나의 댓글")
-//                coordinator?.didTapMyComments() // 나의 댓글
-            case (0, 3):
-                print("차단 관리")
-//                coordinator?.didTapBlockManagement() // 차단 관리
-            // 고객 센터
-            case (1, 0):
-                print("문의 하기")
-//                coordinator?.didTapAskSupport() // 문의 하기
-            case (1, 1):
-                print("문의 내역")
-//                coordinator?.didTapInquiryHistory() // 문의 내역
-            case (1, 2):
-                print("공지사항")
-//                coordinator?.didTapNotice() // 공지사항
-            case (1, 3):
-                print("사용 가이드")
-//                coordinator?.didTapUserGuide() // 사용 가이드
-            // 서비스 약관
-            case (2, 0):
-                print("서비스 약관")
-            //                coordinator?.didTapTermsOfUse() // 이용 약관
-            case (2, 1):
-                print("개인정보 처리 방침")
-//                coordinator?.didTapPrivacyPolicy() // 개인정보 처리방침
-            default:
-                break
+            switch menu {
+            case .notificationSettings:
+                coordinator?.didTapNotificationSettings()
+            case .postManagement:
+                coordinator?.didTapPostManagement()
+            case .myComments:
+                coordinator?.didTapMyComments()
+            case .blockManagement:
+                coordinator?.didTapBlockManagement()
+            case .termsOfUse:
+                coordinator?.didTapTermsOfUse()
+            case .privacyPolicy:
+                coordinator?.didTapPrivacyPolicy()
             }
         }
     }
@@ -186,5 +184,30 @@ extension MyPageViewController: MyPageSocialButtonDelegate {
             popover.sourceView = layoutView.socialButtonView
         }
         present(activityVC, animated: true)
+    }
+}
+
+struct MenuSection {
+    let header: String
+    let items: [MenuItem]
+}
+
+enum MenuItem {
+    case notificationSettings
+    case postManagement
+    case myComments
+    case blockManagement
+    case termsOfUse
+    case privacyPolicy
+
+    var title: String {
+        switch self {
+        case .notificationSettings: "알림 설정"
+        case .postManagement: "작성 글 관리"
+        case .myComments: "나의 댓글"
+        case .blockManagement: "차단 관리"
+        case .termsOfUse: "이용 약관"
+        case .privacyPolicy: "개인정보 처리방침"
+        }
     }
 }

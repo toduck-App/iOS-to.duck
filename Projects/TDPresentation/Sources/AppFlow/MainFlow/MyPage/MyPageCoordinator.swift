@@ -79,4 +79,28 @@ extension MyPageCoordinator: NavigationDelegate {
         childCoordinators.append(editProfileMenuCoordinator)
         editProfileMenuCoordinator.start()
     }
+
+    func didTapNotificationSettings() {
+        print("Notification Settings Tapped")
+    }
+
+    func didTapPostManagement() {
+        print("Post Management Tapped")
+    }
+
+    func didTapMyComments() {
+        print("My Comments Tapped")
+    }
+
+    func didTapBlockManagement() {
+        print("Block Management Tapped")
+    }
+
+    func didTapTermsOfUse() {
+        print("Terms of Use Tapped")
+    }
+
+    func didTapPrivacyPolicy() {
+        print("Privacy Policy Tapped")
+    }
 }

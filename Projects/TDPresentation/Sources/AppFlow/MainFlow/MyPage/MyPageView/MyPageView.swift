@@ -3,7 +3,8 @@ import TDDesign
 import UIKit
 
 final class MyPageView: BaseView {
-    var didSelectMenuItem: ((IndexPath) -> Void)?
+    private var sections: [MenuSection] = []
+    var didSelectMenuItem: ((MenuItem) -> Void)?
     
     private let scrollView = CustomScrollView()
     private let containerView = UIView()
@@ -129,35 +130,33 @@ final class MyPageView: BaseView {
             $0.bottom.equalToSuperview().offset(-20)
         }
     }
+
+    func setMenuSections(_ sections: [MenuSection]) {
+        self.sections = sections
+        menuCollectionView.reloadData()
+    }
 }
 
 extension MyPageView: UICollectionViewDataSource {
-    func numberOfSections(
-        in collectionView: UICollectionView
-    ) -> Int {
-        Constants.mockDataSource.count
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        sections.count
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        Constants.mockDataSource[section].value.count
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        sections[section].items.count
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MyPageMenuCollectionViewCell.identifier, for: indexPath
-        ) as? MyPageMenuCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        let sectionData = Constants.mockDataSource[indexPath.section]
-        let item = sectionData.value[indexPath.item]
-        cell.configure(with: item)
-        
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MyPageMenuCollectionViewCell.identifier,
+            for: indexPath
+        ) as! MyPageMenuCollectionViewCell
+
+        let item = sections[indexPath.section].items[indexPath.item]
+        cell.configure(with: item.title)
         return cell
     }
     
@@ -174,8 +173,8 @@ extension MyPageView: UICollectionViewDataSource {
             ) as? MyPageMenuCollectionHeaderView else {
                 return UICollectionReusableView()
             }
-            let sectionData = Constants.mockDataSource[indexPath.section]
-            header.configure(with: sectionData.key)
+            let sectionData = sections[indexPath.section].header
+            header.configure(with: sectionData)
             return header
         } else if kind == UICollectionView.elementKindSectionFooter {
             guard let footer = collectionView.dequeueReusableSupplementaryView(
@@ -225,11 +224,9 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         )
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        didSelectMenuItem?(indexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let item = sections[indexPath.section].items[indexPath.item]
+        didSelectMenuItem?(item)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
@@ -259,13 +256,5 @@ private extension MyPageView {
         static let footerPadding: CGFloat = 20
         static let menuViewHeight: CGFloat = 110
         static let randomHeight: CGFloat = 1000
-    }
-    
-    enum Constants {
-        static let mockDataSource: [(key: String, value: [String])] = [
-            ("계정 관리", ["알림 설정", "작성 글 관리", "나의 댓글", "차단 관리"]),
-            ("고객 센터", ["문의 하기", "문의 내역", "공지사항", "토덕 이용 가이드"]),
-            ("서비스 약관", ["이용 약관", "개인정보 처리방침"])
-        ]
     }
 }
