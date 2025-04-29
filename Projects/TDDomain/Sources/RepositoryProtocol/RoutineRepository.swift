@@ -7,4 +7,5 @@ public protocol RoutineRepository {
     func fetchAvailableRoutineList() async throws -> [Routine]
     func updateRoutine(routineId: Int, routine: Routine, preRoutine: Routine) async throws
     func deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) async throws
+    func deleteRoutineForCurrentDay(routineId: Int, date: String) async throws
 }

@@ -13,6 +13,7 @@ public enum RoutineAPI {
     case updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) // 루틴 완료 상태 변경
     case updateRoutine(routineId: Int, routine: RoutineUpdateRequestDTO) // 루틴 수정
     case deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) // 해당 날짜 이후로 루틴 모두 삭제
+    case deleteRoutineForCurrentDay(routineId: Int, date: String) // 해당 날짜의 루틴만 삭제
 }
 
 extension RoutineAPI: MFTarget {
@@ -31,7 +32,7 @@ extension RoutineAPI: MFTarget {
         case .fetchRoutineList:
             return "v1/routines/me"
         case .fetchRoutineListForDates:
-            return "/v1/routines/me/dates"
+            return "v1/routines/me/dates"
         case .fetchAvailableRoutineList:
             return "v1/routines/me/available"
         case .updateCompleteRoutine(let routineId, _, _):
@@ -40,6 +41,8 @@ extension RoutineAPI: MFTarget {
             return "v1/routines/\(routineId)"
         case .deleteRoutineAfterCurrentDay(let routineId, _):
             return "v1/routines/\(routineId)"
+        case .deleteRoutineForCurrentDay(let routineId, _):
+            return "v1/routines/\(routineId)/individual"
         }
     }
     
@@ -54,7 +57,7 @@ extension RoutineAPI: MFTarget {
         case .updateCompleteRoutine,
                 .updateRoutine:
             return .put
-        case .deleteRoutineAfterCurrentDay:
+        case .deleteRoutineAfterCurrentDay, .deleteRoutineForCurrentDay:
             return .delete
         }
     }
@@ -81,6 +84,10 @@ extension RoutineAPI: MFTarget {
             return [
                 "keepRecords": keepRecords
             ]
+        case .deleteRoutineForCurrentDay(_, let date):
+            return [
+                "date": date
+            ]
         }
     }
     
@@ -90,7 +97,8 @@ extension RoutineAPI: MFTarget {
                 .fetchRoutine,
                 .fetchRoutineListForDates,
                 .fetchAvailableRoutineList,
-                .deleteRoutineAfterCurrentDay:
+                .deleteRoutineAfterCurrentDay,
+                .deleteRoutineForCurrentDay:
             return .requestPlain
         case .finishRoutine(_, let routineDate, let isCompleted):
             return .requestParameters(parameters: [

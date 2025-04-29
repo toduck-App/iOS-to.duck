@@ -8,4 +8,5 @@ public protocol RoutineService {
     func updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) async throws
     func updateRoutine(routineId: Int, routine: RoutineUpdateRequestDTO) async throws
     func deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) async throws
+    func deleteRoutineForCurrentDay(routineId: Int, date: String) async throws
 }
