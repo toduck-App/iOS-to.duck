@@ -214,6 +214,7 @@ final class TodoViewModel: BaseViewModel {
                 isOneDayDeleted: isOneDayDeleted,
                 queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
             )
+            removeEventFromWeeklyList(eventId: scheduleId, isSchedule: true)
             output.send(.deletedTodo)
         } catch {
             output.send(.failure(error: "일정을 삭제할 수 없습니다."))
@@ -233,9 +234,24 @@ final class TodoViewModel: BaseViewModel {
                     keepRecords: true
                 )
             }
+            removeEventFromWeeklyList(eventId: routineId, isSchedule: false)
+            output.send(.deletedTodo)
         } catch {
             output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
         }
+    }
+    
+    private func removeEventFromWeeklyList(eventId: Int, isSchedule: Bool) {
+        if isSchedule {
+            if let events = weeklyScheduleList[selectedDate] {
+                weeklyScheduleList[selectedDate] = events.filter { $0.id != eventId }
+            }
+        } else {
+            if let events = weeklyRoutineList[selectedDate] {
+                weeklyRoutineList[selectedDate] = events.filter { $0.id != eventId }
+            }
+        }
+        unionTodoListForSelectedDate(selectedDate: selectedDate)
     }
     
     // MARK: - 내일로 미루기
@@ -295,5 +311,4 @@ final class TodoViewModel: BaseViewModel {
             output.send(.failure(error: "루틴을 생성할 수 없습니다."))
         }
     }
-    
 }
