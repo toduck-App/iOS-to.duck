@@ -39,7 +39,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private let input = PassthroughSubject<TodoViewModel.Input, Never>()
     private var timelineDataSource: UITableViewDiffableDataSource<Int, TimeLineCellItem>?
     private var cancellables = Set<AnyCancellable>()
-    private var selectedDate: Date?
+    private var selectedDate = Date()
     private var isMenuVisible = false
     private var didAddDimmedView = false
     weak var delegate: TodoViewControllerDelegate?
@@ -61,15 +61,12 @@ final class TodoViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let today = Date()
-        selectedDate = today
-        viewModel.selectedDate = today
         let calendar = Calendar.current
-        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? Date()
         
-        weekCalendarView.select(today)
+        weekCalendarView.select(selectedDate)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
-        fetchWeekTodo(for: Date())
+        fetchWeekTodo(for: selectedDate)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -195,28 +192,20 @@ final class TodoViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedTodoList:
                     self?.applyTimelineSnapshot()
-                case .failure(let error):
-                    self?.showErrorAlert(errorMessage: error)
-                case .successFinishTodo:
-                    if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchWeeklyScheduleList(startDate: dateString, endDate: dateString))
-                    }
-                case .tomorrowTodoCreated:
-                    if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchWeeklyScheduleList(startDate: dateString, endDate: dateString))
-                    }
                 case .fetchedRoutineDetail(let routine):
                     let eventDisplayItem = EventDisplayItem(routine: routine)
-                    let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
+                    let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
                     let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
-                case .deletedTodo:
+                case .successFinishTodo,
+                        .tomorrowTodoCreated,
+                        .deletedTodo:
                     if let formattedDate = self?.selectedDate {
                         self?.input.send(.didSelectedDate(date: formattedDate))
                     }
+                case .failure(let error):
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
     }
@@ -358,7 +347,7 @@ extension TodoViewController: UITableViewDelegate {
     ) {
         guard let item = timelineDataSource?.itemIdentifier(for: indexPath) else { return }
         let detailEventViewController: DetailEventViewController
-        let currentDate = selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
+        let currentDate = selectedDate.convertToString(formatType: .yearMonthDayKorean)
         
         // TODO: 로직 개선하기
         /// 현재 로직에서 일정은 그냥 바로 팝업 띄우고,

@@ -36,7 +36,7 @@ final class TodoViewModel: BaseViewModel {
     private(set) var timedTodoList: [any Eventable] = []
     private var weeklyScheduleList: [Date: [Schedule]] = [:]
     private var isOneDayDeleted: Bool = false
-    var selectedDate: Date?
+    var selectedDate = Date()
     
     init(
         createScheduleUseCase: CreateScheduleUseCase,
@@ -168,7 +168,7 @@ final class TodoViewModel: BaseViewModel {
             try await finishScheduleUseCase.execute(
                 scheduleId: todo.id ?? 0,
                 isComplete: !todo.isFinished,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+                queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
             )
             output.send(.successFinishTodo)
         } catch {
@@ -180,7 +180,7 @@ final class TodoViewModel: BaseViewModel {
         do {
             try await finishRoutineUseCase.execute(
                 routineId: todo.id ?? 0,
-                routineDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
+                routineDate: selectedDate.convertToString(formatType: .yearMonthDay),
                 isCompleted: !todo.isFinished
             )
             output.send(.successFinishTodo)
@@ -203,7 +203,7 @@ final class TodoViewModel: BaseViewModel {
             try await deleteScheduleUseCase.execute(
                 scheduleId: scheduleId,
                 isOneDayDeleted: isOneDayDeleted,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+                queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
             )
             output.send(.deletedTodo)
         } catch {
@@ -230,8 +230,6 @@ final class TodoViewModel: BaseViewModel {
     
     private func updateEventToNextDay(todoId: Int, isSchedule: Bool, isAllDay: Bool) {
         guard let event = getEvent(for: todoId, isAllDay: isAllDay) else { return }
-        guard let selectedDate = selectedDate else { return }
-        
         let nextDay = getNextDay(from: selectedDate)
         
         if isSchedule {
