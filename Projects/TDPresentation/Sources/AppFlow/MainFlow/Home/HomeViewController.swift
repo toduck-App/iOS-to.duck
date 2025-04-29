@@ -127,6 +127,8 @@ final class HomeViewController: BaseViewController<BaseView> {
             let finishScheduleUseCase = DIContainer.shared.resolve(FinishScheduleUseCase.self)
             let finishRoutineUseCase = DIContainer.shared.resolve(FinishRoutineUseCase.self)
             let deleteScheduleUseCase = DIContainer.shared.resolve(DeleteScheduleUseCase.self)
+            let deleteRoutineAfterCurrentDayUseCase = DIContainer.shared.resolve(DeleteRoutineAfterCurrentDayUseCase.self)
+            let deleteRoutineForCurrentDayUseCase = DIContainer.shared.resolve(DeleteRoutineForCurrentDayUseCase.self)
             let viewModel = TodoViewModel(
                 createScheduleUseCase: createScheduleUseCase,
                 createRoutineUseCase: createRoutineUseCase,
@@ -135,7 +137,9 @@ final class HomeViewController: BaseViewController<BaseView> {
                 fetchRoutineUseCase: fetchRoutineUseCase,
                 finishScheduleUseCase: finishScheduleUseCase,
                 finishRoutineUseCase: finishRoutineUseCase,
-                deleteScheduleUseCase: deleteScheduleUseCase
+                deleteScheduleUseCase: deleteScheduleUseCase,
+                deleteRoutineAfterCurrentDayUseCase: deleteRoutineAfterCurrentDayUseCase,
+                deleteRoutineForCurrentDayUseCase: deleteRoutineForCurrentDayUseCase
             )
             let todoViewController = TodoViewController(viewModel: viewModel)
             todoViewController.delegate = coordinator

@@ -30,13 +30,14 @@ final class TodoViewModel: BaseViewModel {
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let deleteScheduleUseCase: DeleteScheduleUseCase
+    private let deleteRoutineAfterCurrentDayUseCase: DeleteRoutineAfterCurrentDayUseCase
+    private let deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var allDayTodoList: [any Eventable] = []
-    private(set) var timedTodoList: [any Eventable] = []
-    private var isOneDayDeleted: Bool = false
     private var weeklyScheduleList: [Date: [any Eventable]] = [:]
     private var weeklyRoutineList: [Date: [any Eventable]] = [:]
+    private(set) var allDayTodoList: [any Eventable] = []
+    private(set) var timedTodoList: [any Eventable] = []
     var selectedDate = Date()
     
     init(
@@ -47,7 +48,9 @@ final class TodoViewModel: BaseViewModel {
         fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         finishRoutineUseCase: FinishRoutineUseCase,
-        deleteScheduleUseCase: DeleteScheduleUseCase
+        deleteScheduleUseCase: DeleteScheduleUseCase,
+        deleteRoutineAfterCurrentDayUseCase: DeleteRoutineAfterCurrentDayUseCase,
+        deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
     ) {
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
@@ -57,6 +60,8 @@ final class TodoViewModel: BaseViewModel {
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
         self.deleteScheduleUseCase = deleteScheduleUseCase
+        self.deleteRoutineAfterCurrentDayUseCase = deleteRoutineAfterCurrentDayUseCase
+        self.deleteRoutineForCurrentDayUseCase = deleteRoutineForCurrentDayUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -65,7 +70,7 @@ final class TodoViewModel: BaseViewModel {
         shared
             .filter {
                 switch $0 {
-                case .checkBoxTapped, .didSelectedDate:
+                case .checkBoxTapped:
                     return false
                 default:
                     return true
@@ -78,8 +83,14 @@ final class TodoViewModel: BaseViewModel {
                 case .fetchRoutineDetail(let todo):
                     Task { await self?.fetchRoutineDetail(with: todo) }
                 case .moveToTomorrow(let todoId, let event):
-                    self?.isOneDayDeleted = true
                     self?.handleMoveToTomorrow(todoId: todoId, event: event)
+                case .deleteTodayTodo(let todoId, let isSchedule):
+                    self?.deleteEvent(todoId: todoId, isSchedule: isSchedule, isOneDayDeleted: true)
+                case .deleteAllTodo(let todoId, let isSchedule):
+                    self?.deleteEvent(todoId: todoId, isSchedule: isSchedule, isOneDayDeleted: false)
+                case .didSelectedDate(let selectedDate):
+                    self?.selectedDate = selectedDate
+                    self?.unionTodoListForSelectedDate(selectedDate: selectedDate)
                 default:
                     break
                 }
@@ -89,7 +100,7 @@ final class TodoViewModel: BaseViewModel {
         shared
             .filter {
                 switch $0 {
-                case .checkBoxTapped, .didSelectedDate:
+                case .checkBoxTapped:
                     return true
                 default:
                     return false
@@ -100,9 +111,6 @@ final class TodoViewModel: BaseViewModel {
                 switch event {
                 case .checkBoxTapped(let todo):
                     Task { await self?.finishTodo(with: todo) }
-                case .didSelectedDate(let selectedDate):
-                    self?.selectedDate = selectedDate
-                    self?.unionTodoListForSelectedDate(selectedDate: selectedDate)
                 default:
                     break
                 }
@@ -191,15 +199,15 @@ final class TodoViewModel: BaseViewModel {
     }
     
     // MARK: - 투두 삭제
-    private func deleteEvent(todoId: Int, isSchedule: Bool) {
+    private func deleteEvent(todoId: Int, isSchedule: Bool, isOneDayDeleted: Bool) {
         if isSchedule {
-            Task { await deleteSchedule(scheduleId: todoId) }
+            Task { await deleteSchedule(scheduleId: todoId, isOneDayDeleted: isOneDayDeleted) }
         } else {
-            Task { await deleteRoutine(routineId: todoId) }
+            Task { await deleteRoutine(routineId: todoId, isOneDayDeleted: isOneDayDeleted) }
         }
     }
     
-    private func deleteSchedule(scheduleId: Int) async {
+    private func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool) async {
         do {
             try await deleteScheduleUseCase.execute(
                 scheduleId: scheduleId,
@@ -212,9 +220,19 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func deleteRoutine(routineId: Int) async {
+    private func deleteRoutine(routineId: Int, isOneDayDeleted: Bool) async {
         do {
-            
+            if isOneDayDeleted {
+                try await deleteRoutineForCurrentDayUseCase.execute(
+                    routineId: routineId,
+                    date: selectedDate.convertToString(formatType: .yearMonthDay)
+                )
+            } else {
+                try await deleteRoutineAfterCurrentDayUseCase.execute(
+                    routineId: routineId,
+                    keepRecords: true
+                )
+            }
         } catch {
             output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
         }
@@ -225,7 +243,7 @@ final class TodoViewModel: BaseViewModel {
         let isSchedule = event.eventMode == .schedule
         let isAllDay = event.isAllDay
         
-        deleteEvent(todoId: todoId, isSchedule: isSchedule)
+        deleteEvent(todoId: todoId, isSchedule: isSchedule, isOneDayDeleted: true)
         updateEventToNextDay(todoId: todoId, isSchedule: isSchedule, isAllDay: isAllDay)
     }
     

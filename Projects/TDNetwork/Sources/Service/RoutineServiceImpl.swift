@@ -57,6 +57,6 @@ public struct RoutineServiceImpl: RoutineService {
     
     public func deleteRoutineForCurrentDay(routineId: Int, date: String) async throws {
         let target = RoutineAPI.deleteRoutineForCurrentDay(routineId: routineId, date: date)
-        
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
 }
