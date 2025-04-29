@@ -129,8 +129,8 @@ public final class TDFormMoveView: UIView {
         if let titleImageView = titleImageView {
             titleHorizontalStackView.addArrangedSubview(titleImageView)
             titleImageView.snp.makeConstraints {
-                $0.width.equalTo(20)
-                $0.height.equalTo(20)
+                $0.width.equalTo(24)
+                $0.height.equalTo(24)
             }
         }
         titleHorizontalStackView.addArrangedSubview(titleLabel)
