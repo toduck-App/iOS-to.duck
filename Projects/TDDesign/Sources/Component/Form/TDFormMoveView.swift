@@ -94,7 +94,7 @@ public final class TDFormMoveView: UIView {
             titleLabel.setTitleLabel("날짜")
             descriptionLabel.setText("없음")
         case .time:
-            titleImageView = UIImageView(image: TDImage.timeSmall)
+            titleImageView = UIImageView(image: TDImage.clockMedium)
             titleImageView?.contentMode = .scaleAspectFit
             titleLabel.setTitleLabel("시간")
             descriptionLabel.setText("없음")

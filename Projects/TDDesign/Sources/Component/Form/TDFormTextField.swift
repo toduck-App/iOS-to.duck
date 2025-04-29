@@ -117,7 +117,7 @@ extension TDFormTextField {
         
         titleHorizontalStackView.snp.makeConstraints { make in
             make.top.trailing.equalToSuperview()
-            make.leading.equalToSuperview().inset(4)
+            make.leading.equalToSuperview()
         }
         
         textField.snp.makeConstraints { make in
