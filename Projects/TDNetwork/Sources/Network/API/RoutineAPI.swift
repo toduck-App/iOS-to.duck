@@ -8,6 +8,7 @@ public enum RoutineAPI {
     case finishRoutine(routineId: Int, routineDate: String, isCompleted: Bool) // 루틴 완료
     case fetchRoutine(routineId: Int) // 하나의 루틴 상세 조회
     case fetchRoutineList(dateString: String) // 모든 루틴 조회
+    case fetchRoutineListForDates(startDate: String, endDate: String) // 날짜 범위에 따른 루틴 조회
     case fetchAvailableRoutineList // 사용 가능한 루틴 조회
     case updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) // 루틴 완료 상태 변경
     case updateRoutine(routineId: Int, routine: RoutineUpdateRequestDTO) // 루틴 수정
@@ -29,6 +30,8 @@ extension RoutineAPI: MFTarget {
             return "v1/routines/\(routineId)"
         case .fetchRoutineList:
             return "v1/routines/me"
+        case .fetchRoutineListForDates:
+            return "/v1/routines/me/dates"
         case .fetchAvailableRoutineList:
             return "v1/routines/me/available"
         case .updateCompleteRoutine(let routineId, _, _):
@@ -46,7 +49,7 @@ extension RoutineAPI: MFTarget {
             return .post
         case .finishRoutine:
             return .put
-        case .fetchRoutineList, .fetchRoutine, .fetchAvailableRoutineList:
+        case .fetchRoutineList, .fetchRoutine, .fetchRoutineListForDates, .fetchAvailableRoutineList:
             return .get
         case .updateCompleteRoutine,
                 .updateRoutine:
@@ -69,6 +72,11 @@ extension RoutineAPI: MFTarget {
             return [
                 "date": dateString
             ]
+        case .fetchRoutineListForDates(let startDate, let endDate):
+            return [
+                "startDate": startDate,
+                "endDate": endDate
+            ]
         case .deleteRoutine(_, let keepRecords):
             return [
                 "keepRecords": keepRecords
@@ -79,14 +87,15 @@ extension RoutineAPI: MFTarget {
     public var task: MFTask {
         switch self {
         case .fetchRoutineList,
-             .fetchRoutine,
-             .fetchAvailableRoutineList,
-             .deleteRoutine:
+                .fetchRoutine,
+                .fetchRoutineListForDates,
+                .fetchAvailableRoutineList,
+                .deleteRoutine:
             return .requestPlain
         case .finishRoutine(_, let routineDate, let isCompleted):
             return .requestParameters(parameters: [
                 "routineDate": routineDate,
-                "isCompleted": isCompleted	
+                "isCompleted": isCompleted
             ])
         case .createRoutine(let routine):
             return .requestParameters(parameters: [

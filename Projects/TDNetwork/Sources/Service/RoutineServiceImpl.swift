@@ -30,6 +30,11 @@ public struct RoutineServiceImpl: RoutineService {
         return try await provider.requestDecodable(of: RoutineListResponseDTO.self, target).value
     }
     
+    public func fetchRoutineListForDates(startDate: String, endDate: String) async throws -> RoutineListForDatesResponseDTO {
+        let target = RoutineAPI.fetchRoutineListForDates(startDate: startDate, endDate: endDate)
+        return try await provider.requestDecodable(of: RoutineListForDatesResponseDTO.self, target).value
+    }
+    
     public func fetchAvailableRoutineList() async throws -> RoutineListResponseDTO {
         let target = RoutineAPI.fetchAvailableRoutineList
         return try await provider.requestDecodable(of: RoutineListResponseDTO.self, target).value
