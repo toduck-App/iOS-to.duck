@@ -12,7 +12,7 @@ public enum RoutineAPI {
     case fetchAvailableRoutineList // 사용 가능한 루틴 조회
     case updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) // 루틴 완료 상태 변경
     case updateRoutine(routineId: Int, routine: RoutineUpdateRequestDTO) // 루틴 수정
-    case deleteRoutine(routineId: Int, keepRecords: Bool) // 루틴 삭제
+    case deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) // 해당 날짜 이후로 루틴 모두 삭제
 }
 
 extension RoutineAPI: MFTarget {
@@ -38,7 +38,7 @@ extension RoutineAPI: MFTarget {
             return "v1/routines/\(routineId)/completion"
         case .updateRoutine(let routineId, _):
             return "v1/routines/\(routineId)"
-        case .deleteRoutine(let routineId, _):
+        case .deleteRoutineAfterCurrentDay(let routineId, _):
             return "v1/routines/\(routineId)"
         }
     }
@@ -54,7 +54,7 @@ extension RoutineAPI: MFTarget {
         case .updateCompleteRoutine,
                 .updateRoutine:
             return .put
-        case .deleteRoutine:
+        case .deleteRoutineAfterCurrentDay:
             return .delete
         }
     }
@@ -77,7 +77,7 @@ extension RoutineAPI: MFTarget {
                 "startDate": startDate,
                 "endDate": endDate
             ]
-        case .deleteRoutine(_, let keepRecords):
+        case .deleteRoutineAfterCurrentDay(_, let keepRecords):
             return [
                 "keepRecords": keepRecords
             ]
@@ -90,7 +90,7 @@ extension RoutineAPI: MFTarget {
                 .fetchRoutine,
                 .fetchRoutineListForDates,
                 .fetchAvailableRoutineList,
-                .deleteRoutine:
+                .deleteRoutineAfterCurrentDay:
             return .requestPlain
         case .finishRoutine(_, let routineDate, let isCompleted):
             return .requestParameters(parameters: [

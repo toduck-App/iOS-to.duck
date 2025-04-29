@@ -50,8 +50,8 @@ public struct RoutineServiceImpl: RoutineService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
-    public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
-        let target = RoutineAPI.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
+    public func deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) async throws {
+        let target = RoutineAPI.deleteRoutineAfterCurrentDay(routineId: routineId, keepRecords: keepRecords)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
 }

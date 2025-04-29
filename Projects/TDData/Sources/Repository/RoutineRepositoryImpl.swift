@@ -42,7 +42,8 @@ public final class RoutineRepositoryImpl: RoutineRepository {
         try await service.updateRoutine(routineId: routineId, routine: requestDTO)
     }
     
-    public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
-        try await service.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
+    public func deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) async throws {
+        try await service.deleteRoutineAfterCurrentDay(routineId: routineId, keepRecords: keepRecords)
+    }
     }
 }

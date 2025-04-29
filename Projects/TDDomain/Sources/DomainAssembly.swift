@@ -170,11 +170,11 @@ public struct DomainAssembly: Assembly {
             return DeletePostUseCaseImpl(repository: repository)
         }
         
-        container.register(DeleteRoutineUseCase.self) { resolver in
+        container.register(DeleteRoutineAfterCurrentDayUseCase.self) { resolver in
             guard let repository = resolver.resolve(RoutineRepository.self) else {
                 fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
             }
-            return DeleteRoutineUseCaseImpl(repository: repository)
+            return DeleteRoutineAfterCurrentDayUseCaseImpl(repository: repository)
         }
         
         container.register(DeleteScheduleUseCase.self) { resolver in
