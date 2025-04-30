@@ -79,6 +79,16 @@ extension MyPageCoordinator: NavigationDelegate {
         childCoordinators.append(editProfileMenuCoordinator)
         editProfileMenuCoordinator.start()
     }
+    
+    func didTapShareProfile() {
+        let shareProfileCoordinator = ShareProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        shareProfileCoordinator.finishDelegate = self
+        childCoordinators.append(shareProfileCoordinator)
+        shareProfileCoordinator.start()
+    }
 
     func didTapNotificationSettings() {
         print("Notification Settings Tapped")

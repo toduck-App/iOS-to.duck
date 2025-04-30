@@ -166,24 +166,7 @@ extension MyPageViewController: MyPageSocialButtonDelegate {
     }
 
     func didTapShareButton() {
-        guard let userId = TDTokenManager.shared.userId else { return }
-        let icon = TDImage.appIcon
-        let profileURL = URL(string: "toduck://profile?userId=\(userId)")!
-        let shareItem = ProfileShareItem(
-            url: profileURL,
-            title: "Toduck에서 나의 프로필을 확인하세요!",
-            icon: icon
-        )
-
-        let activityVC = UIActivityViewController(
-            activityItems: [shareItem],
-            applicationActivities: nil
-        )
-
-        if let popover = activityVC.popoverPresentationController {
-            popover.sourceView = layoutView.socialButtonView
-        }
-        present(activityVC, animated: true)
+        coordinator?.didTapShareProfile()
     }
 }
 

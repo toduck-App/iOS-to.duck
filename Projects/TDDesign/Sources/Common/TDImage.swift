@@ -309,6 +309,7 @@ public enum TDImage {
     
     public enum Illust {
         public static let withdraw = TDDesignAsset.Images.withdraw.image
+        public static let shareProfile = TDDesignAsset.Images.shareProfile.image
     }
     
     public enum Pen {
