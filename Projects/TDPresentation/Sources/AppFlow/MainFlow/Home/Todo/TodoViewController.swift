@@ -566,11 +566,21 @@ extension TodoViewController.TimeLineCellItem: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case let (.allDay(e1, s1), .allDay(e2, s2)):
-            return e1.id == e2.id && s1 == s2
+            return e1.id == e2.id &&
+                   e1.title == e2.title &&
+                   e1.isFinished == e2.isFinished &&
+                   s1 == s2
+
         case let (.timeEvent(h1, e1, s1), .timeEvent(h2, e2, s2)):
-            return h1 == h2 && s1 == s2 && e1.id == e2.id
+            return h1 == h2 &&
+                   s1 == s2 &&
+                   e1.id == e2.id &&
+                   e1.title == e2.title &&
+                   e1.isFinished == e2.isFinished
+
         case let (.gap(s1, e1), .gap(s2, e2)):
             return s1 == s2 && e1 == e2
+
         default:
             return false
         }
@@ -581,14 +591,18 @@ extension TodoViewController.TimeLineCellItem: Equatable {
         case let .allDay(event, showTime):
             hasher.combine("allDay")
             hasher.combine(event.id)
+            hasher.combine(event.title)
+            hasher.combine(event.isFinished)
             hasher.combine(showTime)
-            
+
         case let .timeEvent(hour, event, showTime):
             hasher.combine("routine")
             hasher.combine(hour)
             hasher.combine(event.id)
+            hasher.combine(event.title)
+            hasher.combine(event.isFinished)
             hasher.combine(showTime)
-            
+
         case let .gap(startHour, endHour):
             hasher.combine("gap")
             hasher.combine(startHour)
