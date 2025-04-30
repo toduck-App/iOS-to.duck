@@ -66,13 +66,14 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         weekCalendarView.select(selectedDate)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
-        fetchWeekTodo(for: selectedDate)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setupFloatingUIInWindow()
+        fetchWeekTodo(for: selectedDate)
+        input.send(.didSelectedDate(date: selectedDate))
         eventMakorFloattingButton.isHidden = false
     }
     
@@ -95,7 +96,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         input.send(.fetchWeeklyTodoList(startDate: startDate, endDate: endDate))
     }
     
-    // 뷰가 나타날 때 플로팅 버튼 처리
+    // MARK: 플로팅 버튼 처리
     private func setupFloatingUIInWindow() {
         guard !didAddDimmedView,
               let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -144,7 +145,6 @@ final class TodoViewController: BaseViewController<BaseView> {
         }
     }
     
-    // 뷰가 사라질 때 플로팅 버튼 처리
     private func hideFloatingViews() {
         dimmedView.removeFromSuperview()
         floatingActionMenuView.removeFromSuperview()
@@ -190,20 +190,20 @@ final class TodoViewController: BaseViewController<BaseView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .fetchedTodoList:
-                    self?.applyTimelineSnapshot()
+                case .fetchedTodoList,
+                        .deletedTodo:
+                    self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
                     let eventDisplayItem = EventDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
                     let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
+                case .unionedTodoList:
+                    self?.applyTimelineSnapshot()
                 case .successFinishTodo,
-                        .tomorrowTodoCreated,
-                        .deletedTodo:
-                    if let formattedDate = self?.selectedDate {
-                        self?.input.send(.didSelectedDate(date: formattedDate))
-                    }
+                        .tomorrowTodoCreated:
+                    self?.fetchWeekTodo(for: self?.selectedDate ?? Date())
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
                 }
@@ -269,8 +269,11 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     private func configureDimmedViewGesture() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimmedView))
-        dimmedView.addGestureRecognizer(tap)
+        let tapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(didTapDimmedView)
+        )
+        dimmedView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     @objc
@@ -289,7 +292,6 @@ extension TodoViewController: FSCalendarDelegate {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDate = date
-        viewModel.selectedDate = date
         input.send(.didSelectedDate(date: date))
     }
     

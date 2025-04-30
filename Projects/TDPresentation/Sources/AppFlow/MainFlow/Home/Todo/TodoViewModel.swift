@@ -18,6 +18,7 @@ final class TodoViewModel: BaseViewModel {
         case fetchedRoutineDetail(Routine)
         case successFinishTodo
         case tomorrowTodoCreated
+        case unionedTodoList
         case deletedTodo
         case failure(error: String)
     }
@@ -34,11 +35,11 @@ final class TodoViewModel: BaseViewModel {
     private let deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private var weeklyScheduleList: [Date: [any Eventable]] = [:]
-    private var weeklyRoutineList: [Date: [any Eventable]] = [:]
+    private var weeklyScheduleList: [Date: [Schedule]] = [:]
+    private var weeklyRoutineList: [Date: [Routine]] = [:]
+    private var selectedDate = Date()
     private(set) var allDayTodoList: [any Eventable] = []
     private(set) var timedTodoList: [any Eventable] = []
-    var selectedDate = Date()
     
     init(
         createScheduleUseCase: CreateScheduleUseCase,
@@ -133,23 +134,24 @@ final class TodoViewModel: BaseViewModel {
             )
             self.weeklyScheduleList = fetchedWeeklyScheduleList
             self.weeklyRoutineList = fetchedWeeklyRoutineList
+            output.send(.fetchedTodoList)
         } catch {
             output.send(.failure(error: "투두를 불러오는데 실패했습니다."))
         }
     }
     
     private func unionTodoListForSelectedDate(selectedDate: Date) {
-        let selectedSchedule = weeklyScheduleList[selectedDate] ?? []
-        let selectedRoutine = weeklyRoutineList[selectedDate] ?? []
+        let selectedDateScheduleList = weeklyScheduleList[selectedDate.normalized] ?? []
+        let selectedDateRoutineList = weeklyRoutineList[selectedDate.normalized] ?? []
         
-        let todoList: [any Eventable] = (selectedSchedule as [any Eventable]) + (selectedRoutine as [any Eventable])
+        let todoList: [any Eventable] = (selectedDateScheduleList as [any Eventable]) + (selectedDateRoutineList as [any Eventable])
         
         self.allDayTodoList = todoList.filter { $0.time == nil }
         self.timedTodoList = todoList
             .filter { $0.time != nil }
             .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
         
-        output.send(.fetchedTodoList)
+        output.send(.unionedTodoList)
     }
     
     private func fetchRoutineDetail(with todo: any Eventable) async {
