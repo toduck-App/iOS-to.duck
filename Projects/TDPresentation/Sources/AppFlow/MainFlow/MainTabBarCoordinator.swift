@@ -72,9 +72,7 @@ final class MainTabBarCoordinator: Coordinator {
 // MARK: - CoordinatorFinishDelegate
 extension MainTabBarCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
-        if let index = childCoordinators.firstIndex(where: { $0 === childCoordinator }) {
-            childCoordinators.remove(at: index)
-        }
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }
 

@@ -56,6 +56,9 @@ public final class AppCoordinator: Coordinator {
         ) { [weak self] _ in
             self?.childCoordinators.removeAll()
             self?.navigationController.popToRootViewController(animated: true)
+            if let currentViewController = self?.navigationController.topViewController as? ErrorAlertDisplayable {
+                currentViewController.showErrorAlert(errorMessage: "재로그인이 필요합니다.")
+            }
             self?.startAuthFlow()
         }
     }
@@ -66,6 +69,7 @@ public final class AppCoordinator: Coordinator {
             injector: injector
         )
         tabBarCoordinator.start()
+        tabBarCoordinator.finishDelegate = self
         childCoordinators.append(tabBarCoordinator)
     }
     
@@ -102,6 +106,9 @@ extension AppCoordinator: CoordinatorFinishDelegate {
 
         if childCoordinator is AuthCoordinator {
             startTabBarFlow()
+        } else if childCoordinator is MainTabBarCoordinator {
+            navigationController.popToRootViewController(animated: true)
+            startAuthFlow()
         }
     }
 }
