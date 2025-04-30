@@ -107,7 +107,13 @@ extension MyPageCoordinator: NavigationDelegate {
     }
 
     func didTapTermsOfUse() {
-        print("Terms of Use Tapped")
+        let termOfUseCoordinator = TermOfUseCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        termOfUseCoordinator.finishDelegate = self
+        childCoordinators.append(termOfUseCoordinator)
+        termOfUseCoordinator.start()
     }
 
     func didTapPrivacyPolicy() {

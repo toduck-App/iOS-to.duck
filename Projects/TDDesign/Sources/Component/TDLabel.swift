@@ -161,7 +161,7 @@ public final class TDLabel: UILabel {
         let attributedString = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: labelText))
         let range = NSRange(location: 0, length: labelText.count)
         let paragraphStyle = NSMutableParagraphStyle()
-        let lineHeight = toduckFont.size * toduckFont.lineHeightMultiple
+        let lineHeight = toduckFont.size * lineHeightMultiple
         paragraphStyle.minimumLineHeight = lineHeight
         paragraphStyle.maximumLineHeight = lineHeight
         paragraphStyle.alignment = alignment
