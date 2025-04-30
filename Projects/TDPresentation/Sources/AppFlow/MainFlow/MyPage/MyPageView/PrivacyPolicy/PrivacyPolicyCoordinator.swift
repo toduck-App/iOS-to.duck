@@ -2,7 +2,7 @@ import TDCore
 import TDDomain
 import UIKit
 
-final class TermOfUseCoordinator: Coordinator {
+final class PrivacyPolicyCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -17,8 +17,8 @@ final class TermOfUseCoordinator: Coordinator {
     }
     
     func start() {
-        let termOfUseViewController = TermOfUseViewController()
-        termOfUseViewController.coordinator = self
-        navigationController.pushTDViewController(termOfUseViewController, animated: true)
+        let privacyPolicyViewController = PrivacyPolicyViewController()
+        privacyPolicyViewController.coordinator = self
+        navigationController.pushTDViewController(privacyPolicyViewController, animated: true)
     }
 }

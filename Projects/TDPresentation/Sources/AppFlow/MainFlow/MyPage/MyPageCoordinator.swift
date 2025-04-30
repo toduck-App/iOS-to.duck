@@ -117,6 +117,12 @@ extension MyPageCoordinator: NavigationDelegate {
     }
 
     func didTapPrivacyPolicy() {
-        print("Privacy Policy Tapped")
+        let privacyPolicyCoordinator = PrivacyPolicyCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        privacyPolicyCoordinator.finishDelegate = self
+        childCoordinators.append(privacyPolicyCoordinator)
+        privacyPolicyCoordinator.start()
     }
 }
