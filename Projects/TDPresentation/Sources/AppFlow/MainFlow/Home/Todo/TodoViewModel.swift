@@ -4,7 +4,8 @@ import TDDomain
 
 final class TodoViewModel: BaseViewModel {
     enum Input {
-        case fetchTodoList(startDate: String, endDate: String)
+        case didSelectedDate(date: Date)
+        case fetchWeeklyTodoList(startDate: String, endDate: String)
         case fetchRoutineDetail(any Eventable)
         case deleteTodayTodo(todoId: Int, isSchedule: Bool)
         case deleteAllTodo(todoId: Int, isSchedule: Bool)
@@ -17,6 +18,7 @@ final class TodoViewModel: BaseViewModel {
         case fetchedRoutineDetail(Routine)
         case successFinishTodo
         case tomorrowTodoCreated
+        case unionedTodoList
         case deletedTodo
         case failure(error: String)
     }
@@ -24,57 +26,72 @@ final class TodoViewModel: BaseViewModel {
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
-    private let fetchRoutineListUseCase: FetchRoutineListUseCase
+    private let fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let deleteScheduleUseCase: DeleteScheduleUseCase
+    private let deleteRoutineAfterCurrentDayUseCase: DeleteRoutineAfterCurrentDayUseCase
+    private let deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var weeklyScheduleList: [Date: [Schedule]] = [:]
+    private var weeklyRoutineList: [Date: [Routine]] = [:]
+    private var selectedDate = Date()
     private(set) var allDayTodoList: [any Eventable] = []
     private(set) var timedTodoList: [any Eventable] = []
-    private var isOneDayDeleted: Bool = false
-    var selectedDate: Date?
     
     init(
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchScheduleListUseCase: FetchScheduleListUseCase,
-        fetchRoutineListUseCase: FetchRoutineListUseCase,
+        fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         finishRoutineUseCase: FinishRoutineUseCase,
-        deleteScheduleUseCase: DeleteScheduleUseCase
+        deleteScheduleUseCase: DeleteScheduleUseCase,
+        deleteRoutineAfterCurrentDayUseCase: DeleteRoutineAfterCurrentDayUseCase,
+        deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
     ) {
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
-        self.fetchRoutineListUseCase = fetchRoutineListUseCase
+        self.fetchRoutineListForDatesUseCase = fetchRoutineListForDatesUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
         self.deleteScheduleUseCase = deleteScheduleUseCase
+        self.deleteRoutineAfterCurrentDayUseCase = deleteRoutineAfterCurrentDayUseCase
+        self.deleteRoutineForCurrentDayUseCase = deleteRoutineForCurrentDayUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         let shared = input.share()
         
         shared
-            .filter { event in
-                if case .checkBoxTapped = event {
+            .filter {
+                switch $0 {
+                case .checkBoxTapped:
                     return false
+                default:
+                    return true
                 }
-                return true
             }
             .sink { [weak self] event in
                 switch event {
-                case .fetchTodoList(let startDate, let endDate):
-                    Task { await self?.fetchTodoList(startDate: startDate, endDate: endDate) }
+                case .fetchWeeklyTodoList(let startDate, let endDate):
+                    Task { await self?.fetchWeeklyTodoList(startDate: startDate, endDate: endDate) }
                 case .fetchRoutineDetail(let todo):
                     Task { await self?.fetchRoutineDetail(with: todo) }
                 case .moveToTomorrow(let todoId, let event):
-                    self?.isOneDayDeleted = true
                     self?.handleMoveToTomorrow(todoId: todoId, event: event)
+                case .deleteTodayTodo(let todoId, let isSchedule):
+                    self?.deleteEvent(todoId: todoId, isSchedule: isSchedule, isOneDayDeleted: true)
+                case .deleteAllTodo(let todoId, let isSchedule):
+                    self?.deleteEvent(todoId: todoId, isSchedule: isSchedule, isOneDayDeleted: false)
+                case .didSelectedDate(let selectedDate):
+                    self?.selectedDate = selectedDate
+                    self?.unionTodoListForSelectedDate(selectedDate: selectedDate)
                 default:
                     break
                 }
@@ -82,16 +99,21 @@ final class TodoViewModel: BaseViewModel {
             .store(in: &cancellables)
         
         shared
-            .filter { event in
-                if case .checkBoxTapped = event {
+            .filter {
+                switch $0 {
+                case .checkBoxTapped:
                     return true
+                default:
+                    return false
                 }
-                return false
             }
             .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
             .sink { [weak self] event in
-                if case .checkBoxTapped(let todo) = event {
+                switch event {
+                case .checkBoxTapped(let todo):
                     Task { await self?.finishTodo(with: todo) }
+                default:
+                    break
                 }
             }
             .store(in: &cancellables)
@@ -100,22 +122,36 @@ final class TodoViewModel: BaseViewModel {
     }
     
     // MARK: - 투두 리스트 가져오기
-    private func fetchTodoList(startDate: String, endDate: String) async {
+    private func fetchWeeklyTodoList(startDate: String, endDate: String) async {
         do {
-            let scheduleList = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
-            let routineList = try await fetchRoutineListUseCase.execute(dateString: startDate)
-            
-            let todoList: [any Eventable] = (scheduleList as [any Eventable]) + (routineList as [any Eventable])
-            
-            self.allDayTodoList = todoList.filter { $0.time == nil }
-            self.timedTodoList = todoList
-                .filter { $0.time != nil }
-                .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
-            
+            let fetchedWeeklyScheduleList = try await fetchScheduleListUseCase.execute(
+                startDate: startDate,
+                endDate: endDate
+            )
+            let fetchedWeeklyRoutineList = try await fetchRoutineListForDatesUseCase.execute(
+                startDate: startDate,
+                endDate: endDate
+            )
+            self.weeklyScheduleList = fetchedWeeklyScheduleList
+            self.weeklyRoutineList = fetchedWeeklyRoutineList
             output.send(.fetchedTodoList)
         } catch {
-            output.send(.failure(error: "일정을 불러오는데 실패했습니다."))
+            output.send(.failure(error: "투두를 불러오는데 실패했습니다."))
         }
+    }
+    
+    private func unionTodoListForSelectedDate(selectedDate: Date) {
+        let selectedDateScheduleList = weeklyScheduleList[selectedDate.normalized] ?? []
+        let selectedDateRoutineList = weeklyRoutineList[selectedDate.normalized] ?? []
+        
+        let todoList: [any Eventable] = (selectedDateScheduleList as [any Eventable]) + (selectedDateRoutineList as [any Eventable])
+        
+        self.allDayTodoList = todoList.filter { $0.time == nil }
+        self.timedTodoList = todoList
+            .filter { $0.time != nil }
+            .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
+        
+        output.send(.unionedTodoList)
     }
     
     private func fetchRoutineDetail(with todo: any Eventable) async {
@@ -143,7 +179,7 @@ final class TodoViewModel: BaseViewModel {
             try await finishScheduleUseCase.execute(
                 scheduleId: todo.id ?? 0,
                 isComplete: !todo.isFinished,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+                queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
             )
             output.send(.successFinishTodo)
         } catch {
@@ -155,7 +191,7 @@ final class TodoViewModel: BaseViewModel {
         do {
             try await finishRoutineUseCase.execute(
                 routineId: todo.id ?? 0,
-                routineDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? "",
+                routineDate: selectedDate.convertToString(formatType: .yearMonthDay),
                 isCompleted: !todo.isFinished
             )
             output.send(.successFinishTodo)
@@ -165,33 +201,59 @@ final class TodoViewModel: BaseViewModel {
     }
     
     // MARK: - 투두 삭제
-    private func deleteEvent(todoId: Int, isSchedule: Bool) {
+    private func deleteEvent(todoId: Int, isSchedule: Bool, isOneDayDeleted: Bool) {
         if isSchedule {
-            Task { await deleteSchedule(scheduleId: todoId) }
+            Task { await deleteSchedule(scheduleId: todoId, isOneDayDeleted: isOneDayDeleted) }
         } else {
-            Task { await deleteRoutine(routineId: todoId) }
+            Task { await deleteRoutine(routineId: todoId, isOneDayDeleted: isOneDayDeleted) }
         }
     }
     
-    private func deleteSchedule(scheduleId: Int) async {
+    private func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool) async {
         do {
             try await deleteScheduleUseCase.execute(
                 scheduleId: scheduleId,
                 isOneDayDeleted: isOneDayDeleted,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+                queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
             )
+            removeEventFromWeeklyList(eventId: scheduleId, isSchedule: true)
             output.send(.deletedTodo)
         } catch {
             output.send(.failure(error: "일정을 삭제할 수 없습니다."))
         }
     }
     
-    private func deleteRoutine(routineId: Int) async {
+    private func deleteRoutine(routineId: Int, isOneDayDeleted: Bool) async {
         do {
-            
+            if isOneDayDeleted {
+                try await deleteRoutineForCurrentDayUseCase.execute(
+                    routineId: routineId,
+                    date: selectedDate.convertToString(formatType: .yearMonthDay)
+                )
+            } else {
+                try await deleteRoutineAfterCurrentDayUseCase.execute(
+                    routineId: routineId,
+                    keepRecords: true
+                )
+            }
+            removeEventFromWeeklyList(eventId: routineId, isSchedule: false)
+            output.send(.deletedTodo)
         } catch {
             output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
         }
+    }
+    
+    private func removeEventFromWeeklyList(eventId: Int, isSchedule: Bool) {
+        if isSchedule {
+            if let events = weeklyScheduleList[selectedDate] {
+                weeklyScheduleList[selectedDate] = events.filter { $0.id != eventId }
+            }
+        } else {
+            if let events = weeklyRoutineList[selectedDate] {
+                weeklyRoutineList[selectedDate] = events.filter { $0.id != eventId }
+            }
+        }
+        unionTodoListForSelectedDate(selectedDate: selectedDate)
     }
     
     // MARK: - 내일로 미루기
@@ -199,14 +261,12 @@ final class TodoViewModel: BaseViewModel {
         let isSchedule = event.eventMode == .schedule
         let isAllDay = event.isAllDay
         
-        deleteEvent(todoId: todoId, isSchedule: isSchedule)
+        deleteEvent(todoId: todoId, isSchedule: isSchedule, isOneDayDeleted: true)
         updateEventToNextDay(todoId: todoId, isSchedule: isSchedule, isAllDay: isAllDay)
     }
     
     private func updateEventToNextDay(todoId: Int, isSchedule: Bool, isAllDay: Bool) {
         guard let event = getEvent(for: todoId, isAllDay: isAllDay) else { return }
-        guard let selectedDate = selectedDate else { return }
-        
         let nextDay = getNextDay(from: selectedDate)
         
         if isSchedule {
@@ -253,5 +313,4 @@ final class TodoViewModel: BaseViewModel {
             output.send(.failure(error: "루틴을 생성할 수 없습니다."))
         }
     }
-    
 }

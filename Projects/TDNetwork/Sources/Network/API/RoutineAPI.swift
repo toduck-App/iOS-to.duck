@@ -8,10 +8,12 @@ public enum RoutineAPI {
     case finishRoutine(routineId: Int, routineDate: String, isCompleted: Bool) // 루틴 완료
     case fetchRoutine(routineId: Int) // 하나의 루틴 상세 조회
     case fetchRoutineList(dateString: String) // 모든 루틴 조회
+    case fetchRoutineListForDates(startDate: String, endDate: String) // 날짜 범위에 따른 루틴 조회
     case fetchAvailableRoutineList // 사용 가능한 루틴 조회
     case updateCompleteRoutine(routineId: Int, routineDateString: String, isCompleted: Bool) // 루틴 완료 상태 변경
     case updateRoutine(routineId: Int, routine: RoutineUpdateRequestDTO) // 루틴 수정
-    case deleteRoutine(routineId: Int, keepRecords: Bool) // 루틴 삭제
+    case deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) // 해당 날짜 이후로 루틴 모두 삭제
+    case deleteRoutineForCurrentDay(routineId: Int, date: String) // 해당 날짜의 루틴만 삭제
 }
 
 extension RoutineAPI: MFTarget {
@@ -29,14 +31,18 @@ extension RoutineAPI: MFTarget {
             return "v1/routines/\(routineId)"
         case .fetchRoutineList:
             return "v1/routines/me"
+        case .fetchRoutineListForDates:
+            return "v1/routines/me/dates"
         case .fetchAvailableRoutineList:
             return "v1/routines/me/available"
         case .updateCompleteRoutine(let routineId, _, _):
             return "v1/routines/\(routineId)/completion"
         case .updateRoutine(let routineId, _):
             return "v1/routines/\(routineId)"
-        case .deleteRoutine(let routineId, _):
+        case .deleteRoutineAfterCurrentDay(let routineId, _):
             return "v1/routines/\(routineId)"
+        case .deleteRoutineForCurrentDay(let routineId, _):
+            return "v1/routines/\(routineId)/individual"
         }
     }
     
@@ -46,12 +52,12 @@ extension RoutineAPI: MFTarget {
             return .post
         case .finishRoutine:
             return .put
-        case .fetchRoutineList, .fetchRoutine, .fetchAvailableRoutineList:
+        case .fetchRoutineList, .fetchRoutine, .fetchRoutineListForDates, .fetchAvailableRoutineList:
             return .get
         case .updateCompleteRoutine,
                 .updateRoutine:
             return .put
-        case .deleteRoutine:
+        case .deleteRoutineAfterCurrentDay, .deleteRoutineForCurrentDay:
             return .delete
         }
     }
@@ -69,9 +75,18 @@ extension RoutineAPI: MFTarget {
             return [
                 "date": dateString
             ]
-        case .deleteRoutine(_, let keepRecords):
+        case .fetchRoutineListForDates(let startDate, let endDate):
+            return [
+                "startDate": startDate,
+                "endDate": endDate
+            ]
+        case .deleteRoutineAfterCurrentDay(_, let keepRecords):
             return [
                 "keepRecords": keepRecords
+            ]
+        case .deleteRoutineForCurrentDay(_, let date):
+            return [
+                "date": date
             ]
         }
     }
@@ -79,14 +94,16 @@ extension RoutineAPI: MFTarget {
     public var task: MFTask {
         switch self {
         case .fetchRoutineList,
-             .fetchRoutine,
-             .fetchAvailableRoutineList,
-             .deleteRoutine:
+                .fetchRoutine,
+                .fetchRoutineListForDates,
+                .fetchAvailableRoutineList,
+                .deleteRoutineAfterCurrentDay,
+                .deleteRoutineForCurrentDay:
             return .requestPlain
         case .finishRoutine(_, let routineDate, let isCompleted):
             return .requestParameters(parameters: [
                 "routineDate": routineDate,
-                "isCompleted": isCompleted	
+                "isCompleted": isCompleted
             ])
         case .createRoutine(let routine):
             return .requestParameters(parameters: [

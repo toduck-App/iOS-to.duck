@@ -15,6 +15,8 @@ final class MockScheduleRepository: ScheduleRepository {
 
     var didCallCreate = false
     var createdSchedule: Schedule?
+    
+    init(_ schedules: [Schedule]) { self.mockScheduleList = schedules }
 
     func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
         return mockScheduleList
@@ -42,8 +44,8 @@ final class MockScheduleRepository: ScheduleRepository {
         didCallUpdate = true
         updatedScheduleId = scheduleId
     }
-
-    func deleteSchedule(scheduleId: Int) async throws {
+    
+    func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String) async throws {
         didCallDelete = true
         deletedScheduleId = scheduleId
     }

@@ -170,11 +170,11 @@ public struct DomainAssembly: Assembly {
             return DeletePostUseCaseImpl(repository: repository)
         }
         
-        container.register(DeleteRoutineUseCase.self) { resolver in
+        container.register(DeleteRoutineAfterCurrentDayUseCase.self) { resolver in
             guard let repository = resolver.resolve(RoutineRepository.self) else {
                 fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
             }
-            return DeleteRoutineUseCaseImpl(repository: repository)
+            return DeleteRoutineAfterCurrentDayUseCaseImpl(repository: repository)
         }
         
         container.register(DeleteScheduleUseCase.self) { resolver in
@@ -289,6 +289,13 @@ public struct DomainAssembly: Assembly {
             }
             return FetchUserShareUrlUseCaseImpl(repository: repository)
         }
+        
+        container.register(FetchRoutineListForDatesUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchRoutineListForDatesUseCaseImpl(repository: repository)
+        }
 
         container.register(FetchUserUseCase.self) { resolver in
             guard let repository = resolver.resolve(UserRepository.self) else {
@@ -402,10 +409,6 @@ public struct DomainAssembly: Assembly {
             return UpdatePostUseCaseImpl(repository: repository)
         }
         
-        container.register(BuildMonthScheduleDictUseCase.self) { _ in
-            return BuildMonthScheduleDictUseCaseImpl()
-        }
-        
         container.register(UpdateScheduleUseCase.self) { resolver in
             guard let repository = resolver.resolve(ScheduleRepository.self) else {
                 fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
@@ -502,6 +505,13 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return DeleteCommentUseCaseImpl(repository: repository)
+        }
+        
+        container.register(DeleteRoutineForCurrentDayUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
+            }
+            return DeleteRoutineForCurrentDayUseCaseImpl(repository: repository)
         }
         
         container.register(ShareRoutineUseCase.self) { resolver in

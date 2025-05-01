@@ -2,12 +2,12 @@ import TDDomain
 import Foundation
 
 public struct RoutineListResponseDTO: Decodable {
-    let queryDate: String?
-    let routines: [RoutineListDetail]
+    public let queryDate: String?
+    public let routines: [RoutineListDetail]
     
-    func convertToRoutineList() -> [Routine] {
+    public func convertToRoutineList() -> [Routine] {
         routines.map { routine in
-            return Routine(
+            Routine(
                 id: routine.routineId,
                 title: routine.title,
                 category: TDCategory(colorHex: routine.color, imageName: routine.category),
@@ -26,13 +26,13 @@ public struct RoutineListResponseDTO: Decodable {
 }
 
 public struct RoutineListDetail: Decodable {
-    let routineId: Int
-    let color: String
-    let category: String
-    let daysOfWeek: [String]?
-    let time: String?
-    let title: String
-    let memo: String?
-    let isCompleted: Bool?
-    let sharedCount: Int?
+    public let routineId: Int
+    public let color: String
+    public let category: String
+    public let daysOfWeek: [String]?
+    public let time: String?
+    public let title: String
+    public let memo: String?
+    public let isCompleted: Bool?
+    public let sharedCount: Int?
 }

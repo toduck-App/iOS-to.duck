@@ -11,7 +11,8 @@ let project = Project(
             sources: .sources,
             dependencies: [
                 .external(dependency: .Swinject),
-                .external(dependency: .KeyChainManager)
+                .external(dependency: .KeyChainManager),
+                .external(dependency: .Then)
             ]
         )
     ]

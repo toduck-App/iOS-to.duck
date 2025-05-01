@@ -30,6 +30,11 @@ public struct RoutineServiceImpl: RoutineService {
         return try await provider.requestDecodable(of: RoutineListResponseDTO.self, target).value
     }
     
+    public func fetchRoutineListForDates(startDate: String, endDate: String) async throws -> RoutineListForDatesResponseDTO {
+        let target = RoutineAPI.fetchRoutineListForDates(startDate: startDate, endDate: endDate)
+        return try await provider.requestDecodable(of: RoutineListForDatesResponseDTO.self, target).value
+    }
+    
     public func fetchAvailableRoutineList() async throws -> RoutineListResponseDTO {
         let target = RoutineAPI.fetchAvailableRoutineList
         return try await provider.requestDecodable(of: RoutineListResponseDTO.self, target).value
@@ -45,8 +50,13 @@ public struct RoutineServiceImpl: RoutineService {
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
-    public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
-        let target = RoutineAPI.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
+    public func deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) async throws {
+        let target = RoutineAPI.deleteRoutineAfterCurrentDay(routineId: routineId, keepRecords: keepRecords)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func deleteRoutineForCurrentDay(routineId: Int, date: String) async throws {
+        let target = RoutineAPI.deleteRoutineForCurrentDay(routineId: routineId, date: date)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
 }
