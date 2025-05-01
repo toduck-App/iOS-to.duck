@@ -7,16 +7,15 @@ import UIKit
 
 final class TimerViewController: BaseViewController<TimerView>, TDToastPresentable {
     weak var coordinator: TimerCoordinator?
-    private let viewModel: TimerViewModel!
+    private let viewModel: TimerViewModel
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
     
     private var cancellables = Set<AnyCancellable>()
     private var theme: TDTimerTheme = .Bboduck
-    // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
-    private var focusCount: Int = 0
-
+    private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
+    
     // TODO: 처음 로딩시 테마 2개가 동시에 보이는것 수정
-
+    
     // MARK: - Initializer
     
     init(viewModel: TimerViewModel) {
@@ -24,9 +23,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         super.init()
     }
     
-    required init?(coder: NSCoder) {
-        viewModel = nil
-        super.init(coder: coder)
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -40,44 +39,39 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         input.send(.fetchTimerInitialStatus)
     }
     
+    // MARK: - Common Methods
+    
     override func configure() {
         setupNavigation()
         
         // timer buttons
-        layoutView.playButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.startTimer)
-            }, for: .touchUpInside
-        )
+        layoutView.playButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.startTimer)
+        }, for: .touchUpInside)
         
-        layoutView.pauseButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.pauseTimer)
-            }, for: .touchUpInside
-        )
+        layoutView.pauseButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.showToast(type: .orange, title: "집중 타이머를 잠시 멈췄어요", message: "20초 안에 재시작하면 집중시간이 이어집니다")
+            self?.input.send(.pauseTimer)
+        }, for: .touchUpInside)
         
-        layoutView.resetButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.resetTimer)
-            }, for: .touchUpInside
-        )
-
-        layoutView.stopButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.stopTimer)
-            }, for: .touchUpInside
-        )
+        layoutView.resetButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.resetTimer)
+        }, for: .touchUpInside)
+        
+        layoutView.stopButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.stopTimer)
+        }, for: .touchUpInside)
     }
     
     // MARK: - Binding
     
     override func binding() {
-        let output: AnyPublisher<TimerViewModel.Output, Never> = viewModel.transform(input: input.eraseToAnyPublisher())
-
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
@@ -114,11 +108,13 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.dropDownView.delegate = self
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
         
-        layoutView.rightNavigationMenuButton.addAction(
-            UIAction { [weak self] _ in
-                self?.layoutView.dropDownView.showDropDown()
-            }, for: .touchUpInside
-        )
+        layoutView.leftNavigationItem.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapCalendarButton()
+        }, for: .touchUpInside)
+        
+        layoutView.rightNavigationMenuButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.dropDownView.showDropDown()
+        }, for: .touchUpInside)
         
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
@@ -161,7 +157,7 @@ extension TimerViewController {
         }
         layoutView.bboduckTimerView.isRunning = isRunning
         layoutView.simpleTimerView.isRunning = isRunning
-
+        
         if isRunning {
             handleControlStack(.playing)
         } else {
@@ -184,7 +180,7 @@ extension TimerViewController {
         
         layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
         layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
-
+        
         // background theme
         layoutView.backgroundColor = theme.backgroundColor
         
@@ -192,7 +188,7 @@ extension TimerViewController {
         navigationItem.rightBarButtonItem?.customView?.subviews.forEach { view in
             view.tintColor = theme.navigationColor
         }
-
+        
         var index = 0
         navigationItem.leftBarButtonItem?.customView?.subviews.forEach { view in
             if view is UIImageView {
@@ -220,7 +216,7 @@ extension TimerViewController {
         
         layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        for i in 1 ... setting.focusCountLimit {
+        for i in 1...setting.focusCountLimit {
             if i <= newCount {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
@@ -234,14 +230,14 @@ extension TimerViewController {
     }
     
     private func updateMaxFocusCount(with maxCount: Int) {
-        guard let setting: TDTimerSetting = viewModel.timerSetting else { return }
+        guard let setting = viewModel.timerSetting else { return }
         
         for view in layoutView.focusCountStackView.arrangedSubviews {
             layoutView.focusCountStackView.removeArrangedSubview(view)
             view.removeFromSuperview()
         }
         
-        for i in 1 ... setting.focusCountLimit {
+        for i in 1...setting.focusCountLimit {
             if i <= maxCount {
                 layoutView.focusCountStackView.addArrangedSubview(
                     createFocusCountTomatoView())
@@ -261,7 +257,7 @@ extension TimerViewController {
             TDLogger.error("[TimerViewController]\(message)")
         case .outOfRange:
             handleControlStack(.pause)
-
+            
             TDLogger.error("[TimerViewController] outOfRange")
         }
     }
