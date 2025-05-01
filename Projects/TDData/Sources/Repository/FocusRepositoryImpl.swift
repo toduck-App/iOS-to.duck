@@ -7,6 +7,10 @@ struct FocusRepositoryImpl: FocusRepository {
         self.service = service
     }
     
+    func saveFocus(date: String, targetCount: Int, settingCount: Int, time: Int) async throws {
+        try await service.saveFocus(date: date, targetCount: targetCount, settingCount: settingCount, time: time)
+    }
+    
     func fetchFocusPercent(yearMonth: String) async throws -> Int {
         let response = try await service.fetchFocusPercent(yearMonth: yearMonth)
         return response.percent

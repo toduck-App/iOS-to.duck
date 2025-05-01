@@ -7,6 +7,11 @@ public struct FocusServiceImpl: FocusService {
         self.provider = provider
     }
     
+    public func saveFocus(date: String, targetCount: Int, settingCount: Int, time: Int) async throws {
+        let target = FocusAPI.saveFocus(date: date, targetCount: targetCount, settingCount: settingCount, time: time)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
     public func fetchFocusPercent(yearMonth: String) async throws -> FocusPercentResponseDTO {
         let target = FocusAPI.fetchFocusPercent(yearMonth: yearMonth)
         let response = try await provider.requestDecodable(of: FocusPercentResponseDTO.self, target)

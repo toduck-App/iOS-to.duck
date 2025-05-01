@@ -4,6 +4,7 @@ import TDCore
 import TDDomain
 
 public enum FocusAPI {
+    case saveFocus(date: String, targetCount: Int, settingCount: Int, time: Int)
     case fetchFocusPercent(yearMonth: String)
     case fetchFocusList(yearMonth: String)
 }
@@ -19,6 +20,8 @@ extension FocusAPI: MFTarget {
             return "v1/concentration/percent"
         case .fetchFocusList:
             return "v1/concentration/monthly"
+        case .saveFocus:
+            return "/v1/concentration/save"
         }
     }
     
@@ -27,6 +30,8 @@ extension FocusAPI: MFTarget {
         case .fetchFocusPercent,
                 .fetchFocusList:
             return .get
+        case .saveFocus:
+            return .post
         }
     }
     
@@ -40,6 +45,8 @@ extension FocusAPI: MFTarget {
             return [
                 "yearMonth": yearMonth
             ]
+        case .saveFocus:
+            return nil
         }
     }
     
@@ -48,6 +55,13 @@ extension FocusAPI: MFTarget {
         case .fetchFocusPercent,
                 .fetchFocusList:
             return .requestPlain
+        case .saveFocus(let date, let targetCount, let settingCount, let time):
+            return .requestParameters(parameters: [
+                "date": date,
+                "targetCount": targetCount,
+                "settingCount": settingCount,
+                "time": time
+            ])
         }
     }
     
