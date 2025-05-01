@@ -1,7 +1,7 @@
 import TDCore
 
 public protocol UpdateFocusCountUseCase {
-    func execute(_ count: Int) -> Result<Void, TDCore.TDDataError>
+    func execute(_ count: Int) throws
 }
 
 final class UpdateFocusCountUseCaseImpl: UpdateFocusCountUseCase {
@@ -12,11 +12,11 @@ final class UpdateFocusCountUseCaseImpl: UpdateFocusCountUseCase {
         self.repository = repository
     }
 
-    public func execute(_ count: Int) -> Result<Void, TDCore.TDDataError> {
-        guard count >= min else { 
-            return .failure(.updateEntityFailure)
+    public func execute(_ count: Int) throws {
+        guard count >= min else {
+            throw TDDataError.updateEntityFailure
         }
 
-        return repository.updateFocusCount(count: count)
+        try repository.updateFocusCount(count: count)
     }
 }

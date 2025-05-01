@@ -1,7 +1,7 @@
 import TDCore
 
 public protocol UpdateTimerSettingUseCase {
-    func execute(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError>
+    func execute(setting: TDTimerSetting) throws
 }
 
 final class UpdateTimerSettingUseCaseImpl: UpdateTimerSettingUseCase {
@@ -12,10 +12,10 @@ final class UpdateTimerSettingUseCaseImpl: UpdateTimerSettingUseCase {
         self.repository = repository
     }
 
-    public func execute(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError> {
+    public func execute(setting: TDTimerSetting) throws {
         guard setting.focusCountLimit >= min, setting.focusCountLimit <= max else {
-            return .failure(.updateEntityFailure)
+            throw TDDataError.updateEntityFailure
          }
-        return repository.updateTimerSetting(setting: setting)
+        return try repository.updateTimerSetting(setting: setting)
     }
 }

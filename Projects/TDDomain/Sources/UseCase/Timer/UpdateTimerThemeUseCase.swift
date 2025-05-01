@@ -1,7 +1,7 @@
 import TDCore
 
 public protocol UpdateTimerThemeUseCase {
-    func execute(theme: TDTimerTheme) -> Result<Void, TDCore.TDDataError>
+    func execute(theme: TDTimerTheme) throws
 }
 
 final class UpdateTimerThemeUseCaseImpl: UpdateTimerThemeUseCase {
@@ -11,7 +11,7 @@ final class UpdateTimerThemeUseCaseImpl: UpdateTimerThemeUseCase {
         self.repository = repository
     }
 
-    func execute(theme: TDTimerTheme) -> Result<Void, TDCore.TDDataError> {
-        return repository.updateTimerTheme(theme: theme)
+    func execute(theme: TDTimerTheme) throws {
+        try repository.updateTimerTheme(theme: theme)
     }
 }

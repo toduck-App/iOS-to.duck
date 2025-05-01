@@ -4,14 +4,14 @@ public protocol TimerRepository {
     // MARK: - User Defualt
 
     func fetchTimerSetting() -> TDTimerSetting
-    func updateTimerSetting(setting: TDTimerSetting) -> Result<Void, TDCore.TDDataError>
+    func updateTimerSetting(setting: TDTimerSetting) throws
 
     func fetchTimerTheme() -> TDTimerTheme
-    func updateTimerTheme(theme: TDTimerTheme) -> Result<Void, TDCore.TDDataError>
+    func updateTimerTheme(theme: TDTimerTheme) throws
 
     // MARK: - Need Server
 
     func fetchFocusCount() -> Int
-    func updateFocusCount(count: Int) -> Result<Void, TDCore.TDDataError>
-    func resetFocusCount() -> Result<Void, TDCore.TDDataError>
+    func updateFocusCount(count: Int) throws
+    func resetFocusCount() throws
 }

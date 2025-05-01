@@ -28,6 +28,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -63,11 +65,10 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         layoutView.stopButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
+            self?.updateFocusCount(with: 0)
             self?.input.send(.stopTimer)
         }, for: .touchUpInside)
     }
-    
-    // MARK: - Binding
     
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
@@ -88,8 +89,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateMaxFocusCount(with: maxCount)
                 case let .updatedTimerTheme(theme), let .fetchedTimerTheme(theme):
                     self?.updateTheme(theme: theme)
-                case let .failure(code):
-                    self?.handleFailure(code)
+                case let .failure(message):
+                    self?.showErrorAlert(errorMessage: message)
                 case .updatedTimerSetting:
                     self?.updatedTimerSetting()
                 default:
@@ -247,19 +248,6 @@ extension TimerViewController {
             }
         }
         layoutView.focusCountStackView.layoutIfNeeded()
-    }
-    
-    // TODO: 간단한 토스트 구현하면 Implement하기
-    private func handleFailure(_ code: TimerViewModel.TimerViewModelError) {
-        switch code {
-        case .updateFailed:
-            let message = "[\(code)]: 알 수 없는 오류가 발생했습니다."
-            TDLogger.error("[TimerViewController]\(message)")
-        case .outOfRange:
-            handleControlStack(.pause)
-            
-            TDLogger.error("[TimerViewController] outOfRange")
-        }
     }
     
     private func updatedTimerSetting() {

@@ -1,7 +1,7 @@
 import TDCore
 
 public protocol ResetFocusCountUseCase {
-    func execute() -> Result<Void, TDCore.TDDataError>
+    func execute() throws
 }
 
 final class ResetFocusCountUseCaseImpl: ResetFocusCountUseCase {
@@ -11,7 +11,7 @@ final class ResetFocusCountUseCaseImpl: ResetFocusCountUseCase {
         self.repository = repository
     }
 
-    public func execute() -> Result<Void, TDCore.TDDataError> {
-        return repository.resetFocusCount()
+    public func execute() throws {
+        return try repository.resetFocusCount()
     }
 }
