@@ -14,7 +14,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         didSet {
             layoutView.focusTimeField.leftButton.isEnabled = focusTime > TDTimerSetting.minFocusDuration
             layoutView.focusTimeField.rightButton.isEnabled = focusTime < TDTimerSetting.maxFocusDuration
-            layoutView.focusTimeField.outputLabel.text = "\(focusTime)분"
+            layoutView.focusTimeField.outputLabel.setText("\(focusTime)분")
         }
     }
 
@@ -22,7 +22,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         didSet {
             layoutView.focusCountField.leftButton.isEnabled = focusCountLimit > TDTimerSetting.minFocusCountLimit
             layoutView.focusCountField.rightButton.isEnabled = focusCountLimit < TDTimerSetting.maxFocusCountLimit
-            layoutView.focusCountField.outputLabel.text = "\(focusCountLimit)회"
+            layoutView.focusCountField.outputLabel.setText("\(focusCountLimit)회")
         }
     }
 
@@ -30,7 +30,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         didSet {
             layoutView.restTimeField.leftButton.isEnabled = restTime > TDTimerSetting.minRestDuration
             layoutView.restTimeField.rightButton.isEnabled = restTime < TDTimerSetting.maxRestDuration
-            layoutView.restTimeField.outputLabel.text = "\(restTime)분"
+            layoutView.restTimeField.outputLabel.setText("\(restTime)분")
         }
     }
 
@@ -51,6 +51,8 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         input.send(.fetchTimerSetting)
     }
 
+    // MARK: - Common Methods
+    
     override func configure() {
         // focus time field
         layoutView.focusTimeField.leftButton.addAction(

@@ -1,5 +1,6 @@
 import UIKit
 import TDDesign
+
 final class TimerAlarmView: BaseView {
     let exitButton: TDBaseButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear,foregroundColor: TDColor.Neutral.neutral700)
 

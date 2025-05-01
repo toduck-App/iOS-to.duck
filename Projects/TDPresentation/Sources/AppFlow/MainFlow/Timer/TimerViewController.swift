@@ -140,10 +140,11 @@ extension TimerViewController {
         let minute = (remainedTime / 60) % 60
         let hour = minute / 60
         
-        layoutView.remainedFocusTimeLabel.text =
-        hour >= 1
-        ? String(format: "%d:%02d:%02d", hour, minute, second)
-        : String(format: "%02d:%02d", minute, second)
+        layoutView.remainedFocusTimeLabel.setText(
+            hour >= 1
+            ? String(format: "%d:%02d:%02d", hour, minute, second)
+            : String(format: "%02d:%02d", minute, second)
+        )
         
         // progress 업데이트
         layoutView.simpleTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
