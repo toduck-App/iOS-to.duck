@@ -43,7 +43,10 @@ public final class TimerViewModel: BaseViewModel {
     }
     
     // MARK: - UseCase
+    /// Server
+    private let saveFocusUseCase: SaveFocusUseCase
     
+    /// Storage
     private var focusTimerUseCase: FocusTimerUseCase
     private var restTimerUseCase: RestTimerUseCase
     private var pauseTimerUseCase: PauseTimerUseCase
@@ -64,6 +67,7 @@ public final class TimerViewModel: BaseViewModel {
     // MARK: - initializers
     
     init(
+        saveFocusUseCase: SaveFocusUseCase,
         focusTimerUseCase: FocusTimerUseCase,
         restTimerUseCase: RestTimerUseCase,
         pauseTimerUseCase: PauseTimerUseCase,
@@ -75,6 +79,7 @@ public final class TimerViewModel: BaseViewModel {
         updateFocusCountUseCase: UpdateFocusCountUseCase,
         resetFocusCountUseCase: ResetFocusCountUseCase
     ) {
+        self.saveFocusUseCase = saveFocusUseCase
         self.focusTimerUseCase = focusTimerUseCase
         self.restTimerUseCase = restTimerUseCase
         self.pauseTimerUseCase = pauseTimerUseCase
@@ -107,7 +112,7 @@ public final class TimerViewModel: BaseViewModel {
             case .pauseTimer:
                 self?.pauseTimer()
             case .stopTimer:
-                self?.stopTimer()
+                Task { await self?.stopTimer() }
             case .resetTimer:
                 self?.resetTimer()
             case .fetchTimerRunningStatus:
@@ -188,20 +193,20 @@ extension TimerViewModel {
     }
     
     /// 집중 타이머를 중지하고 진행상황을 보고
-    private func stopTimer() {
+    private func stopTimer() async {
         resetTimer()
         restTimerUseCase.reset()
         let count = fetchFocusCountUseCase.execute()
         do {
             try updateFocusCountUseCase.execute(0)
             resetFocusCount()
+            let limit = fetchTimerSettingUseCase.execute().focusCountLimit
+            TDLogger.debug("[TimerViewModel#stopTimer] count: \(count), limit: \(limit)")
+            
+            try await saveFocusUseCase.execute(date: "2025-05-01", targetCount: 2, settingCount: 5, time: 123)
         } catch {
             output.send(.failure("집중 정상 종료를 실패했습니다."))
         }
-        let limit = fetchTimerSettingUseCase.execute().focusCountLimit
-        
-        // TODO: 비지니스 로직 추가
-        TDLogger.debug("[TimerViewModel#stopTimer] count: \(count), limit: \(limit)")
     }
     
     private func fetchTimerRunningStatus() {
