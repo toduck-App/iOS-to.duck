@@ -5,10 +5,10 @@ public protocol UpdateTimerSettingUseCase {
 }
 
 final class UpdateTimerSettingUseCaseImpl: UpdateTimerSettingUseCase {
-    private let repository: TimerRepository
+    private let repository: FocusRepository
     private let max = 5
     private let min = 1
-    public init(repository: TimerRepository) {
+    public init(repository: FocusRepository) {
         self.repository = repository
     }
 

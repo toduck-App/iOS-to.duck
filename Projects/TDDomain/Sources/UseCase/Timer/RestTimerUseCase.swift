@@ -23,13 +23,13 @@ final class RestTimerUseCaseImpl: RestTimerUseCase {
     public var isRunning: Bool {
         return timer != nil
     }
-    private let repository: TimerRepository
+    private let repository: FocusRepository
 
     weak var delegate: RestTimerUseCaseDelegate?
 
     // MARK: - Initializer
 
-    init(repository: TimerRepository) {
+    init(repository: FocusRepository) {
         self.repository = repository
     }
 

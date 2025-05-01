@@ -33,7 +33,10 @@ public struct DataAssembly: Assembly {
             guard let service = container.resolve(FocusService.self) else {
                 fatalError("FocusService is not registered")
             }
-            return FocusRepositoryImpl(service: service)
+            guard let storage = container.resolve(TimerStorage.self) else {
+                fatalError("Storage is not registered")
+            }
+            return FocusRepositoryImpl(service: service, storage: storage)
         }
         
         container.register(MyPageRepository.self) { _ in
@@ -87,12 +90,6 @@ public struct DataAssembly: Assembly {
             }
             return RecentKeywordRepositoryImpl(storage: storage)
         }
-
-        container.register(TimerRepository.self) { _ in
-            guard let storage = container.resolve(TimerStorage.self) else {
-                fatalError("Storage is not registered")
-            }
-            return TimerRepositoryImpl(storage: storage)
-        }.inObjectScope(.container)
     }
 }
+

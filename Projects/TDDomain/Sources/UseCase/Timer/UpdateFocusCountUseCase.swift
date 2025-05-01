@@ -5,10 +5,10 @@ public protocol UpdateFocusCountUseCase {
 }
 
 final class UpdateFocusCountUseCaseImpl: UpdateFocusCountUseCase {
-    private let repository: TimerRepository
+    private let repository: FocusRepository
     private let min = 0
 
-    public init(repository: TimerRepository) {
+    public init(repository: FocusRepository) {
         self.repository = repository
     }
 

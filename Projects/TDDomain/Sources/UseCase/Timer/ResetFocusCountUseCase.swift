@@ -5,9 +5,9 @@ public protocol ResetFocusCountUseCase {
 }
 
 final class ResetFocusCountUseCaseImpl: ResetFocusCountUseCase {
-    private let repository: TimerRepository
+    private let repository: FocusRepository
 
-    public init(repository: TimerRepository) {
+    public init(repository: FocusRepository) {
         self.repository = repository
     }
 

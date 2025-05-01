@@ -3,9 +3,9 @@ public protocol FetchFocusCountUseCase {
 }
 
 final class FetchFocusCountImpl: FetchFocusCountUseCase {
-    private let repository: TimerRepository
+    private let repository: FocusRepository
 
-    public init(repository: TimerRepository) {
+    public init(repository: FocusRepository) {
         self.repository = repository
     }
 
