@@ -11,7 +11,7 @@ public protocol FocusTimerUseCase {
 
 public protocol FocusTimerUseCaseDelegate: AnyObject {
     func didUpdateFocusTime(remainTime: Int)
-    func didFinishFocusTimer()
+    func didFinishFocusTimerOneCycle()
     func didStartFocusTimer()
 }
 
@@ -51,7 +51,7 @@ final class FocusTimerUseCaseImpl: FocusTimerUseCase {
                 remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
                 delegate?.didUpdateFocusTime(remainTime: remainTime)
             } else {
-                delegate?.didFinishFocusTimer()
+                delegate?.didFinishFocusTimerOneCycle()
                 stop()
             }
         }

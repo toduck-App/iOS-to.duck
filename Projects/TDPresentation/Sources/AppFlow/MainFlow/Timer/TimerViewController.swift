@@ -14,8 +14,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private var theme: TDTimerTheme = .Bboduck
     private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
     
-    // TODO: 처음 로딩시 테마 2개가 동시에 보이는것 수정
-    
     // MARK: - Initializer
     
     init(viewModel: TimerViewModel) {
@@ -33,50 +31,14 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        input.send(.fetchTimerTheme)
-        input.send(.fetchFocusCount)
-        input.send(.fetchTimerSetting)
-        input.send(.fetchTimerInitialStatus)
+        input.send(.fetchFocusAllSetting)
     }
     
     // MARK: - Common Methods
     
     override func configure() {
         setupNavigation()
-        
-        // timer buttons
-        layoutView.playButton.addAction(UIAction { [weak self] _ in
-            HapticManager.impact(.soft)
-            self?.dismissToast()
-            self?.input.send(.startTimer)
-            self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
-            self?.tabBarController?.tabBar.isUserInteractionEnabled = false
-        }, for: .touchUpInside)
-        
-        layoutView.pauseButton.addAction(UIAction { [weak self] _ in
-            HapticManager.impact(.soft)
-            self?.showToast(
-                type: .orange,
-                title: "집중 타이머를 잠시 멈췄어요",
-                message: "20초 안에 재시작하면 집중시간이 이어집니다",
-                duration: 20
-            )
-            self?.input.send(.pauseTimer)
-            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
-        }, for: .touchUpInside)
-        
-        layoutView.resetButton.addAction(UIAction { [weak self] _ in
-            HapticManager.impact(.soft)
-            self?.input.send(.resetTimer)
-        }, for: .touchUpInside)
-        
-        layoutView.stopButton.addAction(UIAction { [weak self] _ in
-            HapticManager.impact(.soft)
-            self?.dismissToast()
-            self?.input.send(.stopTimer)
-            self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
-            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
-        }, for: .touchUpInside)
+        setupButtonActions()
     }
     
     override func binding() {
@@ -90,8 +52,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateTimer(remainedTime)
                 case let .updatedTimerRunning(isRunning):
                     self?.updateTimerRunning(isRunning)
-                case .finishedTimer:
-                    self?.finishedTimer()
+                case .finishedTimerOneCycle:
+                    self?.finishedTimerOneCycle()
                 case let .updatedFocusCount(count), let .fetchedFocusCount(count):
                     self?.updateFocusCount(with: count)
                 case let .updatedMaxFocusCount(maxCount):
@@ -126,14 +88,13 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                 case .successFinishedTimer:
                     self?.updateFocusCount(with: 0)
                     self?.handleControlStack(.initilize)
-                    self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
                 case let .failure(message):
                     self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }
     
-    func setupNavigation() {
+    private func setupNavigation() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: layoutView.leftNavigationItem)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -153,12 +114,65 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
-}
-
-// MARK: - Private Methods
-
-extension TimerViewController {
-    private func finishedTimer() {
+    
+    private func setupButtonActions() {
+        layoutView.playButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.didTapStartTimerButton)
+            self?.didTapStartTimerButton()
+        }, for: .touchUpInside)
+        
+        layoutView.pauseButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.didTapPauseTimerButton)
+            self?.didTapPauseTimerButton()
+        }, for: .touchUpInside)
+        
+        layoutView.resetButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.didTapResetTimerButton)
+            self?.didTapResetTimerButton()
+        }, for: .touchUpInside)
+        
+        layoutView.stopButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.input.send(.didTapStopTimerButton)
+            self?.didTapStopTimerButton()
+        }, for: .touchUpInside)
+    }
+    
+    private func didTapStartTimerButton() {
+        dismissToast()
+        updateTimerRunning(true)
+        layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
+        tabBarController?.tabBar.isUserInteractionEnabled = false
+    }
+    
+    private func didTapPauseTimerButton() {
+        updateTimerRunning(false)
+        showToast(
+            type: .orange,
+            title: "집중 타이머를 잠시 멈췄어요",
+            message: "20초 안에 재시작하면 집중시간이 이어집니다",
+            duration: 20
+        )
+        tabBarController?.tabBar.isUserInteractionEnabled = true
+    }
+    
+    private func didTapResetTimerButton() {
+        updateTimerRunning(false)
+        updateTimer(viewModel.timerSetting?.toFocusDurationMinutes() ?? 0)
+    }
+    
+    private func didTapStopTimerButton() {
+        dismissToast()
+        layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
+        tabBarController?.tabBar.isUserInteractionEnabled = true
+    }
+    
+    // MARK: - Private Methods
+    
+    private func finishedTimerOneCycle() {
         handleControlStack(.pause)
         input.send(.increaseFocusCount)
     }

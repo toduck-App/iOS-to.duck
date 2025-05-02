@@ -9,21 +9,22 @@ import Then
 
 public final class TimerViewModel: BaseViewModel {
     enum Input {
+        case fetchFocusAllSetting
         case fetchTimerSetting
-        case updateTimerSetting(setting: TDTimerSetting)
         case fetchTimerTheme
-        case updateTimerTheme(theme: TDTimerTheme)
         case fetchTimerRunningStatus
-        case fetchTimerInitialStatus
         case fetchFocusCount
-        case startTimer
-        case resetTimer
-        case stopTimer
-        case pauseTimer
+        case updateTimerSetting(setting: TDTimerSetting)
+        case updateTimerTheme(theme: TDTimerTheme)
         case increaseFocusCount
         case increaseMaxFocusCount
         case decreaseMaxFocusCount
         case resetFocusCount
+        
+        case didTapStartTimerButton
+        case didTapResetTimerButton
+        case didTapStopTimerButton
+        case didTapPauseTimerButton
     }
     
     enum Output {
@@ -31,7 +32,7 @@ public final class TimerViewModel: BaseViewModel {
         case updatedTimerRunning(_ isRunning: Bool?)
         case updatedTimerTheme(theme: TDTimerTheme)
         case updatedTimerSetting
-        case finishedTimer
+        case finishedTimerOneCycle
         case fetchedFocusCount(count: Int)
         case fetchedTimerSetting(setting: TDTimerSetting) // viewmodel에서 변수로 활용됨
         case fetchedTimerTheme(theme: TDTimerTheme)
@@ -110,6 +111,12 @@ public final class TimerViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
+            case .fetchFocusAllSetting:
+                self?.fetchTimerTheme()
+                self?.fetchFocusCount()
+                self?.fetchTimerSetting()
+                self?.fetchTimerInitialStatus()
+                
             case .fetchTimerSetting:
                 self?.fetchTimerSetting()
             case let .updateTimerSetting(setting):
@@ -118,18 +125,16 @@ public final class TimerViewModel: BaseViewModel {
                 self?.fetchTimerTheme()
             case let .updateTimerTheme(theme):
                 self?.updateTimerTheme(theme: theme)
-            case .startTimer:
+            case .didTapStartTimerButton:
                 self?.startTimer()
-            case .pauseTimer:
+            case .didTapPauseTimerButton:
                 self?.pauseTimer()
-            case .stopTimer:
+            case .didTapStopTimerButton:
                 Task { await self?.stopTimer(isSuccess: false) }
-            case .resetTimer:
-                self?.resetTimer()
+            case .didTapResetTimerButton:
+                self?.focusTimerUseCase.reset()
             case .fetchTimerRunningStatus:
                 self?.fetchTimerRunningStatus()
-            case .fetchTimerInitialStatus:
-                self?.fetchTimerInitialStatus()
             case .fetchFocusCount:
                 self?.fetchFocusCount()
             case .increaseFocusCount:
@@ -184,32 +189,23 @@ extension TimerViewModel {
     
     private func startTimer() {
         startTime = Date()
+        focusLimit = fetchTimerSettingUseCase.execute().focusCountLimit
         
         focusTimerUseCase.start()
         pauseTimerUseCase.reset()
         restTimerUseCase.reset()
-        
-        output.send(.updatedTimerRunning(focusTimerUseCase.isRunning))
     }
     
     /// 일시적으로 타이머를 멈춤
     private func pauseTimer() {
         focusTimerUseCase.stop()
-        
         pauseTimerUseCase.start()
-        output.send(.updatedTimerRunning(focusTimerUseCase.isRunning))
-    }
-    
-    private func resetTimer() {
-        focusTimerUseCase.reset()
-        output.send(.updatedTimer(timerSetting!.toFocusDurationMinutes()))
-        output.send(.updatedTimerRunning(focusTimerUseCase.isRunning))
     }
     
     /// 집중 타이머를 중지하고 진행상황을 보고
     private func stopTimer(isSuccess: Bool) async {
         endTime = Date()
-        resetTimer()
+        focusTimerUseCase.reset()
         restTimerUseCase.reset()
 
         let actualStartTime = startTime ?? Date()
@@ -218,21 +214,23 @@ extension TimerViewModel {
         let resetPenalty = resetTime * (isSuccess ? resetCount : max(0, resetCount - 1))
         let adjustedFocusDuration = max(0, rawFocusDuration - resetPenalty)
 
-        let focusCount = fetchFocusCountUseCase.execute()
-        let focusLimit = fetchTimerSettingUseCase.execute().focusCountLimit
+        let currentFocusCount = fetchFocusCountUseCase.execute()
 
         do {
+            print(fetchFocusCountUseCase.execute())
             resetFocusCount()
+            print(fetchFocusCountUseCase.execute())
             resetCount = 0
             
-            TDLogger.info("집중 타이머 종료: focusCount \(focusCount), focusLimit \(focusLimit), adjustedFocusDuration \(adjustedFocusDuration)초")
+            TDLogger.info("집중 타이머 종료: currentFocusCount \(currentFocusCount), focusLimit \(focusLimit), adjustedFocusDuration \(adjustedFocusDuration)초")
+            print(fetchFocusCountUseCase.execute())
             try await saveFocusUseCase.execute(
                 date: currentDay.convertToString(formatType: .yearMonthDay),
                 targetCount: focusCount,
                 settingCount: focusLimit,
                 time: adjustedFocusDuration
             )
-
+            print(fetchFocusCountUseCase.execute())
             output.send(.successFinishedTimer)
         } catch {
             output.send(.failure("집중 정상 종료를 실패했습니다."))
@@ -250,15 +248,15 @@ extension TimerViewModel {
     
     private func increaseFocusCount() {
         do {
-            var count = fetchFocusCountUseCase.execute()
-            count += 1
+            focusCount = fetchFocusCountUseCase.execute()
+            focusCount += 1
             
-            try updateFocusCountUseCase.execute(count)
+            try updateFocusCountUseCase.execute(focusCount)
             
-            if count % timerSetting!.focusCountLimit == 0 {
+            if focusCount % timerSetting!.focusCountLimit == 0 {
                 output.send(.updatedFocusCount(count: timerSetting!.focusCountLimit))
             } else {
-                output.send(.updatedFocusCount(count: count % timerSetting!.focusCountLimit))
+                output.send(.updatedFocusCount(count: focusCount % timerSetting!.focusCountLimit))
             }
         } catch {
             output.send(.failure("집중 토마토 개수 범위를 벗어났습니다."))
@@ -321,14 +319,13 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
         output.send(.updatedTimer(remainTime))
     }
     
-    public func didFinishFocusTimer() {
+    public func didFinishFocusTimerOneCycle() {
         output.send(.updatedTimer(0))
-        output.send(.finishedTimer)
+        output.send(.finishedTimerOneCycle)
         
-        let limit = fetchTimerSettingUseCase.execute().focusCountLimit
-        let count = fetchFocusCountUseCase.execute()
+        let currentFocusCount = fetchFocusCountUseCase.execute()
         
-        if (count + 1) % limit == 0 {
+        if (currentFocusCount + 1) % focusLimit == 0 {
             Task { await stopTimer(isSuccess: true) }
             restTimerUseCase.stop()
             resetFocusCount()
@@ -339,6 +336,8 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
         }
     }
 }
+
+// MARK: - RestTimerUseCaseDelegate
 
 extension TimerViewModel: RestTimerUseCaseDelegate {
     public func didStartRestTimer() {
@@ -355,6 +354,8 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
         resetCount += 1
     }
 }
+
+// MARK: - PauseTimerUseCaseDelegate
 
 extension TimerViewModel: PauseTimerUseCaseDelegate {
     public func didUpdatePauseTime(remainTime: Int) {

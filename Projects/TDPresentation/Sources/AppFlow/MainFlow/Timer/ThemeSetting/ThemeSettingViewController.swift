@@ -22,6 +22,7 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         input.send(.fetchTimerTheme)
     }
 
