@@ -49,6 +49,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         // timer buttons
         layoutView.playButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
+            self?.dismissToast()
             self?.input.send(.startTimer)
         }, for: .touchUpInside)
         
@@ -71,6 +72,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.stopButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
             self?.updateFocusCount(with: 0)
+            self?.dismissToast()
             self?.input.send(.stopTimer)
         }, for: .touchUpInside)
     }
@@ -98,8 +100,12 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.showErrorAlert(errorMessage: message)
                 case .updatedTimerSetting:
                     self?.updatedTimerSetting()
-                default:
-                    break
+                case .fetchedTimerSetting(let setting):
+                    TDLogger.debug("Timer Setting: \(setting)")
+                case .stoppedTimer:
+                    TDLogger.debug("Timer Stopped")
+                case .startTimer:
+                    TDLogger.debug("Timer Started")
                 }
             }.store(in: &cancellables)
     }

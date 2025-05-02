@@ -48,6 +48,18 @@ extension TDToastPresentable where Self: UIViewController {
                 toastView.removeFromSuperview()
             }
         }
+    }
+    
+    func dismissToast() {
+        guard let keyWindow = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else {
+            return
+        }
         
+        keyWindow.subviews
+            .filter { $0 is TDToast }
+            .forEach { $0.removeFromSuperview() }
     }
 }

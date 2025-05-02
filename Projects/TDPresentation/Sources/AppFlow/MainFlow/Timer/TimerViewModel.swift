@@ -324,10 +324,7 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
 
 extension TimerViewModel: PauseTimerUseCaseDelegate {
     public func didUpdatePauseTime(remainTime: Int) {
-        if remainTime == pauseTimerUseCase.pauseTime - 1 {
-            // TODO: Show Alert
-            TDLogger.debug("[TimerViewModel#didUpdatePauseTime] Show Alert")
-        }
+        TDLogger.debug("현재 휴식 남은 시간: \(remainTime)")
     }
     
     public func didFinishPauseTimer() {
