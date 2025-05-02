@@ -2,74 +2,16 @@ import TDDesign
 import UIKit
 
 final class TimerSettingView: BaseView {
-    let recommandView = UIView().then { recommand in
-        recommand.layer.borderWidth = 1
-        recommand.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        recommand.layer.cornerRadius = 10
-        
-        let title = TDLabel(
-            labelText: "토덕의 추천 설정", toduckFont: .boldBody2, alignment: .center,
-            toduckColor: TDColor.Neutral.neutral800
-        )
-        
-        let fireImageView = UIImageView().then {
-            $0.image = TDImage.fireSmall
-        }
-        
-        let recommandLabelStack = UIStackView().then {
-            $0.spacing = 4
-            $0.axis = .horizontal
-            $0.distribution = .fillProportionally
-            $0.alignment = .center
-        }
-        
-        // addview
-        recommand.addSubview(fireImageView)
-        recommand.addSubview(title)
-        recommand.addSubview(recommandLabelStack)
-        
-        for title in ["집중 횟수 4회", "집중 시간 25분", "휴식 시간 5분"] {
-            let view = UIView().then {
-                let label = TDLabel(toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
-                label.setText(title)
-                $0.backgroundColor = TDColor.Neutral.neutral50
-                $0.layer.cornerRadius = 4
-                
-                $0.addSubview(label)
-                label.snp.makeConstraints { make in
-                    make.edges.equalToSuperview().inset(8)
-                }
-            }
-            recommandLabelStack.addArrangedSubview(view)
-        }
-        
-        // layout
-        fireImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(10)
-            make.top.equalToSuperview().inset(16)
-            make.size.equalTo(24)
-        }
-        
-        title.snp.makeConstraints { make in
-            make.leading.equalTo(fireImageView.snp.trailing).inset(-4)
-            make.centerY.equalTo(fireImageView.snp.centerY)
-        }
-        
-        recommandLabelStack.snp.makeConstraints { make in
-            make.top.equalTo(fireImageView.snp.bottom).offset(6)
-            make.leading.equalTo(fireImageView.snp.leading)
-        }
-    }
-    
+    let recommandView = TimerRecommendView()
     let exitButton: TDBaseButton = TDBaseButton(image: TDImage.X.x1Medium, backgroundColor: .clear,foregroundColor: TDColor.Neutral.neutral700)
     let timerSettingTitleLabel = TDLabel(
         labelText: "타이머 설정", toduckFont: .boldHeader4, alignment: .center,
         toduckColor: TDColor.Neutral.neutral800
     )
     
+    let focusCountField = TimerSettingFieldControl(state: .focusCount)
     let focusTimeField = TimerSettingFieldControl(state: .focusTime)
     let restTimeField = TimerSettingFieldControl(state: .restTime)
-    let focusCountField = TimerSettingFieldControl(state: .focusCount)
     
     let fieldStack = UIStackView().then {
         $0.spacing = 28
@@ -91,7 +33,7 @@ final class TimerSettingView: BaseView {
         addSubview(timerSettingTitleLabel)
         addSubview(recommandView)
         
-        for item in [focusTimeField, focusCountField, restTimeField] {
+        for item in [focusCountField, focusTimeField, restTimeField] {
             fieldStack.addArrangedSubview(item)
         }
         
@@ -112,10 +54,9 @@ final class TimerSettingView: BaseView {
         }
         
         recommandView.snp.makeConstraints { make in
-            make.height.equalTo(86)
-            make.leading.equalTo(exitButton.snp.leading)
-            make.trailing.equalToSuperview().inset(16)
-            make.top.equalTo(exitButton.snp.bottom).offset(45)
+            make.height.equalTo(53)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(exitButton.snp.bottom).offset(44)
         }
         
         fieldStack.snp.makeConstraints { make in

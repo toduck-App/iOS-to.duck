@@ -30,7 +30,7 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         didSet {
             layoutView.restTimeField.leftButton.isEnabled = restTime > TDTimerSetting.minRestDuration
             layoutView.restTimeField.rightButton.isEnabled = restTime < TDTimerSetting.maxRestDuration
-            layoutView.restTimeField.outputLabel.setText("\(restTime)분")
+            layoutView.restTimeField.outputLabel.setText(restTime == 0 ? "휴식 없음" : "\(restTime)분")
         }
     }
 
