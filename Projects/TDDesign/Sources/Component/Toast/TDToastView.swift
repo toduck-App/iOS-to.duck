@@ -7,11 +7,14 @@ public final class TDToastView: UIView {
     private let titleText: String
     private let contentText: String
     private let sideDumpView = UIView()
-    private let tomato: UIImageView
+    private let tomatoImageView: UIImageView
     private let sideColor = UIView()
-    private let titleLabel = TDLabel(toduckFont: .boldBody2)
+    private let titleLabel = TDLabel(
+        toduckFont: .boldBody2
+    )
     private let contentLabel = TDLabel(
-        toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800
+        toduckFont: .mediumBody3,
+        toduckColor: TDColor.Neutral.neutral700
     )
     private let verticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -30,11 +33,12 @@ public final class TDToastView: UIView {
         self.foregroundColor = foregroundColor
         self.titleText = titleText
         self.contentText = contentText
-        tomato = UIImageView(image: tomatoImage)
+        self.tomatoImageView = UIImageView(image: tomatoImage)
         super.init(frame: frame)
-        configure()
+        
         addViews()
         layout()
+        configure()
     }
     
     @available(*, unavailable)
@@ -46,7 +50,7 @@ public final class TDToastView: UIView {
     
     private func addViews() {
         addSubview(sideDumpView)
-        addSubview(tomato)
+        addSubview(tomatoImageView)
         addSubview(verticalStackView)
         
         verticalStackView.addArrangedSubview(titleLabel)
@@ -63,14 +67,14 @@ public final class TDToastView: UIView {
             $0.width.equalTo(8)
         }
         
-        tomato.snp.makeConstraints {
+        tomatoImageView.snp.makeConstraints {
             $0.leading.equalTo(sideDumpView.snp.trailing).offset(16)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(24)
         }
         
         verticalStackView.snp.makeConstraints {
-            $0.leading.equalTo(tomato.snp.trailing).offset(12)
+            $0.leading.equalTo(tomatoImageView.snp.trailing).offset(12)
             $0.trailing.equalToSuperview().inset(12)
             $0.centerY.equalToSuperview()
         }

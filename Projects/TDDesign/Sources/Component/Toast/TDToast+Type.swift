@@ -19,7 +19,7 @@ public extension TDToast {
             case .green:
                 return TDImage.Tomato.green
             case .orange:
-                return TDImage.Tomato.orange
+                return TDImage.Tomato.toast
             }
         }
     }

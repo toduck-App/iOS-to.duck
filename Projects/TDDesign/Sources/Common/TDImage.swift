@@ -302,6 +302,7 @@ public enum TDImage {
         public static let green = TDDesignAsset.Images.greenTomato.image
         public static let orange = TDDesignAsset.Images.orangeTomato.image
         public static let timer = TDDesignAsset.Images.timerTomato.image
+        public static let toast = TDDesignAsset.Images.tomatoToast.image
         public static let tomatoSmallFill = TDDesignAsset.Images.tomatoSmallFill.image
         public static let tomatoSmallEmtpy = TDDesignAsset.Images.tomatoSmallEmtpy.image
     }
