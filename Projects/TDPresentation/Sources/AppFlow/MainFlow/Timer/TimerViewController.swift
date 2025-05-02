@@ -285,13 +285,6 @@ extension TimerViewController: TDDropDownDelegate {
                 viewModel: viewModel)
             
             presentSheet(viewController: themeSettingViewController)
-        case .alarmSetting:
-            let timerAlarmViewController = TimerAlarmViewController(
-                viewModel: viewModel)
-            
-            presentSheet(viewController: timerAlarmViewController)
-        case .whiteNoise:
-            break
 #if DEBUG
         case .resetFocusCount:
             input.send(.resetFocusCount)
@@ -381,8 +374,6 @@ extension TimerViewController {
     enum TimerDropDownMenuItem: String, CaseIterable {
         case timerSetting = "타이머 설정"
         case themeSetting = "테마 변경"
-        case alarmSetting = "알람 설정"
-        case whiteNoise = "백색 소음"
         
 #if DEBUG
         case resetFocusCount = "집중 횟수 초기화"
@@ -398,8 +389,6 @@ extension TimerViewController {
                 return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
             case .themeSetting:
                 return (TDImage.Tomato.tomatoSmallEmtpy, TDImage.Tomato.tomatoSmallFill)
-            case .whiteNoise:
-                return (TDImage.Play.play2SmallEmtpy, TDImage.Play.play2SmallFill)
             default:
                 return (TDImage.Play.play2SmallEmtpy, TDImage.Play.play2SmallFill)
             }
