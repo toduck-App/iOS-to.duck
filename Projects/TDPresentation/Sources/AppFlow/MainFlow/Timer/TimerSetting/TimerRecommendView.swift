@@ -86,7 +86,10 @@ final class TimerRecommendView: BaseView {
             titleLabel.textColor = TDColor.Neutral.neutral800
             recommandLabelStack.arrangedSubviews.forEach {
                 if let label = $0 as? TDLabel {
-                    label.textColor = TDColor.Neutral.neutral600
+                    label.setColor(TDColor.Neutral.neutral600)
+                    if let text = label.text, text == "|" {
+                        label.setColor(TDColor.Neutral.neutral300)
+                    }
                 }
             }
         }
