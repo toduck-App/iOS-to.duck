@@ -190,6 +190,7 @@ extension TimerViewController {
             layoutView.simpleTimerView.pause()
             return
         }
+        
         layoutView.bboduckTimerView.isRunning = isRunning
         layoutView.simpleTimerView.isRunning = isRunning
         
@@ -197,9 +198,9 @@ extension TimerViewController {
             handleControlStack(.playing)
         } else {
             handleControlStack(.pause)
-            layoutView.bboduckTimerView.pause()
         }
     }
+    
     private func updateTheme(theme: TDTimerTheme) {
         self.theme = theme
         
