@@ -224,7 +224,8 @@ extension TimerViewModel {
         do {
             resetFocusCount()
             resetCount = 0
-
+            
+            TDLogger.info("집중 타이머 종료: focusCount \(focusCount), focusLimit \(focusLimit), adjustedFocusDuration \(adjustedFocusDuration)초")
             try await saveFocusUseCase.execute(
                 date: currentDay.convertToString(formatType: .yearMonthDay),
                 targetCount: focusCount,
@@ -358,6 +359,9 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
 extension TimerViewModel: PauseTimerUseCaseDelegate {
     public func didUpdatePauseTime(remainTime: Int) {
         TDLogger.debug("현재 휴식 남은 시간: \(remainTime)")
+        if remainTime == 0 {
+            Task { await stopTimer(isSuccess: false) }
+        }
     }
     
     public func didFinishPauseTimer() {
