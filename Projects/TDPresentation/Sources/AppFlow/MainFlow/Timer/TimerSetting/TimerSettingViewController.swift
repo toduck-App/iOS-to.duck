@@ -83,12 +83,12 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         // rest time field
         layoutView.restTimeField.leftButton.addAction(UIAction { [weak self] _ in
             self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
-            self?.restTime -= 1
+            self?.restTime -= 5
         }, for: .touchUpInside)
 
         layoutView.restTimeField.rightButton.addAction(UIAction { [weak self] _ in
             self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
-            self?.restTime += 1
+            self?.restTime += 5
         }, for: .touchUpInside)
 
         // save button (unchanged)
