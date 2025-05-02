@@ -32,26 +32,27 @@ final class FocusTimerUseCaseImpl: FocusTimerUseCase {
 
     init(repository: FocusRepository) {
         self.repository = repository
-
     }
 
     func start() {
         guard !isRunning else { return}
         let setting = repository.fetchTimerSetting()
-        self.remainTime = self.remainTime == 0 ? setting.toFocusDurationMinutes() : self.remainTime
+        remainTime = remainTime == 0
+        ? setting.toFocusDurationMinutes()
+        : remainTime
 
-        if self.remainTime == setting.toFocusDurationMinutes() {
-            self.delegate?.didStartFocusTimer()
+        if remainTime == setting.toFocusDurationMinutes() {
+            delegate?.didStartFocusTimer()
         }
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            if self.remainTime > 0 {
-                self.remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요 
-                self.delegate?.didUpdateFocusTime(remainTime: self.remainTime)
+            if remainTime > 0 {
+                remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
+                delegate?.didUpdateFocusTime(remainTime: remainTime)
             } else {
-                self.delegate?.didFinishFocusTimer()
-                self.stop()
+                delegate?.didFinishFocusTimer()
+                stop()
             }
         }
     }
@@ -64,10 +65,6 @@ final class FocusTimerUseCaseImpl: FocusTimerUseCase {
 
     func reset() {
         stop()
-        self.remainTime = 0
+        remainTime = 0
     }
-
-
-    // MARK: - Private Methods
-
 }

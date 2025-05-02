@@ -2,12 +2,13 @@ import Foundation
 import TDCore
 
 public protocol PauseTimerUseCase {
-    func start()
-    func stop()
-    func reset()
     var isRunning: Bool { get }
     var delegate: PauseTimerUseCaseDelegate? { get set }
     var pauseTime: Int { get }
+    
+    func start()
+    func stop()
+    func reset()
 }
 
 public protocol PauseTimerUseCaseDelegate: AnyObject {
@@ -37,12 +38,12 @@ final class PauseTimerUseCaseImpl: PauseTimerUseCase {
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self else { return }
-            if self.remainTime > 0 {
-                self.remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요 
-                self.delegate?.didUpdatePauseTime(remainTime: remainTime)
+            if remainTime > 0 {
+                remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
+                delegate?.didUpdatePauseTime(remainTime: remainTime)
             } else {
-                self.stop()
-                self.delegate?.didFinishPauseTimer()
+                stop()
+                delegate?.didFinishPauseTimer()
             }
         }
     }
@@ -55,6 +56,6 @@ final class PauseTimerUseCaseImpl: PauseTimerUseCase {
 
     func reset() {
         stop()
-        self.remainTime = 0
+        remainTime = 0
     }
 }
