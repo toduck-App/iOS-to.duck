@@ -59,62 +59,55 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
         layoutView.recommandView.addGestureRecognizer(tapGesture)
         
         // focus time field
-        layoutView.focusTimeField.leftButton.addAction(
-            UIAction { _ in
-                self.focusTime -= 5
-            }, for: .touchUpInside
-        )
+        layoutView.focusTimeField.leftButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.focusTime -= 5
+        }, for: .touchUpInside)
 
-        layoutView.focusTimeField.rightButton.addAction(
-            UIAction { _ in
-                self.focusTime += 5
-            }, for: .touchUpInside
-        )
+        layoutView.focusTimeField.rightButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.focusTime += 5
+        }, for: .touchUpInside)
 
         // focus count field
-        layoutView.focusCountField.leftButton.addAction(
-            UIAction { _ in
-                self.focusCountLimit -= 1
-            }, for: .touchUpInside
-        )
+        layoutView.focusCountField.leftButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.focusCountLimit -= 1
+        }, for: .touchUpInside)
 
-        layoutView.focusCountField.rightButton.addAction(
-            UIAction { _ in
-                self.focusCountLimit += 1
-            }, for: .touchUpInside
-        )
+        layoutView.focusCountField.rightButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.focusCountLimit += 1
+        }, for: .touchUpInside)
 
         // rest time field
-        layoutView.restTimeField.leftButton.addAction(
-            UIAction { _ in
-                self.restTime -= 1
-            }, for: .touchUpInside
-        )
+        layoutView.restTimeField.leftButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.restTime -= 1
+        }, for: .touchUpInside)
 
-        layoutView.restTimeField.rightButton.addAction(
-            UIAction { _ in
-                self.restTime += 1
-            }, for: .touchUpInside
-        )
-        // save button
-        layoutView.saveButton.addAction(
-            UIAction { _ in
-                let setting = TDTimerSetting(
-                    focusDuration: self.focusTime,
-                    focusCountLimit: self.focusCountLimit,
-                    restDuration: self.restTime
-                )
-                self.input.send(
-                    .updateTimerSetting(setting: setting))
-                self.dismiss(animated: true)
-            }, for: .touchUpInside
-        )
+        layoutView.restTimeField.rightButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.restTime += 1
+        }, for: .touchUpInside)
 
-        layoutView.exitButton.addAction(
-            UIAction { _ in
-                self.dismiss(animated: true)
-            }, for: .touchUpInside
-        )
+        // save button (unchanged)
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            let setting = TDTimerSetting(
+                focusDuration: focusTime,
+                focusCountLimit: focusCountLimit,
+                restDuration: restTime
+            )
+            input.send(.updateTimerSetting(setting: setting))
+            dismiss(animated: true)
+        }, for: .touchUpInside)
+
+        // exit button
+        layoutView.exitButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.recommandView.updateForegroundColorForSelected(isSelected: false)
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
     }
 
     override func binding() {
