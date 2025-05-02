@@ -37,9 +37,9 @@ public final class TimerViewModel: BaseViewModel {
         case fetchedTimerTheme(theme: TDTimerTheme)
         case updatedFocusCount(count: Int)
         case updatedMaxFocusCount(maxCount: Int)
-        case failure(_ message: String)
         case stoppedTimer
         case startTimer
+        case failure(_ message: String)
         
         case finishedFocusTimer
         case finishedRestTimer
@@ -313,6 +313,7 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
         
         if (count + 1) % limit == 0 {
             restTimerUseCase.stop()
+            resetFocusCount()
             Task { await stopTimer() }
             output.send(.finishedFocusTimer)
         } else {

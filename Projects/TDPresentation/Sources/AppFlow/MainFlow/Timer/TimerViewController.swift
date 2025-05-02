@@ -13,6 +13,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private var cancellables = Set<AnyCancellable>()
     private var theme: TDTimerTheme = .Bboduck
     private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
+    private var isTimerRunning: Bool = false
     
     // TODO: 처음 로딩시 테마 2개가 동시에 보이는것 수정
     
@@ -49,6 +50,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             HapticManager.impact(.soft)
             self?.dismissToast()
             self?.input.send(.startTimer)
+            self?.isTimerRunning = true
+            self?.tabBarController?.tabBar.isUserInteractionEnabled = false
         }, for: .touchUpInside)
         
         layoutView.pauseButton.addAction(UIAction { [weak self] _ in
@@ -60,6 +63,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                 duration: 20
             )
             self?.input.send(.pauseTimer)
+            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
         }, for: .touchUpInside)
         
         layoutView.resetButton.addAction(UIAction { [weak self] _ in
@@ -71,6 +75,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             HapticManager.impact(.soft)
             self?.dismissToast()
             self?.input.send(.stopTimer)
+            self?.isTimerRunning = true
+            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
         }, for: .touchUpInside)
     }
     
@@ -120,6 +126,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     )
                 case .successFinishedTimer:
                     self?.updateFocusCount(with: 0)
+                    self?.handleControlStack(.initilize)
+                    self?.isTimerRunning = true
                 case let .failure(message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -134,14 +142,24 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         )
         
         layoutView.dropDownView.delegate = self
-        layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
         
         layoutView.leftNavigationItem.addAction(UIAction { [weak self] _ in
             self?.coordinator?.didTapCalendarButton()
         }, for: .touchUpInside)
         
         layoutView.rightNavigationMenuButton.addAction(UIAction { [weak self] _ in
-            self?.layoutView.dropDownView.showDropDown()
+            guard let self else { return }
+
+            let menuItems: [TimerDropDownMenuItem] = {
+                if self.isTimerRunning {
+                    return TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }
+                } else {
+                    return TimerDropDownMenuItem.allCases
+                }
+            }()
+
+            layoutView.dropDownView.dataSource = menuItems.map { $0.dropDownItem }
+            layoutView.dropDownView.showDropDown()
         }, for: .touchUpInside)
         
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
@@ -177,7 +195,7 @@ extension TimerViewController {
     }
     
     private func updateTimerRunning(_ isRunning: Bool?) {
-        guard let isRunning = isRunning else {
+        guard let isRunning else {
             handleControlStack(.initilize)
             layoutView.bboduckTimerView.pause()
             layoutView.simpleTimerView.pause()
