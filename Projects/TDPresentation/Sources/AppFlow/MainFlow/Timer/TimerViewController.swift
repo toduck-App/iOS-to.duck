@@ -33,8 +33,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 아래의 함수들 configure에 넣으면 작동이 안함
-        
         input.send(.fetchTimerTheme)
         input.send(.fetchFocusCount)
         input.send(.fetchTimerSetting)
@@ -71,7 +69,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         layoutView.stopButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
-            self?.updateFocusCount(with: 0)
             self?.dismissToast()
             self?.input.send(.stopTimer)
         }, for: .touchUpInside)
@@ -96,8 +93,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateMaxFocusCount(with: maxCount)
                 case let .updatedTimerTheme(theme), let .fetchedTimerTheme(theme):
                     self?.updateTheme(theme: theme)
-                case let .failure(message):
-                    self?.showErrorAlert(errorMessage: message)
                 case .updatedTimerSetting:
                     self?.updatedTimerSetting()
                 case .fetchedTimerSetting(let setting):
@@ -106,6 +101,27 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     TDLogger.debug("Timer Stopped")
                 case .startTimer:
                     TDLogger.debug("Timer Started")
+                case .finishedFocusTimer:
+                    HapticManager.impact(.soft)
+                    self?.updateTimerRunning(false)
+                    self?.showToast(
+                        type: .orange,
+                        title: "집중 성공 🧚‍♀️",
+                        message: "잘했어요 ! 이대로 집중하는 습관을 천천히 길러봐요 !",
+                        duration: nil
+                    )
+                case .finishedRestTimer:
+                    HapticManager.impact(.soft)
+                    self?.showToast(
+                        type: .orange,
+                        title: "휴식 시간 끝 💡️",
+                        message: "집중할 시간이에요 ! 자리에 앉아볼까요?",
+                        duration: nil
+                    )
+                case .successFinishedTimer:
+                    self?.updateFocusCount(with: 0)
+                case let .failure(message):
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }
@@ -137,8 +153,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 extension TimerViewController {
     private func finishedTimer() {
         handleControlStack(.pause)
-        showToast(type: .orange, title: "휴식 시간 끝 💡️", message: "집중할 시간이에요 ! 자리에 앉아볼까요?")
-        
         input.send(.increaseFocusCount)
     }
     
@@ -166,6 +180,7 @@ extension TimerViewController {
         guard let isRunning = isRunning else {
             handleControlStack(.initilize)
             layoutView.bboduckTimerView.pause()
+            layoutView.simpleTimerView.pause()
             return
         }
         layoutView.bboduckTimerView.isRunning = isRunning

@@ -40,6 +40,10 @@ public final class TimerViewModel: BaseViewModel {
         case failure(_ message: String)
         case stoppedTimer
         case startTimer
+        
+        case finishedFocusTimer
+        case finishedRestTimer
+        case successFinishedTimer
     }
     
     // MARK: - UseCase
@@ -63,6 +67,10 @@ public final class TimerViewModel: BaseViewModel {
     private(set) var timerSetting: TDTimerSetting?
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var currentDay = Date()
+    private var focusCount: Int = 0
+    private var focusLimit: Int = 0
+    private var focusDuration: Int = 0
     
     // MARK: - initializers
     
@@ -201,9 +209,14 @@ extension TimerViewModel {
             try updateFocusCountUseCase.execute(0)
             resetFocusCount()
             let limit = fetchTimerSettingUseCase.execute().focusCountLimit
-            TDLogger.debug("[TimerViewModel#stopTimer] count: \(count), limit: \(limit)")
-            
-            try await saveFocusUseCase.execute(date: "2025-05-01", targetCount: 2, settingCount: 5, time: 123)
+
+            try await saveFocusUseCase.execute(
+                date: currentDay.convertToString(formatType: .yearMonthDay),
+                targetCount: count,
+                settingCount: limit,
+                time: 123
+            )
+            output.send(.successFinishedTimer)
         } catch {
             output.send(.failure("집중 정상 종료를 실패했습니다."))
         }
@@ -238,7 +251,7 @@ extension TimerViewModel {
     private func increaseMaxFocusCount() {
         guard var setting = timerSetting else { return }
         
-        let current: Int = setting.focusCountLimit + 1
+        let current = setting.focusCountLimit + 1
         setting.focusCountLimit = current
         
         do {
@@ -252,7 +265,7 @@ extension TimerViewModel {
     private func decreaseMaxFocusCount() {
         guard var setting: TDTimerSetting = timerSetting else { return }
         
-        let current: Int = setting.focusCountLimit - 1
+        let current = setting.focusCountLimit - 1
         setting.focusCountLimit = current
         
         do {
@@ -300,11 +313,12 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
         
         if (count + 1) % limit == 0 {
             restTimerUseCase.stop()
+            Task { await stopTimer() }
+            output.send(.finishedFocusTimer)
         } else {
             restTimerUseCase.start()
+            output.send(.updatedTimerRunning(false))
         }
-        
-        output.send(.updatedTimerRunning(false))
     }
 }
 
@@ -319,6 +333,7 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
     
     public func didFinishRestTimer() {
         focusTimerUseCase.start()
+        output.send(.finishedRestTimer)
     }
 }
 

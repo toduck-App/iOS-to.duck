@@ -7,7 +7,12 @@ protocol TDToastPresentable {
 }
 
 extension TDToastPresentable where Self: UIViewController {
-    func showToast(type: TDToast.TDToastType, title: String, message: String, duration: Double? = 2.0) {
+    func showToast(
+        type: TDToast.TDToastType,
+        title: String,
+        message: String,
+        duration: Double?
+    ) {
         let toastView = TDToast(toastType: type, titleText: title, contentText: message)
         
         guard
@@ -40,7 +45,7 @@ extension TDToastPresentable where Self: UIViewController {
             }
         ) { _ in
             UIView.animate(
-                withDuration: 0.5, delay: duration ?? 0, options: .curveEaseIn,
+                withDuration: 0.5, delay: duration ?? 2, options: .curveEaseIn,
                 animations: {
                     toastView.alpha = 0
                 }
