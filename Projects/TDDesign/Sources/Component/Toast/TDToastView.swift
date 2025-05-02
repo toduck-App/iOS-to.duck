@@ -90,4 +90,8 @@ public final class TDToastView: UIView {
         
         sideColor.backgroundColor = foregroundColor
     }
+    
+    func updateContentText(_ text: String) {
+        contentLabel.setText(text)
+    }
 }

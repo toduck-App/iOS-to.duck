@@ -2,6 +2,8 @@ import UIKit
 
 public final class TDToast: UIView {
     let toastView: TDToastView
+    private var timer: Timer?
+    private var remainingSeconds: Int = 0
     
     public convenience init(
         toastType: TDToastType,
@@ -38,6 +40,10 @@ public final class TDToast: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        timer?.invalidate()
+    }
+    
     private func configure() {
         backgroundColor = .clear
         layer.shadowColor = UIColor.black.cgColor
@@ -53,5 +59,26 @@ public final class TDToast: UIView {
         toastView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+    
+    public func startCountdown(seconds: Int) {
+        remainingSeconds = seconds
+        updateMessage()
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.remainingSeconds -= 1
+
+            if self.remainingSeconds > 0 {
+                self.updateMessage()
+            } else {
+                self.timer?.invalidate()
+                self.timer = nil
+            }
+        }
+    }
+
+    private func updateMessage() {
+        toastView.updateContentText("\(remainingSeconds)초 안에 재시작하면 집중시간이 이어집니다")
     }
 }

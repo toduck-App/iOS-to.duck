@@ -54,7 +54,12 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         layoutView.pauseButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
-            self?.showToast(type: .orange, title: "집중 타이머를 잠시 멈췄어요", message: "20초 안에 재시작하면 집중시간이 이어집니다")
+            self?.showToast(
+                type: .orange,
+                title: "집중 타이머를 잠시 멈췄어요",
+                message: "20초 안에 재시작하면 집중시간이 이어집니다",
+                duration: 20
+            )
             self?.input.send(.pauseTimer)
         }, for: .touchUpInside)
         

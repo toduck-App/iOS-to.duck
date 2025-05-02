@@ -20,25 +20,26 @@ final class PauseTimerUseCaseImpl: PauseTimerUseCase {
 
     private var timer: Timer?
     private var duration: Int = 0
-    private var remainTime: Int = 0
+    private(set) var pauseTime = 20
+    private(set) var remainTime: Int = 0
+    
     public var isRunning: Bool {
         return timer != nil
     }
     
     weak var delegate: PauseTimerUseCaseDelegate?
-    let pauseTime = 10
 
     // MARK: - Initializer
 
     func start() {
         guard !isRunning else { return}
-        self.remainTime = 10
+        self.remainTime = 20
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             if self.remainTime > 0 {
                 self.remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요 
-                self.delegate?.didUpdatePauseTime(remainTime: self.remainTime)
+                self.delegate?.didUpdatePauseTime(remainTime: remainTime)
             } else {
                 self.stop()
                 self.delegate?.didFinishPauseTimer()
@@ -56,8 +57,4 @@ final class PauseTimerUseCaseImpl: PauseTimerUseCase {
         stop()
         self.remainTime = 0
     }
-
-
-    // MARK: - Private Methods
-
 }
