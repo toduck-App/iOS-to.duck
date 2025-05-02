@@ -22,7 +22,7 @@ final class TimerRecommendView: BaseView {
     )
     
     let recommandLabelStack = UIStackView().then {
-        $0.spacing = 4
+        $0.spacing = 8
         $0.axis = .horizontal
         $0.distribution = .fillProportionally
         $0.alignment = .center
@@ -65,6 +65,30 @@ final class TimerRecommendView: BaseView {
             make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
             make.top.bottom.equalToSuperview().inset(8)
+        }
+    }
+    
+    func updateForegroundColorForSelected(isSelected: Bool) {
+        if isSelected {
+            backgroundColor = TDColor.Primary.primary50
+            recommandView.layer.borderColor = TDColor.Primary.primary500.cgColor
+            fireImageView.tintColor = TDColor.Primary.primary500
+            titleLabel.textColor = TDColor.Primary.primary500
+            recommandLabelStack.arrangedSubviews.forEach {
+                if let label = $0 as? TDLabel {
+                    label.textColor = TDColor.Primary.primary500
+                }
+            }
+        } else {
+            backgroundColor = TDColor.baseWhite
+            recommandView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            fireImageView.tintColor = TDColor.Neutral.neutral600
+            titleLabel.textColor = TDColor.Neutral.neutral800
+            recommandLabelStack.arrangedSubviews.forEach {
+                if let label = $0 as? TDLabel {
+                    label.textColor = TDColor.Neutral.neutral600
+                }
+            }
         }
     }
 }

@@ -54,6 +54,10 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
     // MARK: - Common Methods
     
     override func configure() {
+        // 토덕의 추천 설정
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(recommendSettingTapped))
+        layoutView.recommandView.addGestureRecognizer(tapGesture)
+        
         // focus time field
         layoutView.focusTimeField.leftButton.addAction(
             UIAction { _ in
@@ -126,6 +130,18 @@ final class TimerSettingViewController: BaseViewController<TimerSettingView> {
                     break
                 }
             }.store(in: &cancellables)
+    }
+    
+    @objc
+    private func recommendSettingTapped() {
+        recommendSetting()
+        layoutView.recommandView.updateForegroundColorForSelected(isSelected: true)
+    }
+    
+    private func recommendSetting() {
+        focusCountLimit = 4
+        focusTime = 25
+        restTime = 5
     }
 
     private func fetchedTimerSetting(setting: TDTimerSetting) {
