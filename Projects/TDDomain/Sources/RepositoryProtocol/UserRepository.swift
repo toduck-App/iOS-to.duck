@@ -10,4 +10,5 @@ public protocol UserRepository {
     func blockUser(userID: User.ID) async throws
     
     func shareRoutine(routineID: Routine.ID, routine: Routine) async throws
+    func fetchMyCommentList(cursor: Int?, limit: Int) async throws -> (result: [Comment], hasMore: Bool, nextCursor: Int?)
 }

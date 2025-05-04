@@ -91,19 +91,43 @@ extension MyPageCoordinator: NavigationDelegate {
     }
 
     func didTapNotificationSettings() {
-        print("Notification Settings Tapped")
+        let notificationSettingCoordinator = NotificationSettingCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        notificationSettingCoordinator.finishDelegate = self
+        childCoordinators.append(notificationSettingCoordinator)
+        notificationSettingCoordinator.start()
     }
 
     func didTapPostManagement() {
-        print("Post Management Tapped")
+        let myPostCoordinator = MyPostCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        myPostCoordinator.finishDelegate = self
+        childCoordinators.append(myPostCoordinator)
+        myPostCoordinator.start()
     }
 
     func didTapMyComments() {
-        print("My Comments Tapped")
+        let myCommentCoordinator = MyCommentCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        myCommentCoordinator.finishDelegate = self
+        childCoordinators.append(myCommentCoordinator)
+        myCommentCoordinator.start()
     }
 
     func didTapBlockManagement() {
-        print("Block Management Tapped")
+        let myBlockCoordinator = MyBlockCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        myBlockCoordinator.finishDelegate = self
+        childCoordinators.append(myBlockCoordinator)
+        myBlockCoordinator.start()
     }
 
     func didTapTermsOfUse() {

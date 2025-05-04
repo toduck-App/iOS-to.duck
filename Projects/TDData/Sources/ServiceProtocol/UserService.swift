@@ -7,4 +7,5 @@ public protocol UserService {
     func requestUserPosts(userId: Int, cursor: Int?, limit: Int) async throws -> TDPostListDTO
     func requestUserRoutines(userId: Int) async throws -> RoutineListResponseDTO
     func requestShareRoutine(routineID: Int, routine: RoutineRequestDTO) async throws
+    func requestMyCommentList(cursor: Int?, limit: Int) async throws -> TDCommentListDTO
 }

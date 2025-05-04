@@ -18,7 +18,7 @@ public enum SocialAPI {
     case likeComment(postId: Int, commentId: Int)
     case unlikeComment(postId: Int, commentId: Int)
     
-    case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
+    case fetchMyCommentList(cursor: Int?, limit: Int) // TODO: 다른 유저의 Comment List 가져올 필요
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
     case deleteComment(postId: Int, commentId: Int)
@@ -64,8 +64,8 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(postId)/comments/\(commentId)/likes"
         case .unlikeComment(let postId, let commentId):
             "v1/socials/\(postId)/comments/\(commentId)/likes"
-        case .fetchUserCommentList(let userId):
-            "/users/\(userId)/comments"
+        case .fetchMyCommentList:
+            "v1/my-page/comments"
         case .createComment(let socialId, _, _, _):
             "v1/socials/\(socialId)/comments"
         case .updateComment(let comment):
@@ -94,7 +94,7 @@ extension SocialAPI: MFTarget {
         case .fetchPostList,
              .searchPost,
              .fetchPost,
-             .fetchUserCommentList,
+             .fetchMyCommentList,
              .fetchUser,
              .fetchUserPostList,
              .fetchUserRoutineList:
@@ -142,6 +142,12 @@ extension SocialAPI: MFTarget {
                 params["cursor"] = cursor
             }
             return params
+        case .fetchMyCommentList(let cursor, let limit):
+            var params: [String: Any] = ["limit": limit]
+            if let cursor {
+                params["cursor"] = cursor
+            }
+            return params
         case .shareRoutine,
              .reportPost,
              .likePost,
@@ -150,7 +156,6 @@ extension SocialAPI: MFTarget {
              .blockUser,
              .likeComment,
              .unlikeComment,
-             .fetchUserCommentList,
              .fetchUser,
              .fetchUserRoutineList,
              .deletePost,
@@ -177,7 +182,7 @@ extension SocialAPI: MFTarget {
              .blockUser,
              .likeComment,
              .unlikeComment,
-             .fetchUserCommentList,
+             .fetchMyCommentList,
              .fetchUser,
              .fetchUserPostList,
              .fetchUserRoutineList,

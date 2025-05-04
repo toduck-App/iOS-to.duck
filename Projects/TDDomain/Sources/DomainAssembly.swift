@@ -200,7 +200,7 @@ public struct DomainAssembly: Assembly {
         }   
         
         container.register(FetchCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(SocialRepository.self) else {
+            guard let repository = resolver.resolve(UserRepository.self) else {
                 fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
             }
             return FetchCommentUseCaseImpl(repository: repository)

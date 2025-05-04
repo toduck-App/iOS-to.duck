@@ -1,0 +1,3 @@
+final class MyBlockView: BaseView {
+
+}

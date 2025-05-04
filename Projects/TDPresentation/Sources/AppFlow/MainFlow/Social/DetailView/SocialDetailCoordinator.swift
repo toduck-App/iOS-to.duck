@@ -23,7 +23,6 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)
         let togglePostLikeUseCase = injector.resolve(TogglePostLikeUseCase.self)
         let toggleCommentLikeUseCase = injector.resolve(ToggleCommentLikeUseCase.self)
-        let fetchCommentUseCase = injector.resolve(FetchCommentUseCase.self)
         let createCommentUseCase =  injector.resolve(CreateCommentUseCase.self)
         let reportPostUseCase = injector.resolve(ReportPostUseCase.self)
         let delteCommentUseCase = injector.resolve(DeleteCommentUseCase.self)
@@ -31,7 +30,6 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
         
         let socialDetailViewModel = SocialDetailViewModel(
             fetchPostUsecase: fetchPostUseCase,
-            fetchCommentUsecase: fetchCommentUseCase,
             togglePostLikeUseCase: togglePostLikeUseCase,
             toggleCommentLikeUseCase: toggleCommentLikeUseCase,
             createCommentUseCase: createCommentUseCase,
