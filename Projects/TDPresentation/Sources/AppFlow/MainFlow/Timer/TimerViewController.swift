@@ -60,8 +60,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateMaxFocusCount(with: maxCount)
                 case let .updatedTimerTheme(theme), let .fetchedTimerTheme(theme):
                     self?.updateTheme(theme: theme)
-                case .fetchedTimerSetting(let setting):
-                    TDLogger.debug("Timer Setting: \(setting)")
+                case .fetchedTimerSetting:
+                    self?.updateFocusCount(with: 0)
                 case .stoppedTimer:
                     TDLogger.debug("Timer Stopped")
                 case .startTimer:
@@ -75,6 +75,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                         message: "잘했어요 ! 이대로 집중하는 습관을 천천히 길러봐요 !",
                         duration: nil
                     )
+                    self?.tabBarController?.tabBar.isUserInteractionEnabled = true
+                    self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
                 case .finishedRestTimer:
                     HapticManager.impact(.soft)
                     self?.showToast(
@@ -265,11 +267,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         for i in 1...setting.focusCountLimit {
             if i <= newCount {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountTomatoView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountTomatoView())
             } else {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountEmptyView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountEmptyView())
             }
         }
         
@@ -286,11 +286,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         for i in 1...setting.focusCountLimit {
             if i <= maxCount {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountTomatoView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountTomatoView())
             } else {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountEmptyView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountEmptyView())
             }
         }
         layoutView.focusCountStackView.layoutIfNeeded()
@@ -301,18 +299,17 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
 
 extension TimerViewController: TDDropDownDelegate {
     func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
-        let item = TimerDropDownMenuItem.allCases[indexPath.row]
+        let currentItems = TimerDropDownMenuItem.allCases.filter { menuItem in
+            layoutView.dropDownView.dataSource.contains(where: { $0.title == menuItem.dropDownItem.title })
+        }
+        let item = currentItems[indexPath.row]
         
         switch item {
         case .timerSetting:
-            let timerSettingViewController = TimerSettingViewController(
-                viewModel: viewModel)
-            
+            let timerSettingViewController = TimerSettingViewController(viewModel: viewModel)
             presentSheet(viewController: timerSettingViewController)
         case .themeSetting:
-            let themeSettingViewController = ThemeSettingViewController(
-                viewModel: viewModel)
-            
+            let themeSettingViewController = ThemeSettingViewController(viewModel: viewModel)
             presentSheet(viewController: themeSettingViewController)
         }
     }

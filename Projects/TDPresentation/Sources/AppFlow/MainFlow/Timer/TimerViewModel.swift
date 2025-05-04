@@ -180,7 +180,6 @@ public final class TimerViewModel: BaseViewModel {
 
         let actualStartTime = startTime ?? Date()
         let rawFocusDuration = Int(endTime?.timeIntervalSince(actualStartTime) ?? 0)
-
         let adjustedFocusDuration = max(0, rawFocusDuration - restTime)
 
         do {
@@ -194,6 +193,8 @@ public final class TimerViewModel: BaseViewModel {
             focusCount = 0
             restTime = 0
             restCount = 0
+            output.send(.updateTime(timerSetting!.toFocusDurationMinutes()))
+            output.send(.updatedTimerRunning(nil))
             output.send(.successFinishedTimer)
         } catch {
             output.send(.failure("집중 정상 종료를 실패했습니다."))
@@ -263,10 +264,12 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
         increaseFocusCount()
         
         if focusCount % focusLimit == 0 {
+            // 최종적으로 집중 성공한 경우
             Task { await stopTimer(isSuccess: true) }
             restTimerUseCase.stop()
             output.send(.finishedFocusTimer)
         } else {
+            HapticManager.impact(.soft)
             restTimerUseCase.start()
             output.send(.updatedTimerRunning(false))
         }
