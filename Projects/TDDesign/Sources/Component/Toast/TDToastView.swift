@@ -85,14 +85,14 @@ public final class TDToastView: UIView {
         backgroundColor = .white
         clipsToBounds = true
         
-        sideDumpView.backgroundColor = foregroundColor
+        sideDumpView.backgroundColor = .white
         
         titleLabel.setColor(foregroundColor)
         titleLabel.setText(titleText)
         
         contentLabel.setText(contentText)
         
-        sideColor.backgroundColor = foregroundColor
+        sideColor.backgroundColor = .white
     }
     
     func updateContentText(_ text: String) {
