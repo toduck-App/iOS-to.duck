@@ -205,3 +205,22 @@ public struct TDSocialCategoryDTO: Codable {
     public let socialCategoryId: Int
     public let name: String
 }
+
+public struct TDBlockedUserListDTO: Codable {
+    public let blockedUsers: [TDBlockedUser]
+    
+    public struct TDBlockedUser: Codable {
+        public let userId: Int
+        public let nickname: String
+        public let profileImageUrl: String?
+        
+        func convertToEntity() -> User {
+            User(
+                id: userId,
+                name: nickname,
+                icon: profileImageUrl,
+                title: "작심삼일"
+            )
+        }
+    }
+}
