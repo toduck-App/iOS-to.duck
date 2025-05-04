@@ -58,7 +58,15 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         setupNavigationBar()
 
         layoutView.logoutButton.addAction(UIAction { [weak self] _ in
-            self?.input.send(.logout)
+            self?.showCommonAlert(
+                message: "로그아웃 하시겠어요?",
+                image: TDImage.Mood.sad,
+                cancelTitle: "취소",
+                confirmTitle: "확인",
+                onConfirm: {
+                    self?.input.send(.logout)
+                }
+            )
         }, for: .touchUpInside)
 
         layoutView.deleteAccountButton.addAction(UIAction { [weak self] _ in
@@ -98,7 +106,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 case .logoutFinished:
-                    self?.coordinator?.didTapLogoutButton() // TODO: 로그인 화면으로 이동
+                    self?.coordinator?.didTapLogoutButton()
                 case .fetchedUserDetail(let userDetail):
                     let followingCount = userDetail.followingCount
                     let followerCount = userDetail.followerCount
