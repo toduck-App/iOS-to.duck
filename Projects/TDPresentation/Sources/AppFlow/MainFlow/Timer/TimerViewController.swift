@@ -48,7 +48,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case let .updatedTimer(remainedTime):
+                case let .updateTime(remainedTime):
                     self?.updateTimer(remainedTime)
                 case let .updatedTimerRunning(isRunning):
                     self?.updateTimerRunning(isRunning)
@@ -60,8 +60,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.updateMaxFocusCount(with: maxCount)
                 case let .updatedTimerTheme(theme), let .fetchedTimerTheme(theme):
                     self?.updateTheme(theme: theme)
-                case .updatedTimerSetting:
-                    self?.updatedTimerSetting()
                 case .fetchedTimerSetting(let setting):
                     TDLogger.debug("Timer Setting: \(setting)")
                 case .stoppedTimer:
@@ -298,11 +296,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         }
         layoutView.focusCountStackView.layoutIfNeeded()
     }
-    
-    private func updatedTimerSetting() {
-        input.send(.fetchFocusCount)
-        input.send(.fetchTimerSetting)
-    }
 }
 
 // MARK: - TDDropDownDelegate
@@ -322,10 +315,6 @@ extension TimerViewController: TDDropDownDelegate {
                 viewModel: viewModel)
             
             presentSheet(viewController: themeSettingViewController)
-#if DEBUG
-        case .resetFocusCount:
-            input.send(.resetFocusCount)
-#endif
         }
     }
 }
@@ -412,9 +401,6 @@ extension TimerViewController {
         case timerSetting = "타이머 설정"
         case themeSetting = "테마 변경"
         
-#if DEBUG
-        case resetFocusCount = "집중 횟수 초기화"
-#endif
         var dropDownItem: TDDropdownItem {
             return TDDropdownItem(title: rawValue, leftImage: image)
         }
@@ -426,8 +412,6 @@ extension TimerViewController {
                 return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
             case .themeSetting:
                 return (TDImage.Tomato.tomatoSmallEmtpy, TDImage.Tomato.tomatoSmallFill)
-            default:
-                return (TDImage.Play.play2SmallEmtpy, TDImage.Play.play2SmallFill)
             }
         }
     }
