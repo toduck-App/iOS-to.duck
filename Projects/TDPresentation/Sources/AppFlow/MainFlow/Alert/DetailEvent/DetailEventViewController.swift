@@ -44,6 +44,9 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         configureTitle()
         configureEventDetails()
         configureVisibility()
+        if mode == .routine {
+            popupContentView.delayToTomorrowButton.isHidden = true
+        }
     }
     
     /// 버튼 액션을 설정

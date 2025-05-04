@@ -55,7 +55,7 @@ public final class EventDetailView: UIView {
     )
     private let timeDetailHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.alignment = .leading
+        $0.alignment = .center
         $0.spacing = 4
     }
 
@@ -71,7 +71,7 @@ public final class EventDetailView: UIView {
     )
     private let placeHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.alignment = .leading
+        $0.alignment = .center
         $0.spacing = 4
     }
     

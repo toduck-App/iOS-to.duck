@@ -1,10 +1,10 @@
 import Foundation
 
-public protocol DeleteRoutineUseCase {
+public protocol DeleteRoutineAfterCurrentDayUseCase {
     func execute(routineId: Int, keepRecords: Bool) async throws
 }
 
-public final class DeleteRoutineUseCaseImpl: DeleteRoutineUseCase {
+public final class DeleteRoutineAfterCurrentDayUseCaseImpl: DeleteRoutineAfterCurrentDayUseCase {
     private let repository: RoutineRepository
     
     public init(repository: RoutineRepository) {
@@ -12,6 +12,6 @@ public final class DeleteRoutineUseCaseImpl: DeleteRoutineUseCase {
     }
     
     public func execute(routineId: Int, keepRecords: Bool) async throws {
-        try await repository.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
+        try await repository.deleteRoutineAfterCurrentDay(routineId: routineId, keepRecords: keepRecords)
     }
 }

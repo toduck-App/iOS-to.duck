@@ -27,6 +27,11 @@ public final class RoutineRepositoryImpl: RoutineRepository {
         return response.convertToRoutineList()
     }
     
+    public func fetchRoutineListForDates(startDate: String, endDate: String) async throws -> [String: [Routine]] {
+        let response = try await service.fetchRoutineListForDates(startDate: startDate, endDate: endDate)
+        return response.convertToRoutineDictionary()
+    }
+    
     public func fetchAvailableRoutineList() async throws -> [Routine] {
         let response = try await service.fetchAvailableRoutineList()
         return response.convertToRoutineList()
@@ -37,7 +42,11 @@ public final class RoutineRepositoryImpl: RoutineRepository {
         try await service.updateRoutine(routineId: routineId, routine: requestDTO)
     }
     
-    public func deleteRoutine(routineId: Int, keepRecords: Bool) async throws {
-        try await service.deleteRoutine(routineId: routineId, keepRecords: keepRecords)
+    public func deleteRoutineAfterCurrentDay(routineId: Int, keepRecords: Bool) async throws {
+        try await service.deleteRoutineAfterCurrentDay(routineId: routineId, keepRecords: keepRecords)
+    }
+    
+    public func deleteRoutineForCurrentDay(routineId: Int, date: String) async throws {
+        try await service.deleteRoutineForCurrentDay(routineId: routineId, date: date)
     }
 }

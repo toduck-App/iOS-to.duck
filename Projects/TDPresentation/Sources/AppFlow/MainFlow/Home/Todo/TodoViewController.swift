@@ -39,7 +39,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private let input = PassthroughSubject<TodoViewModel.Input, Never>()
     private var timelineDataSource: UITableViewDiffableDataSource<Int, TimeLineCellItem>?
     private var cancellables = Set<AnyCancellable>()
-    private var selectedDate: Date?
+    private var selectedDate = Date()
     private var isMenuVisible = false
     private var didAddDimmedView = false
     weak var delegate: TodoViewControllerDelegate?
@@ -61,22 +61,19 @@ final class TodoViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let today = Date()
-        selectedDate = today
-        viewModel.selectedDate = today
         let calendar = Calendar.current
-        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? Date()
         
-        weekCalendarView.select(today)
+        weekCalendarView.select(selectedDate)
         weekCalendarView.setCurrentPage(startOfWeek, animated: false)
-        fetchTodayTodo(with: Date())
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        fetchTodayTodo(with: selectedDate ?? Date())
         setupFloatingUIInWindow()
+        fetchWeekTodo(for: selectedDate)
+        input.send(.didSelectedDate(date: selectedDate))
         eventMakorFloattingButton.isHidden = false
     }
     
@@ -86,12 +83,20 @@ final class TodoViewController: BaseViewController<BaseView> {
         hideFloatingViews()
     }
     
-    private func fetchTodayTodo(with date: Date) {
-        let formattedDate = date.convertToString(formatType: .yearMonthDay)
-        input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
+    private func fetchWeekTodo(for date: Date) {
+        guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date) else { return }
+        
+        let startDate = weekInterval.start.convertToString(formatType: .yearMonthDay)
+        let endDate = Calendar.current.date(
+            byAdding: .day,
+            value: 6,
+            to: weekInterval.start
+        )?.convertToString(formatType: .yearMonthDay) ?? startDate
+        
+        input.send(.fetchWeeklyTodoList(startDate: startDate, endDate: endDate))
     }
     
-    // 뷰가 나타날 때 플로팅 버튼 처리
+    // MARK: 플로팅 버튼 처리
     private func setupFloatingUIInWindow() {
         guard !didAddDimmedView,
               let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -140,7 +145,6 @@ final class TodoViewController: BaseViewController<BaseView> {
         }
     }
     
-    // 뷰가 사라질 때 플로팅 버튼 처리
     private func hideFloatingViews() {
         dimmedView.removeFromSuperview()
         floatingActionMenuView.removeFromSuperview()
@@ -186,31 +190,22 @@ final class TodoViewController: BaseViewController<BaseView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .fetchedTodoList:
-                    self?.applyTimelineSnapshot()
-                case .failure(let error):
-                    self?.showErrorAlert(errorMessage: error)
-                case .successFinishTodo:
-                    if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
-                    }
-                case .tomorrowTodoCreated:
-                    if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
-                    }
+                case .fetchedTodoList,
+                        .deletedTodo:
+                    self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
                     let eventDisplayItem = EventDisplayItem(routine: routine)
-                    let currentDate = self?.selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
+                    let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
                     let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
-                case .deletedTodo:
-                    if let formattedDate = self?.selectedDate {
-                        let dateString = formattedDate.convertToString(formatType: .yearMonthDay)
-                        self?.input.send(.fetchTodoList(startDate: dateString, endDate: dateString))
-                    }
+                case .unionedTodoList:
+                    self?.applyTimelineSnapshot()
+                case .successFinishTodo,
+                        .tomorrowTodoCreated:
+                    self?.fetchWeekTodo(for: self?.selectedDate ?? Date())
+                case .failure(let error):
+                    self?.showErrorAlert(errorMessage: error)
                 }
             }.store(in: &cancellables)
     }
@@ -274,8 +269,11 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     private func configureDimmedViewGesture() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimmedView))
-        dimmedView.addGestureRecognizer(tap)
+        let tapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(didTapDimmedView)
+        )
+        dimmedView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     @objc
@@ -294,10 +292,7 @@ extension TodoViewController: FSCalendarDelegate {
         at monthPosition: FSCalendarMonthPosition
     ) {
         selectedDate = date
-        viewModel.selectedDate = date
-        
-        let formattedDate = date.convertToString(formatType: .yearMonthDay)
-        input.send(.fetchTodoList(startDate: formattedDate, endDate: formattedDate))
+        input.send(.didSelectedDate(date: date))
     }
     
     func calendar(
@@ -309,6 +304,10 @@ extension TodoViewController: FSCalendarDelegate {
             make.height.equalTo(bounds.height)
         }
         self.view.layoutIfNeeded()
+    }
+    
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        fetchWeekTodo(for: calendar.currentPage)
     }
 }
 
@@ -350,7 +349,7 @@ extension TodoViewController: UITableViewDelegate {
     ) {
         guard let item = timelineDataSource?.itemIdentifier(for: indexPath) else { return }
         let detailEventViewController: DetailEventViewController
-        let currentDate = selectedDate?.convertToString(formatType: .yearMonthDayKorean) ?? ""
+        let currentDate = selectedDate.convertToString(formatType: .yearMonthDayKorean)
         
         // TODO: 로직 개선하기
         /// 현재 로직에서 일정은 그냥 바로 팝업 띄우고,
@@ -567,11 +566,21 @@ extension TodoViewController.TimeLineCellItem: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case let (.allDay(e1, s1), .allDay(e2, s2)):
-            return e1.id == e2.id && s1 == s2
+            return e1.id == e2.id &&
+                   e1.title == e2.title &&
+                   e1.isFinished == e2.isFinished &&
+                   s1 == s2
+
         case let (.timeEvent(h1, e1, s1), .timeEvent(h2, e2, s2)):
-            return h1 == h2 && s1 == s2 && e1.id == e2.id
+            return h1 == h2 &&
+                   s1 == s2 &&
+                   e1.id == e2.id &&
+                   e1.title == e2.title &&
+                   e1.isFinished == e2.isFinished
+
         case let (.gap(s1, e1), .gap(s2, e2)):
             return s1 == s2 && e1 == e2
+
         default:
             return false
         }
@@ -582,14 +591,18 @@ extension TodoViewController.TimeLineCellItem: Equatable {
         case let .allDay(event, showTime):
             hasher.combine("allDay")
             hasher.combine(event.id)
+            hasher.combine(event.title)
+            hasher.combine(event.isFinished)
             hasher.combine(showTime)
-            
+
         case let .timeEvent(hour, event, showTime):
             hasher.combine("routine")
             hasher.combine(hour)
             hasher.combine(event.id)
+            hasher.combine(event.title)
+            hasher.combine(event.isFinished)
             hasher.combine(showTime)
-            
+
         case let .gap(startHour, endHour):
             hasher.combine("gap")
             hasher.combine(startHour)

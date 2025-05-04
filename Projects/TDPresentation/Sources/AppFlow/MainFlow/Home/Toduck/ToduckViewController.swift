@@ -120,7 +120,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     /// 자동 스크롤이 일정한 간격을 유지를 위해 셀의 너비에 따라 다음 인덱스 계산
     private func scrollToNextItem() {
         let collectionView = layoutView.scheduleCollectionView
-        let itemCount = viewModel.todaySchedules.count
+        let itemCount = viewModel.currentSchedules.count
         guard itemCount > 1 else { return }
         
         let nextIndex = getNextIndex(for: collectionView, totalItems: itemCount)

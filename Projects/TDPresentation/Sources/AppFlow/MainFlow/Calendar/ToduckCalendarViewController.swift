@@ -258,6 +258,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let currentPage = calendar.currentPage
+        updateHeaderLabel(for: currentPage)
         
         guard let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: currentPage)),
               let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate) else {
