@@ -12,7 +12,7 @@ final class MyPageViewModel: BaseViewModel {
     
     enum Output {
         case fetchedUserNickname(String)
-        case fetchedUserDetail(UserDetail)
+        case fetchedUserDetail(User, UserDetail)
         case logoutFinished
         case failureAPI(String)
     }
@@ -60,8 +60,8 @@ final class MyPageViewModel: BaseViewModel {
     private func fetchUserDetail() async {
         do {
             guard let userId = TDTokenManager.shared.userId else { return }
-            let (_, userDetail) = try await fetchUserDetailUseCase.execute(id: userId)
-            output.send(.fetchedUserDetail(userDetail))
+            let (user, userDetail) = try await fetchUserDetailUseCase.execute(id: userId)
+            output.send(.fetchedUserDetail(user, userDetail))
         } catch {
             output.send(.failureAPI(error.localizedDescription))
         }

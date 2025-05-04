@@ -107,11 +107,11 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                     self?.showErrorAlert(errorMessage: message)
                 case .logoutFinished:
                     self?.coordinator?.didTapLogoutButton()
-                case .fetchedUserDetail(let userDetail):
+                case .fetchedUserDetail(let user, let userDetail):
                     let followingCount = userDetail.followingCount
                     let followerCount = userDetail.followerCount
                     let postCount = userDetail.totalPostCount
-                    self?.layoutView.profileView.configure(followingCount: followingCount, followerCount: followerCount, postCount: postCount)
+                    self?.layoutView.profileView.configure(profileImage: user.icon, followingCount: followingCount, followerCount: followerCount, postCount: postCount)
                 }
             }.store(in: &cancellables)
     }

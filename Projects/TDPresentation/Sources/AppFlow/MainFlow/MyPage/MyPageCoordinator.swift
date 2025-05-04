@@ -71,13 +71,21 @@ extension MyPageCoordinator: NavigationDelegate {
     }
 
     func didTapProfileButton() {
-        let editProfileMenuCoordinator = EditProfileMenuCoordinator(
+        let editProfileCoordinator = EditProfileCoordinator(
             navigationController: navigationController,
             injector: injector
         )
-        editProfileMenuCoordinator.finishDelegate = self
-        childCoordinators.append(editProfileMenuCoordinator)
-        editProfileMenuCoordinator.start()
+        editProfileCoordinator.finishDelegate = self
+        childCoordinators.append(editProfileCoordinator)
+        editProfileCoordinator.start()
+        // MARK: 회원 정보 수정 은 추후에 구현
+//        let editProfileMenuCoordinator = EditProfileMenuCoordinator(
+//            navigationController: navigationController,
+//            injector: injector
+//        )
+//        editProfileMenuCoordinator.finishDelegate = self
+//        childCoordinators.append(editProfileMenuCoordinator)
+//        editProfileMenuCoordinator.start()
     }
     
     func didTapShareProfile() {

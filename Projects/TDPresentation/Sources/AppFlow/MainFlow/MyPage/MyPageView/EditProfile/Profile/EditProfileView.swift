@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 import TDDesign
 
 protocol EditProfileDelegate: AnyObject {
@@ -7,17 +8,23 @@ protocol EditProfileDelegate: AnyObject {
 
 final class EditProfileView: BaseView {
     weak var delegate: EditProfileDelegate?
-    private let profileImageView = TDImageView()
+    let profileImageView = TDImageView()
     let nicknameField = TDFormTextField(
         title: "닉네임",
         isRequired: false,
         maxCharacter: LayoutConstants.nicknameMaxLength,
         placeholder: "닉네임을 작성해주세요"
     )
+    let saveButton = TDButton(
+        title: "저장",
+        size: .large
+    ).then {
+        $0.isEnabled = false
+    }
     
     override func addview() {
         nicknameField.delegate = self
-        [profileImageView, nicknameField].forEach(addSubview)
+        [profileImageView, nicknameField, saveButton].forEach(addSubview)
     }
     
     override func layout() {
@@ -32,10 +39,20 @@ final class EditProfileView: BaseView {
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.commonPadding)
             $0.height.equalTo(LayoutConstants.nicknameFieldHeight)
         }
+        
+        saveButton.snp.makeConstraints { make in
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-LayoutConstants.commonPadding)
+            make.leading.trailing.equalToSuperview().inset(LayoutConstants.commonPadding)
+        }
     }
     
     override func configure() {
         backgroundColor = .white
+    }
+    
+    func configureImageView(imageData: Data) {
+        let image = UIImage(data: imageData) ?? TDImage.Profile.medium
+        profileImageView.innerImageView.image = image
     }
 }
 

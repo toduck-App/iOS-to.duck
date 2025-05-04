@@ -540,5 +540,12 @@ public struct DomainAssembly: Assembly {
             }
             return FetchBlockedUsersUseCaseImpl(repository: repository)
         }
+        
+        container.register(UpdateProfileImageUseCase.self) { resolver in
+            guard let repository = resolver.resolve(MyPageRepository.self) else {
+                fatalError("컨테이너에 MyPageRepository가 등록되어 있지 않습니다.")
+            }
+            return UpdateProfileImageUseCaseImpl(repository: repository)
+        }
     }
 }

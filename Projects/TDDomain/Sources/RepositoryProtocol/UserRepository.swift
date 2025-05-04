@@ -10,7 +10,6 @@ public protocol UserRepository {
     func unFollowUser(targetUserID: User.ID) async throws
     func blockUser(userID: User.ID) async throws
     func unBlockUser(userID: User.ID) async throws
-    
     func shareRoutine(routineID: Routine.ID, routine: Routine) async throws
     func fetchMyCommentList(cursor: Int?, limit: Int) async throws -> (result: [Comment], hasMore: Bool, nextCursor: Int?)
 }

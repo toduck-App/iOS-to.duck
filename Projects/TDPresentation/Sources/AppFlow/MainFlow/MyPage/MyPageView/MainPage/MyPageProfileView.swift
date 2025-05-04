@@ -8,6 +8,7 @@
 import SnapKit
 import UIKit
 import TDDesign
+import Kingfisher
 
 final class MyPageProfileView: BaseView {
     private let containerView = UIView()
@@ -99,8 +100,14 @@ final class MyPageProfileView: BaseView {
         isProfileImageTapped = false
     }
     
-    func configure(followingCount: Int, followerCount: Int, postCount: Int) {
+    func configure(profileImage: String?, followingCount: Int, followerCount: Int, postCount: Int) {
         guard let followInfoStackView = followInfoStackView.arrangedSubviews as? [FollowInfoView] else { return }
+        
+        if let profileImage = profileImage {
+            profileImageView.kf.setImage(with: URL(string: profileImage))
+        } else {
+            profileImageView.image = TDImage.Profile.large
+        }
         
         followInfoStackView[0].configure(type: "팔로잉", number: followingCount)
         followInfoStackView[1].configure(type: "팔로워", number: followerCount)
