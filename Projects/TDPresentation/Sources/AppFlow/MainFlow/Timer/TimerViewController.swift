@@ -118,30 +118,27 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private func setupButtonActions() {
         layoutView.playButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
-            self?.input.send(.didTapStartTimerButton)
             self?.didTapStartTimerButton()
         }, for: .touchUpInside)
         
         layoutView.pauseButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
-            self?.input.send(.didTapPauseTimerButton)
             self?.didTapPauseTimerButton()
         }, for: .touchUpInside)
         
         layoutView.resetButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
-            self?.input.send(.didTapResetTimerButton)
             self?.didTapResetTimerButton()
         }, for: .touchUpInside)
         
         layoutView.stopButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
-            self?.input.send(.didTapStopTimerButton)
             self?.didTapStopTimerButton()
         }, for: .touchUpInside)
     }
     
     private func didTapStartTimerButton() {
+        input.send(.didTapStartTimerButton)
         dismissToast()
         updateTimerRunning(true)
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
@@ -149,6 +146,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
     
     private func didTapPauseTimerButton() {
+        input.send(.didTapPauseTimerButton)
         updateTimerRunning(false)
         showToast(
             type: .orange,
@@ -160,14 +158,24 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
     
     private func didTapResetTimerButton() {
-        updateTimerRunning(false)
-        updateTimer(viewModel.timerSetting?.toFocusDurationMinutes() ?? 0)
+        let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .reset)
+        timerCautionPopupViewController.onAction = { [weak self] in
+            self?.input.send(.didTapResetTimerButton)
+            self?.updateTimerRunning(false)
+            self?.updateTimer(self?.viewModel.timerSetting?.toFocusDurationMinutes() ?? 0)
+        }
+        presentPopup(with: timerCautionPopupViewController)
     }
     
     private func didTapStopTimerButton() {
-        dismissToast()
-        layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
-        tabBarController?.tabBar.isUserInteractionEnabled = true
+        let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .stop)
+        timerCautionPopupViewController.onAction = { [weak self] in
+            self?.input.send(.didTapStopTimerButton)
+            self?.dismissToast()
+            self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
+            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
+        }
+        presentPopup(with: timerCautionPopupViewController)
     }
     
     // MARK: - Private Methods

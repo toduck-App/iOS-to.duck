@@ -114,20 +114,23 @@ final class DiaryAnalyzeDetailView: BaseView {
     
     // MARK: - Configure
     func updateDiaryCount(_ count: Int) {
-        description1Label.setText("지난 달 보다")
-        
-        description2Label.attributedText = makeColoredText(
-            mainText: "\(count)일 더 작성했어요",
-            coloredPart: "\(count)일"
-        )
         
         switch count {
         case let x where x > 0:
             analyzeImageView.image = TDImage.Analyze.bookIncrease
+            description1Label.setText("지난 달 보다")
+            description2Label.attributedText = makeColoredText(
+                mainText: "\(count)일 더 작성했어요",
+                coloredPart: "\(count)일"
+            )
         case let x where x < 0:
             analyzeImageView.image = TDImage.Analyze.bookDecrease
+            description1Label.setText("지난 달 보다")
+            description2Label.setText("일기 작성이 줄었어요")
         default:
             analyzeImageView.image = TDImage.Analyze.bookZero
+            description1Label.setText("지난 기록이 없어요..")
+            description2Label.setText("일기를 작성해봐요!")
         }
     }
     

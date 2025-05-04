@@ -76,7 +76,7 @@ public final class TimerViewModel: BaseViewModel {
         fetchTimerSettingUseCase: FetchTimerSettingUseCase,
         updateTimerSettingUseCase: UpdateTimerSettingUseCase,
         fetchTimerThemeUseCase: FetchTimerThemeUseCase,
-        updateTimerThemeUseCase: UpdateTimerThemeUseCase,
+        updateTimerThemeUseCase: UpdateTimerThemeUseCase
     ) {
         self.saveFocusUseCase = saveFocusUseCase
         self.focusTimerUseCase = focusTimerUseCase
