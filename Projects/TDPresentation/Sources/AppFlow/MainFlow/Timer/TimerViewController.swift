@@ -172,7 +172,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     
     private func finishedTimerOneCycle() {
         handleControlStack(.pause)
-        input.send(.increaseFocusCount)
     }
     
     private func updateTimer(_ remainedTime: Int) {
