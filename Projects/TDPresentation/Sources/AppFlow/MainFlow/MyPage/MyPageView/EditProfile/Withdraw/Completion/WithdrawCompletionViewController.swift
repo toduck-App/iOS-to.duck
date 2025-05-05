@@ -1,14 +1,24 @@
-//
-//  WithdrawCompletionViewController.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 3/27/25.
-//
-
+import Combine
 import UIKit
 
 final class WithdrawCompletionViewController: BaseViewController<WithdrawCompletionView> {
     weak var coordinator: WithdrawCompletionCoordinator?
+    let viewModel: WithdrawCompletionViewModel!
+    
+    private let input = PassthroughSubject<WithdrawCompletionViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(
+        viewModel: WithdrawCompletionViewModel
+    ) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func configure() {
         layoutView.delegate = self
@@ -20,10 +30,27 @@ final class WithdrawCompletionViewController: BaseViewController<WithdrawComplet
             }
         )
     }
+    
+    override func binding() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                guard let self else { return }
+                switch event {
+                case .withdrawCompleted:
+                    self.coordinator?.popToRootViewController()
+                case .failure(let error):
+                    self.showErrorAlert(errorMessage: error)
+                }
+            }
+            .store(in: &cancellables)
+    }
 }
 
 extension WithdrawCompletionViewController: WithdrawCompletionViewDelegate {
     func WithdrawCompletionViewDidTapNextButton(_ view: WithdrawCompletionView) {
-        coordinator?.popToRootViewController()
+        input.send(.didTapWithdrawCompleteButton)
     }
 }

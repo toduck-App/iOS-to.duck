@@ -7,78 +7,89 @@ public enum UserAuthAPI {
     case requestVerificationCodeWithFindId(phoneNumber: String) // 아이디 찾기 인증요청
     case requestVerificationCodeWithFindPassword(loginId: String, phoneNumber: String) // 비밀번호 찾기 인증요청
     case logout // 로그아웃
+    case withdraw(reasonCode: String, reasonText: String)
     // 인증번호 유효성은 AuthAPI
 }
 
 extension UserAuthAPI: MFTarget {
     public var baseURL: URL {
-        return URL(string: APIConstants.baseURL)!
+        URL(string: APIConstants.baseURL)!
     }
     
     public var path: String {
         switch self {
         case .changePassword:
-            return "v1/users/find/change-password"
+            "v1/users/find/change-password"
         case .findId:
-            return "v1/users/find/login-id"
+            "v1/users/find/login-id"
         case .requestVerificationCodeWithFindId:
-            return "v1/users/find/verified-code"
+            "v1/users/find/verified-code"
         case .requestVerificationCodeWithFindPassword:
-            return "v1/users/find/verify-login-id-phonenumber"
+            "v1/users/find/verify-login-id-phonenumber"
         case .logout:
-            return "v1/users/logout"
+            "v1/users/logout"
+        case .withdraw:
+            "v1/my-page/account"
         }
     }
     
     public var method: MFHTTPMethod {
         switch self {
         case .changePassword:
-            return .put
+            .put
         case .findId,
-                .requestVerificationCodeWithFindId,
-                .logout:
-            return .get
+             .requestVerificationCodeWithFindId,
+             .logout:
+            .get
         case .requestVerificationCodeWithFindPassword:
-            return .patch
+            .patch
+        case .withdraw:
+            .delete
         }
     }
     
     public var queries: Parameters? {
         switch self {
         case .findId(let phoneNumber):
-            return ["phoneNumber": phoneNumber]
+            ["phoneNumber": phoneNumber]
         case .requestVerificationCodeWithFindId(let phoneNumber):
-            return ["phoneNumber": phoneNumber]
+            ["phoneNumber": phoneNumber]
         case .changePassword,
-                .requestVerificationCodeWithFindPassword,
-                .logout:
-            return nil
+             .requestVerificationCodeWithFindPassword,
+             .logout,
+             .withdraw:
+            nil
         }
     }
     
     public var task: MFTask {
         switch self {
         case .changePassword(let loginId, let changedPassword, let phoneNumber):
-            return .requestParameters(
+            .requestParameters(
                 parameters: ["loginId": loginId,
                              "changedPassword": changedPassword,
                              "phoneNumber": phoneNumber]
             )
         case .requestVerificationCodeWithFindPassword(let loginId, let phoneNumber):
-            return .requestParameters(
+            .requestParameters(
                 parameters: ["loginId": loginId,
                              "phoneNumber": phoneNumber]
             )
+        case .withdraw(let reasonCode, let reasonText):
+            .requestParameters(
+                parameters: ["reasonCode": reasonCode,
+                             "reasonText": reasonText]
+            )
         case .findId,
-                .requestVerificationCodeWithFindId,
-                .logout:
-            return .requestPlain
+             .requestVerificationCodeWithFindId,
+             .logout:
+            .requestPlain
         }
     }
     
     public var headers: MFHeaders? {
         switch self {
-        case .logout:
+        case .logout, .withdraw:
             let headers: MFHeaders = [
                 .authorization(bearerToken: TDTokenManager.shared.accessToken ?? ""),
                 .cookie(TDTokenManager.shared.refreshToken ?? ""),
@@ -87,9 +98,9 @@ extension UserAuthAPI: MFTarget {
             return headers
             
         case .changePassword,
-                .findId,
-                .requestVerificationCodeWithFindId,
-                .requestVerificationCodeWithFindPassword:
+             .findId,
+             .requestVerificationCodeWithFindId,
+             .requestVerificationCodeWithFindPassword:
             return [.contentType("application/json")]
         }
     }

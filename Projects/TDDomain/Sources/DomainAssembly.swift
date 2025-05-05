@@ -547,5 +547,12 @@ public struct DomainAssembly: Assembly {
             }
             return UpdateProfileImageUseCaseImpl(repository: repository)
         }
+        
+        container.register(WithdrawUseCase.self) { resolver in
+            guard let repository = resolver.resolve(UserAuthRepository.self) else {
+                fatalError("컨테이너에 UserAuthRepository가 등록되어 있지 않습니다.")
+            }
+            return WithdrawUseCaseImpl(repository: repository)
+        }
     }
 }

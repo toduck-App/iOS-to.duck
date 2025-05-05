@@ -28,4 +28,9 @@ public struct UserAuthRepositoryImpl: UserAuthRepository {
         try await service.logout()
         try await TDTokenManager.shared.removeToken()
     }
+    
+    public func withdraw(type: WithdrawReasonType, reason: String) async throws {
+        try await service.withdrawAccount(type: type.rawValue, reason: reason)
+        try await TDTokenManager.shared.removeToken()
+    }
 }
