@@ -70,14 +70,14 @@ extension MyPageCoordinator: NavigationDelegate {
         toduckCalendarCoordinator.start()
     }
 
-    func didTapProfileButton() {
+    func didTapProfileButton(nickName: String) {
         let editProfileCoordinator = EditProfileCoordinator(
             navigationController: navigationController,
             injector: injector
         )
         editProfileCoordinator.finishDelegate = self
         childCoordinators.append(editProfileCoordinator)
-        editProfileCoordinator.start()
+        editProfileCoordinator.start(nickName: nickName)
         // MARK: 회원 정보 수정 은 추후에 구현
 //        let editProfileMenuCoordinator = EditProfileMenuCoordinator(
 //            navigationController: navigationController,

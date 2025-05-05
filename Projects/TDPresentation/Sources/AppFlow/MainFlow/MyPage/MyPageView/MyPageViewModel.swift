@@ -22,6 +22,7 @@ final class MyPageViewModel: BaseViewModel {
     private let userLogoutUseCase: UserLogoutUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private(set) var nickName: String?
     
     init(
         fetchUserNicknameUseCase: FetchUserNicknameUseCase,
@@ -51,6 +52,7 @@ final class MyPageViewModel: BaseViewModel {
     private func fetchUserNickname() async {
         do {
             let nickname = try await fetchUserNicknameUseCase.execute()
+            self.nickName = nickname
             output.send(.fetchedUserNickname(nickname))
         } catch {
             output.send(.failureAPI(error.localizedDescription))

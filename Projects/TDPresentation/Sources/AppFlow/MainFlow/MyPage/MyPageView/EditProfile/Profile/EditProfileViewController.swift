@@ -49,6 +49,10 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
                 }
             }.store(in: &cancellables)
     }
+    
+    func updateNickName(nickName: String) {
+        layoutView.nicknameField.setupTextField(nickName)
+    }
 }
 
 extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate {

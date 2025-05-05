@@ -16,7 +16,7 @@ final class EditProfileCoordinator: Coordinator {
         self.injector = injector
     }
     
-    func start() {
+    func start(nickName: String) {
         let updateUserNicknameUseCase = injector.resolve(UpdateUserNicknameUseCase.self)
         let updateProfileImageUseCase = injector.resolve(UpdateProfileImageUseCase.self)
         let viewModel = EditProfileViewModel(
@@ -26,8 +26,11 @@ final class EditProfileCoordinator: Coordinator {
         let editProfileViewController = EditProfileViewController(viewModel: viewModel)
         editProfileViewController.hidesBottomBarWhenPushed = true
         editProfileViewController.coordinator = self
+        editProfileViewController.updateNickName(nickName: nickName)
         navigationController.pushViewController(editProfileViewController, animated: true)
     }
+    
+    func start() { }
     
     func popViewController() {
         navigationController.popViewController(animated: true)

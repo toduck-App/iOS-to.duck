@@ -111,7 +111,12 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                     let followingCount = userDetail.followingCount
                     let followerCount = userDetail.followerCount
                     let postCount = userDetail.totalPostCount
-                    self?.layoutView.profileView.configure(profileImage: user.icon, followingCount: followingCount, followerCount: followerCount, postCount: postCount)
+                    self?.layoutView.profileView.configure(
+                        profileImage: user.icon,
+                        followingCount: followingCount,
+                        followerCount: followerCount,
+                        postCount: postCount
+                    )
                 }
             }.store(in: &cancellables)
     }
@@ -160,7 +165,9 @@ final class MyPageViewController: BaseViewController<MyPageView> {
 
         if let responderEvent = event as? CustomEventWrapper {
             if responderEvent.customType == .profileImageTapped {
-                coordinator?.didTapProfileButton()
+                if let nickName = viewModel.nickName {
+                    coordinator?.didTapProfileButton(nickName: nickName)
+                }
             }
         }
     }
@@ -170,7 +177,9 @@ extension MyPageViewController: UICollectionViewDelegate {}
 
 extension MyPageViewController: MyPageSocialButtonDelegate {
     func didTapProfileButton() {
-        coordinator?.didTapProfileButton()
+        if let nickName = viewModel.nickName {
+            coordinator?.didTapProfileButton(nickName: nickName)
+        }
     }
 
     func didTapShareButton() {
