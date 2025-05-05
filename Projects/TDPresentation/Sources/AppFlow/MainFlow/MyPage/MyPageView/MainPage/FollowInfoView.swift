@@ -20,19 +20,9 @@ final class FollowInfoView: UIView {
         return stackView
     }()
     
-    private let typeLabel: UILabel = {
-        let label = UILabel()
-        label.font = TDFont.mediumCaption1.font
-        label.textColor = TDColor.Neutral.neutral600
-        return label
-    }()
+    private let typeLabel = TDLabel(toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
     
-    private let numberLabel: UILabel = {
-        let label = UILabel()
-        label.font = TDFont.boldBody3.font
-        label.textColor = TDColor.Neutral.neutral800
-        return label
-    }()
+    private let numberLabel = TDLabel(toduckFont: .boldBody3, toduckColor: TDColor.Neutral.neutral800)
     
     init(type: String, number: Int) {
         super.init(frame: .zero)
@@ -44,6 +34,14 @@ final class FollowInfoView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func configure(
+        type: String,
+        number: Int
+    ) {
+        typeLabel.text = type
+        numberLabel.text = "\(number)"
+    }
 }
 
 // MARK: - Private Methods
@@ -52,8 +50,8 @@ private extension FollowInfoView {
         _ type: String,
         _ number: Int
     ) {
-        typeLabel.text = type
-        numberLabel.text = "\(number)"
+        typeLabel.setText(type)
+        numberLabel.setText("\(number)")
         addSubview(stackView)
         [typeLabel, numberLabel].forEach {
             stackView.addArrangedSubview($0)

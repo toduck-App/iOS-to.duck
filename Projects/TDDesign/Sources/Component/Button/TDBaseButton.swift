@@ -75,6 +75,19 @@ public class TDBaseButton: UIButton {
         }
     }
     
+    override
+    public var isSelected: Bool {
+        didSet {
+            if isSelected {
+                configuration?.baseBackgroundColor = backgroundToduckColor
+                configuration?.baseForegroundColor = foregroundToduckColor
+            } else {
+                configuration?.baseBackgroundColor = TDColor.Neutral.neutral100
+                configuration?.baseForegroundColor = TDColor.Neutral.neutral500
+            }
+        }
+    }
+    
     
     // MARK: - Public Methods
     /// 버튼의 배경색을 설정합니다.

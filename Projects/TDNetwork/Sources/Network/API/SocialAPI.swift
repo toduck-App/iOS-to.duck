@@ -14,11 +14,13 @@ public enum SocialAPI {
     case fetchPost(postId: String)
     case reportPost(postId: Int, reportType: String, reason: String?, blockAuthor: Bool)
     case blockUser(userId: Int)
+    case unBlockUser(userId: Int)
+    case fetchBlockedUserList
     
     case likeComment(postId: Int, commentId: Int)
     case unlikeComment(postId: Int, commentId: Int)
     
-    case fetchUserCommentList(userId: String) // TODO: 다른 유저의 Comment List 가져올 필요
+    case fetchMyCommentList(cursor: Int?, limit: Int) // TODO: 다른 유저의 Comment List 가져올 필요
     case createComment(socialId: Int, parentCommentId: Int?, content: String, imageUrl: String?)
     case updateComment(comment: Comment) // TODO: Comment 수정 기능 구현 필요 (NEED BACKEND)
     case deleteComment(postId: Int, commentId: Int)
@@ -60,12 +62,14 @@ extension SocialAPI: MFTarget {
             "v1/socials/\(postId)/report"
         case .blockUser(let blockUser):
             "v1/users/\(blockUser)/block"
+        case .unBlockUser(let blockUser):
+            "v1/users/\(blockUser)/block"
         case .likeComment(let postId, let commentId):
             "v1/socials/\(postId)/comments/\(commentId)/likes"
         case .unlikeComment(let postId, let commentId):
             "v1/socials/\(postId)/comments/\(commentId)/likes"
-        case .fetchUserCommentList(let userId):
-            "/users/\(userId)/comments"
+        case .fetchMyCommentList:
+            "v1/my-page/comments"
         case .createComment(let socialId, _, _, _):
             "v1/socials/\(socialId)/comments"
         case .updateComment(let comment):
@@ -86,6 +90,8 @@ extension SocialAPI: MFTarget {
             "v1/users/\(targetUserId)/follow"
         case .shareRoutine(let routineId, _):
             "v1/profiles/shared-routines/\(routineId)"
+        case .fetchBlockedUserList:
+            "v1/my-page/blocked-users"
         }
     }
     
@@ -94,10 +100,11 @@ extension SocialAPI: MFTarget {
         case .fetchPostList,
              .searchPost,
              .fetchPost,
-             .fetchUserCommentList,
+             .fetchMyCommentList,
              .fetchUser,
              .fetchUserPostList,
-             .fetchUserRoutineList:
+             .fetchUserRoutineList,
+             .fetchBlockedUserList:
             .get
         case .likePost,
              .createPost,
@@ -111,7 +118,7 @@ extension SocialAPI: MFTarget {
             .post
         case .updatePost, .updateComment:
             .patch
-        case .deletePost, .deleteComment, .unlikePost, .unfollowUser, .unlikeComment:
+        case .deletePost, .deleteComment, .unlikePost, .unfollowUser, .unlikeComment, .unBlockUser:
             .delete
         }
     }
@@ -142,15 +149,21 @@ extension SocialAPI: MFTarget {
                 params["cursor"] = cursor
             }
             return params
+        case .fetchMyCommentList(let cursor, let limit):
+            var params: [String: Any] = ["limit": limit]
+            if let cursor {
+                params["cursor"] = cursor
+            }
+            return params
         case .shareRoutine,
              .reportPost,
              .likePost,
              .unlikePost,
              .fetchPost,
              .blockUser,
+             .unBlockUser,
              .likeComment,
              .unlikeComment,
-             .fetchUserCommentList,
              .fetchUser,
              .fetchUserRoutineList,
              .deletePost,
@@ -161,7 +174,8 @@ extension SocialAPI: MFTarget {
              .updateComment,
              .followUser,
              .unfollowUser,
-             .reportComment:
+             .reportComment,
+             .fetchBlockedUserList:
             // TODO: - API에 따라 이 부분도 구현되어야 합니다.
             return nil
         }
@@ -175,16 +189,18 @@ extension SocialAPI: MFTarget {
              .unlikePost,
              .fetchPost,
              .blockUser,
+             .unBlockUser,
              .likeComment,
              .unlikeComment,
-             .fetchUserCommentList,
+             .fetchMyCommentList,
              .fetchUser,
              .fetchUserPostList,
              .fetchUserRoutineList,
              .deletePost,
              .deleteComment,
              .followUser,
-             .unfollowUser:
+             .unfollowUser,
+             .fetchBlockedUserList:
             return .requestPlain
         case .createPost(let post):
             let params: [String: Any?] = [

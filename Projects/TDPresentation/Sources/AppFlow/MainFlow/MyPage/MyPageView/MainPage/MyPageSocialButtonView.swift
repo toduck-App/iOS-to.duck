@@ -1,55 +1,70 @@
-//
-//  MyPageMenuView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/14/25.
-//
-
-import UIKit
 import SnapKit
+import UIKit
+
+protocol MyPageSocialButtonDelegate: AnyObject {
+    func didTapProfileButton()
+    func didTapShareButton()
+}
 
 final class MyPageSocialButtonView: UIView {
-    let menuStackView: UIStackView = {
+    weak var delegate: MyPageSocialButtonDelegate?
+
+    private let menuStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = LayoutConstants.menuStackViewSpacing
         return stackView
     }()
-    
+
+    private var profileContainer = MyPageMenuContainer(type: .profile)
+    private var shareContainer = MyPageMenuContainer(type: .share)
+
     override init(frame: CGRect) {
         super.init(frame: .zero)
         setupViews()
         setupLayoutConstraints()
+        attachGestures()
     }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
 
-// MARK: - Private Methods
-private extension MyPageSocialButtonView {
-    func setupViews() {
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    private func setupViews() {
         addSubview(menuStackView)
-        [
-            MyPageMenuContainer(type: .calendar),
-            MyPageMenuContainer(type: .routine),
-            MyPageMenuContainer(type: .share)
-        ].forEach { menuStackView.addArrangedSubview($0) }
+        for item in [profileContainer, shareContainer] {
+            menuStackView.addArrangedSubview(item)
+            item.isUserInteractionEnabled = true
+        }
     }
-    
-    func setupLayoutConstraints() {
+
+    private func setupLayoutConstraints() {
         menuStackView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(LayoutConstants.stackViewUpperPadding)
             $0.bottom.equalToSuperview().offset(-LayoutConstants.stackViewLowerPadding)
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.stackViewHorizontalPadding)
         }
     }
+
+    private func attachGestures() {
+        let profileTap = UITapGestureRecognizer(target: self, action: #selector(profileTapped))
+        profileContainer.addGestureRecognizer(profileTap)
+
+        let shareTap = UITapGestureRecognizer(target: self, action: #selector(shareTapped))
+        shareContainer.addGestureRecognizer(shareTap)
+    }
+
+    @objc private func profileTapped() {
+        delegate?.didTapProfileButton()
+    }
+
+    @objc private func shareTapped() {
+        delegate?.didTapShareButton()
+    }
 }
 
 // MARK: - Constants
+
 private extension MyPageSocialButtonView {
     enum LayoutConstants {
         static let menuStackViewSpacing: CGFloat = 10

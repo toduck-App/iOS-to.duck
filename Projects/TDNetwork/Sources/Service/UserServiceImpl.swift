@@ -41,4 +41,21 @@ public struct UserServiceImpl: UserService {
         let target = SocialAPI.shareRoutine(routineId: routineID, dto: routine)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func requestMyCommentList(cursor: Int?, limit: Int) async throws -> TDCommentListDTO {
+        let target = SocialAPI.fetchMyCommentList(cursor: cursor, limit: limit)
+        let response = try await provider.requestDecodable(of: TDCommentListDTO.self, target)
+        return response.value
+    }
+    
+    public func requestUserUnBlock(userId: Int) async throws {
+        let target = SocialAPI.unBlockUser(userId: userId)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func requestUserBlockList() async throws -> TDBlockedUserListDTO {
+        let target = SocialAPI.fetchBlockedUserList
+        let response = try await provider.requestDecodable(of: TDBlockedUserListDTO.self, target)
+        return response.value
+    }
 }

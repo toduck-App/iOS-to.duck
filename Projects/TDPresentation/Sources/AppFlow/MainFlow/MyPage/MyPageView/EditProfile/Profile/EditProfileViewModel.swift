@@ -1,45 +1,64 @@
 import Combine
-import TDDomain
 import Foundation
+import TDDomain
 
 final class EditProfileViewModel: BaseViewModel {
     enum Input {
         case writeNickname(nickname: String)
-        case updateNickname
+        case writeProfileImage(image: Data)
+        case updateProfile
     }
     
     enum Output {
-        case updatedNickname
+        case updatedProfile
         case failureAPI(String)
     }
     
+    private let updateProfileImageUseCase: UpdateProfileImageUseCase
     private let updateUserNicknameUseCase: UpdateUserNicknameUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var nickname = ""
+    private var profileImage: Data?
+    private var isEnableUpdateButton: Bool {
+        !nickname.isEmpty
+    }
     
     init(
-        updateUserNicknameUseCase: UpdateUserNicknameUseCase
+        updateUserNicknameUseCase: UpdateUserNicknameUseCase,
+        updateProfileImageUseCase: UpdateProfileImageUseCase
     ) {
         self.updateUserNicknameUseCase = updateUserNicknameUseCase
+        self.updateProfileImageUseCase = updateProfileImageUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
+            guard let self else { return }
             switch event {
             case .writeNickname(let nickname):
-                self?.nickname = nickname
-            case .updateNickname:
-                Task { await self?.updateNickname() }
+                self.nickname = nickname
+            case .writeProfileImage(let image):
+                profileImage = image
+            case .updateProfile:
+                Task { await self.updateProfile() }
             }
         }.store(in: &cancellables)
         return output.eraseToAnyPublisher()
     }
     
-    private func updateNickname() async {
+    private func updateProfile() async {
         do {
             try await updateUserNicknameUseCase.execute(nickname: nickname)
-            output.send(.updatedNickname)
+            let fileName = UUID().uuidString + ".jpg"
+            if let profileImage {
+                let image: (fileName: String, imageData: Data)? = (fileName: fileName, imageData: profileImage)
+                try await updateProfileImageUseCase.execute(image: image)
+            } else {
+                try await updateProfileImageUseCase.execute(image: nil)
+            }
+            
+            output.send(.updatedProfile)
         } catch {
             output.send(.failureAPI(error.localizedDescription))
         }

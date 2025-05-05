@@ -1,35 +1,20 @@
-//
-//  MyPageMenuContainer.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/14/25.
-//
-
 import UIKit
 import SnapKit
 
 import TDDesign
 
 enum ContainerType {
-    case calendar
-    case routine
+    case profile
     case share
 }
 
 final class MyPageMenuContainer: UIView {
-    let icon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = LayoutConstants.iconCornerRadius
-        return imageView
-    }()
+    let icon = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.layer.cornerRadius = LayoutConstants.iconCornerRadius
+    }
     
-    let label: UILabel = {
-        let label = UILabel()
-        label.font = TDFont.mediumBody2.font
-        label.textColor = TDColor.Neutral.neutral800
-        return label
-    }()
+    let label = TDLabel(toduckFont: .mediumBody2, toduckColor: TDColor.Neutral.neutral800)
     
     init(type: ContainerType) {
         super.init(frame: .zero)
@@ -51,23 +36,20 @@ private extension MyPageMenuContainer {
         [icon, label].forEach { addSubview($0) }
         
         switch type {
-        case .calendar:
-            icon.image = TDImage.Calendar.top2Medium
-            label.text = "오늘의 일정"
-        case .routine:
-            icon.image = TDImage.checkMedium.withRenderingMode(.alwaysTemplate)
-            icon.tintColor = TDColor.Neutral.neutral500
-            icon.backgroundColor = TDColor.Neutral.neutral300
-            label.text = "오늘의 루틴"
+        case .profile:
+            icon.image = TDImage.Pen.penNeutralColor.withRenderingMode(.alwaysOriginal)
+            icon.tintColor = TDColor.Neutral.neutral800
+            label.setText("프로필")
         case .share:
             icon.image = TDImage.Social.medium
-            label.text = "공유하기"
+            label.setText("공유하기")
         }
     }
     
     func setupLayoutConstraints() {
         icon.snp.makeConstraints {
             $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
+            $0.size.equalTo(LayoutConstants.iconSize)
             $0.centerX.equalToSuperview()
         }
         
@@ -81,6 +63,7 @@ private extension MyPageMenuContainer {
 // MARK: - Constants
 private extension MyPageMenuContainer {
     enum LayoutConstants {
+        static let iconSize: CGFloat = 24
         static let verticalPadding: CGFloat = 14
         static let iconCornerRadius: CGFloat = 4
         static let containerCornerRadius: CGFloat = 8

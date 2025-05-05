@@ -7,11 +7,11 @@
 
 import UIKit
 import SnapKit
-
+import TDDomain
 import TDDesign
 
 protocol TDCheckboxFieldDelegate: AnyObject {
-    func TDCheckboxFieldDelegateDidChange(_ field: TDCheckboxField, _ isSelected: Bool, type: ReasonType)
+    func TDCheckboxFieldDelegateDidChange(_ field: TDCheckboxField, _ isSelected: Bool, type: WithdrawReasonType)
 }
 
 final class TDCheckboxField: BaseView {
@@ -23,13 +23,13 @@ final class TDCheckboxField: BaseView {
     private let checkboxLabel = TDLabel(toduckFont: .mediumBody1)
     private let placeholderLabel = TDLabel(toduckFont: .mediumBody3, toduckColor: TDColor.Neutral.neutral500)
     
-    let reasonType: ReasonType
+    let reasonType: WithdrawReasonType
     let checkbox = TDCheckbox(
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite
     )
     
-    private let textView: UITextView = {
+    let textView: UITextView = {
         let textView = UITextView()
         textView.layer.cornerRadius = LayoutConstants.textViewCornerRadius
         textView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
@@ -48,7 +48,7 @@ final class TDCheckboxField: BaseView {
         return textView
     }()
     
-    init(type: ReasonType) {
+    init(type: WithdrawReasonType) {
         self.reasonType = type
         super.init(frame: .zero)
         setupView()

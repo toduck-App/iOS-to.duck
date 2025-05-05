@@ -1,29 +1,35 @@
 import Combine
-import TDDomain
 import Foundation
+import TDCore
+import TDDomain
 
 final class MyPageViewModel: BaseViewModel {
     enum Input {
         case fetchUserNickname
+        case fetchUserDetail
         case logout
     }
     
     enum Output {
         case fetchedUserNickname(String)
+        case fetchedUserDetail(User, UserDetail)
         case logoutFinished
         case failureAPI(String)
     }
     
     private let fetchUserNicknameUseCase: FetchUserNicknameUseCase
+    private let fetchUserDetailUseCase: FetchUserUseCase
     private let userLogoutUseCase: UserLogoutUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
     init(
         fetchUserNicknameUseCase: FetchUserNicknameUseCase,
+        fetchUserDetailUseCase: FetchUserUseCase,
         userLogoutUseCase: UserLogoutUseCase
     ) {
         self.fetchUserNicknameUseCase = fetchUserNicknameUseCase
+        self.fetchUserDetailUseCase = fetchUserDetailUseCase
         self.userLogoutUseCase = userLogoutUseCase
     }
     
@@ -32,6 +38,8 @@ final class MyPageViewModel: BaseViewModel {
             switch event {
             case .fetchUserNickname:
                 Task { await self?.fetchUserNickname() }
+            case .fetchUserDetail:
+                Task { await self?.fetchUserDetail() }
             case .logout:
                 Task { await self?.logout() }
             }
@@ -49,6 +57,16 @@ final class MyPageViewModel: BaseViewModel {
         }
     }
     
+    private func fetchUserDetail() async {
+        do {
+            guard let userId = TDTokenManager.shared.userId else { return }
+            let (user, userDetail) = try await fetchUserDetailUseCase.execute(id: userId)
+            output.send(.fetchedUserDetail(user, userDetail))
+        } catch {
+            output.send(.failureAPI(error.localizedDescription))
+        }
+    }
+    
     private func logout() async {
         do {
             try await userLogoutUseCase.execute()
@@ -58,4 +76,3 @@ final class MyPageViewModel: BaseViewModel {
         }
     }
 }
-

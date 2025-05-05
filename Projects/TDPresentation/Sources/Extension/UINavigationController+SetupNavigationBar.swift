@@ -56,7 +56,7 @@ private extension UINavigationController {
         let backButtonView = UIImageView(image: TDImage.Direction.leftMedium.withRenderingMode(.alwaysTemplate))
         
         let titleLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
-        titleLabel.text = title
+        titleLabel.setText(title)
         backButtonView.tintColor = TDColor.Neutral.neutral800
         [backButtonView, titleLabel].forEach { container.addSubview($0) }
         

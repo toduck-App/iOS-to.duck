@@ -5,14 +5,23 @@
 //  Created by 정지용 on 1/7/25.
 //
 
-import UIKit
 import SnapKit
-
+import UIKit
 import TDDesign
+import Kingfisher
 
 final class MyPageProfileView: BaseView {
     private let containerView = UIView()
-    private let profileImageView = TDImageView()
+    
+    // MARK: 기존 Profile Avatar View가 사용되지 않고 있습니다.
+    // private let profileImageView = TDImageView()
+
+    private let profileImageView = UIImageView().then {
+        $0.clipsToBounds = true
+        $0.contentMode = .scaleAspectFill
+        $0.image = TDImage.Profile.large
+    }
+
     private let innerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -82,7 +91,7 @@ final class MyPageProfileView: BaseView {
         let touchLocation = touch.location(in: self)
         let profileFrame = profileImageView.convert(profileImageView.bounds, to: self)
         
-        if isProfileImageTapped && profileFrame.contains(touchLocation) {
+        if isProfileImageTapped, profileFrame.contains(touchLocation) {
             prepareTouchEvent(.profileImageTapped, touches: touches, event: event)
         } else {
             prepareTouchEvent(.unknown, touches: touches, event: event)
@@ -91,12 +100,27 @@ final class MyPageProfileView: BaseView {
         isProfileImageTapped = false
     }
     
+    func configure(profileImage: String?, followingCount: Int, followerCount: Int, postCount: Int) {
+        guard let followInfoStackView = followInfoStackView.arrangedSubviews as? [FollowInfoView] else { return }
+        
+        if let profileImage = profileImage {
+            profileImageView.kf.setImage(with: URL(string: profileImage))
+        } else {
+            profileImageView.image = TDImage.Profile.large
+        }
+        
+        followInfoStackView[0].configure(type: "팔로잉", number: followingCount)
+        followInfoStackView[1].configure(type: "팔로워", number: followerCount)
+        followInfoStackView[2].configure(type: "작성한 글", number: postCount)
+    }
+    
     override func configure() {
         badgeLabels.forEach { $0.isHidden = true }
     }
 }
 
 // MARK: - Private Methods
+
 private extension MyPageProfileView {
     func setupViews() {
         addSubview(containerView)
@@ -105,10 +129,9 @@ private extension MyPageProfileView {
         [usernameLabel].forEach { userInfoStackView.addArrangedSubview($0) }
         badgeLabels.forEach { userInfoStackView.addArrangedSubview($0) }
         [
-            // TODO: Mock 데이터 제거
-            FollowInfoView(type: "팔로잉", number: 12),
-            FollowInfoView(type: "팔로워", number: 261),
-            FollowInfoView(type: "작성한 글", number: 315)
+            FollowInfoView(type: "팔로잉", number: 0),
+            FollowInfoView(type: "팔로워", number: 0),
+            FollowInfoView(type: "작성한 글", number: 0)
         ].forEach { followInfoStackView.addArrangedSubview($0) }
     }
     
@@ -120,8 +143,8 @@ private extension MyPageProfileView {
                 .inset(LayoutConstants.containerHorizontalPadding)
         }
         
-        badgeLabels.forEach {
-            $0.snp.makeConstraints {
+        for badgeLabel in badgeLabels {
+            badgeLabel.snp.makeConstraints {
                 $0.height.equalTo(LayoutConstants.badgeIntrinsicContentSize)
             }
         }
@@ -143,6 +166,7 @@ private extension MyPageProfileView {
 }
 
 // MARK: - Constants
+
 private extension MyPageProfileView {
     enum LayoutConstants {
         static let containerVerticalPadding: CGFloat = 12

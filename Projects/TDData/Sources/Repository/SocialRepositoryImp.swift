@@ -108,10 +108,6 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
     
-    public func fetchUserCommentList(userID: User.ID) async throws -> [Comment]? {
-        []
-    }
-    
     public func createComment(
         postID: Post.ID,
         parentId: Comment.ID?,

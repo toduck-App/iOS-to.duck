@@ -25,7 +25,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
     }
     
     lazy var avatarView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 18
         $0.backgroundColor = TDColor.Neutral.neutral100

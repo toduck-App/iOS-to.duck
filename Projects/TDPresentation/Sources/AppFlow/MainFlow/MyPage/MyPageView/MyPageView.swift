@@ -1,12 +1,15 @@
-import UIKit
 import SnapKit
 import TDDesign
+import UIKit
 
 final class MyPageView: BaseView {
+    private var sections: [MenuSection] = []
+    var didSelectMenuItem: ((MenuItem) -> Void)?
+    
     private let scrollView = CustomScrollView()
     private let containerView = UIView()
     let profileView = MyPageProfileView()
-    private let socialButtonView = MyPageSocialButtonView()
+    let socialButtonView = MyPageSocialButtonView()
     private let menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -18,9 +21,11 @@ final class MyPageView: BaseView {
             right: LayoutConstants.sectionHorizontalInset
         )
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.allowsSelection = true
         collectionView.isScrollEnabled = false
         return collectionView
     }()
+
     let logoutButton = TDBaseButton(
         title: "로그아웃",
         backgroundColor: TDColor.baseWhite,
@@ -35,6 +40,7 @@ final class MyPageView: BaseView {
     )
     
     // MARK: - Default Methods
+
     override func addview() {
         addSubview(scrollView)
         scrollView.addSubview(containerView)
@@ -92,7 +98,7 @@ final class MyPageView: BaseView {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(
                 LayoutConstants.contentViewHeight +
-                LayoutConstants.containerVerticalPadding * 2
+                    LayoutConstants.containerVerticalPadding * 2
             )
             $0.width.equalToSuperview()
         }
@@ -124,35 +130,33 @@ final class MyPageView: BaseView {
             $0.bottom.equalToSuperview().offset(-20)
         }
     }
+
+    func setMenuSections(_ sections: [MenuSection]) {
+        self.sections = sections
+        menuCollectionView.reloadData()
+    }
 }
 
 extension MyPageView: UICollectionViewDataSource {
-    func numberOfSections(
-        in collectionView: UICollectionView
-    ) -> Int {
-        return Constants.mockDataSource.count
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        sections.count
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        return Constants.mockDataSource[section].value.count
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        sections[section].items.count
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MyPageMenuCollectionViewCell.identifier, for: indexPath
-        ) as? MyPageMenuCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        let sectionData = Constants.mockDataSource[indexPath.section]
-        let item = sectionData.value[indexPath.item]
-        cell.configure(with: item)
-        
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MyPageMenuCollectionViewCell.identifier,
+            for: indexPath
+        ) as! MyPageMenuCollectionViewCell
+
+        let item = sections[indexPath.section].items[indexPath.item]
+        cell.configure(with: item.title)
         return cell
     }
     
@@ -169,8 +173,8 @@ extension MyPageView: UICollectionViewDataSource {
             ) as? MyPageMenuCollectionHeaderView else {
                 return UICollectionReusableView()
             }
-            let sectionData = Constants.mockDataSource[indexPath.section]
-            header.configure(with: sectionData.key)
+            let sectionData = sections[indexPath.section].header
+            header.configure(with: sectionData)
             return header
         } else if kind == UICollectionView.elementKindSectionFooter {
             guard let footer = collectionView.dequeueReusableSupplementaryView(
@@ -192,7 +196,7 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(
+        CGSize(
             width: collectionView.bounds.width - LayoutConstants.sectionHorizontalInset * 2,
             height: LayoutConstants.customCellHeight
         )
@@ -203,7 +207,7 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        return CGSize(
+        CGSize(
             width: collectionView.bounds.width,
             height: LayoutConstants.sectionHeaderHeight
         )
@@ -214,10 +218,16 @@ extension MyPageView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
-        return CGSize(
+        CGSize(
             width: collectionView.bounds.width,
             height: LayoutConstants.sectionFooterHeight
         )
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let item = sections[indexPath.section].items[indexPath.item]
+        didSelectMenuItem?(item)
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
 
@@ -233,6 +243,7 @@ extension MyPageView: UIScrollViewDelegate {
 }
 
 // MARK: - Constants
+
 private extension MyPageView {
     enum LayoutConstants {
         static let sectionHorizontalInset: CGFloat = 16
@@ -245,12 +256,5 @@ private extension MyPageView {
         static let footerPadding: CGFloat = 20
         static let menuViewHeight: CGFloat = 110
         static let randomHeight: CGFloat = 1000
-    }
-    
-    enum Constants {
-        static let mockDataSource: [(key: String, value: [String])] = [
-            ("계정 관리", ["알림 설정", "작성 글 관리", "나의 댓글", "차단 관리"]),
-            ("서비스 약관", ["이용 약관", "개인정보 처리방침"])
-        ]
     }
 }

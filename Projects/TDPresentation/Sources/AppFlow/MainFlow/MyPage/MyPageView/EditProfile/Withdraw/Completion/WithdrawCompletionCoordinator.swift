@@ -1,35 +1,40 @@
-//
-//  WithdrawCompletionCoordinator.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 3/27/25.
-//
-
-import UIKit
-
 import TDCore
+import TDDomain
+import UIKit
 
 final class WithdrawCompletionCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
-    
+    var type: WithdrawReasonType
+    var reason: String
+
     init(
         navigationController: UINavigationController,
-        injector: DependencyResolvable
+        injector: DependencyResolvable,
+        type: WithdrawReasonType,
+        reason: String
     ) {
         self.navigationController = navigationController
         self.injector = injector
+        self.type = type
+        self.reason = reason
     }
-    
+
     func start() {
-        let withdrawCompletionViewController = WithdrawCompletionViewController()
+        let withdrawUseCase = injector.resolve(WithdrawUseCase.self)
+        let withdrawCompletionViewModel = WithdrawCompletionViewModel(
+            withdrawUseCase: withdrawUseCase,
+            type: type,
+            reason: reason
+        )
+        let withdrawCompletionViewController = WithdrawCompletionViewController(viewModel: withdrawCompletionViewModel)
         withdrawCompletionViewController.hidesBottomBarWhenPushed = true
         withdrawCompletionViewController.coordinator = self
         navigationController.pushViewController(withdrawCompletionViewController, animated: true)
     }
-    
+
     func popViewController() {
         navigationController.popViewController(animated: true)
         finishDelegate?.didFinish(childCoordinator: self)
