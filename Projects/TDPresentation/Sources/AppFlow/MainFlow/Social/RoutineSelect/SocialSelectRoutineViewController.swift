@@ -39,6 +39,11 @@ final class SocialSelectRoutineViewController: BaseViewController<SocialSelectRo
                 switch event {
                 case .fetchRoutines:
                     self.layoutView.routineTableView.reloadData()
+                    if self.viewModel.routines.isEmpty {
+                        self.layoutView.emptyView.isHidden = false
+                    } else {
+                        self.layoutView.emptyView.isHidden = true
+                    }
                 case .selectRoutine:
                     guard let routine = self.viewModel.selectedRoutine else { return }
                     self.coordinator?.didTapRoutine(routine)
