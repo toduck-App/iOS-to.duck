@@ -4,7 +4,7 @@ public struct TDUserProfileResponseDTO: Decodable {
     let followingCount: Int
     let followerCount: Int
     let postCount: Int
-    let commentCount: Int?
+    let totalCommentCount: Int
     let totalRoutineShareCount: Int
     let isMe: Bool
     let isFollowing: Bool
