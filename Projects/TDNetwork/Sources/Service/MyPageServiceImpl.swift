@@ -18,4 +18,9 @@ struct MyPageServiceImpl: MyPageService {
         let target = MyPageAPI.updateNickname(nickname: nickname)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    func updateProfileImage(url: String?) async throws {
+        let target = MyPageAPI.updateProfileImage(urlString: url)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

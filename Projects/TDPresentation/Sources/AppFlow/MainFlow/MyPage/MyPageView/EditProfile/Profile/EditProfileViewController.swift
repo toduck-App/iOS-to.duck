@@ -23,14 +23,14 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
     override func configure() {
         layoutView.delegate = self
         layoutView.backgroundColor = .white
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.updateProfile)
+        }, for: .touchUpInside)
+        layoutView.profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapProfileImage)))
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "프로필 수정",
             leftButtonAction: UIAction { [weak self] _ in
                 self?.coordinator?.finish(by: .pop)
-            },
-            rightButtonTitle: "저장",
-            rightButtonAction: UIAction { [weak self] _ in
-                self?.input.send(.updateNickname)
             }
         )
     }
@@ -42,7 +42,7 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .updatedNickname:
+                case .updatedProfile:
                     self?.coordinator?.finish(by: .pop)
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
@@ -51,17 +51,29 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
     }
 }
 
-extension EditProfileViewController: EditProfileDelegate {
+extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate {
     func editProfileView(
         _ view: EditProfileView,
         text: String,
         didUpdateCondition isConditionMet: Bool
     ) {
         input.send(.writeNickname(nickname: text))
-        if isConditionMet {
-            navigationController?.updateRightButtonState(to: .normal)
-        } else {
-            navigationController?.updateRightButtonState(to: .disabled)
-        }
+        layoutView.saveButton.isEnabled = isConditionMet
+    }
+    
+    @objc
+    func didTapProfileImage() {
+        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: 1)
+        photoPickerController.pickerDelegate = self
+        navigationController?.pushTDViewController(photoPickerController, animated: true)
+    }
+    
+    func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
+        input.send(.writeProfileImage(image: photos[0]))
+        layoutView.configureImageView(imageData: photos[0])
+    }
+    
+    func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
+        self.showErrorAlert(errorMessage: "사진 접근 권한이 필요합니다.")
     }
 }

@@ -16,53 +16,12 @@ public struct TDPostDTO: Codable {
     let hasImages: Bool
     let images: [TDSocialImageDTO]
     let socialLikeInfo: TDSocialLikeInfoDTO
-    let comments: [TDSocialCommentDTO]?
+    let comments: [TDComment]?
     let commentCount: Int?
     let categories: [TDSocialCategoryDTO]?
     let createdAt: String
     
-    public struct TDOwnerDTO: Codable {
-        let ownerId: Int
-        let nickname: String
-        let profileImageUrl: String?
-        
-        func convertToEntity() -> User {
-            User(
-                id: ownerId,
-                name: nickname,
-                icon: profileImageUrl,
-                // TODO: 뱃지 정보가 아직 미구현
-                title: "작심삼일"
-            )
-        }
-    }
     
-    public struct TDSocialImageDTO: Codable {
-        let socialImageId: Int
-        let url: String
-    }
-    
-    public struct TDSocialLikeInfoDTO: Codable {
-        let likeCount: Int
-        let isLikedByMe: Bool
-    }
-    
-    public struct TDSocialCommentDTO: Codable {
-        let commentId: Int
-        let parentCommentId: Int?
-        let owner: TDOwnerDTO
-        let imageUrl: String?
-        let hasImage: Bool
-        let content: String
-        let commentLikeInfo: TDSocialLikeInfoDTO
-        let isReply: Bool
-        let createdAt: String
-    }
-    
-    public struct TDSocialCategoryDTO: Codable {
-        public let socialCategoryId: Int
-        public let name: String
-    }
     
     public init(
         socialId: Int,
@@ -73,7 +32,7 @@ public struct TDPostDTO: Codable {
         hasImages: Bool,
         images: [TDSocialImageDTO],
         socialLikeInfo: TDSocialLikeInfoDTO,
-        comments: [TDSocialCommentDTO]?,
+        comments: [TDComment]?,
         commentCount: Int?,
         categories: [TDSocialCategoryDTO]?,
         createdAt: String
@@ -214,4 +173,54 @@ public struct TDCommentCreateResponseDTO: Decodable {
 
 public struct TDCommentLikeResponseDTO: Decodable {
     public let commentLikeId: Int
+}
+
+public struct TDOwnerDTO: Codable {
+    let ownerId: Int
+    let nickname: String
+    let profileImageUrl: String?
+    
+    func convertToEntity() -> User {
+        User(
+            id: ownerId,
+            name: nickname,
+            icon: profileImageUrl,
+            // TODO: 뱃지 정보가 아직 미구현
+            title: "작심삼일"
+        )
+    }
+}
+
+public struct TDSocialImageDTO: Codable {
+    let socialImageId: Int
+    let url: String
+}
+
+public struct TDSocialLikeInfoDTO: Codable {
+    let likeCount: Int
+    let isLikedByMe: Bool
+}
+
+public struct TDSocialCategoryDTO: Codable {
+    public let socialCategoryId: Int
+    public let name: String
+}
+
+public struct TDBlockedUserListDTO: Codable {
+    public let blockedUsers: [TDBlockedUser]
+    
+    public struct TDBlockedUser: Codable {
+        public let userId: Int
+        public let nickname: String
+        public let profileImageUrl: String?
+        
+        func convertToEntity() -> User {
+            User(
+                id: userId,
+                name: nickname,
+                icon: profileImageUrl,
+                title: "작심삼일"
+            )
+        }
+    }
 }

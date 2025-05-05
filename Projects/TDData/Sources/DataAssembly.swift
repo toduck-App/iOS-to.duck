@@ -40,7 +40,10 @@ public struct DataAssembly: Assembly {
             guard let service = container.resolve(MyPageService.self) else {
                 fatalError("MyPageService is not registered")
             }
-            return MyPageRepositoryImpl(service: service)
+            guard let awsService = container.resolve(AwsService.self) else {
+                fatalError("awsService is not registered")
+            }
+            return MyPageRepositoryImpl(service: service, awsService: awsService)
         }.inObjectScope(.container)
         
         container.register(SocialRepository.self) { _ in

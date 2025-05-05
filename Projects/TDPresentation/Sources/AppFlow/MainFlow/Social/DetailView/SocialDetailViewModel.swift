@@ -34,7 +34,6 @@ public final class SocialDetailViewModel: BaseViewModel {
     
     private let postID: Int
     private let fetchPostUsecase: FetchPostUseCase
-    private let fetchCommentUsecase: FetchCommentUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
     private let toggleCommentLikeUseCase: ToggleCommentLikeUseCase
     private let createCommentUseCase: CreateCommentUseCase
@@ -53,7 +52,6 @@ public final class SocialDetailViewModel: BaseViewModel {
     
     init(
         fetchPostUsecase: FetchPostUseCase,
-        fetchCommentUsecase: FetchCommentUseCase,
         togglePostLikeUseCase: TogglePostLikeUseCase,
         toggleCommentLikeUseCase: ToggleCommentLikeUseCase,
         createCommentUseCase: CreateCommentUseCase,
@@ -63,7 +61,6 @@ public final class SocialDetailViewModel: BaseViewModel {
         at postID: Post.ID
     ) {
         self.fetchPostUsecase = fetchPostUsecase
-        self.fetchCommentUsecase = fetchCommentUsecase
         self.togglePostLikeUseCase = togglePostLikeUseCase
         self.toggleCommentLikeUseCase = toggleCommentLikeUseCase
         self.createCommentUseCase = createCommentUseCase

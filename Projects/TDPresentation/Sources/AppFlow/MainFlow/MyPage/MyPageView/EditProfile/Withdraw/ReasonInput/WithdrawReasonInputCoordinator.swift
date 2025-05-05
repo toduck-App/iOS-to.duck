@@ -1,12 +1,13 @@
-import UIKit
 import TDCore
+import TDDomain
+import UIKit
 
 final class WithdrawReasonInputCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
-    
+
     init(
         navigationController: UINavigationController,
         injector: DependencyResolvable
@@ -14,14 +15,14 @@ final class WithdrawReasonInputCoordinator: Coordinator {
         self.navigationController = navigationController
         self.injector = injector
     }
-    
+
     func start() {
         let withdrawReasonInputViewController = WithdrawReasonInputViewController()
         withdrawReasonInputViewController.hidesBottomBarWhenPushed = true
         withdrawReasonInputViewController.coordinator = self
         navigationController.pushViewController(withdrawReasonInputViewController, animated: true)
     }
-    
+
     func popViewController() {
         navigationController.popViewController(animated: true)
         finishDelegate?.didFinish(childCoordinator: self)
@@ -35,10 +36,12 @@ extension WithdrawReasonInputCoordinator: CoordinatorFinishDelegate {
 }
 
 extension WithdrawReasonInputCoordinator {
-    func didTapNextButton() {
+    func didTapNextButton(type: WithdrawReasonType, reason: String) {
         let withdrawCompletionCoordinator = WithdrawCompletionCoordinator(
             navigationController: navigationController,
-            injector: injector
+            injector: injector,
+            type: type,
+            reason: reason
         )
         withdrawCompletionCoordinator.finishDelegate = self
         childCoordinators.append(withdrawCompletionCoordinator)

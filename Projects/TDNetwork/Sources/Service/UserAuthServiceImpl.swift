@@ -33,4 +33,9 @@ public struct UserAuthServiceImpl: UserAuthService {
         let target = UserAuthAPI.logout
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
+    
+    public func withdrawAccount(type: String, reason: String) async throws {
+        let target = UserAuthAPI.withdraw(reasonCode: type, reasonText: reason)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

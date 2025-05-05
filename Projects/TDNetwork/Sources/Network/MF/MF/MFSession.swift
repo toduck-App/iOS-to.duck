@@ -101,6 +101,7 @@ open class MFSession {
                             try await refreshToken()
                             return try await perform(request, transformer: transformer, retryCount: retryCount - 1)
                         } else {
+                            NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
                             throw mfError
                         }
                     case .emptyAccessToken,

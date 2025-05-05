@@ -6,77 +6,17 @@
 //
 
 import UIKit
-
+import TDDomain
 import TDDesign
 
 protocol WithdrawReasonInputViewDelegate: AnyObject {
-    func withdrawReasonInputViewDidTapNextButton(_ withdrawReasonInputView: WithdrawReasonInputView)
+    func withdrawReasonInputViewDidTapNextButton(_ withdrawReasonInputView: WithdrawReasonInputView, selectedReason: WithdrawReasonType, reasonText: String)
 }
 
-enum ReasonType {
-    case hardToUse
-    case missingFeatures
-    case frequentErrors
-    case foundBetterApp
-    case rejoinWithNewAccount
-    case other
-    
-    var description: String {
-        switch self {
-        case .hardToUse:
-            return "사용 방법이 어려워요"
-        case .missingFeatures:
-            return "원하는 기능이 없어요"
-        case .frequentErrors:
-            return "오류가 자주 발생해요"
-        case .foundBetterApp:
-            return "더 좋은 어플이 있어요"
-        case .rejoinWithNewAccount:
-            return "다른 계정으로 다시 가입하고 싶어요"
-        case .other:
-            return "기타"
-        }
-    }
-    
-    var placeholder: String {
-        switch self {
-        case .hardToUse:
-            return """
-            토덕 어플 사용 중 어떤 어려움을 겪으셨는지 알려주세요. 
-            토덕은 언제나 여러분의 의견을 기다립니다. (130자 제한)
-            """
-        case .missingFeatures:
-            return """
-            토덕 어플에 추가되었으면 하는 기능을 자유롭게 이야기 해 주세요.
-            토덕은 언제나 여러분의 의견을 기다립니다. (130자 제한)
-            """
-        case .frequentErrors:
-            return """
-            토덕 어플 사용 중 어떤 어려움을 겪으셨는지 알려주세요. 
-            토덕은 언제나 여러분의 의견을 기다립니다. (130자 제한)
-            """
-        case .foundBetterApp:
-            return """
-            토덕 어플보다 더 좋은 기능을 가진 어플이 있다면 알려주세요. 
-            토덕은 언제나 여러분의 의견을 기다립니다. (130자 제한)
-            """
-        case .rejoinWithNewAccount:
-            return """
-            다른 계정으로 재가입을 원하시는 이유를 알려주세요. 
-            토덕은 언제나 여러분의 의견을 기다립니다. (130자 제한)
-            """
-        case .other:
-            return """
-            토덕의 발전을 위해 아쉬운 점이 있다면, 편하게 작성해주세요. 
-            토덕은 언제나 여러분의 의견을 기다립니다. (130자 제한)
-            """
-        }
-    }
-}
 
 final class WithdrawReasonInputView: BaseView {
     weak var delegate: WithdrawReasonInputViewDelegate?
-    private var selectedReason: ReasonType?
+    private var selectedReason: WithdrawReasonType?
     
     private let contentView = UIView()
     private let scrollView: UIScrollView = {
@@ -122,12 +62,12 @@ final class WithdrawReasonInputView: BaseView {
         scrollView.addSubview(contentView)
         [titleLabel, infoLabel].forEach { labelStack.addArrangedSubview($0) }
         [
-            TDCheckboxField(type: ReasonType.hardToUse),
-            TDCheckboxField(type: ReasonType.missingFeatures),
-            TDCheckboxField(type: ReasonType.frequentErrors),
-            TDCheckboxField(type: ReasonType.foundBetterApp),
-            TDCheckboxField(type: ReasonType.rejoinWithNewAccount),
-            TDCheckboxField(type: ReasonType.other)
+            TDCheckboxField(type: WithdrawReasonType.hardToUse),
+            TDCheckboxField(type: WithdrawReasonType.missingFeatures),
+            TDCheckboxField(type: WithdrawReasonType.frequentErrors),
+            TDCheckboxField(type: WithdrawReasonType.foundBetterApp),
+            TDCheckboxField(type: WithdrawReasonType.rejoinWithNewAccount),
+            TDCheckboxField(type: WithdrawReasonType.other)
         ].forEach {
             $0.delegate = self
             reasonStack.addArrangedSubview($0)
@@ -192,12 +132,15 @@ final class WithdrawReasonInputView: BaseView {
 private extension WithdrawReasonInputView {
     @objc
     func nextButtonTapped() {
-        delegate?.withdrawReasonInputViewDidTapNextButton(self)
+        guard let selectedReason = reasonStack.arrangedSubviews.compactMap({ $0 as? TDCheckboxField }).first(where: { $0.checkbox.isSelected })?.reasonType else { return }
+        self.selectedReason = selectedReason
+        let reasonText = (reasonStack.arrangedSubviews.compactMap { $0 as? TDCheckboxField }).first(where: { $0.checkbox.isSelected })?.textView.text ?? ""
+        delegate?.withdrawReasonInputViewDidTapNextButton(self, selectedReason: selectedReason, reasonText: reasonText)
     }
 }
 
 extension WithdrawReasonInputView: TDCheckboxFieldDelegate {
-    func TDCheckboxFieldDelegateDidChange(_ field: TDCheckboxField, _ isSelected: Bool, type: ReasonType) {
+    func TDCheckboxFieldDelegateDidChange(_ field: TDCheckboxField, _ isSelected: Bool, type: WithdrawReasonType) {
         if isSelected {
             reasonStack.arrangedSubviews.forEach { subview in
                 guard let subview = subview as? TDCheckboxField else { return }

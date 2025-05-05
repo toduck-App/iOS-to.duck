@@ -1,17 +1,17 @@
 import Foundation
 
 public protocol FetchCommentUseCase {
-    func execute(userID: User.ID) async throws -> [Comment]?
+    func execute(cursor: Int?, limit: Int) async throws -> (result: [Comment], hasMore: Bool, nextCursor: Int?)
 }
 
 public final class FetchCommentUseCaseImpl: FetchCommentUseCase {
-    private let repository: SocialRepository
+    private let repository: UserRepository
     
-    public init(repository: SocialRepository) {
+    public init(repository: UserRepository) {
         self.repository = repository
     }
     
-    public func execute(userID: User.ID) async throws -> [Comment]? {
-        return try await repository.fetchUserCommentList(userID: userID)
+    public func execute(cursor: Int?, limit: Int) async throws -> (result: [Comment], hasMore: Bool, nextCursor: Int?) {
+        try await repository.fetchMyCommentList(cursor: cursor, limit: limit)
     }
 }

@@ -19,7 +19,7 @@ final class WithdrawCoordinator: Coordinator {
         let withdrawViewController = WithdrawViewController()
         withdrawViewController.hidesBottomBarWhenPushed = true
         withdrawViewController.coordinator = self
-        navigationController.pushViewController(withdrawViewController, animated: true)
+        navigationController.pushTDViewController(withdrawViewController, animated: true)
     }
     
     func popViewController() {

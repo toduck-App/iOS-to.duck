@@ -11,7 +11,7 @@ import SnapKit
 import TDDesign
 
 final class TDImageView: BaseView {
-    private let innerImageView: UIImageView = {
+    let innerImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill

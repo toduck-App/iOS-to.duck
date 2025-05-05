@@ -1,16 +1,16 @@
-import Swinject
 import KakaoSDKAuth
+import Swinject
 import TDCore
 import TDData
 import TDDomain
+import TDNetwork
 import TDPresentation
 import TDStorage
-import TDNetwork
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    var appCoordinator: (Coordinator)?
+    var appCoordinator: Coordinator?
     let navigationController = UINavigationController()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -30,8 +30,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
-            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            if AuthApi.isKakaoTalkLoginUrl(url) {
                 _ = AuthController.handleOpenUrl(url: url)
+            }
+            if url.scheme == "toduck", url.host == "profile" {
+                guard let userId = url.queryParameters?["userId"] else { return }
             }
         }
     }

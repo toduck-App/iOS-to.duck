@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 
 public enum TDImage {
+    public static let appIcon = TDDesignAsset.Images.appIcon.image
     public static let toduckLogo = TDDesignAsset.Images.toduckLogo.image
     public static let toduckPrimaryLogo = TDDesignAsset.Images.toduckPrimaryLogo.image
     public static let loginBackGround = TDDesignAsset.Images.loginBackGround.image
@@ -308,6 +309,7 @@ public enum TDImage {
     
     public enum Illust {
         public static let withdraw = TDDesignAsset.Images.withdraw.image
+        public static let shareProfile = TDDesignAsset.Images.shareProfile.image
     }
     
     public enum Pen {
