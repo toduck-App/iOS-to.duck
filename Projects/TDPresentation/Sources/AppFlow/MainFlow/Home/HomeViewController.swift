@@ -80,26 +80,38 @@ final class HomeViewController: BaseViewController<BaseView> {
     }
     
     private func updateNavigationBarColor(for index: Int) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        
         if index == 0 {
-            navigationController?.navigationBar.barTintColor = TDColor.Neutral.neutral50
-            navigationController?.navigationBar.backgroundColor = TDColor.Neutral.neutral50
-            view.backgroundColor = TDColor.Neutral.neutral50
-            segmentedControl.tintColor = TDColor.Neutral.neutral50
+            let color = TDColor.Neutral.neutral50
+            appearance.backgroundColor = color
+            appearance.shadowColor = .clear
+            navigationController?.navigationBar.tintColor = TDColor.Neutral.neutral900
+
+            view.backgroundColor = color
+            segmentedControl.tintColor = color
             segmentedControl.updateIndicatorColor(
                 foreground: TDColor.Neutral.neutral800,
-                background: TDColor.Neutral.neutral50
+                background: color
             )
         } else {
-            navigationController?.navigationBar.barTintColor = TDColor.baseWhite
-            navigationController?.navigationBar.backgroundColor = TDColor.baseWhite
-            view.backgroundColor = TDColor.baseWhite
-            segmentedControl.tintColor = TDColor.baseWhite
-            
+            let color = TDColor.baseWhite
+            appearance.backgroundColor = color
+            appearance.shadowColor = .clear
+            navigationController?.navigationBar.tintColor = TDColor.Neutral.neutral900
+
+            view.backgroundColor = color
+            segmentedControl.tintColor = color
             segmentedControl.updateIndicatorColor(
                 foreground: TDColor.Neutral.neutral800,
-                background: TDColor.baseWhite
+                background: color
             )
         }
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
     
     private func getViewController(for index: Int) -> UIViewController {

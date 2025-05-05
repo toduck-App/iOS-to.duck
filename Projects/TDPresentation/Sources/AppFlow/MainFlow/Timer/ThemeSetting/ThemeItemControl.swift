@@ -35,7 +35,7 @@ final class ThemeItemControl: UIControl {
     }
 
     required init?(coder: NSCoder) {
-        theme = .Bboduck
+        theme = .toduck
         super.init(coder: coder)
     }
 
@@ -49,7 +49,7 @@ final class ThemeItemControl: UIControl {
         themeImageView.clipsToBounds = true
         themeImageView.layer.cornerRadius = 12
         themeImageView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        themeImageView.layer.borderWidth = theme == .Simple ? 1 : 0
+        themeImageView.layer.borderWidth = theme == .simple ? 1 : 0
     }
 
     func layout() {
@@ -108,18 +108,18 @@ extension ThemeItemControl {
 private extension TDTimerTheme {
     var name: String {
         switch self {
-        case .Bboduck:
+        case .toduck:
             return "뽀덕이"
-        case .Simple:
+        case .simple:
             return "심플"
         }
     }
 
     var image: UIImage {
         switch self {
-        case .Bboduck:
+        case .toduck:
             return TDImage.ThemePreview.BboduckPreview
-        case .Simple:
+        case .simple:
             return TDImage.ThemePreview.SimplePreview
         }
     }

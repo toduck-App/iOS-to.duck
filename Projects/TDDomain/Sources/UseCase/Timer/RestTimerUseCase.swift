@@ -2,11 +2,12 @@ import Foundation
 import TDCore
 
 public protocol RestTimerUseCase {
+    var isRunning: Bool { get }
+    var delegate: RestTimerUseCaseDelegate? { get set }
+    
     func start()
     func stop()
     func reset()
-    var isRunning: Bool { get }
-    var delegate: RestTimerUseCaseDelegate? { get set }
 }
 
 public protocol RestTimerUseCaseDelegate: AnyObject {
@@ -23,13 +24,13 @@ final class RestTimerUseCaseImpl: RestTimerUseCase {
     public var isRunning: Bool {
         return timer != nil
     }
-    private let repository: TimerRepository
+    private let repository: FocusRepository
 
     weak var delegate: RestTimerUseCaseDelegate?
 
     // MARK: - Initializer
 
-    init(repository: TimerRepository) {
+    init(repository: FocusRepository) {
         self.repository = repository
     }
 
@@ -37,16 +38,18 @@ final class RestTimerUseCaseImpl: RestTimerUseCase {
         guard !isRunning else { return}
         let setting = repository.fetchTimerSetting()
 
-        remainTime = remainTime == 0 ? setting.toRestDurationMinutes() : remainTime
+        remainTime = remainTime == 0
+        ? setting.toRestDurationMinutes()
+        : remainTime
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            if self.remainTime > 0 {
-                self.remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요 
-                self.delegate?.didUpdateRestTime(remainTime: self.remainTime)
+            guard let self else { return }
+            if remainTime > 0 {
+                remainTime -= 1
+                delegate?.didUpdateRestTime(remainTime: remainTime)
             } else {
-                self.stop()
-                self.delegate?.didFinishRestTimer()
+                stop()
+                delegate?.didFinishRestTimer()
             }
         }
     }
@@ -59,6 +62,6 @@ final class RestTimerUseCaseImpl: RestTimerUseCase {
 
     func reset() {
         stop()
-        self.remainTime = 0
+        remainTime = 0
     }
 }

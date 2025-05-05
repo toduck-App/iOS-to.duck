@@ -116,6 +116,7 @@ final class MyPageProfileView: BaseView {
     
     override func configure() {
         badgeLabels.forEach { $0.isHidden = true }
+        profileImageView.layer.cornerRadius = LayoutConstants.profileImageViewSize / 2
     }
 }
 

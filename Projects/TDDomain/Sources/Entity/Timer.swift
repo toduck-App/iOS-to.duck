@@ -38,6 +38,6 @@ public extension TDTimerSetting {
     static let maxFocusDuration = 60
     static let minFocusDuration = 5
     
-    static let maxRestDuration = 10
+    static let maxRestDuration = 30
     static let minRestDuration = 0
 }

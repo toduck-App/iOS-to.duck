@@ -18,6 +18,13 @@ final class TodoViewController: BaseViewController<BaseView> {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
+    private let noTodoContainerView = UIView()
+    private let noTodoImageView = UIImageView(image: TDImage.noEvent)
+    private let noTodoLabel = TDLabel(
+        labelText: "등록된 투두가 없어요",
+        toduckFont: TDFont.boldBody1,
+        toduckColor: TDColor.Neutral.neutral600
+    )
     
     private let dimmedView = UIView().then {
         $0.backgroundColor = TDColor.baseBlack.withAlphaComponent(0.5)
@@ -168,6 +175,9 @@ final class TodoViewController: BaseViewController<BaseView> {
     override func addView() {
         view.addSubview(weekCalendarView)
         view.addSubview(todoTableView)
+        view.addSubview(noTodoContainerView)
+        noTodoContainerView.addSubview(noTodoImageView)
+        noTodoContainerView.addSubview(noTodoLabel)
     }
     
     override func layout() {
@@ -180,6 +190,21 @@ final class TodoViewController: BaseViewController<BaseView> {
         todoTableView.snp.makeConstraints {
             $0.top.equalTo(weekCalendarView.snp.bottom).offset(LayoutConstants.tableViewTopOffset)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        noTodoContainerView.snp.makeConstraints {
+            $0.top.equalTo(weekCalendarView.snp.bottom).offset(LayoutConstants.tableViewTopOffset)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        noTodoImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(30)
+            $0.centerX.equalToSuperview()
+            $0.size.equalTo(96)
+        }
+        noTodoLabel.snp.makeConstraints {
+            $0.top.equalTo(noTodoImageView.snp.bottom).offset(8)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(24)
         }
     }
     
@@ -201,6 +226,9 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.presentPopup(with: detailEventViewController)
                 case .unionedTodoList:
                     self?.applyTimelineSnapshot()
+                    let isHidden = self?.viewModel.timedTodoList.isEmpty ?? true && self?.viewModel.allDayTodoList.isEmpty ?? true
+                    self?.noTodoContainerView.isHidden = !isHidden
+                    self?.todoTableView.isHidden = isHidden
                 case .successFinishTodo,
                         .tomorrowTodoCreated:
                     self?.fetchWeekTodo(for: self?.selectedDate ?? Date())
@@ -212,6 +240,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
+        noTodoContainerView.backgroundColor = TDColor.Neutral.neutral50
         weekCalendarView.delegate = self
         todoTableView.delegate = self
         floatingActionMenuView.isHidden = true

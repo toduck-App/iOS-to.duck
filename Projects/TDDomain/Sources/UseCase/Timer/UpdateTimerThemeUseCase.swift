@@ -1,17 +1,17 @@
 import TDCore
 
 public protocol UpdateTimerThemeUseCase {
-    func execute(theme: TDTimerTheme) -> Result<Void, TDCore.TDDataError>
+    func execute(theme: TDTimerTheme) throws
 }
 
 final class UpdateTimerThemeUseCaseImpl: UpdateTimerThemeUseCase {
-    private let repository: TimerRepository
+    private let repository: FocusRepository
 
-    init(repository: TimerRepository) {
+    init(repository: FocusRepository) {
         self.repository = repository
     }
 
-    func execute(theme: TDTimerTheme) -> Result<Void, TDCore.TDDataError> {
-        return repository.updateTimerTheme(theme: theme)
+    func execute(theme: TDTimerTheme) throws {
+        try repository.updateTimerTheme(theme: theme)
     }
 }

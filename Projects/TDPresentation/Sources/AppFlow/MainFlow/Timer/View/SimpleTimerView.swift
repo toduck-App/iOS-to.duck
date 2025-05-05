@@ -35,7 +35,6 @@ final class SimpleTimerView: BaseTimerView {
 
     override var progress: CGFloat {
         didSet {
-            guard isRunning else { return }
             updateProgress()
             updateTomatoRotation()
         }
@@ -79,11 +78,13 @@ final class SimpleTimerView: BaseTimerView {
         
         updateTomatoRotation()
     }
-}
-
-// MAKR: - Private Methods
-
-private extension SimpleTimerView {
+    
+    func pause() {
+        isRunning = false
+        progressLayer.strokeEnd = 1
+        tomatoView.transform = .identity
+    }
+    
     func updateProgress() {
         CATransaction.begin()
         CATransaction.setDisableActions(false)

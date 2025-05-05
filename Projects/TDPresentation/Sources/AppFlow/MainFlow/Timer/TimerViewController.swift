@@ -6,17 +6,14 @@ import TDDomain
 import UIKit
 
 final class TimerViewController: BaseViewController<TimerView>, TDToastPresentable {
-    weak var coordinator: TimerCoordinator?
-    private let viewModel: TimerViewModel!
+    private let viewModel: TimerViewModel
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
     
     private var cancellables = Set<AnyCancellable>()
-    private var theme: TDTimerTheme = .Bboduck
-    // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
-    private var focusCount: Int = 0
-
-    // TODO: 처음 로딩시 테마 2개가 동시에 보이는것 수정
-
+    private var theme: TDTimerTheme = .toduck
+    private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
+    weak var coordinator: TimerCoordinator?
+    
     // MARK: - Initializer
     
     init(viewModel: TimerViewModel) {
@@ -24,114 +21,186 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         super.init()
     }
     
-    required init?(coder: NSCoder) {
-        viewModel = nil
-        super.init(coder: coder)
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 아래의 함수들 configure에 넣으면 작동이 안함
-        
-        input.send(.fetchTimerTheme)
-        input.send(.fetchFocusCount)
-        input.send(.fetchTimerSetting)
-        input.send(.fetchTimerInitialStatus)
+        input.send(.fetchFocusAllSetting)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        applyNavigationAppearance(for: theme)
+    }
+    
+    // MARK: - Common Methods
     
     override func configure() {
         setupNavigation()
-        
-        // timer buttons
-        layoutView.playButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.startTimer)
-            }, for: .touchUpInside
-        )
-        
-        layoutView.pauseButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.pauseTimer)
-            }, for: .touchUpInside
-        )
-        
-        layoutView.resetButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.resetTimer)
-            }, for: .touchUpInside
-        )
-
-        layoutView.stopButton.addAction(
-            UIAction { _ in
-                HapticManager.impact(.soft)
-                self.input.send(.stopTimer)
-            }, for: .touchUpInside
-        )
+        setupButtonActions()
     }
     
-    // MARK: - Binding
-    
     override func binding() {
-        let output: AnyPublisher<TimerViewModel.Output, Never> = viewModel.transform(input: input.eraseToAnyPublisher())
-
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case let .updatedTimer(remainedTime):
+                case let .updateTime(remainedTime):
                     self?.updateTimer(remainedTime)
                 case let .updatedTimerRunning(isRunning):
                     self?.updateTimerRunning(isRunning)
-                case .finishedTimer:
-                    self?.finishedTimer()
+                case .finishedTimerOneCycle:
+                    self?.finishedTimerOneCycle()
                 case let .updatedFocusCount(count), let .fetchedFocusCount(count):
                     self?.updateFocusCount(with: count)
                 case let .updatedMaxFocusCount(maxCount):
                     self?.updateMaxFocusCount(with: maxCount)
                 case let .updatedTimerTheme(theme), let .fetchedTimerTheme(theme):
                     self?.updateTheme(theme: theme)
-                case let .failure(code):
-                    self?.handleFailure(code)
-                case .updatedTimerSetting:
-                    self?.updatedTimerSetting()
-                default:
-                    break
+                case .fetchedTimerSetting:
+                    self?.updateFocusCount(with: 0)
+                case .stoppedTimer:
+                    TDLogger.debug("Timer Stopped")
+                case .startTimer:
+                    TDLogger.debug("Timer Started")
+                case .finishedFocusTimer:
+                    HapticManager.impact(.soft)
+                    self?.updateTimerRunning(false)
+                    self?.showToast(
+                        type: .orange,
+                        title: "집중 성공 🧚‍♀️",
+                        message: "잘했어요 ! 이대로 집중하는 습관을 천천히 길러봐요 !",
+                        duration: nil
+                    )
+                    self?.tabBarController?.tabBar.isUserInteractionEnabled = true
+                    self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
+                case .finishedRestTimer:
+                    HapticManager.impact(.soft)
+                    self?.showToast(
+                        type: .orange,
+                        title: "휴식 시간 끝 💡️",
+                        message: "집중할 시간이에요 ! 자리에 앉아볼까요?",
+                        duration: nil
+                    )
+                case .successFinishedTimer:
+                    self?.updateFocusCount(with: 0)
+                    self?.handleControlStack(.initilize)
+                case let .failure(message):
+                    self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
     }
     
-    func setupNavigation() {
+    private func setupNavigation() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: layoutView.leftNavigationItem)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            customView: layoutView.rightNavigationMenuButton
-        )
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.rightNavigationMenuButton)
         
         layoutView.dropDownView.delegate = self
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
         
-        layoutView.rightNavigationMenuButton.addAction(
-            UIAction { [weak self] _ in
-                self?.layoutView.dropDownView.showDropDown()
-            }, for: .touchUpInside
-        )
+        layoutView.leftNavigationItem.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapCalendarButton()
+        }, for: .touchUpInside)
+        
+        layoutView.rightNavigationMenuButton.addAction(UIAction { [weak self] _ in
+            self?.layoutView.dropDownView.showDropDown()
+        }, for: .touchUpInside)
         
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
-}
-
-// MARK: - Private Methods
-
-extension TimerViewController {
-    private func finishedTimer() {
-        handleControlStack(.pause)
-        showToast(type: .orange, title: "휴식 시간 끝 💡️", message: "집중할 시간이에요 ! 자리에 앉아볼까요?")
+    
+    private func applyNavigationAppearance(for theme: TDTimerTheme) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = theme.navigationBarBackgroundColor
+        appearance.titleTextAttributes = [.foregroundColor: theme.navigationColor]
+        appearance.shadowColor = .clear
         
-        input.send(.increaseFocusCount)
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.tintColor = theme.navigationColor
+    }
+    
+    private func setupButtonActions() {
+        layoutView.playButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.didTapStartTimerButton()
+        }, for: .touchUpInside)
+        
+        layoutView.pauseButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.didTapPauseTimerButton()
+        }, for: .touchUpInside)
+        
+        layoutView.resetButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.didTapResetTimerButton()
+        }, for: .touchUpInside)
+        
+        layoutView.stopButton.addAction(UIAction { [weak self] _ in
+            HapticManager.impact(.soft)
+            self?.didTapStopTimerButton()
+        }, for: .touchUpInside)
+    }
+    
+    private func didTapStartTimerButton() {
+        input.send(.didTapStartTimerButton)
+        dismissToast()
+        updateTimerRunning(true)
+        layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
+        tabBarController?.tabBar.isUserInteractionEnabled = false
+        layoutView.leftNavigationItem.isUserInteractionEnabled = false
+    }
+    
+    private func didTapPauseTimerButton() {
+        input.send(.didTapPauseTimerButton)
+        updateTimerRunning(false)
+        showToast(
+            type: .orange,
+            title: "집중 타이머를 잠시 멈췄어요",
+            message: "20초 안에 재시작하면 집중시간이 이어집니다",
+            duration: 20
+        )
+        tabBarController?.tabBar.isUserInteractionEnabled = true
+        layoutView.leftNavigationItem.isUserInteractionEnabled = true
+    }
+    
+    private func didTapResetTimerButton() {
+        let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .reset)
+        timerCautionPopupViewController.onAction = { [weak self] in
+            self?.input.send(.didTapResetTimerButton)
+            self?.updateTimerRunning(false)
+            self?.updateTimer(self?.viewModel.timerSetting?.toFocusDurationMinutes() ?? 0)
+        }
+        presentPopup(with: timerCautionPopupViewController)
+    }
+    
+    private func didTapStopTimerButton() {
+        let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .stop)
+        timerCautionPopupViewController.onAction = { [weak self] in
+            self?.input.send(.didTapStopTimerButton)
+            self?.dismissToast()
+            self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
+            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
+            self?.layoutView.leftNavigationItem.isUserInteractionEnabled = true
+        }
+        presentPopup(with: timerCautionPopupViewController)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func finishedTimerOneCycle() {
+        handleControlStack(.pause)
     }
     
     private func updateTimer(_ remainedTime: Int) {
@@ -143,10 +212,11 @@ extension TimerViewController {
         let minute = (remainedTime / 60) % 60
         let hour = minute / 60
         
-        layoutView.remainedFocusTimeLabel.text =
-        hour >= 1
-        ? String(format: "%d:%02d:%02d", hour, minute, second)
-        : String(format: "%02d:%02d", minute, second)
+        layoutView.remainedFocusTimeLabel.setText(
+            hour >= 1
+            ? String(format: "%d:%02d:%02d", hour, minute, second)
+            : String(format: "%02d:%02d", minute, second)
+        )
         
         // progress 업데이트
         layoutView.simpleTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
@@ -154,26 +224,28 @@ extension TimerViewController {
     }
     
     private func updateTimerRunning(_ isRunning: Bool?) {
-        guard let isRunning = isRunning else {
+        guard let isRunning else {
             handleControlStack(.initilize)
             layoutView.bboduckTimerView.pause()
+            layoutView.simpleTimerView.pause()
             return
         }
+        
         layoutView.bboduckTimerView.isRunning = isRunning
         layoutView.simpleTimerView.isRunning = isRunning
-
+        
         if isRunning {
             handleControlStack(.playing)
         } else {
             handleControlStack(.pause)
-            layoutView.bboduckTimerView.pause()
         }
     }
+    
     private func updateTheme(theme: TDTimerTheme) {
         self.theme = theme
         
-        layoutView.simpleTimerView.isHidden = theme == .Bboduck
-        layoutView.bboduckTimerView.isHidden = theme == .Simple
+        layoutView.simpleTimerView.isHidden = theme == .toduck
+        layoutView.bboduckTimerView.isHidden = theme == .simple
         
         // button theme
         layoutView.playButton.configuration?.baseBackgroundColor = theme.buttonCenterBackgroundColor
@@ -184,7 +256,7 @@ extension TimerViewController {
         
         layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
         layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
-
+        
         // background theme
         layoutView.backgroundColor = theme.backgroundColor
         
@@ -192,7 +264,7 @@ extension TimerViewController {
         navigationItem.rightBarButtonItem?.customView?.subviews.forEach { view in
             view.tintColor = theme.navigationColor
         }
-
+        
         var index = 0
         navigationItem.leftBarButtonItem?.customView?.subviews.forEach { view in
             if view is UIImageView {
@@ -207,6 +279,7 @@ extension TimerViewController {
         
         // stack theme
         updateFocusCount(with: focusCount)
+        applyNavigationAppearance(for: theme)
         layoutView.layoutIfNeeded()
     }
     
@@ -220,13 +293,11 @@ extension TimerViewController {
         
         layoutView.focusCountStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        for i in 1 ... setting.focusCountLimit {
+        for i in 1...setting.focusCountLimit {
             if i <= newCount {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountTomatoView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountTomatoView())
             } else {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountEmptyView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountEmptyView())
             }
         }
         
@@ -234,78 +305,22 @@ extension TimerViewController {
     }
     
     private func updateMaxFocusCount(with maxCount: Int) {
-        guard let setting: TDTimerSetting = viewModel.timerSetting else { return }
+        guard let setting = viewModel.timerSetting else { return }
         
         for view in layoutView.focusCountStackView.arrangedSubviews {
             layoutView.focusCountStackView.removeArrangedSubview(view)
             view.removeFromSuperview()
         }
         
-        for i in 1 ... setting.focusCountLimit {
+        for i in 1...setting.focusCountLimit {
             if i <= maxCount {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountTomatoView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountTomatoView())
             } else {
-                layoutView.focusCountStackView.addArrangedSubview(
-                    createFocusCountEmptyView())
+                layoutView.focusCountStackView.addArrangedSubview(createFocusCountEmptyView())
             }
         }
         layoutView.focusCountStackView.layoutIfNeeded()
     }
-    
-    // TODO: 간단한 토스트 구현하면 Implement하기
-    private func handleFailure(_ code: TimerViewModel.TimerViewModelError) {
-        switch code {
-        case .updateFailed:
-            let message = "[\(code)]: 알 수 없는 오류가 발생했습니다."
-            TDLogger.error("[TimerViewController]\(message)")
-        case .outOfRange:
-            handleControlStack(.pause)
-
-            TDLogger.error("[TimerViewController] outOfRange")
-        }
-    }
-    
-    private func updatedTimerSetting() {
-        input.send(.fetchFocusCount)
-        input.send(.fetchTimerSetting)
-    }
-}
-
-// MARK: - TDDropDownDelegate
-
-extension TimerViewController: TDDropDownDelegate {
-    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
-        let item = TimerDropDownMenuItem.allCases[indexPath.row]
-        
-        switch item {
-        case .timerSetting:
-            let timerSettingViewController = TimerSettingViewController(
-                viewModel: viewModel)
-            
-            presentSheet(viewController: timerSettingViewController)
-        case .themeSetting:
-            let themeSettingViewController = ThemeSettingViewController(
-                viewModel: viewModel)
-            
-            presentSheet(viewController: themeSettingViewController)
-        case .alarmSetting:
-            let timerAlarmViewController = TimerAlarmViewController(
-                viewModel: viewModel)
-            
-            presentSheet(viewController: timerAlarmViewController)
-        case .whiteNoise:
-            break
-#if DEBUG
-        case .resetFocusCount:
-            input.send(.resetFocusCount)
-#endif
-        }
-    }
-}
-
-extension TimerViewController {
-    // MARK: - private methods related to UI
     
     // TODO: initStack -> anyStack으로 바뀌면 레이아웃이 뭉개짐
     private func handleControlStack(_ state: TimerControlStackState) {
@@ -354,6 +369,26 @@ extension TimerViewController {
             }
         }
     }
+}
+
+// MARK: - TDDropDownDelegate
+
+extension TimerViewController: TDDropDownDelegate {
+    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let currentItems = TimerDropDownMenuItem.allCases.filter { menuItem in
+            layoutView.dropDownView.dataSource.contains(where: { $0.title == menuItem.dropDownItem.title })
+        }
+        let item = currentItems[indexPath.row]
+        
+        switch item {
+        case .timerSetting:
+            let timerSettingViewController = TimerSettingViewController(viewModel: viewModel)
+            presentSheet(viewController: timerSettingViewController)
+        case .themeSetting:
+            let themeSettingViewController = ThemeSettingViewController(viewModel: viewModel)
+            presentSheet(viewController: themeSettingViewController)
+        }
+    }
     
     private func presentSheet<view: BaseView, vc: BaseViewController<view>>(viewController: vc) {
         let sheetController = SheetViewController(
@@ -385,27 +420,17 @@ extension TimerViewController {
     enum TimerDropDownMenuItem: String, CaseIterable {
         case timerSetting = "타이머 설정"
         case themeSetting = "테마 변경"
-        case alarmSetting = "알람 설정"
-        case whiteNoise = "백색 소음"
         
-#if DEBUG
-        case resetFocusCount = "집중 횟수 초기화"
-#endif
         var dropDownItem: TDDropdownItem {
             return TDDropdownItem(title: rawValue, leftImage: image)
         }
         
-        // TODO: 이미지 추가 예정
         var image: TDDropdownItem.SelectableImage {
             switch self {
             case .timerSetting:
                 return (TDImage.Sort.recentEmpty, TDImage.Sort.recentFill)
             case .themeSetting:
                 return (TDImage.Tomato.tomatoSmallEmtpy, TDImage.Tomato.tomatoSmallFill)
-            case .whiteNoise:
-                return (TDImage.Play.play2SmallEmtpy, TDImage.Play.play2SmallFill)
-            default:
-                return (TDImage.Play.play2SmallEmtpy, TDImage.Play.play2SmallFill)
             }
         }
     }
@@ -416,81 +441,90 @@ extension TimerViewController {
 private extension TDTimerTheme {
     var buttonForegroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral400
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary100
         }
     }
     
     var buttonCenterBackgroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return .clear
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary200
         }
     }
     
     var buttonCenterForegroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral600
-        case .Bboduck:
+        case .toduck:
             return .white
         }
     }
     
     var backgroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return UIColor(red: 1.00, green: 1.00, blue: 0.99, alpha: 1.00)
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary100
         }
     }
     
     var navigationColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral500
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary300
+        }
+    }
+
+    var navigationBarBackgroundColor: UIColor {
+        switch self {
+        case .simple:
+            return .white
+        case .toduck:
+            return TDColor.Primary.primary100
         }
     }
     
     var navigationImage: UIImage {
         switch self {
-        case .Simple:
+        case .simple:
             return TDImage.Calendar.top2Medium
-        case .Bboduck:
+        case .toduck:
             return TDImage.Calendar.top2MediumOrange
         }
     }
     
     var counterStackBorderWidth: CGFloat {
         switch self {
-        case .Simple:
+        case .simple:
             return 0
-        case .Bboduck:
+        case .toduck:
             return 1
         }
     }
     
     var counterStackBackgroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral200
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary25
         }
     }
     
     var counterStackBorderColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return .clear
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary200
         }
     }

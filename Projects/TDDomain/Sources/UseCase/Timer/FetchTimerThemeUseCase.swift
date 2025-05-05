@@ -5,9 +5,9 @@ public protocol FetchTimerThemeUseCase {
 }
 
 final class FetchTimerThemeUseCaseImpl: FetchTimerThemeUseCase {
-    private let repository: TimerRepository
+    private let repository: FocusRepository
 
-    init(repository: TimerRepository) {
+    init(repository: FocusRepository) {
         self.repository = repository
     }
 

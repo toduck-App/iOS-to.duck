@@ -17,8 +17,8 @@ final class ThemeSettingView: BaseView {
         $0.alignment = .fill
     }
 
-    let themeBbouckButton = ThemeItemControl(theme: .Bboduck)
-    let themeSimpleButton = ThemeItemControl(theme: .Simple)
+    let themeBbouckButton = ThemeItemControl(theme: .toduck)
+    let themeSimpleButton = ThemeItemControl(theme: .simple)
 
     let saveButton: TDButton = .init(title: "저장", size: .large)
 

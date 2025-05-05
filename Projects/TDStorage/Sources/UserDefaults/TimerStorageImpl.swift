@@ -11,7 +11,7 @@ public final class TimerStorageImpl: TimerStorage {
         self.userDefaults = userDefaults
     }
 
-    public func fetchTimerSetting() -> TDData.TDTimerSettingDTO? {
+    public func fetchTimerSetting() -> TDTimerSettingDTO? {
         guard let data = userDefaults.data(forKey: timerSettingKey),
             let decoded = try? JSONDecoder().decode(TDData.TDTimerSettingDTO.self, from: data)
         else { return nil }
@@ -19,18 +19,17 @@ public final class TimerStorageImpl: TimerStorage {
         return decoded
     }
 
-    public func updateTimerSetting(_ data: TDData.TDTimerSettingDTO) -> Result<Void, TDCore.TDDataError> {
+    public func updateTimerSetting(_ data: TDData.TDTimerSettingDTO) throws {
         let encoder: JSONEncoder = JSONEncoder()
         do {
             let data = try encoder.encode(data)
             userDefaults.set(data, forKey: timerSettingKey)
-            return .success(())
         } catch {
-            return .failure(.convertDTOFailure)
+            throw TDDataError.convertDTOFailure
         }
     }
 
-    public func fetchTheme() -> TDData.TDTimerThemeDTO? {
+    public func fetchTheme() -> TDTimerThemeDTO? {
         guard let data = userDefaults.data(forKey: timerThemeKey),
             let decoded = try? JSONDecoder().decode(TDData.TDTimerThemeDTO.self, from: data)
         else { return nil }
@@ -38,14 +37,13 @@ public final class TimerStorageImpl: TimerStorage {
         return decoded
     }
 
-    public func updateTheme(_ data: TDData.TDTimerThemeDTO) -> Result<Void, TDCore.TDDataError> {
+    public func updateTheme(_ data: TDData.TDTimerThemeDTO) throws {
         let encoder = JSONEncoder()
         do {
             let data = try encoder.encode(data)
             userDefaults.set(data, forKey: timerThemeKey)
-            return .success(())
         } catch {
-            return .failure(.convertDTOFailure)
+            throw TDDataError.convertDTOFailure
         }
     }
 
@@ -54,9 +52,8 @@ public final class TimerStorageImpl: TimerStorage {
         return data
     }
 
-    public func updateFocusCount(_ data: Int) -> Result<Void, TDCore.TDDataError> {
-        guard data >= 0 else { return .failure(.convertDTOFailure) }
+    public func updateFocusCount(_ data: Int) throws {
+        guard data >= 0 else { throw TDDataError.convertDTOFailure }
         userDefaults.set(data, forKey: focusCountKey)
-        return .success(())
     }
 }

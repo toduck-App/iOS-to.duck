@@ -49,6 +49,10 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
                 }
             }.store(in: &cancellables)
     }
+    
+    func updateNickName(nickName: String) {
+        layoutView.nicknameField.setupTextField(nickName)
+    }
 }
 
 extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate {
@@ -71,6 +75,7 @@ extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate 
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
         input.send(.writeProfileImage(image: photos[0]))
         layoutView.configureImageView(imageData: photos[0])
+        layoutView.saveButton.isEnabled = true
     }
     
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {

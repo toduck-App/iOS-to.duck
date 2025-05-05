@@ -56,6 +56,7 @@ public enum TDImage {
     public static let clockFill = TDDesignAsset.Images.clockFill.image
     public static let cycle = TDDesignAsset.Images.cycleImage.image
     public static let checkNeutral = TDDesignAsset.Images.checkNeutral.image
+    public static let timerAlert = TDDesignAsset.Images.timerAlert.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
@@ -303,6 +304,7 @@ public enum TDImage {
         public static let green = TDDesignAsset.Images.greenTomato.image
         public static let orange = TDDesignAsset.Images.orangeTomato.image
         public static let timer = TDDesignAsset.Images.timerTomato.image
+        public static let toast = TDDesignAsset.Images.tomatoToast.image
         public static let tomatoSmallFill = TDDesignAsset.Images.tomatoSmallFill.image
         public static let tomatoSmallEmtpy = TDDesignAsset.Images.tomatoSmallEmtpy.image
     }
