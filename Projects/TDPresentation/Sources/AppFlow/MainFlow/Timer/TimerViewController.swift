@@ -34,6 +34,12 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         input.send(.fetchFocusAllSetting)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        applyNavigationAppearance(for: theme)
+    }
+    
     // MARK: - Common Methods
     
     override func configure() {
@@ -112,6 +118,19 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         navigationItem.rightBarButtonItem?.tintColor = TDColor.Primary.primary300
     }
     
+    private func applyNavigationAppearance(for theme: TDTimerTheme) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = theme.navigationBarBackgroundColor
+        appearance.titleTextAttributes = [.foregroundColor: theme.navigationColor]
+        appearance.shadowColor = .clear
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.tintColor = theme.navigationColor
+    }
+    
     private func setupButtonActions() {
         layoutView.playButton.addAction(UIAction { [weak self] _ in
             HapticManager.impact(.soft)
@@ -140,6 +159,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         updateTimerRunning(true)
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
         tabBarController?.tabBar.isUserInteractionEnabled = false
+        layoutView.leftNavigationItem.isUserInteractionEnabled = false
     }
     
     private func didTapPauseTimerButton() {
@@ -152,6 +172,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             duration: 20
         )
         tabBarController?.tabBar.isUserInteractionEnabled = true
+        layoutView.leftNavigationItem.isUserInteractionEnabled = true
     }
     
     private func didTapResetTimerButton() {
@@ -171,6 +192,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             self?.dismissToast()
             self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
             self?.tabBarController?.tabBar.isUserInteractionEnabled = true
+            self?.layoutView.leftNavigationItem.isUserInteractionEnabled = true
         }
         presentPopup(with: timerCautionPopupViewController)
     }
@@ -257,6 +279,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         // stack theme
         updateFocusCount(with: focusCount)
+        applyNavigationAppearance(for: theme)
         layoutView.layoutIfNeeded()
     }
     
@@ -298,30 +321,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         }
         layoutView.focusCountStackView.layoutIfNeeded()
     }
-}
-
-// MARK: - TDDropDownDelegate
-
-extension TimerViewController: TDDropDownDelegate {
-    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
-        let currentItems = TimerDropDownMenuItem.allCases.filter { menuItem in
-            layoutView.dropDownView.dataSource.contains(where: { $0.title == menuItem.dropDownItem.title })
-        }
-        let item = currentItems[indexPath.row]
-        
-        switch item {
-        case .timerSetting:
-            let timerSettingViewController = TimerSettingViewController(viewModel: viewModel)
-            presentSheet(viewController: timerSettingViewController)
-        case .themeSetting:
-            let themeSettingViewController = ThemeSettingViewController(viewModel: viewModel)
-            presentSheet(viewController: themeSettingViewController)
-        }
-    }
-}
-
-extension TimerViewController {
-    // MARK: - private methods related to UI
     
     // TODO: initStack -> anyStack으로 바뀌면 레이아웃이 뭉개짐
     private func handleControlStack(_ state: TimerControlStackState) {
@@ -368,6 +367,26 @@ extension TimerViewController {
             $0.snp.makeConstraints {
                 $0.size.equalTo(FocusCountViewLayoutConstant.size)
             }
+        }
+    }
+}
+
+// MARK: - TDDropDownDelegate
+
+extension TimerViewController: TDDropDownDelegate {
+    func dropDown(_: TDDesign.TDDropdownHoverView, didSelectRowAt indexPath: IndexPath) {
+        let currentItems = TimerDropDownMenuItem.allCases.filter { menuItem in
+            layoutView.dropDownView.dataSource.contains(where: { $0.title == menuItem.dropDownItem.title })
+        }
+        let item = currentItems[indexPath.row]
+        
+        switch item {
+        case .timerSetting:
+            let timerSettingViewController = TimerSettingViewController(viewModel: viewModel)
+            presentSheet(viewController: timerSettingViewController)
+        case .themeSetting:
+            let themeSettingViewController = ThemeSettingViewController(viewModel: viewModel)
+            presentSheet(viewController: themeSettingViewController)
         }
     }
     
@@ -503,9 +522,9 @@ private extension TDTimerTheme {
     
     var counterStackBorderColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return .clear
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary200
         }
     }
