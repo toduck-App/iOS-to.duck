@@ -18,10 +18,10 @@ public protocol PauseTimerUseCaseDelegate: AnyObject {
 
 final class PauseTimerUseCaseImpl: PauseTimerUseCase {
     // MARK: - Properties
-
+    
+    let pauseTime = 20
     private var timer: Timer?
     private var duration: Int = 0
-    private(set) var pauseTime = 20
     private(set) var remainTime: Int = 0
     
     public var isRunning: Bool {
@@ -34,7 +34,7 @@ final class PauseTimerUseCaseImpl: PauseTimerUseCase {
 
     func start() {
         guard !isRunning else { return}
-        self.remainTime = 20
+        remainTime = pauseTime
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self else { return }

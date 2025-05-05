@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 public final class TDToast: UIView {
     let toastView: TDToastView
@@ -61,19 +62,21 @@ public final class TDToast: UIView {
         }
     }
     
+    @MainActor
     public func startCountdown(seconds: Int) {
+        timer?.invalidate()
         remainingSeconds = seconds
         updateMessage()
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self else { return }
-            self.remainingSeconds -= 1
+            remainingSeconds -= 1
 
-            if self.remainingSeconds > 0 {
-                self.updateMessage()
+            if remainingSeconds > 0 {
+                updateMessage()
             } else {
-                self.timer?.invalidate()
-                self.timer = nil
+                timer?.invalidate()
+                timer = nil
             }
         }
     }

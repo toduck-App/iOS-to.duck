@@ -7,6 +7,7 @@ protocol TDToastPresentable {
 }
 
 extension TDToastPresentable where Self: UIViewController {
+    @MainActor
     func showToast(
         type: TDToast.TDToastType,
         title: String,

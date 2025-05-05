@@ -430,28 +430,28 @@ public struct DomainAssembly: Assembly {
         }
         container.register(FetchTimerSettingUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return FetchTimerSettingUseCaseImpl(repository: repository)
         }
         
         container.register(UpdateTimerSettingUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return UpdateTimerSettingUseCaseImpl(repository: repository)
         }
         
         container.register(FocusTimerUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return FocusTimerUseCaseImpl(repository: repository)
         }
 
         container.register(RestTimerUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return RestTimerUseCaseImpl(repository: repository)
         }
@@ -462,21 +462,21 @@ public struct DomainAssembly: Assembly {
         
         container.register(FetchFocusCountUseCase.self, factory: { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return FetchFocusCountImpl(repository: repository)
         })
         
         container.register(UpdateFocusCountUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return UpdateFocusCountUseCaseImpl(repository: repository)
         }
 
         container.register(ResetFocusCountUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return ResetFocusCountUseCaseImpl(repository: repository)
         }
@@ -490,14 +490,14 @@ public struct DomainAssembly: Assembly {
 
         container.register(FetchTimerThemeUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return FetchTimerThemeUseCaseImpl(repository: repository)
         }
 
         container.register(UpdateTimerThemeUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
-                fatalError("컨테이너에 TimerRepository가 등록되어 있지 않습니다.")
+                fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return UpdateTimerThemeUseCaseImpl(repository: repository)
         }
