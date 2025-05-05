@@ -18,18 +18,22 @@ final class EditProfileViewModel: BaseViewModel {
     private let updateUserNicknameUseCase: UpdateUserNicknameUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private var nickname = ""
+    private var nickName: String = ""
+    private var preNickName: String = ""
     private var profileImage: Data?
     private var isEnableUpdateButton: Bool {
-        !nickname.isEmpty
+        !nickName.isEmpty
     }
     
     init(
         updateUserNicknameUseCase: UpdateUserNicknameUseCase,
-        updateProfileImageUseCase: UpdateProfileImageUseCase
+        updateProfileImageUseCase: UpdateProfileImageUseCase,
+        nickName: String = ""
     ) {
         self.updateUserNicknameUseCase = updateUserNicknameUseCase
         self.updateProfileImageUseCase = updateProfileImageUseCase
+        self.preNickName = nickName
+        self.nickName = nickName
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -37,7 +41,7 @@ final class EditProfileViewModel: BaseViewModel {
             guard let self else { return }
             switch event {
             case .writeNickname(let nickname):
-                self.nickname = nickname
+                nickName = nickname
             case .writeProfileImage(let image):
                 profileImage = image
             case .updateProfile:
@@ -49,7 +53,11 @@ final class EditProfileViewModel: BaseViewModel {
     
     private func updateProfile() async {
         do {
-            try await updateUserNicknameUseCase.execute(nickname: nickname)
+            if nickName != preNickName {
+                try await updateUserNicknameUseCase.execute(nickname: nickName)
+                preNickName = nickName
+            }
+            
             let fileName = UUID().uuidString + ".jpg"
             if let profileImage {
                 let image: (fileName: String, imageData: Data)? = (fileName: fileName, imageData: profileImage)

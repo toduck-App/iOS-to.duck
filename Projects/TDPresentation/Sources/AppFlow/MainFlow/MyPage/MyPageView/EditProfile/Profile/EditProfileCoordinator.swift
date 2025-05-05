@@ -21,7 +21,8 @@ final class EditProfileCoordinator: Coordinator {
         let updateProfileImageUseCase = injector.resolve(UpdateProfileImageUseCase.self)
         let viewModel = EditProfileViewModel(
             updateUserNicknameUseCase: updateUserNicknameUseCase,
-            updateProfileImageUseCase: updateProfileImageUseCase
+            updateProfileImageUseCase: updateProfileImageUseCase,
+            nickName: nickName
         )
         let editProfileViewController = EditProfileViewController(viewModel: viewModel)
         editProfileViewController.hidesBottomBarWhenPushed = true

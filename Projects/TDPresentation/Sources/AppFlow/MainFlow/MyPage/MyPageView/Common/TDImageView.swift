@@ -1,10 +1,3 @@
-//
-//  TDImageView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/16/25.
-//
-
 import UIKit
 import SnapKit
 
@@ -32,7 +25,7 @@ final class TDImageView: BaseView {
     private let outerImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.image = TDImage.Pen.penMediumColor
+        imageView.image = TDImage.Camera.cameraMediumColor
         return imageView
     }()
     
