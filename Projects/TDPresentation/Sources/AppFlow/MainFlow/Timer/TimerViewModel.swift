@@ -5,8 +5,6 @@ import TDDesign
 import TDDomain
 import Then
 
-// TODO: 실행 도중 타이머 설정 변경시 처리
-
 public final class TimerViewModel: BaseViewModel {
     enum Input {
         case fetchFocusAllSetting

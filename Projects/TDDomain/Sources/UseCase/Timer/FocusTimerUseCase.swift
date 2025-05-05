@@ -46,9 +46,9 @@ final class FocusTimerUseCaseImpl: FocusTimerUseCase {
         }
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             if remainTime > 0 {
-                remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
+                remainTime -= 1 // TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
                 delegate?.didUpdateFocusTime(remainTime: remainTime)
             } else {
                 delegate?.didFinishFocusTimerOneCycle()

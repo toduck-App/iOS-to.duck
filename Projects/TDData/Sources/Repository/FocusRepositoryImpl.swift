@@ -43,7 +43,7 @@ struct FocusRepositoryImpl: FocusRepository {
     
     func fetchTimerTheme() -> TDDomain.TDTimerTheme {
         guard let dto = storage.fetchTheme() else {
-            return .Bboduck
+            return .toduck
         }
         return dto.convertToTDTimerTheme()
     }

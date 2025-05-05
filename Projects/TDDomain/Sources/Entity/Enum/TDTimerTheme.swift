@@ -1,12 +1,12 @@
 import TDCore
 
 public enum TDTimerTheme: Int {
-    case Bboduck
-    case Simple
+    case toduck
+    case simple
 }
 
 public extension TDTimerTheme {
     static func parse(value: Int) -> TDTimerTheme {
-        return TDTimerTheme(rawValue: value) ?? .Simple
+        return TDTimerTheme(rawValue: value) ?? .simple
     }
 }

@@ -8,7 +8,7 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
     private let viewModel: TimerViewModel!
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private var themeState: TDTimerTheme = .Bboduck
+    private var themeState: TDTimerTheme = .toduck
 
     init(viewModel: TimerViewModel) {
         self.viewModel = viewModel
@@ -32,12 +32,12 @@ final class ThemeSettingViewController: BaseViewController<ThemeSettingView> {
         }, for: .touchUpInside)
 
         layoutView.themeBbouckButton.addAction(UIAction { [self] _ in
-            themeState = .Bboduck
+            themeState = .toduck
             updateSelectButtonState()
         }, for: .touchUpInside)
 
         layoutView.themeSimpleButton.addAction(UIAction { [self] _ in
-            themeState = .Simple
+            themeState = .simple
             updateSelectButtonState()
         }, for: .touchUpInside)
 
@@ -76,7 +76,7 @@ extension ThemeSettingViewController {
     }
 
     private func updateSelectButtonState() {
-        layoutView.themeBbouckButton.isSelected = themeState == .Bboduck
-        layoutView.themeSimpleButton.isSelected = themeState == .Simple
+        layoutView.themeBbouckButton.isSelected = themeState == .toduck
+        layoutView.themeSimpleButton.isSelected = themeState == .simple
     }
 }

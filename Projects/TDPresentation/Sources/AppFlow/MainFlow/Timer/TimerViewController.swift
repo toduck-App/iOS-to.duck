@@ -6,13 +6,13 @@ import TDDomain
 import UIKit
 
 final class TimerViewController: BaseViewController<TimerView>, TDToastPresentable {
-    weak var coordinator: TimerCoordinator?
     private let viewModel: TimerViewModel
     private let input = PassthroughSubject<TimerViewModel.Input, Never>()
     
     private var cancellables = Set<AnyCancellable>()
-    private var theme: TDTimerTheme = .Bboduck
+    private var theme: TDTimerTheme = .toduck
     private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
+    weak var coordinator: TimerCoordinator?
     
     // MARK: - Initializer
     
@@ -96,10 +96,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     
     private func setupNavigation() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: layoutView.leftNavigationItem)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            customView: layoutView.rightNavigationMenuButton
-        )
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.rightNavigationMenuButton)
         
         layoutView.dropDownView.delegate = self
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
@@ -225,8 +222,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private func updateTheme(theme: TDTimerTheme) {
         self.theme = theme
         
-        layoutView.simpleTimerView.isHidden = theme == .Bboduck
-        layoutView.bboduckTimerView.isHidden = theme == .Simple
+        layoutView.simpleTimerView.isHidden = theme == .toduck
+        layoutView.bboduckTimerView.isHidden = theme == .simple
         
         // button theme
         layoutView.playButton.configuration?.baseBackgroundColor = theme.buttonCenterBackgroundColor
@@ -409,7 +406,6 @@ extension TimerViewController {
             return TDDropdownItem(title: rawValue, leftImage: image)
         }
         
-        // TODO: 이미지 추가 예정
         var image: TDDropdownItem.SelectableImage {
             switch self {
             case .timerSetting:
@@ -426,72 +422,81 @@ extension TimerViewController {
 private extension TDTimerTheme {
     var buttonForegroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral400
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary100
         }
     }
     
     var buttonCenterBackgroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return .clear
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary200
         }
     }
     
     var buttonCenterForegroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral600
-        case .Bboduck:
+        case .toduck:
             return .white
         }
     }
     
     var backgroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return UIColor(red: 1.00, green: 1.00, blue: 0.99, alpha: 1.00)
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary100
         }
     }
     
     var navigationColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral500
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary300
+        }
+    }
+
+    var navigationBarBackgroundColor: UIColor {
+        switch self {
+        case .simple:
+            return .white
+        case .toduck:
+            return TDColor.Primary.primary100
         }
     }
     
     var navigationImage: UIImage {
         switch self {
-        case .Simple:
+        case .simple:
             return TDImage.Calendar.top2Medium
-        case .Bboduck:
+        case .toduck:
             return TDImage.Calendar.top2MediumOrange
         }
     }
     
     var counterStackBorderWidth: CGFloat {
         switch self {
-        case .Simple:
+        case .simple:
             return 0
-        case .Bboduck:
+        case .toduck:
             return 1
         }
     }
     
     var counterStackBackgroundColor: UIColor {
         switch self {
-        case .Simple:
+        case .simple:
             return TDColor.Neutral.neutral200
-        case .Bboduck:
+        case .toduck:
             return TDColor.Primary.primary25
         }
     }

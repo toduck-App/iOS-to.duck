@@ -39,7 +39,7 @@ final class PauseTimerUseCaseImpl: PauseTimerUseCase {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self else { return }
             if remainTime > 0 {
-                remainTime -= 1 //TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
+                remainTime -= 1 // TODO: 자연스러운 프로그래스 감소를 위해 시간 뻥튀기 필요
                 delegate?.didUpdatePauseTime(remainTime: remainTime)
             } else {
                 stop()
