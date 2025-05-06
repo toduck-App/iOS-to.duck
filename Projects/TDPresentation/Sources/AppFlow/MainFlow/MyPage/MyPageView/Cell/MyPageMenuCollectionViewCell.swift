@@ -1,22 +1,13 @@
-//
-//  MyPageMenuCollectionViewCell.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/14/25.
-//
-
 import UIKit
 import SnapKit
 
 import TDDesign
 
 final class MyPageMenuCollectionViewCell: UICollectionViewCell {
-    private let textLabel: UILabel = {
-        let label = UILabel()
-        label.font = TDFont.mediumBody2.font
-        label.textColor = TDColor.Neutral.neutral800
-        return label
-    }()
+    private let textLabel = TDLabel(
+        toduckFont: .mediumHeader5,
+        toduckColor: TDColor.Neutral.neutral800
+    )
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -35,7 +26,7 @@ final class MyPageMenuCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with title: String) {
-        textLabel.text = title
+        textLabel.setText(title)
     }
 }
 

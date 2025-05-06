@@ -41,8 +41,8 @@ final class MyPageSocialButtonView: UIView {
     private func setupLayoutConstraints() {
         menuStackView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(LayoutConstants.stackViewUpperPadding)
-            $0.bottom.equalToSuperview().offset(-LayoutConstants.stackViewLowerPadding)
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.stackViewHorizontalPadding)
+            $0.height.equalTo(54)
         }
     }
 
