@@ -16,7 +16,7 @@ public struct TDTimerSetting {
 
     public func toFocusDurationMinutes() -> Int {
         #if DEBUG
-            return focusDuration
+            return focusDuration * 5
         #else
             return focusDuration * 60
         #endif
@@ -24,7 +24,7 @@ public struct TDTimerSetting {
 
     public func toRestDurationMinutes() -> Int {
         #if DEBUG
-            return restDuration
+            return restDuration * 5
         #else
             return restDuration * 60
         #endif
