@@ -1,4 +1,5 @@
 import Combine
+import UserNotifications
 import Foundation
 import TDCore
 import TDDesign
@@ -168,6 +169,7 @@ public final class TimerViewModel: BaseViewModel {
     private func pauseTimer() {
         focusTimerUseCase.stop()
         pauseTimerUseCase.start()
+        sendPauseNotification()
     }
     
     /// 집중 타이머를 중지하고 진행상황을 보고
@@ -241,6 +243,22 @@ public final class TimerViewModel: BaseViewModel {
             output.send(.failure("집중 토마토 개수 범위를 벗어났습니다."))
         }
     }
+    
+    private func sendPauseNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "집중 타이머를 잠시 멈췄어요"
+        content.body = "20초 안에 재시작하면 집중시간이 이어집니다"
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("로컬 알림 등록 실패: \(error.localizedDescription)")
+            }
+        }
+    }
 }
 
 // MARK: - TimerUseCaseDelegate
@@ -303,6 +321,21 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
     }
     
     public func didFinishRestTimer() {
+        let content = UNMutableNotificationContent()
+        content.title = "휴식 시간 끝 💡️"
+        content.body = "집중할 시간이에요 ! 자리에 앉아볼까요?"
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("로컬 알림 등록 실패: \(error.localizedDescription)")
+            }
+        }
+        // 기존 로직 유지
         focusTimerUseCase.start()
         output.send(.finishedRestTimer)
         restCount += 1
