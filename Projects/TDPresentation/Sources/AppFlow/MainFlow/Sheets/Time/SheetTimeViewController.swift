@@ -27,6 +27,10 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
     }
     private var selectedHour: Int? {
         didSet {
+            if selectedHour != nil && selectedMinute == nil {
+                selectedMinute = 0
+                layoutView.minuteCollectionView.reloadData()
+            }
             updateSaveButtonState()
         }
     }
@@ -190,108 +194,82 @@ extension SheetTimeViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let reuseIdentifier = collectionView == layoutView.hourCollectionView ? "HourCell" : "MinuteCell"
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        
         let isHourCollection = collectionView == layoutView.hourCollectionView
-        let text = isHourCollection
+        let reuseIdentifier = isHourCollection ? "HourCell" : "MinuteCell"
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+
+        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+        let containerView = createCellContainer(in: cell)
+        let labelText = isHourCollection
             ? "\(indexPath.row + 1)"
             : String(format: "%02d", indexPath.row * 5)
-        
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-        
+        let label = createCellLabel(with: labelText)
+        let isSelected = isHourCollection
+            ? indexPath.row + 1 == selectedHour
+            : indexPath.row * 5 == selectedMinute
+
+        if isHourCollection {
+            configureHourCell(containerView, label: label, hour: indexPath.row + 1, isSelected: isSelected)
+        } else {
+            configureMinuteCell(containerView, label: label, isSelected: isSelected)
+        }
+
+        return cell
+    }
+    
+    private func createCellContainer(in cell: UICollectionViewCell) -> UIView {
         let containerView = UIView()
         containerView.layer.cornerRadius = 8
         containerView.layer.masksToBounds = true
         cell.contentView.addSubview(containerView)
-        containerView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        let label = TDLabel(
+        containerView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        return containerView
+    }
+
+    private func createCellLabel(with text: String) -> TDLabel {
+        TDLabel(
             labelText: text,
             toduckFont: .mediumBody2,
             alignment: .center
         )
-        
-        let isSelected =
-            (isHourCollection && indexPath.row + 1 == selectedHour) ||
-            (!isHourCollection && indexPath.row * 5 == selectedMinute)
-        
-        // MARK: - Hour Cell
-        if isHourCollection {
-            let hour = indexPath.row + 1
+    }
+
+    private func configureHourCell(_ containerView: UIView, label: TDLabel, hour: Int, isSelected: Bool) {
+        if hour == 12, isSelected, layoutView.amButton.isSelected || layoutView.pmButton.isSelected {
+            containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
             
-            if hour == 12 {
-                if isSelected && (layoutView.amButton.isSelected || layoutView.pmButton.isSelected) {
-                    // 12시 + 선택됨: 해/달 이미지 + 이미지 위에 텍스트
-                    containerView.backgroundColor = isAM ? TDColor.SunMoon.moon : TDColor.SunMoon.sun
-                    
-                    let imageView = UIImageView()
-                    imageView.image = isAM ? TDImage.SunMoon.moon : TDImage.SunMoon.sun
-                    imageView.contentMode = .scaleAspectFit
-                    containerView.addSubview(imageView)
-                    
-                    let imageSize: CGFloat = isAM ? 28 : 32
-                    imageView.snp.makeConstraints { make in
-                        make.center.equalToSuperview()
-                        make.width.height.equalTo(imageSize)
-                    }
-                    
-                    containerView.addSubview(label)
-                    label.snp.makeConstraints { make in
-                        make.center.equalToSuperview()
-                    }
-                    
-                    label.setColor(TDColor.Neutral.neutral800)
-                } else {
-                    // 12시 + 선택 안 됨: 일반 셀처럼 표시
-                    containerView.addSubview(label)
-                    label.snp.makeConstraints { make in
-                        make.edges.equalToSuperview()
-                    }
-                    
-                    if isSelected {
-                        containerView.backgroundColor = TDColor.Primary.primary100
-                        label.setColor(TDColor.Primary.primary500)
-                    } else {
-                        containerView.backgroundColor = TDColor.Neutral.neutral50
-                        label.setColor(TDColor.Neutral.neutral800)
-                    }
-                }
-            } else {
-                // 1~11시
-                containerView.addSubview(label)
-                label.snp.makeConstraints { make in
-                    make.edges.equalToSuperview()
-                }
-                
-                if isSelected {
-                    containerView.backgroundColor = TDColor.Primary.primary100
-                    label.setColor(TDColor.Primary.primary500)
-                } else {
-                    containerView.backgroundColor = TDColor.Neutral.neutral50
-                    label.setColor(TDColor.Neutral.neutral800)
-                }
+            let imageView = UIImageView()
+            imageView.image = isAM ? TDImage.SunMoon.moon : TDImage.SunMoon.sun
+            imageView.contentMode = .scaleAspectFit
+            containerView.addSubview(imageView)
+            imageView.snp.makeConstraints {
+                $0.center.equalToSuperview()
+                $0.width.height.equalTo(isAM ? 28 : 32)
             }
-        }
-        
-        // MARK: - Minute Cell
-        else {
+
             containerView.addSubview(label)
-            label.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
-            }
-            
-            if isSelected {
-                containerView.backgroundColor = TDColor.Primary.primary100
-                label.setColor(TDColor.Primary.primary500)
-            } else {
-                containerView.backgroundColor = TDColor.Neutral.neutral50
-                label.setColor(TDColor.Neutral.neutral800)
-            }
+            label.snp.makeConstraints { $0.center.equalToSuperview() }
+            label.setColor(TDColor.Neutral.neutral800)
+        } else {
+            containerView.addSubview(label)
+            label.snp.makeConstraints { $0.edges.equalToSuperview() }
+            updateCellAppearance(containerView, label: label, isSelected: isSelected)
         }
-        
-        return cell
+    }
+
+    private func configureMinuteCell(_ containerView: UIView, label: TDLabel, isSelected: Bool) {
+        containerView.addSubview(label)
+        label.snp.makeConstraints { $0.edges.equalToSuperview() }
+        updateCellAppearance(containerView, label: label, isSelected: isSelected)
+    }
+
+    private func updateCellAppearance(_ containerView: UIView, label: TDLabel, isSelected: Bool) {
+        if isSelected {
+            containerView.backgroundColor = TDColor.Primary.primary100
+            label.setColor(TDColor.Primary.primary500)
+        } else {
+            containerView.backgroundColor = TDColor.Neutral.neutral50
+            label.setColor(TDColor.Neutral.neutral800)
+        }
     }
 }
