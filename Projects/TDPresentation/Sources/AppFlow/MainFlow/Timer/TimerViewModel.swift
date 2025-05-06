@@ -169,7 +169,7 @@ public final class TimerViewModel: BaseViewModel {
     private func pauseTimer() {
         focusTimerUseCase.stop()
         pauseTimerUseCase.start()
-        sendPauseNotification()
+        TimerNotificationManager.shared.sendNotification(type: .pause)
     }
     
     /// 집중 타이머를 중지하고 진행상황을 보고
@@ -318,24 +318,14 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
     public func didUpdateRestTime(remainTime: Int) {
         output.send(.updateTime(remainTime))
         restTime += 1
+        
+        if remainTime == 60 {
+            TimerNotificationManager.shared.sendNotification(type: .restEndingSoon)
+        }
     }
     
     public func didFinishRestTimer() {
-        let content = UNMutableNotificationContent()
-        content.title = "휴식 시간 끝 💡️"
-        content.body = "집중할 시간이에요 ! 자리에 앉아볼까요?"
-        content.sound = .default
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("로컬 알림 등록 실패: \(error.localizedDescription)")
-            }
-        }
-        // 기존 로직 유지
+        TimerNotificationManager.shared.sendNotification(type: .restFinished)
         focusTimerUseCase.start()
         output.send(.finishedRestTimer)
         restCount += 1
