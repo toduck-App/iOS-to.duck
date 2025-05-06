@@ -1,11 +1,11 @@
 import UserNotifications
 
-public final class TimerNotificationManager {
-    public static let shared = TimerNotificationManager()
+public final class LocalPushNotificationManager {
+    public static let shared = LocalPushNotificationManager()
     
     private init() {}
     
-    public func sendNotification(type: TimerNotificationType, delay: TimeInterval = 1) {
+    public func sendNotification(type: LocalNotificationType, delay: TimeInterval = 1) {
         let content = UNMutableNotificationContent()
         content.title = type.title
         content.body = type.body
