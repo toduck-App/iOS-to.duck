@@ -169,7 +169,7 @@ public final class TimerViewModel: BaseViewModel {
     private func pauseTimer() {
         focusTimerUseCase.stop()
         pauseTimerUseCase.start()
-        LocalPushNotificationManager.shared.sendNotification(type: .pause)
+        LocalPushNotificationManager.shared.sendNotification(type: .timerPause)
     }
     
     /// 집중 타이머를 중지하고 진행상황을 보고
@@ -304,7 +304,7 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
         restTime += 1
         
         if remainTime == 10 {
-            LocalPushNotificationManager.shared.sendNotification(type: .restFinished)
+            LocalPushNotificationManager.shared.sendNotification(type: .timerRestFinished)
         }
     }
     
