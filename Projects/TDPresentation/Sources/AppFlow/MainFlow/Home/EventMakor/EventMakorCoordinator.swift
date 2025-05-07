@@ -3,12 +3,17 @@ import TDDomain
 import TDDesign
 import TDCore
 
+protocol EventMakorCoordinatorDelegate: AnyObject {
+    func didTapSaveButton(createdDate: Date)
+}
+
 final class EventMakorCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
     private let selectedDate: Date
+    weak var delegate: EventMakorCoordinatorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -41,6 +46,7 @@ final class EventMakorCoordinator: Coordinator {
         eventMakorViewController.coordinator = self
         eventMakorViewController.hidesBottomBarWhenPushed = true
         eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
+        eventMakorViewController.delegate = delegate
         navigationController.pushTDViewController(eventMakorViewController, animated: true)
         if let preEvent {
             eventMakorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
@@ -99,6 +105,7 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
 }
 
 // MARK: - Sheet Delegate
+
 extension EventMakorCoordinator: SheetColorDelegate {
     func didSaveCategory() {
         guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }

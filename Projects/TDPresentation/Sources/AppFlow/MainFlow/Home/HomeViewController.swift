@@ -44,7 +44,7 @@ final class HomeViewController: BaseViewController<BaseView> {
             
             if selectedIndex == currentIndex {
                 if let todoVC = self.currentViewController as? TodoViewController {
-                    todoVC.updateCalendarForThisWeek()
+                    todoVC.updateWeekCalendarForDate(at: Date())
                 }
             } else {
                 self.updateView()
@@ -204,10 +204,11 @@ extension HomeViewController: TodoViewControllerDelegate {
     func didTapEventMakor(
         mode: EventMakorViewController.Mode,
         selectedDate: Date?,
-        preEvent: (any Eventable)?
+        preEvent: (any Eventable)?,
+        delegate: EventMakorCoordinatorDelegate?
     ) {
         guard let selectedDate else { return }
-        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent)
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent, delegate: delegate)
     }
 }
 

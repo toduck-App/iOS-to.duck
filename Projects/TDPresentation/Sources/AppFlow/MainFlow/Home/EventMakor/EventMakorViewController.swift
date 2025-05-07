@@ -18,7 +18,9 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     private let eventMakorView: EventMakorView
     private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var createStartDate: Date?
     weak var coordinator: EventMakorCoordinator?
+    weak var delegate: EventMakorCoordinatorDelegate?
     
     // MARK: - Initializer
     init(
@@ -77,6 +79,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
             } else {
                 self?.input.send(.tapSaveTodoButton)
             }
+            self?.delegate?.didTapSaveButton(createdDate: self?.createStartDate ?? Date())
         }, for: .touchUpInside)
     }
     
@@ -194,6 +197,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     func updateSelectedDate(startDate: Date, endDate: Date?) {
+        createStartDate = startDate
         let startDateForBackend = startDate.convertToString(formatType: .yearMonthDay)
         let startDateForDisplay = startDate.convertToString(formatType: .monthDay)
         
@@ -301,7 +305,6 @@ extension EventMakorViewController: TDFormButtonsViewDelegate {
 }
 
 // MARK: - UIScrollViewDelegate
-
 extension EventMakorViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
@@ -332,6 +335,7 @@ extension EventMakorViewController: UIScrollViewDelegate {
     }
 }
 
+// MARK: - EditScheduleModeDelegate
 extension EventMakorViewController: EditScheduleModeDelegate {
     func didTapTodayScheduleApply() {
         input.send(.tapScheduleEditTodayButton)

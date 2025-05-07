@@ -312,15 +312,14 @@ final class TodoViewController: BaseViewController<BaseView> {
         }
     }
     
-    func updateCalendarForThisWeek() {
-        let today = Date()
-        selectedDate = today
+    func updateWeekCalendarForDate(at date: Date) {
+        selectedDate = date
 
         let calendar = Calendar.current
-        if let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start {
-            weekCalendarView.select(today)
+        if let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: date)?.start {
+            weekCalendarView.select(date)
             weekCalendarView.setCurrentPage(startOfWeek, animated: true)
-            fetchWeekTodo(for: today)
+            fetchWeekTodo(for: date)
         }
     }
 }
@@ -423,11 +422,11 @@ extension TodoViewController: UITableViewDelegate {
 // MARK: - FloatingActionMenuView Delegate
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
-        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil)
+        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil, delegate: self)
     }
     
     func didTapRoutineButton() {
-        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil)
+        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil, delegate: self)
     }
 }
 
@@ -498,7 +497,8 @@ extension TodoViewController {
                 self?.delegate?.didTapEventMakor(
                     mode: mode,
                     selectedDate: self?.selectedDate,
-                    preEvent: event
+                    preEvent: event,
+                    delegate: self
                 )
             },
             deleteAction: { [weak self] in
@@ -585,6 +585,14 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
             let isSchedule = eventMode == .schedule
             input.send(.deleteAllTodo(todoId: eventId, isSchedule: isSchedule))
         }
+    }
+}
+
+// MARK: - EventMakorCoordinatorDelegate
+extension TodoViewController: EventMakorCoordinatorDelegate {
+    
+    func didTapSaveButton(createdDate: Date) {
+        updateWeekCalendarForDate(at: createdDate)
     }
 }
 
