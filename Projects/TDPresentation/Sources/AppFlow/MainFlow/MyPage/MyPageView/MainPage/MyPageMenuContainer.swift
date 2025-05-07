@@ -41,7 +41,7 @@ private extension MyPageMenuContainer {
             icon.tintColor = TDColor.Neutral.neutral800
             label.setText("프로필")
         case .share:
-            icon.image = TDImage.Social.medium
+            icon.image = TDImage.Direction.curvedArrowMedium
             label.setText("공유하기")
         }
     }
@@ -49,13 +49,14 @@ private extension MyPageMenuContainer {
     func setupLayoutConstraints() {
         icon.snp.makeConstraints {
             $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
+            $0.leading.equalToSuperview().offset(52)
             $0.size.equalTo(LayoutConstants.iconSize)
-            $0.centerX.equalToSuperview()
         }
         
         label.snp.makeConstraints {
-            $0.bottom.equalToSuperview().offset(-LayoutConstants.verticalPadding)
-            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
+            $0.leading.equalTo(icon.snp.trailing).offset(8)
+            $0.centerY.equalTo(icon)
         }
     }
 }

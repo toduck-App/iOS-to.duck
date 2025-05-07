@@ -1,4 +1,5 @@
 import Combine
+import UserNotifications
 import Foundation
 import TDCore
 import TDDesign
@@ -168,6 +169,7 @@ public final class TimerViewModel: BaseViewModel {
     private func pauseTimer() {
         focusTimerUseCase.stop()
         pauseTimerUseCase.start()
+        LocalPushNotificationManager.shared.sendNotification(type: .timerPause)
     }
     
     /// 집중 타이머를 중지하고 진행상황을 보고
@@ -300,6 +302,10 @@ extension TimerViewModel: RestTimerUseCaseDelegate {
     public func didUpdateRestTime(remainTime: Int) {
         output.send(.updateTime(remainTime))
         restTime += 1
+        
+        if remainTime == 10 {
+            LocalPushNotificationManager.shared.sendNotification(type: .timerRestFinished)
+        }
     }
     
     public func didFinishRestTimer() {

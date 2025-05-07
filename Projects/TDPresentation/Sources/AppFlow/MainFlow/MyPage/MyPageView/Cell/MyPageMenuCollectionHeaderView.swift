@@ -1,22 +1,13 @@
-//
-//  MyPageMenuCollectionHeaderView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/14/25.
-//
-
 import UIKit
 import SnapKit
 
 import TDDesign
 
 final class MyPageMenuCollectionHeaderView: UICollectionReusableView {
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = TDFont.mediumCaption1.font
-        label.textColor = TDColor.Neutral.neutral600
-        return label
-    }()
+    private let titleLabel = TDLabel(
+        toduckFont: .mediumCaption1,
+        toduckColor: TDColor.Neutral.neutral600
+    )
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -30,7 +21,7 @@ final class MyPageMenuCollectionHeaderView: UICollectionReusableView {
     }
     
     func configure(with title: String) {
-        titleLabel.text = title
+        titleLabel.setText(title)
     }
     
     override func prepareForReuse() {

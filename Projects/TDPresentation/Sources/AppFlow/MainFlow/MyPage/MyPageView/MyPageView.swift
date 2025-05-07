@@ -254,7 +254,7 @@ private extension MyPageView {
         static let containerVerticalPadding: CGFloat = 12
         static let contentViewHeight: CGFloat = 80
         static let footerPadding: CGFloat = 20
-        static let menuViewHeight: CGFloat = 110
+        static let menuViewHeight: CGFloat = 82
         static let randomHeight: CGFloat = 1000
     }
 }
