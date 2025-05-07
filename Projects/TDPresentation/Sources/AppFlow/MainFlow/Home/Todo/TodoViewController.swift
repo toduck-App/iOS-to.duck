@@ -527,14 +527,19 @@ extension TodoViewController {
     private func makeTimelineItems() -> [TimeLineCellItem] {
         var items: [TimeLineCellItem] = []
         let calendar = Calendar.current
-        
-        // isAllDay가 true인 루틴이 있으면 최상단에 allDay 셀 추가
+
+        // 종일 이벤트 추가
         for (index, event) in viewModel.allDayTodoList.enumerated() {
             let showTime = (index == 0)
             items.append(.allDay(event: event, showTime: showTime))
         }
-        
-        // 같은 시간(12시간제)별로 모든 루틴을 배열로 매핑
+
+        // 시간 이벤트가 없으면 gap 없이 반환
+        guard !viewModel.timedTodoList.isEmpty else {
+            return items
+        }
+
+        // 시간별 매핑
         var eventMapping: [Int: [any Eventable]] = [:]
         for event in viewModel.timedTodoList {
             if let time = event.time, let dateTime = Date.convertFromString(time, format: .time24Hour) {
@@ -542,18 +547,17 @@ extension TodoViewController {
                 eventMapping[hourComponent, default: []].append(event)
             }
         }
-        
+
+        // 시간 셀 및 gap 구성
         var currentHour = 0
         while currentHour < 24 {
             if let events = eventMapping[currentHour], !events.isEmpty {
-                // 같은 시간대에 여러 루틴이 있으면, 첫 번째 셀에만 타임라인 표시
                 for (index, event) in events.enumerated() {
                     let showTime = (index == 0)
                     items.append(.timeEvent(hour: currentHour, event: event, showTime: showTime))
                 }
                 currentHour += 1
             } else {
-                // 해당 시간에 루틴이 없으면 연속된 빈 시간대를 gap 셀로 묶음
                 let gapStart = currentHour
                 while currentHour < 24, eventMapping[currentHour] == nil {
                     currentHour += 1
@@ -562,7 +566,7 @@ extension TodoViewController {
                 items.append(.gap(startHour: gapStart, endHour: gapEnd))
             }
         }
-        
+
         return items
     }
 }
