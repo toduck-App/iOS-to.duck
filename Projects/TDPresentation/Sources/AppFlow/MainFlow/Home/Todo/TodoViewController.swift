@@ -7,8 +7,8 @@ import TDDesign
 
 final class TodoViewController: BaseViewController<BaseView> {
     enum TimeLineCellItem: Hashable {
-        case allDay(event: any Eventable, showTime: Bool)
-        case timeEvent(hour: Int, event: any Eventable, showTime: Bool)
+        case allDay(event: any TodoItem, showTime: Bool)
+        case timeEvent(hour: Int, event: any TodoItem, showTime: Bool)
         case gap(startHour: Int, endHour: Int)
     }
     
@@ -219,9 +219,9 @@ final class TodoViewController: BaseViewController<BaseView> {
                         .deletedTodo:
                     self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
-                    let eventDisplayItem = EventDisplayItem(routine: routine)
+                    let todoDisplayItem = TodoDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
-                    let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
+                    let detailEventViewController = DetailEventViewController(mode: .routine, todo: todoDisplayItem, currentDate: currentDate)
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
                 case .unionedTodoList:
@@ -397,8 +397,8 @@ extension TodoViewController: UITableViewDelegate {
         switch item {
         case .allDay(let event, _):
             if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
                 detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
@@ -406,8 +406,8 @@ extension TodoViewController: UITableViewDelegate {
             }
         case .timeEvent(_, let event, _):
             if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
                 detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
@@ -473,7 +473,7 @@ extension TodoViewController {
         tableView: UITableView,
         indexPath: IndexPath,
         hour: Int,
-        event: any Eventable,
+        event: any TodoItem,
         showTime: Bool
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
@@ -482,18 +482,18 @@ extension TodoViewController {
         ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
         let place = event.eventMode == .schedule ? (event as? Schedule)?.place : nil
-        let eventDisplay = EventDisplayItem(from: event, place: place)
+        let todoDisplayItem = TodoDisplayItem(from: event, place: place)
         
         cell.configure(
             hour: hour,
             showTime: showTime,
-            event: eventDisplay,
+            event: todoDisplayItem,
             checkBoxAction: { [weak self] in
                 HapticManager.impact(.soft)
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in
-                let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
+                let mode: TodoCreatorViewController.Mode = todoDisplayItem.eventMode == .schedule ? .schedule : .routine
                 self?.delegate?.didTapEventMakor(
                     mode: mode,
                     selectedDate: self?.selectedDate,
@@ -502,10 +502,10 @@ extension TodoViewController {
                 )
             },
             deleteAction: { [weak self] in
-                let isSchedule = eventDisplay.eventMode == .schedule
+                let isSchedule = todoDisplayItem.eventMode == .schedule
                 let deleteEventViewController = DeleteEventViewController(
-                    eventId: eventDisplay.id,
-                    isRepeating: eventDisplay.isRepeating,
+                    eventId: todoDisplayItem.id,
+                    isRepeating: todoDisplayItem.isRepeating,
                     eventMode: isSchedule ? .schedule : .routine
                 )
                 deleteEventViewController.delegate = self
@@ -540,7 +540,7 @@ extension TodoViewController {
         }
 
         // 시간별 매핑
-        var eventMapping: [Int: [any Eventable]] = [:]
+        var eventMapping: [Int: [any TodoItem]] = [:]
         for event in viewModel.timedTodoList {
             if let time = event.time, let dateTime = Date.convertFromString(time, format: .time24Hour) {
                 let hourComponent = calendar.component(.hour, from: dateTime)
@@ -589,7 +589,7 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
 }
 
 // MARK: - EventMakorCoordinatorDelegate
-extension TodoViewController: EventMakorCoordinatorDelegate {
+extension TodoViewController: TodoCreatorCoordinatorDelegate {
     
     func didTapSaveButton(createdDate: Date) {
         updateWeekCalendarForDate(at: createdDate)
@@ -598,7 +598,7 @@ extension TodoViewController: EventMakorCoordinatorDelegate {
 
 // MARK: - DetailEventViewControllerDelegate
 extension TodoViewController: DetailEventViewControllerDelegate {
-    func didTapDeleteButton(event: EventDisplayItem) {
+    func didTapDeleteButton(event: TodoDisplayItem) {
         let deleteEventViewController = DeleteEventViewController(
             eventId: event.id,
             isRepeating: event.isRepeating,
@@ -608,7 +608,7 @@ extension TodoViewController: DetailEventViewControllerDelegate {
         presentPopup(with: deleteEventViewController)
     }
     
-    func didTapTomorrowButton(event: EventDisplayItem) {
+    func didTapTomorrowButton(event: TodoDisplayItem) {
         if let id = event.id {
             input.send(.moveToTomorrow(todoId: id, event: event))
         }

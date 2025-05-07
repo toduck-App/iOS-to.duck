@@ -3,7 +3,7 @@ import TDDomain
 import TDCore
 
 protocol TodoViewControllerDelegate: AnyObject {
-    func didTapEventMakor(mode: EventMakorViewController.Mode, selectedDate: Date?, preEvent: (any Eventable)?, delegate: EventMakorCoordinatorDelegate?)
+    func didTapEventMakor(mode: TodoCreatorViewController.Mode, selectedDate: Date?, preEvent: (any TodoItem)?, delegate: TodoCreatorCoordinatorDelegate?)
 }
 
 final class HomeCoordinator: Coordinator {
@@ -37,13 +37,13 @@ extension HomeCoordinator: CoordinatorFinishDelegate {
 // MARK: - EventMakorDelegate
 extension HomeCoordinator: TodoViewControllerDelegate {
     func didTapEventMakor(
-        mode: EventMakorViewController.Mode,
+        mode: TodoCreatorViewController.Mode,
         selectedDate: Date?,
-        preEvent: (any Eventable)?,
-        delegate: EventMakorCoordinatorDelegate?
+        preEvent: (any TodoItem)?,
+        delegate: TodoCreatorCoordinatorDelegate?
     ) {
         guard let selectedDate else { return }
-        let eventMakorCoordinator = EventMakorCoordinator(
+        let eventMakorCoordinator = TodoCreatorCoordinator(
             navigationController: navigationController,
             injector: injector,
             selectedDate: selectedDate

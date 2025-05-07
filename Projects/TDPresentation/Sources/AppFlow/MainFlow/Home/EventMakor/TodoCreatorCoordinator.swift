@@ -3,7 +3,7 @@ import TDDomain
 import TDDesign
 import TDCore
 
-protocol EventMakorCoordinatorDelegate: AnyObject {
+protocol TodoCreatorCoordinatorDelegate: AnyObject {
     func didTapSaveButton(createdDate: Date)
 }
 
@@ -13,7 +13,7 @@ final class TodoCreatorCoordinator: Coordinator {
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
     private let selectedDate: Date
-    weak var delegate: EventMakorCoordinatorDelegate?
+    weak var delegate: TodoCreatorCoordinatorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -25,7 +25,7 @@ final class TodoCreatorCoordinator: Coordinator {
         self.selectedDate = selectedDate
     }
     
-    func start(mode: EventMakorViewController.Mode, preEvent: (any TodoItem)?) {
+    func start(mode: TodoCreatorViewController.Mode, preEvent: (any TodoItem)?) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
@@ -42,14 +42,14 @@ final class TodoCreatorCoordinator: Coordinator {
             selectedDate: selectedDate
         )
         viewModel.setupInitialDate(with: selectedDate, isEditMode: preEvent != nil)
-        let eventMakorViewController = EventMakorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
-        eventMakorViewController.coordinator = self
-        eventMakorViewController.hidesBottomBarWhenPushed = true
-        eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
-        eventMakorViewController.delegate = delegate
-        navigationController.pushTDViewController(eventMakorViewController, animated: true)
+        let todoCreatorViewController = TodoCreatorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
+        todoCreatorViewController.coordinator = self
+        todoCreatorViewController.hidesBottomBarWhenPushed = true
+        todoCreatorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
+        todoCreatorViewController.delegate = delegate
+        navigationController.pushTDViewController(todoCreatorViewController, animated: true)
         if let preEvent {
-            eventMakorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
+            todoCreatorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
         }
     }
     
@@ -108,14 +108,14 @@ extension TodoCreatorCoordinator: TDFormMoveViewDelegate {
 
 extension TodoCreatorCoordinator: SheetColorDelegate {
     func didSaveCategory() {
-        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        guard let eventMakorViewController = navigationController.viewControllers.last as? TodoCreatorViewController else { return }
         eventMakorViewController.reloadCategoryView()
     }
 }
 
 extension TodoCreatorCoordinator: SheetCalendarDelegate {
     func didTapSaveButton(startDate: Date, endDate: Date?) {
-        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        guard let eventMakorViewController = navigationController.viewControllers.last as? TodoCreatorViewController else { return }
         eventMakorViewController.updateSelectedDate(startDate: startDate, endDate: endDate)
     }
 }
@@ -127,7 +127,7 @@ extension TodoCreatorCoordinator: SheetTimeDelegate {
         hour: Int,
         minute: Int
     ) {
-        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        guard let eventMakorViewController = navigationController.viewControllers.last as? TodoCreatorViewController else { return }
         eventMakorViewController.updateSelectedTime(
             isAllDay: isAllDay,
             isAM: isAM,

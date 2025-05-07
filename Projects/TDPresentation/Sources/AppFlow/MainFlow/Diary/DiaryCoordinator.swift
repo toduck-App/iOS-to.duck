@@ -55,7 +55,7 @@ extension DiaryCoordinator: CoordinatorFinishDelegate {
 // MARK: - Diary Coordinator Delegate
 extension DiaryCoordinator: DiaryCoordinatorDelegate {
     func didTapCreateDiaryButton(selectedDate: Date) {
-        let diaryMakorCoordinator = DiaryMakorCoordinator(
+        let diaryMakorCoordinator = DiaryCreatorCoordinator(
             navigationController: navigationController,
             injector: injector,
             isEdit: false
@@ -66,7 +66,7 @@ extension DiaryCoordinator: DiaryCoordinatorDelegate {
     }
     
     func didTapEditDiaryButton(diary: Diary) {
-        let diaryMakorCoordinator = DiaryMakorCoordinator(
+        let diaryMakorCoordinator = DiaryCreatorCoordinator(
             navigationController: navigationController,
             injector: injector,
             isEdit: true

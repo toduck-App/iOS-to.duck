@@ -2,7 +2,7 @@ import SnapKit
 import TDDesign
 import UIKit
 
-final class SocialCreateView: BaseView {
+final class SocialCreatorView: BaseView {
     // MARK: - UI Properties
     
     private(set) var scrollView = UIScrollView()

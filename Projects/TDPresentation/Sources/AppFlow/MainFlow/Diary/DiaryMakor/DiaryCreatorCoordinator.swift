@@ -3,7 +3,7 @@ import TDDomain
 import TDDesign
 import TDCore
 
-final class DiaryMakorCoordinator: Coordinator {
+final class DiaryCreatorCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -26,18 +26,18 @@ final class DiaryMakorCoordinator: Coordinator {
     ) {
         let createDiaryUseCase = injector.resolve(CreateDiaryUseCase.self)
         let updateDiaryUseCase = injector.resolve(UpdateDiaryUseCase.self)
-        let viewModel = DiaryMakorViewModel(
+        let viewModel = DiaryCreatorViewModel(
             createDiaryUseCase: createDiaryUseCase,
             updateDiaryUseCase: updateDiaryUseCase,
             selectedDate: selectedDate,
             preDiary: diary
         )
-        let diaryMakorViewController = DiaryMakorViewController(viewModel: viewModel, isEdit: isEdit)
-        diaryMakorViewController.coordinator = self
-        diaryMakorViewController.hidesBottomBarWhenPushed = true
-        navigationController.pushTDViewController(diaryMakorViewController, animated: true)
+        let diaryCreatorViewController = DiaryCreatorViewController(viewModel: viewModel, isEdit: isEdit)
+        diaryCreatorViewController.coordinator = self
+        diaryCreatorViewController.hidesBottomBarWhenPushed = true
+        navigationController.pushTDViewController(diaryCreatorViewController, animated: true)
         if let diary, isEdit {
-            diaryMakorViewController.updateEditView(preDiary: diary)
+            diaryCreatorViewController.updateEditView(preDiary: diary)
         }
     }
     
@@ -45,7 +45,7 @@ final class DiaryMakorCoordinator: Coordinator {
 }
 
 // MARK: - Coordinator Finish Delegate
-extension DiaryMakorCoordinator: CoordinatorFinishDelegate {
+extension DiaryCreatorCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }

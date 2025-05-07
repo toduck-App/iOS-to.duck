@@ -5,7 +5,7 @@ import Combine
 import TDDesign
 import TDCore
 
-final class EventMakorViewController: BaseViewController<BaseView> {
+final class TodoCreatorViewController: BaseViewController<BaseView> {
     enum Mode {
         case schedule
         case routine
@@ -14,24 +14,24 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     // MARK: - Properties
     private let mode: Mode
     private let isEdit: Bool
-    private let viewModel: EventMakorViewModel
-    private let eventMakorView: EventMakorView
-    private let input = PassthroughSubject<EventMakorViewModel.Input, Never>()
+    private let viewModel: TodoCreatorViewModel
+    private let eventMakorView: TodoCreatorView
+    private let input = PassthroughSubject<TodoCreatorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var createStartDate: Date?
-    weak var coordinator: EventMakorCoordinator?
-    weak var delegate: EventMakorCoordinatorDelegate?
+    weak var coordinator: TodoCreatorCoordinator?
+    weak var delegate: TodoCreatorCoordinatorDelegate?
     
     // MARK: - Initializer
     init(
         mode: Mode,
         isEdit: Bool,
-        viewModel: EventMakorViewModel
+        viewModel: TodoCreatorViewModel
     ) {
         self.mode = mode
         self.isEdit = isEdit
         self.viewModel = viewModel
-        self.eventMakorView = EventMakorView(mode: mode)
+        self.eventMakorView = TodoCreatorView(mode: mode)
         super.init()
     }
     
@@ -187,7 +187,7 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
     
     // MARK: Delegate Method
-    func updatePreEvent(preEvent: (any Eventable)?, selectedDate: Date?) {
+    func updatePreEvent(preEvent: (any TodoItem)?, selectedDate: Date?) {
         let selectedDateString = selectedDate?.convertToString(formatType: .monthDay) ?? ""
         eventMakorView.updatePreEvent(preEvent: preEvent, selectedDateString: selectedDateString)
     }
@@ -240,15 +240,15 @@ final class EventMakorViewController: BaseViewController<BaseView> {
     }
 }
 
-// MARK: - EventMakorViewDelegate
-extension EventMakorViewController: TDFormMoveViewDelegate {
+// MARK: - TDFormMoveViewDelegate
+extension TodoCreatorViewController: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDFormMoveView, type: TDFormMoveViewType) {
         coordinator?.didTapMoveView(view, type: type)
     }
 }
 
 // MARK: - TDCategoryCellDelegate
-extension EventMakorViewController: TDCategoryCellDelegate {
+extension TodoCreatorViewController: TDCategoryCellDelegate {
     func didTapCategoryCell(_ color: UIColor, _ image: UIImage, _ index: Int) {
         input.send(.selectCategory(
             color.convertToHexString() ?? "",
@@ -258,7 +258,7 @@ extension EventMakorViewController: TDCategoryCellDelegate {
 }
 
 // MARK: - TextFieldDelegate
-extension EventMakorViewController: TDFormTextFieldDelegate {
+extension TodoCreatorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == eventMakorView.titleForm {
             input.send(.updateTitleTextField(text))
@@ -275,20 +275,20 @@ extension EventMakorViewController: TDFormTextFieldDelegate {
 }
 
 // MARK: - TextViewDelegate
-extension EventMakorViewController: TDFormTextViewDelegate {
+extension TodoCreatorViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
         input.send(.updateMemoTextView(text))
     }
 }
 
 // MARK: - SegmentViewDelegate
-extension EventMakorViewController: TDFormSegmentViewDelegate {
+extension TodoCreatorViewController: TDFormSegmentViewDelegate {
     func segmentView(_ segmentView: TDFormSegmentView, didChangeToPublic isPublic: Bool) {
         input.send(.selectLockType(isPublic))
     }
 }
 
-extension EventMakorViewController: TDFormButtonsViewDelegate {
+extension TodoCreatorViewController: TDFormButtonsViewDelegate {
     func formButtonsView(
         _ formButtonsView: TDFormButtonsView,
         type: TDFormButtonsViewType,
@@ -305,7 +305,7 @@ extension EventMakorViewController: TDFormButtonsViewDelegate {
 }
 
 // MARK: - UIScrollViewDelegate
-extension EventMakorViewController: UIScrollViewDelegate {
+extension TodoCreatorViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
@@ -336,7 +336,7 @@ extension EventMakorViewController: UIScrollViewDelegate {
 }
 
 // MARK: - EditScheduleModeDelegate
-extension EventMakorViewController: EditScheduleModeDelegate {
+extension TodoCreatorViewController: EditScheduleModeDelegate {
     func didTapTodayScheduleApply() {
         input.send(.tapScheduleEditTodayButton)
     }

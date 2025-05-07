@@ -202,10 +202,10 @@ final class HomeViewController: BaseViewController<BaseView> {
 // MARK: - EventMakorDelegate
 extension HomeViewController: TodoViewControllerDelegate {
     func didTapEventMakor(
-        mode: EventMakorViewController.Mode,
+        mode: TodoCreatorViewController.Mode,
         selectedDate: Date?,
-        preEvent: (any Eventable)?,
-        delegate: EventMakorCoordinatorDelegate?
+        preEvent: (any TodoItem)?,
+        delegate: TodoCreatorCoordinatorDelegate?
     ) {
         guard let selectedDate else { return }
         coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent, delegate: delegate)

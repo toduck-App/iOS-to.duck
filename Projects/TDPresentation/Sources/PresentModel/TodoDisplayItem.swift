@@ -2,7 +2,7 @@ import UIKit
 import TDDomain
 
 /// TDDomain의 일정과 루틴을 표현하기 위한 Presentation Model
-struct EventDisplayItem: Eventable {
+struct TodoDisplayItem: TodoItem {
     let id: Int?
     let title: String
     let category: TDCategory
@@ -22,25 +22,25 @@ struct EventDisplayItem: Eventable {
     let isPublic: Bool
     
     init(
-        from event: any Eventable,
+        from todo: any TodoItem,
         place: String? = nil,
         date: String? = nil,
         isPublic: Bool = false
     ) {
-        self.id = event.id
-        self.title = event.title
-        self.category = event.category
-        self.isAllDay = event.isAllDay
-        self.time = event.time
-        self.isRepeating = event.isRepeating
-        self.repeatDays = event.repeatDays
-        self.alarmTime = event.alarmTime
-        self.memo = event.memo
-        self.isFinished = event.isFinished
-        self.eventMode = event.eventMode
+        self.id = todo.id
+        self.title = todo.title
+        self.category = todo.category
+        self.isAllDay = todo.isAllDay
+        self.time = todo.time
+        self.isRepeating = todo.isRepeating
+        self.repeatDays = todo.repeatDays
+        self.alarmTime = todo.alarmTime
+        self.memo = todo.memo
+        self.isFinished = todo.isFinished
+        self.eventMode = todo.eventMode
         
-        self.categoryIcon = event.categoryIcon
-        self.categoryColor = event.categoryColor
+        self.categoryIcon = todo.categoryIcon
+        self.categoryColor = todo.categoryColor
         self.date = date
         self.place = place
         self.isPublic = isPublic

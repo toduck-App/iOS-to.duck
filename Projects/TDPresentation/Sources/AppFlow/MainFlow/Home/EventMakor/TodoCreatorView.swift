@@ -4,7 +4,7 @@ import SnapKit
 import Then
 import TDDesign
 
-final class EventMakorView: BaseView {
+final class TodoCreatorView: BaseView {
     // MARK: - UI Components
     let scrollView = UIScrollView()
     let stackView = UIStackView().then {
@@ -102,12 +102,12 @@ final class EventMakorView: BaseView {
     let dummyViewForStackView = UIView()
     
     // MARK: - Properties
-    private let mode: EventMakorViewController.Mode
+    private let mode: TodoCreatorViewController.Mode
     var noticeSnackBarBottomConstraint: Constraint?
     var dummyViewHeightConstraint: Constraint?
     
     // MARK: - Initialize
-    init(mode: EventMakorViewController.Mode) {
+    init(mode: TodoCreatorViewController.Mode) {
         self.mode = mode
         super.init(frame: .zero)
     }
@@ -273,7 +273,7 @@ final class EventMakorView: BaseView {
         }
     }
     
-    func updatePreEvent(preEvent: (any Eventable)?, selectedDateString: String?) {
+    func updatePreEvent(preEvent: (any TodoItem)?, selectedDateString: String?) {
         titleForm.setupTextField(preEvent?.title ?? "")
         saveButton.isEnabled = preEvent?.title.isEmpty == false
         noticeSnackBarView.isHidden = preEvent?.title.isEmpty == false
