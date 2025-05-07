@@ -15,7 +15,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
     private let mode: Mode
     private let isEdit: Bool
     private let viewModel: TodoCreatorViewModel
-    private let eventMakorView: TodoCreatorView
+    private let todoMakorView: TodoCreatorView
     private let input = PassthroughSubject<TodoCreatorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var createStartDate: Date?
@@ -31,7 +31,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
         self.mode = mode
         self.isEdit = isEdit
         self.viewModel = viewModel
-        self.eventMakorView = TodoCreatorView(mode: mode)
+        self.todoMakorView = TodoCreatorView(mode: mode)
         super.init()
     }
     
@@ -43,7 +43,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
     // MARK: - Life Cycle
     override func loadView() {
         super.loadView()
-        view = eventMakorView
+        view = todoMakorView
     }
     
     override func viewDidLoad() {
@@ -68,10 +68,10 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
     // MARK: - Base Method
     override func configure() {
         navigationController?.navigationBar.isHidden = false
-        eventMakorView.scrollView.delegate = self
+        todoMakorView.scrollView.delegate = self
         setupDelegate()
         setupCategory()
-        eventMakorView.saveButton.addAction(UIAction { [weak self] _ in
+        todoMakorView.saveButton.addAction(UIAction { [weak self] _ in
             if self?.isEdit == true && self?.mode == .schedule {
                 self?.presentSheetEditMode()
             } else if self?.isEdit == true && self?.mode == .routine {
@@ -91,7 +91,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
             .sink { [weak self] event in
                 switch event {
                 case .fetchedCategories:
-                    self?.eventMakorView.categoryViewsForm.setupCategoryView(
+                    self?.todoMakorView.categoryViewsForm.setupCategoryView(
                         colors: self?.viewModel.categories.compactMap { $0.colorHex.convertToUIColor()
                         } ?? [])
                 case .savedEvent:
@@ -113,8 +113,8 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 case .canSaveEvent(let isEnabled):
-                    self?.eventMakorView.saveButton.isEnabled = isEnabled
-                    self?.eventMakorView.noticeSnackBarView.isHidden = isEnabled
+                    self?.todoMakorView.saveButton.isEnabled = isEnabled
+                    self?.todoMakorView.noticeSnackBarView.isHidden = isEnabled
                 }
             }.store(in: &cancellables)
     }
@@ -128,7 +128,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
         else { return }
         
         UIView.animate(withDuration: duration) {
-            self.eventMakorView.dummyViewHeightConstraint?.update(offset: keyboardFrame.height)
+            self.todoMakorView.dummyViewHeightConstraint?.update(offset: keyboardFrame.height)
         }
     }
     
@@ -140,7 +140,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
         else { return }
 
         UIView.animate(withDuration: duration) {
-            self.eventMakorView.dummyViewHeightConstraint?.update(offset: 112)
+            self.todoMakorView.dummyViewHeightConstraint?.update(offset: 112)
         }
     }
     
@@ -169,27 +169,27 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
     }
     
     private func setupDelegate() {
-        eventMakorView.titleForm.delegate = self
-        eventMakorView.categoryTitleForm.delegate = self
-        eventMakorView.categoryViewsForm.delegate = self
-        eventMakorView.dateForm.delegate = self
-        eventMakorView.timeForm.delegate = self
-        eventMakorView.repeatDayForm.delegate = self
-        eventMakorView.alarmForm.delegate = self
-        eventMakorView.lockForm.delegate = self
-        eventMakorView.locationForm.delegate = self
-        eventMakorView.memoTextView.delegate = self
+        todoMakorView.titleForm.delegate = self
+        todoMakorView.categoryTitleForm.delegate = self
+        todoMakorView.categoryViewsForm.delegate = self
+        todoMakorView.dateForm.delegate = self
+        todoMakorView.timeForm.delegate = self
+        todoMakorView.repeatDayForm.delegate = self
+        todoMakorView.alarmForm.delegate = self
+        todoMakorView.lockForm.delegate = self
+        todoMakorView.locationForm.delegate = self
+        todoMakorView.memoTextView.delegate = self
     }
     
     private func setupCategory() {
         let categoryColors = viewModel.categories.compactMap { $0.colorHex.convertToUIColor() }
-        eventMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
+        todoMakorView.categoryViewsForm.setupCategoryView(colors: categoryColors)
     }
     
     // MARK: Delegate Method
     func updatePreEvent(preEvent: (any TodoItem)?, selectedDate: Date?) {
         let selectedDateString = selectedDate?.convertToString(formatType: .monthDay) ?? ""
-        eventMakorView.updatePreEvent(preEvent: preEvent, selectedDateString: selectedDateString)
+        todoMakorView.updatePreEvent(preEvent: preEvent, selectedDateString: selectedDateString)
     }
     
     func reloadCategoryView() {
@@ -206,11 +206,11 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
             let endDateForDisplay = endDate.convertToString(formatType: .monthDay)
             
             // 여러 기간 선택 시
-            eventMakorView.dateForm.updateDescription("\(startDateForDisplay) - \(endDateForDisplay)")
+            todoMakorView.dateForm.updateDescription("\(startDateForDisplay) - \(endDateForDisplay)")
             input.send(.selectDate(startDateForBackend, endDateForBackend))
         } else {
             // 단일 날짜 선택 시
-            eventMakorView.dateForm.updateDescription(startDateForDisplay)
+            todoMakorView.dateForm.updateDescription(startDateForDisplay)
             input.send(.selectDate(startDateForBackend, startDateForBackend))
         }
     }
@@ -218,8 +218,8 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
     func updateSelectedTime(isAllDay: Bool, isAM: Bool, hour: Int, minute: Int) {
         if isAllDay {
             // "종일"로 표시 및 입력 이벤트 전송
-            eventMakorView.timeForm.updateDescription("종일")
-            eventMakorView.alarmForm.updateAlarmContent(isAllDay: true)
+            todoMakorView.timeForm.updateDescription("종일")
+            todoMakorView.alarmForm.updateAlarmContent(isAllDay: true)
             input.send(.selectTime(isAllDay, nil))
         } else {
             // 선택된 Date 생성
@@ -231,8 +231,8 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
             }()
             
             let displayTime = selectedDate.convertToString(formatType: .time12HourEnglish)
-            eventMakorView.timeForm.updateDescription(displayTime)
-            eventMakorView.alarmForm.updateAlarmContent(isAllDay: false)
+            todoMakorView.timeForm.updateDescription(displayTime)
+            todoMakorView.alarmForm.updateAlarmContent(isAllDay: false)
             let selectedTimeString = selectedDate.convertToString(formatType: .time24Hour)
             input.send(.selectTime(isAllDay, selectedTimeString))
             TDLogger.debug("\(selectedDate) 선택된 시간: \(displayTime)")
@@ -260,15 +260,15 @@ extension TodoCreatorViewController: TDCategoryCellDelegate {
 // MARK: - TextFieldDelegate
 extension TodoCreatorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
-        if textField == eventMakorView.titleForm {
+        if textField == todoMakorView.titleForm {
             input.send(.updateTitleTextField(text))
         }
         
-        if textField == eventMakorView.memoTextView {
+        if textField == todoMakorView.memoTextView {
             input.send(.updateMemoTextView(text))
         }
         
-        if textField == eventMakorView.locationForm {
+        if textField == todoMakorView.locationForm {
             input.send(.updateLocationTextField(text))
         }
     }
@@ -319,7 +319,7 @@ extension TodoCreatorViewController: UIScrollViewDelegate {
     }
     
     private func showSnackBar() {
-        guard let constraint = eventMakorView.noticeSnackBarBottomConstraint else { return }
+        guard let constraint = todoMakorView.noticeSnackBarBottomConstraint else { return }
         constraint.update(offset: 0)
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -327,7 +327,7 @@ extension TodoCreatorViewController: UIScrollViewDelegate {
     }
 
     private func hideSnackBar() {
-        guard let constraint = eventMakorView.noticeSnackBarBottomConstraint else { return }
+        guard let constraint = todoMakorView.noticeSnackBarBottomConstraint else { return }
         constraint.update(offset: 50)
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
