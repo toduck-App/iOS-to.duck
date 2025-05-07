@@ -7,11 +7,11 @@ import UIKit
 final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
     weak var coordinator: SocialCreatorCoordinator?
 
-    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
+    private let viewModel: SocialCreatorViewModel
     private let input = PassthroughSubject<SocialCreatorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var isAtBottom = false
-    let viewModel: SocialCreatorViewModel!
+    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
     var post: Post? = nil
 
     init(viewModel: SocialCreatorViewModel) {
@@ -20,9 +20,9 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
         hidesBottomBarWhenPushed = true
     }
 
-    required init?(coder: NSCoder) {
-        self.viewModel = nil
-        super.init(coder: coder)
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewWillDisappear(_ animated: Bool) {
