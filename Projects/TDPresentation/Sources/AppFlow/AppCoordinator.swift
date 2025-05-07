@@ -23,6 +23,17 @@ public final class AppCoordinator: Coordinator {
     
     public func start() {
         showSplash()
+        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
+        if !isFirstLaunch {
+            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+            startWalkThroughFlow()
+            removeSplash()
+            return
+        }
+        startDefaultFlow()
+    }
+    
+    private func startDefaultFlow() {
         observeTokenExpired()
         
         Task {
@@ -63,6 +74,16 @@ public final class AppCoordinator: Coordinator {
         }
     }
     
+    private func startWalkThroughFlow() {
+        let walkThroughCoordinator = WalkThroughCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        walkThroughCoordinator.start()
+        walkThroughCoordinator.finishDelegate = self
+        childCoordinators.append(walkThroughCoordinator)
+    }
+    
     private func startTabBarFlow() {
         let tabBarCoordinator = MainTabBarCoordinator(
             navigationController: navigationController,
@@ -85,6 +106,7 @@ public final class AppCoordinator: Coordinator {
     }
     
     // MARK: – Skeleton helpers
+
     private func showSplash() {
         let splashViewController = SplashViewController()
         self.splashViewController = splashViewController
@@ -103,6 +125,11 @@ public final class AppCoordinator: Coordinator {
 extension AppCoordinator: CoordinatorFinishDelegate {
     public func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        
+        if childCoordinator is WalkThroughCoordinator {
+            navigationController.popToRootViewController(animated: true)
+            startAuthFlow()
+        }
 
         if childCoordinator is AuthCoordinator {
             startTabBarFlow()
