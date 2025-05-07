@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "coatchMark1.png",
+      "filename" : "_coachMark1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "coatchMark1@2x.png",
+      "filename" : "_coachMark1@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "coatchMark1@3x.png",
+      "filename" : "_coachMark1@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

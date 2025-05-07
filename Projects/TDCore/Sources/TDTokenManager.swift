@@ -7,6 +7,14 @@ public final class TDTokenManager {
     public private(set) var refreshToken: String?
     public private(set) var refreshTokenExpiredAt: Date?
     public private(set) var userId: Int?
+    
+    public var isFirstLaunch: Bool {
+        return UserDefaults.standard.bool(forKey: "isFirstLaunch")
+    }
+    
+    public var isFirstLogin: Bool {
+        return UserDefaults.standard.bool(forKey: "isFirstLogin")
+    }
        
     private init() {}
     
@@ -69,5 +77,13 @@ public final class TDTokenManager {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
         return formatter.date(from: string)
+    }
+    
+    public func launchFirstLaunch() {
+        UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+    }
+    
+    public func launchFirstLogin() {
+        UserDefaults.standard.set(true, forKey: "isFirstLogin")
     }
 }

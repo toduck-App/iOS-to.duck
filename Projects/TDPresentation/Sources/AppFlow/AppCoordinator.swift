@@ -23,9 +23,8 @@ public final class AppCoordinator: Coordinator {
     
     public func start() {
         showSplash()
-        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
-        if !isFirstLaunch {
-            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+        if !TDTokenManager.shared.isFirstLaunch {
+            TDTokenManager.shared.launchFirstLaunch()
             startWalkThroughFlow()
             removeSplash()
             return
