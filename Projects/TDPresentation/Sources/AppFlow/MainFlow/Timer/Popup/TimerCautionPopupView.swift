@@ -80,12 +80,12 @@ final class TimerCautionPopupView: BaseView {
         }
         
         cancelButton.snp.makeConstraints { make in
-            make.width.equalTo(160)
+            make.width.equalTo(150)
             make.height.equalTo(52)
         }
         
         actionButton.snp.makeConstraints { make in
-            make.width.equalTo(160)
+            make.width.equalTo(150)
             make.height.equalTo(52)
         }
     }

@@ -171,7 +171,7 @@ extension SocialCreateViewModel {
     }
     
     private func validateCreatePost() {
-        if title.isEmpty || content.isEmpty || category.isEmpty {
+        if content.isEmpty || category.isEmpty {
             canCreatePost = false
             output.send(.canCreatePost(canCreatePost))
             return

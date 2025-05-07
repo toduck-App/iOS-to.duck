@@ -19,7 +19,7 @@ final class SocialCreateView: BaseView {
     private(set) var socialSelectRoutineView = SocialRoutineInputView()
     private(set) var titleTextFieldView = TDFormTextField(
         title: "제목",
-        isRequired: true,
+        isRequired: false,
         maxCharacter: 16,
         placeholder: "글의 제목을 작성해주세요."
     )

@@ -12,6 +12,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private var cancellables = Set<AnyCancellable>()
     private var theme: TDTimerTheme = .toduck
     private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
+    private var isTimerRunning: Bool = false
     weak var coordinator: TimerCoordinator?
     
     // MARK: - Initializer
@@ -45,6 +46,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     override func configure() {
         setupNavigation()
         setupButtonActions()
+        setupNotification()
     }
     
     override func binding() {
@@ -85,6 +87,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                     self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
                 case .finishedRestTimer:
                     HapticManager.impact(.soft)
+                    self?.isTimerRunning = true
                     self?.showToast(
                         type: .orange,
                         title: "휴식 시간 끝 💡️",
@@ -155,6 +158,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     
     private func didTapStartTimerButton() {
         input.send(.didTapStartTimerButton)
+        isTimerRunning = true
         dismissToast()
         updateTimerRunning(true)
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
@@ -164,6 +168,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     
     private func didTapPauseTimerButton() {
         input.send(.didTapPauseTimerButton)
+        isTimerRunning = false
         updateTimerRunning(false)
         showToast(
             type: .orange,
@@ -186,6 +191,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
     
     private func didTapStopTimerButton() {
+        isTimerRunning = false
         let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .stop)
         timerCautionPopupViewController.onAction = { [weak self] in
             self?.input.send(.didTapStopTimerButton)
@@ -197,7 +203,21 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         presentPopup(with: timerCautionPopupViewController)
     }
     
-    // MARK: - Private Methods
+    private func setupNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+    
+    @objc
+    private func handleAppDidEnterBackground() {
+        if isTimerRunning {
+            didTapPauseTimerButton()
+        }
+    }
     
     private func finishedTimerOneCycle() {
         handleControlStack(.pause)
@@ -236,8 +256,10 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         
         if isRunning {
             handleControlStack(.playing)
+            isTimerRunning = true
         } else {
             handleControlStack(.pause)
+            isTimerRunning = false
         }
     }
     
