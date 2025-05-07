@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Schedule: Eventable {
+public struct Schedule: TodoItem {
     public let id: Int? // 서버의 일정 PK
     public let title: String
     public let category: TDCategory

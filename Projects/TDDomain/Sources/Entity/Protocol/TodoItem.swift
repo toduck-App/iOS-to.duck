@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Eventable: Hashable {
+public protocol TodoItem: Hashable {
     var id: Int? { get }
     var title: String { get }
     var category: TDCategory { get }

@@ -6,11 +6,11 @@ final class TodoViewModel: BaseViewModel {
     enum Input {
         case didSelectedDate(date: Date)
         case fetchWeeklyTodoList(startDate: String, endDate: String)
-        case fetchRoutineDetail(any Eventable)
+        case fetchRoutineDetail(any TodoItem)
         case deleteTodayTodo(todoId: Int, isSchedule: Bool)
         case deleteAllTodo(todoId: Int, isSchedule: Bool)
-        case checkBoxTapped(todo: any Eventable)
-        case moveToTomorrow(todoId: Int, event: any Eventable)
+        case checkBoxTapped(todo: any TodoItem)
+        case moveToTomorrow(todoId: Int, event: any TodoItem)
     }
     
     enum Output {
@@ -38,8 +38,8 @@ final class TodoViewModel: BaseViewModel {
     private var weeklyScheduleList: [Date: [Schedule]] = [:]
     private var weeklyRoutineList: [Date: [Routine]] = [:]
     private var selectedDate = Date()
-    private(set) var allDayTodoList: [any Eventable] = []
-    private(set) var timedTodoList: [any Eventable] = []
+    private(set) var allDayTodoList: [any TodoItem] = []
+    private(set) var timedTodoList: [any TodoItem] = []
     
     init(
         createScheduleUseCase: CreateScheduleUseCase,
@@ -144,7 +144,7 @@ final class TodoViewModel: BaseViewModel {
         let selectedDateScheduleList = weeklyScheduleList[selectedDate.normalized] ?? []
         let selectedDateRoutineList = weeklyRoutineList[selectedDate.normalized] ?? []
         
-        let todoList: [any Eventable] = (selectedDateScheduleList as [any Eventable]) + (selectedDateRoutineList as [any Eventable])
+        let todoList: [any TodoItem] = (selectedDateScheduleList as [any TodoItem]) + (selectedDateRoutineList as [any TodoItem])
         
         self.allDayTodoList = todoList.filter { $0.time == nil }
         self.timedTodoList = todoList
@@ -154,7 +154,7 @@ final class TodoViewModel: BaseViewModel {
         output.send(.unionedTodoList)
     }
     
-    private func fetchRoutineDetail(with todo: any Eventable) async {
+    private func fetchRoutineDetail(with todo: any TodoItem) async {
         guard let todo = todo as? Routine else { return }
         
         do {
@@ -166,7 +166,7 @@ final class TodoViewModel: BaseViewModel {
     }
     
     // MARK: - 투두 완료
-    private func finishTodo(with todo: any Eventable) async {
+    private func finishTodo(with todo: any TodoItem) async {
         if todo.eventMode == .schedule {
             await finishSchedule(with: todo)
         } else {
@@ -174,7 +174,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func finishSchedule(with todo: any Eventable) async {
+    private func finishSchedule(with todo: any TodoItem) async {
         do {
             try await finishScheduleUseCase.execute(
                 scheduleId: todo.id ?? 0,
@@ -187,7 +187,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func finishRoutine(with todo: any Eventable) async {
+    private func finishRoutine(with todo: any TodoItem) async {
         do {
             try await finishRoutineUseCase.execute(
                 routineId: todo.id ?? 0,
@@ -257,7 +257,7 @@ final class TodoViewModel: BaseViewModel {
     }
     
     // MARK: - 내일로 미루기
-    private func handleMoveToTomorrow(todoId: Int, event: any Eventable) {
+    private func handleMoveToTomorrow(todoId: Int, event: any TodoItem) {
         let isSchedule = event.eventMode == .schedule
         let isAllDay = event.isAllDay
         
@@ -283,7 +283,7 @@ final class TodoViewModel: BaseViewModel {
         }
     }
     
-    private func getEvent(for todoId: Int, isAllDay: Bool) -> (any Eventable)? {
+    private func getEvent(for todoId: Int, isAllDay: Bool) -> (any TodoItem)? {
         if isAllDay {
             return allDayTodoList.first { $0.id == todoId }
         } else {

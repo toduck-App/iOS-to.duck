@@ -75,7 +75,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
     func configure(
         hour: Int,
         showTime: Bool,
-        event: EventDisplayItem?,
+        event: TodoDisplayItem?,
         checkBoxAction: (() -> Void)? = nil,
         editAction: (() -> Void)? = nil,
         deleteAction: (() -> Void)? = nil

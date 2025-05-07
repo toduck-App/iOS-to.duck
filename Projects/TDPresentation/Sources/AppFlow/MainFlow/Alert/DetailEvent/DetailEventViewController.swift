@@ -4,25 +4,25 @@ import TDDesign
 import UIKit
 
 protocol DetailEventViewControllerDelegate: AnyObject {
-    func didTapDeleteButton(event: EventDisplayItem)
-    func didTapTomorrowButton(event: EventDisplayItem)
+    func didTapDeleteButton(event: TodoDisplayItem)
+    func didTapTomorrowButton(event: TodoDisplayItem)
 }
 
 final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     // MARK: - Properties
     private let mode: TDEventMode
-    private let event: EventDisplayItem
+    private let todo: TodoDisplayItem
     private let currentDate: String
     weak var delegate: DetailEventViewControllerDelegate?
     
     // MARK: - Initializer
     init(
         mode: TDEventMode,
-        event: EventDisplayItem,
+        todo: TodoDisplayItem,
         currentDate: String
     ) {
         self.mode = mode
-        self.event = event
+        self.todo = todo
         self.currentDate = currentDate
         super.init()
     }
@@ -57,13 +57,13 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
         
         popupContentView.deleteButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            delegate?.didTapDeleteButton(event: event)
+            delegate?.didTapDeleteButton(event: todo)
             dismissPopup()
         }, for: .touchUpInside)
         
         popupContentView.delayToTomorrowButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            delegate?.didTapTomorrowButton(event: event)
+            delegate?.didTapTomorrowButton(event: todo)
             dismissPopup()
         }, for: .touchUpInside)
     }
@@ -78,21 +78,21 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     /// 이벤트 정보 설정
     private func configureEventDetails() {
         popupContentView.dateLabel.setText(currentDate)
-        popupContentView.alarmImageView.image = event.alarmTime != nil
+        popupContentView.alarmImageView.image = todo.alarmTime != nil
             ? TDImage.Bell.ringingMedium
             : TDImage.Bell.offMedium
         
         popupContentView.categoryImageView.configure(
             radius: 12,
-            backgroundColor: event.categoryColor,
-            category: event.categoryIcon ?? TDImage.Tomato.tomatoSmallEmtpy
+            backgroundColor: todo.categoryColor,
+            category: todo.categoryIcon ?? TDImage.Tomato.tomatoSmallEmtpy
         )
-        popupContentView.eventTitleLabel.setText(event.title)
+        popupContentView.eventTitleLabel.setText(todo.title)
         
-        popupContentView.timeDetailView.updateDescription(event.time ?? "없음")
-        let repeatString = event.repeatDays == nil ? "없음" : event.repeatDays!.map { $0.title }.joined(separator: ", ")
+        popupContentView.timeDetailView.updateDescription(todo.time ?? "없음")
+        let repeatString = todo.repeatDays == nil ? "없음" : todo.repeatDays!.map { $0.title }.joined(separator: ", ")
         popupContentView.repeatDetailView.updateDescription(repeatString)
-        if let memo = event.memo {
+        if let memo = todo.memo {
             popupContentView.memoContentLabel.setText(memo)
             popupContentView.memoContentLabel.setColor(TDColor.Neutral.neutral800)
         } else {
@@ -105,10 +105,10 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     private func configureVisibility() {
         if mode == .routine {
             popupContentView.placeDetailView.isHidden = true
-            popupContentView.lockDetailView.updateDescription(event.isPublic ? "공개" : "비공개")
+            popupContentView.lockDetailView.updateDescription(todo.isPublic ? "공개" : "비공개")
         } else {
             popupContentView.lockDetailView.isHidden = true
-            popupContentView.placeDetailView.updateDescription(event.place ?? "없음")
+            popupContentView.placeDetailView.updateDescription(todo.place ?? "없음")
         }
     }
 }

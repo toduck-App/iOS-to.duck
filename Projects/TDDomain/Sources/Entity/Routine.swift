@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Routine: Eventable, Identifiable {
+public struct Routine: TodoItem, Identifiable {
     public let id: Int?
     public let title: String
     public let category: TDCategory

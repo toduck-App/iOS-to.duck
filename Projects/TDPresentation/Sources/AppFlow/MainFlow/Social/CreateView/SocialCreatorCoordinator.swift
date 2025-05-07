@@ -2,7 +2,7 @@ import TDCore
 import TDDomain
 import UIKit
 
-final class SocialCreateCoordinator: Coordinator {
+final class SocialCreatorCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -22,16 +22,16 @@ final class SocialCreateCoordinator: Coordinator {
     func start() {
         let createPostUseCase = injector.resolve(CreatePostUseCase.self)
         let updatePostUseCase = injector.resolve(UpdatePostUseCase.self)
-        let socialCreateViewModel = SocialCreateViewModel(createPostUseCase: createPostUseCase,
+        let socialCreateViewModel = SocialCreatorViewModel(createPostUseCase: createPostUseCase,
                                                           UpdatePostUseCase: updatePostUseCase,
                                                           prevPost: post)
 
-        let socialCreateViewController = SocialCreateViewController(
+        let socialCreatorViewController = SocialCreatorViewController(
             viewModel: socialCreateViewModel
         )
-        socialCreateViewController.post = post
-        socialCreateViewController.coordinator = self
-        navigationController.pushTDViewController(socialCreateViewController, animated: true)
+        socialCreatorViewController.post = post
+        socialCreatorViewController.coordinator = self
+        navigationController.pushTDViewController(socialCreatorViewController, animated: true)
     }
 
     func didTapDoneButton() {
@@ -50,9 +50,9 @@ final class SocialCreateCoordinator: Coordinator {
     }
 }
 
-extension SocialCreateCoordinator: SocialSelectRoutineDelegate {
+extension SocialCreatorCoordinator: SocialSelectRoutineDelegate {
     func didTapRoutine(_ routine: Routine) {
-        guard let socialCreateViewController = navigationController.viewControllers.last as? SocialCreateViewController else { return }
-        socialCreateViewController.setRoutine(routine)
+        guard let socialCreatorViewController = navigationController.viewControllers.last as? SocialCreatorViewController else { return }
+        socialCreatorViewController.setRoutine(routine)
     }
 }

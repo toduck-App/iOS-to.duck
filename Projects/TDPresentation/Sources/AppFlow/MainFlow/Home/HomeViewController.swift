@@ -37,7 +37,18 @@ final class HomeViewController: BaseViewController<BaseView> {
         }
         
         segmentedControl.addAction(UIAction { [weak self] _ in
-            self?.updateView()
+            guard let self else { return }
+            
+            let selectedIndex = self.segmentedControl.selectedIndex
+            let currentIndex = self.cachedViewControllers.first(where: { $0.value === self.currentViewController })?.key
+            
+            if selectedIndex == currentIndex {
+                if let todoVC = self.currentViewController as? TodoViewController {
+                    todoVC.updateWeekCalendarForDate(at: Date())
+                }
+            } else {
+                self.updateView()
+            }
         }, for: .valueChanged)
     }
     
@@ -191,12 +202,13 @@ final class HomeViewController: BaseViewController<BaseView> {
 // MARK: - EventMakorDelegate
 extension HomeViewController: TodoViewControllerDelegate {
     func didTapEventMakor(
-        mode: EventMakorViewController.Mode,
+        mode: TodoCreatorViewController.Mode,
         selectedDate: Date?,
-        preEvent: (any Eventable)?
+        preEvent: (any TodoItem)?,
+        delegate: TodoCreatorCoordinatorDelegate?
     ) {
         guard let selectedDate else { return }
-        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent)
+        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent, delegate: delegate)
     }
 }
 

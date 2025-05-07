@@ -80,6 +80,10 @@ public final class TDDropdownHoverView: UIView {
 
         dropDownMode = .display
 
+        if let selectedIndexPath = dropDownTableView.indexPathForSelectedRow {
+            dropDownTableView.deselectRow(at: selectedIndexPath, animated: false)
+        }
+        selectedOption = nil
         window.addSubview(overlayView)
         overlayView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
@@ -167,22 +171,24 @@ public extension TDDropdownHoverView {
 // MARK: - UITableViewDataSource
 
 extension TDDropdownHoverView: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         dataSource.count
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: DropDownCell.identifier,
             for: indexPath
         ) as? DropDownCell else {
             return UITableViewCell()
         }
-
-        if let selectedOption, selectedOption == dataSource[indexPath.row].title {
-            cell.isSelected = true
-        }
-
+        
         cell.configure(with: dataSource[indexPath.row])
         return cell
     }
@@ -191,7 +197,10 @@ extension TDDropdownHoverView: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension TDDropdownHoverView: UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         selectedOption = dataSource[indexPath.row].title
         delegate?.dropDown(self, didSelectRowAt: indexPath)
         dropDownTableView.selectRow(at: indexPath)

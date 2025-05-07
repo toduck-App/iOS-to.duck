@@ -4,25 +4,25 @@ import TDDesign
 import TDDomain
 import UIKit
 
-final class SocialCreateViewController: BaseViewController<SocialCreateView> {
-    weak var coordinator: SocialCreateCoordinator?
+final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
+    weak var coordinator: SocialCreatorCoordinator?
 
-    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
-    private let input = PassthroughSubject<SocialCreateViewModel.Input, Never>()
+    private let viewModel: SocialCreatorViewModel
+    private let input = PassthroughSubject<SocialCreatorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var isAtBottom = false
-    let viewModel: SocialCreateViewModel!
+    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
     var post: Post? = nil
 
-    init(viewModel: SocialCreateViewModel) {
+    init(viewModel: SocialCreatorViewModel) {
         self.viewModel = viewModel
         super.init()
         hidesBottomBarWhenPushed = true
     }
 
-    required init?(coder: NSCoder) {
-        self.viewModel = nil
-        super.init(coder: coder)
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -132,7 +132,7 @@ final class SocialCreateViewController: BaseViewController<SocialCreateView> {
 
 // MARK: - SocialSelectRoutineViewDelegate
 
-extension SocialCreateViewController: SocialRoutineInputDelegate {
+extension SocialCreatorViewController: SocialRoutineInputDelegate {
     func setRoutine(_ routine: Routine) {
         input.send(.setRoutine(routine))
     }
@@ -144,7 +144,7 @@ extension SocialCreateViewController: SocialRoutineInputDelegate {
 
 // MARK: - TDChipCollectionViewDelegate
 
-extension SocialCreateViewController: TDChipCollectionViewDelegate {
+extension SocialCreatorViewController: TDChipCollectionViewDelegate {
     func chipCollectionView(_ collectionView: TDDesign.TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
         input.send(.chipSelect(at: index))
     }
@@ -152,7 +152,7 @@ extension SocialCreateViewController: TDChipCollectionViewDelegate {
 
 // MARK: - SocialAddPhotoViewDelegate
 
-extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
+extension SocialCreatorViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
     func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
         input.send(.setImages(photos, true))
     }
@@ -170,7 +170,7 @@ extension SocialCreateViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate
 
 // MARK: - TextFieldDelegate
 
-extension SocialCreateViewController: TDFormTextFieldDelegate {
+extension SocialCreatorViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDDesign.TDFormTextField, didChangeText text: String) {
         input.send(.setTitle(text))
     }
@@ -178,7 +178,7 @@ extension SocialCreateViewController: TDFormTextFieldDelegate {
 
 // MARK: - TextViewDelegate
 
-extension SocialCreateViewController: TDFormTextViewDelegate {
+extension SocialCreatorViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDDesign.TDFormTextView, didChangeText text: String) {
         input.send(.setContent(text))
     }
@@ -186,7 +186,7 @@ extension SocialCreateViewController: TDFormTextViewDelegate {
 
 // MARK: - Create Action
 
-extension SocialCreateViewController {
+extension SocialCreatorViewController {
     private func didTapRegisterButton() {
         input.send(.createPost)
     }
@@ -194,7 +194,7 @@ extension SocialCreateViewController {
 
 // MARK: - UIScrollViewDelegate
 
-extension SocialCreateViewController: UIScrollViewDelegate {
+extension SocialCreatorViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if viewModel.canCreatePost { hideSnackBar(); return }
         let offsetY = scrollView.contentOffset.y

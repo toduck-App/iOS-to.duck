@@ -3,12 +3,17 @@ import TDDomain
 import TDDesign
 import TDCore
 
-final class EventMakorCoordinator: Coordinator {
+protocol TodoCreatorCoordinatorDelegate: AnyObject {
+    func didTapSaveButton(createdDate: Date)
+}
+
+final class TodoCreatorCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
     private let selectedDate: Date
+    weak var delegate: TodoCreatorCoordinatorDelegate?
 
     init(
         navigationController: UINavigationController,
@@ -20,13 +25,13 @@ final class EventMakorCoordinator: Coordinator {
         self.selectedDate = selectedDate
     }
     
-    func start(mode: EventMakorViewController.Mode, preEvent: (any Eventable)?) {
+    func start(mode: TodoCreatorViewController.Mode, preEvent: (any TodoItem)?) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)
         let updateScheduleUseCase = injector.resolve(UpdateScheduleUseCase.self)
         let updateRoutineUseCase = injector.resolve(UpdateRoutineUseCase.self)
-        let viewModel = EventMakorViewModel(
+        let viewModel = TodoCreatorViewModel(
             mode: mode,
             createScheduleUseCase: createScheduleUseCase,
             createRoutineUseCase: createRoutineUseCase,
@@ -37,13 +42,14 @@ final class EventMakorCoordinator: Coordinator {
             selectedDate: selectedDate
         )
         viewModel.setupInitialDate(with: selectedDate, isEditMode: preEvent != nil)
-        let eventMakorViewController = EventMakorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
-        eventMakorViewController.coordinator = self
-        eventMakorViewController.hidesBottomBarWhenPushed = true
-        eventMakorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
-        navigationController.pushTDViewController(eventMakorViewController, animated: true)
+        let todoCreatorViewController = TodoCreatorViewController(mode: mode, isEdit: preEvent != nil, viewModel: viewModel)
+        todoCreatorViewController.coordinator = self
+        todoCreatorViewController.hidesBottomBarWhenPushed = true
+        todoCreatorViewController.updateSelectedDate(startDate: selectedDate, endDate: nil)
+        todoCreatorViewController.delegate = delegate
+        navigationController.pushTDViewController(todoCreatorViewController, animated: true)
         if let preEvent {
-            eventMakorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
+            todoCreatorViewController.updatePreEvent(preEvent: preEvent, selectedDate: selectedDate)
         }
     }
     
@@ -51,14 +57,14 @@ final class EventMakorCoordinator: Coordinator {
 }
 
 // MARK: - Coordinator Finish Delegate
-extension EventMakorCoordinator: CoordinatorFinishDelegate {
+extension TodoCreatorCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
 }
 
 // MARK: - TDFormMoveView Delegate
-extension EventMakorCoordinator: TDFormMoveViewDelegate {
+extension TodoCreatorCoordinator: TDFormMoveViewDelegate {
     func didTapMoveView(_ view: TDDesign.TDFormMoveView, type: TDDesign.TDFormMoveViewType) {
         var selectedCoordinator: Coordinator?
         switch type {
@@ -99,28 +105,29 @@ extension EventMakorCoordinator: TDFormMoveViewDelegate {
 }
 
 // MARK: - Sheet Delegate
-extension EventMakorCoordinator: SheetColorDelegate {
+
+extension TodoCreatorCoordinator: SheetColorDelegate {
     func didSaveCategory() {
-        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        guard let eventMakorViewController = navigationController.viewControllers.last as? TodoCreatorViewController else { return }
         eventMakorViewController.reloadCategoryView()
     }
 }
 
-extension EventMakorCoordinator: SheetCalendarDelegate {
+extension TodoCreatorCoordinator: SheetCalendarDelegate {
     func didTapSaveButton(startDate: Date, endDate: Date?) {
-        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        guard let eventMakorViewController = navigationController.viewControllers.last as? TodoCreatorViewController else { return }
         eventMakorViewController.updateSelectedDate(startDate: startDate, endDate: endDate)
     }
 }
 
-extension EventMakorCoordinator: SheetTimeDelegate {
+extension TodoCreatorCoordinator: SheetTimeDelegate {
     func didTapSaveButton(
         isAllDay: Bool,
         isAM: Bool,
         hour: Int,
         minute: Int
     ) {
-        guard let eventMakorViewController = navigationController.viewControllers.last as? EventMakorViewController else { return }
+        guard let eventMakorViewController = navigationController.viewControllers.last as? TodoCreatorViewController else { return }
         eventMakorViewController.updateSelectedTime(
             isAllDay: isAllDay,
             isAM: isAM,

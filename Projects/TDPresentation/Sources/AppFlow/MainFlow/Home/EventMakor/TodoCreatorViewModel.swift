@@ -3,7 +3,7 @@ import Foundation
 import TDCore
 import TDDomain
 
-final class EventMakorViewModel: BaseViewModel {
+final class TodoCreatorViewModel: BaseViewModel {
     enum Input {
         case fetchCategories
         case selectCategory(String, String)
@@ -29,7 +29,7 @@ final class EventMakorViewModel: BaseViewModel {
         case failureAPI(String)
     }
     
-    private let mode: EventMakorViewController.Mode
+    private let mode: TodoCreatorViewController.Mode
     private let output = PassthroughSubject<Output, Never>()
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
@@ -38,7 +38,7 @@ final class EventMakorViewModel: BaseViewModel {
     private let updateRoutineUseCase: UpdateRoutineUseCase
     private var cancellables = Set<AnyCancellable>()
     private(set) var categories: [TDCategory] = []
-    let preEvent: (any Eventable)?
+    let preEvent: (any TodoItem)?
     
     // 생성할 일정 & 루틴 정보
     private var title: String?
@@ -59,13 +59,13 @@ final class EventMakorViewModel: BaseViewModel {
     
     // MARK: - Initializer
     init(
-        mode: EventMakorViewController.Mode,
+        mode: TodoCreatorViewController.Mode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
         updateScheduleUseCase: UpdateScheduleUseCase,
         updateRoutineUseCase: UpdateRoutineUseCase,
-        preEvent: (any Eventable)?,
+        preEvent: (any TodoItem)?,
         selectedDate: Date? = nil
     ) {
         self.mode = mode

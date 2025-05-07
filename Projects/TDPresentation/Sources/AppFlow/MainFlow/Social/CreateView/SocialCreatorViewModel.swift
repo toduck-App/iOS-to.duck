@@ -3,7 +3,7 @@ import Foundation
 import TDDesign
 import TDDomain
 
-final class SocialCreateViewModel: BaseViewModel {
+final class SocialCreatorViewModel: BaseViewModel {
     enum Input {
         case chipSelect(at: Int)
         case setRoutine(Routine)
@@ -99,7 +99,7 @@ final class SocialCreateViewModel: BaseViewModel {
     }
 }
 
-extension SocialCreateViewModel {
+extension SocialCreatorViewModel {
     private func createPost() async {
         let post = Post(
             title: title,
