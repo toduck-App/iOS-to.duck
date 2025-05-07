@@ -340,4 +340,16 @@ public enum TDImage {
         public static let BboduckPreview = TDDesignAsset.Images.bboduckPreview.image
         public static let SimplePreview = TDDesignAsset.Images.simplePreview.image
     }
+    
+    public enum Walkthrough {
+        public static let first = TDDesignAsset.Images.walkThroughFirst.image
+        public static let second = TDDesignAsset.Images.walkThroughSecond.image
+        public static let third = TDDesignAsset.Images.walkThroughThird.image
+    }
+    
+    public enum CoachMark {
+        public static let first = TDDesignAsset.Images.coachMarkFirst.image
+        public static let second = TDDesignAsset.Images.coachMarkSecond.image
+        public static let third = TDDesignAsset.Images.coachMarkThird.image
+    }
 }
