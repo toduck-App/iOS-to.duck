@@ -311,6 +311,18 @@ final class TodoViewController: BaseViewController<BaseView> {
             updateFloatingView()
         }
     }
+    
+    func updateCalendarForThisWeek() {
+        let today = Date()
+        selectedDate = today
+
+        let calendar = Calendar.current
+        if let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start {
+            weekCalendarView.select(today)
+            weekCalendarView.setCurrentPage(startOfWeek, animated: true)
+            fetchWeekTodo(for: today)
+        }
+    }
 }
 
 // MARK: - FSCalendar Delegate

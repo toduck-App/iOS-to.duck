@@ -37,7 +37,18 @@ final class HomeViewController: BaseViewController<BaseView> {
         }
         
         segmentedControl.addAction(UIAction { [weak self] _ in
-            self?.updateView()
+            guard let self else { return }
+            
+            let selectedIndex = self.segmentedControl.selectedIndex
+            let currentIndex = self.cachedViewControllers.first(where: { $0.value === self.currentViewController })?.key
+            
+            if selectedIndex == currentIndex {
+                if let todoVC = self.currentViewController as? TodoViewController {
+                    todoVC.updateCalendarForThisWeek()
+                }
+            } else {
+                self.updateView()
+            }
         }, for: .valueChanged)
     }
     
