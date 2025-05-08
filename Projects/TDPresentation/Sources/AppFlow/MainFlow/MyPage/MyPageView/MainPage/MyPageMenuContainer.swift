@@ -48,15 +48,29 @@ private extension MyPageMenuContainer {
     
     func setupLayoutConstraints() {
         icon.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
-            $0.leading.equalToSuperview().offset(52)
             $0.size.equalTo(LayoutConstants.iconSize)
         }
         
         label.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
-            $0.leading.equalTo(icon.snp.trailing).offset(8)
             $0.centerY.equalTo(icon)
+        }
+
+        let contentStack = UIView()
+        addSubview(contentStack)
+        contentStack.addSubview(icon)
+        contentStack.addSubview(label)
+        
+        contentStack.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+
+        icon.snp.makeConstraints {
+            $0.leading.top.bottom.equalToSuperview()
+        }
+
+        label.snp.makeConstraints {
+            $0.leading.equalTo(icon.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview()
         }
     }
 }
