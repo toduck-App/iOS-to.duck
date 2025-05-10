@@ -44,10 +44,10 @@ public struct AuthServiceImpl: AuthService {
     ) async throws -> LoginUserResponseDTO {
         let target = AuthAPI.login(loginId: loginId, password: password)
         let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
-
+        
         return try mapToLoginUserResponseDTO(from: response)
     }
-
+    
     public func refreshToken() async throws -> TDData.LoginUserResponseDTO {
         guard let refreshToken = TDTokenManager.shared.refreshToken else {
             throw TDDataError.invalidRefreshToken
@@ -70,34 +70,38 @@ public struct AuthServiceImpl: AuthService {
     
     private func handleKakaoLoginWithApp() async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
-            UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
+            Task { @MainActor in
+                UserApi.shared.loginWithKakaoTalk { oauthToken, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    
+                    guard let idToken = oauthToken?.idToken else {
+                        continuation.resume(throwing: TDDataError.invalidIDToken)
+                        return
+                    }
+                    
+                    continuation.resume(returning: idToken)
                 }
-                
-                guard let idToken = oauthToken?.idToken else {
-                    continuation.resume(throwing: TDDataError.invalidIDToken)
-                    return
-                }
-                
-                continuation.resume(returning: idToken)
             }
         }
     }
     
     private func handleKakaoLoginWithAccount() async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
-            UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
+            Task { @MainActor in
+                UserApi.shared.loginWithKakaoAccount { oauthToken, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    guard let idToken = oauthToken?.idToken else {
+                        continuation.resume(throwing: TDDataError.invalidIDToken)
+                        return
+                    }
+                    continuation.resume(returning: idToken)
                 }
-                guard let idToken = oauthToken?.idToken else {
-                    continuation.resume(throwing: TDDataError.invalidIDToken)
-                    return
-                }
-                continuation.resume(returning: idToken)
             }
         }
     }
