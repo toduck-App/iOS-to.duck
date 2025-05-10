@@ -34,7 +34,8 @@ final class TimerView: BaseView {
     let pauseButton = TDBaseButton(
         image: TDImage.Timer.pause,
         backgroundColor: TDColor.Primary.primary200,
-        foregroundColor: TDColor.Neutral.neutral400
+        foregroundColor: TDColor.Neutral.neutral400,
+        inset: NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
     )
 
     let resetButton = TDBaseButton(

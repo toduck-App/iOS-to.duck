@@ -97,7 +97,7 @@ extension SocialListCoordinator: SocialListDelegate {
     }
 
     func didTapCreateButton() {
-        let createCoordinator = SocialCreateCoordinator(
+        let createCoordinator = SocialCreatorCoordinator(
             navigationController: navigationController,
             injector: injector
         )
@@ -107,7 +107,7 @@ extension SocialListCoordinator: SocialListDelegate {
     }
     
     func didTapEditPost(post: Post) {
-        let createCoordinator = SocialCreateCoordinator(
+        let createCoordinator = SocialCreatorCoordinator(
             navigationController: navigationController,
             injector: injector,
             post: post

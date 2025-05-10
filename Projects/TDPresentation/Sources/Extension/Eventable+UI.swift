@@ -1,7 +1,7 @@
 import UIKit
 import TDDomain
 
-extension Eventable {
+extension TodoItem {
     var categoryColor: UIColor {
         return category.colorHex.convertToUIColor() ?? .clear
     }

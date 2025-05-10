@@ -154,7 +154,7 @@ extension TDFormTextView {
         }
         
         placeholderLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(14)
+            make.top.equalToSuperview().offset(8)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-12)
         }

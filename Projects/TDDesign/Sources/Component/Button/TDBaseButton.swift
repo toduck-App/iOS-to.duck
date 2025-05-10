@@ -17,7 +17,8 @@ public class TDBaseButton: UIButton {
         backgroundColor: UIColor = TDColor.Primary.primary500,
         foregroundColor: UIColor = .white,
         radius: CGFloat = 12,
-        font: UIFont = TDFont.boldHeader3.font
+        font: UIFont = TDFont.boldHeader3.font,
+        inset: NSDirectionalEdgeInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
     ) {
         self.title = title
         self.image = image
@@ -25,6 +26,7 @@ public class TDBaseButton: UIButton {
         self.foregroundToduckColor = foregroundColor
         self.radius = radius
         self.font = font
+        self.inset = inset
         super.init(frame: .zero)
         
         setupButton()

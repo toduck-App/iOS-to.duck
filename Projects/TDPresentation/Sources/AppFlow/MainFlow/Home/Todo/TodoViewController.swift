@@ -7,8 +7,8 @@ import TDDesign
 
 final class TodoViewController: BaseViewController<BaseView> {
     enum TimeLineCellItem: Hashable {
-        case allDay(event: any Eventable, showTime: Bool)
-        case timeEvent(hour: Int, event: any Eventable, showTime: Bool)
+        case allDay(event: any TodoItem, showTime: Bool)
+        case timeEvent(hour: Int, event: any TodoItem, showTime: Bool)
         case gap(startHour: Int, endHour: Int)
     }
     
@@ -219,9 +219,9 @@ final class TodoViewController: BaseViewController<BaseView> {
                         .deletedTodo:
                     self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
-                    let eventDisplayItem = EventDisplayItem(routine: routine)
+                    let todoDisplayItem = TodoDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
-                    let detailEventViewController = DetailEventViewController(mode: .routine, event: eventDisplayItem, currentDate: currentDate)
+                    let detailEventViewController = DetailEventViewController(mode: .routine, todo: todoDisplayItem, currentDate: currentDate)
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
                 case .unionedTodoList:
@@ -311,6 +311,17 @@ final class TodoViewController: BaseViewController<BaseView> {
             updateFloatingView()
         }
     }
+    
+    func updateWeekCalendarForDate(at date: Date) {
+        selectedDate = date
+
+        let calendar = Calendar.current
+        if let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: date)?.start {
+            weekCalendarView.select(date)
+            weekCalendarView.setCurrentPage(startOfWeek, animated: true)
+            fetchWeekTodo(for: date)
+        }
+    }
 }
 
 // MARK: - FSCalendar Delegate
@@ -386,8 +397,8 @@ extension TodoViewController: UITableViewDelegate {
         switch item {
         case .allDay(let event, _):
             if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
                 detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
@@ -395,8 +406,8 @@ extension TodoViewController: UITableViewDelegate {
             }
         case .timeEvent(_, let event, _):
             if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let eventDisplayItem = EventDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailEventViewController(mode: event.eventMode, event: eventDisplayItem, currentDate: currentDate)
+                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
+                detailEventViewController = DetailEventViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
                 detailEventViewController.delegate = self
                 presentPopup(with: detailEventViewController)
             } else {
@@ -411,11 +422,11 @@ extension TodoViewController: UITableViewDelegate {
 // MARK: - FloatingActionMenuView Delegate
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
-        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil)
+        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil, delegate: self)
     }
     
     func didTapRoutineButton() {
-        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil)
+        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil, delegate: self)
     }
 }
 
@@ -462,7 +473,7 @@ extension TodoViewController {
         tableView: UITableView,
         indexPath: IndexPath,
         hour: Int,
-        event: any Eventable,
+        event: any TodoItem,
         showTime: Bool
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
@@ -471,29 +482,30 @@ extension TodoViewController {
         ) as? TimeSlotTableViewCell else { return UITableViewCell() }
         
         let place = event.eventMode == .schedule ? (event as? Schedule)?.place : nil
-        let eventDisplay = EventDisplayItem(from: event, place: place)
+        let todoDisplayItem = TodoDisplayItem(from: event, place: place)
         
         cell.configure(
             hour: hour,
             showTime: showTime,
-            event: eventDisplay,
+            event: todoDisplayItem,
             checkBoxAction: { [weak self] in
                 HapticManager.impact(.soft)
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in
-                let mode: EventMakorViewController.Mode = eventDisplay.eventMode == .schedule ? .schedule : .routine
+                let mode: TodoCreatorViewController.Mode = todoDisplayItem.eventMode == .schedule ? .schedule : .routine
                 self?.delegate?.didTapEventMakor(
                     mode: mode,
                     selectedDate: self?.selectedDate,
-                    preEvent: event
+                    preEvent: event,
+                    delegate: self
                 )
             },
             deleteAction: { [weak self] in
-                let isSchedule = eventDisplay.eventMode == .schedule
+                let isSchedule = todoDisplayItem.eventMode == .schedule
                 let deleteEventViewController = DeleteEventViewController(
-                    eventId: eventDisplay.id,
-                    isRepeating: eventDisplay.isRepeating,
+                    eventId: todoDisplayItem.id,
+                    isRepeating: todoDisplayItem.isRepeating,
                     eventMode: isSchedule ? .schedule : .routine
                 )
                 deleteEventViewController.delegate = self
@@ -515,33 +527,37 @@ extension TodoViewController {
     private func makeTimelineItems() -> [TimeLineCellItem] {
         var items: [TimeLineCellItem] = []
         let calendar = Calendar.current
-        
-        // isAllDay가 true인 루틴이 있으면 최상단에 allDay 셀 추가
+
+        // 종일 이벤트 추가
         for (index, event) in viewModel.allDayTodoList.enumerated() {
             let showTime = (index == 0)
             items.append(.allDay(event: event, showTime: showTime))
         }
-        
-        // 같은 시간(12시간제)별로 모든 루틴을 배열로 매핑
-        var eventMapping: [Int: [any Eventable]] = [:]
+
+        // 시간 이벤트가 없으면 gap 없이 반환
+        guard !viewModel.timedTodoList.isEmpty else {
+            return items
+        }
+
+        // 시간별 매핑
+        var eventMapping: [Int: [any TodoItem]] = [:]
         for event in viewModel.timedTodoList {
             if let time = event.time, let dateTime = Date.convertFromString(time, format: .time24Hour) {
                 let hourComponent = calendar.component(.hour, from: dateTime)
                 eventMapping[hourComponent, default: []].append(event)
             }
         }
-        
+
+        // 시간 셀 및 gap 구성
         var currentHour = 0
         while currentHour < 24 {
             if let events = eventMapping[currentHour], !events.isEmpty {
-                // 같은 시간대에 여러 루틴이 있으면, 첫 번째 셀에만 타임라인 표시
                 for (index, event) in events.enumerated() {
                     let showTime = (index == 0)
                     items.append(.timeEvent(hour: currentHour, event: event, showTime: showTime))
                 }
                 currentHour += 1
             } else {
-                // 해당 시간에 루틴이 없으면 연속된 빈 시간대를 gap 셀로 묶음
                 let gapStart = currentHour
                 while currentHour < 24, eventMapping[currentHour] == nil {
                     currentHour += 1
@@ -550,7 +566,7 @@ extension TodoViewController {
                 items.append(.gap(startHour: gapStart, endHour: gapEnd))
             }
         }
-        
+
         return items
     }
 }
@@ -572,9 +588,17 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
     }
 }
 
+// MARK: - EventMakorCoordinatorDelegate
+extension TodoViewController: TodoCreatorCoordinatorDelegate {
+    
+    func didTapSaveButton(createdDate: Date) {
+        updateWeekCalendarForDate(at: createdDate)
+    }
+}
+
 // MARK: - DetailEventViewControllerDelegate
 extension TodoViewController: DetailEventViewControllerDelegate {
-    func didTapDeleteButton(event: EventDisplayItem) {
+    func didTapDeleteButton(event: TodoDisplayItem) {
         let deleteEventViewController = DeleteEventViewController(
             eventId: event.id,
             isRepeating: event.isRepeating,
@@ -584,7 +608,7 @@ extension TodoViewController: DetailEventViewControllerDelegate {
         presentPopup(with: deleteEventViewController)
     }
     
-    func didTapTomorrowButton(event: EventDisplayItem) {
+    func didTapTomorrowButton(event: TodoDisplayItem) {
         if let id = event.id {
             input.send(.moveToTomorrow(todoId: id, event: event))
         }

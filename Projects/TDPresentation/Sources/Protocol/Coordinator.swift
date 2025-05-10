@@ -1,4 +1,3 @@
-import TDCore
 import UIKit
 
 public protocol Coordinator: AnyObject {
