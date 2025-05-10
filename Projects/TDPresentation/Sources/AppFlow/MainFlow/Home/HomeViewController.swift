@@ -22,6 +22,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         view.backgroundColor = TDColor.baseWhite
         setupSegmentedControl()
         setupNavigationBar()
+        setupSwipeGestures()
         updateView()
     }
     
@@ -79,6 +80,37 @@ final class HomeViewController: BaseViewController<BaseView> {
         }, for: .touchUpInside)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
+    }
+    
+    private func setupSwipeGestures() {
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeLeft.direction = .left
+        swipeLeft.delegate = self
+        view.addGestureRecognizer(swipeLeft)
+
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeRight.direction = .right
+        swipeRight.delegate = self
+        view.addGestureRecognizer(swipeRight)
+    }
+
+    @objc private func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
+        let currentIndex = segmentedControl.selectedIndex
+
+        switch gesture.direction {
+        case .left:
+            if currentIndex < 1 {
+                segmentedControl.setSelectedIndex(currentIndex + 1)
+                updateView()
+            }
+        case .right:
+            if currentIndex > 0 {
+                segmentedControl.setSelectedIndex(currentIndex - 1)
+                updateView()
+            }
+        default:
+            break
+        }
     }
     
     // MARK: - View Update
@@ -196,6 +228,25 @@ final class HomeViewController: BaseViewController<BaseView> {
     func resetToToduck() {
         segmentedControl.setSelectedIndex(0)
         updateView()
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+extension HomeViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let view = touch.view, view is UIControl {
+            return false
+        }
+
+        var currentView: UIView? = touch.view
+        while let view = currentView {
+            if view is UIScrollView {
+                return false
+            }
+            currentView = view.superview
+        }
+
+        return true
     }
 }
 
