@@ -12,6 +12,7 @@ public final class AppCoordinator: Coordinator {
     public var finishDelegate: CoordinatorFinishDelegate?
     public var injector: DependencyResolvable
     private var splashViewController: SplashViewController?
+    private var pendingDeepLink: DeepLinkType?
     
     public init(
         navigationController: UINavigationController,
@@ -47,6 +48,7 @@ public final class AppCoordinator: Coordinator {
                         startAuthFlow()
                     } else {
                         startTabBarFlow()
+                        processPendingDeepLink()
                     }
                 }
             } catch {
@@ -102,6 +104,33 @@ public final class AppCoordinator: Coordinator {
         authCoordinator.finishDelegate = self
         authCoordinator.delegate = self
         childCoordinators.append(authCoordinator)
+    }
+    
+    // MARK: – DeepLink helpers
+    
+    public func handleDeepLink(_ link: DeepLinkType) {
+        guard TDTokenManager.shared.accessToken != nil else {
+            pendingDeepLink = link
+            startAuthFlow()
+            return
+        }
+        
+        guard let tabBarCoordinator = childCoordinators.first(where: { $0 is MainTabBarCoordinator }) as? MainTabBarCoordinator else {
+            pendingDeepLink = link
+            startTabBarFlow()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.handleDeepLink(link)
+            }
+            return
+        }
+        
+        tabBarCoordinator.handleDeepLink(link)
+    }
+
+    func processPendingDeepLink() {
+        guard let pending = pendingDeepLink else { return }
+        handleDeepLink(pending)
+        pendingDeepLink = nil
     }
     
     // MARK: – Skeleton helpers

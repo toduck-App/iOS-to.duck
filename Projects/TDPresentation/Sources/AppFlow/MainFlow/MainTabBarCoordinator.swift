@@ -74,6 +74,62 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.start()
         childCoordinators.append(coordinator)
     }
+    
+    // MARK: - Deep Linking
+    func handleDeepLink(_ link: DeepLinkType) {
+        switch link {
+        case .profile, .post:
+            handleSocialDeepLink(link)
+            
+        case .todo, .focus:
+            selectTab(.home)
+//            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
+//                .handleDeepLink(link)
+            
+        case .diary:
+            selectTab(.diary)
+            
+        case .home:
+            selectTab(.home)
+            navigationController.popToRootViewController(animated: false)
+            
+        case .notification:
+            selectTab(.home)
+//            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
+//                .showNotificationList()
+        }
+    }
+
+    private func handleSocialDeepLink(_ link: DeepLinkType) {
+        selectTab(.social)
+        
+        guard let socialCoordinator = childCoordinators.first(where: { $0 is SocialListCoordinator }) as? SocialListCoordinator else {
+            return
+        }
+        
+        socialCoordinator.navigationController.popToRootViewController(animated: false)
+        
+        switch link {
+        case .profile(let userId):
+            if let userId = Int(userId) {
+                socialCoordinator.showProfile(userId: userId)
+            }
+            
+//        case .post(let postId, let commentId):
+//            socialCoordinator.showPostDetail(
+//                postId: postId,
+//                scrollToComment: commentId != nil
+//            )
+//            
+        default:
+            break
+        }
+    }
+    
+    private func selectTab(_ item: MainTabbarItem) {
+        guard let index = MainTabbarItem.allCases.firstIndex(of: item) else { return }
+        tabBarController.selectedIndex = index
+    }
 }
 
 // MARK: - CoordinatorFinishDelegate

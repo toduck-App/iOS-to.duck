@@ -10,33 +10,54 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    var appCoordinator: Coordinator?
+    var appCoordinator: AppCoordinator?
     let navigationController = UINavigationController()
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        
-        let injector: DependencyResolvable = DIContainer.shared
-        assembleDependencies()
-        setupTabBarAppearance()
-        appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
-        appCoordinator?.start()
-        
         window?.rootViewController = navigationController
         window?.windowScene = windowScene
         window?.makeKeyAndVisible()
+        
+        assembleDependencies()
+        setupTabBarAppearance()
+        let injector: DependencyResolvable = DIContainer.shared
+        appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
+        appCoordinator?.start()
+        
+        if let urlContext = connectionOptions.urlContexts.first {
+            handleDeepLink(url: urlContext.url)
+        }
     }
     
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        if let url = URLContexts.first?.url {
-            if AuthApi.isKakaoTalkLoginUrl(url) {
-                _ = AuthController.handleOpenUrl(url: url)
-            }
-            if url.scheme == "toduck", url.host == "profile" {
-                guard let userId = url.queryParameters?["userId"] else { return }
-            }
+    func scene(
+        _ scene: UIScene,
+        openURLContexts URLContexts: Set<UIOpenURLContext>
+    ) {
+        guard let url = URLContexts.first?.url else { return }
+        handleDeepLink(url: url)
+    }
+
+    private func handleDeepLink(url: URL) {
+        if AuthApi.isKakaoTalkLoginUrl(url) {
+            _ = AuthController.handleOpenUrl(url: url)
+            return
         }
+        
+        guard let deepLink = DeepLinkType(url: url) else { return }
+        
+        if appCoordinator == nil {
+            let injector: DependencyResolvable = DIContainer.shared
+            appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
+            appCoordinator?.start()
+        }
+        
+        appCoordinator?.handleDeepLink(deepLink)
     }
     
     private func assembleDependencies() {

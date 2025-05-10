@@ -50,6 +50,17 @@ final class SocialListCoordinator: Coordinator {
     func didTapHomeTomatoIcon() {
         (finishDelegate as? MainTabBarCoordinator)?.switchToHomeTab()
     }
+    
+    func showProfile(userId: Int) {
+        let socialProfileCoordinator = SocialProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: userId
+        )
+        socialProfileCoordinator.finishDelegate = self
+        childCoordinators.append(socialProfileCoordinator)
+        socialProfileCoordinator.start()
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
