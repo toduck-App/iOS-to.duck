@@ -7,13 +7,13 @@ final class MainTabBarCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
-
+    
     private lazy var tabBarController: MainTabBarController = {
         let controller = MainTabBarController(coordinator: self)
         controller.tabDelegate = self
         return controller
     }()
-
+    
     // MARK: - Initializer
     init(
         navigationController: UINavigationController,
@@ -22,7 +22,7 @@ final class MainTabBarCoordinator: Coordinator {
         self.navigationController = navigationController
         self.injector = injector
     }
-
+    
     func start() {
         if !TDTokenManager.shared.isFirstLogin {
             TDTokenManager.shared.launchFirstLogin()
@@ -34,14 +34,14 @@ final class MainTabBarCoordinator: Coordinator {
         let items: [UINavigationController] = MainTabbarItem.allCases.map { createNavigationController(for: $0) }
         configureTabBarController(with: items)
     }
-
+    
     // MARK: - Configuration
     private func configureTabBarController(with viewControllers: [UIViewController]) {
         navigationController.setNavigationBarHidden(true, animated: false)
         tabBarController.setViewControllers(viewControllers, animated: false)
         navigationController.viewControllers = [tabBarController]
     }
-
+    
     private func createNavigationController(for item: MainTabbarItem) -> UINavigationController {
         let navigationController = UINavigationController()
         navigationController.setNavigationBarHidden(false, animated: false)
@@ -49,10 +49,10 @@ final class MainTabBarCoordinator: Coordinator {
         configureCoordinator(for: item, navigationController: navigationController)
         return navigationController
     }
-
+    
     private func configureCoordinator(for item: MainTabbarItem, navigationController: UINavigationController) {
         let coordinator: Coordinator
-
+        
         switch item {
         case .home:
             coordinator = HomeCoordinator(navigationController: navigationController, injector: injector)
@@ -65,10 +65,10 @@ final class MainTabBarCoordinator: Coordinator {
         case .mypage:
             coordinator = MyPageCoordinator(navigationController: navigationController, injector: injector)
         }
-
+        
         addCoordinator(coordinator)
     }
-
+    
     private func addCoordinator(_ coordinator: Coordinator) {
         coordinator.finishDelegate = self
         coordinator.start()
@@ -78,28 +78,28 @@ final class MainTabBarCoordinator: Coordinator {
     // MARK: - Deep Linking
     func handleDeepLink(_ link: DeepLinkType) {
         switch link {
-        case .profile, .post:
-            handleSocialDeepLink(link)
-            
-        case .todo, .focus:
-            selectTab(.home)
-//            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
-//                .handleDeepLink(link)
-            
-        case .diary:
-            selectTab(.diary)
-            
         case .home:
             selectTab(.home)
             navigationController.popToRootViewController(animated: false)
             
+        case .todo:
+            selectTab(.home)
+            //            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
+            //                .handleDeepLink(link)
+            
         case .notification:
             selectTab(.home)
-//            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
-//                .showNotificationList()
+            //            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
+            //                .showNotificationList()
+            
+        case .diary:
+            handleDiaryDeepLink(link)
+            
+        case .profile, .post:
+            handleSocialDeepLink(link)
         }
     }
-
+    
     private func handleSocialDeepLink(_ link: DeepLinkType) {
         selectTab(.social)
         
@@ -115,15 +115,26 @@ final class MainTabBarCoordinator: Coordinator {
                 socialCoordinator.showProfile(userId: userId)
             }
             
-//        case .post(let postId, let commentId):
-//            socialCoordinator.showPostDetail(
-//                postId: postId,
-//                scrollToComment: commentId != nil
-//            )
-//            
+            //        case .post(let postId, let commentId):
+            //            socialCoordinator.showPostDetail(
+            //                postId: postId,
+            //                scrollToComment: commentId != nil
+            //            )
+            //
         default:
             break
         }
+    }
+    
+    private func handleDiaryDeepLink(_ link: DeepLinkType) {
+        selectTab(.diary)
+        
+        guard let diaryCoordinator = childCoordinators.first(where: { $0 is DiaryCoordinator }) as? DiaryCoordinator else {
+            return
+        }
+        
+        diaryCoordinator.navigationController.popToRootViewController(animated: false)
+        diaryCoordinator.start()
     }
     
     private func selectTab(_ item: MainTabbarItem) {

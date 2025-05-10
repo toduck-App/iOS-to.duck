@@ -4,7 +4,6 @@ public enum DeepLinkType {
     case profile(userId: String)
     case post(postId: String, commentId: String?)
     case todo
-    case focus
     case diary
     case home
     case notification
@@ -24,9 +23,6 @@ public enum DeepLinkType {
             
         case "todo":
             self = .todo
-            
-        case "focus":
-            self = .focus
             
         case "diary":
             self = .diary
