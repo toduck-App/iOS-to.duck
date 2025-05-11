@@ -1,26 +1,19 @@
 import UIKit
 import KakaoSDKAuth
 import KakaoSDKCommon
+import FirebaseCore
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        if let kakaoAppKey = Bundle.main.infoDictionary?["KAKAO_NATIVE_APP_KEY"] as? String {
-            KakaoSDK.initSDK(appKey: kakaoAppKey)
-        }
-        
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
-        }
+        configureFirebase()
+        configureKakaoSDK()
+        configurePushNotification()
 
         return true
     }
@@ -46,5 +39,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return false
+    }
+    
+    // MARK: - 개별 설정 메서드
+
+    private func configureFirebase() {
+        FirebaseApp.configure()
+    }
+
+    private func configureKakaoSDK() {
+        if let kakaoAppKey = Bundle.main.infoDictionary?["KAKAO_NATIVE_APP_KEY"] as? String {
+            KakaoSDK.initSDK(appKey: kakaoAppKey)
+        }
+    }
+
+    private func configurePushNotification() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
     }
 }
