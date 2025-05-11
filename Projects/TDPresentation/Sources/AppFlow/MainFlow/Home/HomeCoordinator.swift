@@ -27,10 +27,16 @@ final class HomeCoordinator: Coordinator {
     }
     
     func startForTodo() {
-        let homeViewController = HomeViewController()
-        homeViewController.coordinator = self
-        homeViewController.segmentedControl.setSelectedIndex(1, animated: true)
-        navigationController.pushViewController(homeViewController, animated: false)
+        if let homeVC = navigationController.viewControllers
+            .first(where: { $0 is HomeViewController }) as? HomeViewController {
+            homeVC.segmentedControl.setSelectedIndex(1, animated: true)
+            navigationController.popToViewController(homeVC, animated: false)
+        } else {
+            let homeVC = HomeViewController()
+            homeVC.coordinator = self
+            homeVC.segmentedControl.setSelectedIndex(1, animated: true)
+            navigationController.pushViewController(homeVC, animated: false)
+        }
     }
 }
 

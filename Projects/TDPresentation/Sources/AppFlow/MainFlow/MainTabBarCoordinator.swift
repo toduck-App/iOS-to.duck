@@ -115,9 +115,9 @@ final class MainTabBarCoordinator: Coordinator {
                 socialCoordinator.showProfile(userId: userId)
             }
             
-        case .post(let postId, let commentId):
+        case .post(let postId, let commentIdString):
             if let postId = Int(postId),
-               let commentId, let commentId = Int(commentId) {
+               let commentIdString, let commentId = Int(commentIdString) {
                 socialCoordinator.didTapPost(postId: postId, commentId: commentId)
             }
             

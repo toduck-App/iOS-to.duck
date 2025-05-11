@@ -50,13 +50,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         
         guard let deepLink = DeepLinkType(url: url) else { return }
-        
-        if appCoordinator == nil {
-            let injector: DependencyResolvable = DIContainer.shared
-            appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
-            appCoordinator?.start()
-        }
-        
         appCoordinator?.handleDeepLink(deepLink)
     }
     

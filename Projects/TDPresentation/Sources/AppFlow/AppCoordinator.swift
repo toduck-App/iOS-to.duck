@@ -85,7 +85,7 @@ public final class AppCoordinator: Coordinator {
         childCoordinators.append(walkThroughCoordinator)
     }
     
-    private func startTabBarFlow() {
+    private func startTabBarFlow(completion: (() -> Void)? = nil) {
         let tabBarCoordinator = MainTabBarCoordinator(
             navigationController: navigationController,
             injector: injector
@@ -93,6 +93,7 @@ public final class AppCoordinator: Coordinator {
         tabBarCoordinator.start()
         tabBarCoordinator.finishDelegate = self
         childCoordinators.append(tabBarCoordinator)
+        completion?()
     }
     
     private func startAuthFlow() {
@@ -111,15 +112,16 @@ public final class AppCoordinator: Coordinator {
     public func handleDeepLink(_ link: DeepLinkType) {
         guard TDTokenManager.shared.accessToken != nil else {
             pendingDeepLink = link
-            startAuthFlow()
+            if !childCoordinators.contains(where: { $0 is AuthCoordinator }) {
+                startAuthFlow()
+            }
             return
         }
         
         guard let tabBarCoordinator = childCoordinators.first(where: { $0 is MainTabBarCoordinator }) as? MainTabBarCoordinator else {
             pendingDeepLink = link
-            startTabBarFlow()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.handleDeepLink(link)
+            startTabBarFlow { [weak self] in
+                self?.handleDeepLink(link)
             }
             return
         }
