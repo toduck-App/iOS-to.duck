@@ -8,16 +8,21 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
     let postID: Post.ID
+    let commentId: Comment.ID?
     
     init(
         navigationController: UINavigationController,
         injector: DependencyResolvable,
-        id: Post.ID
+        postId: Post.ID,
+        commentId: Comment.ID?
     ) {
         self.navigationController = navigationController
         self.injector = injector
-        self.postID = id
+        self.postID = postId
+        self.commentId = commentId
     }
+    
+    // TODO: CommentID가 넘어왔을 시 해당 댓글로 스크롤 이동
     
     func start() {
         let fetchPostUseCase = injector.resolve(FetchPostUseCase.self)

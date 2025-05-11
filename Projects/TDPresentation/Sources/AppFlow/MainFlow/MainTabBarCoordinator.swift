@@ -115,12 +115,12 @@ final class MainTabBarCoordinator: Coordinator {
                 socialCoordinator.showProfile(userId: userId)
             }
             
-            //        case .post(let postId, let commentId):
-            //            socialCoordinator.showPostDetail(
-            //                postId: postId,
-            //                scrollToComment: commentId != nil
-            //            )
-            //
+        case .post(let postId, let commentId):
+            if let postId = Int(postId),
+               let commentId, let commentId = Int(commentId) {
+                socialCoordinator.didTapPost(postId: postId, commentId: commentId)
+            }
+            
         default:
             break
         }

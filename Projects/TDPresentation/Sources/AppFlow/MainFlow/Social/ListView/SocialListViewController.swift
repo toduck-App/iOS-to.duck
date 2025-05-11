@@ -211,7 +211,7 @@ extension SocialListViewController: UICollectionViewDelegate {
     
     private func didTapPost(at indexPath: IndexPath) {
         let postId = viewModel.posts[indexPath.item].id
-        coordinator?.didTapPost(id: postId)
+        coordinator?.didTapPost(postId: postId, commentId: nil)
     }
 }
 
