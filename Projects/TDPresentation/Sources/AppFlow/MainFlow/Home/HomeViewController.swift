@@ -5,7 +5,7 @@ import UIKit
 
 final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
-    private let segmentedControl = TDSegmentedControl(items: ["토덕", "투두"])
+    let segmentedControl = TDSegmentedControl(items: ["토덕", "투두"])
     
     // MARK: - Properties
     private var cachedViewControllers = [Int: UIViewController]()

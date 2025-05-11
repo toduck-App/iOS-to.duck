@@ -84,13 +84,13 @@ final class MainTabBarCoordinator: Coordinator {
             
         case .todo:
             selectTab(.home)
-            //            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
-            //                .handleDeepLink(link)
+            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
+                .startForTodo()
             
         case .notification:
             selectTab(.home)
-            //            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
-            //                .showNotificationList()
+            (childCoordinators.first { $0 is HomeCoordinator } as? HomeCoordinator)?
+                .didTapAlarmButton()
             
         case .diary:
             handleDiaryDeepLink(link)
