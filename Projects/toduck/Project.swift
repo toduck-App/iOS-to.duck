@@ -25,8 +25,6 @@ let appTarget = Target.target(
         .storage(),
         .domain(),
         
-        // Third Party Library
-        .external(dependency: .FirebaseAnalytics),
     ],
     settings: .settings(
         base: [
