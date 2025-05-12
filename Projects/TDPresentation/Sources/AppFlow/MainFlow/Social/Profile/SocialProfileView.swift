@@ -22,6 +22,7 @@ final class SocialProfileView: BaseView {
     private let profileBackgroundView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.image = TDImage.Profile.background1
     }
     
     private let nickNameLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
@@ -214,7 +215,7 @@ final class SocialProfileView: BaseView {
     }
     
     public func configureFollowingButton(isFollowing: Bool, isMe: Bool) {
-        profileBackgroundView.image = isFollowing ? TDImage.Profile.background2 : TDImage.Profile.background1
+//        profileBackgroundView.image = isFollowing ? TDImage.Profile.background2 : TDImage.Profile.background1
         if isMe {
             followButton.isHidden = true
             return
