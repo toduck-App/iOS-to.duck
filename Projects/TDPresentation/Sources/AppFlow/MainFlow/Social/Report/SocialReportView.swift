@@ -2,6 +2,10 @@ import TDDesign
 import UIKit
 
 final class SocialReportView: BaseView {
+    private let reportImage = UIImageView().then {
+        $0.image = TDImage.reportFillMedium
+    }
+    
     private let titleLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
     
     private(set) lazy var tableView = UITableView().then {
@@ -23,6 +27,7 @@ final class SocialReportView: BaseView {
     
     private func setupView() {
         backgroundColor = TDColor.baseWhite
+        addSubview(reportImage)
         addSubview(titleLabel)
         addSubview(tableView)
     }
@@ -32,9 +37,16 @@ final class SocialReportView: BaseView {
     }
     
     private func setupConstraints() {
+        reportImage.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(28)
+            make.leading.equalToSuperview().inset(16)
+            make.size.equalTo(24)
+        }
+        
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(28)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.centerY.equalTo(reportImage)
+            make.leading.equalTo(reportImage.snp.trailing).offset(8)
+            make.trailing.equalToSuperview().inset(16)
         }
         
         tableView.snp.makeConstraints { make in
