@@ -9,7 +9,6 @@ import UIKit
 
 final class SocialDetailCommentCell: UICollectionViewCell {
     weak var commentDelegate: SocialPostDelegate?
-    
     private let containerView = UIView().then {
         $0.backgroundColor = TDColor.baseWhite
         $0.layer.cornerRadius = 12
@@ -30,7 +29,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
         $0.distribution = .fill
     }
     
-    lazy var avatarView = UIImageView().then {
+    lazy var avatarView = AvatarImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 18
@@ -65,6 +64,7 @@ final class SocialDetailCommentCell: UICollectionViewCell {
     // MARK: - Configure
     
     func configure(with item: Comment) {
+        avatarView.userID = item.user.id
         setupUI()
         headerView.configure(
             titleBadge: item.user.title,
@@ -100,6 +100,9 @@ private extension SocialDetailCommentCell {
     func setupUI() {
         setupLayout()
         setupConstraints()
+        avatarView.isUserInteractionEnabled = true
+        let tapGR = UITapGestureRecognizer(target: self, action: #selector(handleAvatarTap(_:)))
+        avatarView.addGestureRecognizer(tapGR)
     }
     
     func setupLayout() {
@@ -237,13 +240,21 @@ private extension SocialDetailCommentCell {
 
     // MARK: 대댓글 - Subview 생성 함수들
     
-    func buildReplyAvatar(_ comment: Comment) -> UIImageView {
-        let avatar = UIImageView().then {
+    func buildReplyAvatar(_ comment: Comment) -> AvatarImageView {
+        let avatar = AvatarImageView().then {
             $0.contentMode = .scaleAspectFill
             $0.layer.cornerRadius = 18
             $0.clipsToBounds = true
             $0.backgroundColor = TDColor.Neutral.neutral100
         }
+        // 대댓글 작성자 ID 저장
+        avatar.userID = comment.user.id
+        // 탭 제스처 등록
+        avatar.isUserInteractionEnabled = true
+        let tapGR = UITapGestureRecognizer(target: self, action: #selector(handleAvatarTap(_:)))
+        avatar.addGestureRecognizer(tapGR)
+        
+        
         // TODO: 이거 어떻게 처리할지 고민해보기
         if let icon = comment.user.icon, let url = URL(string: icon) {
             avatar.kf.setImage(with: url)
@@ -329,5 +340,19 @@ private extension SocialDetailCommentCell {
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+    }
+}
+
+extension SocialDetailCommentCell {
+    final class AvatarImageView: UIImageView {
+        var userID: User.ID?
+    }
+    
+    @objc private func handleAvatarTap(_ sender: UITapGestureRecognizer) {
+        guard
+            let iv = sender.view as? AvatarImageView,
+            let id = iv.userID
+        else { return }
+        commentDelegate?.didTapProfileImage(self, id)
     }
 }

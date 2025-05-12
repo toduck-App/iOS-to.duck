@@ -7,6 +7,7 @@ import Then
 import UIKit
 
 final class SocialFeedCollectionViewCell: UICollectionViewCell {
+    private var userID: User.ID?
     weak var socialFeedCellDelegate: SocialPostDelegate?
     
     private var verticalStackView = UIStackView().then {
@@ -65,6 +66,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     }
     
     public func configure(with item: Post, highlightTerm: String? = nil) {
+        self.userID = item.user.id
         headerView.configure(
             titleBadge: item.user.title,
             nickname: item.user.name,
@@ -140,6 +142,12 @@ private extension SocialFeedCollectionViewCell {
     func setupUI() {
         setupLayout()
         setupConstraints()
+        avatarView.isUserInteractionEnabled = true
+        let tapGR = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleAvatarTap)
+        )
+        avatarView.addGestureRecognizer(tapGR)
     }
     
     func setupLayout() {
@@ -263,5 +271,12 @@ extension SocialFeedCollectionViewCell {
             guard let self else { return }
             socialFeedCellDelegate?.didTapLikeButton(self, item.id)
         }
+    }
+}
+
+extension SocialFeedCollectionViewCell {
+    @objc private func handleAvatarTap() {
+        guard let id = userID else { return }
+        socialFeedCellDelegate?.didTapProfileImage(self, id)
     }
 }

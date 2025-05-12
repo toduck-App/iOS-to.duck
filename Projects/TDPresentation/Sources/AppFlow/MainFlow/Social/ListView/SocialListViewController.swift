@@ -218,6 +218,10 @@ extension SocialListViewController: UICollectionViewDelegate {
 // MARK: Input
 
 extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UIScrollViewDelegate {
+    func didTapProfileImage(_ cell: UICollectionViewCell, _ userID: TDDomain.User.ID) {
+        coordinator?.didTapUserProfile(id: userID)
+    }
+    
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
         let controller = SocialBlockViewController()
         controller.onBlock = { [weak self] in

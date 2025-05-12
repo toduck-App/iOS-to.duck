@@ -123,6 +123,10 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
 // MARK: User Action
 
 extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate, UICollectionViewDelegate {
+    func didTapProfileImage(_ cell: UICollectionViewCell, _ userID: TDDomain.User.ID) {
+        coordinator?.didTapUserProfile(id: userID)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = datasource.itemIdentifier(for: indexPath) else { return }
         switch item {
