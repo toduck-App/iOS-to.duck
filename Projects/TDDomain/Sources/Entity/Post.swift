@@ -82,7 +82,7 @@ public extension Post {
                                      commentCount: 3,
                                      shareCount: nil,
                                      routine: nil,
-                                     category: [.anxiety, .impulse]),
+                                     category: [.anxiety, .mistake]),
                                 Post(
                                     id: 2,
                                     user: User.dummy[1],
@@ -112,7 +112,7 @@ public extension Post {
                                         recommendedRoutines: nil,
                                         isFinished: false
                                     ),
-                                    category: [.anxiety, .impulse]
+                                    category: [.anxiety, .mistake]
                                 ),
                                 Post(id: 3,
                                      user: User.dummy[2],
@@ -124,7 +124,7 @@ public extension Post {
                                      commentCount: 1,
                                      shareCount: 12,
                                      routine: nil,
-                                     category: [.anxiety, .memory, .sleep]),
+                                     category: [.anxiety, .memory, .infomation]),
                                 Post(
                                     id: 4,
                                     user: User.dummy[3],
@@ -148,7 +148,7 @@ public extension Post {
                                         recommendedRoutines: nil,
                                         isFinished: false
                                     ),
-                                    category: [.anxiety, .impulse, .anxiety]
+                                    category: [.anxiety, .infomation, .anxiety]
                                 ),
                                 Post(id: 5,
                                      user: User.dummy[4],
@@ -173,7 +173,7 @@ public extension Post {
                                     commentCount: 2,
                                     shareCount: nil,
                                     routine: nil,
-                                    category: [.sleep])
+                                    category: [.normal])
                                 ]
 }
 
