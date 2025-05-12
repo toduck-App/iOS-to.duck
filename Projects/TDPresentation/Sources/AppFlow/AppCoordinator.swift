@@ -12,6 +12,7 @@ public final class AppCoordinator: Coordinator {
     public var finishDelegate: CoordinatorFinishDelegate?
     public var injector: DependencyResolvable
     private var splashViewController: SplashViewController?
+    private var pendingDeepLink: DeepLinkType?
     
     public init(
         navigationController: UINavigationController,
@@ -47,6 +48,7 @@ public final class AppCoordinator: Coordinator {
                         startAuthFlow()
                     } else {
                         startTabBarFlow()
+                        processPendingDeepLink()
                     }
                 }
             } catch {
@@ -83,7 +85,7 @@ public final class AppCoordinator: Coordinator {
         childCoordinators.append(walkThroughCoordinator)
     }
     
-    private func startTabBarFlow() {
+    private func startTabBarFlow(completion: (() -> Void)? = nil) {
         let tabBarCoordinator = MainTabBarCoordinator(
             navigationController: navigationController,
             injector: injector
@@ -91,6 +93,7 @@ public final class AppCoordinator: Coordinator {
         tabBarCoordinator.start()
         tabBarCoordinator.finishDelegate = self
         childCoordinators.append(tabBarCoordinator)
+        completion?()
     }
     
     private func startAuthFlow() {
@@ -102,6 +105,34 @@ public final class AppCoordinator: Coordinator {
         authCoordinator.finishDelegate = self
         authCoordinator.delegate = self
         childCoordinators.append(authCoordinator)
+    }
+    
+    // MARK: – DeepLink helpers
+    
+    public func handleDeepLink(_ link: DeepLinkType) {
+        guard TDTokenManager.shared.accessToken != nil else {
+            pendingDeepLink = link
+            if !childCoordinators.contains(where: { $0 is AuthCoordinator }) {
+                startAuthFlow()
+            }
+            return
+        }
+        
+        guard let tabBarCoordinator = childCoordinators.first(where: { $0 is MainTabBarCoordinator }) as? MainTabBarCoordinator else {
+            pendingDeepLink = link
+            startTabBarFlow { [weak self] in
+                self?.handleDeepLink(link)
+            }
+            return
+        }
+        
+        tabBarCoordinator.handleDeepLink(link)
+    }
+
+    func processPendingDeepLink() {
+        guard let pending = pendingDeepLink else { return }
+        handleDeepLink(pending)
+        pendingDeepLink = nil
     }
     
     // MARK: – Skeleton helpers

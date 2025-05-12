@@ -3,7 +3,7 @@ import TDDomain
 import UIKit
 
 protocol SocialListDelegate: AnyObject {
-    func didTapPost(id: Post.ID)
+    func didTapPost(postId: Post.ID, commentId: Comment.ID?)
     func didTapCreateButton()
     func didTapReport(id: Post.ID)
     func didTapUserProfile(id: User.ID)
@@ -50,6 +50,17 @@ final class SocialListCoordinator: Coordinator {
     func didTapHomeTomatoIcon() {
         (finishDelegate as? MainTabBarCoordinator)?.switchToHomeTab()
     }
+    
+    func showProfile(userId: Int) {
+        let socialProfileCoordinator = SocialProfileCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            id: userId
+        )
+        socialProfileCoordinator.finishDelegate = self
+        childCoordinators.append(socialProfileCoordinator)
+        socialProfileCoordinator.start()
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
@@ -85,11 +96,12 @@ extension SocialListCoordinator: SocialListDelegate {
         socialReportCoordinator.start()
     }
 
-    func didTapPost(id: Post.ID) {
+    func didTapPost(postId: Post.ID, commentId: Comment.ID?) {
         let socialDetailCoordinator = SocialDetailCoordinator(
             navigationController: navigationController,
             injector: injector,
-            id: id
+            postId: postId,
+            commentId: commentId
         )
         socialDetailCoordinator.finishDelegate = self
         childCoordinators.append(socialDetailCoordinator)

@@ -36,7 +36,9 @@ final class AuthCoordinator: Coordinator {
     }
     
     func didLogin() {
+        finishDelegate?.didFinish(childCoordinator: self)
         delegate?.didLogin()
+        (finishDelegate as? AppCoordinator)?.processPendingDeepLink()
     }
 }
 

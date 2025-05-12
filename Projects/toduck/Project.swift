@@ -11,7 +11,8 @@ let appTarget = Target.target(
     sources: .sources,
     resources: [
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/**")),
-        .glob(pattern: .relativeToRoot("Projects/toduck/Resources/LaunchScreen.storyboard"))
+        .glob(pattern: .relativeToRoot("Projects/toduck/Resources/LaunchScreen.storyboard")),
+        .glob(pattern: .relativeToRoot("Projects/toduck/SupportingFiles/GoogleService-Info.plist")),
     ],
     entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     dependencies: [
@@ -22,7 +23,10 @@ let appTarget = Target.target(
         .design(),
         .network(),
         .storage(),
-        .domain()
+        .domain(),
+        
+        // Third Party Library
+        .external(dependency: .FirebaseAnalytics),
     ],
     settings: .settings(
         base: [

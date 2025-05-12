@@ -1,4 +1,7 @@
 ### macOS ###
+# FireBase 관련 파일
+GoogleService-Info.plist
+
 # Tuist 패키지 설치 관련 파일
 Tuist/Package.resolved
 

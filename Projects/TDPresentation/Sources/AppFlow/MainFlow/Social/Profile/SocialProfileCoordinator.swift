@@ -47,7 +47,8 @@ extension SocialProfileCoordinator: SocialProfileCoordinatorDelegate {
         let coordinator = SocialDetailCoordinator(
             navigationController: navigationController,
             injector: injector,
-            id: id
+            postId: id,
+            commentId: nil
         )
         childCoordinators.append(coordinator)
         coordinator.finishDelegate = self

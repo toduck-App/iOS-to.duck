@@ -33,7 +33,6 @@ private extension MyPageMenuContainer {
     func setupViews(type: ContainerType) {
         layer.cornerRadius = LayoutConstants.containerCornerRadius
         backgroundColor = TDColor.Neutral.neutral50
-        [icon, label].forEach { addSubview($0) }
         
         switch type {
         case .profile:
@@ -47,15 +46,22 @@ private extension MyPageMenuContainer {
     }
     
     func setupLayoutConstraints() {
-        icon.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
-            $0.leading.equalToSuperview().offset(52)
-            $0.size.equalTo(LayoutConstants.iconSize)
-        }
+        let contentStack = UIView()
+        addSubview(contentStack)
+        contentStack.addSubview(icon)
+        contentStack.addSubview(label)
         
+        contentStack.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+
+        icon.snp.makeConstraints {
+            $0.leading.top.bottom.equalToSuperview()
+        }
+
         label.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(LayoutConstants.verticalPadding)
             $0.leading.equalTo(icon.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview()
             $0.centerY.equalTo(icon)
         }
     }

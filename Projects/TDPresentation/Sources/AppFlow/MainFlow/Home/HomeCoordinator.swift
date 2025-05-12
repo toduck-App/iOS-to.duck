@@ -25,6 +25,19 @@ final class HomeCoordinator: Coordinator {
         homeViewController.coordinator = self
         navigationController.pushViewController(homeViewController, animated: false)
     }
+    
+    func startForTodo() {
+        if let homeVC = navigationController.viewControllers
+            .first(where: { $0 is HomeViewController }) as? HomeViewController {
+            homeVC.segmentedControl.setSelectedIndex(1, animated: true)
+            navigationController.popToViewController(homeVC, animated: false)
+        } else {
+            let homeVC = HomeViewController()
+            homeVC.coordinator = self
+            homeVC.segmentedControl.setSelectedIndex(1, animated: true)
+            navigationController.pushViewController(homeVC, animated: false)
+        }
+    }
 }
 
 // MARK: - Coordinator Finish Delegate
@@ -58,8 +71,13 @@ extension HomeCoordinator: TodoViewControllerDelegate {
 // MARK: - Navigation Delegate
 extension HomeCoordinator: NavigationDelegate {
     func didTapAlarmButton() {
-        // TODO: 알람 페이지로 이동
-        TDLogger.debug("알람 페이지로 이동")
+        let notificationCoordinator = NotificationCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        notificationCoordinator.finishDelegate = self
+        childCoordinators.append(notificationCoordinator)
+        notificationCoordinator.start()
     }
     
     func didTapCalendarButton() {
