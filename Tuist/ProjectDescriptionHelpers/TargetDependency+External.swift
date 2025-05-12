@@ -15,6 +15,7 @@ public enum External: String {
     case Swinject
     case FittedSheets
     case FirebaseAnalytics
+    case FirebaseMessaging
     case KeyChainManager = "KeyChainManager-KJ"
 }
 
