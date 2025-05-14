@@ -56,6 +56,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         print("❌ APNs 등록 실패: \(error.localizedDescription)")
     }
     
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+
+        if let actionUrlString = userInfo["actionUrl"] as? String,
+           let actionUrl = URL(string: actionUrlString) {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: .didReceivePushNotificationURL,
+                    object: nil,
+                    userInfo: ["url": actionUrl]
+                )
+            }
+        }
+
+        completionHandler()
+    }
+    
     // MARK: - Firebase 초기화
     
     private func configureFirebase() {
