@@ -7,9 +7,13 @@ import UIKit
 
 final class SocialSearchView: BaseView {
     private(set) var cancleButton = UIButton().then {
-        $0.setTitle("취소", for: .normal)
-        $0.setTitleColor(TDColor.Neutral.neutral800, for: .normal)
-        $0.titleLabel?.font = TDFont.mediumBody2.font
+        $0.setImage(TDImage.X.x2Medium.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.tintColor = TDColor.Neutral.neutral800
+    }
+    
+    private(set) var backButton = UIButton().then {
+        $0.setImage(TDImage.Direction.leftMedium.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.tintColor = TDColor.Neutral.neutral800
     }
 
     private(set) var searchBar = UISearchBar().then {
@@ -30,11 +34,13 @@ final class SocialSearchView: BaseView {
                 .font: placeholderFont
             ]
         )
-        if let leftImageView = $0.searchTextField.leftView as? UIImageView {
-            let image = leftImageView.image?.withRenderingMode(.alwaysTemplate)
-            leftImageView.image = image
-            leftImageView.tintColor = TDColor.Neutral.neutral400
-        }
+//        if let leftImageView = $0.searchTextField.leftView as? UIImageView {
+//            let image = leftImageView.image?.withRenderingMode(.alwaysTemplate)
+//            leftImageView.image = image
+//            leftImageView.tintColor = TDColor.Neutral.neutral400
+//        }
+        $0.searchTextField.leftView = nil
+        $0.searchTextField.leftViewMode = .never
     }
 
     private(set) lazy var keywordCollectionView = UICollectionView(

@@ -56,7 +56,7 @@ final class SocialListViewController: BaseViewController<SocialListView> {
     }
     
     private func setupNavigationSearchBar() {
-        navigationItem.leftBarButtonItems = nil
+        navigationItem.leftBarButtonItems = [UIBarButtonItem(customView: layoutView.searchView.backButton)]
         navigationItem.titleView = layoutView.searchView.searchBar
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchView.cancleButton)
     }
@@ -66,6 +66,14 @@ final class SocialListViewController: BaseViewController<SocialListView> {
             self?.layoutView.showSearchView()
             self?.setupNavigationSearchBar()
             self?.input.send(.loadKeywords)
+        }, for: .touchUpInside)
+        
+        layoutView.searchView.backButton.addAction(UIAction {
+            [weak self] _ in
+            self?.layoutView.hideSearchView()
+            self?.layoutView.clearSearchText()
+            self?.setupDefaultNavigationBar()
+            self?.input.send(.clearSearch)
         }, for: .touchUpInside)
         
         layoutView.searchView.cancleButton.addAction(UIAction {
