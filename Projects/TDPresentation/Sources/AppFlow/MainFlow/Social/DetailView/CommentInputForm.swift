@@ -4,10 +4,12 @@ import Then
 import UIKit
 
 final class CommentInputForm: UIView, UITextViewDelegate {
-    private let sendButton = UIButton().then {
+    let sendButton = UIButton().then {
         $0.setTitle("등록", for: .normal)
         $0.titleLabel?.font = TDFont.boldBody2.font
         $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
+        $0.setTitleColor(TDColor.Neutral.neutral400, for: .disabled)
+        $0.isEnabled = false
     }
     
     private let imageButton = UIButton().then {
@@ -95,6 +97,12 @@ final class CommentInputForm: UIView, UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         placeholderLabel.isHidden = !textView.text.isEmpty
+        if textView.text.isEmpty {
+            sendButton.isEnabled = false
+        } else {
+            sendButton.isEnabled = true
+        }
+        
         
         let fittingSize = textView.sizeThatFits(CGSize(width: textView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         if fittingSize.height <= maxHeight {

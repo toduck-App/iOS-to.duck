@@ -51,6 +51,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         
         layoutView.commentInputForm.setTapSendButton(
             UIAction { [weak self] _ in
+                self?.layoutView.commentInputForm.sendButton.isEnabled = false
                 self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
             })
         layoutView.commentInputForm.setTapImageButton(
@@ -106,12 +107,14 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                 case .didTapComment(let comment):
                     self?.layoutView.showReplyInputForm(name: comment.user.name)
                 case .createComment:
+                    self?.layoutView.commentInputForm.sendButton.isEnabled = true
                     self?.layoutView.removeReplyInputForm()
                     self?.layoutView.clearText()
                     self?.layoutView.removeCommentInputImage()
                 case .reloadParentComment(let comment):
                     self?.reloadParentComment(parentID: comment.id)
                 case .failure(let message):
+                    self?.layoutView.commentInputForm.sendButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
                 default:
                     break
