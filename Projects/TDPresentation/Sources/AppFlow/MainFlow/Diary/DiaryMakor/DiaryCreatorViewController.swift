@@ -41,6 +41,7 @@ final class DiaryCreatorViewController: BaseViewController<DiaryCreatorView> {
                 case .savedDiary:
                     self?.coordinator?.finish(by: .pop)
                 case .failure(let message):
+                    self?.layoutView.saveButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
@@ -57,9 +58,11 @@ final class DiaryCreatorViewController: BaseViewController<DiaryCreatorView> {
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             if self?.isEdit == true {
                 self?.input.send(.tapEditButton)
+                
             } else {
                 self?.input.send(.tapSaveButton)
             }
+            self?.layoutView.saveButton.isEnabled = false
         }, for: .touchUpInside)
     }
     

@@ -45,17 +45,8 @@ final class DiaryCreatorViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        let shared = input.share()
         
-        shared
-            .filter {
-                switch $0 {
-                case .tapSaveButton, .tapEditButton:
-                    return false
-                default:
-                    return true
-                }
-            }
+        input
             .sink { [weak self] event in
                 switch event {
                 case .tapCategoryCell(let mood):
@@ -66,29 +57,10 @@ final class DiaryCreatorViewModel: BaseViewModel {
                     self?.memo = memo
                 case .setImages(let datas):
                     self?.setImages(datas)
-                default:
-                    break
-                }
-            }.store(in: &cancellables)
-        
-        shared
-            .filter {
-                switch $0 {
-                case .tapSaveButton, .tapEditButton:
-                    return true
-                default:
-                    return false
-                }
-            }
-            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
-            .sink { [weak self] event in
-                switch event {
                 case .tapSaveButton:
                     Task { await self?.saveDiary() }
                 case .tapEditButton:
                     Task { await self?.editDiary() }
-                default:
-                    break
                 }
             }.store(in: &cancellables)
         

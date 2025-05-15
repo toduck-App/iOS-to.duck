@@ -69,6 +69,7 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
                 case .setImage:
                     layoutView.formPhotoView.addPhotos(viewModel.images)
                 case .failure(let message):
+                    layoutView.saveButton.isEnabled = true
                     showErrorAlert(errorMessage: message)
                 case .success:
                     coordinator?.didTapDoneButton()
@@ -189,6 +190,7 @@ extension SocialCreatorViewController: TDFormTextViewDelegate {
 extension SocialCreatorViewController {
     private func didTapRegisterButton() {
         input.send(.createPost)
+        layoutView.saveButton.isEnabled = false
     }
 }
 

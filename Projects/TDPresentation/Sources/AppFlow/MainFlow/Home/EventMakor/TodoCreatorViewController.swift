@@ -79,6 +79,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
             } else {
                 self?.input.send(.tapSaveTodoButton)
             }
+            self?.todoMakorView.saveButton.isEnabled = false
             self?.delegate?.didTapSaveButton(createdDate: self?.createStartDate ?? Date())
         }, for: .touchUpInside)
     }
@@ -111,6 +112,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
                         .joined(separator: ", ")
                     self?.showErrorAlert(errorMessage: "\(missing)이(가) 입력되지 않았어요.")
                 case .failureAPI(let message):
+                    self?.todoMakorView.saveButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
                 case .canSaveEvent(let isEnabled):
                     self?.todoMakorView.saveButton.isEnabled = isEnabled
