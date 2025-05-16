@@ -151,14 +151,12 @@ final class TimelineRoutineCell: UITableViewCell {
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
             make.trailing.equalTo(shareInfo.snp.leading).offset(-8)
-            make.height.equalTo(75)
         }
 
         shareInfo.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(8)
-            make.centerY.equalTo(containerHorizontalStackView.snp.centerY)
-            make.height.equalTo(75)
             make.width.equalTo(48)
+            make.top.bottom.equalTo(containerHorizontalStackView)
         }
 
         shareStackView.snp.makeConstraints { make in
@@ -166,7 +164,7 @@ final class TimelineRoutineCell: UITableViewCell {
         }
 
         timeImageView.snp.makeConstraints { make in
-            make.size.equalTo(12)
+            make.size.equalTo(18)
         }
     }
 

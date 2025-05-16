@@ -38,6 +38,7 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
             self?.dismissPopup()
         }, for: .touchUpInside)
         popupContentView.doneButton.addAction(UIAction { [weak self] _ in
+            self?.popupContentView.doneButton.isEnabled = false
             self?.input.send(.createRoutine)
         }, for: .touchUpInside)
     } 
@@ -67,6 +68,7 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
                 case .success:
                     dismissPopup()
                 case .failure(let description):
+                    popupContentView.doneButton.isEnabled = true
                     coordinator?.showErrorAlert(message: description)
                 }
             }

@@ -193,12 +193,12 @@ final class SocialProfileView: BaseView {
         }
         
         routineTableView.snp.makeConstraints { make in
-            make.top.equalTo(routineLabel.snp.bottom).offset(10)
+            make.top.equalTo(routineLabel.snp.bottom).offset(20)
             make.leading.trailing.bottom.equalToSuperview().inset(16)
         }
         
         socialFeedCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(routineLabel.snp.bottom).offset(10)
+            make.top.equalTo(routineLabel.snp.bottom).offset(20)
             make.leading.trailing.bottom.equalToSuperview().inset(16)
         }
         

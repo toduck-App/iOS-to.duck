@@ -72,4 +72,15 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
     func didFinish(childCoordinator: any Coordinator) {
         finish(by: .pop)
     }
+    
+    func didTapRoutine(routine: Routine) {
+        let coordinator = RoutineShareCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            routine: routine
+        )
+        childCoordinators.append(coordinator)
+        coordinator.finishDelegate = self
+        coordinator.start()
+    }
 }

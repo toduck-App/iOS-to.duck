@@ -130,6 +130,10 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
         coordinator?.didTapUserProfile(id: userID)
     }
     
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {
+        coordinator?.didTapRoutine(routine: routine)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = datasource.itemIdentifier(for: indexPath) else { return }
         switch item {
