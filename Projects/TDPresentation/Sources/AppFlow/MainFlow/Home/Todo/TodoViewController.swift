@@ -135,7 +135,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         buttonShadowWrapper.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(LayoutConstants.buttonTrailingInset)
-            $0.bottom.equalTo(window.safeAreaLayoutGuide.snp.bottom).offset(-84)
+            $0.bottom.equalTo(window.safeAreaLayoutGuide.snp.bottom).offset(-70)
             $0.width.equalTo(LayoutConstants.buttonWidth)
             $0.height.equalTo(LayoutConstants.buttonHeight)
         }

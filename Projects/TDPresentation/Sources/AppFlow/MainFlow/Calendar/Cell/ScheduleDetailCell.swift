@@ -5,7 +5,7 @@ import SnapKit
 import Then
 
 final class ScheduleDetailCell: UITableViewCell {
-    private let eventDetailView = EventDetailView()
+    private let eventDetailView = TodoDetailView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

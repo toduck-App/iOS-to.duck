@@ -10,7 +10,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         toduckColor: TDColor.Neutral.neutral800
     )
     private let shadowContainerView = UIView()
-    private let eventDetailView = EventDetailView()
+    private let eventDetailView = TodoDetailView()
     private let buttonsContainerView = UIView()
     private let editButton = UIButton()
     private let deleteButton = UIButton()

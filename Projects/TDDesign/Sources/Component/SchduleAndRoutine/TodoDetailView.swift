@@ -2,7 +2,7 @@ import SnapKit
 import Then
 import UIKit
 
-public final class EventDetailView: UIView {
+public final class TodoDetailView: UIView {
     // MARK: - UI Components
 
     private var scheduleIdentyColorView = UIView().then {
