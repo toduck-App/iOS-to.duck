@@ -17,7 +17,7 @@ final class CancleTagCell: UICollectionViewCell {
     }
     
     private let cancleButton = UIButton().then {
-        let image = TDImage.X.x2Medium.withRenderingMode(.alwaysTemplate)
+        let image = TDImage.X.x2Small.withRenderingMode(.alwaysTemplate)
         $0.setImage(image, for: .normal)
         $0.tintColor = TDColor.Neutral.neutral600
     }
@@ -51,6 +51,8 @@ final class CancleTagCell: UICollectionViewCell {
         tagLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(12)
             make.top.bottom.equalToSuperview().inset(6)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(21)
         }
         
         cancleButton.snp.makeConstraints { make in
