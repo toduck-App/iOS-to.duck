@@ -50,7 +50,7 @@ final class MyPostView: BaseView {
         }
         
         socialFeedCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(postLabel.snp.bottom)
+            make.top.equalTo(postLabel.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
         }
