@@ -40,6 +40,7 @@ final class MainTabBarCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(true, animated: false)
         tabBarController.setViewControllers(viewControllers, animated: false)
         navigationController.viewControllers = [tabBarController]
+        configurePushNotification()
     }
     
     private func createNavigationController(for item: MainTabbarItem) -> UINavigationController {
@@ -165,6 +166,22 @@ extension MainTabBarCoordinator: MainTabBarControllerDelegate {
         if let navigationController = tabBarController.viewControllers?[MainTabbarItem.home.index] as? UINavigationController,
            let homeViewController = navigationController.viewControllers.first as? HomeViewController {
             homeViewController.resetToToduck()
+        }
+    }
+}
+
+extension MainTabBarCoordinator {
+    // MARK: - 푸시 알림 권한 요청
+    
+    private func configurePushNotification() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            } else {
+                print("❌ 푸시 알림 권한 거부 또는 오류: \(error?.localizedDescription ?? "unknown error")")
+            }
         }
     }
 }

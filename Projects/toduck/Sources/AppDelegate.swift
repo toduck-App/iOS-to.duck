@@ -15,7 +15,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     ) -> Bool {
         configureFirebase()
         configureKakaoSDK()
-        configurePushNotification()
         return true
     }
     
@@ -100,20 +99,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     private func configureKakaoSDK() {
         if let kakaoAppKey = Bundle.main.infoDictionary?["KAKAO_NATIVE_APP_KEY"] as? String {
             KakaoSDK.initSDK(appKey: kakaoAppKey)
-        }
-    }
-    
-    // MARK: - 푸시 알림 권한 요청
-    
-    private func configurePushNotification() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            } else {
-                print("❌ 푸시 알림 권한 거부 또는 오류: \(error?.localizedDescription ?? "unknown error")")
-            }
         }
     }
     
