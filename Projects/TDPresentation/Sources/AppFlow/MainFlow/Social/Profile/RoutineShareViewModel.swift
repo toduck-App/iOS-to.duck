@@ -75,6 +75,7 @@ final class RoutineShareViewModel: BaseViewModel {
     
     private func createRoutine() async {
         do {
+            // MARK: MEMO는 소셜에 공유된 루틴에는 ‘메모’가 공유되지 않습니다. [ 루틴명, 카테고리, 시간 ] 만 공유됩니다.
             try await shareRoutineUseCase.execute(routineID: existingRoutine.id, routine: Routine(
                 id: nil,
                 title: title,
@@ -84,7 +85,7 @@ final class RoutineShareViewModel: BaseViewModel {
                 time: time,
                 repeatDays: repeatDays,
                 alarmTime: alarm,
-                memo: memo,
+                memo: "",
                 recommendedRoutines: nil,
                 isFinished: false
             ))
