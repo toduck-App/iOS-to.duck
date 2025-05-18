@@ -349,7 +349,16 @@ extension DiaryViewController: DiaryCalendarViewControllerDelegate {
         selectedDate: Date,
         isWrited: Bool
     ) {
-        self.selectedDate = selectedDate.normalized
+        // 선택된 날짜와 오늘(00:00) 비교
+        let today = Calendar.current.startOfDay(for: Date())
+        let targetDate = selectedDate.normalized
+        
+        // 오늘 이후(내일 이상)라면 버튼 숨기고 리턴
+        if targetDate > today {
+            diaryPostButtonContainerView.isHidden = true
+            return
+        }
+        
         if isWrited && diarySegmentedControl.selectedIndex == 0 {
             diaryPostButtonContainerView.isHidden = true
         } else {
