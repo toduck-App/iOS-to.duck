@@ -58,6 +58,7 @@ final class SocialProfileView: BaseView {
     private(set) var segmentedControl = TDSegmentedControl(
         items: ["루틴", "작성한 글"],
         indicatorForeGroundColor: TDColor.Primary.primary500,
+        indicatorBackGroundColor: TDColor.Neutral.neutral300,
         selectedTextColor: TDColor.Primary.primary500
     )
     
@@ -274,11 +275,11 @@ private extension SocialProfileView {
         let itemPadding: CGFloat = 10
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(500)
+            heightDimension: .estimated(1)
         )
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(500)
+            heightDimension: .estimated(1)
         )
         
         let edgeSpacing = NSCollectionLayoutEdgeSpacing(
