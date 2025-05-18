@@ -27,7 +27,7 @@ final class EditPasswordCoordinator: Coordinator {
         let editPasswordViewController = EditPasswordViewController()
         editPasswordViewController.hidesBottomBarWhenPushed = true
         editPasswordViewController.coordinator = self
-        navigationController.pushViewController(editPasswordViewController, animated: true)
+        navigationController.pushTDViewController(editPasswordViewController, animated: true)
     }
     
     func popViewController() {

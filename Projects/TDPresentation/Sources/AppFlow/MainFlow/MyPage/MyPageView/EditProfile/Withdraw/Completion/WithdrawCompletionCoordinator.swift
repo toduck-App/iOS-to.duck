@@ -32,7 +32,7 @@ final class WithdrawCompletionCoordinator: Coordinator {
         let withdrawCompletionViewController = WithdrawCompletionViewController(viewModel: withdrawCompletionViewModel)
         withdrawCompletionViewController.hidesBottomBarWhenPushed = true
         withdrawCompletionViewController.coordinator = self
-        navigationController.pushViewController(withdrawCompletionViewController, animated: true)
+        navigationController.pushTDViewController(withdrawCompletionViewController, animated: true)
     }
 
     func popViewController() {

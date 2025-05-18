@@ -1,14 +1,6 @@
-//
-//  UINavigationController+SetupNavigationBar.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/22/25.
-//
-
-import UIKit
 import SnapKit
-
 import TDDesign
+import UIKit
 
 extension UINavigationController {
     func setupNestedNavigationBar(
@@ -29,11 +21,13 @@ extension UINavigationController {
                 action: rightButtonAction
             )
         }
+        topViewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     func updateRightButtonState(to state: UIControl.State) {
         guard let container = topViewController?.navigationItem.rightBarButtonItem?.customView,
-              let rightButton = container.subviews.first(where: { $0 is UIButton }) as? UIButton else {
+              let rightButton = container.subviews.first(where: { $0 is UIButton }) as? UIButton
+        else {
             return
         }
         
@@ -123,8 +117,21 @@ private extension UINavigationController {
     }
 }
 
-fileprivate enum LayoutConstants {
+private enum LayoutConstants {
     static let leftItemSpacing: CGFloat = 16
     static let leftImageViewSize: CGFloat = 24
     static let rightBarButtonItemWidth: CGFloat = 51
+}
+
+// MARK: createLeftBarButton으로 설정할 경우, 기존 Swipe Pop 이 동작하지 않아서 따로 UIGestureRecognizerDelegate 설정
+
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+        
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        viewControllers.count > 1
+    }
 }

@@ -28,7 +28,7 @@ final class EditProfileCoordinator: Coordinator {
         editProfileViewController.hidesBottomBarWhenPushed = true
         editProfileViewController.coordinator = self
         editProfileViewController.updateNickName(nickName: nickName)
-        navigationController.pushViewController(editProfileViewController, animated: true)
+        navigationController.pushTDViewController(editProfileViewController, animated: true)
     }
     
     func start() { }

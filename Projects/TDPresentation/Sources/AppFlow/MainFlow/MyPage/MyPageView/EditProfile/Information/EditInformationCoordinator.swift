@@ -27,7 +27,7 @@ final class EditInformationCoordinator: Coordinator {
         let editInformationViewController = EditInformationViewController()
         editInformationViewController.hidesBottomBarWhenPushed = true
         editInformationViewController.coordinator = self
-        navigationController.pushViewController(editInformationViewController, animated: true)
+        navigationController.pushTDViewController(editInformationViewController, animated: true)
     }
     
     func popViewController() {
