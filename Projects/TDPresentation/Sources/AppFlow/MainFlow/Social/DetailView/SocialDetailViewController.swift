@@ -170,10 +170,7 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        // TODO: - Denied Photo Access
-        let alert = UIAlertController(title: "알림", message: "사진 접근 권한이 거부되었습니다. 설정에서 권한을 허용해주세요.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
+        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
     }
     
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
