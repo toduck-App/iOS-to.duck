@@ -13,27 +13,27 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - UI Components
-    private let weekCalendarView = HomeCalendar()
-    private let todoTableView = UITableView().then {
+    let weekCalendarView = HomeCalendar()
+    let todoTableView = UITableView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
-    private let noTodoContainerView = UIView()
-    private let noTodoImageView = UIImageView(image: TDImage.noEvent)
-    private let noTodoLabel = TDLabel(
+    let noTodoContainerView = UIView()
+    let noTodoImageView = UIImageView(image: TDImage.noEvent)
+    let noTodoLabel = TDLabel(
         labelText: "등록된 투두가 없어요",
         toduckFont: TDFont.boldBody1,
         toduckColor: TDColor.Neutral.neutral600
     )
     
-    private let dimmedView = UIView().then {
+    let dimmedView = UIView().then {
         $0.backgroundColor = TDColor.baseBlack.withAlphaComponent(0.5)
         $0.alpha = 0
         $0.isHidden = true
     }
-    private let floatingActionMenuView = FloatingActionMenuView()
-    private let buttonShadowWrapper = UIView()
-    private let eventMakorFloattingButton = TDBaseButton(
+    let floatingActionMenuView = FloatingActionMenuView()
+    let buttonShadowWrapper = UIView()
+    let eventMakorFloattingButton = TDBaseButton(
         image: TDImage.addLarge,
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,

@@ -253,15 +253,24 @@ extension HomeViewController: UIGestureRecognizerDelegate {
         if let view = touch.view, view is UIControl {
             return false
         }
-
-        var currentView: UIView? = touch.view
-        while let view = currentView {
+        
+        let tableView = (cachedViewControllers[1] as? TodoViewController)?
+            .todoTableView
+        let locationInTable = touch.location(in: tableView)
+        if let tableView = tableView, tableView.bounds.contains(locationInTable) {
+            if tableView.indexPathForRow(at: locationInTable) == nil {
+                return true
+            }
+            return false
+        }
+        
+        var current: UIView? = touch.view
+        while let view = current {
             if view is UIScrollView {
                 return false
             }
-            currentView = view.superview
+            current = view.superview
         }
-
         return true
     }
 }
