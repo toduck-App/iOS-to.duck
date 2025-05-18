@@ -19,6 +19,8 @@ final class TimeSlotTableViewCell: UITableViewCell {
     private let maxButtonWidth: CGFloat = LayoutConstants.buttonContainerWidth
     private var oldEventDetailViewBounds: CGRect = .zero
     private var didSetCornerRadius = false
+    private var isSwipeOpened: Bool = false
+    var segmentSwipeAction: (() -> Void)?
     var editAction: (() -> Void)?
     var deleteAction: (() -> Void)?
     
@@ -227,6 +229,8 @@ final class TimeSlotTableViewCell: UITableViewCell {
             options: .curveEaseOut
         ) {
             self.applyTransform(offset: targetOffset)
+        } completion: { _ in
+            self.isSwipeOpened = shouldOpen
         }
     }
     
@@ -249,7 +253,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         case .changed:
             handlePanChanged(translation: translation)
         case .ended, .cancelled:
-            handlePanEnded(velocity: velocity)
+            handlePanEnded(translation: translation.x, velocity: velocity.x)
         default:
             break
         }
@@ -260,9 +264,19 @@ final class TimeSlotTableViewCell: UITableViewCell {
         applyTransform(offset: offset)
     }
     
-    private func handlePanEnded(velocity: CGPoint) {
-        let shouldOpen = shouldRevealButtons(velocityX: velocity.x)
-        animateButtons(shouldOpen: shouldOpen)
+    private func handlePanEnded(translation: CGFloat, velocity: CGFloat) {
+        let shouldOpen = shouldRevealButtons(velocityX: velocity)
+        
+        // 닫힌 상태에서(shouldOpen == false && !isSwipeOpened) 좌→우 스와이프 속도가 일정 이상이면
+        if !shouldOpen && !isSwipeOpened && (translation > 30 || velocity > 500) {
+            // 세그먼트 전환 콜백 실행
+            segmentSwipeAction?()
+            // 셀을 제자리로 복귀
+            animateButtons(shouldOpen: false)
+        } else {
+            // 기존 로직대로 버튼 열기/닫기
+            animateButtons(shouldOpen: shouldOpen)
+        }
     }
     
     private func calculateOffset(translationX: CGFloat) -> CGFloat {

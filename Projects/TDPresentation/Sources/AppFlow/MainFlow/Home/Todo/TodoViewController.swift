@@ -91,7 +91,9 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     private func fetchWeekTodo(for date: Date) {
-        guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date) else { return }
+        guard
+            let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date)
+        else { return }
         
         let startDate = weekInterval.start.convertToString(formatType: .yearMonthDay)
         let endDate = Calendar.current.date(
@@ -105,9 +107,11 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     // MARK: 플로팅 버튼 처리
     private func setupFloatingUIInWindow() {
-        guard !didAddDimmedView,
-              let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+        guard
+            !didAddDimmedView,
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = windowScene.windows.first(where: { $0.isKeyWindow })
+        else { return }
         
         addFloatingViewsToWindow(window)
         setupFloatingConstraints(in: window)
@@ -464,6 +468,7 @@ extension TodoViewController {
                 }
                 
                 cell.configure(startHour: startHour, endHour: endHour)
+                
                 return cell
             }
         }
@@ -512,6 +517,13 @@ extension TodoViewController {
                 self?.presentPopup(with: deleteEventViewController)
             }
         )
+        
+        cell.segmentSwipeAction = { [weak self] in
+            NotificationCenter.default.post(
+                name: .didSwipeCellToSegmentLeft,
+                object: nil
+            )
+        }
         
         return cell
     }

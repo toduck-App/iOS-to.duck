@@ -23,6 +23,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         setupSegmentedControl()
         setupNavigationBar()
         setupSwipeGestures()
+        setupNotification()
         updateView()
     }
     
@@ -111,6 +112,21 @@ final class HomeViewController: BaseViewController<BaseView> {
         default:
             break
         }
+    }
+    
+    private func setupNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCellSwipeForSegment),
+            name: .didSwipeCellToSegmentLeft,
+            object: nil
+        )
+    }
+    
+    @objc
+    private func handleCellSwipeForSegment() {
+        segmentedControl.setSelectedIndex(0)
+        updateView()
     }
     
     // MARK: - View Update
