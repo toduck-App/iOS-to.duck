@@ -21,5 +21,6 @@ public struct AwsServiceImpl: AwsService {
     }
 
     public func requestUploadImage(url: URL, data: Data) async throws {
-        let response = try await provider.requestString(.uploadImage(url: url, data: data))}
+        try await provider.requestString(.uploadImage(url: url, data: data))
+    }
 }

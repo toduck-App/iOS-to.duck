@@ -106,7 +106,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 case .logoutFinished:
-                    self?.coordinator?.didTapLogoutButton()
+                    NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
                 case .fetchedUserDetail(let user, let userDetail):
                     let followingCount = userDetail.followingCount
                     let followerCount = userDetail.followerCount
