@@ -11,5 +11,5 @@ public protocol TodoItem: Hashable {
     var alarmTime: AlarmTime? { get }
     var memo: String? { get }
     var isFinished: Bool { get }
-    var eventMode: TDEventMode { get }
+    var eventMode: TDTodoMode { get }
 }

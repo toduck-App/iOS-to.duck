@@ -3,21 +3,22 @@ import TDDomain
 import TDDesign
 import UIKit
 
-protocol DetailEventViewControllerDelegate: AnyObject {
+protocol DetailTodoViewControllerDelegate: AnyObject {
     func didTapDeleteButton(event: TodoDisplayItem)
     func didTapTomorrowButton(event: TodoDisplayItem)
+    func didTapEditButton(event: TodoDisplayItem, mode: TDTodoMode)
 }
 
-final class DetailEventViewController: TDPopupViewController<DetailEventView> {
+final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
     // MARK: - Properties
-    private let mode: TDEventMode
+    private let mode: TDTodoMode
     private let todo: TodoDisplayItem
     private let currentDate: String
-    weak var delegate: DetailEventViewControllerDelegate?
+    weak var delegate: DetailTodoViewControllerDelegate?
     
     // MARK: - Initializer
     init(
-        mode: TDEventMode,
+        mode: TDTodoMode,
         todo: TodoDisplayItem,
         currentDate: String
     ) {
@@ -51,7 +52,7 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
     
     /// 버튼 액션을 설정
     private func setupButtonActions() {
-        popupContentView.cancelButton.addAction(UIAction { [weak self] _ in
+        popupContentView.closeButton.addAction(UIAction { [weak self] _ in
             self?.dismissPopup()
         }, for: .touchUpInside)
         
@@ -66,6 +67,19 @@ final class DetailEventViewController: TDPopupViewController<DetailEventView> {
             delegate?.didTapTomorrowButton(event: todo)
             dismissPopup()
         }, for: .touchUpInside)
+        
+        popupContentView.editAreaView.addGestureRecognizer(
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(editButtonTapped)
+            )
+        )
+    }
+    
+    @objc
+    private func editButtonTapped() {
+        dismissPopup()
+        delegate?.didTapEditButton(event: todo, mode: mode)
     }
     
     // MARK: - UI Configuration

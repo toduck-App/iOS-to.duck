@@ -14,7 +14,7 @@ public struct Schedule: TodoItem {
     public let memo: String?
     public let isFinished: Bool
     public let scheduleRecords: [ScheduleRecord]?
-    public let eventMode: TDEventMode = .schedule
+    public let eventMode: TDTodoMode = .schedule
     
     public var isRepeating: Bool {
         repeatDays != nil || startDate != endDate

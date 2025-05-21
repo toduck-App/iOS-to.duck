@@ -2,14 +2,14 @@ import SnapKit
 import TDDesign
 import UIKit
 
-final class DetailEventView: BaseView {
+final class DetailTodoView: BaseView {
     private let containerView = UIView().then {
         $0.backgroundColor = TDColor.baseWhite
     }
     
     /// 네비게이션
     private let navigationContainerView = UIView()
-    let cancelButton = TDBaseButton(
+    let closeButton = TDBaseButton(
         image: TDImage.X.x1Medium,
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral700
@@ -28,6 +28,8 @@ final class DetailEventView: BaseView {
         toduckFont: TDFont.mediumBody2,
         toduckColor: TDColor.Neutral.neutral600
     )
+    
+    let editAreaView = UIView()
     let categoryImageView = TDCategoryCircleView()
     let eventTitleContainerView = UIView()
     let eventTitleLabel = TDLabel(
@@ -101,29 +103,30 @@ final class DetailEventView: BaseView {
         
         /// 네비게이션
         containerView.addSubview(navigationContainerView)
-        navigationContainerView.addSubview(cancelButton)
+        navigationContainerView.addSubview(closeButton)
         navigationContainerView.addSubview(titleLabel)
         navigationContainerView.addSubview(alarmImageView)
         
         /// 일정 정보 (날짜, 카테고리, 제목)
         containerView.addSubview(dateLabel)
-        containerView.addSubview(categoryImageView)
-        containerView.addSubview(eventTitleContainerView)
+        containerView.addSubview(editAreaView)
+        editAreaView.addSubview(categoryImageView)
+        editAreaView.addSubview(eventTitleContainerView)
         eventTitleContainerView.addSubview(eventTitleLabel)
         
         /// 일정 내용 (시간, 반복, 장소)
-        containerView.addSubview(eventInfoVerticalStackView)
+        editAreaView.addSubview(eventInfoVerticalStackView)
         eventInfoVerticalStackView.addArrangedSubview(timeDetailView)
         eventInfoVerticalStackView.addArrangedSubview(repeatDetailView)
         eventInfoVerticalStackView.addArrangedSubview(placeDetailView)
         eventInfoVerticalStackView.addArrangedSubview(lockDetailView)
         
         /// 메모
-        containerView.addSubview(memoHorizontalStackView)
+        editAreaView.addSubview(memoHorizontalStackView)
         memoHorizontalStackView.addArrangedSubview(memoImageView)
         memoHorizontalStackView.addArrangedSubview(memoLabel)
         memoHorizontalStackView.addArrangedSubview(memoDescriptionLabel)
-        containerView.addSubview(memoContentContainerView)
+        editAreaView.addSubview(memoContentContainerView)
         memoContentContainerView.addSubview(memoContentLabel)
         
         /// 버튼
@@ -143,19 +146,19 @@ final class DetailEventView: BaseView {
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.navigationHorizontalInset)
             $0.height.equalTo(LayoutConstants.navigationHeight)
         }
-        cancelButton.snp.makeConstraints {
+        closeButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
-            $0.width.height.equalTo(LayoutConstants.cancelButtonSize)
+            $0.size.equalTo(LayoutConstants.cancelButtonSize)
         }
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalTo(cancelButton)
+            $0.centerY.equalTo(closeButton)
             $0.width.equalTo(LayoutConstants.titleLabelWidth)
         }
         alarmImageView.snp.makeConstraints {
-            $0.centerY.equalTo(cancelButton)
+            $0.centerY.equalTo(closeButton)
             $0.trailing.equalToSuperview()
-            $0.width.height.equalTo(LayoutConstants.alarmImageSize)
+            $0.size.equalTo(LayoutConstants.alarmImageSize)
         }
         
         dateLabel.snp.makeConstraints {
@@ -163,16 +166,20 @@ final class DetailEventView: BaseView {
             $0.leading.equalToSuperview().inset(LayoutConstants.dateLeadingInset)
             $0.height.equalTo(20)
         }
-        categoryImageView.snp.makeConstraints {
+        editAreaView.snp.makeConstraints {
             $0.top.equalTo(dateLabel.snp.bottom).offset(LayoutConstants.categoryTopOffset)
-            $0.leading.equalTo(dateLabel)
-            $0.width.height.equalTo(LayoutConstants.categorySize)
+            $0.leading.trailing.equalToSuperview().inset(18)
+            $0.bottom.equalTo(buttonContainerHorizontalStackView.snp.top).offset(-12)
+        }
+        
+        categoryImageView.snp.makeConstraints {
+            $0.top.leading.equalToSuperview()
+            $0.size.equalTo(LayoutConstants.categorySize)
         }
         eventTitleContainerView.snp.makeConstraints {
             $0.leading.equalTo(categoryImageView.snp.trailing).offset(LayoutConstants.eventTitleLeadingOffset)
-            $0.trailing.equalToSuperview().inset(LayoutConstants.eventTitleTrailingInset)
+            $0.trailing.equalToSuperview()
             $0.centerY.equalTo(categoryImageView)
-            $0.top.bottom.equalTo(categoryImageView)
         }
         eventTitleLabel.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(LayoutConstants.eventTitleInsets)
@@ -180,24 +187,23 @@ final class DetailEventView: BaseView {
         
         eventInfoVerticalStackView.snp.makeConstraints {
             $0.top.equalTo(categoryImageView.snp.bottom).offset(LayoutConstants.eventInfoTopOffset)
-            $0.trailing.equalToSuperview().inset(LayoutConstants.eventInfoTrailingInset)
-            $0.leading.equalToSuperview().inset(LayoutConstants.eventInfoLeadingInset)
+            $0.leading.trailing.equalToSuperview()
         }
         
         memoHorizontalStackView.snp.makeConstraints {
             $0.top.equalTo(eventInfoVerticalStackView.snp.bottom).offset(LayoutConstants.memoStackTopOffset)
-            $0.leading.equalToSuperview().inset(LayoutConstants.eventInfoLeadingInset)
+            $0.leading.equalToSuperview()
         }
         memoContentContainerView.snp.makeConstraints {
             $0.top.equalTo(memoHorizontalStackView.snp.bottom).offset(LayoutConstants.memoContentTopOffset)
-            $0.leading.trailing.equalToSuperview().inset(LayoutConstants.memoContentHorizontalInset)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         memoContentLabel.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(LayoutConstants.memoContentInsets)
         }
         
         buttonContainerHorizontalStackView.snp.makeConstraints {
-            $0.top.equalTo(memoContentContainerView.snp.bottom).offset(LayoutConstants.buttonContainerTopOffset)
+            $0.top.equalTo(editAreaView.snp.bottom).offset(LayoutConstants.buttonContainerTopOffset)
             $0.leading.trailing.bottom.equalToSuperview().inset(LayoutConstants.buttonContainerHorizontalInset)
             $0.height.equalTo(LayoutConstants.buttonContainerHeight)
         }
@@ -207,13 +213,14 @@ final class DetailEventView: BaseView {
         containerView.layer.cornerRadius = LayoutConstants.containerCornerRadius
         eventTitleContainerView.backgroundColor = TDColor.Neutral.neutral50
         eventTitleContainerView.layer.cornerRadius = LayoutConstants.eventTitleCornerRadius
+        editAreaView.backgroundColor = .white
         memoContentContainerView.backgroundColor = TDColor.Neutral.neutral50
         memoContentContainerView.layer.cornerRadius = LayoutConstants.memoContentCornerRadius
     }
 }
 
 // MARK: - Layout Constants
-extension DetailEventView {
+extension DetailTodoView {
     private enum LayoutConstants {
         // Container
         static let containerHorizontalInset: CGFloat = 16
@@ -228,7 +235,7 @@ extension DetailEventView {
         static let alarmImageSize: CGFloat = 24
         
         // Date Label
-        static let dateLeadingInset: CGFloat = 22
+        static let dateLeadingInset: CGFloat = 16
         
         // Category
         static let categoryTopOffset: CGFloat = 10
@@ -242,8 +249,8 @@ extension DetailEventView {
         
         // Event Info
         static let eventInfoTopOffset: CGFloat = 24
-        static let eventInfoLeadingInset: CGFloat = 22
-        static let eventInfoTrailingInset: CGFloat = 16
+        static let eventInfoLeadingInset: CGFloat = 16
+        static let eventInfoTrailingInset: CGFloat = 18
         static let eventInfoSpacing: CGFloat = 22
         
         // Memo
