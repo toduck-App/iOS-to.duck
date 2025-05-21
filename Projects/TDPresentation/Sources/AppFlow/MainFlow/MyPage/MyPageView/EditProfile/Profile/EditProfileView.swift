@@ -54,6 +54,10 @@ final class EditProfileView: BaseView {
         let image = UIImage(data: imageData) ?? TDImage.Profile.medium
         profileImageView.innerImageView.image = image
     }
+    
+    func configureImageViewWithDefaultImage() {
+        profileImageView.innerImageView.image = TDImage.Profile.medium
+    }
 }
 
 extension EditProfileView: TDFormTextFieldDelegate {

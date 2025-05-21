@@ -1,6 +1,7 @@
 import UIKit
 import TDDesign
 import Combine
+import Kingfisher
 
 final class EditProfileViewController: BaseViewController<EditProfileView> {
     private let viewModel: EditProfileViewModel
@@ -55,6 +56,22 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
     
     func updateNickName(nickName: String) {
         layoutView.nicknameField.setupTextField(nickName)
+    }
+    
+    func updateProfileImage(imageUrl: String?) {
+        guard let imageUrl, let url = URL(string: imageUrl) else {
+            layoutView.configureImageViewWithDefaultImage()
+            return
+        }
+        
+        layoutView.profileImageView.innerImageView.kf.setImage(
+            with: url,
+            placeholder: TDImage.Profile.medium,
+            options: [
+                .transition(.fade(0.2)),
+                .cacheOriginalImage
+            ]
+        )
     }
 }
 

@@ -23,6 +23,7 @@ final class MyPageViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var nickName: String?
+    private(set) var user: User?
     
     init(
         fetchUserNicknameUseCase: FetchUserNicknameUseCase,
@@ -63,6 +64,7 @@ final class MyPageViewModel: BaseViewModel {
         do {
             guard let userId = TDTokenManager.shared.userId else { return }
             let (user, userDetail) = try await fetchUserDetailUseCase.execute(id: userId)
+            self.user = user
             output.send(.fetchedUserDetail(user, userDetail))
         } catch {
             output.send(.failureAPI(error.localizedDescription))

@@ -166,7 +166,10 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         if let responderEvent = event as? CustomEventWrapper {
             if responderEvent.customType == .profileImageTapped {
                 if let nickName = viewModel.nickName {
-                    coordinator?.didTapProfileButton(nickName: nickName)
+                    coordinator?.didTapProfileButton(
+                        nickName: nickName,
+                        imageUrl: viewModel.user?.icon
+                    )
                 }
             }
         }
@@ -178,7 +181,10 @@ extension MyPageViewController: UICollectionViewDelegate {}
 extension MyPageViewController: MyPageSocialButtonDelegate {
     func didTapProfileButton() {
         if let nickName = viewModel.nickName {
-            coordinator?.didTapProfileButton(nickName: nickName)
+            coordinator?.didTapProfileButton(
+                nickName: nickName,
+                imageUrl: viewModel.user?.icon
+            )
         }
     }
 

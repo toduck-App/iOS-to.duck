@@ -1,10 +1,3 @@
-//
-//  MyPageCoordinator.swift
-//  toduck
-//
-//  Created by 박효준 on 7/16/24.
-//
-
 import TDCore
 import TDDomain
 import UIKit
@@ -70,14 +63,14 @@ extension MyPageCoordinator: NavigationDelegate {
         toduckCalendarCoordinator.start()
     }
 
-    func didTapProfileButton(nickName: String) {
+    func didTapProfileButton(nickName: String, imageUrl: String?) {
         let editProfileCoordinator = EditProfileCoordinator(
             navigationController: navigationController,
             injector: injector
         )
         editProfileCoordinator.finishDelegate = self
         childCoordinators.append(editProfileCoordinator)
-        editProfileCoordinator.start(nickName: nickName)
+        editProfileCoordinator.start(nickName: nickName, imageUrl: imageUrl)
         // MARK: 회원 정보 수정 은 추후에 구현
 //        let editProfileMenuCoordinator = EditProfileMenuCoordinator(
 //            navigationController: navigationController,
