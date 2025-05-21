@@ -24,6 +24,7 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
         layoutView.delegate = self
         layoutView.backgroundColor = .white
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            guard self?.layoutView.nicknameField.text.count ?? 0 >= 2 else { return }
             self?.input.send(.updateProfile)
         }, for: .touchUpInside)
         layoutView.profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapProfileImage)))
@@ -44,6 +45,8 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
                 switch event {
                 case .updatedProfile:
                     self?.coordinator?.finish(by: .pop)
+                case .failureNickname(let message):
+                    self?.showErrorAlert(titleError: "죄송해요 !", errorMessage: message)
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -62,7 +65,11 @@ extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate 
         didUpdateCondition isConditionMet: Bool
     ) {
         input.send(.writeNickname(nickname: text))
-        layoutView.saveButton.isEnabled = isConditionMet
+        if layoutView.nicknameField.text.count < 2 {
+            layoutView.saveButton.isEnabled = false
+        } else {
+            layoutView.saveButton.isEnabled = true
+        }
     }
     
     @objc

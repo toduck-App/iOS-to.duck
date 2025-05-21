@@ -1,10 +1,3 @@
-//
-//  EditPasswordView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import UIKit
 import SnapKit
 
