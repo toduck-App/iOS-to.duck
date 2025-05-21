@@ -41,6 +41,25 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         applyNavigationAppearance(for: theme)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        if isTimerRunning,
+           let selectedVC = tabBarController?.selectedViewController,
+           selectedVC != self.navigationController {
+            input.send(.didTapPauseTimerButton)
+            isTimerRunning = false
+            updateTimerRunning(false)
+            layoutView.leftNavigationItem.isUserInteractionEnabled = true
+            showToast(
+                type: .orange,
+                title: "집중 타이머를 잠시 멈췄어요",
+                message: "20초 안에 재시작하면 집중시간이 이어집니다",
+                duration: 20
+            )
+        }
+    }
+    
     // MARK: - Common Methods
     
     override func configure() {
@@ -83,7 +102,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
                         message: "잘했어요 ! 이대로 집중하는 습관을 천천히 길러봐요 !",
                         duration: nil
                     )
-                    self?.tabBarController?.tabBar.isUserInteractionEnabled = true
                     self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
                 case .finishedRestTimer:
                     HapticManager.impact(.soft)
@@ -162,7 +180,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         dismissToast()
         updateTimerRunning(true)
         layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.filter { $0 != .timerSetting }.map { $0.dropDownItem }
-        tabBarController?.tabBar.isUserInteractionEnabled = false
         layoutView.leftNavigationItem.isUserInteractionEnabled = false
     }
     
@@ -176,7 +193,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             message: "20초 안에 재시작하면 집중시간이 이어집니다",
             duration: 20
         )
-        tabBarController?.tabBar.isUserInteractionEnabled = true
         layoutView.leftNavigationItem.isUserInteractionEnabled = true
     }
     
@@ -197,7 +213,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             self?.input.send(.didTapStopTimerButton)
             self?.dismissToast()
             self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
-            self?.tabBarController?.tabBar.isUserInteractionEnabled = true
             self?.layoutView.leftNavigationItem.isUserInteractionEnabled = true
         }
         presentPopup(with: timerCautionPopupViewController)
