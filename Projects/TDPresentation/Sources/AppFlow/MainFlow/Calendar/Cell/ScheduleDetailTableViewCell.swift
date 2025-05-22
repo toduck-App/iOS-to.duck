@@ -34,7 +34,6 @@ final class ScheduleDetailTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         resetCellState()
-        todoDetailView.transform = .identity
     }
     
     override func layoutSubviews() {
@@ -44,6 +43,7 @@ final class ScheduleDetailTableViewCell: UITableViewCell {
     
     private func resetCellState() {
         todoDetailView.resetForReuse()
+        todoDetailView.transform = .identity
     }
     
     // MARK: - Configuration

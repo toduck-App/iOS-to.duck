@@ -271,7 +271,6 @@ final class TimeSlotTableViewCell: UITableViewCell {
             animateButtons(shouldOpen: false)
             segmentSwipeAction?()
         } else {
-            // 기존 로직대로 버튼 열기/닫기
             animateButtons(shouldOpen: shouldOpen)
         }
     }
