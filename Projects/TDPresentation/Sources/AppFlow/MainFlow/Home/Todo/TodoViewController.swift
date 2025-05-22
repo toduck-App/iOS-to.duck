@@ -223,9 +223,11 @@ final class TodoViewController: BaseViewController<BaseView> {
                         .deletedTodo:
                     self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
-                    let todoDisplayItem = TodoDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
-                    let detailEventViewController = DetailTodoViewController(mode: .routine, todo: todoDisplayItem, currentDate: currentDate)
+                    let detailEventViewController = DetailTodoViewController(
+                        todo: routine,
+                        currentDate: currentDate
+                    )
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
                 case .unionedTodoList:
@@ -395,28 +397,15 @@ extension TodoViewController: UITableViewDelegate {
         let detailEventViewController: DetailTodoViewController
         let currentDate = selectedDate.convertToString(formatType: .yearMonthDayKorean)
         
-        // TODO: 로직 개선하기
-        /// 현재 로직에서 일정은 그냥 바로 팝업 띄우고,
-        /// 루틴은 추가 정보가 필요해서 루틴 상세 API를 조회하고, binding 메소드에서 팝업 띄우게 해뒀음
         switch item {
         case .allDay(let event, _):
-            if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailTodoViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
-                detailEventViewController.delegate = self
-                presentPopup(with: detailEventViewController)
-            } else {
-                input.send(.fetchRoutineDetail(event))
-            }
+            detailEventViewController = DetailTodoViewController(todo: event, currentDate: currentDate)
+            detailEventViewController.delegate = self
+            presentPopup(with: detailEventViewController)
         case .timeEvent(_, let event, _):
-            if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailTodoViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
-                detailEventViewController.delegate = self
-                presentPopup(with: detailEventViewController)
-            } else {
-                input.send(.fetchRoutineDetail(event))
-            }
+            detailEventViewController = DetailTodoViewController(todo: event, currentDate: currentDate)
+            detailEventViewController.delegate = self
+            presentPopup(with: detailEventViewController)
         case .gap(_, _):
             break
         }
@@ -498,9 +487,8 @@ extension TodoViewController {
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in
-                let mode: TodoCreatorViewController.Mode = todoDisplayItem.eventMode == .schedule ? .schedule : .routine
                 self?.delegate?.didTapEventMakor(
-                    mode: mode,
+                    mode: todoDisplayItem.eventMode,
                     selectedDate: self?.selectedDate,
                     preEvent: event,
                     delegate: self
@@ -602,7 +590,6 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
 
 // MARK: - EventMakorCoordinatorDelegate
 extension TodoViewController: TodoCreatorCoordinatorDelegate {
-    
     func didTapSaveButton(createdDate: Date) {
         updateWeekCalendarForDate(at: createdDate)
     }
@@ -610,7 +597,7 @@ extension TodoViewController: TodoCreatorCoordinatorDelegate {
 
 // MARK: - DetailEventViewControllerDelegate
 extension TodoViewController: DetailTodoViewControllerDelegate {
-    func didTapDeleteButton(event: TodoDisplayItem) {
+    func didTapDeleteButton(event: any TDDomain.TodoItem) {
         let deleteEventViewController = DeleteEventViewController(
             eventId: event.id,
             isRepeating: event.isRepeating,
@@ -620,17 +607,16 @@ extension TodoViewController: DetailTodoViewControllerDelegate {
         presentPopup(with: deleteEventViewController)
     }
     
-    func didTapTomorrowButton(event: TodoDisplayItem) {
+    func didTapTomorrowButton(event: any TDDomain.TodoItem) {
         if let id = event.id {
             input.send(.moveToTomorrow(todoId: id, event: event))
         }
     }
     
-    func didTapEditButton(event: TodoDisplayItem, mode: TDTodoMode) {
-        let editMode: TodoCreatorViewController.Mode = event.eventMode == .schedule ? .schedule : .routine
+    func didTapEditButton(event: any TodoItem) {
         // TODO: 타입캐스팅 문제해결
         delegate?.didTapEventMakor(
-            mode: editMode,
+            mode: event.eventMode,
             selectedDate: selectedDate,
             preEvent: event,
             delegate: self

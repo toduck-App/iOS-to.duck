@@ -29,7 +29,7 @@ final class TodoCreatorViewModel: BaseViewModel {
         case failureAPI(String)
     }
     
-    private let mode: TodoCreatorViewController.Mode
+    private let mode: TDTodoMode
     private let output = PassthroughSubject<Output, Never>()
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
@@ -59,7 +59,7 @@ final class TodoCreatorViewModel: BaseViewModel {
     
     // MARK: - Initializer
     init(
-        mode: TodoCreatorViewController.Mode,
+        mode: TDTodoMode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,

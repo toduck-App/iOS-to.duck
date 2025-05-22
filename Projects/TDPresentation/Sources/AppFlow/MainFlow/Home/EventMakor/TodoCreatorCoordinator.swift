@@ -25,7 +25,7 @@ final class TodoCreatorCoordinator: Coordinator {
         self.selectedDate = selectedDate
     }
     
-    func start(mode: TodoCreatorViewController.Mode, preEvent: (any TodoItem)?) {
+    func start(mode: TDTodoMode, preEvent: (any TodoItem)?) {
         let createScheduleUseCase = injector.resolve(CreateScheduleUseCase.self)
         let createRoutineUseCase = injector.resolve(CreateRoutineUseCase.self)
         let fetchRoutineListUseCase = injector.resolve(FetchCategoriesUseCase.self)

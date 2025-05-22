@@ -6,7 +6,6 @@ final class TodoViewModel: BaseViewModel {
     enum Input {
         case didSelectedDate(date: Date)
         case fetchWeeklyTodoList(startDate: String, endDate: String)
-        case fetchRoutineDetail(any TodoItem)
         case deleteTodayTodo(todoId: Int, isSchedule: Bool)
         case deleteAllTodo(todoId: Int, isSchedule: Bool)
         case checkBoxTapped(todo: any TodoItem)
@@ -81,8 +80,6 @@ final class TodoViewModel: BaseViewModel {
                 switch event {
                 case .fetchWeeklyTodoList(let startDate, let endDate):
                     Task { await self?.fetchWeeklyTodoList(startDate: startDate, endDate: endDate) }
-                case .fetchRoutineDetail(let todo):
-                    Task { await self?.fetchRoutineDetail(with: todo) }
                 case .moveToTomorrow(let todoId, let event):
                     self?.handleMoveToTomorrow(todoId: todoId, event: event)
                 case .deleteTodayTodo(let todoId, let isSchedule):

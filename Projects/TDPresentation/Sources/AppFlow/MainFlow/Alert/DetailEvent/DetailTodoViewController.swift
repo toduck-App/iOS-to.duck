@@ -4,25 +4,22 @@ import TDDesign
 import UIKit
 
 protocol DetailTodoViewControllerDelegate: AnyObject {
-    func didTapDeleteButton(event: TodoDisplayItem)
-    func didTapTomorrowButton(event: TodoDisplayItem)
-    func didTapEditButton(event: TodoDisplayItem, mode: TDTodoMode)
+    func didTapDeleteButton(event: any TodoItem)
+    func didTapTomorrowButton(event: any TodoItem)
+    func didTapEditButton(event: any TodoItem)
 }
 
 final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
     // MARK: - Properties
-    private let mode: TDTodoMode
-    private let todo: TodoDisplayItem
+    private let todo: any TodoItem
     private let currentDate: String
     weak var delegate: DetailTodoViewControllerDelegate?
     
     // MARK: - Initializer
     init(
-        mode: TDTodoMode,
-        todo: TodoDisplayItem,
+        todo: any TodoItem,
         currentDate: String
     ) {
-        self.mode = mode
         self.todo = todo
         self.currentDate = currentDate
         super.init()
@@ -45,7 +42,7 @@ final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
         configureTitle()
         configureEventDetails()
         configureVisibility()
-        if mode == .routine {
+        if todo.eventMode == .routine {
             popupContentView.delayToTomorrowButton.isHidden = true
         }
     }
@@ -79,33 +76,52 @@ final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
     @objc
     private func editButtonTapped() {
         dismissPopup()
-        delegate?.didTapEditButton(event: todo, mode: mode)
+        delegate?.didTapEditButton(event: todo)
     }
     
     // MARK: - UI Configuration
     /// 제목 설정
     private func configureTitle() {
-        let title = mode == .schedule ? "일정 상세보기" : "루틴 상세보기"
+        let title = todo.eventMode == .schedule ? "일정 상세보기" : "루틴 상세보기"
         popupContentView.titleLabel.setText(title)
     }
     
     /// 이벤트 정보 설정
     private func configureEventDetails() {
+        configureDateAndAlarm()
+        configureCategoryAndTitle()
+        configureTime()
+        configureRepeatDays()
+        configureMemo()
+    }
+
+    private func configureDateAndAlarm() {
         popupContentView.dateLabel.setText(currentDate)
         popupContentView.alarmImageView.image = todo.alarmTime != nil
             ? TDImage.Bell.ringingMedium
             : TDImage.Bell.offMedium
-        
+    }
+
+    private func configureCategoryAndTitle() {
         popupContentView.categoryImageView.configure(
             radius: 12,
             backgroundColor: todo.categoryColor,
             category: todo.categoryIcon ?? TDImage.Tomato.tomatoSmallEmtpy
         )
         popupContentView.eventTitleLabel.setText(todo.title)
-        
-        popupContentView.timeDetailView.updateDescription(todo.time ?? "없음")
-        let repeatString = todo.repeatDays == nil ? "없음" : todo.repeatDays!.map { $0.title }.joined(separator: ", ")
+    }
+
+    private func configureTime() {
+        let timeText = todo.isAllDay ? "종일" : (todo.time ?? "없음")
+        popupContentView.timeDetailView.updateDescription(timeText)
+    }
+
+    private func configureRepeatDays() {
+        let repeatString = todo.repeatDays?.map { $0.title }.joined(separator: ", ") ?? "없음"
         popupContentView.repeatDetailView.updateDescription(repeatString)
+    }
+
+    private func configureMemo() {
         if let memo = todo.memo {
             popupContentView.memoContentLabel.setText(memo)
             popupContentView.memoContentLabel.setColor(TDColor.Neutral.neutral800)
@@ -117,12 +133,12 @@ final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
     
     /// 루틴과 일정에 따라 UI를 다르게 설정
     private func configureVisibility() {
-        if mode == .routine {
+        if todo.eventMode == .routine, let routine = todo as? Routine {
             popupContentView.placeDetailView.isHidden = true
-            popupContentView.lockDetailView.updateDescription(todo.isPublic ? "공개" : "비공개")
-        } else {
+            popupContentView.lockDetailView.updateDescription(routine.isPublic ? "공개" : "비공개")
+        } else if todo.eventMode == .schedule, let schedule = todo as? Schedule {
             popupContentView.lockDetailView.isHidden = true
-            popupContentView.placeDetailView.updateDescription(todo.place ?? "없음")
+            popupContentView.placeDetailView.updateDescription(schedule.place ?? "없음")
         }
     }
 }
