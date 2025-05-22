@@ -27,7 +27,7 @@ final class SocialProfileView: BaseView {
     
     private let nickNameLabel = TDLabel(toduckFont: .boldHeader4, toduckColor: TDColor.Neutral.neutral800)
     
-    private let titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
+//    private let titleBagde = TDBadge(badgeTitle: "", backgroundColor: TDColor.Primary.primary25, foregroundColor: TDColor.Primary.primary500)
     
     private let followingLabel = TDLabel(labelText: "팔로잉", toduckFont: .mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
     
@@ -99,7 +99,7 @@ final class SocialProfileView: BaseView {
         whiteBackgroundView.addSubview(avatarView)
         whiteBackgroundView.addSubview(followButton)
         whiteBackgroundView.addSubview(nickNameLabel)
-        whiteBackgroundView.addSubview(titleBagde)
+//        whiteBackgroundView.addSubview(titleBagde)
         whiteBackgroundView.addSubview(followingLabel)
         whiteBackgroundView.addSubview(followingCountLabel)
         whiteBackgroundView.addSubview(followerLabel)
@@ -135,10 +135,10 @@ final class SocialProfileView: BaseView {
             make.leading.equalTo(avatarView.snp.leading)
         }
         
-        titleBagde.snp.makeConstraints { make in
-            make.leading.equalTo(nickNameLabel.snp.trailing).offset(10)
-            make.centerY.equalTo(nickNameLabel)
-        }
+//        titleBagde.snp.makeConstraints { make in
+//            make.leading.equalTo(nickNameLabel.snp.trailing).offset(10)
+//            make.centerY.equalTo(nickNameLabel)
+//        }
         
         followingLabel.snp.makeConstraints { make in
             make.leading.equalTo(avatarView.snp.leading)
@@ -223,11 +223,17 @@ final class SocialProfileView: BaseView {
         }
         followButton.setTitle(isFollowing ? "팔로잉" : "팔로우", for: .normal)
         followButton.configuration?.baseForegroundColor = isFollowing ? TDColor.Neutral.neutral600 : TDColor.baseWhite
-        followButton.configuration?.baseBackgroundColor = isFollowing ? TDColor.Neutral.neutral100 : TDColor.Primary.primary500
+        followButton.configuration?.baseBackgroundColor = isFollowing ? TDColor.baseWhite : TDColor.Primary.primary500
+        if isFollowing {
+            followButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            followButton.layer.borderWidth = 1
+        } else {
+            followButton.layer.borderWidth = 0
+        }
     }
     
     public func configure(avatarURL: String?, badgeTitle: String, nickname: String) {
-        titleBagde.setTitle(badgeTitle)
+//        titleBagde.setTitle(badgeTitle)
         nickNameLabel.setText(nickname)
         if let avatarURL, let avatarURL = URL(string: avatarURL) {
             avatarView.kf.setImage(with: avatarURL)
