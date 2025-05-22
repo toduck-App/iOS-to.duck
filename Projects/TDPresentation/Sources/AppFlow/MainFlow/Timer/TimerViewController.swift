@@ -285,14 +285,23 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.bboduckTimerView.isHidden = theme == .simple
         
         // button theme
-        layoutView.playButton.configuration?.baseBackgroundColor = theme.buttonCenterBackgroundColor
-        layoutView.playButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
+        layoutView.playButton.configuration?.image = theme == .simple ? TDImage.Timer.playNeutral : TDImage.Timer.playPrimary
+        layoutView.pauseButton.configuration?.image = theme == .simple ? TDImage.Timer.pauseNeutral : TDImage.Timer.pausePrimary
+        layoutView.resetButton.configuration?.image = theme == .simple ? TDImage.Timer.resetNeutral : TDImage.Timer.resetPrimary
+        layoutView.stopButton.configuration?.image = theme == .simple ? TDImage.Timer.stopNeutral : TDImage.Timer.stopPrimary
         
-        layoutView.pauseButton.configuration?.baseBackgroundColor = theme.buttonCenterBackgroundColor
-        layoutView.pauseButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
-        
-        layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
-        layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonForegroundColor
+        if theme == .simple {
+            layoutView.playButton.configuration?.baseBackgroundColor = .white
+            layoutView.pauseButton.configuration?.baseBackgroundColor = .white
+            layoutView.resetButton.configuration?.baseBackgroundColor = .white
+            layoutView.stopButton.configuration?.baseBackgroundColor = .white
+        } else {
+            layoutView.resetButton.configuration?.baseBackgroundColor = .clear
+            layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
+            
+            layoutView.stopButton.configuration?.baseBackgroundColor = .clear
+            layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
+        }
         
         // background theme
         layoutView.backgroundColor = theme.backgroundColor

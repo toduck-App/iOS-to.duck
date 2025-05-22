@@ -7,7 +7,7 @@ final class TimerView: BaseView {
     let controlStack = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
-        $0.distribution = .fillProportionally
+        $0.distribution = .fillEqually
         $0.spacing = 22
     }
 
@@ -133,7 +133,7 @@ final class TimerView: BaseView {
         controlStack.snp.makeConstraints { make in
             make.bottom.equalTo(safeAreaLayoutGuide).inset(55)
             make.centerX.equalToSuperview()
-            make.height.equalTo(72)
+            make.height.equalTo(80)
         }
 
         bboduckTimerView.snp.makeConstraints { make in
