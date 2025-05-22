@@ -60,6 +60,7 @@ public enum TDImage {
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
+        public static let permissionCamera = TDDesignAsset.Images.permissionCamera.image
     }
     
     public enum CheckBox {

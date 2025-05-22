@@ -1,11 +1,11 @@
-import UIKit
-import Kingfisher
 import Combine
 import FSCalendar
+import Kingfisher
 import SnapKit
 import TDCore
-import TDDomain
 import TDDesign
+import TDDomain
+import UIKit
 
 protocol DiaryCalendarViewControllerDelegate: AnyObject {
     func didSelectDate(_ diaryCalendarViewController: DiaryCalendarViewController, selectedDate: Date, isWrited: Bool)
@@ -13,6 +13,7 @@ protocol DiaryCalendarViewControllerDelegate: AnyObject {
 
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
+
     private let contentStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
@@ -29,6 +30,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         $0.image = TDImage.noEvent
         $0.contentMode = .scaleAspectFit
     }
+
     private let noDiaryLabel = TDLabel(
         labelText: "일기를 작성하지 않았어요",
         toduckFont: TDFont.boldBody1,
@@ -40,6 +42,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     let dummyView = UIView()
     
     // MARK: - Properties
+
     private let viewModel: DiaryCalendarViewModel
     private let input = PassthroughSubject<DiaryCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -74,6 +77,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Common Methods
+
     override func addView() {
         view.addSubview(contentStackView)
         
@@ -151,7 +155,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         calendarHeaderContainerView.layer.borderColor = TDColor.Neutral.neutral200.cgColor
         calendarHeaderContainerView.layer.cornerRadius = 8
         diaryDetailView.dropDownHoverView.delegate = self
-        diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map { $0.dropDownItem }
+        diaryDetailView.dropDownHoverView.dataSource = DiaryEditType.allCases.map(\.dropDownItem)
         diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
             self?.diaryDetailView.dropDownHoverView.showDropDown()
         }, for: .touchUpInside)
@@ -195,11 +199,12 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: 일기 불러온 후 이미지 불러오기
+
     private func updateDiaryView(with diary: Diary? = nil) {
         updateContainerVisibility(for: diary)
         delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: diary != nil)
         
-        guard let diary = diary else { return }
+        guard let diary else { return }
         
         if let imageURLs = diary.diaryImageUrls, !imageURLs.isEmpty {
             loadImages(from: imageURLs) { [weak self] loadedImages in
@@ -353,17 +358,26 @@ extension DiaryCalendarViewController: DeleteEventViewControllerDelegate {
         dismiss(animated: true)
     }
     
-    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) { }
+    func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {}
 }
 
 // MARK: - SocialAddPhotoViewDelegate
+
 extension DiaryCalendarViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
     func didSelectPhotos(_ picker: TDPhotoPickerController, photos: [Data]) {
         input.send(.setImages(photos))
     }
     
     func deniedPhotoAccess(_ picker: TDPhotoPickerController) {
-        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
+        showCommonAlert(
+            title: "카메라 사용에 대한 접근 권한이 없어요",
+            message: "[앱 설정 → 앱 이름] 탭에서 접근을 활성화 해주세요",
+            image: TDImage.Alert.permissionCamera,
+            cancelTitle: "취소",
+            confirmTitle: "설정으로 이동", onConfirm: {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        )
     }
     
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
