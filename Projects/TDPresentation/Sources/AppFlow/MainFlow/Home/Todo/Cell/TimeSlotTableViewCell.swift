@@ -10,14 +10,14 @@ final class TimeSlotTableViewCell: UITableViewCell {
         toduckColor: TDColor.Neutral.neutral800
     )
     private let shadowContainerView = UIView()
-    private let eventDetailView = TodoDetailView()
+    private let todoDetailView = TodoDetailView()
     private let buttonsContainerView = UIView()
     private let editButton = UIButton()
     private let deleteButton = UIButton()
     
     // MARK: - Properties
     private let maxButtonWidth: CGFloat = LayoutConstants.buttonContainerWidth
-    private var oldEventDetailViewBounds: CGRect = .zero
+    private var oldTodoDetailViewBounds: CGRect = .zero
     private var didSetCornerRadius = false
     private var isSwipeOpened: Bool = false
     var segmentSwipeAction: (() -> Void)?
@@ -55,22 +55,22 @@ final class TimeSlotTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let newBounds = eventDetailView.bounds
-        if newBounds != .zero && newBounds != oldEventDetailViewBounds {
+        let newBounds = todoDetailView.bounds
+        if newBounds != .zero && newBounds != oldTodoDetailViewBounds {
             configureCornerRadius()
-            oldEventDetailViewBounds = newBounds
+            oldTodoDetailViewBounds = newBounds
         }
     }
     
     private func resetCellState() {
         timeLabel.setText("")
-        eventDetailView.resetForReuse()
+        todoDetailView.resetForReuse()
         shadowContainerView.transform = .identity
         timeLabel.transform = .identity
         didSetCornerRadius = false
-        oldEventDetailViewBounds = .zero
+        oldTodoDetailViewBounds = .zero
         shadowContainerView.isHidden = false
-        eventDetailView.isHidden = false
+        todoDetailView.isHidden = false
     }
     
     // MARK: - Configuration
@@ -106,7 +106,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         // 이벤트 있을 경우
         shadowContainerView.isHidden = false
         let isNone = event.categoryIcon == TDImage.Category.none
-        eventDetailView.configureCell(
+        todoDetailView.configureCell(
             color: event.categoryColor,
             title: event.title,
             time: event.time,
@@ -118,7 +118,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
 
         // 액션 설정
         if let checkBoxAction {
-            eventDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
+            todoDetailView.configureButtonAction(checkBoxAction: checkBoxAction)
         }
 
         if let editAction, let deleteAction {
@@ -128,18 +128,18 @@ final class TimeSlotTableViewCell: UITableViewCell {
     }
     
     private func configureCornerRadius() {
-        eventDetailView.layer.cornerRadius = 8
-        eventDetailView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-        eventDetailView.clipsToBounds = true
+        todoDetailView.layer.cornerRadius = 8
+        todoDetailView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        todoDetailView.clipsToBounds = true
         
         let maskPath = UIBezierPath(
-            roundedRect: eventDetailView.bounds,
+            roundedRect: todoDetailView.bounds,
             byRoundingCorners: [.topLeft, .bottomLeft],
             cornerRadii: CGSize(width: 2, height: 2)
         )
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
-        eventDetailView.layer.mask = maskLayer
+        todoDetailView.layer.mask = maskLayer
     }
     
     private func configureShadow() {
@@ -155,7 +155,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
         contentView.addSubview(timeLabel)
         contentView.addSubview(buttonsContainerView)
         contentView.addSubview(shadowContainerView)
-        shadowContainerView.addSubview(eventDetailView)
+        shadowContainerView.addSubview(todoDetailView)
         buttonsContainerView.addSubview(editButton)
         buttonsContainerView.addSubview(deleteButton)
     }
@@ -174,7 +174,7 @@ final class TimeSlotTableViewCell: UITableViewCell {
             make.bottom.equalToSuperview()
         }
         
-        eventDetailView.snp.makeConstraints { make in
+        todoDetailView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(LayoutConstants.eventDetailInset)
         }
         
@@ -267,12 +267,9 @@ final class TimeSlotTableViewCell: UITableViewCell {
     private func handlePanEnded(translation: CGFloat, velocity: CGFloat) {
         let shouldOpen = shouldRevealButtons(velocityX: velocity)
         
-        // 닫힌 상태에서(shouldOpen == false && !isSwipeOpened) 좌→우 스와이프 속도가 일정 이상이면
         if !shouldOpen && !isSwipeOpened && (translation > 30 || velocity > 500) {
-            // 세그먼트 전환 콜백 실행
-            segmentSwipeAction?()
-            // 셀을 제자리로 복귀
             animateButtons(shouldOpen: false)
+            segmentSwipeAction?()
         } else {
             // 기존 로직대로 버튼 열기/닫기
             animateButtons(shouldOpen: shouldOpen)

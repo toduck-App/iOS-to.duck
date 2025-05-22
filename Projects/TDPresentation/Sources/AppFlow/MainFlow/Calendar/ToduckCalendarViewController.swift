@@ -341,14 +341,24 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ScheduleDetailCell.identifier,
+            withIdentifier: ScheduleDetailTableViewCell.identifier,
             for: indexPath
-        ) as? ScheduleDetailCell else { return UITableViewCell() }
+        ) as? ScheduleDetailTableViewCell else { return UITableViewCell() }
         
         let schedule = viewModel.currentDayScheduleList[indexPath.row]
-        cell.configure(with: schedule) { [weak self] in
-            self?.input.send(.checkBoxTapped(schedule))
-        }
+        
+        cell.configure(
+            with: schedule,
+            checkAction: { [weak self] in
+                self?.input.send(.checkBoxTapped(schedule))
+            },
+            editAction: {
+                print("Edit tapped for schedule: \(schedule.title)")
+            },
+            deleteAction: {
+                print("Delete tapped for schedule: \(schedule.title)")
+            }
+        )
         
         return cell
     }

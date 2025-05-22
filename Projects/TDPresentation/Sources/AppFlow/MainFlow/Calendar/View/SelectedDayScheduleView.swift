@@ -38,8 +38,8 @@ final class SelectedDayScheduleView: BaseView {
         backgroundColor = .white
         noScheduleLabel.isHidden = true
         scheduleTableView.register(
-            ScheduleDetailCell.self,
-            forCellReuseIdentifier: ScheduleDetailCell.identifier
+            ScheduleDetailTableViewCell.self,
+            forCellReuseIdentifier: ScheduleDetailTableViewCell.identifier
         )
     }
     
