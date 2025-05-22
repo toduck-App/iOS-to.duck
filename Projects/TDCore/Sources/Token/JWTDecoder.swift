@@ -1,7 +1,6 @@
 import Foundation
 
 public actor JWTDecoder {
-
     public static let shared = JWTDecoder()
     private init() {}
 
