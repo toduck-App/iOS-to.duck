@@ -11,8 +11,8 @@ final class SelectedDayScheduleView: BaseView {
         toduckFont: .boldHeader5,
         toduckColor: TDColor.Neutral.neutral700
     )
-    private let downDirectionImageView = UIImageView().then {
-        $0.image = TDImage.Direction.downMedium.withTintColor(TDColor.Neutral.neutral700)
+    private let addImageView = UIImageView().then {
+        $0.image = TDImage.addSmall.withTintColor(TDColor.Neutral.neutral600)
     }
     let headerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
@@ -48,7 +48,7 @@ final class SelectedDayScheduleView: BaseView {
         addSubview(scheduleTableView)
         headerView.addSubview(calendarImageView)
         headerView.addSubview(dateLabel)
-        headerView.addSubview(downDirectionImageView)
+        headerView.addSubview(addImageView)
         addSubview(noScheduleLabel)
     }
     
@@ -69,10 +69,10 @@ final class SelectedDayScheduleView: BaseView {
             $0.centerY.equalTo(headerView.snp.centerY)
         }
         
-        downDirectionImageView.snp.makeConstraints {
-            $0.trailing.equalTo(headerView.snp.trailing).offset(-21)
+        addImageView.snp.makeConstraints {
+            $0.trailing.equalTo(headerView.snp.trailing).offset(-16)
             $0.centerY.equalTo(headerView.snp.centerY)
-            $0.width.height.equalTo(24)
+            $0.size.equalTo(24)
         }
         
         scheduleTableView.snp.makeConstraints {
