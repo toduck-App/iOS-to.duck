@@ -614,7 +614,6 @@ extension TodoViewController: DetailTodoViewControllerDelegate {
     }
     
     func didTapEditButton(event: any TodoItem) {
-        // TODO: 타입캐스팅 문제해결
         delegate?.didTapEventMakor(
             mode: event.eventMode,
             selectedDate: selectedDate,

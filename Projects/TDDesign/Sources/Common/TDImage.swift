@@ -207,10 +207,14 @@ public enum TDImage {
     public enum Timer {
         public static let colorMedium = TDDesignAsset.Images.timerColorMedium.image
         public static let medium = TDDesignAsset.Images.timerMedium.image
-        public static let play = TDDesignAsset.Images.playMedium.image
-        public static let pause = TDDesignAsset.Images.pauseMedium.image
-        public static let reset = TDDesignAsset.Images.resetMedium.image
-        public static let stop = TDDesignAsset.Images.stopMedium.image
+        public static let playPrimary = TDDesignAsset.Images.playPrimary.image
+        public static let pausePrimary = TDDesignAsset.Images.pausePrimary.image
+        public static let resetPrimary = TDDesignAsset.Images.resetPrimary.image
+        public static let stopPrimary = TDDesignAsset.Images.stopPrimary.image
+        public static let playNeutral = TDDesignAsset.Images.playNeutral.image
+        public static let pauseNeutral = TDDesignAsset.Images.pauseNeutral.image
+        public static let resetNeutral = TDDesignAsset.Images.resetNeutral.image
+        public static let stopNeutral = TDDesignAsset.Images.stopNeutral.image
     }
     
     public enum X {
