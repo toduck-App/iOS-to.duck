@@ -219,8 +219,7 @@ final class TodoViewController: BaseViewController<BaseView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .fetchedTodoList,
-                        .deletedTodo:
+                case .fetchedTodoList:
                     self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
                     let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
@@ -236,7 +235,8 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.noTodoContainerView.isHidden = !isHidden
                     self?.todoTableView.isHidden = isHidden
                 case .successFinishTodo,
-                        .tomorrowTodoCreated:
+                        .tomorrowTodoCreated,
+                        .deletedTodo:
                     self?.fetchWeekTodo(for: self?.selectedDate ?? Date())
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
@@ -516,7 +516,7 @@ extension TodoViewController {
             }
         )
         
-        cell.segmentSwipeAction = { [weak self] in
+        cell.segmentSwipeAction = {
             NotificationCenter.default.post(
                 name: .didSwipeCellToSegmentLeft,
                 object: nil

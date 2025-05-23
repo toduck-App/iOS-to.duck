@@ -233,7 +233,6 @@ final class TodoViewModel: BaseViewModel {
                     keepRecords: true
                 )
             }
-            removeEventFromWeeklyList(eventId: routineId, isSchedule: false)
             output.send(.deletedTodo)
         } catch {
             output.send(.failure(error: "루틴을 삭제할 수 없습니다."))
