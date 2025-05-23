@@ -19,11 +19,11 @@ final class ToduckCalendarCoordinator: Coordinator {
     func start() {
         let fetchScheduleListUseCase = injector.resolve(FetchScheduleListUseCase.self)
         let finishScheduleUseCase = DIContainer.shared.resolve(FinishScheduleUseCase.self)
-        let finishRoutineUseCase = DIContainer.shared.resolve(FinishRoutineUseCase.self)
+        let deleteScheduleUseCase = injector.resolve(DeleteScheduleUseCase.self)
         let toduckCalendarViewModel = ToduckCalendarViewModel(
             fetchScheduleListUseCase: fetchScheduleListUseCase,
             finishScheduleUseCase: finishScheduleUseCase,
-            finishRoutineUseCase: finishRoutineUseCase
+            deleteScheduleUseCase: deleteScheduleUseCase
         )
         let toduckCalendarViewController = ToduckCalendarViewController(viewModel: toduckCalendarViewModel)
         toduckCalendarViewController.coordinator = self

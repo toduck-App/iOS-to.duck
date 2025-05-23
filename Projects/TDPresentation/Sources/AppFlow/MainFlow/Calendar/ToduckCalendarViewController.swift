@@ -30,7 +30,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var initialDetailViewState: DetailViewState = .topCollapsed
     private var currentMonthStartDate = Date().startOfMonth()
     private var currentMonthEndDate = Date().endOfMonth()
-    private var selectedDate: Date?
+    private var selectedDate = Date()
     weak var coordinator: ToduckCalendarCoordinator?
     
     // MARK: - Initializer
@@ -48,19 +48,14 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        input.send(
-            .fetchSchedule(
-                startDate: currentMonthStartDate.convertToString(formatType: .yearMonthDay),
-                endDate: currentMonthEndDate.convertToString(formatType: .yearMonthDay)
-            )
-        )
+        fetchScheduleList()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         view.bringSubviewToFront(selectedDayScheduleView)
-        input.send(.fetchDetailSchedule(date: selectedDate ?? Date()))
+        input.send(.fetchDetailSchedule(date: selectedDate))
     }
     
     override func viewDidLayoutSubviews() {
@@ -122,16 +117,20 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
+                guard let self else { return }
                 switch event {
                 case .fetchedScheduleList:
-                    self?.calendar.reloadData()
+                    calendar.reloadData()
+                    input.send(.fetchDetailSchedule(date: selectedDate ?? Date()))
                 case .fetchedDetailSchedule:
-                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
-                    self?.selectedDayScheduleView.noScheduleLabel.isHidden = !(self?.viewModel.currentDayScheduleList.isEmpty ?? true)
+                    selectedDayScheduleView.scheduleTableView.reloadData()
+                    selectedDayScheduleView.noScheduleLabel.isHidden = !(viewModel.currentDayScheduleList.isEmpty)
                 case .successFinishSchedule:
-                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                    selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
-                    self?.showErrorAlert(errorMessage: errorMessage)
+                    showErrorAlert(errorMessage: errorMessage)
+                case .deletedTodo:
+                    fetchScheduleList()
                 }
             }.store(in: &cancellables)
     }
@@ -139,9 +138,25 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private func selectToday() {
         let today = Date()
         calendar.select(today)
-        selectedDate = today
         viewModel.selectedDate = today
         selectedDayScheduleView.updateDateLabel(date: today)
+    }
+    
+    private func fetchScheduleList() {
+        guard
+            let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: calendar.currentPage)),
+            let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate)
+        else { return }
+        
+        currentMonthStartDate = startDate
+        currentMonthEndDate = endDate
+        
+        input.send(
+            .fetchSchedule(
+                startDate: currentMonthStartDate.convertToString(formatType: .yearMonthDay),
+                endDate: currentMonthEndDate.convertToString(formatType: .yearMonthDay)
+            )
+        )
     }
 }
 
@@ -259,18 +274,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let currentPage = calendar.currentPage
         updateHeaderLabel(for: currentPage)
-        
-        guard let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: currentPage)),
-              let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate) else {
-            return
-        }
-        
-        input.send(
-            .fetchSchedule(
-                startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay)
-            )
-        )
+        fetchScheduleList()
     }
     
     // MARK: - 날짜 폰트 색상
@@ -360,11 +364,38 @@ extension ToduckCalendarViewController: UITableViewDataSource {
                     delegate: nil
                 )
             },
-            deleteAction: {
-                print("Delete tapped for schedule: \(schedule.title)")
+            deleteAction: { [weak self] in
+                let deleteEventViewController = DeleteEventViewController(
+                    eventId: schedule.id,
+                    isRepeating: schedule.isRepeating,
+                    eventMode: .schedule
+                )
+                deleteEventViewController.delegate = self
+                self?.presentPopup(with: deleteEventViewController)
             }
         )
         
         return cell
+    }
+}
+
+// MARK: - DeleteEventViewControllerDelegate
+extension ToduckCalendarViewController: DeleteEventViewControllerDelegate {
+    func didTapTodayDeleteButton(
+        eventId: Int?,
+        eventMode: DeleteEventViewController.EventMode
+    ) {
+        if let eventId = eventId {
+            input.send(.deleteTodayTodo(scheduleId: eventId))
+        }
+    }
+    
+    func didTapAllDeleteButton(
+        eventId: Int?,
+        eventMode: DeleteEventViewController.EventMode
+    ) {
+        if let eventId = eventId {
+            input.send(.deleteAllTodo(scheduleId: eventId))
+        }
     }
 }
