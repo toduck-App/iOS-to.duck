@@ -14,11 +14,15 @@ final class ScheduleDetailTableViewCell: UITableViewCell {
     // MARK: Properties
     private let maxButtonWidth: CGFloat = 120
     private var initialOffset: CGFloat = 0
+    private var oldTodoDetailViewBounds: CGRect = .zero
     var editAction: (() -> Void)?
     var deleteAction: (() -> Void)?
     
     // MARK: Initializer
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?
+    ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
         setupButtons()
@@ -39,11 +43,18 @@ final class ScheduleDetailTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         configureCornerRadius()
+        
+        let newBounds = todoDetailView.bounds
+        if newBounds != .zero && newBounds != oldTodoDetailViewBounds {
+            configureCornerRadius()
+            oldTodoDetailViewBounds = newBounds
+        }
     }
     
     private func resetCellState() {
         todoDetailView.resetForReuse()
         todoDetailView.transform = .identity
+        oldTodoDetailViewBounds = .zero
     }
     
     // MARK: - Configuration
@@ -71,13 +82,15 @@ final class ScheduleDetailTableViewCell: UITableViewCell {
     // MARK: - View Setup
     private func setupViews() {
         selectionStyle = .none
+        contentView.backgroundColor = TDColor.Neutral.neutral50
         contentView.addSubview(buttonsContainerView)
         contentView.addSubview(todoDetailView)
         buttonsContainerView.addSubview(editButton)
         buttonsContainerView.addSubview(deleteButton)
         
         todoDetailView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(10)
+            make.top.equalToSuperview().offset(6)
+            make.bottom.equalToSuperview()
             make.leading.trailing.equalToSuperview()
         }
         

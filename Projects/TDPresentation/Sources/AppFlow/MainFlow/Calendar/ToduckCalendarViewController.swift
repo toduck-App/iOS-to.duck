@@ -45,6 +45,12 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        fetchScheduleList()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -108,7 +114,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         selectToday()
         calendarHeader.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
-        selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     }
     
     override func binding() {
@@ -121,7 +126,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedScheduleList:
                     calendar.reloadData()
-                    input.send(.fetchDetailSchedule(date: selectedDate ?? Date()))
+                    input.send(.fetchDetailSchedule(date: selectedDate))
                 case .fetchedDetailSchedule:
                     selectedDayScheduleView.scheduleTableView.reloadData()
                     selectedDayScheduleView.noScheduleLabel.isHidden = !(viewModel.currentDayScheduleList.isEmpty)
@@ -157,14 +162,6 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 endDate: currentMonthEndDate.convertToString(formatType: .yearMonthDay)
             )
         )
-    }
-}
-
-private extension ToduckCalendarViewController {
-    private enum Constant {
-        static let calendarHeaderTopOffset: CGFloat = 30
-        static let calendarTopOffset: CGFloat = 20
-        static let calendarHeight: CGFloat = 334
     }
     
     private func setupGesture() {
@@ -229,13 +226,11 @@ private extension ToduckCalendarViewController {
     private func adjustCalendarHeight(for detailViewState: DetailViewState) {
         let newCalendarHeight: CGFloat = Constant.calendarHeight
         
-        // 먼저 rowHeight를 계산
         let headerHeight = calendar.headerHeight
         let weekdayHeight = calendar.weekdayHeight
         let numberOfRows: CGFloat = 6 // 최대 6주
         let newRowHeight = (newCalendarHeight - headerHeight - weekdayHeight) / numberOfRows
         
-        // 애니메이션과 함께 변경사항 적용
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             guard let self else { return }
             self.calendar.rowHeight = newRowHeight
@@ -397,5 +392,14 @@ extension ToduckCalendarViewController: DeleteEventViewControllerDelegate {
         if let eventId = eventId {
             input.send(.deleteAllTodo(scheduleId: eventId))
         }
+    }
+}
+
+
+extension ToduckCalendarViewController {
+    private enum Constant {
+        static let calendarHeaderTopOffset: CGFloat = 30
+        static let calendarTopOffset: CGFloat = 20
+        static let calendarHeight: CGFloat = 334
     }
 }

@@ -18,7 +18,6 @@ final class TimeSlotTableViewCell: UITableViewCell {
     // MARK: - Properties
     private let maxButtonWidth: CGFloat = LayoutConstants.buttonContainerWidth
     private var oldTodoDetailViewBounds: CGRect = .zero
-    private var didSetCornerRadius = false
     private var isSwipeOpened: Bool = false
     var segmentSwipeAction: (() -> Void)?
     var editAction: (() -> Void)?
@@ -67,7 +66,6 @@ final class TimeSlotTableViewCell: UITableViewCell {
         todoDetailView.resetForReuse()
         shadowContainerView.transform = .identity
         timeLabel.transform = .identity
-        didSetCornerRadius = false
         oldTodoDetailViewBounds = .zero
         shadowContainerView.isHidden = false
         todoDetailView.isHidden = false

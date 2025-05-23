@@ -3,22 +3,24 @@ import UIKit
 
 final class SelectedDayScheduleView: BaseView {
     // MARK: - UI Components
-    private let calendarImageView = UIImageView().then {
+    let divideTopLineView = UIView.dividedLine()
+    let headerView = UIView().then {
+        $0.backgroundColor = .white
+    }
+    let divideBottomLineView = UIView.dividedLine()
+    let calendarImageView = UIImageView().then {
         $0.image = TDImage.Calendar.top3Medium
         $0.contentMode = .scaleAspectFill
     }
-    private let dateLabel = TDLabel(
+    let dateLabel = TDLabel(
         toduckFont: .boldHeader5,
         toduckColor: TDColor.Neutral.neutral700
     )
-    private let addImageView = UIImageView().then {
+    let addImageView = UIImageView().then {
         $0.image = TDImage.addSmall.withTintColor(TDColor.Neutral.neutral600)
     }
-    let headerView = UIView().then {
-        $0.backgroundColor = TDColor.Neutral.neutral50
-    }
     let scheduleTableView = UITableView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = TDColor.Neutral.neutral50
     }
     let noScheduleLabel = TDLabel(
         labelText: "기록한 일정이 없는 날이에요",
@@ -34,17 +36,10 @@ final class SelectedDayScheduleView: BaseView {
     }
     
     // MARK: - Setup & Configuration
-    override func configure() {
-        backgroundColor = .white
-        noScheduleLabel.isHidden = true
-        scheduleTableView.register(
-            ScheduleDetailTableViewCell.self,
-            forCellReuseIdentifier: ScheduleDetailTableViewCell.identifier
-        )
-    }
-    
     override func addview() {
+        addSubview(divideTopLineView)
         addSubview(headerView)
+        addSubview(divideBottomLineView)
         addSubview(scheduleTableView)
         headerView.addSubview(calendarImageView)
         headerView.addSubview(dateLabel)
@@ -53,9 +48,17 @@ final class SelectedDayScheduleView: BaseView {
     }
     
     override func layout() {
-        headerView.snp.makeConstraints {
+        divideTopLineView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
+        }
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(divideTopLineView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(48).priority(.high)
+        }
+        divideBottomLineView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
         }
         
         calendarImageView.snp.makeConstraints {
@@ -76,7 +79,7 @@ final class SelectedDayScheduleView: BaseView {
         }
         
         scheduleTableView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom)
+            $0.top.equalTo(divideBottomLineView.snp.bottom).offset(4)
             $0.leading.equalTo(22)
             $0.trailing.equalTo(-16)
             $0.bottom.equalToSuperview()
@@ -86,5 +89,17 @@ final class SelectedDayScheduleView: BaseView {
             $0.top.equalTo(headerView.snp.bottom).offset(36)
             $0.centerX.equalToSuperview()
         }
+    }
+    
+    override func configure() {
+        backgroundColor = TDColor.Neutral.neutral50
+        divideTopLineView.backgroundColor = TDColor.Neutral.neutral300
+        divideBottomLineView.backgroundColor = TDColor.Neutral.neutral300
+        noScheduleLabel.isHidden = true
+        scheduleTableView.separatorStyle = .none
+        scheduleTableView.register(
+            ScheduleDetailTableViewCell.self,
+            forCellReuseIdentifier: ScheduleDetailTableViewCell.identifier
+        )
     }
 }
