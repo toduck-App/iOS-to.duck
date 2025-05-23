@@ -415,11 +415,21 @@ extension TodoViewController: UITableViewDelegate {
 // MARK: - FloatingActionMenuView Delegate
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
-        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil, delegate: self)
+        delegate?.didTapTodoMakor(
+            mode: .schedule,
+            selectedDate: selectedDate,
+            preTodo: nil,
+            delegate: self
+        )
     }
     
     func didTapRoutineButton() {
-        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil, delegate: self)
+        delegate?.didTapTodoMakor(
+            mode: .routine,
+            selectedDate: selectedDate,
+            preTodo: nil,
+            delegate: self
+        )
     }
 }
 
@@ -487,10 +497,10 @@ extension TodoViewController {
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in
-                self?.delegate?.didTapEventMakor(
+                self?.delegate?.didTapTodoMakor(
                     mode: todoDisplayItem.eventMode,
                     selectedDate: self?.selectedDate,
-                    preEvent: event,
+                    preTodo: event,
                     delegate: self
                 )
             },
@@ -597,7 +607,7 @@ extension TodoViewController: TodoCreatorCoordinatorDelegate {
 
 // MARK: - DetailEventViewControllerDelegate
 extension TodoViewController: DetailTodoViewControllerDelegate {
-    func didTapDeleteButton(event: any TDDomain.TodoItem) {
+    func didTapDeleteButton(event: any TodoItem) {
         let deleteEventViewController = DeleteEventViewController(
             eventId: event.id,
             isRepeating: event.isRepeating,
@@ -607,17 +617,17 @@ extension TodoViewController: DetailTodoViewControllerDelegate {
         presentPopup(with: deleteEventViewController)
     }
     
-    func didTapTomorrowButton(event: any TDDomain.TodoItem) {
+    func didTapTomorrowButton(event: any TodoItem) {
         if let id = event.id {
             input.send(.moveToTomorrow(todoId: id, event: event))
         }
     }
     
     func didTapEditButton(event: any TodoItem) {
-        delegate?.didTapEventMakor(
+        delegate?.didTapTodoMakor(
             mode: event.eventMode,
             selectedDate: selectedDate,
-            preEvent: event,
+            preTodo: event,
             delegate: self
         )
     }

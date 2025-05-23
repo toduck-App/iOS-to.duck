@@ -28,9 +28,12 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
+    private var currentMonthStartDate = Date().startOfMonth()
+    private var currentMonthEndDate = Date().endOfMonth()
     private var selectedDate: Date?
     weak var coordinator: ToduckCalendarCoordinator?
     
+    // MARK: - Initializer
     init(viewModel: ToduckCalendarViewModel) {
         self.viewModel = viewModel
         super.init()
@@ -42,21 +45,15 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        // 이번 달 일정들 조회
-        let startDate = Date().startOfMonth()
-        let endDate = Date().endOfMonth()
         input.send(
             .fetchSchedule(
-                startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay)
+                startDate: currentMonthStartDate.convertToString(formatType: .yearMonthDay),
+                endDate: currentMonthEndDate.convertToString(formatType: .yearMonthDay)
             )
         )
-        setupCalendar()
-        setupGesture()
-        selectToday()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -111,6 +108,9 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     
     override func configure() {
         view.backgroundColor = .white
+        setupCalendar()
+        setupGesture()
+        selectToday()
         calendarHeader.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
         selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
@@ -352,8 +352,13 @@ extension ToduckCalendarViewController: UITableViewDataSource {
             checkAction: { [weak self] in
                 self?.input.send(.checkBoxTapped(schedule))
             },
-            editAction: {
-                print("Edit tapped for schedule: \(schedule.title)")
+            editAction: { [weak self] in
+                self?.coordinator?.didTapTodoMakor(
+                    mode: .schedule,
+                    selectedDate: self?.selectedDate,
+                    preTodo: schedule,
+                    delegate: nil
+                )
             },
             deleteAction: {
                 print("Delete tapped for schedule: \(schedule.title)")

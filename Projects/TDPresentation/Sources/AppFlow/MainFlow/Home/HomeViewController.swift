@@ -277,14 +277,19 @@ extension HomeViewController: UIGestureRecognizerDelegate {
 
 // MARK: - EventMakorDelegate
 extension HomeViewController: TodoViewControllerDelegate {
-    func didTapEventMakor(
+    func didTapTodoMakor(
         mode: TDTodoMode,
         selectedDate: Date?,
-        preEvent: (any TodoItem)?,
+        preTodo: (any TodoItem)?,
         delegate: TodoCreatorCoordinatorDelegate?
     ) {
         guard let selectedDate else { return }
-        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent, delegate: delegate)
+        coordinator?.didTapTodoMakor(
+            mode: mode,
+            selectedDate: selectedDate,
+            preTodo: preTodo,
+            delegate: delegate
+        )
     }
 }
 
