@@ -90,5 +90,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         handleDeepLink(url: url)
     }
-    
 }

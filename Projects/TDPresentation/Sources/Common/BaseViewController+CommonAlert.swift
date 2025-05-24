@@ -1,5 +1,3 @@
-// MARK: – BaseViewController+CommonAlert.swift
-
 import SnapKit
 import TDDesign
 import Then
