@@ -129,7 +129,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                     input.send(.fetchDetailSchedule(date: selectedDate))
                 case .fetchedDetailSchedule:
                     selectedDayScheduleView.scheduleTableView.reloadData()
-                    selectedDayScheduleView.noScheduleLabel.isHidden = !(viewModel.currentDayScheduleList.isEmpty)
+                    selectedDayScheduleView.noScheduleView.isHidden = !(viewModel.currentDayScheduleList.isEmpty)
                 case .successFinishSchedule:
                     selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):

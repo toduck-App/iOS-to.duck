@@ -22,8 +22,10 @@ final class SelectedDayScheduleView: BaseView {
     let scheduleTableView = UITableView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
     }
+    let noScheduleView = UIView()
+    let noScheduleImageView = UIImageView(image: TDImage.noEvent)
     let noScheduleLabel = TDLabel(
-        labelText: "기록한 일정이 없는 날이에요",
+        labelText: "기록한 일정이 없어요",
         toduckFont: .mediumBody3,
         toduckColor: TDColor.Neutral.neutral500
     )
@@ -44,7 +46,9 @@ final class SelectedDayScheduleView: BaseView {
         headerView.addSubview(calendarImageView)
         headerView.addSubview(dateLabel)
         headerView.addSubview(addImageView)
-        addSubview(noScheduleLabel)
+        addSubview(noScheduleView)
+        noScheduleView.addSubview(noScheduleImageView)
+        noScheduleView.addSubview(noScheduleLabel)
     }
     
     override func layout() {
@@ -85,8 +89,17 @@ final class SelectedDayScheduleView: BaseView {
             $0.bottom.equalToSuperview()
         }
         
+        noScheduleView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+        }
+        noScheduleImageView.snp.makeConstraints {
+            $0.top.equalTo(noScheduleView.snp.top)
+            $0.centerX.equalToSuperview()
+            $0.size.equalTo(96)
+        }
         noScheduleLabel.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom).offset(36)
+            $0.top.equalTo(noScheduleImageView.snp.bottom).offset(8)
             $0.centerX.equalToSuperview()
         }
     }
@@ -95,7 +108,7 @@ final class SelectedDayScheduleView: BaseView {
         backgroundColor = TDColor.Neutral.neutral50
         divideTopLineView.backgroundColor = TDColor.Neutral.neutral300
         divideBottomLineView.backgroundColor = TDColor.Neutral.neutral300
-        noScheduleLabel.isHidden = true
+        noScheduleView.isHidden = true
         scheduleTableView.separatorStyle = .none
         scheduleTableView.register(
             ScheduleDetailTableViewCell.self,

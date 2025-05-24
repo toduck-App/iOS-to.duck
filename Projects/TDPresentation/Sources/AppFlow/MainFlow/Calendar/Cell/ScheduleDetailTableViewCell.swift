@@ -40,17 +40,6 @@ final class ScheduleDetailTableViewCell: UITableViewCell {
         resetCellState()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        configureCornerRadius()
-        
-        let newBounds = todoDetailView.bounds
-        if newBounds != .zero && newBounds != oldTodoDetailViewBounds {
-            configureCornerRadius()
-            oldTodoDetailViewBounds = newBounds
-        }
-    }
-    
     private func resetCellState() {
         todoDetailView.resetForReuse()
         todoDetailView.transform = .identity
