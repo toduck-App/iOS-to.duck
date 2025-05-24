@@ -26,11 +26,13 @@ let appTarget = Target.target(
         .domain(),
         
         .external(dependency: .FirebaseAnalytics),
+        .external(dependency: .FirebaseCrashlytics),
         .external(dependency: .FirebaseMessaging),
     ],
     settings: .settings(
         base: [
-            "DEVELOPMENT_LANGUAGE": "ko"
+            "DEVELOPMENT_LANGUAGE": "ko",
+            "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
         ],
         configurations: [
             .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
