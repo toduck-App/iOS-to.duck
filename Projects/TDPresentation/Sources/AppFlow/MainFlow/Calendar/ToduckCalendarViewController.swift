@@ -110,6 +110,7 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func configure() {
         view.backgroundColor = .white
         setupCalendar()
+        setupAction()
         setupGesture()
         selectToday()
         calendarHeader.delegate = self
@@ -162,6 +163,17 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
                 endDate: currentMonthEndDate.convertToString(formatType: .yearMonthDay)
             )
         )
+    }
+    
+    private func setupAction() {
+        selectedDayScheduleView.addButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapTodoMakor(
+                mode: .schedule,
+                selectedDate: self?.selectedDate,
+                preTodo: nil,
+                delegate: nil
+            )
+        }, for: .touchUpInside)
     }
     
     private func setupGesture() {
