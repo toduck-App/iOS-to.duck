@@ -179,8 +179,13 @@ extension MainTabBarCoordinator {
                 DispatchQueue.main.async {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
+                
+                if UserDefaults.standard.object(forKey: UserDefaultsConstant.pushEnabledKey) == nil {
+                    UserDefaults.standard.set(true, forKey: UserDefaultsConstant.pushEnabledKey)
+                }
             } else {
                 print("❌ 푸시 알림 권한 거부 또는 오류: \(error?.localizedDescription ?? "unknown error")")
+                UserDefaults.standard.set(false, forKey: "PushEnabled")
             }
         }
     }
