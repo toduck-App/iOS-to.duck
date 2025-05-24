@@ -93,6 +93,13 @@ public struct DataAssembly: Assembly {
             }
             return RecentKeywordRepositoryImpl(storage: storage)
         }
+        
+        container.register(NotificationRepository.self) { _ in
+            guard let service = container.resolve(NotificationService.self) else {
+                fatalError("StoreService is not registered")
+            }
+            return NotificationRepositoryImpl(service: service)
+        }.inObjectScope(.container)
     }
 }
 

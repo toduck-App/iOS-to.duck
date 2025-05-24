@@ -45,5 +45,9 @@ public struct ServiceAssembly: Assembly {
         container.register(RoutineService.self) { _ in
             return RoutineServiceImpl()
         }
+        
+        container.register(NotificationService.self) { _ in
+            return NotificationServiceImpl()
+        }
     }
 }
