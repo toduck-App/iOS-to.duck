@@ -67,7 +67,10 @@ extension NotificationAPI: MFTarget {
                 .deleteDeviceToken:
             return .requestPlain
         case .registerDeviceToken(let token):
-            return .requestJSONEncodable(token)
+            return .requestParameters(parameters: [
+                "token": token,
+                "deviceType": "IOS"
+            ])
         }
     }
     

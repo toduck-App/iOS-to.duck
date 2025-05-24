@@ -23,6 +23,7 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
+        observeFCMToken()
         showSplash()
         if !TDTokenManager.shared.isFirstLaunch {
             TDTokenManager.shared.launchFirstLaunch()
@@ -149,6 +150,30 @@ public final class AppCoordinator: Coordinator {
             navigationController.viewControllers.removeFirst()
         }
         self.splashViewController = nil
+    }
+    
+    // MARK: Notification Helpers
+    private func observeFCMToken() {
+        NotificationCenter.default.addObserver(
+            forName: .didReceiveFCMToken,
+            object: nil,
+            queue: .main
+        ) { notification in
+            guard
+                let token = notification.userInfo?["token"] as? String
+            else { return }
+            
+            let registerDeviceTokenUseCase = DIContainer.shared.resolve(RegisterDeviceTokenUseCase.self)
+
+            Task {
+                do {
+                    TDLogger.info("FCM 토큰 우리 서버에 등록: \(token)")
+                    try await registerDeviceTokenUseCase.execute(token: token)
+                } catch {
+                    TDLogger.error("❌ FCM 토큰 등록 실패: \(error)")
+                }
+            }
+        }
     }
 }
 

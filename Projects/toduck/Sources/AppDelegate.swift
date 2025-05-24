@@ -1,4 +1,5 @@
 import UIKit
+import TDNetwork
 import TDCore
 import FirebaseCore
 import FirebaseMessaging
@@ -41,7 +42,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
                 TDLogger.error("❌ FCM 토큰 받기 실패: \(error.localizedDescription)")
             } else if let token = token {
                 TDLogger.info("✅ 초기 FCM 토큰: \(token)")
-                // TODO: 서버에 전송
+                NotificationCenter.default.post(
+                    name: .didReceiveFCMToken,
+                    object: nil,
+                    userInfo: ["token": token]
+                )
             }
         }
     }
@@ -79,9 +84,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     // MARK: - FCM 토큰 갱신
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        guard let fcmToken = fcmToken else { return }
+        guard let fcmToken else { return }
         TDLogger.info("🔄 FCM 토큰 갱신됨: \(fcmToken)")
-        // TODO: 서버에 갱신된 토큰 전송
+        
+        NotificationCenter.default.post(
+            name: .didReceiveFCMToken,
+            object: nil,
+            userInfo: ["token": fcmToken]
+        )
     }
     
     // MARK: - 카카오 로그인 처리
