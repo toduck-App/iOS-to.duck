@@ -20,10 +20,12 @@ final class MyPageCoordinator: Coordinator {
         let fetchUserNicknameUseCase = injector.resolve(FetchUserNicknameUseCase.self)
         let userLogoutUseCase = injector.resolve(UserLogoutUseCase.self)
         let fetchUserDetailUseCase = injector.resolve(FetchUserUseCase.self)
+        let deleteDeviceTokenUseCase = injector.resolve(DeleteDeviceTokenUseCase.self)
         let viewModel = MyPageViewModel(
             fetchUserNicknameUseCase: fetchUserNicknameUseCase,
             fetchUserDetailUseCase: fetchUserDetailUseCase,
-            userLogoutUseCase: userLogoutUseCase
+            userLogoutUseCase: userLogoutUseCase,
+            deleteDeviceTokenUseCase: deleteDeviceTokenUseCase
         )
         let myPageViewController = MyPageViewController(viewModel: viewModel)
         myPageViewController.coordinator = self

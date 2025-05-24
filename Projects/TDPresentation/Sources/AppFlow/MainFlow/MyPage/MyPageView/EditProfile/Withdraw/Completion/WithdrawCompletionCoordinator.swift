@@ -24,8 +24,10 @@ final class WithdrawCompletionCoordinator: Coordinator {
 
     func start() {
         let withdrawUseCase = injector.resolve(WithdrawUseCase.self)
+        let deleteDeviceTokenUseCase = injector.resolve(DeleteDeviceTokenUseCase.self)
         let withdrawCompletionViewModel = WithdrawCompletionViewModel(
             withdrawUseCase: withdrawUseCase,
+            deleteDeviceTokenUseCase: deleteDeviceTokenUseCase,
             type: type,
             reason: reason
         )

@@ -20,6 +20,7 @@ final class MyPageViewModel: BaseViewModel {
     private let fetchUserNicknameUseCase: FetchUserNicknameUseCase
     private let fetchUserDetailUseCase: FetchUserUseCase
     private let userLogoutUseCase: UserLogoutUseCase
+    private let deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var nickName: String?
@@ -28,11 +29,13 @@ final class MyPageViewModel: BaseViewModel {
     init(
         fetchUserNicknameUseCase: FetchUserNicknameUseCase,
         fetchUserDetailUseCase: FetchUserUseCase,
-        userLogoutUseCase: UserLogoutUseCase
+        userLogoutUseCase: UserLogoutUseCase,
+        deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase
     ) {
         self.fetchUserNicknameUseCase = fetchUserNicknameUseCase
         self.fetchUserDetailUseCase = fetchUserDetailUseCase
         self.userLogoutUseCase = userLogoutUseCase
+        self.deleteDeviceTokenUseCase = deleteDeviceTokenUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -74,6 +77,7 @@ final class MyPageViewModel: BaseViewModel {
     private func logout() async {
         do {
             try await userLogoutUseCase.execute()
+            try await deleteDeviceTokenUseCase.execute(token: TDTokenManager.shared.fcmToken ?? "")
             output.send(.logoutFinished)
         } catch {
             output.send(.failureAPI(error.localizedDescription))

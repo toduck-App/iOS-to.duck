@@ -42,6 +42,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
                 TDLogger.error("❌ FCM 토큰 받기 실패: \(error.localizedDescription)")
             } else if let token = token {
                 TDLogger.info("✅ 초기 FCM 토큰: \(token)")
+                TDTokenManager.shared.registerFCMToken(token)
                 NotificationCenter.default.post(
                     name: .didReceiveFCMToken,
                     object: nil,
@@ -87,6 +88,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         guard let fcmToken else { return }
         TDLogger.info("🔄 FCM 토큰 갱신됨: \(fcmToken)")
         
+        TDTokenManager.shared.registerFCMToken(fcmToken)
         NotificationCenter.default.post(
             name: .didReceiveFCMToken,
             object: nil,
