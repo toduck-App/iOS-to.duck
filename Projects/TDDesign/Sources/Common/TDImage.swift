@@ -57,6 +57,7 @@ public enum TDImage {
     public static let cycle = TDDesignAsset.Images.cycleImage.image
     public static let checkNeutral = TDDesignAsset.Images.checkNeutral.image
     public static let timerAlert = TDDesignAsset.Images.timerAlert.image
+    public static let logout = TDDesignAsset.Images.logout.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
