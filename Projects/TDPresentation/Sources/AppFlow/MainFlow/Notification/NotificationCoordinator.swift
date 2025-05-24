@@ -18,7 +18,13 @@ public final class NotificationCoordinator: Coordinator {
     }
     
     public func start() {
-        let notificationViewController = NotificationViewController()
+        let fetchNotificationListUseCase = injector.resolve(FetchNotificationListUseCase.self)
+        let readAllNotificationsUseCase = injector.resolve(ReadAllNotificationsUseCase.self)
+        let notificationViewModel = NotificationViewModel(
+            fetchNotificationListUseCase: fetchNotificationListUseCase,
+            readAllNotificationsUseCase: readAllNotificationsUseCase
+        )
+        let notificationViewController = NotificationViewController(viewModel: notificationViewModel)
         notificationViewController.coordinator = self
         navigationController.pushTDViewController(notificationViewController, animated: true)
     }

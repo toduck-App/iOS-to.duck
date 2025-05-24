@@ -77,7 +77,6 @@ final class HomeViewController: BaseViewController<BaseView> {
         alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
         alarmButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.didTapAlarmButton()
-            TDLogger.debug("홈 화면 네비게이션 우측 알람 버튼 클릭")
         }, for: .touchUpInside)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
