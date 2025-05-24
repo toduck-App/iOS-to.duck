@@ -16,7 +16,7 @@ final class NotificationViewModel: BaseViewModel {
     private let readAllNotificationsUseCase: ReadAllNotificationsUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private(set) var notifications: TDNotificationList?
+    private(set) var notifications: [TDNotificationDetail] = []
     
     init(
         fetchNotificationListUseCase: FetchNotificationListUseCase,
@@ -42,7 +42,7 @@ final class NotificationViewModel: BaseViewModel {
     private func fetchNotificationList(page: Int, size: Int) async {
         do {
             let notifications = try await fetchNotificationListUseCase.execute(page: page, size: size)
-            self.notifications = notifications
+            self.notifications = notifications.notifications
             output.send(.fetchedNotificationList)
         } catch {
             output.send(.failure(error.localizedDescription))

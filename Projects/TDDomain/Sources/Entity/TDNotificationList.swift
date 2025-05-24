@@ -12,7 +12,7 @@ public struct TDNotificationDetail {
     public let title: String
     public let body: String
     public let actionUrl: String?
-    public let data: [String: String]
+    public let data: NotificationInfo
     public let isRead: Bool
     public let createdAt: String
     
@@ -22,7 +22,7 @@ public struct TDNotificationDetail {
         title: String,
         body: String,
         actionUrl: String?,
-        data: [String: String],
+        data: NotificationInfo,
         isRead: Bool,
         createdAt: String
     ) {
@@ -34,5 +34,17 @@ public struct TDNotificationDetail {
         self.data = data
         self.isRead = isRead
         self.createdAt = createdAt
+    }
+}
+
+public struct NotificationInfo {
+    public let commenterName: String
+    public let commentContent: String
+    public let postId: Int
+    
+    public init(commenterName: String, commentContent: String, postId: Int) {
+        self.commenterName = commenterName
+        self.commentContent = commentContent
+        self.postId = postId
     }
 }
