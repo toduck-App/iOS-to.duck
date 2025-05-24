@@ -60,7 +60,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         layoutView.logoutButton.addAction(UIAction { [weak self] _ in
             self?.showCommonAlert(
                 message: "로그아웃 하시겠어요?",
-                image: TDImage.Mood.sad,
+                image: TDImage.logout,
                 cancelTitle: "취소",
                 confirmTitle: "확인",
                 onConfirm: {

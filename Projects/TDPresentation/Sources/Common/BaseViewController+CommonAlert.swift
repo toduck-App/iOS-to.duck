@@ -10,7 +10,7 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
     /// - Parameters:
     ///   - title: 제목 (nil이면 숨김)
     ///   - message: 본문
-    ///   - image: 상단 이미지
+    ///   - image: 상단 이미지 (이미지 사이즈에 맞춰서 자동 조절)
     ///   - cancelTitle: 취소 버튼 타이틀
     ///   - confirmTitle: 확인 버튼 타이틀
     ///   - onCancel: 취소 버튼 눌렀을 때 실행
@@ -169,8 +169,6 @@ final class TDCommonAlertView: BaseView {
         errorImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(28)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(100)
-            $0.height.equalTo(100)
         }
         
         titleLabel.snp.makeConstraints {
