@@ -130,6 +130,17 @@ extension NotificationViewController: UITableViewDelegate {
         let notification = viewModel.notifications[indexPath.row]
         coordinator?.didSelectNotification(notification)
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        if offsetY > contentHeight - frameHeight - 200 { // 바닥 근처일 때
+            guard !viewModel.isLastPage else { return }
+            input.send(.fetchNotificationList(page: viewModel.currentPage + 1, size: 20))
+        }
+    }
 }
 
 extension NotificationViewController: UITableViewDataSource {

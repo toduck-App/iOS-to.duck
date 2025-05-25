@@ -19,6 +19,9 @@ final class NotificationViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var notifications: [TDNotificationDetail] = []
+    var currentPage = 0
+    var isLastPage = false
+    var isLoading = false
     
     init(
         toggleUserFollowUseCase: ToggleUserFollowUseCase,
@@ -46,12 +49,26 @@ final class NotificationViewModel: BaseViewModel {
     }
     
     private func fetchNotificationList(page: Int, size: Int) async {
+        guard !isLoading else { return }
+        isLoading = true
+
         do {
-            self.notifications = try await fetchNotificationListUseCase.execute(page: page, size: size)
+            let result = try await fetchNotificationListUseCase.execute(page: page, size: size)
+            
+            if page == 0 {
+                self.notifications = result
+            } else {
+                self.notifications.append(contentsOf: result)
+            }
+
+            self.currentPage = page
+            self.isLastPage = result.count < size
             output.send(.fetchedNotificationList)
         } catch {
             output.send(.failure(error.localizedDescription))
         }
+
+        isLoading = false
     }
     
     private func toggleUserFollow(userId: Int, isFollowing: Bool) async {
