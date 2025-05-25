@@ -55,6 +55,10 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         )
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     func configureDismissKeyboardGesture() {
         let tapGesture = UITapGestureRecognizer(
             target: self,

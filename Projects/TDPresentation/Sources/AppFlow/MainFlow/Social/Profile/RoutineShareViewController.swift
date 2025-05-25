@@ -41,7 +41,7 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
             self?.popupContentView.doneButton.isEnabled = false
             self?.input.send(.createRoutine)
         }, for: .touchUpInside)
-    } 
+    }
     
     private func setupTapGestureForCategoryImageView() {
         popupContentView.categoryImageView.isUserInteractionEnabled = true
@@ -94,6 +94,8 @@ final class RoutineShareViewController: TDPopupViewController<RoutineShareView> 
     
     /// 루틴과 일정에 따라 UI를 다르게 설정
     private func configureVisibility(routine: Routine) {
-        popupContentView.lockDetailView.updateDescription(routine.isPublic ? "공개" : "비공개")
+        //MARK: 소셜 프로필에 조회되는 루틴은 무조건 공개로 표시되어있습니다.
+        popupContentView.lockDetailView.updateDescription("공개")
+//        popupContentView.lockDetailView.updateDescription(routine.isPublic ? "공개" : "비공개")
     }
 }

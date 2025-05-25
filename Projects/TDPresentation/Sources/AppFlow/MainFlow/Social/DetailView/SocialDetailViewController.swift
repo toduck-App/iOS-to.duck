@@ -112,13 +112,15 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     self?.layoutView.showCommentInputImage(with: data)
                 case .didTapComment(let comment):
                     self?.layoutView.showReplyInputForm(name: comment.user.name)
-                case .createComment:
+                case .createComment(let commentId):
                     self?.layoutView.commentInputForm.sendButton.isEnabled = true
                     self?.layoutView.removeReplyInputForm()
                     self?.layoutView.clearText()
                     self?.layoutView.removeCommentInputImage()
+                    self?.scrollToComment(id: commentId, animated: true)
                 case .reloadParentComment(let comment):
                     self?.reloadParentComment(parentID: comment.id)
+                    self?.scrollToComment(id: comment.id, animated: true)
                 case .failure(let message):
                     self?.layoutView.commentInputForm.sendButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
@@ -138,12 +140,16 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         guard let indexPath = datasource.indexPath(for: targetItem) else {
             return
         }
-
+        
         layoutView.detailCollectionView.scrollToItem(
             at: indexPath,
             at: .centeredVertically,
             animated: true
         )
+    }
+    
+    override func handleTapToDismiss() {
+        // No implementation needed
     }
 }
 
@@ -194,7 +200,15 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
+        showCommonAlert(
+            title: "카메라 사용에 대한 접근 권한이 없어요",
+            message: "[앱 설정 → 앱 이름] 탭에서 접근을 활성화 해주세요",
+            image: TDImage.Alert.permissionCamera,
+            cancelTitle: "취소",
+            confirmTitle: "설정으로 이동", onConfirm: {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        )
     }
     
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
@@ -210,7 +224,7 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
-        TDLogger.debug("EDIT COMMENT")
+        TDLogger.debug("EDIT COMMENT \(commentID)")
     }
     
     func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
@@ -219,6 +233,10 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
         coordinator?.didTapUserProfile(id: userID)
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        view.endEditing(true)
     }
 }
 
@@ -250,5 +268,22 @@ extension SocialDetailViewController {
         }
         snapshot.reloadItems(newItems)
         datasource.apply(snapshot, animatingDifferences: true)
+    }
+}
+
+// MARK: - focus util
+extension SocialDetailViewController {
+    func scrollToComment(id: Comment.ID, animated: Bool = true) {
+        guard let indexPath = datasource.indexPath(for: .comment(id)) else {
+            return
+        }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.layoutView.detailCollectionView.scrollToItem(
+                at: indexPath,
+                at: .centeredVertically,
+                animated: animated
+            )
+        }
     }
 }
