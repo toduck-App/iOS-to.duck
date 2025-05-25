@@ -113,7 +113,7 @@ public final class SocialRepositoryImp: SocialRepository {
         parentId: Comment.ID?,
         content: String,
         image: (fileName: String, imageData: Data)?
-    ) async throws {
+    ) async throws -> Comment.ID {
         var imageUrls: String?
         if let image {
             let urls = try await awsService.requestPresignedUrl(fileName: image.fileName)
@@ -121,7 +121,7 @@ public final class SocialRepositoryImp: SocialRepository {
             imageUrls = urls.fileUrl.absoluteString
         }
         
-        try await socialService.requestCreateComment(socialId: postID, content: content, parentId: parentId, imageUrl: imageUrls)
+        return try await socialService.requestCreateComment(socialId: postID, content: content, parentId: parentId, imageUrl: imageUrls)
     }
     
     public func updateComment(comment: Comment) async throws -> Bool {
