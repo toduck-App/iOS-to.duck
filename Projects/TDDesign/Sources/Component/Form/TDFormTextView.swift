@@ -45,6 +45,7 @@ public final class TDFormTextView: UIView {
         $0.axis = .horizontal
         $0.spacing = 4
     }
+
     private let titleImageView = UIImageView()
     private let titleLabel = TDRequiredTitle()
     private let currentCounterLabel = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral800)
@@ -60,7 +61,21 @@ public final class TDFormTextView: UIView {
         $0.textContainerInset = UIEdgeInsets(top: 14, left: 12, bottom: 14, right: 12)
         $0.delegate = self
         $0.backgroundColor = TDColor.Neutral.neutral50
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = $0.font!.lineHeight * 0.6
+        paragraphStyle.maximumLineHeight = $0.font!.lineHeight
+        paragraphStyle.minimumLineHeight = $0.font!.lineHeight
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: paragraphStyle,
+            .font: $0.font!,
+            .foregroundColor: TDColor.Neutral.neutral800
+        ]
+        
+        $0.typingAttributes = attributes
     }
+
     
     private let placeholderLabel = TDLabel(toduckFont: .regularBody4, toduckColor: TDColor.Neutral.neutral500)
     
@@ -76,7 +91,7 @@ public final class TDFormTextView: UIView {
         placeholder: String,
         maxHeight: CGFloat = 112
     ) {
-        self.titleImageView.image = image
+        titleImageView.image = image
         self.maxCharacter = maxCharacter
         self.maxHeight = maxHeight
         super.init(frame: .zero)

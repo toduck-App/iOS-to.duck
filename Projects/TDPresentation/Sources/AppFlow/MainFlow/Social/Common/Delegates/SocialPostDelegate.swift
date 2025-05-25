@@ -2,6 +2,8 @@ import TDDomain
 import UIKit
 
 protocol SocialPostDelegate: AnyObject {
+    func didTapProfileImage(_ cell: UICollectionViewCell, _ userID: User.ID)
+    
     func didTapLikeButton(_ cell: UICollectionViewCell, _ postID: Post.ID)
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID)

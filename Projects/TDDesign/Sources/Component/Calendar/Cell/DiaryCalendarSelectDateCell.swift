@@ -3,6 +3,11 @@ import SnapKit
 import Then
 
 public final class DiaryCalendarSelectDateCell: FSCalendarCell {
+    public let todayDotView = UIView().then {
+        $0.backgroundColor = TDColor.Primary.primary500
+        $0.layer.cornerRadius = 2
+        $0.isHidden = true
+    }
     
     public let backImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -32,9 +37,15 @@ public final class DiaryCalendarSelectDateCell: FSCalendarCell {
     private func setupViews() {
         contentView.insertSubview(selectionBackgroundView, at: 0)
         contentView.insertSubview(backImageView, aboveSubview: selectionBackgroundView)
+        contentView.addSubview(todayDotView)
     }
     
     private func setConstraints() {
+        todayDotView.snp.makeConstraints {
+            $0.size.equalTo(4)
+            $0.top.trailing.equalTo(selectionBackgroundView)
+        }
+        
         titleLabel.snp.makeConstraints {
             $0.center.equalTo(contentView)
         }
@@ -48,6 +59,10 @@ public final class DiaryCalendarSelectDateCell: FSCalendarCell {
             $0.center.equalTo(contentView)
             $0.size.equalTo(36)
         }
+    }
+    
+    public func markAsToday(_ isToday: Bool) {
+        todayDotView.isHidden = !isToday
     }
     
     public override func layoutSubviews() {

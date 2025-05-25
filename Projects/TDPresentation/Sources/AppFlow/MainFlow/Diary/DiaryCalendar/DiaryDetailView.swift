@@ -172,7 +172,7 @@ public final class DiaryDetailView: UIView {
             .forEach { $0.removeFromSuperview() }
         
         if let memo, !memo.isEmpty {
-            sentenceContentLabel.text = memo
+            sentenceContentLabel.setText(memo)
             sentenceVerticalStackView.isHidden = false
             mainStackView.addArrangedSubview(sentenceVerticalStackView)
         }

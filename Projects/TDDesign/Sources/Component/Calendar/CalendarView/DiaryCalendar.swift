@@ -1,10 +1,3 @@
-//
-//  FocusCalendar.swift
-//  toduck
-//
-//  Created by 박효준 on 9/8/24.
-//
-
 import FSCalendar
 import SnapKit
 import Then

@@ -1,6 +1,6 @@
 import UIKit
 
-public extension TDToast {
+public extension TDToastView {
     enum TDToastType {
         case orange
         case green

@@ -1,6 +1,7 @@
 import UIKit
 import TDDesign
 import Combine
+import Kingfisher
 
 final class EditProfileViewController: BaseViewController<EditProfileView> {
     private let viewModel: EditProfileViewModel
@@ -24,6 +25,7 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
         layoutView.delegate = self
         layoutView.backgroundColor = .white
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            guard self?.layoutView.nicknameField.text.count ?? 0 >= 2 else { return }
             self?.input.send(.updateProfile)
         }, for: .touchUpInside)
         layoutView.profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapProfileImage)))
@@ -44,6 +46,8 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
                 switch event {
                 case .updatedProfile:
                     self?.coordinator?.finish(by: .pop)
+                case .failureNickname(let message):
+                    self?.showErrorAlert(titleError: "죄송해요 !", errorMessage: message)
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 }
@@ -52,6 +56,22 @@ final class EditProfileViewController: BaseViewController<EditProfileView> {
     
     func updateNickName(nickName: String) {
         layoutView.nicknameField.setupTextField(nickName)
+    }
+    
+    func updateProfileImage(imageUrl: String?) {
+        guard let imageUrl, let url = URL(string: imageUrl) else {
+            layoutView.configureImageViewWithDefaultImage()
+            return
+        }
+        
+        layoutView.profileImageView.innerImageView.kf.setImage(
+            with: url,
+            placeholder: TDImage.Profile.medium,
+            options: [
+                .transition(.fade(0.2)),
+                .cacheOriginalImage
+            ]
+        )
     }
 }
 
@@ -62,7 +82,11 @@ extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate 
         didUpdateCondition isConditionMet: Bool
     ) {
         input.send(.writeNickname(nickname: text))
-        layoutView.saveButton.isEnabled = isConditionMet
+        if layoutView.nicknameField.text.count < 2 {
+            layoutView.saveButton.isEnabled = false
+        } else {
+            layoutView.saveButton.isEnabled = true
+        }
     }
     
     @objc
@@ -79,6 +103,14 @@ extension EditProfileViewController: EditProfileDelegate, TDPhotoPickerDelegate 
     }
     
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        self.showErrorAlert(errorMessage: "사진 접근 권한이 필요합니다.")
+        showCommonAlert(
+            title: "카메라 사용에 대한 접근 권한이 없어요",
+            message: "[앱 설정 → 앱 이름] 탭에서 접근을 활성화 해주세요",
+            image: TDImage.Alert.permissionCamera,
+            cancelTitle: "취소",
+            confirmTitle: "설정으로 이동", onConfirm: {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        )
     }
 }

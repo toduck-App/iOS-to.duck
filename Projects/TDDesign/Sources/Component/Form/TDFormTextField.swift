@@ -37,7 +37,11 @@ public final class TDFormTextField: UIView {
     public weak var delegate: TDFormTextFieldDelegate?
     
     private let maxCharacter: Int
-
+    
+    public var text: String {
+        return textField.getCoreTextField()?.text ?? ""
+    }
+    
     // MARK: - UI Properties
     
     private let titleHorizontalStackView = UIStackView().then {

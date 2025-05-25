@@ -76,6 +76,14 @@ final class DiaryViewController: BaseViewController<BaseView> {
     
     // MARK: - Life Cycle
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        input.send(.fetchUserNickname)
+        input.send(.fetchDiaryCompareCount)
+        input.send(.fetchFocusPercent)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -84,7 +92,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         input.send(.fetchDiaryCompareCount)
         input.send(.fetchFocusPercent)
     }
-    
     
     // MARK: - View Setup
     
@@ -126,7 +133,7 @@ final class DiaryViewController: BaseViewController<BaseView> {
         }
         
         calendarSwitchContainerView.snp.makeConstraints {
-            $0.top.equalTo(diarySegmentedControl.snp.bottom).offset(16)
+            $0.top.equalTo(diarySegmentedControl.snp.bottom).offset(24)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
@@ -349,7 +356,16 @@ extension DiaryViewController: DiaryCalendarViewControllerDelegate {
         selectedDate: Date,
         isWrited: Bool
     ) {
-        self.selectedDate = selectedDate.normalized
+        // 선택된 날짜와 오늘(00:00) 비교
+        let today = Calendar.current.startOfDay(for: Date())
+        let targetDate = selectedDate.normalized
+        
+        // 오늘 이후(내일 이상)라면 버튼 숨기고 리턴
+        if targetDate > today {
+            diaryPostButtonContainerView.isHidden = true
+            return
+        }
+        
         if isWrited && diarySegmentedControl.selectedIndex == 0 {
             diaryPostButtonContainerView.isHidden = true
         } else {

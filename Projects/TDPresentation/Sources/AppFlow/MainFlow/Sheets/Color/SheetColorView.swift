@@ -31,8 +31,8 @@ final class SheetColorView: BaseView {
     )
     let saveButton = TDBaseButton(
         title: "저장",
-        backgroundColor: TDColor.Primary.primary500,
-        foregroundColor: TDColor.baseWhite,
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
         radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.boldHeader3.font
     )
@@ -96,8 +96,15 @@ final class SheetColorView: BaseView {
     func updateSaveButtonState() {
         let isEnabled = categoryCollectionView.isCategorySelected()
         saveButton.isEnabled = isEnabled
-        saveButton.backgroundColor = isEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral100
-        saveButton.layer.borderWidth = 0
+        if isEnabled {
+            saveButton.updateBackgroundColor(backgroundColor: TDColor.Primary.primary500, foregroundColor: .white)
+            saveButton.layer.borderColor = TDColor.Primary.primary500.cgColor
+            saveButton.layer.borderWidth = 0
+        } else {
+            saveButton.updateBackgroundColor(backgroundColor: TDColor.baseWhite, foregroundColor: TDColor.Neutral.neutral700)
+            saveButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            saveButton.layer.borderWidth = 1
+        }
     }
 }
 

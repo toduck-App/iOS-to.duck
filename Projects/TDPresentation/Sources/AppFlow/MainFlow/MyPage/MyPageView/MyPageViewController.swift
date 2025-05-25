@@ -60,7 +60,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         layoutView.logoutButton.addAction(UIAction { [weak self] _ in
             self?.showCommonAlert(
                 message: "로그아웃 하시겠어요?",
-                image: TDImage.Mood.sad,
+                image: TDImage.logout,
                 cancelTitle: "취소",
                 confirmTitle: "확인",
                 onConfirm: {
@@ -106,7 +106,7 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 case .failureAPI(let message):
                     self?.showErrorAlert(errorMessage: message)
                 case .logoutFinished:
-                    self?.coordinator?.didTapLogoutButton()
+                    NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
                 case .fetchedUserDetail(let user, let userDetail):
                     let followingCount = userDetail.followingCount
                     let followerCount = userDetail.followerCount
@@ -166,7 +166,10 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         if let responderEvent = event as? CustomEventWrapper {
             if responderEvent.customType == .profileImageTapped {
                 if let nickName = viewModel.nickName {
-                    coordinator?.didTapProfileButton(nickName: nickName)
+                    coordinator?.didTapProfileButton(
+                        nickName: nickName,
+                        imageUrl: viewModel.user?.icon
+                    )
                 }
             }
         }
@@ -178,7 +181,10 @@ extension MyPageViewController: UICollectionViewDelegate {}
 extension MyPageViewController: MyPageSocialButtonDelegate {
     func didTapProfileButton() {
         if let nickName = viewModel.nickName {
-            coordinator?.didTapProfileButton(nickName: nickName)
+            coordinator?.didTapProfileButton(
+                nickName: nickName,
+                imageUrl: viewModel.user?.icon
+            )
         }
     }
 

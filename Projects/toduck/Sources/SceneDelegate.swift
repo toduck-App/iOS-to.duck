@@ -12,7 +12,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     let navigationController = UINavigationController()
-
+    
     func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
@@ -26,6 +26,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         assembleDependencies()
         setupTabBarAppearance()
+        setupNotification()
+        
         let injector: DependencyResolvable = DIContainer.shared
         appCoordinator = AppCoordinator(navigationController: navigationController, injector: injector)
         appCoordinator?.start()
@@ -42,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let url = URLContexts.first?.url else { return }
         handleDeepLink(url: url)
     }
-
+    
     private func handleDeepLink(url: URL) {
         if AuthApi.isKakaoTalkLoginUrl(url) {
             _ = AuthController.handleOpenUrl(url: url)
@@ -52,6 +54,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let deepLink = DeepLinkType(url: url) else { return }
         appCoordinator?.handleDeepLink(deepLink)
     }
+    
+    // MARK: - Setup
     
     private func assembleDependencies() {
         DIContainer.shared.assemble([ServiceAssembly(), StorageAssembly(), DataAssembly(), DomainAssembly()])
@@ -66,5 +70,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
+    }
+    
+    private func setupNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNotificationDeepLink(_:)),
+            name: .didReceivePushNotificationURL,
+            object: nil
+        )
+    }
+    
+    @objc
+    private func handleNotificationDeepLink(_ notification: Notification) {
+        guard
+            let userInfo = notification.userInfo,
+            let url = userInfo["url"] as? URL
+        else { return }
+        
+        handleDeepLink(url: url)
     }
 }

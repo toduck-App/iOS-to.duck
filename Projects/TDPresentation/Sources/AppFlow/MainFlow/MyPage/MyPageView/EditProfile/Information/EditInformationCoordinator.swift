@@ -1,12 +1,4 @@
-//
-//  EditInformationCoordinator.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import TDCore
-
 import UIKit
 
 final class EditInformationCoordinator: Coordinator {
@@ -27,7 +19,7 @@ final class EditInformationCoordinator: Coordinator {
         let editInformationViewController = EditInformationViewController()
         editInformationViewController.hidesBottomBarWhenPushed = true
         editInformationViewController.coordinator = self
-        navigationController.pushViewController(editInformationViewController, animated: true)
+        navigationController.pushTDViewController(editInformationViewController, animated: true)
     }
     
     func popViewController() {

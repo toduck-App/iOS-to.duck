@@ -21,7 +21,7 @@ public protocol SocialService {
     // 댓글 신고
     func requestReportComment(postID: Int, commentID: Int, reportType: String, reason: String?, blockAuthor: Bool) async throws
     // 댓글 생성
-    func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws
+    func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws -> Int
     
     // 댓글 좋아요
     func requestLikeComment(postID: Int, commentID: Int) async throws

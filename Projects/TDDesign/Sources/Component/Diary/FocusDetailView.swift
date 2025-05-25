@@ -141,11 +141,11 @@ public final class FocusDetailView: UIView {
         }
         
         timeInfoLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(8)
+            $0.leading.equalToSuperview().offset(16)
             $0.centerY.equalToSuperview()
         }
         timeStackView.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-8)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.centerY.equalToSuperview()
         }
     }

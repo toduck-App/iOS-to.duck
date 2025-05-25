@@ -24,13 +24,11 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
-        
-        // Third Party Library
-        .external(dependency: .FirebaseAnalytics),
     ],
     settings: .settings(
         base: [
-            "DEVELOPMENT_LANGUAGE": "ko"
+            "DEVELOPMENT_LANGUAGE": "ko",
+            "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
         ],
         configurations: [
             .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),

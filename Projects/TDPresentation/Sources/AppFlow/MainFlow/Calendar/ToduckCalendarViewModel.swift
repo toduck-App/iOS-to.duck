@@ -6,6 +6,8 @@ final class ToduckCalendarViewModel: BaseViewModel {
     enum Input {
         case fetchSchedule(startDate: String, endDate: String)
         case fetchDetailSchedule(date: Date)
+        case deleteTodayTodo(scheduleId: Int)
+        case deleteAllTodo(scheduleId: Int)
         case checkBoxTapped(Schedule)
     }
     
@@ -13,27 +15,28 @@ final class ToduckCalendarViewModel: BaseViewModel {
         case fetchedScheduleList
         case fetchedDetailSchedule
         case successFinishSchedule
+        case deletedTodo
         case failure(error: String)
     }
     
     // MARK: - Properties
     private let fetchScheduleListUseCase: FetchScheduleListUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
-    private let finishRoutineUseCase: FinishRoutineUseCase
+    private let deleteScheduleUseCase: DeleteScheduleUseCase
     private let output = PassthroughSubject<Output, Never>()
     private(set) var monthScheduleDict: [Date: [Schedule]] = [:]
     private(set) var currentDayScheduleList: [Schedule] = []
     private var cancellables = Set<AnyCancellable>()
-    var selectedDate: Date?
+    var selectedDate = Date()
     
     init(
         fetchScheduleListUseCase: FetchScheduleListUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
-        finishRoutineUseCase: FinishRoutineUseCase
+        deleteScheduleUseCase: DeleteScheduleUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
-        self.finishRoutineUseCase = finishRoutineUseCase
+        self.deleteScheduleUseCase = deleteScheduleUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -55,6 +58,10 @@ final class ToduckCalendarViewModel: BaseViewModel {
                 let scheduleList = self?.monthScheduleDict[key] ?? []
                 self?.currentDayScheduleList = scheduleList.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
                 self?.output.send(.fetchedDetailSchedule)
+            case .deleteTodayTodo(let scheduleId):
+                Task { await self?.deleteSchedule(scheduleId: scheduleId, isOneDayDeleted: true) }
+            case .deleteAllTodo(let scheduleId):
+                Task { await self?.deleteSchedule(scheduleId: scheduleId, isOneDayDeleted: false) }
             default:
                 break
             }
@@ -83,7 +90,7 @@ final class ToduckCalendarViewModel: BaseViewModel {
             let fetchedSchedule = try await fetchScheduleListUseCase.execute(startDate: startDate, endDate: endDate)
             self.monthScheduleDict = fetchedSchedule
             
-            let key = Calendar.current.startOfDay(for: selectedDate ?? Date())
+            let key = Calendar.current.startOfDay(for: selectedDate)
             let scheduleList = monthScheduleDict[key] ?? []
             self.currentDayScheduleList = scheduleList.sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
             
@@ -96,12 +103,12 @@ final class ToduckCalendarViewModel: BaseViewModel {
     private func finishSchedule(with schedule: Schedule) async {
         do {
             let toggledFinished = !schedule.isFinished
-            let key = Calendar.current.startOfDay(for: selectedDate ?? Date())
+            let key = Calendar.current.startOfDay(for: selectedDate)
 
             try await finishScheduleUseCase.execute(
                 scheduleId: schedule.id ?? 0,
                 isComplete: toggledFinished,
-                queryDate: selectedDate?.convertToString(formatType: .yearMonthDay) ?? ""
+                queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
             )
 
             if var schedules = monthScheduleDict[key] {
@@ -150,6 +157,20 @@ final class ToduckCalendarViewModel: BaseViewModel {
             output.send(.successFinishSchedule)
         } catch {
             output.send(.failure(error: "일정을 완료할 수 없습니다."))
+        }
+    }
+    
+    // MARK: - 투두 삭제
+    private func deleteSchedule(scheduleId: Int, isOneDayDeleted: Bool) async {
+        do {
+            try await deleteScheduleUseCase.execute(
+                scheduleId: scheduleId,
+                isOneDayDeleted: isOneDayDeleted,
+                queryDate: selectedDate.convertToString(formatType: .yearMonthDay)
+            )
+            output.send(.deletedTodo)
+        } catch {
+            output.send(.failure(error: "일정을 삭제할 수 없습니다."))
         }
     }
 }

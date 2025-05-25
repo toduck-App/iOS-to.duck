@@ -28,9 +28,12 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private var isDetailCalendarMode = false // 캘린더가 화면 꽉 채우는지
     private var currentDetailViewState: DetailViewState = .topCollapsed
     private var initialDetailViewState: DetailViewState = .topCollapsed
-    private var selectedDate: Date?
+    private var currentMonthStartDate = Date().startOfMonth()
+    private var currentMonthEndDate = Date().endOfMonth()
+    private var selectedDate = Date()
     weak var coordinator: ToduckCalendarCoordinator?
     
+    // MARK: - Initializer
     init(viewModel: ToduckCalendarViewModel) {
         self.viewModel = viewModel
         super.init()
@@ -45,25 +48,20 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 이번 달 일정들 조회
-        let startDate = Date().startOfMonth()
-        let endDate = Date().endOfMonth()
-        input.send(
-            .fetchSchedule(
-                startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay)
-            )
-        )
-        setupCalendar()
-        setupGesture()
-        selectToday()
+        fetchScheduleList()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchScheduleList()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         view.bringSubviewToFront(selectedDayScheduleView)
-        input.send(.fetchDetailSchedule(date: selectedDate ?? Date()))
+        input.send(.fetchDetailSchedule(date: selectedDate))
     }
     
     override func viewDidLayoutSubviews() {
@@ -111,9 +109,12 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     
     override func configure() {
         view.backgroundColor = .white
+        setupCalendar()
+        setupAction()
+        setupGesture()
+        selectToday()
         calendarHeader.delegate = self
         selectedDayScheduleView.scheduleTableView.dataSource = self
-        selectedDayScheduleView.scheduleTableView.separatorInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     }
     
     override func binding() {
@@ -122,16 +123,20 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
+                guard let self else { return }
                 switch event {
                 case .fetchedScheduleList:
-                    self?.calendar.reloadData()
+                    calendar.reloadData()
+                    input.send(.fetchDetailSchedule(date: selectedDate))
                 case .fetchedDetailSchedule:
-                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
-                    self?.selectedDayScheduleView.noScheduleLabel.isHidden = !(self?.viewModel.currentDayScheduleList.isEmpty ?? true)
+                    selectedDayScheduleView.scheduleTableView.reloadData()
+                    selectedDayScheduleView.noScheduleView.isHidden = !(viewModel.currentDayScheduleList.isEmpty)
                 case .successFinishSchedule:
-                    self?.selectedDayScheduleView.scheduleTableView.reloadData()
+                    selectedDayScheduleView.scheduleTableView.reloadData()
                 case .failure(let errorMessage):
-                    self?.showErrorAlert(errorMessage: errorMessage)
+                    showErrorAlert(errorMessage: errorMessage)
+                case .deletedTodo:
+                    fetchScheduleList()
                 }
             }.store(in: &cancellables)
     }
@@ -139,17 +144,36 @@ final class ToduckCalendarViewController: BaseViewController<BaseView> {
     private func selectToday() {
         let today = Date()
         calendar.select(today)
-        selectedDate = today
         viewModel.selectedDate = today
         selectedDayScheduleView.updateDateLabel(date: today)
     }
-}
-
-private extension ToduckCalendarViewController {
-    private enum Constant {
-        static let calendarHeaderTopOffset: CGFloat = 30
-        static let calendarTopOffset: CGFloat = 20
-        static let calendarHeight: CGFloat = 334
+    
+    private func fetchScheduleList() {
+        guard
+            let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: calendar.currentPage)),
+            let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate)
+        else { return }
+        
+        currentMonthStartDate = startDate
+        currentMonthEndDate = endDate
+        
+        input.send(
+            .fetchSchedule(
+                startDate: currentMonthStartDate.convertToString(formatType: .yearMonthDay),
+                endDate: currentMonthEndDate.convertToString(formatType: .yearMonthDay)
+            )
+        )
+    }
+    
+    private func setupAction() {
+        selectedDayScheduleView.addButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapTodoMakor(
+                mode: .schedule,
+                selectedDate: self?.selectedDate,
+                preTodo: nil,
+                delegate: nil
+            )
+        }, for: .touchUpInside)
     }
     
     private func setupGesture() {
@@ -214,13 +238,11 @@ private extension ToduckCalendarViewController {
     private func adjustCalendarHeight(for detailViewState: DetailViewState) {
         let newCalendarHeight: CGFloat = Constant.calendarHeight
         
-        // 먼저 rowHeight를 계산
         let headerHeight = calendar.headerHeight
         let weekdayHeight = calendar.weekdayHeight
         let numberOfRows: CGFloat = 6 // 최대 6주
         let newRowHeight = (newCalendarHeight - headerHeight - weekdayHeight) / numberOfRows
         
-        // 애니메이션과 함께 변경사항 적용
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             guard let self else { return }
             self.calendar.rowHeight = newRowHeight
@@ -248,6 +270,23 @@ extension ToduckCalendarViewController: CalendarHeaderStackViewDelegate {
 extension ToduckCalendarViewController: TDCalendarConfigurable {
     func calendar(
         _ calendar: FSCalendar,
+        cellFor date: Date,
+        at position: FSCalendarMonthPosition
+    ) -> FSCalendarCell {
+        guard let cell = calendar.dequeueReusableCell(
+            withIdentifier: ToduckCalendarDateCell.identifier,
+            for: date,
+            at: position
+        ) as? ToduckCalendarDateCell else { return FSCalendarCell() }
+        
+        let isToday = Calendar.current.isDateInToday(date)
+        cell.markAsToday(isToday)
+        
+        return cell
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {
@@ -259,18 +298,7 @@ extension ToduckCalendarViewController: TDCalendarConfigurable {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let currentPage = calendar.currentPage
         updateHeaderLabel(for: currentPage)
-        
-        guard let startDate = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: currentPage)),
-              let endDate = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startDate) else {
-            return
-        }
-        
-        input.send(
-            .fetchSchedule(
-                startDate: startDate.convertToString(formatType: .yearMonthDay),
-                endDate: endDate.convertToString(formatType: .yearMonthDay)
-            )
-        )
+        fetchScheduleList()
     }
     
     // MARK: - 날짜 폰트 색상
@@ -341,15 +369,66 @@ extension ToduckCalendarViewController: UITableViewDataSource {
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ScheduleDetailCell.identifier,
+            withIdentifier: ScheduleDetailTableViewCell.identifier,
             for: indexPath
-        ) as? ScheduleDetailCell else { return UITableViewCell() }
+        ) as? ScheduleDetailTableViewCell else { return UITableViewCell() }
         
         let schedule = viewModel.currentDayScheduleList[indexPath.row]
-        cell.configure(with: schedule) { [weak self] in
-            self?.input.send(.checkBoxTapped(schedule))
-        }
+        
+        cell.configure(
+            with: schedule,
+            checkAction: { [weak self] in
+                self?.input.send(.checkBoxTapped(schedule))
+            },
+            editAction: { [weak self] in
+                self?.coordinator?.didTapTodoMakor(
+                    mode: .schedule,
+                    selectedDate: self?.selectedDate,
+                    preTodo: schedule,
+                    delegate: nil
+                )
+            },
+            deleteAction: { [weak self] in
+                let deleteEventViewController = DeleteEventViewController(
+                    eventId: schedule.id,
+                    isRepeating: schedule.isRepeating,
+                    eventMode: .schedule
+                )
+                deleteEventViewController.delegate = self
+                self?.presentPopup(with: deleteEventViewController)
+            }
+        )
         
         return cell
+    }
+}
+
+// MARK: - DeleteEventViewControllerDelegate
+extension ToduckCalendarViewController: DeleteEventViewControllerDelegate {
+    func didTapTodayDeleteButton(
+        eventId: Int?,
+        eventMode: DeleteEventViewController.EventMode
+    ) {
+        if let eventId = eventId {
+            input.send(.deleteTodayTodo(scheduleId: eventId))
+        }
+    }
+    
+    func didTapAllDeleteButton(
+        eventId: Int?,
+        eventMode: DeleteEventViewController.EventMode
+    ) {
+        if let eventId = eventId {
+            input.send(.deleteAllTodo(scheduleId: eventId))
+        }
+    }
+}
+
+
+extension ToduckCalendarViewController {
+    private enum Constant {
+        static let calendarHeaderTopOffset: CGFloat = 30
+        static let calendarTopOffset: CGFloat = 20
+        static let calendarHeight: CGFloat = 334
     }
 }

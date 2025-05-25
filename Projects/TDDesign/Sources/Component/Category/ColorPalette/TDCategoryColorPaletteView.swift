@@ -60,6 +60,11 @@ public final class TDCategoryColorPaletteView: UIView {
         categoryColors.append((text: TDColor.Schedule.text15, back: TDColor.baseWhite))
         collectionView.reloadData()
     }
+    
+    public func setEnabled(_ isEnabled: Bool) {
+        self.alpha = isEnabled ? 1.0 : 0.3
+        self.isUserInteractionEnabled = isEnabled
+    }
 }
 
 // MARK: - UICollectionViewDataSource

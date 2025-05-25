@@ -4,7 +4,22 @@ import UIKit
 public final class TDSelectableButton: TDBaseButton {
     private var selectedBackgroundColor: UIColor = TDColor.Primary.primary100
     private var selectedForegroundColor: UIColor = TDColor.Primary.primary500
+    private var deselectedBackgroundColor: UIColor
+    private var deselectedForegroundColor: UIColor
     let identifier: String
+    
+    override
+    public var isSelected: Bool {
+        didSet {
+            if isSelected {
+                configuration?.baseBackgroundColor = backgroundToduckColor
+                configuration?.baseForegroundColor = foregroundToduckColor
+            } else {
+                configuration?.baseBackgroundColor = deselectedBackgroundColor
+                configuration?.baseForegroundColor = deselectedForegroundColor
+            }
+        }
+    }
     
     // MARK: - Initializers
     
@@ -17,10 +32,16 @@ public final class TDSelectableButton: TDBaseButton {
         title: String,
         backgroundColor: UIColor,
         foregroundColor: UIColor,
+        selectedBackgroundColor: UIColor = TDColor.Primary.primary100,
+        selectedForegroundColor: UIColor = TDColor.Primary.primary500,
         radius: CGFloat = 12,
         font: UIFont
     ) {
         self.identifier = title
+        self.selectedBackgroundColor = selectedBackgroundColor
+        self.selectedForegroundColor = selectedForegroundColor
+        self.deselectedBackgroundColor = backgroundColor
+        self.deselectedForegroundColor = foregroundColor
         super.init(
             title: title,
             backgroundColor: backgroundColor,
@@ -37,13 +58,12 @@ public final class TDSelectableButton: TDBaseButton {
     
     override public func updateConfiguration() {
         super.updateConfiguration()
-        
         if isSelected {
             configuration?.baseBackgroundColor = selectedBackgroundColor
             configuration?.baseForegroundColor = selectedForegroundColor
         } else {
-            configuration?.baseBackgroundColor = backgroundToduckColor
-            configuration?.baseForegroundColor = foregroundToduckColor
+            configuration?.baseBackgroundColor = deselectedBackgroundColor
+            configuration?.baseForegroundColor = deselectedForegroundColor
         }
     }
 }

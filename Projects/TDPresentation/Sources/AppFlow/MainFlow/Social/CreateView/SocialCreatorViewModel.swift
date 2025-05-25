@@ -53,15 +53,8 @@ final class SocialCreatorViewModel: BaseViewModel {
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        let shared = input.share()
-
-        shared
-            .filter { event in
-                if case .createPost = event {
-                    return false
-                }
-                return true
-            }
+        
+        input
             .sink { [weak self] event in
             guard let self else { return }
             switch event {
@@ -75,25 +68,10 @@ final class SocialCreatorViewModel: BaseViewModel {
                 setImages(data, isEditImage)
             case .setTitle(let title):
                 setTitle(title)
-            default:
-                break
+            case .createPost:
+                Task { await self.createPost() }
             }
         }.store(in: &cancellables)
-        
-        shared
-            .filter { event in
-                if case .createPost = event {
-                    return true
-                }
-                return false
-            }
-            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
-            .sink { [weak self] event in
-                if case .createPost = event {
-                    Task { self?.isEditMode ?? false ? await self?.editPost() : await self?.createPost() }
-                }
-            }
-            .store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }

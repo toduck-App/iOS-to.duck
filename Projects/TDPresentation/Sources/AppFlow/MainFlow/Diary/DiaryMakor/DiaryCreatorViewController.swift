@@ -41,6 +41,7 @@ final class DiaryCreatorViewController: BaseViewController<DiaryCreatorView> {
                 case .savedDiary:
                     self?.coordinator?.finish(by: .pop)
                 case .failure(let message):
+                    self?.layoutView.saveButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
                 }
             }.store(in: &cancellables)
@@ -57,9 +58,11 @@ final class DiaryCreatorViewController: BaseViewController<DiaryCreatorView> {
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             if self?.isEdit == true {
                 self?.input.send(.tapEditButton)
+                
             } else {
                 self?.input.send(.tapSaveButton)
             }
+            self?.layoutView.saveButton.isEnabled = false
         }, for: .touchUpInside)
     }
     
@@ -142,7 +145,15 @@ extension DiaryCreatorViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate
     }
 
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        showErrorAlert(errorMessage: "사진 접근 권한이 없습니다.")
+        showCommonAlert(
+            title: "카메라 사용에 대한 접근 권한이 없어요",
+            message: "[앱 설정 → 앱 이름] 탭에서 접근을 활성화 해주세요",
+            image: TDImage.Alert.permissionCamera,
+            cancelTitle: "취소",
+            confirmTitle: "설정으로 이동", onConfirm: {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        )
     }
 
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {

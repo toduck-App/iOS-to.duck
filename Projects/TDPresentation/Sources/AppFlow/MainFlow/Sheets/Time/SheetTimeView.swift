@@ -160,7 +160,7 @@ final class SheetTimeView: BaseView {
         
         allDayLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().inset(LayoutConstants.horizontalInset)
+            $0.leading.equalToSuperview()
         }
         
         allDaySwitch.snp.makeConstraints {

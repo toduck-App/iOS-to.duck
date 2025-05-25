@@ -20,7 +20,7 @@ public struct RoutineListForDatesResponseDTO: Decodable {
                     title: detail.title,
                     category: TDCategory(colorHex: detail.color, imageName: detail.category),
                     isAllDay: detail.time == nil,
-                    isPublic: false,
+                    isPublic: detail.isPublic ?? false,
                     time: detail.time,
                     repeatDays: detail.daysOfWeek?.compactMap { TDWeekDay(rawValue: $0) },
                     alarmTime: nil,

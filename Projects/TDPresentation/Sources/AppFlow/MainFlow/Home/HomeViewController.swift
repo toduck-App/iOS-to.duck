@@ -23,6 +23,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         setupSegmentedControl()
         setupNavigationBar()
         setupSwipeGestures()
+        setupNotification()
         updateView()
     }
     
@@ -76,7 +77,6 @@ final class HomeViewController: BaseViewController<BaseView> {
         alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
         alarmButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.didTapAlarmButton()
-            TDLogger.debug("홈 화면 네비게이션 우측 알람 버튼 클릭")
         }, for: .touchUpInside)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)
@@ -111,6 +111,21 @@ final class HomeViewController: BaseViewController<BaseView> {
         default:
             break
         }
+    }
+    
+    private func setupNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCellSwipeForSegment),
+            name: .didSwipeCellToSegmentLeft,
+            object: nil
+        )
+    }
+    
+    @objc
+    private func handleCellSwipeForSegment() {
+        segmentedControl.setSelectedIndex(0)
+        updateView()
     }
     
     // MARK: - View Update
@@ -237,29 +252,43 @@ extension HomeViewController: UIGestureRecognizerDelegate {
         if let view = touch.view, view is UIControl {
             return false
         }
-
-        var currentView: UIView? = touch.view
-        while let view = currentView {
+        
+        let tableView = (cachedViewControllers[1] as? TodoViewController)?
+            .todoTableView
+        let locationInTable = touch.location(in: tableView)
+        if let tableView = tableView, tableView.bounds.contains(locationInTable) {
+            if tableView.indexPathForRow(at: locationInTable) == nil {
+                return true
+            }
+            return false
+        }
+        
+        var current: UIView? = touch.view
+        while let view = current {
             if view is UIScrollView {
                 return false
             }
-            currentView = view.superview
+            current = view.superview
         }
-
         return true
     }
 }
 
 // MARK: - EventMakorDelegate
 extension HomeViewController: TodoViewControllerDelegate {
-    func didTapEventMakor(
-        mode: TodoCreatorViewController.Mode,
+    func didTapTodoMakor(
+        mode: TDTodoMode,
         selectedDate: Date?,
-        preEvent: (any TodoItem)?,
+        preTodo: (any TodoItem)?,
         delegate: TodoCreatorCoordinatorDelegate?
     ) {
         guard let selectedDate else { return }
-        coordinator?.didTapEventMakor(mode: mode, selectedDate: selectedDate, preEvent: preEvent, delegate: delegate)
+        coordinator?.didTapTodoMakor(
+            mode: mode,
+            selectedDate: selectedDate,
+            preTodo: preTodo,
+            delegate: delegate
+        )
     }
 }
 

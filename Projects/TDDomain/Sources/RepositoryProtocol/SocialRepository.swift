@@ -15,7 +15,7 @@ public protocol SocialRepository {
     
     func toggleCommentLike(postID: Post.ID, commentID: Comment.ID, currentLike: Bool) async throws
     func reportComment(postID: Post.ID, commentID: Comment.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws
-    func createComment( postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws
+    func createComment( postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws -> Comment.ID
     func updateComment(comment: Comment) async throws -> Bool
     func deleteComment(postID: Post.ID, commentID: Comment.ID) async throws
 }

@@ -3,27 +3,25 @@ import TDDesign
 import UIKit
 
 protocol TDToastPresentable {
-    func showToast(type: TDToast.TDToastType, title: String, message: String, duration: Double?)
+    func showToast(type: TDToastView.TDToastType, title: String, message: String, duration: Double?) async
 }
 
 extension TDToastPresentable where Self: UIViewController {
     @MainActor
     func showToast(
-        type: TDToast.TDToastType,
+        type: TDToastView.TDToastType,
         title: String,
         message: String,
         duration: Double?
     ) {
-        let toastView = TDToast(toastType: type, titleText: title, contentText: message)
+        let toastView = TDToastView(type: .orange, titleText: title, contentText: message)
         
         guard
             let keyWindow = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene })
                 .flatMap({ $0.windows })
                 .first(where: { $0.isKeyWindow })
-        else {
-            return
-        }
+        else { return }
         
         keyWindow.addSubview(toastView)
         toastView.snp.makeConstraints { make in
@@ -43,17 +41,16 @@ extension TDToastPresentable where Self: UIViewController {
                     make.top.equalToSuperview().inset(80)
                 }
                 keyWindow.layoutIfNeeded()
-            }
-        ) { _ in
-            UIView.animate(
-                withDuration: 0.5, delay: duration ?? 2, options: .curveEaseIn,
-                animations: {
-                    toastView.alpha = 0
-                }
-            ) { _ in
-                toastView.removeFromSuperview()
-            }
-        }
+            },
+            completion: { _ in
+                UIView.animate(
+                    withDuration: 0.5,
+                    delay: duration ?? 2,
+                    options: .curveEaseIn,
+                    animations: { toastView.alpha = 0 },
+                    completion: { _ in toastView.removeFromSuperview() }
+                )
+            })
     }
     
     func dismissToast() {
@@ -65,7 +62,7 @@ extension TDToastPresentable where Self: UIViewController {
         }
         
         keyWindow.subviews
-            .filter { $0 is TDToast }
+            .filter { $0 is TDToastView }
             .forEach { $0.removeFromSuperview() }
     }
 }

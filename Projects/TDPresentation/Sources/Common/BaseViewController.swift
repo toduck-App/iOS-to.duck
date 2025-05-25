@@ -1,3 +1,5 @@
+import FirebaseAnalytics
+import FirebaseCrashlytics
 import TDDesign
 import UIKit
 
@@ -5,6 +7,7 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
     // MARK: - Properties
     var layoutView = LayoutView()
     var keyboardAdjustableView: UIView?
+    private var enterTime: Date?
     
     // MARK: - Initialize
     init() {
@@ -33,6 +36,17 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
         configureDismissKeyboardGesture()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        enterTime = Date()
+        trackScreenAppear()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        trackScreenDuration(startTime: enterTime)
+    }
+    
     // MARK: - Common Method
     func configure() { }
     func addView() { }
@@ -53,6 +67,10 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     func configureDismissKeyboardGesture() {
@@ -94,5 +112,27 @@ class BaseViewController<LayoutView: BaseView>: UIViewController {
     @objc
     func handleTapToDismiss() {
         view.endEditing(true)
+    }
+}
+
+extension UIViewController {
+    @objc var screenName: String {
+        return String(describing: type(of: self))
+    }
+
+    func trackScreenAppear() {
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: [
+            AnalyticsParameterScreenName: screenName
+        ])
+        Crashlytics.crashlytics().log("Entered screen: \(screenName)")
+    }
+
+    func trackScreenDuration(startTime: Date?) {
+        guard let startTime else { return }
+        let duration = Date().timeIntervalSince(startTime)
+        Analytics.logEvent("screen_duration", parameters: [
+            "screen_name": screenName,
+            "duration": duration
+        ])
     }
 }

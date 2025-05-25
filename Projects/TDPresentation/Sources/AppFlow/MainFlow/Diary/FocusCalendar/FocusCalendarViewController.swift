@@ -38,6 +38,7 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
     private let viewModel: FocusCalendarViewModel
     private let input = PassthroughSubject<FocusCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var isFirstLoad = true
     weak var coordinator: DiaryCoordinator?
     var selectedDate = Date().normalized
     
@@ -159,6 +160,12 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
                     self?.updateDiaryView(with: focus)
                 case .fetchedFocusList:
                     self?.calendar.reloadData()
+                    if let self, isFirstLoad {
+                        isFirstLoad = false
+                        calendar.select(selectedDate)
+                        calendar.delegate?.calendar?(self.calendar, didSelect: selectedDate, at: .current)
+                        input.send(.selectDay(selectedDate.normalized))
+                    }
                 case .notFoundFocus:
                     self?.updateDiaryView()
                 case .failureAPI(let message):
@@ -258,7 +265,10 @@ extension FocusCalendarViewController: TDCalendarConfigurable {
         let percentage = viewModel.monthFocusList[normalized]?.percentage
         let focusImage = getFocusImage(for: percentage)
         cell.configure(with: focusImage)
-
+        
+        let isToday = Calendar.current.isDateInToday(date)
+        cell.markAsToday(isToday)
+        
         return cell
     }
     

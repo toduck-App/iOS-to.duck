@@ -1,4 +1,5 @@
 import Combine
+import TDCore
 import TDDomain
 
 final class WithdrawCompletionViewModel: BaseViewModel {
@@ -12,6 +13,7 @@ final class WithdrawCompletionViewModel: BaseViewModel {
     }
 
     private let withdrawUseCase: WithdrawUseCase
+    private let deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
@@ -20,10 +22,12 @@ final class WithdrawCompletionViewModel: BaseViewModel {
     
     init(
         withdrawUseCase: WithdrawUseCase,
+        deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase,
         type: WithdrawReasonType,
         reason: String
     ) {
         self.withdrawUseCase = withdrawUseCase
+        self.deleteDeviceTokenUseCase = deleteDeviceTokenUseCase
         self.type = type
         self.reason = reason
     }
@@ -42,6 +46,7 @@ final class WithdrawCompletionViewModel: BaseViewModel {
     private func withdraw() async {
         do {
             try await withdrawUseCase.execute(type: type, reason: reason)
+            try await deleteDeviceTokenUseCase.execute(token: TDTokenManager.shared.fcmToken ?? "")
             output.send(.withdrawCompleted)
         } catch {
             output.send(.failure(error.localizedDescription))

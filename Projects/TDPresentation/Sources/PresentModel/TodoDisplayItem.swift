@@ -13,7 +13,7 @@ struct TodoDisplayItem: TodoItem {
     let alarmTime: AlarmTime?
     let memo: String?
     let isFinished: Bool
-    let eventMode: TDEventMode
+    let eventMode: TDTodoMode
     
     let categoryIcon: UIImage?
     let categoryColor: UIColor

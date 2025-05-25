@@ -84,24 +84,23 @@ public class TDBaseButton: UIButton {
                 configuration?.baseBackgroundColor = backgroundToduckColor
                 configuration?.baseForegroundColor = foregroundToduckColor
             } else {
-                configuration?.baseBackgroundColor = TDColor.Neutral.neutral100
+                configuration?.baseBackgroundColor = TDColor.baseWhite
                 configuration?.baseForegroundColor = TDColor.Neutral.neutral500
             }
         }
     }
     
-    
     // MARK: - Public Methods
     /// 버튼의 배경색을 설정합니다.
-    public func updateBackgroundColor(buttonColor: UIColor, imageColor: UIColor) {
-        self.backgroundToduckColor = buttonColor
-        self.foregroundToduckColor = imageColor
+    public func updateBackgroundColor(backgroundColor: UIColor, foregroundColor: UIColor) {
+        self.backgroundToduckColor = backgroundColor
+        self.foregroundToduckColor = foregroundColor
         
-        if let originalImage = self.image {
-            self.image = originalImage.withRenderingMode(.alwaysTemplate)
+        if let originalImage = image {
+            image = originalImage.withRenderingMode(.alwaysTemplate)
         }
         
-        self.tintColor = imageColor
+        self.tintColor = foregroundColor
         setupButton()
     }
     

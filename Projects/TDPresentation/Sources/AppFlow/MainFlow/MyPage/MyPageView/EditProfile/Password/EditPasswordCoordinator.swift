@@ -1,10 +1,3 @@
-//
-//  EditPasswordCoordinator.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import TDCore
 
 import UIKit
@@ -27,7 +20,7 @@ final class EditPasswordCoordinator: Coordinator {
         let editPasswordViewController = EditPasswordViewController()
         editPasswordViewController.hidesBottomBarWhenPushed = true
         editPasswordViewController.coordinator = self
-        navigationController.pushViewController(editPasswordViewController, animated: true)
+        navigationController.pushTDViewController(editPasswordViewController, animated: true)
     }
     
     func popViewController() {

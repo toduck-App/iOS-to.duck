@@ -15,12 +15,12 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         case comment(Comment.ID)
     }
     
-    weak var coordinator: SocialDetailCoordinator?
-    
     let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
     private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
     private let viewModel: SocialDetailViewModel!
     private var cancellables = Set<AnyCancellable>()
+    private var scrollToCommentId: Comment.ID?
+    weak var coordinator: SocialDetailCoordinator?
     
     public init(viewModel: SocialDetailViewModel) {
         self.viewModel = viewModel
@@ -51,6 +51,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         
         layoutView.commentInputForm.setTapSendButton(
             UIAction { [weak self] _ in
+                self?.layoutView.commentInputForm.sendButton.isEnabled = false
                 self?.input.send(.registerComment(self?.layoutView.commentInputForm.getText() ?? ""))
             })
         layoutView.commentInputForm.setTapImageButton(
@@ -97,6 +98,12 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                 case .comments(let comments):
                     let items = comments.map { Item.comment($0.id) }
                     self?.applySnapshot(items: items, to: .comments)
+                    if let scrollToId = self?.scrollToCommentId {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self?.scrollToComment(withId: scrollToId)
+                            self?.scrollToCommentId = nil
+                        }
+                    }
                 case .likePost(let post):
                     self?.updateSnapshot(items: [.post(post.id)], to: .post)
                 case .likeComment(let comment):
@@ -105,24 +112,58 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     self?.layoutView.showCommentInputImage(with: data)
                 case .didTapComment(let comment):
                     self?.layoutView.showReplyInputForm(name: comment.user.name)
-                case .createComment:
+                case .createComment(let commentId):
+                    self?.layoutView.commentInputForm.sendButton.isEnabled = true
                     self?.layoutView.removeReplyInputForm()
                     self?.layoutView.clearText()
                     self?.layoutView.removeCommentInputImage()
+                    self?.scrollToComment(id: commentId, animated: true)
                 case .reloadParentComment(let comment):
                     self?.reloadParentComment(parentID: comment.id)
+                    self?.scrollToComment(id: comment.id, animated: true)
                 case .failure(let message):
+                    self?.layoutView.commentInputForm.sendButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
                 default:
                     break
                 }
             }.store(in: &cancellables)
     }
+    
+    func updateScrollToCommentId(_ id: Comment.ID) {
+        scrollToCommentId = id
+    }
+    
+    private func scrollToComment(withId id: Comment.ID) {
+        let targetItem = Item.comment(id)
+        
+        guard let indexPath = datasource.indexPath(for: targetItem) else {
+            return
+        }
+        
+        layoutView.detailCollectionView.scrollToItem(
+            at: indexPath,
+            at: .centeredVertically,
+            animated: true
+        )
+    }
+    
+    override func handleTapToDismiss() {
+        // No implementation needed
+    }
 }
 
 // MARK: User Action
 
 extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate, UICollectionViewDelegate {
+    func didTapProfileImage(_ cell: UICollectionViewCell, _ userID: TDDomain.User.ID) {
+        coordinator?.didTapUserProfile(id: userID)
+    }
+    
+    func didTapRoutineView(_ cell: UICollectionViewCell, _ routine: Routine) {
+        coordinator?.didTapRoutine(routine: routine)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = datasource.itemIdentifier(for: indexPath) else { return }
         switch item {
@@ -159,10 +200,15 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func deniedPhotoAccess(_ picker: TDDesign.TDPhotoPickerController) {
-        // TODO: - Denied Photo Access
-        let alert = UIAlertController(title: "알림", message: "사진 접근 권한이 거부되었습니다. 설정에서 권한을 허용해주세요.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
+        showCommonAlert(
+            title: "카메라 사용에 대한 접근 권한이 없어요",
+            message: "[앱 설정 → 앱 이름] 탭에서 접근을 활성화 해주세요",
+            image: TDImage.Alert.permissionCamera,
+            cancelTitle: "취소",
+            confirmTitle: "설정으로 이동", onConfirm: {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        )
     }
     
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
@@ -178,7 +224,7 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     }
     
     func didTapEditComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
-        TDLogger.debug("EDIT COMMENT")
+        TDLogger.debug("EDIT COMMENT \(commentID)")
     }
     
     func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
@@ -187,6 +233,10 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {
         coordinator?.didTapUserProfile(id: userID)
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        view.endEditing(true)
     }
 }
 
@@ -218,5 +268,22 @@ extension SocialDetailViewController {
         }
         snapshot.reloadItems(newItems)
         datasource.apply(snapshot, animatingDifferences: true)
+    }
+}
+
+// MARK: - focus util
+extension SocialDetailViewController {
+    func scrollToComment(id: Comment.ID, animated: Bool = true) {
+        guard let indexPath = datasource.indexPath(for: .comment(id)) else {
+            return
+        }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.layoutView.detailCollectionView.scrollToItem(
+                at: indexPath,
+                at: .centeredVertically,
+                animated: animated
+            )
+        }
     }
 }

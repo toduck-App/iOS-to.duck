@@ -22,7 +22,15 @@ let project = Project(
                 .external(dependency: .FSCalendar),
                 .external(dependency: .Kingfisher),
                 .external(dependency: .FittedSheets),
-            ]
+                .external(dependency: .FirebaseAnalytics),
+                .external(dependency: .FirebaseMessaging),
+                .external(dependency: .FirebaseCrashlytics),
+            ],
+            settings: .settings(
+                base: [
+                    "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
+                ]
+            )
         ),
         Target.target(
             name: "\(TDModule.TDPresentation.rawValue)Test",

@@ -32,6 +32,8 @@ final class TagCell: UICollectionViewCell {
         tagLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(12)
             make.top.bottom.equalToSuperview().inset(6)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(21)
         }
     }
     

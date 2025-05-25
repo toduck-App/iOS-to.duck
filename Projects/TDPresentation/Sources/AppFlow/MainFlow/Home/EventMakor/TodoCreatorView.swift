@@ -102,12 +102,12 @@ final class TodoCreatorView: BaseView {
     let dummyViewForStackView = UIView()
     
     // MARK: - Properties
-    private let mode: TodoCreatorViewController.Mode
+    private let mode: TDTodoMode
     var noticeSnackBarBottomConstraint: Constraint?
     var dummyViewHeightConstraint: Constraint?
     
     // MARK: - Initialize
-    init(mode: TodoCreatorViewController.Mode) {
+    init(mode: TDTodoMode) {
         self.mode = mode
         super.init(frame: .zero)
     }

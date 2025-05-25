@@ -36,6 +36,7 @@ final class SheetColorViewController: BaseViewController<SheetColorView> {
     
     // MARK: - Common Methods
     override func configure() {
+        layoutView.colorPaletteView.setEnabled(false)
         layoutView.cancelButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.finish(by: .modal)
         }, for: .touchUpInside)
@@ -82,7 +83,7 @@ extension SheetColorViewController: TDCategoryCellDelegate {
         selectedCategoryIndex = index
         
         layoutView.colorPaletteView.setSelectedColor(color)
-        layoutView.colorPaletteView.isUserInteractionEnabled = true
+        layoutView.colorPaletteView.setEnabled(true)
         layoutView.updateSaveButtonState()
     }
 }

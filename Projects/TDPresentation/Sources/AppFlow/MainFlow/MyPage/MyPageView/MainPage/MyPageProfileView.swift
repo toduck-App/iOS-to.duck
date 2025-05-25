@@ -1,10 +1,3 @@
-//
-//  MyPageProfileView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/7/25.
-//
-
 import SnapKit
 import UIKit
 import TDDesign

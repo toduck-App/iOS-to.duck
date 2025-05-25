@@ -13,7 +13,7 @@ public struct Routine: TodoItem, Identifiable {
     public let recommendedRoutines: [String]?
     public let isFinished: Bool
     public let shareCount: Int
-    public let eventMode: TDEventMode = .routine
+    public let eventMode: TDTodoMode = .routine
     
     public var isRepeating: Bool {
         repeatDays != nil

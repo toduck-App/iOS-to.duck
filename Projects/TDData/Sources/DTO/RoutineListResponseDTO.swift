@@ -12,7 +12,7 @@ public struct RoutineListResponseDTO: Decodable {
                 title: routine.title,
                 category: TDCategory(colorHex: routine.color, imageName: routine.category),
                 isAllDay: routine.time == nil,
-                isPublic: false,
+                isPublic: routine.isPublic ?? false,
                 time: routine.time,
                 repeatDays: routine.daysOfWeek?.compactMap { TDWeekDay(rawValue: $0) },
                 alarmTime: nil,
@@ -32,6 +32,7 @@ public struct RoutineListDetail: Decodable {
     public let daysOfWeek: [String]?
     public let time: String?
     public let title: String
+    public let isPublic: Bool?
     public let memo: String?
     public let isCompleted: Bool?
     public let sharedCount: Int?

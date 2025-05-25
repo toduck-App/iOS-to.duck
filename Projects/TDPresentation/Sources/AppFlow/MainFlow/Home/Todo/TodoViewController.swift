@@ -13,27 +13,27 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - UI Components
-    private let weekCalendarView = HomeCalendar()
-    private let todoTableView = UITableView().then {
+    let weekCalendarView = HomeCalendar()
+    let todoTableView = UITableView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
-    private let noTodoContainerView = UIView()
-    private let noTodoImageView = UIImageView(image: TDImage.noEvent)
-    private let noTodoLabel = TDLabel(
+    let noTodoContainerView = UIView()
+    let noTodoImageView = UIImageView(image: TDImage.noEvent)
+    let noTodoLabel = TDLabel(
         labelText: "등록된 투두가 없어요",
         toduckFont: TDFont.boldBody1,
         toduckColor: TDColor.Neutral.neutral600
     )
     
-    private let dimmedView = UIView().then {
+    let dimmedView = UIView().then {
         $0.backgroundColor = TDColor.baseBlack.withAlphaComponent(0.5)
         $0.alpha = 0
         $0.isHidden = true
     }
-    private let floatingActionMenuView = FloatingActionMenuView()
-    private let buttonShadowWrapper = UIView()
-    private let eventMakorFloattingButton = TDBaseButton(
+    let floatingActionMenuView = FloatingActionMenuView()
+    let buttonShadowWrapper = UIView()
+    let eventMakorFloattingButton = TDBaseButton(
         image: TDImage.addLarge,
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
@@ -91,7 +91,9 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     private func fetchWeekTodo(for date: Date) {
-        guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date) else { return }
+        guard
+            let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date)
+        else { return }
         
         let startDate = weekInterval.start.convertToString(formatType: .yearMonthDay)
         let endDate = Calendar.current.date(
@@ -105,9 +107,11 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     // MARK: 플로팅 버튼 처리
     private func setupFloatingUIInWindow() {
-        guard !didAddDimmedView,
-              let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+        guard
+            !didAddDimmedView,
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = windowScene.windows.first(where: { $0.isKeyWindow })
+        else { return }
         
         addFloatingViewsToWindow(window)
         setupFloatingConstraints(in: window)
@@ -135,7 +139,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         buttonShadowWrapper.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(LayoutConstants.buttonTrailingInset)
-            $0.bottom.equalTo(window.safeAreaLayoutGuide.snp.bottom).offset(-84)
+            $0.bottom.equalTo(window.safeAreaLayoutGuide.snp.bottom).offset(-70)
             $0.width.equalTo(LayoutConstants.buttonWidth)
             $0.height.equalTo(LayoutConstants.buttonHeight)
         }
@@ -164,8 +168,8 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     private func resetFloatingButtonAppearance() {
         eventMakorFloattingButton.updateBackgroundColor(
-            buttonColor: TDColor.Primary.primary500,
-            imageColor: TDColor.baseWhite
+            backgroundColor: TDColor.Primary.primary500,
+            foregroundColor: TDColor.baseWhite
         )
         let angle: CGFloat = 0
         eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
@@ -215,13 +219,14 @@ final class TodoViewController: BaseViewController<BaseView> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 switch event {
-                case .fetchedTodoList,
-                        .deletedTodo:
+                case .fetchedTodoList:
                     self?.input.send(.didSelectedDate(date: self?.selectedDate ?? Date()))
                 case .fetchedRoutineDetail(let routine):
-                    let todoDisplayItem = TodoDisplayItem(routine: routine)
                     let currentDate = self?.selectedDate.convertToString(formatType: .yearMonthDayKorean) ?? ""
-                    let detailEventViewController = DetailEventViewController(mode: .routine, todo: todoDisplayItem, currentDate: currentDate)
+                    let detailEventViewController = DetailTodoViewController(
+                        todo: routine,
+                        currentDate: currentDate
+                    )
                     detailEventViewController.delegate = self
                     self?.presentPopup(with: detailEventViewController)
                 case .unionedTodoList:
@@ -230,7 +235,8 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.noTodoContainerView.isHidden = !isHidden
                     self?.todoTableView.isHidden = isHidden
                 case .successFinishTodo,
-                        .tomorrowTodoCreated:
+                        .tomorrowTodoCreated,
+                        .deletedTodo:
                     self?.fetchWeekTodo(for: self?.selectedDate ?? Date())
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
@@ -285,8 +291,8 @@ final class TodoViewController: BaseViewController<BaseView> {
         UIView.animate(withDuration: 0.2, animations: {
             self.dimmedView.alpha = self.isMenuVisible ? 1 : 0
             self.eventMakorFloattingButton.updateBackgroundColor(
-                buttonColor: self.isMenuVisible ? TDColor.baseWhite : TDColor.Primary.primary500,
-                imageColor: self.isMenuVisible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
+                backgroundColor: self.isMenuVisible ? TDColor.baseWhite : TDColor.Primary.primary500,
+                foregroundColor: self.isMenuVisible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
             )
             let angle: CGFloat = self.isMenuVisible ? .pi / 4 : 0
             self.eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
@@ -388,31 +394,18 @@ extension TodoViewController: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         guard let item = timelineDataSource?.itemIdentifier(for: indexPath) else { return }
-        let detailEventViewController: DetailEventViewController
+        let detailEventViewController: DetailTodoViewController
         let currentDate = selectedDate.convertToString(formatType: .yearMonthDayKorean)
         
-        // TODO: 로직 개선하기
-        /// 현재 로직에서 일정은 그냥 바로 팝업 띄우고,
-        /// 루틴은 추가 정보가 필요해서 루틴 상세 API를 조회하고, binding 메소드에서 팝업 띄우게 해뒀음
         switch item {
         case .allDay(let event, _):
-            if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailEventViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
-                detailEventViewController.delegate = self
-                presentPopup(with: detailEventViewController)
-            } else {
-                input.send(.fetchRoutineDetail(event))
-            }
+            detailEventViewController = DetailTodoViewController(todo: event, currentDate: currentDate)
+            detailEventViewController.delegate = self
+            presentPopup(with: detailEventViewController)
         case .timeEvent(_, let event, _):
-            if event.eventMode == .schedule, let schedule = event as? Schedule {
-                let todoDisplayItem = TodoDisplayItem(from: event, place: schedule.place)
-                detailEventViewController = DetailEventViewController(mode: event.eventMode, todo: todoDisplayItem, currentDate: currentDate)
-                detailEventViewController.delegate = self
-                presentPopup(with: detailEventViewController)
-            } else {
-                input.send(.fetchRoutineDetail(event))
-            }
+            detailEventViewController = DetailTodoViewController(todo: event, currentDate: currentDate)
+            detailEventViewController.delegate = self
+            presentPopup(with: detailEventViewController)
         case .gap(_, _):
             break
         }
@@ -422,11 +415,21 @@ extension TodoViewController: UITableViewDelegate {
 // MARK: - FloatingActionMenuView Delegate
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
-        delegate?.didTapEventMakor(mode: .schedule, selectedDate: selectedDate, preEvent: nil, delegate: self)
+        delegate?.didTapTodoMakor(
+            mode: .schedule,
+            selectedDate: selectedDate,
+            preTodo: nil,
+            delegate: self
+        )
     }
     
     func didTapRoutineButton() {
-        delegate?.didTapEventMakor(mode: .routine, selectedDate: selectedDate, preEvent: nil, delegate: self)
+        delegate?.didTapTodoMakor(
+            mode: .routine,
+            selectedDate: selectedDate,
+            preTodo: nil,
+            delegate: self
+        )
     }
 }
 
@@ -464,6 +467,7 @@ extension TodoViewController {
                 }
                 
                 cell.configure(startHour: startHour, endHour: endHour)
+                
                 return cell
             }
         }
@@ -493,11 +497,10 @@ extension TodoViewController {
                 self?.input.send(.checkBoxTapped(todo: event))
             },
             editAction: { [weak self] in
-                let mode: TodoCreatorViewController.Mode = todoDisplayItem.eventMode == .schedule ? .schedule : .routine
-                self?.delegate?.didTapEventMakor(
-                    mode: mode,
+                self?.delegate?.didTapTodoMakor(
+                    mode: todoDisplayItem.eventMode,
                     selectedDate: self?.selectedDate,
-                    preEvent: event,
+                    preTodo: event,
                     delegate: self
                 )
             },
@@ -512,6 +515,13 @@ extension TodoViewController {
                 self?.presentPopup(with: deleteEventViewController)
             }
         )
+        
+        cell.segmentSwipeAction = {
+            NotificationCenter.default.post(
+                name: .didSwipeCellToSegmentLeft,
+                object: nil
+            )
+        }
         
         return cell
     }
@@ -590,15 +600,14 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
 
 // MARK: - EventMakorCoordinatorDelegate
 extension TodoViewController: TodoCreatorCoordinatorDelegate {
-    
     func didTapSaveButton(createdDate: Date) {
         updateWeekCalendarForDate(at: createdDate)
     }
 }
 
 // MARK: - DetailEventViewControllerDelegate
-extension TodoViewController: DetailEventViewControllerDelegate {
-    func didTapDeleteButton(event: TodoDisplayItem) {
+extension TodoViewController: DetailTodoViewControllerDelegate {
+    func didTapDeleteButton(event: any TodoItem) {
         let deleteEventViewController = DeleteEventViewController(
             eventId: event.id,
             isRepeating: event.isRepeating,
@@ -608,10 +617,19 @@ extension TodoViewController: DetailEventViewControllerDelegate {
         presentPopup(with: deleteEventViewController)
     }
     
-    func didTapTomorrowButton(event: TodoDisplayItem) {
+    func didTapTomorrowButton(event: any TodoItem) {
         if let id = event.id {
             input.send(.moveToTomorrow(todoId: id, event: event))
         }
+    }
+    
+    func didTapEditButton(event: any TodoItem) {
+        delegate?.didTapTodoMakor(
+            mode: event.eventMode,
+            selectedDate: selectedDate,
+            preTodo: event,
+            delegate: self
+        )
     }
 }
 

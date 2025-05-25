@@ -20,7 +20,7 @@ final class WithdrawReasonInputCoordinator: Coordinator {
         let withdrawReasonInputViewController = WithdrawReasonInputViewController()
         withdrawReasonInputViewController.hidesBottomBarWhenPushed = true
         withdrawReasonInputViewController.coordinator = self
-        navigationController.pushViewController(withdrawReasonInputViewController, animated: true)
+        navigationController.pushTDViewController(withdrawReasonInputViewController, animated: true)
     }
 
     func popViewController() {

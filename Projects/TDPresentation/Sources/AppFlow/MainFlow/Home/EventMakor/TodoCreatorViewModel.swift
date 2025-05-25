@@ -29,7 +29,7 @@ final class TodoCreatorViewModel: BaseViewModel {
         case failureAPI(String)
     }
     
-    private let mode: TodoCreatorViewController.Mode
+    private let mode: TDTodoMode
     private let output = PassthroughSubject<Output, Never>()
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
@@ -59,7 +59,7 @@ final class TodoCreatorViewModel: BaseViewModel {
     
     // MARK: - Initializer
     init(
-        mode: TodoCreatorViewController.Mode,
+        mode: TDTodoMode,
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
         fetchCategoriesUseCase: FetchCategoriesUseCase,
@@ -107,17 +107,7 @@ final class TodoCreatorViewModel: BaseViewModel {
     
     // MARK: - Input / Output
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        let shared = input.share()
-
-        shared
-            .filter {
-                switch $0 {
-                case .tapSaveTodoButton, .tapEditRoutineButton:
-                    return false
-                default:
-                    return true
-                }
-            }
+        input
             .sink { [weak self] event in
                 switch event {
                 case .fetchCategories:
@@ -153,30 +143,8 @@ final class TodoCreatorViewModel: BaseViewModel {
                     self?.validateCanSave()
                 case .selectAlarm(let index, let isSelected):
                     self?.handleAlarmSelection(at: index, isSelected: isSelected)
-                default:
-                    break
-                }
-            }
-            .store(in: &cancellables)
-
-        shared
-            .filter {
-                switch $0 {
-                case .tapSaveTodoButton, .tapEditRoutineButton:
-                    return true
-                default:
-                    return false
-                }
-            }
-            .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: false)
-            .sink { [weak self] event in
-                switch event {
                 case .tapSaveTodoButton:
                     self?.saveEvent()
-                case .tapEditRoutineButton:
-                    Task { await self?.updateRoutine() }
-                default:
-                    break
                 }
             }
             .store(in: &cancellables)

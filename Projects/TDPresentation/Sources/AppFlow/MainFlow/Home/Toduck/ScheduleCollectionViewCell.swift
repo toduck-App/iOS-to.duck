@@ -4,7 +4,7 @@ import SnapKit
 import Then
 
 final class ScheduleCollectionViewCell: UICollectionViewCell {
-    let eventDetailView = EventDetailView()
+    let eventDetailView = TodoDetailView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

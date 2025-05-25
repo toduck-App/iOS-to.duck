@@ -6,13 +6,8 @@ import TDDesign
 import TDCore
 
 final class TodoCreatorViewController: BaseViewController<BaseView> {
-    enum Mode {
-        case schedule
-        case routine
-    }
-    
     // MARK: - Properties
-    private let mode: Mode
+    private let mode: TDTodoMode
     private let isEdit: Bool
     private let viewModel: TodoCreatorViewModel
     private let todoMakorView: TodoCreatorView
@@ -24,7 +19,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
     
     // MARK: - Initializer
     init(
-        mode: Mode,
+        mode: TDTodoMode,
         isEdit: Bool,
         viewModel: TodoCreatorViewModel
     ) {
@@ -79,6 +74,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
             } else {
                 self?.input.send(.tapSaveTodoButton)
             }
+            self?.todoMakorView.saveButton.isEnabled = false
             self?.delegate?.didTapSaveButton(createdDate: self?.createStartDate ?? Date())
         }, for: .touchUpInside)
     }
@@ -111,6 +107,7 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
                         .joined(separator: ", ")
                     self?.showErrorAlert(errorMessage: "\(missing)이(가) 입력되지 않았어요.")
                 case .failureAPI(let message):
+                    self?.todoMakorView.saveButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
                 case .canSaveEvent(let isEnabled):
                     self?.todoMakorView.saveButton.isEnabled = isEnabled

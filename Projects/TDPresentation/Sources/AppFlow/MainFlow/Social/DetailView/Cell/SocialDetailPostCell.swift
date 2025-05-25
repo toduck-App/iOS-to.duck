@@ -7,6 +7,7 @@ import Then
 import UIKit
 
 final class SocialDetailPostCell: UICollectionViewCell {
+    private var userID: User.ID?
     weak var socialDetailPostCellDelegate: SocialPostDelegate?
     
     private var verticalStackView = UIStackView().then {
@@ -56,6 +57,7 @@ final class SocialDetailPostCell: UICollectionViewCell {
     }
     
     func configure(with item: Post) {
+        self.userID = item.user.id
         headerView.configure(
             titleBadge: item.user.title,
             nickname: item.user.name,
@@ -96,6 +98,12 @@ private extension SocialDetailPostCell {
         layer.cornerRadius = 12
         setupLayout()
         setupConstraints()
+        avatarView.isUserInteractionEnabled = true
+        let tapGR = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleAvatarTap)
+        )
+        avatarView.addGestureRecognizer(tapGR)
     }
     
     func setupLayout() {
@@ -211,5 +219,12 @@ extension SocialDetailPostCell {
             guard let self else { return }
             socialDetailPostCellDelegate?.didTapSharePost(self, item.id)
         }
+    }
+}
+
+extension SocialDetailPostCell {
+    @objc private func handleAvatarTap() {
+        guard let id = userID else { return }
+        socialDetailPostCellDelegate?.didTapProfileImage(self, id)
     }
 }

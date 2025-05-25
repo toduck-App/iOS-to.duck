@@ -23,7 +23,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case comments([Comment])
         case likePost(Post)
         case likeComment(Comment)
-        case createComment
+        case createComment(Comment.ID)
         case registerImage(Data)
         case shareRoutine
         case reportPost
@@ -43,7 +43,6 @@ public final class SocialDetailViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
-    private var registerComment: Comment?
     private var registerImage: Data?
     private var currentComment: Comment? // 현재 댓글을 다려는 댓글?
     
@@ -176,14 +175,15 @@ private extension SocialDetailViewModel {
     private func registerComment(content: String) async {
         do {
             let image: (fileName: String, imageData: Data)? = registerImage != nil ? (fileName: "\(UUID().uuidString).jpg", imageData: registerImage!) : nil
-            try await createCommentUseCase.execute(postID: postID, parentId: currentComment?.id, content: content, image: image)
+            let registerCommentID =  try await createCommentUseCase.execute(postID: postID, parentId: currentComment?.id, content: content, image: image)
             
-            output.send(.createComment)
             await fetchPost()
             if let currentComment {
                 output.send(.reloadParentComment(currentComment))
             }
             currentComment = nil
+            registerImage = nil
+            output.send(.createComment(registerCommentID))
         } catch {
             output.send(.failure("댓글 등록에 실패했습니다."))
         }

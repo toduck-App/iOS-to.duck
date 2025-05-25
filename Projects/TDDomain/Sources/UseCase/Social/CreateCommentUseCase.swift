@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol CreateCommentUseCase {
-    func execute(postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws
+    func execute(postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws -> Comment.ID
 }
 
 public final class CreateCommentUseCaseImpl: CreateCommentUseCase {
@@ -12,7 +12,7 @@ public final class CreateCommentUseCaseImpl: CreateCommentUseCase {
         self.repository = repository
     }
     
-    public func execute(postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws {
+    public func execute(postID: Post.ID, parentId: Comment.ID?, content: String, image: (fileName: String, imageData: Data)?) async throws -> Comment.ID {
         return try await repository.createComment(postID: postID, parentId: parentId, content: content, image: image)
     }
 }

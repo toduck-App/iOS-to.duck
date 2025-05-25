@@ -6,28 +6,29 @@ public enum TimerButtonState {
     case stop
     case reset
 
-    var icon: UIImage {
+    var primaryImage: UIImage {
         switch self {
         case .play:
-            return TDImage.Timer.play.withRenderingMode(.alwaysTemplate)
+            return TDImage.Timer.playPrimary.withRenderingMode(.alwaysTemplate)
         case .pause:
-            return TDImage.Timer.pause.withRenderingMode(.alwaysTemplate)
+            return TDImage.Timer.pausePrimary.withRenderingMode(.alwaysTemplate)
         case .stop:
-            return TDImage.Timer.stop.withRenderingMode(.alwaysTemplate)
+            return TDImage.Timer.stopPrimary.withRenderingMode(.alwaysTemplate)
         case .reset:
-            return TDImage.Timer.reset.withRenderingMode(.alwaysTemplate)
+            return TDImage.Timer.resetPrimary.withRenderingMode(.alwaysTemplate)
         }
     }
-
-    var backgroundColor: UIColor {
-        return UIColor(white: 1, alpha: 0.3)
-    }
-
-    var foregroundColor: UIColor {
-        return .white
-    }
-
-    var outlineColor: UIColor {
-        return UIColor(white: 1, alpha: 0.5)
+    
+    var neutralImage: UIImage {
+        switch self {
+        case .play:
+            return TDImage.Timer.playNeutral.withRenderingMode(.alwaysTemplate)
+        case .pause:
+            return TDImage.Timer.pauseNeutral.withRenderingMode(.alwaysTemplate)
+        case .stop:
+            return TDImage.Timer.stopNeutral.withRenderingMode(.alwaysTemplate)
+        case .reset:
+            return TDImage.Timer.resetNeutral.withRenderingMode(.alwaysTemplate)
+        }
     }
 }
