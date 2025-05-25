@@ -11,11 +11,13 @@ final class NotificationCell: UITableViewCell {
         $0.distribution = .fillProportionally
         $0.spacing = 10
     }
+    let profileImageContainerView = UIView()
     let profileImageView = UIImageView(image: TDImage.Profile.large).then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 16
         $0.layer.masksToBounds = true
     }
+    let profileDescriptionImageView = UIImageView()
     let contentVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .center
@@ -67,7 +69,10 @@ final class NotificationCell: UITableViewCell {
     // MARK: - Setup UI
     private func addView() {
         contentView.addSubview(horizontalStackView)
-        horizontalStackView.addArrangedSubview(profileImageView)
+        horizontalStackView.addArrangedSubview(profileImageContainerView)
+        profileImageContainerView.addSubview(profileImageView)
+        profileImageContainerView.addSubview(profileDescriptionImageView)
+        
         horizontalStackView.addArrangedSubview(contentVerticalStackView)
         horizontalStackView.addArrangedSubview(followButton)
         
@@ -84,8 +89,17 @@ final class NotificationCell: UITableViewCell {
             $0.leading.trailing.equalToSuperview().inset(16)
         }
         
+        profileImageContainerView.snp.makeConstraints {
+            $0.width.equalTo(44)
+            $0.height.equalTo(44)
+        }
         profileImageView.snp.makeConstraints {
-            $0.size.equalTo(32)
+            $0.size.equalTo(40)
+            $0.centerY.equalToSuperview()
+        }
+        profileDescriptionImageView.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(2)
         }
         
         contentVerticalStackView.snp.makeConstraints {
@@ -128,6 +142,7 @@ final class NotificationCell: UITableViewCell {
         senderName: String,
         title: String,
         time: String,
+        type: String,
         description: String?,
         isRead: Bool,
         isFollowed: Bool?
@@ -154,6 +169,15 @@ final class NotificationCell: UITableViewCell {
         }
         
         backgroundColor = isRead ? TDColor.baseWhite : TDColor.Primary.primary25
+        
+        if type == "FOLLOW" {
+            profileDescriptionImageView.image = TDImage.Profile.profileFollow
+        } else if type == "LIKE_POST" || type == "LIKE_COMMENT" {
+            profileDescriptionImageView.image = TDImage.Profile.profileLike
+        } else {
+            profileDescriptionImageView.image = TDImage.Profile.profileComment
+        }
+            
         
         if let isFollowed {
             followButton.setTitle(isFollowed ? "팔로잉" : "팔로우", for: .normal)

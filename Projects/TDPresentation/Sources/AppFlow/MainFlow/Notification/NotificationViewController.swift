@@ -168,6 +168,7 @@ extension NotificationViewController: UITableViewDataSource {
 
         // 제목, 부제목 생성
         let info = notification.data
+        let type = notification.type
         let title = info.titleText
         let subtitle = info.subtitleText
         let senderName = info.senderName
@@ -176,6 +177,7 @@ extension NotificationViewController: UITableViewDataSource {
             senderName: senderName,
             title: title,
             time: time,
+            type: type,
             description: subtitle,
             isRead: notification.isRead,
             isFollowed: notification.isFollowed

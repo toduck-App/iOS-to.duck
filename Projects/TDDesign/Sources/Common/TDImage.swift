@@ -113,6 +113,9 @@ public enum TDImage {
         public static let small = TDDesignAsset.Images.profileSmall.image
         public static let background1 = TDDesignAsset.Images.profileBackground1.image
         public static let background2 = TDDesignAsset.Images.profileBackground2.image
+        public static let profileFollow = TDDesignAsset.Images.profileFollow.image
+        public static let profileLike = TDDesignAsset.Images.profileLike.image
+        public static let profileComment = TDDesignAsset.Images.profileComment.image
     }
     
     public enum Repeat {
