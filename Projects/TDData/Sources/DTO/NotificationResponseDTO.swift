@@ -8,9 +8,11 @@ public struct NotificationResponseDTO: Decodable {
                 notifications.map { notification in
                     TDNotificationDetail(
                         id: notification.id,
+                        senderId: notification.senderId,
+                        senderImageUrl: notification.senderImageUrl,
                         type: notification.type,
                         title: notification.title,
-                        body: notification.body,
+                        body: notification.body ?? "",
                         actionUrl: notification.actionUrl,
                         data: NotificationInfo(
                             commenterName: notification.data.commenterName,
@@ -27,9 +29,11 @@ public struct NotificationResponseDTO: Decodable {
 
 public struct NotificationDetailResponseDTO: Decodable {
     public let id: Int
+    public let senderId: Int?
+    public let senderImageUrl: String?
     public let type: String
     public let title: String
-    public let body: String
+    public let body: String?
     public let actionUrl: String?
     public let data: NotificationInfoDTO
     public let isRead: Bool
@@ -37,6 +41,8 @@ public struct NotificationDetailResponseDTO: Decodable {
     
     public init(
         id: Int,
+        senderId: Int?,
+        senderImageUrl: String?,
         type: String,
         title: String,
         body: String,
@@ -46,6 +52,8 @@ public struct NotificationDetailResponseDTO: Decodable {
         createdAt: String
     ) {
         self.id = id
+        self.senderId = senderId
+        self.senderImageUrl = senderImageUrl
         self.type = type
         self.title = title
         self.body = body

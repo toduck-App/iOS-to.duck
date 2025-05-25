@@ -19,7 +19,7 @@ final class SelectedDayScheduleView: BaseView {
     let addButton = TDBaseButton(
         image: TDImage.plus.withTintColor(TDColor.Neutral.neutral600),
         backgroundColor: .clear,
-        foregroundColor: TDColor.Neutral.neutral600,
+        foregroundColor: TDColor.Neutral.neutral600
     )
     let scheduleTableView = UITableView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50

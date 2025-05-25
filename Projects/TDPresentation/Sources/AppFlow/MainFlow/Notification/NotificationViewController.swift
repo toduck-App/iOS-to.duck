@@ -142,21 +142,35 @@ extension NotificationViewController: UITableViewDataSource {
         ) as? NotificationCell else { return UITableViewCell() }
         
         let notification = viewModel.notifications[indexPath.row]
-        if let url = URL(string: notification.data.commenterName) {
+        if let imageUrl = notification.senderImageUrl,
+           let url = URL(string: imageUrl) {
             cell.profileImageView.kf.setImage(with: url)
         } else {
-            cell.profileImageView.image = nil
+            cell.profileImageView.image = TDImage.Profile.large
         }
 
+        var isFollwed: Bool? = nil
+        if notification.type == "Follow" {
+            
+        }
+        let time = notification.createdAt.toRelativeTime()
+        
         cell.configure(
-            profileImage: nil,
+            senderName: notification.data.commenterName,
             title: notification.title,
-            time: notification.createdAt,
+            time: time,
             description: notification.body,
             isRead: notification.isRead,
-            isFollowed: false
+            isFollowed: isFollwed
         )
         
         return cell
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
+        88
     }
 }

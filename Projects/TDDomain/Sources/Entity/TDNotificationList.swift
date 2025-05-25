@@ -8,6 +8,8 @@ public struct TDNotificationList {
 
 public struct TDNotificationDetail {
     public let id: Int
+    public let senderId: Int?
+    public let senderImageUrl: String?
     public let type: String
     public let title: String
     public let body: String
@@ -18,6 +20,8 @@ public struct TDNotificationDetail {
     
     public init(
         id: Int,
+        senderId: Int?,
+        senderImageUrl: String?,
         type: String,
         title: String,
         body: String,
@@ -27,6 +31,8 @@ public struct TDNotificationDetail {
         createdAt: String
     ) {
         self.id = id
+        self.senderId = senderId
+        self.senderImageUrl = senderImageUrl
         self.type = type
         self.title = title
         self.body = body
