@@ -1,3 +1,60 @@
+public enum NotificationInfo {
+    case comment(commenterName: String, commentContent: String, postId: Int)
+    case reply(replierName: String, replyContent: String, postId: Int, commentId: Int)
+    case replyOnMyPost(replierName: String, replyContent: String, postId: Int, commentId: Int)
+    case like(likerName: String, postId: Int)
+    case likeOnComment(likerName: String, postId: Int, commentId: Int)
+    case follow(followerName: String)
+    case routineShare(routineTitle: String, shareCount: Int)
+
+    public var senderName: String {
+        switch self {
+        case .comment(let name, _, _): return name
+        case .reply(let name, _, _, _): return name
+        case .replyOnMyPost(let name, _, _, _): return name
+        case .like(let name, _): return name
+        case .likeOnComment(let name, _, _): return name
+        case .follow(let name): return name
+        case .routineShare: return ""
+        }
+    }
+
+    public var titleText: String {
+        switch self {
+        case .comment(let name, _, _):
+            return "\(name)님이 내 게시물에 댓글을 남겼어요."
+        case .reply(let name, _, _, _):
+            return "\(name)님이 대댓글을 남겼어요."
+        case .replyOnMyPost(let name, _, _, _):
+            return "\(name)님이 내 게시글에 대댓글을 남겼어요."
+        case .like(let name, _):
+            return "\(name)님이 내 게시글에 좋아요를 남겼어요."
+        case .likeOnComment(let name, _, _):
+            return "\(name)님이 내 댓글에 좋아요를 남겼어요."
+        case .follow(let name):
+            return "\(name)님이 나를 팔로우 합니다."
+        case .routineShare:
+            return "루틴 총 공유수가 100회를 돌파했어요! 🎉"
+        }
+    }
+
+    public var subtitleText: String? {
+        switch self {
+        case .comment(_, let content, _):
+            return content
+        case .reply(_, let content, _, _):
+            return content
+        case .replyOnMyPost(_, let content, _, _):
+            return content
+        case .routineShare:
+            return "나의 인기 루틴을 확인해보세요."
+        default:
+            return nil
+        }
+    }
+}
+
+
 public struct TDNotificationList {
     public let notifications: [TDNotificationDetail]
     
@@ -5,7 +62,6 @@ public struct TDNotificationList {
         self.notifications = notifications
     }
 }
-
 public struct TDNotificationDetail {
     public let id: Int
     public let senderId: Int?
@@ -18,7 +74,7 @@ public struct TDNotificationDetail {
     public let isRead: Bool
     public let createdAt: String
     public var isFollowed: Bool?
-    
+
     public init(
         id: Int,
         senderId: Int?,
@@ -44,7 +100,7 @@ public struct TDNotificationDetail {
         self.createdAt = createdAt
         self.isFollowed = isFollowed
     }
-    
+
     public func withIsFollowed(_ isFollowed: Bool) -> TDNotificationDetail {
         return TDNotificationDetail(
             id: id,
@@ -59,17 +115,5 @@ public struct TDNotificationDetail {
             createdAt: createdAt,
             isFollowed: isFollowed
         )
-    }
-}
-
-public struct NotificationInfo {
-    public let commenterName: String
-    public let commentContent: String
-    public let postId: Int
-    
-    public init(commenterName: String, commentContent: String, postId: Int) {
-        self.commenterName = commenterName
-        self.commentContent = commentContent
-        self.postId = postId
     }
 }

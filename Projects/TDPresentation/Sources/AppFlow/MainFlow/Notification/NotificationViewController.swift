@@ -143,25 +143,33 @@ extension NotificationViewController: UITableViewDataSource {
         
         let notification = viewModel.notifications[indexPath.row]
         let time = notification.createdAt.toRelativeTime()
-        
+
+        // 프로필 이미지 설정
         if let imageUrl = notification.senderImageUrl,
            let url = URL(string: imageUrl) {
             cell.profileImageView.kf.setImage(with: url)
         } else {
             cell.profileImageView.image = TDImage.Profile.large
         }
-        
+
+        // 제목, 부제목 생성
+        let info = notification.data
+        let title = info.titleText
+        let subtitle = info.subtitleText
+        let senderName = info.senderName
+
         cell.configure(
-            senderName: notification.data.commenterName,
-            title: notification.title,
+            senderName: senderName,
+            title: title,
             time: time,
-            description: notification.body,
+            description: subtitle ?? "",
             isRead: notification.isRead,
             isFollowed: notification.isFollowed
         )
         
         return cell
     }
+
     
     func tableView(
         _ tableView: UITableView,
