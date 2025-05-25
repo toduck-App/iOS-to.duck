@@ -15,12 +15,12 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         case comment(Comment.ID)
     }
     
-    weak var coordinator: SocialDetailCoordinator?
-    
     let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
     private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
     private let viewModel: SocialDetailViewModel!
     private var cancellables = Set<AnyCancellable>()
+    private var scrollToCommentId: Comment.ID?
+    weak var coordinator: SocialDetailCoordinator?
     
     public init(viewModel: SocialDetailViewModel) {
         self.viewModel = viewModel
@@ -98,6 +98,12 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                 case .comments(let comments):
                     let items = comments.map { Item.comment($0.id) }
                     self?.applySnapshot(items: items, to: .comments)
+                    if let scrollToId = self?.scrollToCommentId {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self?.scrollToComment(withId: scrollToId)
+                            self?.scrollToCommentId = nil
+                        }
+                    }
                 case .likePost(let post):
                     self?.updateSnapshot(items: [.post(post.id)], to: .post)
                 case .likeComment(let comment):
@@ -120,6 +126,24 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
                     break
                 }
             }.store(in: &cancellables)
+    }
+    
+    func updateScrollToCommentId(_ id: Comment.ID) {
+        scrollToCommentId = id
+    }
+    
+    private func scrollToComment(withId id: Comment.ID) {
+        let targetItem = Item.comment(id)
+        
+        guard let indexPath = datasource.indexPath(for: targetItem) else {
+            return
+        }
+
+        layoutView.detailCollectionView.scrollToItem(
+            at: indexPath,
+            at: .centeredVertically,
+            animated: true
+        )
     }
 }
 

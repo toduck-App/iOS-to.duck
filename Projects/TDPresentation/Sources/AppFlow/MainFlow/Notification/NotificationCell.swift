@@ -19,6 +19,7 @@ final class NotificationCell: UITableViewCell {
     let contentVerticalStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .center
+        $0.spacing = 8
     }
 
     let titleTimeContainer = UIView()
@@ -30,7 +31,6 @@ final class NotificationCell: UITableViewCell {
         toduckFont: .regularBody3,
         toduckColor: TDColor.Neutral.neutral600
     )
-    let dummyView = UIView()
     let descriptionLabel = TDLabel(
         toduckFont: .boldBody3,
         toduckColor: TDColor.Neutral.neutral600

@@ -121,7 +121,13 @@ final class NotificationViewController: BaseViewController<BaseView> {
 }
 
 extension NotificationViewController: UITableViewDelegate {
-    
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        let notification = viewModel.notifications[indexPath.row]
+        coordinator?.didSelectNotification(notification)
+    }
 }
 
 extension NotificationViewController: UITableViewDataSource {

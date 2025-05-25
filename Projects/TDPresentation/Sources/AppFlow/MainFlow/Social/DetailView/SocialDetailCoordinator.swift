@@ -48,6 +48,9 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
             viewModel: socialDetailViewModel
         )
         socialDetailViewController.coordinator = self
+        if let commentId {
+            socialDetailViewController.updateScrollToCommentId(commentId)
+        }
         navigationController.pushTDViewController(socialDetailViewController, animated: true)
     }
     
