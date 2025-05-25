@@ -5,13 +5,15 @@ final class NotificationViewModel: BaseViewModel {
     enum Input {
         case fetchNotificationList(page: Int, size: Int)
         case readAllNotifications
+        case toggleUserFollow(userId: Int, isFollowing: Bool)
     }
     
     enum Output {
         case fetchedNotificationList
+        case successUserFollowToggle
         case failure(String)
     }
-    
+    private let toggleUserFollowUseCase: ToggleUserFollowUseCase
     private let fetchNotificationListUseCase: FetchNotificationListUseCase
     private let readAllNotificationsUseCase: ReadAllNotificationsUseCase
     private let output = PassthroughSubject<Output, Never>()
@@ -19,9 +21,11 @@ final class NotificationViewModel: BaseViewModel {
     private(set) var notifications: [TDNotificationDetail] = []
     
     init(
+        toggleUserFollowUseCase: ToggleUserFollowUseCase,
         fetchNotificationListUseCase: FetchNotificationListUseCase,
         readAllNotificationsUseCase: ReadAllNotificationsUseCase
     ) {
+        self.toggleUserFollowUseCase = toggleUserFollowUseCase
         self.fetchNotificationListUseCase = fetchNotificationListUseCase
         self.readAllNotificationsUseCase = readAllNotificationsUseCase
     }
@@ -29,6 +33,8 @@ final class NotificationViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
+            case .toggleUserFollow(let userId, let isFollowing):
+                Task { await self?.toggleUserFollow(userId: userId, isFollowing: isFollowing) }
             case .fetchNotificationList(let page, let size):
                 Task { await self?.fetchNotificationList(page: page, size: size) }
             case .readAllNotifications:
@@ -41,9 +47,21 @@ final class NotificationViewModel: BaseViewModel {
     
     private func fetchNotificationList(page: Int, size: Int) async {
         do {
-            let notifications = try await fetchNotificationListUseCase.execute(page: page, size: size)
-            self.notifications = notifications
+            self.notifications = try await fetchNotificationListUseCase.execute(page: page, size: size)
             output.send(.fetchedNotificationList)
+        } catch {
+            output.send(.failure(error.localizedDescription))
+        }
+    }
+    
+    private func toggleUserFollow(userId: Int, isFollowing: Bool) async {
+        do {
+            try await toggleUserFollowUseCase.execute(
+                currentFollowState: isFollowing,
+                targetUserID: userId
+            )
+            self.notifications = try await fetchNotificationListUseCase.execute(page: 0, size: 20)
+            output.send(.successUserFollowToggle)
         } catch {
             output.send(.failure(error.localizedDescription))
         }

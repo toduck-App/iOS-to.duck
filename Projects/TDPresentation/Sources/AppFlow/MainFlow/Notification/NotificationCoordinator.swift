@@ -18,9 +18,11 @@ final class NotificationCoordinator: Coordinator {
     }
     
     public func start() {
+        let toggleUserFollowUseCase = injector.resolve(ToggleUserFollowUseCase.self)
         let fetchNotificationListUseCase = injector.resolve(FetchNotificationListUseCase.self)
         let readAllNotificationsUseCase = injector.resolve(ReadAllNotificationsUseCase.self)
         let notificationViewModel = NotificationViewModel(
+            toggleUserFollowUseCase: toggleUserFollowUseCase,
             fetchNotificationListUseCase: fetchNotificationListUseCase,
             readAllNotificationsUseCase: readAllNotificationsUseCase
         )

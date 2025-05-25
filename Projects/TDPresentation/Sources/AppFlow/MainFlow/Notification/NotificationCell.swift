@@ -176,4 +176,10 @@ final class NotificationCell: UITableViewCell {
             followButton.isHidden = true
         }
     }
+    
+    func configureFollowButton(action: @escaping () -> Void) {
+        followButton.addAction(UIAction { _ in
+            action()
+        }, for: .touchUpInside)
+    }
 }

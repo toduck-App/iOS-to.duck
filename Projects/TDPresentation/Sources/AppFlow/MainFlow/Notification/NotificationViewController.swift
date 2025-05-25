@@ -87,6 +87,8 @@ final class NotificationViewController: BaseViewController<BaseView> {
                 case .fetchedNotificationList:
                     notificationTableView.reloadData()
                     noAlarmContainerView.isHidden = !viewModel.notifications.isEmpty
+                case .successUserFollowToggle:
+                    notificationTableView.reloadData()
                 case .failure(let message):
                     showErrorAlert(errorMessage: message)
                 }
@@ -172,6 +174,13 @@ extension NotificationViewController: UITableViewDataSource {
             isRead: notification.isRead,
             isFollowed: notification.isFollowed
         )
+        
+        if let userId = notification.senderId,
+           let isFollowed = notification.isFollowed {
+            cell.configureFollowButton { [weak self] in
+                self?.input.send(.toggleUserFollow(userId: userId, isFollowing: isFollowed))
+            }
+        }
         
         return cell
     }
