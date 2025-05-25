@@ -192,6 +192,7 @@ extension NotificationViewController: UITableViewDataSource {
                 self?.input.send(.toggleUserFollow(userId: userId, isFollowing: isFollowed))
             }
         }
+        cell.selectionStyle = .none
         
         return cell
     }

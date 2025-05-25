@@ -36,8 +36,6 @@ final class NotificationCoordinator: Coordinator {
               let url = URL(string: actionUrl),
               let deepLink = DeepLinkType(url: url) else { return }
         
-        
-
         switch deepLink {
         case .post(let postId, let commentId):
             let socialDetailCoordinator = SocialDetailCoordinator(
@@ -49,6 +47,18 @@ final class NotificationCoordinator: Coordinator {
             socialDetailCoordinator.finishDelegate = self
             childCoordinators.append(socialDetailCoordinator)
             socialDetailCoordinator.start()
+            
+        case .profile(let userId):
+            if let userId = Int(userId) {
+                let socialProfileCoordinator = SocialProfileCoordinator(
+                    navigationController: navigationController,
+                    injector: injector,
+                    id: userId
+                )
+                socialProfileCoordinator.finishDelegate = self
+                childCoordinators.append(socialProfileCoordinator)
+                socialProfileCoordinator.start()
+            }
             
         default:
             break
