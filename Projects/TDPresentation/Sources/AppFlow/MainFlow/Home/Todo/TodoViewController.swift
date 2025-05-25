@@ -168,8 +168,8 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     private func resetFloatingButtonAppearance() {
         eventMakorFloattingButton.updateBackgroundColor(
-            buttonColor: TDColor.Primary.primary500,
-            imageColor: TDColor.baseWhite
+            backgroundColor: TDColor.Primary.primary500,
+            foregroundColor: TDColor.baseWhite
         )
         let angle: CGFloat = 0
         eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
@@ -291,8 +291,8 @@ final class TodoViewController: BaseViewController<BaseView> {
         UIView.animate(withDuration: 0.2, animations: {
             self.dimmedView.alpha = self.isMenuVisible ? 1 : 0
             self.eventMakorFloattingButton.updateBackgroundColor(
-                buttonColor: self.isMenuVisible ? TDColor.baseWhite : TDColor.Primary.primary500,
-                imageColor: self.isMenuVisible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
+                backgroundColor: self.isMenuVisible ? TDColor.baseWhite : TDColor.Primary.primary500,
+                foregroundColor: self.isMenuVisible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
             )
             let angle: CGFloat = self.isMenuVisible ? .pi / 4 : 0
             self.eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)

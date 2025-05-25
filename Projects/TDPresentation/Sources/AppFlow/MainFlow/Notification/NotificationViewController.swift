@@ -35,16 +35,11 @@ final class NotificationViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - View Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        input.send(.fetchNotificationList(page: 0, size: 20))
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         input.send(.readAllNotifications)
+        input.send(.fetchNotificationList(page: 0, size: 20))
     }
     
     // MARK: - Common Methods

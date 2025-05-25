@@ -56,7 +56,7 @@ public final class TDFormButtonsView: UIView {
     // MARK: - Properties
     private let type: TDFormButtonsViewType
     private var daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"]
-    private var alarmTimeList = ["10분 전", "30분 전", "1시간 전"]
+    private var alarmTimeList = ["10분 전", "30분 전", "1일 전"]
     public weak var delegate: TDFormButtonsViewDelegate?
     
     // MARK: - Initialize
@@ -88,7 +88,7 @@ public final class TDFormButtonsView: UIView {
     }
     
     public func updateAlarmContent(isAllDay: Bool) {
-        alarmTimeList = isAllDay ? ["1일 전"] : ["10분 전", "30분 전", "1시간 전"]
+        alarmTimeList = isAllDay ? ["1일 전"] : ["10분 전", "30분 전", "1일 전"]
     
         buttonHorizontalStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         buttons.removeAll()
