@@ -42,7 +42,7 @@ final class NotificationViewModel: BaseViewModel {
     private func fetchNotificationList(page: Int, size: Int) async {
         do {
             let notifications = try await fetchNotificationListUseCase.execute(page: page, size: size)
-            self.notifications = notifications.notifications
+            self.notifications = notifications
             output.send(.fetchedNotificationList)
         } catch {
             output.send(.failure(error.localizedDescription))

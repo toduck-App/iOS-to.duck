@@ -11,7 +11,7 @@ final class NotificationCell: UITableViewCell {
         $0.distribution = .fillProportionally
         $0.spacing = 10
     }
-    let profileImageView = UIImageView(image: TDImage.Profile.medium).then {
+    let profileImageView = UIImageView(image: TDImage.Profile.large).then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 16
         $0.layer.masksToBounds = true
@@ -31,10 +31,7 @@ final class NotificationCell: UITableViewCell {
         toduckFont: .boldBody3,
         toduckColor: TDColor.Neutral.neutral600
     )
-    let followButton = TDBaseButton(
-        title: "팔로우",
-        radius: 8
-    )
+    let followButton = UIButton(type: .system)
     
     // MARK: - Initializer
     override init(
@@ -49,6 +46,18 @@ final class NotificationCell: UITableViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        titleLabel.attributedText = nil
+        timeLabel.text = nil
+        descriptionLabel.text = nil
+        followButton.setTitle(nil, for: .normal)
+        followButton.isHidden = false
+        backgroundColor = TDColor.baseWhite
+        profileImageView.image = TDImage.Profile.large
     }
     
     // MARK: - Setup UI
@@ -139,9 +148,21 @@ final class NotificationCell: UITableViewCell {
         
         if let isFollowed {
             followButton.setTitle(isFollowed ? "팔로잉" : "팔로우", for: .normal)
-            followButton.backgroundColor = isFollowed ? TDColor.baseWhite : TDColor.Primary.primary500
-            followButton.setTitleColor(isFollowed ? TDColor.Neutral.neutral600 : TDColor.baseWhite, for: .normal)
-            followButton.layer.borderColor = isFollowed ? TDColor.Neutral.neutral300.cgColor : nil
+            followButton.titleLabel?.font = TDFont.boldBody2.font
+            
+            if isFollowed {
+                followButton.backgroundColor = TDColor.baseWhite
+                followButton.setTitleColor(TDColor.Neutral.neutral600, for: .normal)
+                followButton.layer.borderWidth = 1
+                followButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+                followButton.layer.cornerRadius = 8
+            } else {
+                followButton.backgroundColor = TDColor.Primary.primary500
+                followButton.setTitleColor(TDColor.baseWhite, for: .normal)
+                followButton.layer.borderWidth = 0
+                followButton.layer.borderColor = nil
+                followButton.layer.cornerRadius = 8
+            }
         } else {
             followButton.isHidden = true
         }

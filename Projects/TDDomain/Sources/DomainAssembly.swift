@@ -212,10 +212,19 @@ public struct DomainAssembly: Assembly {
         }
         
         container.register(FetchNotificationListUseCase.self) { resolver in
-            guard let repository = resolver.resolve(NotificationRepository.self) else {
+            guard let notificationRepository = resolver.resolve(NotificationRepository.self) else {
                 fatalError("컨테이너에 NotificationRepository가 등록되어 있지 않습니다.")
             }
-            return FetchNotificationListUseCaseImpl(repository: repository)
+            
+            guard let userRepository = resolver.resolve(UserRepository.self) else {
+                fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
+            }
+            
+            let fetchUserUseCase = FetchUserUseCaseImpl(repository: userRepository)
+            return FetchNotificationListUseCaseImpl(
+                repository: notificationRepository,
+                fetchUserUseCase: fetchUserUseCase
+            )
         }
         
         container.register(ReadAllNotificationsUseCase.self) { resolver in

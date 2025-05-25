@@ -17,6 +17,7 @@ public struct TDNotificationDetail {
     public let data: NotificationInfo
     public let isRead: Bool
     public let createdAt: String
+    public var isFollowed: Bool?
     
     public init(
         id: Int,
@@ -28,7 +29,8 @@ public struct TDNotificationDetail {
         actionUrl: String?,
         data: NotificationInfo,
         isRead: Bool,
-        createdAt: String
+        createdAt: String,
+        isFollowed: Bool? = nil
     ) {
         self.id = id
         self.senderId = senderId
@@ -40,6 +42,23 @@ public struct TDNotificationDetail {
         self.data = data
         self.isRead = isRead
         self.createdAt = createdAt
+        self.isFollowed = isFollowed
+    }
+    
+    public func withIsFollowed(_ isFollowed: Bool) -> TDNotificationDetail {
+        return TDNotificationDetail(
+            id: id,
+            senderId: senderId,
+            senderImageUrl: senderImageUrl,
+            type: type,
+            title: title,
+            body: body,
+            actionUrl: actionUrl,
+            data: data,
+            isRead: isRead,
+            createdAt: createdAt,
+            isFollowed: isFollowed
+        )
     }
 }
 

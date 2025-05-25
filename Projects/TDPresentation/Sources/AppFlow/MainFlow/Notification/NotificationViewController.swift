@@ -142,18 +142,14 @@ extension NotificationViewController: UITableViewDataSource {
         ) as? NotificationCell else { return UITableViewCell() }
         
         let notification = viewModel.notifications[indexPath.row]
+        let time = notification.createdAt.toRelativeTime()
+        
         if let imageUrl = notification.senderImageUrl,
            let url = URL(string: imageUrl) {
             cell.profileImageView.kf.setImage(with: url)
         } else {
             cell.profileImageView.image = TDImage.Profile.large
         }
-
-        var isFollwed: Bool? = nil
-        if notification.type == "Follow" {
-            
-        }
-        let time = notification.createdAt.toRelativeTime()
         
         cell.configure(
             senderName: notification.data.commenterName,
@@ -161,7 +157,7 @@ extension NotificationViewController: UITableViewDataSource {
             time: time,
             description: notification.body,
             isRead: notification.isRead,
-            isFollowed: isFollwed
+            isFollowed: notification.isFollowed
         )
         
         return cell
