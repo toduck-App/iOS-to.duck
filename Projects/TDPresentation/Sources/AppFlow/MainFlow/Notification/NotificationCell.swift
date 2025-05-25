@@ -177,7 +177,6 @@ final class NotificationCell: UITableViewCell {
         } else {
             profileDescriptionImageView.image = TDImage.Profile.profileComment
         }
-            
         
         if let isFollowed {
             followButton.setTitle(isFollowed ? "팔로잉" : "팔로우", for: .normal)
