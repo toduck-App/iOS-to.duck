@@ -46,6 +46,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     private let viewModel: DiaryCalendarViewModel
     private let input = PassthroughSubject<DiaryCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private var isFirstLoad = true
     weak var coordinator: DiaryCoordinator?
     weak var delegate: DiaryCalendarViewControllerDelegate?
     var selectedDate = Date().normalized
@@ -66,7 +67,6 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         let normalizedToday = Date().normalized
         input.send(.selectDay(normalizedToday))
         fetchDiaryList(for: Date())
-        calendarDidSelect(date: Date())
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -173,6 +173,12 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
                 case .fetchedDiaryList:
                     self?.calendar.reloadData()
                     self?.updateDiaryView(with: self?.viewModel.monthDiaryList[self?.selectedDate ?? Date()])
+                    if let self, isFirstLoad {
+                        isFirstLoad = false
+                        calendar.select(selectedDate)
+                        calendar.delegate?.calendar?(self.calendar, didSelect: selectedDate, at: .current)
+                        input.send(.selectDay(selectedDate.normalized))
+                    }
                 case .setImage:
                     self?.fetchDiaryList(for: self?.selectedDate ?? Date())
                 case .notFoundDiary:
@@ -315,6 +321,9 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         let diary = viewModel.monthDiaryList[normalized]
         cell.configure(with: diary?.emotion.image)
         
+        let isToday = Calendar.current.isDateInToday(date)
+        cell.markAsToday(isToday)
+
         return cell
     }
     

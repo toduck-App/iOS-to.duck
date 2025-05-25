@@ -314,6 +314,9 @@ extension SheetCalendarViewController {
         let dateType = typeOfDate(date)
         cell.updateBackImage(dateType) // 현재 그리는 셀의 date 타입에 의해서 셀 디자인
         
+        let isToday = Calendar.current.isDateInToday(date)
+        cell.markAsToday(isToday)
+        
         return cell
     }
     

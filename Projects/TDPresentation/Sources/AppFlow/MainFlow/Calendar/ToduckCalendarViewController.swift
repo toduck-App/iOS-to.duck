@@ -270,6 +270,23 @@ extension ToduckCalendarViewController: CalendarHeaderStackViewDelegate {
 extension ToduckCalendarViewController: TDCalendarConfigurable {
     func calendar(
         _ calendar: FSCalendar,
+        cellFor date: Date,
+        at position: FSCalendarMonthPosition
+    ) -> FSCalendarCell {
+        guard let cell = calendar.dequeueReusableCell(
+            withIdentifier: ToduckCalendarDateCell.identifier,
+            for: date,
+            at: position
+        ) as? ToduckCalendarDateCell else { return FSCalendarCell() }
+        
+        let isToday = Calendar.current.isDateInToday(date)
+        cell.markAsToday(isToday)
+        
+        return cell
+    }
+    
+    func calendar(
+        _ calendar: FSCalendar,
         didSelect date: Date,
         at monthPosition: FSCalendarMonthPosition
     ) {

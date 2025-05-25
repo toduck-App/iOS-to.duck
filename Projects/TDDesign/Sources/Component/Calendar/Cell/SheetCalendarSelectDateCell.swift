@@ -1,15 +1,13 @@
-//
-//  SelectDatesCustomFSCalendarCell.swift
-//  toduck
-//
-//  Created by 박효준 on 8/25/24.
-//
-
 import FSCalendar
 import SnapKit
 import Then
 
 public final class SheetCalendarSelectDateCell: FSCalendarCell {
+    public let todayDotView = UIView().then {
+        $0.backgroundColor = TDColor.Primary.primary500
+        $0.layer.cornerRadius = 2
+        $0.isHidden = true
+    }
     public let circleBackImageView = UIImageView()
     public let leftRectBackImageView = UIImageView()
     public let rightRectBackImageView = UIImageView()
@@ -35,11 +33,17 @@ public final class SheetCalendarSelectDateCell: FSCalendarCell {
 		contentView.insertSubview(circleBackImageView, at: 0)
 		contentView.insertSubview(leftRectBackImageView, at: 0)
 		contentView.insertSubview(rightRectBackImageView, at: 0)
+        contentView.addSubview(todayDotView)
 	}
     
 	private func setConstraints() {
-		// 요일 폰트를 센터로 맞춤 (디폴트는 위로 치우쳐있음)
-		self.titleLabel.snp.makeConstraints {
+        todayDotView.snp.makeConstraints {
+            $0.size.equalTo(4)
+            $0.top.equalTo(contentView).inset(1)
+            $0.trailing.equalTo(contentView).inset(4)
+        }
+        
+		titleLabel.snp.makeConstraints {
 			$0.center.equalTo(contentView)
 		}
 
@@ -71,6 +75,10 @@ public final class SheetCalendarSelectDateCell: FSCalendarCell {
 			$0.backgroundColor = TDColor.Primary.primary50
 		}
 	}
+    
+    public func markAsToday(_ isToday: Bool) {
+        todayDotView.isHidden = !isToday
+    }
 }
 
 extension SheetCalendarSelectDateCell {
