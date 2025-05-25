@@ -116,7 +116,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             $0.edges.equalToSuperview().inset(12)
         }
         calendar.snp.makeConstraints {
-            $0.top.equalTo(calendarHeader.snp.bottom).offset(30)
+            $0.top.equalTo(calendarHeader.snp.bottom).offset(36)
             $0.leading.trailing.bottom.equalToSuperview().inset(20)
         }
         
