@@ -162,7 +162,7 @@ extension NotificationViewController: UITableViewDataSource {
             senderName: senderName,
             title: title,
             time: time,
-            description: subtitle ?? "",
+            description: subtitle,
             isRead: notification.isRead,
             isFollowed: notification.isFollowed
         )

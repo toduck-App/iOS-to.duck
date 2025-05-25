@@ -16,7 +16,10 @@ final class NotificationCell: UITableViewCell {
         $0.layer.cornerRadius = 16
         $0.layer.masksToBounds = true
     }
-    let contentContainerView = UIView()
+    let contentVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .center
+    }
 
     let titleTimeContainer = UIView()
     let titleLabel = TDLabel(
@@ -27,6 +30,7 @@ final class NotificationCell: UITableViewCell {
         toduckFont: .regularBody3,
         toduckColor: TDColor.Neutral.neutral600
     )
+    let dummyView = UIView()
     let descriptionLabel = TDLabel(
         toduckFont: .boldBody3,
         toduckColor: TDColor.Neutral.neutral600
@@ -64,11 +68,11 @@ final class NotificationCell: UITableViewCell {
     private func addView() {
         contentView.addSubview(horizontalStackView)
         horizontalStackView.addArrangedSubview(profileImageView)
-        horizontalStackView.addArrangedSubview(contentContainerView)
+        horizontalStackView.addArrangedSubview(contentVerticalStackView)
         horizontalStackView.addArrangedSubview(followButton)
         
-        contentContainerView.addSubview(titleTimeContainer)
-        contentContainerView.addSubview(descriptionLabel)
+        contentVerticalStackView.addArrangedSubview(titleTimeContainer)
+        contentVerticalStackView.addArrangedSubview(descriptionLabel)
         
         titleTimeContainer.addSubview(titleLabel)
         titleTimeContainer.addSubview(timeLabel)
@@ -84,7 +88,7 @@ final class NotificationCell: UITableViewCell {
             $0.size.equalTo(32)
         }
         
-        contentContainerView.snp.makeConstraints {
+        contentVerticalStackView.snp.makeConstraints {
             $0.leading.equalTo(profileImageView.snp.trailing).offset(10)
             $0.trailing.equalTo(followButton.snp.leading).offset(-10)
         }
@@ -124,7 +128,7 @@ final class NotificationCell: UITableViewCell {
         senderName: String,
         title: String,
         time: String,
-        description: String,
+        description: String?,
         isRead: Bool,
         isFollowed: Bool?
     ) {
@@ -142,7 +146,12 @@ final class NotificationCell: UITableViewCell {
         
         titleLabel.attributedText = attributedTitle
         timeLabel.setText(time)
-        descriptionLabel.setText(description)
+        if let description, !description.isEmpty {
+            descriptionLabel.setText(description)
+            descriptionLabel.isHidden = false
+        } else {
+            descriptionLabel.isHidden = true
+        }
         
         backgroundColor = isRead ? TDColor.baseWhite : TDColor.Primary.primary25
         
