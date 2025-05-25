@@ -359,6 +359,7 @@ extension DiaryViewController: DiaryCalendarViewControllerDelegate {
         // 선택된 날짜와 오늘(00:00) 비교
         let today = Calendar.current.startOfDay(for: Date())
         let targetDate = selectedDate.normalized
+        self.selectedDate = targetDate
         
         // 오늘 이후(내일 이상)라면 버튼 숨기고 리턴
         if targetDate > today {
