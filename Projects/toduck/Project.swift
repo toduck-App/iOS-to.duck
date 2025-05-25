@@ -24,10 +24,6 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
-        
-        .external(dependency: .FirebaseAnalytics),
-        .external(dependency: .FirebaseCrashlytics),
-        .external(dependency: .FirebaseMessaging),
     ],
     settings: .settings(
         base: [

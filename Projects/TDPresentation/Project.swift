@@ -22,6 +22,9 @@ let project = Project(
                 .external(dependency: .FSCalendar),
                 .external(dependency: .Kingfisher),
                 .external(dependency: .FittedSheets),
+                .external(dependency: .FirebaseAnalytics),
+                .external(dependency: .FirebaseMessaging),
+                .external(dependency: .FirebaseCrashlytics),
             ]
         ),
         Target.target(
