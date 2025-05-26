@@ -29,6 +29,10 @@ final class SocialListView: BaseView {
         items: ["전체", "주제별"]
     )
     
+    private let segmentedControlBottomLine = UIView().then {
+        $0.backgroundColor = TDColor.Neutral.neutral200
+    }
+    
     private(set) lazy var chipCollectionView = TDChipCollectionView(
         chipType: chipType,
         hasAllSelectChip: false,
@@ -122,6 +126,12 @@ final class SocialListView: BaseView {
             make.edges.equalTo(safeAreaLayoutGuide)
             make.height.equalTo(44)
         }
+        
+        segmentedControlBottomLine.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(segmentedControl.snp.bottom)
+            make.height.equalTo(1)
+        }
     }
     
     override func configure() {
@@ -130,7 +140,7 @@ final class SocialListView: BaseView {
     }
     
     override func addview() {
-        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, addPostButton, loadingView, searchView].forEach {
+        [segmentedControl, dropDownHoverView, chipCollectionView, socialFeedCollectionView, addPostButton, loadingView, searchView, segmentedControlBottomLine].forEach {
             addSubview($0)
         }
     }

@@ -12,8 +12,9 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 14
+        $0.spacing = 10
         $0.distribution = .fill
+        $0.alignment = .fill
     }
     
     private lazy var headerView = SocialHeaderView(style: .list)
@@ -175,7 +176,7 @@ private extension SocialFeedCollectionViewCell {
         }
         
         headerView.snp.makeConstraints { make in
-            make.height.equalTo(24)
+            make.height.equalTo(36)
         }
         
         bodyStackView.snp.makeConstraints { make in
@@ -183,7 +184,7 @@ private extension SocialFeedCollectionViewCell {
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.height.equalTo(19)
+            make.height.greaterThanOrEqualTo(20)
         }
         
         footerView.snp.makeConstraints { make in
@@ -195,6 +196,14 @@ private extension SocialFeedCollectionViewCell {
             make.trailing.equalToSuperview().offset(-16)
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
+        }
+        
+        textContainerView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        contentLabel.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(20)
         }
         
         separatorView.snp.makeConstraints { make in
