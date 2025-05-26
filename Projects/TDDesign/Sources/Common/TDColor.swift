@@ -77,6 +77,7 @@ public enum TDColor {
     }
 
     public enum Primary {
+        public static let primary10 = TDDesignAsset.Colors.primary10.color
         public static let primary25 = TDDesignAsset.Colors.primary25.color
         public static let primary50 = TDDesignAsset.Colors.primary50.color
         public static let primary100 = TDDesignAsset.Colors.primary100.color
