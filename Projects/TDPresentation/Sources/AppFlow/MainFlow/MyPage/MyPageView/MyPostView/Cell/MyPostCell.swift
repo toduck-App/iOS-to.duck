@@ -11,7 +11,7 @@ final class MyPostCell: UICollectionViewCell {
     
     private var verticalStackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 14
+        $0.spacing = 10
         $0.distribution = .fill
     }
     
@@ -167,7 +167,7 @@ private extension MyPostCell {
         }
         
         headerView.snp.makeConstraints { make in
-            make.height.equalTo(24)
+            make.height.equalTo(36)
         }
         
         bodyStackView.snp.makeConstraints { make in
