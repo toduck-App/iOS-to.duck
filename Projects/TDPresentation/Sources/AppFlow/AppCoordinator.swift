@@ -11,8 +11,10 @@ public final class AppCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
     public var finishDelegate: CoordinatorFinishDelegate?
     public var injector: DependencyResolvable
+    
     private var splashViewController: SplashViewController?
     private var pendingDeepLink: DeepLinkType?
+    private var pendingFCMToken: String?
     
     public init(
         navigationController: UINavigationController,
@@ -23,14 +25,16 @@ public final class AppCoordinator: Coordinator {
     }
     
     public func start() {
-        observeFCMToken()
         showSplash()
+        observeFCMToken()
+        
         if !TDTokenManager.shared.isFirstLaunch {
             TDTokenManager.shared.launchFirstLaunch()
             startWalkThroughFlow()
             removeSplash()
             return
         }
+        
         startDefaultFlow()
     }
     
@@ -50,6 +54,7 @@ public final class AppCoordinator: Coordinator {
                     } else {
                         startTabBarFlow()
                         processPendingDeepLink()
+                        registerPendingFCMToken()
                     }
                 }
             } catch {
@@ -158,20 +163,33 @@ public final class AppCoordinator: Coordinator {
             forName: .didReceiveFCMToken,
             object: nil,
             queue: .main
-        ) { notification in
-            guard
-                let token = notification.userInfo?["token"] as? String
-            else { return }
-            
-            let registerDeviceTokenUseCase = DIContainer.shared.resolve(RegisterDeviceTokenUseCase.self)
+        ) { [weak self] notification in
+            guard let self else { return }
+            guard let token = notification.userInfo?["token"] as? String else { return }
 
-            Task {
-                do {
-                    TDLogger.info("FCM 토큰 우리 서버에 등록: \(token)")
-                    try await registerDeviceTokenUseCase.execute(token: token)
-                } catch {
-                    TDLogger.error("❌ FCM 토큰 등록 실패: \(error)")
-                }
+            if TDTokenManager.shared.accessToken == nil {
+                TDLogger.info("🔒 accessToken 없음. FCM 토큰 보류: \(token)")
+                pendingFCMToken = token
+            } else {
+                sendFCMTokenToServer(token)
+            }
+        }
+    }
+    
+    private func registerPendingFCMToken() {
+        guard let token = pendingFCMToken else { return }
+        sendFCMTokenToServer(token)
+        pendingFCMToken = nil
+    }
+    
+    private func sendFCMTokenToServer(_ token: String) {
+        let useCase = injector.resolve(RegisterDeviceTokenUseCase.self)
+        Task {
+            do {
+                TDLogger.info("✅ FCM 토큰 서버 등록 시도: \(token)")
+                try await useCase.execute(token: token)
+            } catch {
+                TDLogger.error("❌ FCM 토큰 서버 등록 실패: \(error)")
             }
         }
     }
@@ -199,5 +217,6 @@ extension AppCoordinator: AuthCoordinatorDelegate {
     func didLogin() {
         childCoordinators.removeAll { $0 is AuthCoordinator }
         startTabBarFlow()
+        registerPendingFCMToken()
     }
 }
