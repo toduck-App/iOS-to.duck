@@ -39,8 +39,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        input.send(.readAllNotifications)
-        input.send(.fetchNotificationList(page: 0, size: 20))
+        loadNotifications()
     }
     
     // MARK: - Common Methods
@@ -83,6 +82,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
                 case .fetchedNotificationList:
                     notificationTableView.reloadData()
                     noAlarmContainerView.isHidden = !viewModel.notifications.isEmpty
+                    refreshControl.endRefreshing()
                 case .successUserFollowToggle:
                     notificationTableView.reloadData()
                 case .failure(let message):
@@ -119,21 +119,22 @@ final class NotificationViewController: BaseViewController<BaseView> {
     }
     
     private func setupRefreshControl() {
+        notificationTableView.refreshControl = refreshControl
         refreshControl.addTarget(
             self,
             action: #selector(refreshNotificationList),
             for: .valueChanged
         )
-        notificationTableView.refreshControl = refreshControl
     }
     
     @objc
     private func refreshNotificationList() {
-        input.send(.readAllNotifications)
+        loadNotifications()
+    }
+    
+    private func loadNotifications() {
         input.send(.fetchNotificationList(page: 0, size: 20))
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            self?.refreshControl.endRefreshing()
-        }
+        input.send(.readAllNotifications)
     }
 }
 
