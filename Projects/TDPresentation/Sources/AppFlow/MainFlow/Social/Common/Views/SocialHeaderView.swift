@@ -93,7 +93,6 @@ private extension SocialHeaderView {
     
     func setupConstraints() {
         nicknameLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
             make.top.leading.equalToSuperview()
             make.height.equalTo(21)
         }
@@ -104,13 +103,13 @@ private extension SocialHeaderView {
 //        }
         
         dateLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(nicknameLabel)
-            make.leading.equalTo(nicknameLabel.snp.trailing).offset(10)
+            make.top.equalTo(nicknameLabel.snp.bottom).offset(2)
+            make.leading.equalTo(nicknameLabel.snp.leading)
             make.height.equalTo(12)
         }
         
         dotIconView.snp.makeConstraints { make in
-            make.centerY.equalTo(nicknameLabel)
+            make.centerY.equalToSuperview()
             make.trailing.equalTo(self)
             make.width.height.equalTo(24)
         }
