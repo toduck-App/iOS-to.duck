@@ -50,9 +50,18 @@ final class SocialListViewController: BaseViewController<SocialListView> {
         
         navigationItem.leftBarButtonItems = leftBarButtonItems
         
-        // 우측 버튼 설정 (검색 버튼)
+        // 우측 버튼 설정 (검색 버튼 + 알람 버튼)
         navigationItem.titleView = nil
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchButton)
+        let alarmButton = UIButton(type: .custom)
+        alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
+        alarmButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapAlarmButton()
+        }, for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: alarmButton),
+            UIBarButtonItem(customView: layoutView.searchButton)
+        ]
     }
     
     private func setupNavigationSearchBar() {
