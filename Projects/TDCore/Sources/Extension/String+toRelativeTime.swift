@@ -13,13 +13,13 @@ extension String {
 
         let interval = Int(Date().timeIntervalSince(date))
         if interval < 60 {
-            return "\(interval)초 전"
+            return "\(interval)초"
         } else if interval < 3600 {
-            return "\(interval / 60)분 전"
+            return "\(interval / 60)분"
         } else if interval < 86400 {
-            return "\(interval / 3600)시간 전"
+            return "\(interval / 3600)시간"
         } else {
-            return "\(interval / 86400)일 전"
+            return "\(interval / 86400)일"
         }
     }
 }
