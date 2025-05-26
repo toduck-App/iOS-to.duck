@@ -147,10 +147,8 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
             saveButton.layer.borderWidth = 0
         }
     }
-}
-
-// MARK: 선택된 날짜를 업데이트 (우측 상단 Label)
-extension SheetCalendarViewController {
+    
+    // MARK: 선택된 날짜를 업데이트 (우측 상단 Label)
     private func updateSelectedDatesLabel() {
         guard let firstDate = startDate else {
             selectDates.text = ""
@@ -180,9 +178,8 @@ extension SheetCalendarViewController {
     }
 }
 
-// MARK: - FSCalendarDelegateAppearance
-/// 데코레이션 관리 (텍스트 색, 점 색.. 등등)
 extension SheetCalendarViewController {
+    // MARK: - FSCalendarDelegateAppearance
     // 기본 폰트 색
     func calendar(
         _ calendar: FSCalendar, 
@@ -200,11 +197,8 @@ extension SheetCalendarViewController {
     ) -> UIColor? {
         colorForDate(date)
     }
-}
-
-// MARK: - FSCalendarDelegate
-/// 클릭됐을 때 동작
-extension SheetCalendarViewController {
+    
+    // MARK: - FSCalendarDelegate
     func calendar(
         _ calendar: FSCalendar,
         didSelect date: Date,
@@ -302,11 +296,8 @@ extension SheetCalendarViewController {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         updateHeaderLabel(for: calendar.currentPage)
     }
-}
-
-// MARK: - FSCalendarDataSource
-/// 데코레이션 관리 (텍스트 색, 점 색.. 등등)
-extension SheetCalendarViewController {
+    
+    // MARK: - FSCalendarDataSource
     func calendar(
         _ calendar: FSCalendar,
         cellFor date: Date,
@@ -318,7 +309,7 @@ extension SheetCalendarViewController {
         else { return FSCalendarCell() }
         
         let dateType = typeOfDate(date)
-        cell.updateBackImage(dateType) // 현재 그리는 셀의 date 타입에 의해서 셀 디자인
+        cell.updateBackImage(dateType)
         
         let isToday = Calendar.current.isDateInToday(date)
         cell.markAsToday(isToday)

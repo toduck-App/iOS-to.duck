@@ -35,7 +35,7 @@ final class SheetCalendarCoordinator: Coordinator {
             )
         )
         sheetController.cornerRadius = 28
-        navigationController.present(sheetController, animated: true, completion: nil)
+        navigationController.present(sheetController, animated: true)
     }
 }
 
