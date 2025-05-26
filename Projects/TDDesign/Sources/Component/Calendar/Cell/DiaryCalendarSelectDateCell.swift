@@ -11,12 +11,10 @@ public final class DiaryCalendarSelectDateCell: FSCalendarCell {
     
     public let backImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.clipsToBounds = true
     }
     
     public let selectionBackgroundView = UIView().then {
         $0.backgroundColor = TDColor.Primary.primary100
-        $0.clipsToBounds = true
     }
     
     // 감정 여부를 기억하는 프로퍼티
