@@ -16,17 +16,15 @@ final class FindAccountViewController: BaseViewController<BaseView> {
     private var currentViewController: UIViewController?
     weak var coordinator: FindAccountCoordinator?
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if isMovingFromParent {
-            coordinator?.finish(by: .modal)
-        }
-    }
-    
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
         navigationItem.title = "아이디 · 비밀번호 찾기"
+        navigationController?.setupNestedNavigationBar(
+            leftButtonTitle: "",
+            leftButtonAction: UIAction { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
+            }
+        )
         setupSegmentedControl()
         updateView()
     }
