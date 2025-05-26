@@ -119,11 +119,17 @@ extension UIViewController {
     @objc var screenName: String {
         return String(describing: type(of: self))
     }
+    
+    @objc var screenClassName: String {
+        return String(describing: type(of: self))
+    }
 
     func trackScreenAppear() {
         Analytics.logEvent(AnalyticsEventScreenView, parameters: [
-            AnalyticsParameterScreenName: screenName
+            AnalyticsParameterScreenName: screenName,
+            AnalyticsParameterScreenClass: screenClassName
         ])
+        
         Crashlytics.crashlytics().log("Entered screen: \(screenName)")
     }
 

@@ -32,7 +32,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         case failure(String)
     }
     
-    private let postID: Int
+    private(set) var postID: Int
     private let fetchPostUsecase: FetchPostUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
     private let toggleCommentLikeUseCase: ToggleCommentLikeUseCase

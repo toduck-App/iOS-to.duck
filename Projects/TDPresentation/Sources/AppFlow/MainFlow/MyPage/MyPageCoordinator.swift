@@ -41,6 +41,16 @@ final class MyPageCoordinator: Coordinator {
         childCoordinators.append(withdrawCoordinator)
         withdrawCoordinator.start()
     }
+    
+    func didTapAlarmButton() {
+        let notificationCoordinator = NotificationCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        notificationCoordinator.finishDelegate = self
+        childCoordinators.append(notificationCoordinator)
+        notificationCoordinator.start()
+    }
 
     func didTapLogoutButton() {
         finishDelegate?.didFinish(childCoordinator: self)

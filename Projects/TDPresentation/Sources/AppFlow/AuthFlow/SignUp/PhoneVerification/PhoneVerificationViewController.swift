@@ -21,18 +21,17 @@ final class PhoneVerificationViewController: BaseViewController<PhoneVerificatio
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if isMovingFromParent {
-            coordinator?.finish(by: .modal)
-        }
-    }
-    
     override func configure() {
         layoutView.phoneNumberTextField.delegate = self
         layoutView.verificationNumberTextField.delegate = self
         keyboardAdjustableView = layoutView.nextButton
+        
+        navigationController?.setupNestedNavigationBar(
+            leftButtonTitle: "",
+            leftButtonAction: UIAction { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
+            }
+        )
         
         layoutView.postButton.addAction(UIAction { [weak self] _ in
             let phoneNumber = self?.layoutView.phoneNumberTextField.text ?? ""

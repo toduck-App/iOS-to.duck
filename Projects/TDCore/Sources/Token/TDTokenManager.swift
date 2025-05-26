@@ -6,7 +6,7 @@ public final class TDTokenManager {
     public private(set) var accessToken: String?
     public private(set) var refreshToken: String?
     public private(set) var refreshTokenExpiredAt: Date?
-    public private(set) var fcmToken: String?
+    public private(set) var pendingFCMToken: String?
     public private(set) var userId: Int?
     
     public var isFirstLaunch: Bool {
@@ -89,6 +89,6 @@ public final class TDTokenManager {
     }
     
     public func registerFCMToken(_ token: String) {
-        fcmToken = token
+        pendingFCMToken = token
     }
 }

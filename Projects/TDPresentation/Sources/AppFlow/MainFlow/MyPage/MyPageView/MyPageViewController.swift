@@ -153,8 +153,8 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         // 우측 네비게이션 바 버튼 설정 (알림 버튼)
         let alarmButton = UIButton(type: .custom)
         alarmButton.setImage(TDImage.Bell.topOffMedium, for: .normal)
-        alarmButton.addAction(UIAction { _ in
-            TDLogger.debug("MyPageViewController - 알람 버튼 클릭")
+        alarmButton.addAction(UIAction { [weak self] _ in
+            self?.coordinator?.didTapAlarmButton()
         }, for: .touchUpInside)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alarmButton)

@@ -19,21 +19,18 @@ final class AccountViewController: BaseViewController<AccountView> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if isMovingFromParent {
-            coordinator?.finish(by: .pop)
-        }
-    }
-    
     override func configure() {
         layoutView.idTextField.delegate = self
         layoutView.passwordTextField.delegate = self
         layoutView.verifyPasswordTextField.delegate = self
         keyboardAdjustableView = layoutView.nextButton
-        
         setupButtonActions()
+        navigationController?.setupNestedNavigationBar(
+            leftButtonTitle: "",
+            leftButtonAction: UIAction { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
+            }
+        )
     }
     
     override func binding() {

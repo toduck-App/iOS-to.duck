@@ -65,7 +65,7 @@ extension TodoCreatorCoordinator: CoordinatorFinishDelegate {
 
 // MARK: - TDFormMoveView Delegate
 extension TodoCreatorCoordinator: TDFormMoveViewDelegate {
-    func didTapMoveView(_ view: TDDesign.TDFormMoveView, type: TDDesign.TDFormMoveViewType) {
+    func didTapMoveView(_ view: TDFormMoveView, type: TDFormMoveViewType) {
         var selectedCoordinator: Coordinator?
         switch type {
         case .category:

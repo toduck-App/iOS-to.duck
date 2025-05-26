@@ -15,7 +15,7 @@ final class SocialDetailViewController: BaseViewController<SocialDetailView> {
         case comment(Comment.ID)
     }
     
-    let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
+    private let input = PassthroughSubject<SocialDetailViewModel.Input, Never>()
     private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
     private let viewModel: SocialDetailViewModel!
     private var cancellables = Set<AnyCancellable>()
@@ -229,6 +229,23 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     
     func didTapDeleteComment(_ cell: UICollectionViewCell, _ commentID: Comment.ID) {
         input.send(.deleteComment(commentID))
+    }
+    
+    func didTapSharePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
+        let icon = TDImage.appIcon
+        let profileURL = URL(string: "toduck://post?postId=\(viewModel.postID)")!
+        let shareItem = PostShareItem(
+            url: profileURL,
+            title: "Toduck에서 게시물을 확인하세요!",
+            icon: icon
+        )
+
+        let activityVC = UIActivityViewController(
+            activityItems: [shareItem],
+            applicationActivities: nil
+        )
+        
+        present(activityVC, animated: true)
     }
     
     func didTapNicknameLabel(_ cell: UICollectionViewCell, _ userID: User.ID) {

@@ -55,14 +55,17 @@ final class TodoCreatorViewController: BaseViewController<BaseView> {
         super.viewWillDisappear(animated)
         
         tabBarController?.tabBar.isHidden = false
-        if isMovingFromParent {
-            coordinator?.finish(by: .pop)
-        }
     }
     
     // MARK: - Base Method
     override func configure() {
         navigationController?.navigationBar.isHidden = false
+        navigationController?.setupNestedNavigationBar(
+            leftButtonTitle: "",
+            leftButtonAction: UIAction { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
+            }
+        )
         todoMakorView.scrollView.delegate = self
         setupDelegate()
         setupCategory()

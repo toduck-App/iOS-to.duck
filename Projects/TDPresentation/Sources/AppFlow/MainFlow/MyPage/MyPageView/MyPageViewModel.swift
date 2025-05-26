@@ -77,7 +77,7 @@ final class MyPageViewModel: BaseViewModel {
     private func logout() async {
         do {
             try await userLogoutUseCase.execute()
-            try await deleteDeviceTokenUseCase.execute(token: TDTokenManager.shared.fcmToken ?? "")
+            try await deleteDeviceTokenUseCase.execute(token: TDTokenManager.shared.pendingFCMToken ?? "")
             output.send(.logoutFinished)
         } catch {
             output.send(.failureAPI(error.localizedDescription))

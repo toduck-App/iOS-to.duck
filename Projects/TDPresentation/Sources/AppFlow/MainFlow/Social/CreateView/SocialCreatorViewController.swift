@@ -25,14 +25,6 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        if isMovingFromParent {
-            coordinator?.finish(by: .pop)
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         if let post {
@@ -52,6 +44,13 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             self?.didTapRegisterButton()
         }, for: .touchUpInside)
+        
+        navigationController?.setupNestedNavigationBar(
+            leftButtonTitle: "",
+            leftButtonAction: UIAction { [weak self] _ in
+                self?.coordinator?.finish(by: .pop)
+            }
+        )
     }
 
     override func binding() {

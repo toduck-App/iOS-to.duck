@@ -1,6 +1,6 @@
 import LinkPresentation
 
-final class ProfileShareItem: NSObject, UIActivityItemSource {
+final class PostShareItem: NSObject, UIActivityItemSource {
     private let url: URL
     private let title: String
     private let icon: UIImage

@@ -57,16 +57,25 @@ public final class CalendarHeaderStackView: UIStackView {
     }
 
     private func setupSheetHeader() {
+        let imageContainerView = UIView()
         let calendarImage = UIImageView(image: TDImage.Calendar.top3Medium)
+        calendarImage.contentMode = .scaleAspectFit
         let label = TDLabel(
             toduckFont: TDFont.mediumHeader5,
             alignment: .center,
             toduckColor: TDColor.Neutral.neutral600
         )
         
-        addArrangedSubview(calendarImage)
+        addArrangedSubview(imageContainerView)
         addArrangedSubview(label)
         addArrangedSubview(pickerImageView)
+        imageContainerView.addSubview(calendarImage)
+        imageContainerView.snp.makeConstraints {
+            $0.size.equalTo(24)
+        }
+        calendarImage.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
     }
 
     private func setupTapGesture() {

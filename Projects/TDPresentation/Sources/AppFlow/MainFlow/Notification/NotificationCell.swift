@@ -14,7 +14,7 @@ final class NotificationCell: UITableViewCell {
     let profileImageContainerView = UIView()
     let profileImageView = UIImageView(image: TDImage.Profile.large).then {
         $0.contentMode = .scaleAspectFill
-        $0.layer.cornerRadius = 16
+        $0.layer.cornerRadius = 20
         $0.layer.masksToBounds = true
     }
     let profileDescriptionImageView = UIImageView()
@@ -34,7 +34,7 @@ final class NotificationCell: UITableViewCell {
         toduckColor: TDColor.Neutral.neutral600
     )
     let descriptionLabel = TDLabel(
-        toduckFont: .boldBody3,
+        toduckFont: .mediumBody3,
         toduckColor: TDColor.Neutral.neutral600
     )
     let followButton = UIButton(type: .system)
@@ -124,7 +124,7 @@ final class NotificationCell: UITableViewCell {
             $0.trailing.lessThanOrEqualToSuperview()
         }
         
-        descriptionLabel.numberOfLines = 1
+        descriptionLabel.numberOfLines = 3
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(titleTimeContainer.snp.bottom).offset(8)
             $0.leading.trailing.bottom.equalToSuperview()
@@ -168,7 +168,7 @@ final class NotificationCell: UITableViewCell {
             descriptionLabel.isHidden = true
         }
         
-        backgroundColor = isRead ? TDColor.baseWhite : TDColor.Primary.primary25
+        backgroundColor = isRead ? TDColor.baseWhite : TDColor.Primary.primary10
         
         if type == "FOLLOW" {
             profileDescriptionImageView.image = TDImage.Profile.profileFollow

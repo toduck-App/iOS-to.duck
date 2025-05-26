@@ -40,14 +40,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         Messaging.messaging().token { token, error in
             if let error = error {
                 TDLogger.error("❌ FCM 토큰 받기 실패: \(error.localizedDescription)")
-            } else if let token = token {
-                TDLogger.info("✅ 초기 FCM 토큰: \(token)")
-                TDTokenManager.shared.registerFCMToken(token)
-                NotificationCenter.default.post(
-                    name: .didReceiveFCMToken,
-                    object: nil,
-                    userInfo: ["token": token]
-                )
+            } else if let fcmToken = token {
+                TDLogger.info("✅ 초기 FCM 토큰: \(fcmToken)")
+                
+                if TDTokenManager.shared.accessToken == nil {
+                    TDLogger.debug("🔒 아직 accessToken 없음. FCM 토큰을 보류 상태로 저장")
+                    TDTokenManager.shared.registerFCMToken(fcmToken)
+                } else {
+                    NotificationCenter.default.post(
+                        name: .didReceiveFCMToken,
+                        object: nil,
+                        userInfo: ["token": fcmToken]
+                    )
+                }
             }
         }
     }
@@ -88,12 +93,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         guard let fcmToken else { return }
         TDLogger.info("🔄 FCM 토큰 갱신됨: \(fcmToken)")
         
-        TDTokenManager.shared.registerFCMToken(fcmToken)
-        NotificationCenter.default.post(
-            name: .didReceiveFCMToken,
-            object: nil,
-            userInfo: ["token": fcmToken]
-        )
+        if TDTokenManager.shared.accessToken == nil {
+            TDLogger.debug("🔒 아직 accessToken 없음. FCM 토큰을 보류 상태로 저장")
+            TDTokenManager.shared.registerFCMToken(fcmToken)
+        } else {
+            NotificationCenter.default.post(
+                name: .didReceiveFCMToken,
+                object: nil,
+                userInfo: ["token": fcmToken]
+            )
+        }
     }
     
     // MARK: - 카카오 로그인 처리

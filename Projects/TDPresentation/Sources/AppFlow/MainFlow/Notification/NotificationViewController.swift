@@ -14,6 +14,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
         toduckFont: .boldBody1,
         toduckColor: TDColor.Neutral.neutral600
     )
+    private let refreshControl = UIRefreshControl()
     
     // MARK: - Properties
     private let viewModel: NotificationViewModel
@@ -38,8 +39,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        input.send(.readAllNotifications)
-        input.send(.fetchNotificationList(page: 0, size: 20))
+        loadNotifications()
     }
     
     // MARK: - Common Methods
@@ -82,6 +82,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
                 case .fetchedNotificationList:
                     notificationTableView.reloadData()
                     noAlarmContainerView.isHidden = !viewModel.notifications.isEmpty
+                    refreshControl.endRefreshing()
                 case .successUserFollowToggle:
                     notificationTableView.reloadData()
                 case .failure(let message):
@@ -93,6 +94,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
     override func configure() {
         setupNavigationBar()
         setupNotificationTableView()
+        setupRefreshControl()
     }
     
     private func setupNavigationBar() {
@@ -114,6 +116,25 @@ final class NotificationViewController: BaseViewController<BaseView> {
         notificationTableView.backgroundColor = .clear
         notificationTableView.separatorStyle = .none
         notificationTableView.showsVerticalScrollIndicator = false
+    }
+    
+    private func setupRefreshControl() {
+        notificationTableView.refreshControl = refreshControl
+        refreshControl.addTarget(
+            self,
+            action: #selector(refreshNotificationList),
+            for: .valueChanged
+        )
+    }
+    
+    @objc
+    private func refreshNotificationList() {
+        loadNotifications()
+    }
+    
+    private func loadNotifications() {
+        input.send(.fetchNotificationList(page: 0, size: 20))
+        input.send(.readAllNotifications)
     }
 }
 
