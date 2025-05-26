@@ -12,7 +12,7 @@ final class SocialFooterView: UIView {
     // MARK: - Callback Closures
 
     var onLikeButtonTapped: (() -> Void)?
-    var onScrapButtonTapped: (() -> Void)?
+//    var onScrapButtonTapped: (() -> Void)?
     var onShareButtonTapped: (() -> Void)?
     
     // MARK: - UI Elements
@@ -26,13 +26,13 @@ final class SocialFooterView: UIView {
         }, for: .touchUpInside)
     }
     
-    private lazy var scrapButton = UIButton().then {
-        $0.setImage(TDImage.Scrap.emptyMedium, for: .normal)
-        $0.setImage(TDImage.Scrap.filledMedium, for: .highlighted)
-        $0.addAction(UIAction { [weak self] _ in
-            self?.onScrapButtonTapped?()
-        }, for: .touchUpInside)
-    }
+//    private lazy var scrapButton = UIButton().then {
+//        $0.setImage(TDImage.Scrap.emptyMedium, for: .normal)
+//        $0.setImage(TDImage.Scrap.filledMedium, for: .highlighted)
+//        $0.addAction(UIAction { [weak self] _ in
+//            self?.onScrapButtonTapped?()
+//        }, for: .touchUpInside)
+//    }
     
     private lazy var shareButton = UIButton().then {
         $0.setImage(TDImage.share2Medium, for: .normal)
@@ -88,13 +88,13 @@ final class SocialFooterView: UIView {
             $0.spacing = 4
         }
         
-        let rightStack = UIStackView(arrangedSubviews: [likeButton, likeLabel, scrapButton, shareButton]).then {
+        let rightStack = UIStackView(arrangedSubviews: [likeButton, likeLabel, shareButton]).then {
             $0.axis = .horizontal
             $0.alignment = .center
             $0.spacing = 4
             $0.setCustomSpacing(4, after: likeButton)
             $0.setCustomSpacing(10, after: likeLabel)
-            $0.setCustomSpacing(10, after: scrapButton)
+//            $0.setCustomSpacing(10, after: scrapButton)
         }
         let spacerView = UIView().then {
             $0.setContentHuggingPriority(.defaultLow, for: .horizontal)

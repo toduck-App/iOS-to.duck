@@ -210,10 +210,10 @@ extension SocialDetailPostCell {
             socialDetailPostCellDelegate?.didTapLikeButton(self, item.id)
         }
         
-        footerView.onScrapButtonTapped = { [weak self] in
-            guard let self else { return }
-            socialDetailPostCellDelegate?.didTapScrapPost(self, item.id)
-        }
+//        footerView.onScrapButtonTapped = { [weak self] in
+//            guard let self else { return }
+//            socialDetailPostCellDelegate?.didTapScrapPost(self, item.id)
+//        }
         
         footerView.onShareButtonTapped = { [weak self] in
             guard let self else { return }
