@@ -29,6 +29,7 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     )
     private let buttonHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
+        $0.distribution = .fillEqually
         $0.spacing = 10
     }
     private let resetButton = TDBaseButton(
@@ -38,13 +39,14 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
         radius: 12,
         font: TDFont.boldHeader3.font
     )
-    private let saveButton = TDBaseButton(
-        title: "저장",
-        backgroundColor: TDColor.Primary.primary500,
-        foregroundColor: TDColor.baseWhite,
-        radius: 12,
-        font: TDFont.boldHeader3.font
-    )
+    private let saveButton = UIButton(type: .system).then {
+        $0.setTitle("저장", for: .normal)
+        $0.titleLabel?.font = TDFont.boldHeader3.font
+        $0.backgroundColor = TDColor.baseWhite
+        $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
+        $0.isEnabled = false
+        $0.layer.cornerRadius = 12
+    }
     
     // MARK: - Properties
     private let headerDateFormatter = DateFormatter().then { $0.dateFormat = "yyyy년 M월" }
@@ -134,12 +136,16 @@ final class SheetCalendarViewController: BaseViewController<BaseView>, TDCalenda
     private func updateSaveButtonState() {
         if datesRange.isEmpty {
             saveButton.isEnabled = false
-            saveButton.backgroundColor = TDColor.Neutral.neutral100
+            saveButton.backgroundColor = TDColor.baseWhite
+            saveButton.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
+            saveButton.layer.borderWidth = 1
+            saveButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         } else {
             saveButton.isEnabled = true
             saveButton.backgroundColor = TDColor.Primary.primary500
+            saveButton.setTitleColor(TDColor.baseWhite, for: .normal)
+            saveButton.layer.borderWidth = 0
         }
-        saveButton.layer.borderWidth = 0
     }
 }
 

@@ -20,6 +20,7 @@ final class SheetColorView: BaseView {
     let colorPaletteView = TDCategoryColorPaletteView()
     private let buttonHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
+        $0.distribution = .fillEqually
         $0.spacing = LayoutConstants.buttonSpacing
     }
     let cancelButton = TDBaseButton(
@@ -29,13 +30,14 @@ final class SheetColorView: BaseView {
         radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.boldHeader3.font
     )
-    let saveButton = TDBaseButton(
-        title: "저장",
-        backgroundColor: TDColor.baseWhite,
-        foregroundColor: TDColor.Neutral.neutral700,
-        radius: LayoutConstants.buttonCornerRadius,
-        font: TDFont.boldHeader3.font
-    )
+    let saveButton = UIButton(type: .system).then {
+        $0.setTitle("저장", for: .normal)
+        $0.titleLabel?.font = TDFont.boldHeader3.font
+        $0.backgroundColor = TDColor.baseWhite
+        $0.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
+        $0.isEnabled = false
+        $0.layer.cornerRadius = 12
+    }
     
     // MARK: - Common Methods
     override func addview() {
@@ -97,13 +99,14 @@ final class SheetColorView: BaseView {
         let isEnabled = categoryCollectionView.isCategorySelected()
         saveButton.isEnabled = isEnabled
         if isEnabled {
-            saveButton.updateBackgroundColor(backgroundColor: TDColor.Primary.primary500, foregroundColor: .white)
-            saveButton.layer.borderColor = TDColor.Primary.primary500.cgColor
+            saveButton.backgroundColor = TDColor.Primary.primary500
+            saveButton.setTitleColor(TDColor.baseWhite, for: .normal)
             saveButton.layer.borderWidth = 0
         } else {
-            saveButton.updateBackgroundColor(backgroundColor: TDColor.baseWhite, foregroundColor: TDColor.Neutral.neutral700)
-            saveButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            saveButton.backgroundColor = TDColor.baseWhite
+            saveButton.setTitleColor(TDColor.Neutral.neutral700, for: .normal)
             saveButton.layer.borderWidth = 1
+            saveButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
         }
     }
 }
