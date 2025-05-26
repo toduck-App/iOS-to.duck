@@ -263,6 +263,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
 }
 
+// MARK: - CalendarHeaderStackViewDelegate
 extension DiaryCalendarViewController: CalendarHeaderStackViewDelegate {
     func calendarHeader(
         _ header: CalendarHeaderStackView,

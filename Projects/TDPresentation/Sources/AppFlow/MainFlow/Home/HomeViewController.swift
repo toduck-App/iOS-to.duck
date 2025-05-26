@@ -6,6 +6,7 @@ import UIKit
 final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
     let segmentedControl = TDSegmentedControl(items: ["토덕", "투두"])
+    let dividedLine = UIView.dividedLine()
     
     // MARK: - Properties
     private var cachedViewControllers = [Int: UIViewController]()
@@ -20,6 +21,7 @@ final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - Base Methods
     override func configure() {
         view.backgroundColor = TDColor.baseWhite
+        dividedLine.backgroundColor = TDColor.Neutral.neutral200
         setupSegmentedControl()
         setupNavigationBar()
         setupSwipeGestures()
@@ -30,12 +32,19 @@ final class HomeViewController: BaseViewController<BaseView> {
     // MARK: - Setup Methods
     private func setupSegmentedControl() {
         view.addSubview(segmentedControl)
+        view.addSubview(dividedLine)
         
         segmentedControl.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.equalToSuperview().offset(LayoutConstants.segmentedControlLeadingOffset)
             $0.width.equalTo(LayoutConstants.segmentedControlWidth)
             $0.height.equalTo(LayoutConstants.segmentedControlHeight)
+        }
+        
+        dividedLine.snp.makeConstraints {
+            $0.top.equalTo(segmentedControl.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(1)
         }
         
         segmentedControl.addAction(UIAction { [weak self] _ in
@@ -142,7 +151,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         appearance.configureWithOpaqueBackground()
         
         if index == 0 {
-            let color = TDColor.Neutral.neutral50
+            let color = TDColor.baseWhite
             appearance.backgroundColor = color
             appearance.shadowColor = .clear
             navigationController?.navigationBar.tintColor = TDColor.Neutral.neutral900
@@ -232,7 +241,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         view.addSubview(newViewController.view)
         
         newViewController.view.snp.makeConstraints {
-            $0.top.equalTo(segmentedControl.snp.bottom)
+            $0.top.equalTo(dividedLine.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
