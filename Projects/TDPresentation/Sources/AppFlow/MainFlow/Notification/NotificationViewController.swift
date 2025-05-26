@@ -14,6 +14,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
         toduckFont: .boldBody1,
         toduckColor: TDColor.Neutral.neutral600
     )
+    private let refreshControl = UIRefreshControl()
     
     // MARK: - Properties
     private let viewModel: NotificationViewModel
@@ -93,6 +94,7 @@ final class NotificationViewController: BaseViewController<BaseView> {
     override func configure() {
         setupNavigationBar()
         setupNotificationTableView()
+        setupRefreshControl()
     }
     
     private func setupNavigationBar() {
@@ -114,6 +116,24 @@ final class NotificationViewController: BaseViewController<BaseView> {
         notificationTableView.backgroundColor = .clear
         notificationTableView.separatorStyle = .none
         notificationTableView.showsVerticalScrollIndicator = false
+    }
+    
+    private func setupRefreshControl() {
+        refreshControl.addTarget(
+            self,
+            action: #selector(refreshNotificationList),
+            for: .valueChanged
+        )
+        notificationTableView.refreshControl = refreshControl
+    }
+    
+    @objc
+    private func refreshNotificationList() {
+        input.send(.readAllNotifications)
+        input.send(.fetchNotificationList(page: 0, size: 20))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.refreshControl.endRefreshing()
+        }
     }
 }
 

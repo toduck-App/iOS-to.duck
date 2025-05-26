@@ -34,9 +34,10 @@ final class NotifByFunctionViewController: BaseViewController<NotifByFunctionVie
             }
         )
     }
-    @objc private func didChangeToggle(_ sender: TDToggle) {
+    
+    @objc
+    private func didChangeToggle(_ sender: TDToggle) {
         let idx = sender.tag
         let name = functionNames[idx]
-        print("[\(name)] 알림이 \(sender.isOn ? "켜짐(On)" : "꺼짐(Off)")")
     }
 }
