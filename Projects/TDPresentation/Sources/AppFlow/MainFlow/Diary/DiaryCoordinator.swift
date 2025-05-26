@@ -40,8 +40,13 @@ final class DiaryCoordinator: Coordinator {
     }
     
     func didTapAlarmButton() {
-        // TODO: 알람 페이지로 이동
-        TDLogger.debug("알람 페이지로 이동")
+        let notificationCoordinator = NotificationCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        notificationCoordinator.finishDelegate = self
+        childCoordinators.append(notificationCoordinator)
+        notificationCoordinator.start()
     }
 }
 
