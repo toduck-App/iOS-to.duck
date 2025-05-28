@@ -75,9 +75,9 @@
         
         <!-- Push Notification 권한 설명 -->
         <key>NSCameraUsageDescription</key>
-        <string>사진을 찍기위해 카메라 권한이 필요합니다.</string>
+        <string>To.duck은 프로필 사진과 미디어를 캡처할 수 있도록 카메라를 사용합니다.</string>
         <key>NSPhotoLibraryUsageDescription</key>
-        <string>사진을 선택하고 공유하기 위해 사진 라이브러리에 접근이 필요합니다.</string>
+        <string>카메라 롤에서 선택한 사진을 올려 공유할 수 있습니다.</string>
         
         <!-- Firebase Swizzling 비활성화 -->
         <key>FirebaseAppDelegateProxyEnabled</key>
