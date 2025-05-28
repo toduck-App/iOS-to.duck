@@ -45,7 +45,10 @@ final class WithdrawCompletionViewModel: BaseViewModel {
     
     private func withdraw() async {
         do {
-            try await deleteDeviceTokenUseCase.execute(token: TDTokenManager.shared.pendingFCMToken ?? "")
+            if let token = TDTokenManager.shared.pendingFCMToken, !token.isEmpty {
+                try await deleteDeviceTokenUseCase.execute(token: token)
+            }
+            
             try await withdrawUseCase.execute(type: type, reason: reason)
             output.send(.withdrawCompleted)
         } catch {

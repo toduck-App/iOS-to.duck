@@ -40,7 +40,7 @@ final class WithdrawCompletionViewController: BaseViewController<WithdrawComplet
                 guard let self else { return }
                 switch event {
                 case .withdrawCompleted:
-                    self.coordinator?.popToRootViewController()
+                    NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
                 case .failure(let error):
                     self.showErrorAlert(errorMessage: error)
                 }
