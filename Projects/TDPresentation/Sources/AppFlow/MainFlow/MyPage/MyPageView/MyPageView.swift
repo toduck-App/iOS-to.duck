@@ -135,6 +135,14 @@ final class MyPageView: BaseView {
         self.sections = sections
         menuCollectionView.reloadData()
     }
+    
+    func updateCollectionViewHeight() {
+        menuCollectionView.layoutIfNeeded()
+        let height = menuCollectionView.collectionViewLayout.collectionViewContentSize.height
+        menuCollectionView.snp.updateConstraints {
+            $0.height.equalTo(height)
+        }
+    }
 }
 
 extension MyPageView: UICollectionViewDataSource {
