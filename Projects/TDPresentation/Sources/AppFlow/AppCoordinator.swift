@@ -27,6 +27,7 @@ public final class AppCoordinator: Coordinator {
     public func start() {
         showSplash()
         observeFCMToken()
+        observeTokenExpired()
         
         if !TDTokenManager.shared.isFirstLaunch {
             TDTokenManager.shared.launchFirstLaunch()
@@ -39,8 +40,6 @@ public final class AppCoordinator: Coordinator {
     }
     
     private func startDefaultFlow() {
-        observeTokenExpired()
-        
         Task {
             do {
                 try await TDTokenManager.shared.loadTokenFromKC()

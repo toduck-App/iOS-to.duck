@@ -49,6 +49,11 @@ final class MyPageViewController: BaseViewController<MyPageView> {
         input.send(.fetchUserDetail)
         input.send(.fetchUserNickname)
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        layoutView.updateCollectionViewHeight()
+    }
 
     // MARK: - Common Methods
 
