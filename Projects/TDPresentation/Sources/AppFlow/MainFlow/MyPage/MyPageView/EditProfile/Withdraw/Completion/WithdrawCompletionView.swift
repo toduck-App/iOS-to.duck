@@ -80,7 +80,7 @@ final class WithdrawCompletionView: BaseView {
         
         nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalPadding)
-            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(28)
             $0.height.equalTo(LayoutConstants.nextButtonSize)
         }
     }
