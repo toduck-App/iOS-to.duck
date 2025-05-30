@@ -1,10 +1,3 @@
-//
-//  WithdrawReasonInputViewController.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/29/25.
-//
-
 import TDDomain
 import UIKit
 

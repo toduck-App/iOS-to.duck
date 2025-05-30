@@ -171,11 +171,13 @@ extension SocialListView {
     }
     
     func showSearchView() {
-        searchView.isHidden = false        
+        segmentedControlBottomLine.isHidden = true
+        searchView.isHidden = false
     }
     
     func hideSearchView() {
         searchView.isHidden = true
+        segmentedControlBottomLine.isHidden = false
         searchView.hideKeyboard()
     }
     
