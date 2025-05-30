@@ -1,12 +1,4 @@
-//
-//  WithdrawView.swift
-//  TDPresentation
-//
-//  Created by 정지용 on 1/23/25.
-//
-
 import UIKit
-
 import TDDesign
 
 protocol WithdrawViewDelegate: AnyObject {
@@ -108,7 +100,7 @@ final class WithdrawView: BaseView {
         
         nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.horizontalPadding)
-            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(28)
             $0.height.equalTo(LayoutConstants.nextButtonSize)
         }
         
@@ -116,16 +108,6 @@ final class WithdrawView: BaseView {
             $0.top.equalTo(labelStack.snp.bottom)
             $0.bottom.equalTo(checkbox.snp.top)
             $0.leading.trailing.equalToSuperview()
-        }
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        nextButton.snp.updateConstraints {
-            if safeAreaInsets.bottom == 0 {
-                $0.bottom.equalToSuperview().inset(LayoutConstants.bottomPadding)
-            }
         }
     }
 }
