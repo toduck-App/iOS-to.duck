@@ -128,8 +128,8 @@ final class SocialListView: BaseView {
         }
         
         segmentedControlBottomLine.snp.makeConstraints { make in
+            make.top.equalTo(segmentedControl.snp.bottom)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(segmentedControl.snp.bottom)
             make.height.equalTo(1)
         }
     }
