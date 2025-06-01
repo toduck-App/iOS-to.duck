@@ -293,13 +293,14 @@ extension TodoCreatorViewController: TDFormButtonsViewDelegate {
         _ formButtonsView: TDFormButtonsView,
         type: TDFormButtonsViewType,
         didSelectIndex selectedIndex: Int,
+        title: String,
         isSelected: Bool
     ) {
         switch type {
         case .repeatDay:
             input.send(.selectRepeatDay(index: selectedIndex, isSelected: isSelected))
         case .alarm:
-            input.send(.selectAlarm(index: selectedIndex, isSelected: isSelected))
+            input.send(.selectAlarm(title: title, isSelected: isSelected))
         }
     }
 }

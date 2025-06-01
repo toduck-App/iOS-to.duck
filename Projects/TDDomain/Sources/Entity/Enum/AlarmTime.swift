@@ -2,6 +2,7 @@ public enum AlarmTime: String {
     case tenMinutesBefore = "TEN_MINUTE"
     case thirtyMinutesBefore = "THIRTY_MINUTE"
     case oneHourBefore = "ONE_HOUR"
+    case oneDayBefore = "ONE_DAY"
     
     public var title: String {
         switch self {
@@ -11,6 +12,8 @@ public enum AlarmTime: String {
             return "30분 전"
         case .oneHourBefore:
             return "1시간 전"
+        case .oneDayBefore:
+            return "하루 전"
         }
     }
     
@@ -22,6 +25,8 @@ public enum AlarmTime: String {
             return 30
         case .oneHourBefore:
             return 60
+        case .oneDayBefore:
+            return 1440
         }
     }
 }

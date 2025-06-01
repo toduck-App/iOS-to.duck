@@ -53,9 +53,15 @@ final class TodoCreatorView: BaseView {
     let dividedLine3 = UIView.dividedLine()
     
     // 반복일, 알람
-    let repeatDayForm = TDFormButtonsView(type: .repeatDay)
+    lazy var repeatDayForm = TDFormButtonsView(
+        type: .repeatDay,
+        isSchedule: mode == .schedule
+    )
     let dividedLine4 = UIView.dividedLine()
-    let alarmForm = TDFormButtonsView(type: .alarm)
+    lazy var alarmForm = TDFormButtonsView(
+        type: .alarm,
+        isSchedule: mode == .schedule
+    )
     let dividedLine5 = UIView.dividedLine()
     
     // 장소 (일정에서만 사용됨)
@@ -173,6 +179,7 @@ final class TodoCreatorView: BaseView {
         backgroundColor = TDColor.baseWhite
         scrollView.showsVerticalScrollIndicator = false
         saveButton.isEnabled = false
+        alarmForm.updateAlarmContent(isAllDay: false)
         if mode == .schedule {
             titleForm.setupLabel(title: "일정", placeholder: "일정을 입력해주세요")
             noticeSnackBarLabel.setText("일정 제목, 날짜, 시간은 필수 입력이에요!")

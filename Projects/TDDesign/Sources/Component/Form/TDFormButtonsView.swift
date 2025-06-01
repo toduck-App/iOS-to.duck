@@ -13,6 +13,7 @@ public protocol TDFormButtonsViewDelegate: AnyObject {
         _ formButtonsView: TDFormButtonsView,
         type: TDFormButtonsViewType,
         didSelectIndex selectedIndex: Int,
+        title: String,
         isSelected: Bool
     )
 }
@@ -55,13 +56,15 @@ public final class TDFormButtonsView: UIView {
     
     // MARK: - Properties
     private let type: TDFormButtonsViewType
+    private let isSchedule: Bool
     private var daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"]
-    private var alarmTimeList = ["10분 전", "30분 전", "1일 전"]
+    private var alarmTimeList: [String] = []
     public weak var delegate: TDFormButtonsViewDelegate?
     
     // MARK: - Initialize
-    public init(type: TDFormButtonsViewType) {
+    public init(type: TDFormButtonsViewType, isSchedule: Bool) {
         self.type = type
+        self.isSchedule = isSchedule
         super.init(frame: .zero)
         
         setupView()
@@ -88,11 +91,27 @@ public final class TDFormButtonsView: UIView {
     }
     
     public func updateAlarmContent(isAllDay: Bool) {
-        alarmTimeList = isAllDay ? ["1일 전"] : ["10분 전", "30분 전", "1일 전"]
-    
+        // 알람 옵션 결정
+        if isAllDay {
+            alarmTimeList = ["1일 전"]
+        } else {
+            alarmTimeList = isSchedule
+                ? ["10분 전", "30분 전", "1일 전"] // 일정
+                : ["10분 전", "30분 전", "1시간 전"] // 루틴
+        }
+
+        // 기존 버튼 제거
         buttonHorizontalStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         buttons.removeAll()
+        delegate?.formButtonsView(
+            self,
+            type: type,
+            didSelectIndex: -1,
+            title: "",
+            isSelected: false
+        )
 
+        // 버튼 다시 생성
         buttons = alarmTimeList.enumerated().map { index, title in
             let button = TDSelectableButton(
                 title: title,
@@ -105,6 +124,7 @@ public final class TDFormButtonsView: UIView {
             return button
         }
 
+        // 버튼 레이아웃 추가 및 액션 설정
         buttons.forEach {
             buttonHorizontalStackView.addArrangedSubview($0)
             $0.addAction(UIAction { [weak self] action in
@@ -139,7 +159,7 @@ public final class TDFormButtonsView: UIView {
             case .repeatDay:
                 return daysOfWeek
             case .alarm:
-                return alarmTimeList
+                return []
             }
         }()
         
@@ -228,6 +248,7 @@ public final class TDFormButtonsView: UIView {
             self,
             type: type,
             didSelectIndex: index,
+            title: sender.titleLabel?.text ?? "",
             isSelected: sender.isSelected
         )
     }
