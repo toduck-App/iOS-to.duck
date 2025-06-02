@@ -11,10 +11,7 @@ public struct NotificationServiceImpl: NotificationService {
     }
     
     public func registerDeviceToken(token: String) async throws {
-        try await provider.requestDecodable(
-            of: EmptyResponse.self,
-            .registerDeviceToken(token: token)
-        )
+        try await provider.request(.registerDeviceToken(token: token))
     }
     
     public func fetchNotifications(page: Int, size: Int) async throws -> NotificationResponseDTO {

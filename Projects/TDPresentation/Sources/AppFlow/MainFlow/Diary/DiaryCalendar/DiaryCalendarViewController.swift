@@ -13,7 +13,7 @@ protocol DiaryCalendarViewControllerDelegate: AnyObject {
 
 final class DiaryCalendarViewController: BaseViewController<BaseView> {
     // MARK: - UI Components
-
+    
     private let contentStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
@@ -30,19 +30,27 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         $0.image = TDImage.noEvent
         $0.contentMode = .scaleAspectFit
     }
-
+    
     private let noDiaryLabel = TDLabel(
         labelText: "일기를 작성하지 않았어요",
         toduckFont: TDFont.boldBody1,
         toduckColor: TDColor.Neutral.neutral600
     )
     
-    let diaryDetailContainerView = UIView()
+    let diaryDetailViewTopSpacer = UIView()
+    let diaryDetailVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+        $0.alignment = .fill
+        $0.backgroundColor = TDColor.Neutral.neutral100
+        $0.isLayoutMarginsRelativeArrangement = true
+        $0.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+    }
     let diaryDetailView = DiaryDetailView()
-    let dummyView = UIView()
+    let diaryDetailViewBottomSpacer = UIView()
     
     // MARK: - Properties
-
+    
     private let viewModel: DiaryCalendarViewModel
     private let input = PassthroughSubject<DiaryCalendarViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -77,13 +85,14 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Common Methods
-
+    
     override func addView() {
         view.addSubview(contentStackView)
         
         contentStackView.addArrangedSubview(calendarContainerView)
         contentStackView.addArrangedSubview(noDiaryContainerView)
-        contentStackView.addArrangedSubview(diaryDetailContainerView)
+        contentStackView.addArrangedSubview(diaryDetailViewTopSpacer)
+        contentStackView.addArrangedSubview(diaryDetailVerticalStackView)
         
         calendarContainerView.addSubview(calendarHeaderContainerView)
         calendarContainerView.addSubview(calendar)
@@ -92,8 +101,8 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         noDiaryContainerView.addSubview(noDiaryImageView)
         noDiaryContainerView.addSubview(noDiaryLabel)
         
-        diaryDetailContainerView.addSubview(diaryDetailView)
-        diaryDetailContainerView.addSubview(dummyView)
+        diaryDetailVerticalStackView.addArrangedSubview(diaryDetailView)
+        diaryDetailVerticalStackView.addArrangedSubview(diaryDetailViewBottomSpacer)
         
         calendarHeader.delegate = self
         calendar.delegate = self
@@ -121,7 +130,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         }
         
         noDiaryContainerView.snp.makeConstraints {
-            $0.height.equalTo(350)
+            $0.height.equalTo(280)
         }
         noDiaryImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(40)
@@ -132,25 +141,23 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             $0.centerX.equalToSuperview()
         }
         
-        diaryDetailContainerView.snp.makeConstraints {
-            $0.height.equalTo(500)
+        diaryDetailViewTopSpacer.snp.makeConstraints {
+            $0.height.equalTo(12)
         }
         diaryDetailView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
-            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.leading.equalToSuperview().offset(10)
+            $0.trailing.equalToSuperview().offset(-10)
         }
-        dummyView.snp.makeConstraints {
-            $0.top.equalTo(diaryDetailView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(100)
+        diaryDetailViewBottomSpacer.snp.makeConstraints {
+            $0.height.equalTo(1)
         }
     }
     
     override func configure() {
         setupCalendar()
         layoutView.backgroundColor = TDColor.baseWhite
-        noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral50
-        diaryDetailContainerView.backgroundColor = TDColor.Neutral.neutral50
+        noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral100
+        diaryDetailViewTopSpacer.backgroundColor = TDColor.Neutral.neutral100
         calendarHeaderContainerView.layer.borderWidth = 1
         calendarHeaderContainerView.layer.borderColor = TDColor.Neutral.neutral200.cgColor
         calendarHeaderContainerView.layer.cornerRadius = 8
@@ -205,7 +212,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     // MARK: 일기 불러온 후 이미지 불러오기
-
+    
     private func updateDiaryView(with diary: Diary? = nil) {
         updateContainerVisibility(for: diary)
         delegate?.didSelectDate(self, selectedDate: selectedDate, isWrited: diary != nil)
@@ -222,7 +229,8 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     
     private func updateContainerVisibility(for diary: Diary?) {
-        diaryDetailContainerView.isHidden = diary == nil
+        diaryDetailViewTopSpacer.isHidden = diary == nil
+        diaryDetailVerticalStackView.isHidden = diary == nil
         noDiaryContainerView.isHidden = diary != nil
     }
     
@@ -324,7 +332,7 @@ extension DiaryCalendarViewController: TDCalendarConfigurable {
         
         let isToday = Calendar.current.isDateInToday(date)
         cell.markAsToday(isToday)
-
+        
         return cell
     }
     
