@@ -182,11 +182,11 @@ public final class AppCoordinator: Coordinator {
     }
     
     private func sendFCMTokenToServer(_ token: String) {
-        let useCase = injector.resolve(RegisterDeviceTokenUseCase.self)
+        let registerDeviceTokenUseCase = injector.resolve(RegisterDeviceTokenUseCase.self)
         Task {
             do {
                 TDLogger.info("✅ FCM 토큰 서버 등록 시도: \(token)")
-                try await useCase.execute(token: token)
+                try await registerDeviceTokenUseCase.execute(token: token)
             } catch {
                 TDLogger.error("❌ FCM 토큰 서버 등록 실패: \(error)")
             }

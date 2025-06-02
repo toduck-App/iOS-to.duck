@@ -28,12 +28,10 @@ final class DiaryViewController: BaseViewController<BaseView> {
     /// 분석 뷰
     let analyzeView = DiaryAnalyzeView(diaryCount: 0, focusPercent: 0)
     
+    /// 세그먼트 & 일기-집중도 캘린더
     let diaryContentContainerView = UIView()
-    /// 세그먼트 컨트롤 (기분 / 집중도)
     let diarySegmentedControl = TDSegmentedControl(items: ["기분", "집중도"])
-    
-    /// 일기 및 집중도 캘린더를 전환하는 컨테이너
-    private let calendarSwitchContainerView = UIView()
+    let calendarSwitchContainerView = UIView()
     
     private let diaryPostButtonContainerView = UIView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
@@ -75,14 +73,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Life Cycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        input.send(.fetchUserNickname)
-        input.send(.fetchDiaryCompareCount)
-        input.send(.fetchFocusPercent)
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

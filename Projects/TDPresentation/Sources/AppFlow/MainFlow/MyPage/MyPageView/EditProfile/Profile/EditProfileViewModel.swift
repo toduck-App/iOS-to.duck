@@ -23,6 +23,7 @@ final class EditProfileViewModel: BaseViewModel {
     private var nickName: String = ""
     private var preNickName: String = ""
     private var profileImage: Data?
+    private var isProfileImageUpdated = false
     
     init(
         updateUserNicknameUseCase: UpdateUserNicknameUseCase,
@@ -43,6 +44,7 @@ final class EditProfileViewModel: BaseViewModel {
                 self.nickName = nickname
             case .writeProfileImage(let image):
                 self.profileImage = image
+                self.isProfileImageUpdated = true
             case .updateProfile:
                 Task { await self.updateProfile() }
             }
@@ -56,26 +58,27 @@ final class EditProfileViewModel: BaseViewModel {
             output.send(.failureNickname("닉네임에는 띄어쓰기나 특수문자를 사용할 수 없어요."))
             return
         }
-
+        
         do {
+            // 닉네임이 이전과 다를 경우에만 업데이트
             if nickName != preNickName {
                 try await updateUserNicknameUseCase.execute(nickname: nickName)
                 preNickName = nickName
             }
-
-            let fileName = UUID().uuidString + ".jpg"
-            if let profileImage {
+            
+            // 프로필 이미지를 수정한 경우에만 업데이트 수행
+            if isProfileImageUpdated, let profileImage {
+                let fileName = UUID().uuidString + ".jpg"
                 let image: (fileName: String, imageData: Data)? = (fileName: fileName, imageData: profileImage)
                 try await updateProfileImageUseCase.execute(image: image)
-            } else {
-                try await updateProfileImageUseCase.execute(image: nil)
             }
+            
             output.send(.updatedProfile)
         } catch {
             output.send(.failureAPI(error.localizedDescription))
         }
     }
-
+    
     private func isValidNickname(_ nickname: String) -> Bool {
         let regex = "^[가-힣a-zA-Z0-9]{2,8}$"
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: nickname)

@@ -18,7 +18,7 @@ final class TodoCreatorViewModel: BaseViewModel {
         case updateMemoTextView(String)
         case selectLockType(Bool)
         case selectRepeatDay(index: Int, isSelected: Bool)
-        case selectAlarm(index: Int, isSelected: Bool)
+        case selectAlarm(title: String, isSelected: Bool)
     }
     
     enum Output {
@@ -141,8 +141,8 @@ final class TodoCreatorViewModel: BaseViewModel {
                 case .selectRepeatDay(let index, let isSelected):
                     self?.handleRepeatDaySelection(at: index, isSelected: isSelected)
                     self?.validateCanSave()
-                case .selectAlarm(let index, let isSelected):
-                    self?.handleAlarmSelection(at: index, isSelected: isSelected)
+                case .selectAlarm(let title, let isSelected):
+                    self?.handleAlarmSelection(title: title, isSelected: isSelected)
                 case .tapSaveTodoButton:
                     self?.saveEvent()
                 }
@@ -345,22 +345,29 @@ final class TodoCreatorViewModel: BaseViewModel {
         TDLogger.info("현재 반복 요일: \(repeatDays ?? [])")
     }
     
-    private func handleAlarmSelection(at index: Int, isSelected: Bool) {
-        let alarmTypesArray: [AlarmTime] = [.tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore]
-        
-        guard index >= 0, index < alarmTypesArray.count else {
-            TDLogger.error("Invalid alarm index: \(index)")
+    private func handleAlarmSelection(title: String, isSelected: Bool) {
+        if title.isEmpty {
+            alarm = nil
+            TDLogger.info("알람 초기화됨 (타이틀 없음)")
             return
         }
         
-        let selectedAlarm = alarmTypesArray[index]
+        let titleToAlarmMap: [String: AlarmTime] = [
+            "10분 전": .tenMinutesBefore,
+            "30분 전": .thirtyMinutesBefore,
+            "1시간 전": .oneHourBefore,
+            "1일 전": .oneDayBefore
+        ]
+        
+        guard let selectedAlarm = titleToAlarmMap[title] else {
+            TDLogger.error("Invalid alarm title: \(title)")
+            return
+        }
         
         if isSelected {
-            // 선택한 알람 설정
             alarm = selectedAlarm
             TDLogger.info("알람 선택됨: \(selectedAlarm)")
         } else {
-            // 다시 눌러서 해제한 경우
             alarm = nil
             TDLogger.info("알람 해제됨")
         }

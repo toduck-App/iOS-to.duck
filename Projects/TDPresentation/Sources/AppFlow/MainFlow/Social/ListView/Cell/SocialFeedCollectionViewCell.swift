@@ -17,7 +17,7 @@ final class SocialFeedCollectionViewCell: UICollectionViewCell {
         $0.alignment = .fill
     }
     
-    private lazy var headerView = SocialHeaderView(style: .list)
+    private var headerView = SocialHeaderView(style: .list)
     
     private var bodyStackView = UIStackView().then {
         $0.axis = .vertical

@@ -43,17 +43,17 @@ final class SocialCreatorViewModel: BaseViewModel {
     private let createPostUseCase: CreatePostUseCase
     private let UpdatePostUseCase: UpdatePostUseCase
     
-    init(createPostUseCase: CreatePostUseCase,
-         UpdatePostUseCase: UpdatePostUseCase,
-         prevPost: Post? = nil)
-    {
+    init(
+        createPostUseCase: CreatePostUseCase,
+        UpdatePostUseCase: UpdatePostUseCase,
+        prevPost: Post? = nil
+    ) {
         self.createPostUseCase = createPostUseCase
         self.UpdatePostUseCase = UpdatePostUseCase
         self.prevPost = prevPost
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
-        
         input
             .sink { [weak self] event in
             guard let self else { return }
@@ -69,7 +69,13 @@ final class SocialCreatorViewModel: BaseViewModel {
             case .setTitle(let title):
                 setTitle(title)
             case .createPost:
-                Task { await self.createPost() }
+                Task {
+                    if self.isEditMode {
+                        await self.editPost()
+                    } else {
+                        await self.createPost()
+                    }
+                }
             }
         }.store(in: &cancellables)
         
