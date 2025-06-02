@@ -109,7 +109,7 @@ private extension SocialHeaderView {
         }
         
         dotIconView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(self)
             make.trailing.equalTo(self)
             make.width.height.equalTo(24)
         }
