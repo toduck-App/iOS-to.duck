@@ -2,7 +2,7 @@ import Foundation
 import TDCore
 import TDData
 
-open class MFSession {
+public actor MFSession {
     public static let `default` = MFSession()
     
     public let session: URLSession
@@ -17,7 +17,7 @@ open class MFSession {
     }
     
     @discardableResult
-    open func request(_ request: MFRequest) async throws(MFError) -> MFResponse<Data> {
+    public func request(_ request: MFRequest) async throws(MFError) -> MFResponse<Data> {
         let response = try await perform(request) { data in
             data
         }
@@ -26,7 +26,7 @@ open class MFSession {
     }
     
     @discardableResult
-    open func requestString(_ request: MFRequest) async throws(MFError) -> MFResponse<String> {
+    public func requestString(_ request: MFRequest) async throws(MFError) -> MFResponse<String> {
         let response = try await perform(request) { data in
             guard let string = String(data: data, encoding: .utf8) else { throw MFError.requestStringEncodingFailure }
             return string
@@ -36,7 +36,7 @@ open class MFSession {
     }
     
     @discardableResult
-    open func requestDecodable<T: Decodable>(of type: T.Type, _ request: MFRequest) async throws(MFError) -> MFResponse<T> {
+    public func requestDecodable<T: Decodable>(of type: T.Type, _ request: MFRequest) async throws(MFError) -> MFResponse<T> {
         let response = try await perform(request) { data in
             let decoder = JSONDecoder()
             TDLogger.debug("디코딩할 타입: \(ServerResponse<T>.self)\n디코딩할 데이터: \(String(data: data, encoding: .utf8) ?? "")")
@@ -56,7 +56,7 @@ open class MFSession {
     }
 
     @discardableResult
-    open func requestJSON(_ request: MFRequest) async throws(MFError) -> MFResponse<[String: Any]> {
+    public func requestJSON(_ request: MFRequest) async throws(MFError) -> MFResponse<[String: Any]> {
         let response = try await perform(request) { data in
             do {
                 guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { throw MFError.requestJSONDecodingFailure }
