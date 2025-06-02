@@ -99,6 +99,9 @@ open class MFSession {
                     case .expiredAccessToken:
                         if retryCount > 0 {
                             try await refreshToken()
+                            if let newAccessToken = TDTokenManager.shared.accessToken {
+                                request.addHeaders([.authorization(bearerToken: newAccessToken)])
+                            }
                             return try await perform(request, transformer: transformer, retryCount: retryCount - 1)
                         } else {
                             NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
