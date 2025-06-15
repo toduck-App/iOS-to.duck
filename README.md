@@ -2,9 +2,8 @@
 
 <img width="77" alt="스크린샷 2021-11-19 오후 3 52 02" src="https://img.shields.io/badge/iOS-16.0+-silver"> <img width="83" alt="스크린샷 2021-11-19 오후 3 52 02" src="https://img.shields.io/badge/Xcode-16.4-blue"> <img width="77" alt="Swift 5.0" src="https://img.shields.io/badge/Swift-5.0+-orange">
 
-
-
-## 🍎 토덕 주요 기능
+### <img src="https://github.com/user-attachments/assets/506a2403-2af4-4dd2-a3b0-82cfb7aaf7ed" width=19> 토덕 주요 기능
+> [데모 영상 보러가기](https://kyxxn.notion.site/To-duck-2049adb326268030a845f97960593442?source=copy_link)
 
 | ![1페이지_ 홈 - 하루를 한눈에](https://github.com/user-attachments/assets/b5de4323-00ea-4807-b334-00442b9c5147) | ![2페이지_ 홈 - 일정 관리의 모든 것](https://github.com/user-attachments/assets/45414f5b-1a87-479a-a35c-6b277791524b) | ![3페이지_ 집중 - 혼자 혹은 함께하는 집중 모드](https://github.com/user-attachments/assets/36d90813-c8bd-47fc-983d-01f1132ff1e8) |
 |:-:|:-:|:-:|
@@ -33,7 +32,7 @@
 
 ##
 
-### 🧑‍💻 Authors
+### 🧑‍💻 팀원소개
 
 | <img src="https://avatars.githubusercontent.com/u/129862357?s=400&u=b25bda6955bd46dcef49161230ca633947169589&v=4" width="80"/> | <img src="https://avatars.githubusercontent.com/u/46300191?v=4" width="80"/> |
 | :---: | :---: |
@@ -54,7 +53,7 @@
 
 <div align="center">
   
-|📓 문서|[팀 노션](https://kyxxn.notion.site/to-duck-dfa389d8e7c94be2b35695f79d40e5a5?pvs=4)|[기획/디자인](https://www.figma.com/file/u270kM7D2YRtsbz6rsEYWk?node-id=0-1&p=f&t=ozuh8yXWdkYf52Dv-0&type=design&mode=design)|
-|:-:|:-:|:-:|
+|📓 문서|[팀 노션](https://kyxxn.notion.site/to-duck-dfa389d8e7c94be2b35695f79d40e5a5?pvs=4)|[기획/디자인](https://www.figma.com/file/u270kM7D2YRtsbz6rsEYWk?node-id=0-1&p=f&t=ozuh8yXWdkYf52Dv-0&type=design&mode=design)|[데모 영상](https://kyxxn.notion.site/To-duck-2049adb326268030a845f97960593442?source=copy_link)|
+|:-:|:-:|:-:|:-:|
 
 </div>

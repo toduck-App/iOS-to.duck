@@ -36,25 +36,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     ) {
         Messaging.messaging().apnsToken = deviceToken
         TDLogger.info("✅ APNs 디바이스 토큰 등록 완료")
-        
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                TDLogger.error("❌ FCM 토큰 받기 실패: \(error.localizedDescription)")
-            } else if let fcmToken = token {
-                TDLogger.info("✅ 초기 FCM 토큰: \(fcmToken)")
-                
-                if TDTokenManager.shared.accessToken == nil {
-                    TDLogger.debug("🔒 아직 accessToken 없음. FCM 토큰을 보류 상태로 저장")
-                    TDTokenManager.shared.registerFCMToken(fcmToken)
-                } else {
-                    NotificationCenter.default.post(
-                        name: .didReceiveFCMToken,
-                        object: nil,
-                        userInfo: ["token": fcmToken]
-                    )
-                }
-            }
-        }
     }
     
     func application(

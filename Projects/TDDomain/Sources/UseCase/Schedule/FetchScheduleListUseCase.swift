@@ -18,7 +18,7 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
     ) async throws -> [Date: [Schedule]] {
         let fetchedScheduleList = try await repository.fetchScheduleList(startDate: startDate, endDate: endDate)
         let filteredScheduleList = filterScheduleList(with: fetchedScheduleList, startDate: startDate, endDate: endDate)
-        let buildScheduleDictionary = buildScheduleDictionary(with: filteredScheduleList, startDate: startDate, endDate: endDate)
+        let buildScheduleDictionary = buildScheduleDictionary(with: filteredScheduleList, queryStartDate: startDate, queryEndDate: endDate)
         
         return buildScheduleDictionary
     }
@@ -43,10 +43,10 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
                 let scheduleEnd = Date.convertFromString(schedule.endDate, format: .yearMonthDay)
             else { continue }
             
-            let hasPeriod = scheduleStart != scheduleEnd
-            let hasRepeat = (schedule.repeatDays?.isEmpty == false)
+            let isPeriod = scheduleStart != scheduleEnd
+            let isRepeat = (schedule.repeatDays?.isEmpty == false)
             
-            switch (hasPeriod, hasRepeat) {
+            switch (isPeriod, isRepeat) {
             case (false, false):
                 // 1. 기간 X + 반복 X → 하루만 표시
                 if allDates.contains(scheduleStart) {
@@ -88,12 +88,12 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
     
     func buildScheduleDictionary(
         with scheduleList: [Schedule],
-        startDate: String,
-        endDate: String
+        queryStartDate: String,
+        queryEndDate: String
     ) -> [Date: [Schedule]] {
         guard
-            let monthStart = Date.convertFromString(startDate, format: .yearMonthDay),
-            let monthEnd = Date.convertFromString(endDate, format: .yearMonthDay)
+            let queryStartDate = Date.convertFromString(queryStartDate, format: .yearMonthDay),
+            let queryEndDate = Date.convertFromString(queryEndDate, format: .yearMonthDay)
         else { return [:] }
         
         var scheduleDict: [Date: [Schedule]] = [:]
@@ -101,26 +101,25 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
         
         for schedule in scheduleList {
             guard
-                let scheduleStart = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
+                let scheduleStartDate = Date.convertFromString(schedule.startDate, format: .yearMonthDay),
                 let scheduleEndDate = Date.convertFromString(schedule.endDate, format: .yearMonthDay)
             else { continue }
             
             // 단일 일정 + 반복인 경우 effectiveEnd를 쿼리의 종료일로 설정
-            let effectiveStart = max(scheduleStart, monthStart)
-            let effectiveEnd: Date
+            let effectiveStartDate = max(scheduleStartDate, queryStartDate)
+            let effectiveEndDate: Date
             
-            if scheduleStart == scheduleEndDate && !(schedule.repeatDays?.isEmpty ?? true) {
-                effectiveEnd = monthEnd
+            if scheduleStartDate == scheduleEndDate && !(schedule.repeatDays?.isEmpty ?? true) {
+                effectiveEndDate = queryEndDate
             } else {
-                effectiveEnd = min(scheduleEndDate, monthEnd)
+                effectiveEndDate = min(scheduleEndDate, queryEndDate)
             }
             
-            guard effectiveStart <= effectiveEnd else { continue }
+            guard effectiveStartDate <= effectiveEndDate else { continue }
             
-            let allDates = calendar.generateDates(from: effectiveStart, to: effectiveEnd)
+            let allDates = calendar.generateDates(from: effectiveStartDate, to: effectiveEndDate)
             let recordMap: [Date: ScheduleRecord] = schedule.scheduleRecords?.reduce(into: [:]) { dict, record in
-                if let date = Date.convertFromString(record.recordDate, format: .yearMonthDay),
-                   record.deletedAt == nil {
+                if let date = Date.convertFromString(record.recordDate, format: .yearMonthDay) {
                     dict[date] = record
                 }
             } ?? [:]
@@ -128,15 +127,16 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
             for date in allDates {
                 guard let repeatDays = schedule.repeatDays, !repeatDays.isEmpty else {
                     // 반복 없는 경우 모든 날짜 추가
-                    let key = calendar.startOfDay(for: date)
-                    let cloned = createClonedSchedule(schedule, date: date, recordMap: recordMap)
-                    scheduleDict[key, default: []].append(cloned)
+                    if let cloned = createClonedSchedule(schedule, date: date, recordMap: recordMap) {
+                        let key = calendar.startOfDay(for: date)
+                        scheduleDict[key, default: []].append(cloned)
+                    }
                     continue
                 }
                 
-                if repeatDays.contains(date.weekdayEnum()) {
+                if repeatDays.contains(date.weekdayEnum()),
+                   let cloned = createClonedSchedule(schedule, date: date, recordMap: recordMap) {
                     let key = calendar.startOfDay(for: date)
-                    let cloned = createClonedSchedule(schedule, date: date, recordMap: recordMap)
                     scheduleDict[key, default: []].append(cloned)
                 }
             }
@@ -149,7 +149,11 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
         _ schedule: Schedule,
         date: Date,
         recordMap: [Date: ScheduleRecord]
-    ) -> Schedule {
+    ) -> Schedule? {
+        if recordMap[date]?.deletedAt != nil {
+            return nil
+        }
+        
         let isFinished = recordMap[date]?.isComplete ?? false
         return Schedule(
             id: schedule.id,

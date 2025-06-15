@@ -54,7 +54,6 @@ public enum NotificationInfo {
     }
 }
 
-
 public struct TDNotificationList {
     public let notifications: [TDNotificationDetail]
     
@@ -62,6 +61,7 @@ public struct TDNotificationList {
         self.notifications = notifications
     }
 }
+
 public struct TDNotificationDetail {
     public let id: Int
     public let senderId: Int?
