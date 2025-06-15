@@ -159,6 +159,49 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
                           "허용되지 않은 요일 \(weekday) 발견")
         }
     }
+    
+    func test삭제된기록이있으면_해당날짜일정이생성되지않음() async throws {
+        // Arrange
+        let formatter = DateFormatter.yyyymmdd
+        let targetDate = formatter.date(from: "2025-06-14")!
+
+        let deletedRecord = ScheduleRecord(
+            id: 999,
+            isComplete: false,
+            recordDate: "2025-06-14",
+            deletedAt: "2025-06-14T13:50:59" // 삭제된 기록
+        )
+
+        let schedule = Schedule(
+            id: 5,
+            title: "삭제된 일정",
+            category: TDCategory(colorHex: "#123456", imageName: "sleep"),
+            startDate: "2025-06-14",
+            endDate:   "2025-06-14",
+            isAllDay: true,
+            time: nil,
+            repeatDays: [.saturday],
+            alarmTime: nil,
+            place: nil,
+            memo: nil,
+            isFinished: false,
+            scheduleRecords: [deletedRecord]
+        )
+
+        let sut = FetchScheduleListUseCaseImpl(
+            repository: MockScheduleRepository([schedule])
+        )
+
+        // Act
+        let result = try await sut.execute(
+            startDate: "2025-06-01",
+            endDate:   "2025-06-30"
+        )
+
+        // Assert
+        let stripped = targetDate.stripTime()
+        XCTAssertNil(result[stripped], "삭제된 일정이 표시되었습니다")
+    }
 }
 
 // MARK: - Test Helpers
