@@ -225,8 +225,9 @@ final class FocusCalendarViewController: BaseViewController<BaseView> {
     
     private func calculateTime(from time: Int?) -> (Int, Int) {
         guard let time else { return (0, 0) }
-        let hour = time / 60
-        let minute = time % 60
+        let totalMinutes = time / 60
+        let hour = totalMinutes / 60
+        let minute = totalMinutes % 60
         
         return (hour, minute)
     }
