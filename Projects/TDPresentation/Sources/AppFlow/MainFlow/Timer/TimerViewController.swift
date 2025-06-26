@@ -207,9 +207,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
     
     private func didTapStopTimerButton() {
-        isTimerRunning = false
         let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .stop)
         timerCautionPopupViewController.onAction = { [weak self] in
+            self?.isTimerRunning = false
             self?.input.send(.didTapStopTimerButton)
             self?.dismissToast()
             self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
@@ -242,7 +242,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         guard let setting: TDTimerSetting = viewModel.timerSetting else { return }
         let elapsedTime = setting.toFocusDurationMinutes() - remainedTime
         
-        // Label 업데이트
         let second = remainedTime % 60
         let minute = (remainedTime / 60) % 60
         let hour = minute / 60
@@ -253,7 +252,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             : String(format: "%02d:%02d", minute, second)
         )
         
-        // progress 업데이트
         layoutView.simpleTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
         layoutView.bboduckTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
     }
@@ -284,7 +282,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.simpleTimerView.isHidden = theme == .toduck
         layoutView.bboduckTimerView.isHidden = theme == .simple
         
-        // button theme
         layoutView.playButton.configuration?.image = theme == .simple ? TDImage.Timer.playNeutral : TDImage.Timer.playPrimary
         layoutView.pauseButton.configuration?.image = theme == .simple ? TDImage.Timer.pauseNeutral : TDImage.Timer.pausePrimary
         layoutView.resetButton.configuration?.image = theme == .simple ? TDImage.Timer.resetNeutral : TDImage.Timer.resetPrimary
