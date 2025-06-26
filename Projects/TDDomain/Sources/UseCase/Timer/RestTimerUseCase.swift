@@ -6,6 +6,7 @@ public protocol RestTimerUseCase {
     var delegate: RestTimerUseCaseDelegate? { get set }
     
     func start()
+    func start(from seconds: Int)
     func stop()
     func reset()
 }
@@ -52,6 +53,12 @@ final class RestTimerUseCaseImpl: RestTimerUseCase {
                 delegate?.didFinishRestTimer()
             }
         }
+    }
+    
+    func start(from seconds: Int) {
+        stop()
+        remainTime = seconds
+        start()
     }
 
     func stop() {
