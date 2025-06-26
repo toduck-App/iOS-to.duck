@@ -7,12 +7,18 @@ import TDDomain
 import Then
 
 public final class TimerViewModel: BaseViewModel {
+    enum TimerMode {
+        case focus
+        case rest
+    }
+    
     enum Input {
         case fetchFocusAllSetting
         case fetchTimerSetting
         case fetchTimerTheme
         case updateTimerSetting(setting: TDTimerSetting)
         case updateTimerTheme(theme: TDTimerTheme)
+        case subtractElapsedTime(TimeInterval)
         
         case didTapStartTimerButton
         case didTapResetTimerButton
@@ -64,6 +70,12 @@ public final class TimerViewModel: BaseViewModel {
     private var endTime: Date?
     private var restTime: Int = 0
     private var restCount: Int = 0
+    private var remainingTime: TimeInterval = 0
+    private var currentMode: TimerMode = .focus
+    
+    var currentRemainingTime: TimeInterval {
+        return remainingTime
+    }
     
     // MARK: - initializers
     
@@ -104,6 +116,8 @@ public final class TimerViewModel: BaseViewModel {
                 self?.updateTimerSetting(setting: setting)
             case .fetchTimerTheme:
                 self?.fetchTimerTheme()
+            case .subtractElapsedTime(let elapsedTime):
+                self?.handleSubtractElapsedTime(elapsed: elapsedTime)
                 
             case .didTapStartTimerButton:
                 self?.startTimer()
@@ -152,6 +166,58 @@ public final class TimerViewModel: BaseViewModel {
         } catch {
             output.send(.failure("집중 토마토 개수 범위를 벗어났습니다."))
         }
+    }
+    
+    func handleSubtractElapsedTime(elapsed: TimeInterval) {
+        guard let timerSetting else { return }
+
+        var timeLeft = remainingTime
+        var elapsedTime = elapsed
+
+        while elapsedTime > 0 {
+            if timeLeft > elapsedTime {
+                // 현재 타이머(집중/휴식)가 아직 남았음 → 시간만 줄이면 됨
+                timeLeft -= elapsedTime
+                remainingTime = timeLeft
+                output.send(.updateTime(Int(timeLeft)))
+                output.send(.updatedTimerRunning(currentMode == .focus))
+                
+                switch currentMode {
+                case .focus:
+                    restTimerUseCase.stop()
+                    focusTimerUseCase.start(from: Int(timeLeft))
+                case .rest:
+                    focusTimerUseCase.stop()
+                    restTimerUseCase.start(from: Int(timeLeft))
+                }
+                
+                return
+            } else {
+                elapsedTime -= timeLeft
+
+                switch currentMode {
+                case .focus:
+                    increaseFocusCount()
+                    
+                    if focusCount % focusLimit == 0 {
+                        Task { await stopTimer(isSuccess: true) }
+                        return
+                    }
+
+                    currentMode = .rest
+                    timeLeft = TimeInterval(timerSetting.toRestDurationMinutes())
+
+                case .rest:
+                    restCount += 1
+                    currentMode = .focus
+                    timeLeft = TimeInterval(timerSetting.toFocusDurationMinutes())
+                }
+            }
+        }
+
+        remainingTime = timeLeft
+        output.send(.updateTime(Int(timeLeft)))
+        output.send(.updatedTimerRunning(currentMode == .focus))
     }
     
     // MARK: - Timer Logic
@@ -254,6 +320,7 @@ extension TimerViewModel: FocusTimerUseCaseDelegate {
     }
     
     public func didUpdateFocusTime(remainTime: Int) {
+        remainingTime = TimeInterval(remainTime)
         output.send(.updatedTimerRunning(focusTimerUseCase.isRunning))
         output.send(.updateTime(remainTime))
     }
