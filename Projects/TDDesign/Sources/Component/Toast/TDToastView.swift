@@ -51,7 +51,6 @@ public final class TDToastView: UIView {
     private func setupUI() {
         backgroundColor = .white
         layer.cornerRadius = 8
-        clipsToBounds = true
         
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.1
