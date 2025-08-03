@@ -15,9 +15,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private var autoScrollTimer: Timer?
     weak var delegate: ToduckViewDelegate?
     
-    init(
-        viewModel: ToduckViewModel
-    ) {
+    init(viewModel: ToduckViewModel) {
         self.viewModel = viewModel
         super.init()
     }
