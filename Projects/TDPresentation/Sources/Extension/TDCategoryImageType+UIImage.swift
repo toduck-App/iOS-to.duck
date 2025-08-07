@@ -16,7 +16,7 @@ extension TDCategoryImageType {
         case "TALK": self = .talk
         case "HEART": self = .heart
         case "VEHICLE": self = .vehicle
-        default: self = .none
+        default: self = .`default`
         }
     }
     
@@ -33,6 +33,7 @@ extension TDCategoryImageType {
         case .talk: TDImage.Category.talk
         case .heart: TDImage.Category.heart
         case .vehicle: TDImage.Category.vehicle
+        case .`default`: TDImage.Category.none
         case .none: TDImage.Category.none
         }
     }

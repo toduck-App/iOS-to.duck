@@ -152,8 +152,21 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     func reloadLottiePages() {
         let lottieImageTypes = viewModel.currentDisplaySchedules.map { $0.category }
             .compactMap { TDCategoryImageType(category: $0) }
-        let newAnimations = lottieImageTypes.compactMap { ToduckLottieManager.shared.getLottieAnimation(for: $0) }
+
+        let newAnimations: [LottieAnimation]
         
+        if lottieImageTypes.isEmpty {
+            if let defaultAnimation = ToduckLottieManager.shared.getLottieAnimation(for: .none) {
+                newAnimations = [defaultAnimation]
+            } else {
+                newAnimations = []
+            }
+        } else {
+            newAnimations = lottieImageTypes.compactMap {
+                ToduckLottieManager.shared.getLottieAnimation(for: $0)
+            }
+        }
+
         layoutView.lottiePageViewController.configure(with: newAnimations)
     }
 }
