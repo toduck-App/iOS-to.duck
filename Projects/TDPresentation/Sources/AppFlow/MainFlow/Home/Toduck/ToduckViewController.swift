@@ -34,6 +34,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         
         layoutView.scheduleSegmentedControl.selectedSegmentIndex = 0
         input.send(.fetchScheduleList)
+        reloadLottiePages()
     }
     
     // MARK: Common Methods
@@ -56,7 +57,6 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     
     override func configure() {
         setupSegmentedControl()
-        setupLottiePageViewController()
         setupScheduleCollectionView()
         layoutView.delegate = delegate
     }
@@ -70,19 +70,8 @@ final class ToduckViewController: BaseViewController<ToduckView> {
             
             self?.viewModel.setSegment(selectedType)
             self?.layoutView.scheduleCollectionView.reloadData()
-            self?.updateAutoScroll()
-            
+            self?.reloadLottiePages()
         }, for: .valueChanged)
-    }
-    
-    private func setupLottiePageViewController() {
-        addChild(layoutView.lottiePageViewController)
-        layoutView.insertSubview(layoutView.lottiePageViewController.view, at: 0)
-        layoutView.lottiePageViewController.view.snp.makeConstraints { $0.edges.equalToSuperview() }
-        layoutView.lottiePageViewController.didMove(toParent: self)
-        
-        lottieScrollView?.delegate = self
-        lottieScrollView = layoutView.lottiePageViewController.view.subviews.compactMap { $0 as? UIScrollView }.first
     }
     
     private func setupScheduleCollectionView() {
@@ -130,7 +119,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         
         let nextIndex = getNextIndex(for: collectionView, totalItems: itemCount)
         let newOffsetX = calculateNewOffsetX(for: collectionView, index: nextIndex)
-//        animateCollectionViewScroll(to: newOffsetX)
+        //        animateCollectionViewScroll(to: newOffsetX)
     }
     
     private func getNextIndex(for collectionView: UICollectionView, totalItems: Int) -> Int {
@@ -152,22 +141,11 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     func reloadLottiePages() {
         let lottieImageTypes = viewModel.currentDisplaySchedules.map { $0.category }
             .compactMap { TDCategoryImageType(category: $0) }
-
-        let newAnimations: [LottieAnimation]
-        
-        if lottieImageTypes.isEmpty {
-            if let defaultAnimation = ToduckLottieManager.shared.getLottieAnimation(for: .none) {
-                newAnimations = [defaultAnimation]
-            } else {
-                newAnimations = []
-            }
-        } else {
-            newAnimations = lottieImageTypes.compactMap {
-                ToduckLottieManager.shared.getLottieAnimation(for: $0)
-            }
+        let newAnimations = lottieImageTypes.compactMap {
+            ToduckLottieManager.shared.getLottieAnimation(for: $0)
         }
-
-        layoutView.lottiePageViewController.configure(with: newAnimations)
+        
+        layoutView.lottiePageScrollView.configure(with: newAnimations)
     }
 }
 
@@ -177,27 +155,14 @@ extension ToduckViewController: UIScrollViewDelegate {
         let progress: CGFloat
         let target: UIScrollView
         
-        if scrollView === layoutView.scheduleCollectionView, let lottieScrollView {
-            progress = scrollView.contentOffset.x / scrollView.bounds.width
-            target = lottieScrollView
+        if scrollView === layoutView.scheduleCollectionView {
+            progress = scrollView.contentOffset.x / scrollView.frame.width
+            target = layoutView.lottiePageScrollView
         } else {
-            progress = scrollView.contentOffset.x / scrollView.bounds.width
+            progress = scrollView.contentOffset.x / scrollView.frame.width
             target = layoutView.scheduleCollectionView
         }
-        target.contentOffset.x = progress * target.bounds.width
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        alignPage(scrollView)
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate { alignPage(scrollView) }
-    }
-    
-    private func alignPage(_ scrollView: UIScrollView) {
-        let idx = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
-        layoutView.lottiePageViewController.scrollToPage(index: idx)
+        target.contentOffset.x = progress * target.frame.width
     }
 }
 

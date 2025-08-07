@@ -11,7 +11,7 @@ protocol ToduckViewDelegate: AnyObject {
 
 final class ToduckView: BaseView {
     // MARK: - UI Components
-    let lottiePageViewController = LottiePageViewController()
+    let lottiePageScrollView = LottiePageScrollView()
     let lottieTouchAreaView = UIView()
     
     let scheduleContainerView = UIView()
@@ -49,6 +49,7 @@ final class ToduckView: BaseView {
     
     // MARK: - Common Methods
     override func addview() {
+        addSubview(lottiePageScrollView)
         addSubview(lottieTouchAreaView)
         addSubview(scheduleContainerView)
         scheduleContainerView.addSubview(scheduleSegmentedControl)
@@ -63,6 +64,10 @@ final class ToduckView: BaseView {
     }
     
     override func layout() {
+        lottiePageScrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         lottieTouchAreaView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(36)
             make.bottom.equalTo(scheduleContainerView.snp.top).offset(-36)
