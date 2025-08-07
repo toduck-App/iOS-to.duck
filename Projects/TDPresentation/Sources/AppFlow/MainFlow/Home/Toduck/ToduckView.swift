@@ -11,15 +11,7 @@ protocol ToduckViewDelegate: AnyObject {
 
 final class ToduckView: BaseView {
     // MARK: - UI Components
-    let lottieView = LottieAnimationView(
-        name: "toduckNotodo",
-        bundle: Bundle(identifier: Constant.toduckDesignBundle)!
-    ).then {
-        $0.backgroundColor = .clear
-        $0.contentMode = .scaleAspectFit
-        $0.loopMode = .loop
-        $0.play()
-    }
+    let lottiePageViewController = LottiePageViewController()
     let lottieTouchAreaView = UIView()
     
     let scheduleContainerView = UIView()
@@ -57,7 +49,6 @@ final class ToduckView: BaseView {
     
     // MARK: - Common Methods
     override func addview() {
-        addSubview(lottieView)
         addSubview(lottieTouchAreaView)
         addSubview(scheduleContainerView)
         scheduleContainerView.addSubview(scheduleSegmentedControl)
@@ -72,10 +63,6 @@ final class ToduckView: BaseView {
     }
     
     override func layout() {
-        lottieView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
         lottieTouchAreaView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(36)
             make.bottom.equalTo(scheduleContainerView.snp.top).offset(-36)
