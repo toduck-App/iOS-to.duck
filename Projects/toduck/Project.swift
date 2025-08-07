@@ -24,6 +24,29 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
+        .target(name: "ToduckWidget")
+    ],
+    settings: .settings(
+        base: [
+            "DEVELOPMENT_LANGUAGE": "ko",
+            "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
+        ],
+        configurations: [
+            .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
+            .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
+        ]
+    )
+)
+
+let widgetExtension = Target.target(
+    name: "ToduckWidget",
+    product: .appExtension,
+    sources: .widgetSources,
+    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
+    scripts: [],
+    dependencies: [
+        .domain(),
+        .design()
     ],
     settings: .settings(
         base: [
@@ -43,5 +66,6 @@ let project = Project.project(
     name: "toduck",
     targets: [
         appTarget,
+        widgetExtension
     ]
 )

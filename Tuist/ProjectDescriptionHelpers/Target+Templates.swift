@@ -32,6 +32,6 @@ extension Target {
 
 extension SourceFilesList {
     public static let sources: SourceFilesList = ["Sources/**"]
-    
+    public static let widgetSources: SourceFilesList = ["DiaryWidget/**"]
     public static let tests: SourceFilesList = ["Tests/**"]
 }
