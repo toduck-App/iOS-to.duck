@@ -3,7 +3,7 @@ import TDDesign
 import UIKit
 
 protocol TDToastPresentable {
-    func showToast(type: TDToastView.TDToastType, title: String, message: String, duration: Double?) async
+    func showToast(type: TDToastView.TDToastType, title: String, message: String, duration: Double?)
 }
 
 @MainActor
@@ -37,7 +37,11 @@ extension TDToastPresentable where Self: UIViewController {
         window.layoutIfNeeded()
     }
     
-    private func animateToastAppearance(_ toastView: TDToastView, in window: UIWindow, duration: Double?) {
+    private func animateToastAppearance(
+        _ toastView: TDToastView,
+        in window: UIWindow,
+        duration: Double?
+    ) {
         if let duration {
             toastView.startCountdown(seconds: Int(duration))
         }

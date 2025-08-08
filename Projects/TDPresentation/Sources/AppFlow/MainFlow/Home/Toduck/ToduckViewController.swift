@@ -14,7 +14,6 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     private var cancellables = Set<AnyCancellable>()
     private var autoScrollTimer: Timer?
     
-    weak var lottieScrollView: UIScrollView?
     weak var delegate: ToduckViewDelegate?
     
     // MARK: - Initializer
