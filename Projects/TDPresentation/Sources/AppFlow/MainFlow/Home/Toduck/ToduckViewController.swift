@@ -152,8 +152,10 @@ final class ToduckViewController: BaseViewController<ToduckView> {
 // MARK: - UIScrollViewDelegate
 extension ToduckViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView === layoutView.scheduleCollectionView else { return }
-        guard let layout = layoutView.scheduleCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        guard
+            scrollView === layoutView.scheduleCollectionView,
+            let layout = layoutView.scheduleCollectionView.collectionViewLayout as? UICollectionViewFlowLayout
+        else { return }
         
         let inset = layout.sectionInset.left
         let spacing = layout.minimumLineSpacing
@@ -230,16 +232,12 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         let collectionView = layoutView.scheduleCollectionView
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         
-        // 셀 전체 폭(셀 너비 + 간격)
         let cellWidth = collectionView.frame.width
         let cellSpacing = layout.minimumLineSpacing
         let cellWidthWithSpacing = cellWidth + cellSpacing
         let offset = scrollView.contentOffset.x
-        
-        // 현재 스크롤 위치에 해당하는 인덱스(소수점 포함)
         let estimatedIndex = offset / cellWidthWithSpacing
         
-        // 스크롤 속도에 따라 올림, 내림, 반올림 처리
         let index: CGFloat
         if velocity.x > 0 {
             index = ceil(estimatedIndex)
@@ -249,8 +247,15 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
             index = round(estimatedIndex)
         }
         
-        let newOffsetX = index * cellWidthWithSpacing
-        targetContentOffset.pointee = CGPoint(x: newOffsetX, y: targetContentOffset.pointee.y)
+        let lastIndex = CGFloat(viewModel.currentDisplaySchedules.count - 1)
+        if index >= lastIndex {
+            // 마지막 셀에 도달하면 더 이상 스크롤하지 않도록 고정
+            let maxOffsetX = lastIndex * cellWidthWithSpacing
+            targetContentOffset.pointee = CGPoint(x: maxOffsetX, y: targetContentOffset.pointee.y)
+        } else {
+            let newOffsetX = index * cellWidthWithSpacing
+            targetContentOffset.pointee = CGPoint(x: newOffsetX, y: targetContentOffset.pointee.y)
+        }
     }
 }
 
