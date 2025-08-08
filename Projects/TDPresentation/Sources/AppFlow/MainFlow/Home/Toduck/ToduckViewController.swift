@@ -34,7 +34,6 @@ final class ToduckViewController: BaseViewController<ToduckView> {
         
         layoutView.scheduleSegmentedControl.selectedSegmentIndex = 0
         input.send(.fetchScheduleList)
-        reloadLottiePages()
     }
     
     // MARK: Common Methods
