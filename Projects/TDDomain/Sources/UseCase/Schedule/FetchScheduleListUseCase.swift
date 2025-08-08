@@ -83,7 +83,14 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
             }
         }
         
-        return Array(filteredSchedules)
+        return Array(filteredSchedules).sorted(by: scheduleSortRule)
+    }
+    
+    private func scheduleSortRule(_ lhs: Schedule, _ rhs: Schedule) -> Bool {
+        if lhs.title != rhs.title {
+            return lhs.title < rhs.title
+        }
+        return lhs.category.colorHex > rhs.category.colorHex
     }
     
     func buildScheduleDictionary(
