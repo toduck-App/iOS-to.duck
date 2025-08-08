@@ -44,33 +44,58 @@ final class LottiePageScrollView: UIScrollView {
     
     // MARK: - Configuration
     func configure(with animations: [LottieAnimation]) {
+        clearLottieViews()
+        
+        if animations.isEmpty {
+            configureDefaultLottieView()
+        } else {
+            removeDefaultLottieView()
+            addLottieAnimations(animations)
+        }
+    }
+    
+    private func clearLottieViews() {
+        lottieViews.forEach { $0.removeFromSuperview() }
+        lottieViews.removeAll()
+    }
+    
+    private func removeDefaultLottieView() {
         defaultLottieView.removeFromSuperview()
         defaultLottieView.stop()
         defaultLottieView.animation = nil
-        lottieViews.forEach { $0.removeFromSuperview() }
-        lottieViews.removeAll()
-        
+    }
+    
+    private func addLottieAnimations(_ animations: [LottieAnimation]) {
         animations.enumerated().forEach { index, animation in
-            let lottieView = LottieAnimationView(animation: animation)
-            lottieView.contentMode = .scaleAspectFit
-            lottieView.backgroundColor = .clear
-            lottieView.loopMode = .loop
-            lottieView.play()
-            
-            addSubview(lottieView)
+            let lottieView = createLottieView(for: animation)
+            setupLottieViewConstraints(lottieView, index: index, totalCount: animations.count)
             lottieViews.append(lottieView)
+        }
+    }
+    
+    private func createLottieView(for animation: LottieAnimation) -> LottieAnimationView {
+        let lottieView = LottieAnimationView(animation: animation)
+        lottieView.contentMode = .scaleAspectFit
+        lottieView.backgroundColor = .clear
+        lottieView.loopMode = .loop
+        lottieView.play()
+        addSubview(lottieView)
+        return lottieView
+    }
+    
+    private func setupLottieViewConstraints(_ lottieView: LottieAnimationView, index: Int, totalCount: Int) {
+        lottieView.snp.makeConstraints {
+            $0.top.bottom.equalTo(self.contentLayoutGuide)
+            $0.size.equalTo(self.frameLayoutGuide)
             
-            lottieView.snp.makeConstraints {
-                $0.top.bottom.size.equalToSuperview()
-                
-                if index == 0 {
-                    $0.leading.equalToSuperview()
-                } else {
-                    $0.leading.equalTo(lottieViews[index - 1].snp.trailing)
-                }
-                if index == animations.count - 1 {
-                    $0.trailing.equalToSuperview()
-                }
+            if index == 0 {
+                $0.leading.equalTo(self.contentLayoutGuide)
+            } else {
+                $0.leading.equalTo(lottieViews[index - 1].snp.trailing)
+            }
+            
+            if index == totalCount - 1 {
+                $0.trailing.equalTo(self.contentLayoutGuide)
             }
         }
     }
