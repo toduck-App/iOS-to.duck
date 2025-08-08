@@ -36,9 +36,8 @@ final class LottiePageScrollView: UIScrollView {
             lottieViews.append(lottieView)
             
             lottieView.snp.makeConstraints {
-                $0.top.bottom.equalToSuperview()
-                $0.width.equalToSuperview()
-                $0.height.equalToSuperview()
+                $0.top.bottom.size.equalToSuperview()
+                
                 if index == 0 {
                     $0.leading.equalToSuperview()
                 } else {

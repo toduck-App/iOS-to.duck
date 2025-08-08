@@ -152,17 +152,18 @@ final class ToduckViewController: BaseViewController<ToduckView> {
 // MARK: - UIScrollViewDelegate
 extension ToduckViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let progress: CGFloat
-        let target: UIScrollView
+        guard scrollView === layoutView.scheduleCollectionView else { return }
+        guard let layout = layoutView.scheduleCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         
-        if scrollView === layoutView.scheduleCollectionView {
-            progress = scrollView.contentOffset.x / scrollView.frame.width
-            target = layoutView.lottiePageScrollView
-        } else {
-            progress = scrollView.contentOffset.x / scrollView.frame.width
-            target = layoutView.scheduleCollectionView
-        }
-        target.contentOffset.x = progress * target.frame.width
+        let inset = layout.sectionInset.left
+        let spacing = layout.minimumLineSpacing
+        let pageWidth = layoutView.scheduleCollectionView.bounds.width
+        let step = pageWidth + spacing
+        
+        let page = (scrollView.contentOffset.x + inset) / step
+        let lottieWidth = layoutView.lottiePageScrollView.bounds.width
+        
+        layoutView.lottiePageScrollView.contentOffset.x = page * lottieWidth
     }
 }
 
@@ -227,7 +228,6 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         targetContentOffset: UnsafeMutablePointer<CGPoint>
     ) {
         let collectionView = layoutView.scheduleCollectionView
-        
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         
         // 셀 전체 폭(셀 너비 + 간격)
@@ -249,9 +249,7 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
             index = round(estimatedIndex)
         }
         
-        // 새 오프셋 계산
         let newOffsetX = index * cellWidthWithSpacing
-        
         targetContentOffset.pointee = CGPoint(x: newOffsetX, y: targetContentOffset.pointee.y)
     }
 }
