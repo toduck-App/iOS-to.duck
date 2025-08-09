@@ -10,5 +10,6 @@ public enum TDCategoryImageType {
     case talk
     case vehicle
     case heart
+    case `default`
     case none
 }
