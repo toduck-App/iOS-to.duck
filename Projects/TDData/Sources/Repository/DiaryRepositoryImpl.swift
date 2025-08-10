@@ -1,4 +1,6 @@
 import TDDomain
+import TDCore
+import WidgetKit
 import Foundation
 
 public final class DiaryRepositoryImpl: DiaryRepository {
@@ -24,10 +26,12 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         diary.diaryImageUrls = imageUrls
         
         try await diaryService.createDiary(diary: diary)
+        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
     }
     
     public func fetchDiaryList(year: Int, month: Int) async throws -> [Diary] {
         let response = try await diaryService.fetchDiaryList(year: year, month: month)
+        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
         
         return response.convertToDiaryList()
     }
@@ -46,10 +50,12 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         diary.diaryImageUrls = imageUrls
         
         try await diaryService.updateDiary(diary: diary)
+        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
     }
     
     public func deleteDiary(id: Int) async throws {
         try await diaryService.deleteDiary(id: id)
+        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
     }
     
     public func fetchDiaryCompareCount(yearMonth: String) async throws -> Int {
