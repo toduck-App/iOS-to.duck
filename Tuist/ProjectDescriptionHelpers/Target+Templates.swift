@@ -5,6 +5,7 @@ extension Target {
         name: String,
         product: Product,
         bundleId: String? = nil,
+        deploymentTargets: ProjectDescription.DeploymentTargets? = .iOS(Project.iosVersion),
         infoPlist: InfoPlist? = .default,
         sources: SourceFilesList? = nil,
         resources: ResourceFileElements? = nil,
@@ -18,7 +19,7 @@ extension Target {
             destinations: .init([.iPad, .iPhone]),
             product: product,
             bundleId: bundleId ?? Project.bundleID + "." + name.lowercased(),
-            deploymentTargets: .iOS(Project.iosVersion),
+            deploymentTargets: deploymentTargets,
             infoPlist: infoPlist,
             sources: sources,
             resources: resources,
@@ -32,6 +33,6 @@ extension Target {
 
 extension SourceFilesList {
     public static let sources: SourceFilesList = ["Sources/**"]
-    public static let widgetSources: SourceFilesList = ["DiaryWidget/**"]
+    public static let widgetSources: SourceFilesList = ["TDDiaryWidget/**"]
     public static let tests: SourceFilesList = ["Tests/**"]
 }

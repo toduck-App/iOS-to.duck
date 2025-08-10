@@ -12,7 +12,7 @@ let appTarget = Target.target(
     resources: [
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/**")),
         .glob(pattern: .relativeToRoot("Projects/toduck/Resources/LaunchScreen.storyboard")),
-        .glob(pattern: .relativeToRoot("Projects/toduck/SupportingFiles/GoogleService-Info.plist")),
+        .glob(pattern: .relativeToRoot("Projects/toduck/SupportingFiles/GoogleService-Info.plist"))
     ],
     entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     dependencies: [
@@ -24,7 +24,7 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
-        .target(name: "ToduckWidget")
+        .target(name: "TDDiaryWidget")
     ],
     settings: .settings(
         base: [
@@ -39,9 +39,15 @@ let appTarget = Target.target(
 )
 
 let widgetExtension = Target.target(
-    name: "ToduckWidget",
+    name: "TDDiaryWidget",
     product: .appExtension,
+    deploymentTargets: .iOS("17.0"),
+    infoPlist: .file(path: .relativeToRoot("Projects/toduck/TDDiaryWidget/Resources/Info.plist")),
     sources: .widgetSources,
+    resources: [
+        .glob(pattern: .relativeToRoot("Projects/toduck/TDDiaryWidget/Resources/**"),
+              excluding: ["**/Info.plist"])
+    ],
     entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     scripts: [],
     dependencies: [
