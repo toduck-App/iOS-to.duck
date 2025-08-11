@@ -10,6 +10,8 @@ enum TDWidgetImage {
         static let C2 = TDDiaryWidgetAsset.widgetC2.swiftUIImage
         static let C3 = TDDiaryWidgetAsset.widgetC3.swiftUIImage
         static let D1 = TDDiaryWidgetAsset.widgetD1.swiftUIImage
+        static let D2 = TDDiaryWidgetAsset.widgetD2.swiftUIImage
+        static let D3 = TDDiaryWidgetAsset.widgetD3.swiftUIImage
     }
     
     static let tomato = TDDiaryWidgetAsset.widgetTomato.swiftUIImage

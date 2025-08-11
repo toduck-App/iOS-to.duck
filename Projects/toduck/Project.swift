@@ -51,6 +51,7 @@ let widgetExtension = Target.target(
     entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     scripts: [],
     dependencies: [
+        .core(),
         .domain(),
         .design()
     ],

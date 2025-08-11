@@ -1,8 +1,5 @@
-/*
- App과 AppExtension(Today Extension, Widget Extension 등)은 UserDefaults를 공유하지 않는다.
- */
-
 import SwiftUI
+import TDCore
 import WidgetKit
 
 struct Provider: TimelineProvider {
@@ -12,7 +9,7 @@ struct Provider: TimelineProvider {
      보통은 Date()로 현재 시간을 넣고, 기본 설정값을 적용한다. → 필요에 따라 커스텀
      */
     func placeholder(in context: Context) -> DiaryEntry {
-        DiaryEntry(date: Date(), count: 2, isDangerous: false)
+        DiaryEntry(date: Date(), lastWriteDate: Date(), count: 12)
     }
 
     /*
@@ -21,7 +18,7 @@ struct Provider: TimelineProvider {
      앱에서 즉시 보여줄 수 있는 데이터를 반환하는 역할이다.
      */
     func getSnapshot(in context: Context, completion: @escaping (DiaryEntry) -> ()) {
-        let entry = DiaryEntry(date: Date(), count: 3, isDangerous: false)
+        let entry = DiaryEntry(date: Date(), lastWriteDate: Date(), count: 12)
         completion(entry)
     }
 
@@ -34,14 +31,33 @@ struct Provider: TimelineProvider {
      .never: 갱신 없이 한 번만 설정
      */
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [DiaryEntry] = []
+        let cal = Calendar.current
+        let now = Date()
 
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = DiaryEntry(date: entryDate, count: hourOffset, isDangerous: false)
-            entries.append(entry)
+        let today9 = Utils.make(hour: 21, from: now)
+        let today10 = Utils.make(hour: 22, from: now)
+        let today11 = Utils.make(hour: 23, from: now)
+
+        var schedule = [today9, today10, today11].filter { $0 > now }
+        if schedule.isEmpty {
+            let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
+            schedule = [Utils.make(hour: 21, from: tomorrow),
+                        Utils.make(hour: 22, from: tomorrow),
+                        Utils.make(hour: 23, from: tomorrow)]
+        }
+
+        var entries: [DiaryEntry] = []
+        func makeEntry(at date: Date) -> DiaryEntry {
+            // TODO: 실제로는 App Group 캐시에서 가져와야 함
+            let count = 0
+            let lastWriteDate: Date? = cal.date(byAdding: .day, value: -1, to: date)
+            return DiaryEntry(date: date, lastWriteDate: lastWriteDate, count: count)
+        }
+
+        entries.append(makeEntry(at: now))
+
+        for when in schedule {
+            entries.append(makeEntry(at: when))
         }
 
         let timeline = Timeline(entries: entries, policy: .atEnd)
@@ -68,58 +84,114 @@ struct Provider: TimelineProvider {
  getTimeline()에서 여러 개의 Entry를 생성해 위젯을 업데이트할 수 있음
  */
 struct DiaryEntry: TimelineEntry {
-    var date: Date
-    let count: Int
-    let isDangerous: Bool
+    var date: Date // 현재 Reload 되는 시점
+    let lastWriteDate: Date? // 마지막 작성일
+    let count: Int // 여태 쓴 일기 작성 개수
+
+    // 오늘 작성한 일기가 있다면 true 반환
+    var wroteToday: Bool {
+        guard let last = lastWriteDate else { return false }
+        return Calendar.current.isDateInToday(last)
+    }
+
+    // "어제(1일) 이상 밀린 일기 개수"
+    var procrastinatedDays: Int {
+        guard let last = lastWriteDate else { return 0 }
+        let cal = Calendar.current
+        let lastDay = cal.startOfDay(for: last)
+        let baseDay = cal.startOfDay(for: date)
+        let gap = cal.dateComponents([.day], from: lastDay, to: baseDay).day ?? 0
+        return max(0, gap) // 미래 날짜가 들어와 음수가 되지 않도록 방어
+    }
+
+    // "어제(1일) 이상 밀렸으면 true"
+    var isProcrastinating: Bool {
+        procrastinatedDays >= 1
+    }
+
+    var visableCount: Int {
+        isProcrastinating ? 0 : count
+    }
+
+    // 경고 아이콘 표시 여부
+    var isDangerous: Bool {
+        // 오늘 작성한 일기가 없고, 현재 시간이 오후 10시 이후인 경우
+        wroteToday == false && Calendar.current.component(.hour, from: date) >= 22
+    }
+
+    var state: State {
+        if isDangerous { return .C_danger }
+
+        if lastWriteDate == nil { return .A_neverWritten }
+
+        if isProcrastinating { return .D_procrastinating }
+
+        return .B_active
+    }
+
+    var visableImage: Image {
+        switch state {
+        case .A_neverWritten:
+            [
+                TDWidgetImage.Diary.A1,
+                TDWidgetImage.Diary.A2,
+                TDWidgetImage.Diary.A3,
+            ].randomElement() ?? TDWidgetImage.Diary.A1
+        case .B_active:
+            [
+                TDWidgetImage.Diary.B1,
+                TDWidgetImage.Diary.B2,
+                TDWidgetImage.Diary.B3,
+            ].randomElement() ?? TDWidgetImage.Diary.B1
+        case .C_danger:
+            [
+                TDWidgetImage.Diary.C1,
+                TDWidgetImage.Diary.C2,
+                TDWidgetImage.Diary.C3,
+            ].randomElement() ?? TDWidgetImage.Diary.C1
+        case .D_procrastinating:
+            [
+                TDWidgetImage.Diary.D1,
+                TDWidgetImage.Diary.D2,
+                TDWidgetImage.Diary.D3,
+            ].randomElement() ?? TDWidgetImage.Diary.D1
+        }
+    }
+
+    /* 위젯에서 보여줄 일기 작성 개수
+     오늘 작성한 일기가 있다면 count, 아니면 0
+      */
+
+    enum State {
+        case A_neverWritten // A: 일기를 한번도 작성하지 않은 상태
+        case B_active // B: 꾸준히 작성중인 상태
+        case C_danger // C: 오후 10시 이후 작성하지 않은 상태
+        case D_procrastinating // D: 미루기 시작한 상태
+    }
 }
 
 struct DiaryWidgetEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) private var widgetFamily
 
-    func loadImage() -> Image {
-        /*
-         -
-             - A. [0번] 일기를 한번도 작성 하지 않은 유저
-                 - A1, A2, A3 디자인 시안 돌리기
-             - B. [N번] 일기를 꾸준히 작성중인 유저
-                 - B1, B2, B3
-
-                     ** 예외 사항 : 과거 놓친 일기 작성시에도 작성 횟수가 올라간다.
-                     단, 과거 일기 1번 / 오늘 일기 1번 등 하루에 2번 이상 일기 작성 시 횟수는 누적되지 않음
-
-             - C. [N번, 오후 10시 이후 아직 일기를 작성하지 않았을 경우 (일기 작성 재촉 개념..)
-                 - C1, C2 ,C3 디자인 시안 돌리기
-                 - 토마토 아이콘 옆에 경고 뱃지 추가
-             - D. [0번] 미루기 시작한 유저 (N번에서 0번이 된 상태)
-                 - D1, D2, D3 디자인 시안 돌리기
-         */
-        TDWidgetImage.Diary.A1
-    }
-
-    func isDangerous() -> Bool {
-        // 여기에 10시가 넘었는데도 일기를 작성하지 않았다면 true를 반환하도록 구현
-        entry.isDangerous
-    }
-
     var body: some View {
         switch widgetFamily {
         case .systemSmall:
             ZStack(alignment: .top) {
-                loadImage()
+                entry.visableImage
 
                 VStack {
                     HStack(alignment: .center, spacing: 6) {
                         TDWidgetImage.tomato
                             .frame(width: 44, height: 44)
                             .overlay(alignment: .bottomTrailing) {
-                                if isDangerous() {
+                                if entry.isDangerous {
                                     TDWidgetImage.error
                                         .frame(width: 24, height: 24)
                                 }
                             }
 
-                        Text("\(entry.count)")
+                        Text("\(entry.visableCount)")
                             .customFont(.pretendardSemiBold, size: 30)
                             .monospacedDigit()
                             .foregroundColor(.white)
@@ -137,8 +209,9 @@ struct DiaryWidgetEntryView: View {
                         .opacity(0.8)
                 }
                 .frame(maxWidth: .infinity, alignment: .top)
-                .padding(.top, 10)
+                .padding(.top, 14)
             }
+            .widgetURL(URL(string: "toduck://diary")!)
         default:
             EmptyView()
         }
@@ -168,5 +241,7 @@ struct DiaryWidget: Widget {
 #Preview(as: .systemSmall) {
     DiaryWidget()
 } timeline: {
-    DiaryEntry(date: Date(), count: 100, isDangerous: true)
+    let yesterDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+    let now = Date()
+    DiaryEntry(date: Date(), lastWriteDate: nil, count: 0)
 }
