@@ -26,6 +26,7 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         diary.diaryImageUrls = imageUrls
         
         try await diaryService.createDiary(diary: diary)
+        // TODO: Widget 에 필요한 값. (현재 누적 count, 작성한 일시 갱신 필요)
         WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
     }
     
@@ -50,12 +51,10 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         diary.diaryImageUrls = imageUrls
         
         try await diaryService.updateDiary(diary: diary)
-        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
     }
     
     public func deleteDiary(id: Int) async throws {
         try await diaryService.deleteDiary(id: id)
-        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
     }
     
     public func fetchDiaryCompareCount(yearMonth: String) async throws -> Int {
