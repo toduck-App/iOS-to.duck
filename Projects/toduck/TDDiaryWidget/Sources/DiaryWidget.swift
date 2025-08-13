@@ -50,7 +50,7 @@ struct Provider: TimelineProvider {
         func makeEntry(at date: Date) -> DiaryEntry {
             // TODO: 실제로는 App Group 캐시에서 가져와야 함
             let count = 0
-            let lastWriteDate: Date? = cal.date(byAdding: .day, value: -1, to: date)
+            let lastWriteDate: Date? = nil
             return DiaryEntry(date: date, lastWriteDate: lastWriteDate, count: count)
         }
 
@@ -132,29 +132,37 @@ struct DiaryEntry: TimelineEntry {
     var visableImage: Image {
         switch state {
         case .A_neverWritten:
-            [
+            return [
                 TDWidgetImage.Diary.A1,
                 TDWidgetImage.Diary.A2,
                 TDWidgetImage.Diary.A3,
-            ].randomElement() ?? TDWidgetImage.Diary.A1
+            ].randomElement()!
         case .B_active:
-            [
+            let images = [
                 TDWidgetImage.Diary.B1,
                 TDWidgetImage.Diary.B2,
                 TDWidgetImage.Diary.B3,
-            ].randomElement() ?? TDWidgetImage.Diary.B1
+            ]
+            let res = images[count % images.count]
+            return res
         case .C_danger:
-            [
-                TDWidgetImage.Diary.C1,
-                TDWidgetImage.Diary.C2,
-                TDWidgetImage.Diary.C3,
-            ].randomElement() ?? TDWidgetImage.Diary.C1
+            let images =
+                [
+                    TDWidgetImage.Diary.C1,
+                    TDWidgetImage.Diary.C2,
+                    TDWidgetImage.Diary.C3,
+                ]
+            let res = images[count % images.count]
+            return res
         case .D_procrastinating:
-            [
-                TDWidgetImage.Diary.D1,
-                TDWidgetImage.Diary.D2,
-                TDWidgetImage.Diary.D3,
-            ].randomElement() ?? TDWidgetImage.Diary.D1
+            let images =
+                [
+                    TDWidgetImage.Diary.D1,
+                    TDWidgetImage.Diary.D2,
+                    TDWidgetImage.Diary.D3,
+                ]
+            let res = images[count % images.count]
+            return res
         }
     }
 
@@ -219,7 +227,7 @@ struct DiaryWidgetEntryView: View {
 }
 
 struct DiaryWidget: Widget {
-    let kind: String = "DiaryWidget"
+    let kind: String = WidgetConstant.diary.kindIdentifier
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
@@ -243,5 +251,5 @@ struct DiaryWidget: Widget {
 } timeline: {
     let yesterDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
     let now = Date()
-    DiaryEntry(date: Date(), lastWriteDate: nil, count: 0)
+    DiaryEntry(date: Date(), lastWriteDate: yesterDay, count: 14)
 }
