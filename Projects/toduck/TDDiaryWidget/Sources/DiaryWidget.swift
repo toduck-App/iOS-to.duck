@@ -48,9 +48,8 @@ struct Provider: TimelineProvider {
 
         var entries: [DiaryEntry] = []
         func makeEntry(at date: Date) -> DiaryEntry {
-            // TODO: 실제로는 App Group 캐시에서 가져와야 함
-            let count = 0
-            let lastWriteDate: Date? = nil
+            let count = Utils.read().count
+            let lastWriteDate: Date? = Utils.read().lastWriteDate
             return DiaryEntry(date: date, lastWriteDate: lastWriteDate, count: count)
         }
 
