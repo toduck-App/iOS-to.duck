@@ -31,36 +31,12 @@ struct Provider: TimelineProvider {
      .never: 갱신 없이 한 번만 설정
      */
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        let cal = Calendar.current
         let now = Date()
+        let snapshot = TDDiaryUtils.fetchDiaryData()
+        let entry = DiaryEntry(date: now, lastWriteDate: snapshot.lastWriteDate, count: snapshot.count)
 
-        let today9 = Utils.make(hour: 21, from: now)
-        let today10 = Utils.make(hour: 22, from: now)
-        let today11 = Utils.make(hour: 23, from: now)
-
-        var schedule = [today9, today10, today11].filter { $0 > now }
-        if schedule.isEmpty {
-            let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
-            schedule = [Utils.make(hour: 21, from: tomorrow),
-                        Utils.make(hour: 22, from: tomorrow),
-                        Utils.make(hour: 23, from: tomorrow)]
-        }
-
-        var entries: [DiaryEntry] = []
-        func makeEntry(at date: Date) -> DiaryEntry {
-            let count = Utils.read().count
-            let lastWriteDate: Date? = Utils.read().lastWriteDate
-            return DiaryEntry(date: date, lastWriteDate: lastWriteDate, count: count)
-        }
-
-        entries.append(makeEntry(at: now))
-
-        for when in schedule {
-            entries.append(makeEntry(at: when))
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
+        let next = TDDiaryUtils.nextQuarterHourTrigger(after: now, startHour: 21, endHour: 23, intervalMinutes: 15)
+        completion(Timeline(entries: [entry], policy: .after(next)))
     }
 
     /*
@@ -90,7 +66,7 @@ struct DiaryEntry: TimelineEntry {
     // 오늘 작성한 일기가 있다면 true 반환
     var wroteToday: Bool {
         guard let last = lastWriteDate else { return false }
-        return Calendar.current.isDateInToday(last)
+        return Calendar.current.isDate(last, inSameDayAs: date)
     }
 
     // "어제(1일) 이상 밀린 일기 개수"
@@ -245,10 +221,10 @@ struct DiaryWidget: Widget {
     }
 }
 
-#Preview(as: .systemSmall) {
-    DiaryWidget()
-} timeline: {
-    let yesterDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
-    let now = Date()
-    DiaryEntry(date: Date(), lastWriteDate: yesterDay, count: 14)
-}
+// #Preview(as: .systemSmall) {
+//    DiaryWidget()
+// } timeline: {
+//    let yesterDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+//    let now = Date()
+//    DiaryEntry(date: Date(), lastWriteDate: yesterDay, count: 14)
+// }
