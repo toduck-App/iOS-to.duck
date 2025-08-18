@@ -32,12 +32,18 @@ struct Provider: TimelineProvider {
      */
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         let now = Date()
+
+        // App Group 스냅샷을 읽어서 엔트리 생성
         let snapshot = TDDiaryUtils.fetchDiaryData()
         let entry = DiaryEntry(date: now, lastWriteDate: snapshot.lastWriteDate, count: snapshot.count)
 
-        let next = TDDiaryUtils.nextQuarterHourTrigger(after: now, startHour: 21, endHour: 23, intervalMinutes: 15)
+        // 다음 정각(1시간 간격)으로 트리거 설정
+        let next = TDDiaryUtils.nextHourlyTrigger(after: now)
+
+        // 한 개 엔트리 + 다음 호출 예약
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
+
 
     /*
      위젯의 중요도를 설정할 수 있다.
