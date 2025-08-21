@@ -320,6 +320,13 @@ public struct DomainAssembly: Assembly {
             return FetchServerScheduleListUseCaseImpl(repository: repository)
         }
         
+        container.register(FetchLocalCalendarScheduleListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchLocalCalendarScheduleListUseCaseImpl(repository: repository)
+        }
+        
         container.register(FetchUserPostUseCase.self) { resolver in
             guard let repository = resolver.resolve(UserRepository.self) else {
                 fatalError("컨테이너에 UserRepository가 등록되어 있지 않습니다.")
