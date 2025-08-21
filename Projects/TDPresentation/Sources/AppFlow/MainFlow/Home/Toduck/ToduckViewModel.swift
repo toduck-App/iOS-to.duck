@@ -17,7 +17,7 @@ final class ToduckViewModel: BaseViewModel {
         case failure(error: String)
     }
     
-    private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let fetchScheduleListUseCase: FetchServerScheduleListUseCase
     private let shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -41,7 +41,7 @@ final class ToduckViewModel: BaseViewModel {
     }
     
     init(
-        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        fetchScheduleListUseCase: FetchServerScheduleListUseCase,
         shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     ) {
         self.fetchScheduleListUseCase = fetchScheduleListUseCase

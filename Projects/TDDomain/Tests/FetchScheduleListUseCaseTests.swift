@@ -21,7 +21,7 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
             isFinished: false,
             scheduleRecords: nil
         )
-        let sut = FetchScheduleListUseCaseImpl(
+        let sut = FetchServerScheduleListUseCaseImpl(
             repository: MockScheduleRepository([schedule])
         )
         
@@ -57,7 +57,7 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
             isFinished: false,
             scheduleRecords: nil
         )
-        let sut = FetchScheduleListUseCaseImpl(
+        let sut = FetchServerScheduleListUseCaseImpl(
             repository: MockScheduleRepository([schedule])
         )
         
@@ -101,7 +101,7 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
             isFinished: false,
             scheduleRecords: nil
         )
-        let sut = FetchScheduleListUseCaseImpl(
+        let sut = FetchServerScheduleListUseCaseImpl(
             repository: MockScheduleRepository([schedule])
         )
         
@@ -140,7 +140,7 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
             isFinished: false,
             scheduleRecords: nil
         )
-        let sut = FetchScheduleListUseCaseImpl(
+        let sut = FetchServerScheduleListUseCaseImpl(
             repository: MockScheduleRepository([schedule])
         )
         
@@ -188,7 +188,7 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
             scheduleRecords: [deletedRecord]
         )
         
-        let sut = FetchScheduleListUseCaseImpl(
+        let sut = FetchServerScheduleListUseCaseImpl(
             repository: MockScheduleRepository([schedule])
         )
         
@@ -231,7 +231,7 @@ final class FetchScheduleListUseCaseTests: XCTestCase {
             scheduleRecords: [deletedRecord]
         )
         
-        let sut = FetchScheduleListUseCaseImpl(
+        let sut = FetchServerScheduleListUseCaseImpl(
             repository: MockScheduleRepository([schedule])
         )
         

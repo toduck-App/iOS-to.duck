@@ -24,7 +24,7 @@ final class TodoViewModel: BaseViewModel {
     
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
-    private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let fetchScheduleListUseCase: FetchServerScheduleListUseCase
     private let fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
@@ -43,7 +43,7 @@ final class TodoViewModel: BaseViewModel {
     init(
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
-        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        fetchScheduleListUseCase: FetchServerScheduleListUseCase,
         fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,

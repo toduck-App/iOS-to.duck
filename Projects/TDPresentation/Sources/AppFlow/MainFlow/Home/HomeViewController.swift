@@ -187,7 +187,7 @@ final class HomeViewController: BaseViewController<BaseView> {
         }
 
         let newViewController: UIViewController
-        let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchScheduleListUseCase.self)
+        let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchServerScheduleListUseCase.self)
         switch index {
         case 0:
             let shouldMarkAllDayUseCase = DIContainer.shared.resolve(ShouldMarkAllDayUseCase.self)

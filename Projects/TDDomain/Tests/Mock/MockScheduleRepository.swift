@@ -18,7 +18,7 @@ final class MockScheduleRepository: ScheduleRepository {
     
     init(_ schedules: [Schedule]) { self.mockScheduleList = schedules }
 
-    func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
+    func fetchServerScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
         return mockScheduleList
     }
 

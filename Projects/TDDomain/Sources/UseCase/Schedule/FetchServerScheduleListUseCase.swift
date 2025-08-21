@@ -1,11 +1,11 @@
 import TDCore
 import Foundation
 
-public protocol FetchScheduleListUseCase {
+public protocol FetchServerScheduleListUseCase {
     func execute(startDate: String, endDate: String) async throws -> [Date: [Schedule]]
 }
 
-public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
+public final class FetchServerScheduleListUseCaseImpl: FetchServerScheduleListUseCase {
     private let repository: ScheduleRepository
     
     public init(repository: ScheduleRepository) {
@@ -16,7 +16,7 @@ public final class FetchScheduleListUseCaseImpl: FetchScheduleListUseCase {
         startDate: String,
         endDate: String
     ) async throws -> [Date: [Schedule]] {
-        let fetchedScheduleList = try await repository.fetchScheduleList(startDate: startDate, endDate: endDate)
+        let fetchedScheduleList = try await repository.fetchServerScheduleList(startDate: startDate, endDate: endDate)
         let filteredScheduleList = filterScheduleList(with: fetchedScheduleList, startDate: startDate, endDate: endDate)
         let buildScheduleDictionary = buildScheduleDictionary(with: filteredScheduleList, queryStartDate: startDate, queryEndDate: endDate)
         
