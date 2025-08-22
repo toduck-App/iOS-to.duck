@@ -187,17 +187,23 @@ final class HomeViewController: BaseViewController<BaseView> {
         }
 
         let newViewController: UIViewController
-        let fetchScheduleListUseCase = DIContainer.shared.resolve(FetchServerScheduleListUseCase.self)
+        let fetchServerScheduleListUseCase = DIContainer.shared.resolve(FetchServerScheduleListUseCase.self)
+        let fetchLocalCalendarScheduleListUseCase = DIContainer.shared.resolve(FetchLocalCalendarScheduleListUseCase.self)
+        let fetchAllSchedulesUseCase = FetchAllSchedulesUseCaseImpl(
+            serverUseCase: fetchServerScheduleListUseCase,
+            localUseCase: fetchLocalCalendarScheduleListUseCase
+        )
         switch index {
         case 0:
             let shouldMarkAllDayUseCase = DIContainer.shared.resolve(ShouldMarkAllDayUseCase.self)
             let viewModel = ToduckViewModel(
-                fetchScheduleListUseCase: fetchScheduleListUseCase,
+                fetchAllSchedulesUseCase: fetchAllSchedulesUseCase,
                 shouldMarkAllDayUseCase: shouldMarkAllDayUseCase
             )
             let toduckViewController = ToduckViewController(viewModel: viewModel)
             toduckViewController.delegate = self
             newViewController = toduckViewController
+            
         case 1:
             let createScheduleUseCase = DIContainer.shared.resolve(CreateScheduleUseCase.self)
             let createRoutineUseCase = DIContainer.shared.resolve(CreateRoutineUseCase.self)
@@ -211,7 +217,7 @@ final class HomeViewController: BaseViewController<BaseView> {
             let viewModel = TodoViewModel(
                 createScheduleUseCase: createScheduleUseCase,
                 createRoutineUseCase: createRoutineUseCase,
-                fetchScheduleListUseCase: fetchScheduleListUseCase,
+                fetchAllSchedulesUseCase: fetchAllSchedulesUseCase,
                 fetchRoutineListForDatesUseCase: fetchRoutineListForDatesUseCase,
                 fetchRoutineUseCase: fetchRoutineUseCase,
                 finishScheduleUseCase: finishScheduleUseCase,
@@ -232,11 +238,9 @@ final class HomeViewController: BaseViewController<BaseView> {
     }
     
     private func replaceCurrentViewController(with newViewController: UIViewController) {
-        // 기존 뷰 컨트롤러 제거
         currentViewController?.view.removeFromSuperview()
         currentViewController?.removeFromParent()
         
-        // 새 뷰 컨트롤러 추가
         addChild(newViewController)
         view.addSubview(newViewController.view)
         

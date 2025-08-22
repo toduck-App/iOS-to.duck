@@ -60,7 +60,8 @@ public final class ScheduleRepositoryImpl: ScheduleRepository {
                 place: event.location,
                 memo: event.notes,
                 isFinished: false,
-                scheduleRecords: nil
+                scheduleRecords: nil,
+                source: .localCalendar
             )
         }
     }

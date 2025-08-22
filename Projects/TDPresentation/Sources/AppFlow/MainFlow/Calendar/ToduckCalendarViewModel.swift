@@ -127,7 +127,8 @@ final class ToduckCalendarViewModel: BaseViewModel {
                         place: updatedSchedule.place,
                         memo: updatedSchedule.memo,
                         isFinished: toggledFinished,
-                        scheduleRecords: updatedSchedule.scheduleRecords
+                        scheduleRecords: updatedSchedule.scheduleRecords,
+                        source: .server
                     )
                     schedules[index] = updatedSchedule
                     monthScheduleDict[key] = schedules
@@ -149,7 +150,8 @@ final class ToduckCalendarViewModel: BaseViewModel {
                     place: updated.place,
                     memo: updated.memo,
                     isFinished: toggledFinished,
-                    scheduleRecords: updated.scheduleRecords
+                    scheduleRecords: updated.scheduleRecords,
+                    source: .server
                 )
                 currentDayScheduleList[index] = updated
             }

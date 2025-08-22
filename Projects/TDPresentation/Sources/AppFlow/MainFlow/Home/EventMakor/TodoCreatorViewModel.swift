@@ -282,7 +282,8 @@ final class TodoCreatorViewModel: BaseViewModel {
             place: location,
             memo: memo,
             isFinished: false,
-            scheduleRecords: nil
+            scheduleRecords: nil,
+            source: .server
         )
         
         return schedule

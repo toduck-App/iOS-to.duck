@@ -175,7 +175,8 @@ public final class FetchServerScheduleListUseCaseImpl: FetchServerScheduleListUs
             place: schedule.place,
             memo: schedule.memo,
             isFinished: isFinished,
-            scheduleRecords: schedule.scheduleRecords
+            scheduleRecords: schedule.scheduleRecords,
+            source: .server
         )
     }
 }

@@ -15,7 +15,8 @@ extension Schedule {
             place: nil,
             memo: nil,
             isFinished: false,
-            scheduleRecords: scheduleRecords
+            scheduleRecords: scheduleRecords,
+            source: .server
         )
     }
 }

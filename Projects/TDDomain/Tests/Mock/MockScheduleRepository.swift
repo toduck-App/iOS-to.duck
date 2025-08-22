@@ -45,7 +45,8 @@ final class MockScheduleRepository: ScheduleRepository {
             place: nil,
             memo: nil,
             isFinished: false,
-            scheduleRecords: nil
+            scheduleRecords: nil,
+            source: .server
         )
     }
     
