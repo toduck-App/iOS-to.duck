@@ -44,7 +44,6 @@ struct Provider: TimelineProvider {
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
 
-
     /*
      위젯의 중요도를 설정할 수 있다.
      iOS는 중요도가 높은 위젯을 더 자주 업데이트하거나, 우선적으로 표시할 수 있다.
@@ -227,10 +226,10 @@ struct DiaryWidget: Widget {
     }
 }
 
-// #Preview(as: .systemSmall) {
-//    DiaryWidget()
-// } timeline: {
-//    let yesterDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
-//    let now = Date()
-//    DiaryEntry(date: Date(), lastWriteDate: yesterDay, count: 14)
-// }
+#Preview(as: .systemSmall) {
+    DiaryWidget()
+} timeline: {
+    let yesterDay = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+    let now = Date()
+    DiaryEntry(date: Date(), lastWriteDate: yesterDay, count: 14)
+}
