@@ -1,4 +1,5 @@
 import SwiftUI
+import TDDesign
 import TDCore
 import WidgetKit
 

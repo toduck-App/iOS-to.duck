@@ -33,6 +33,7 @@ extension Target {
 
 extension SourceFilesList {
     public static let sources: SourceFilesList = ["Sources/**"]
-    public static let widgetSources: SourceFilesList = ["TDDiaryWidget/**"]
+    public static let diaryWidgetSources: SourceFilesList = ["TDDiaryWidget/**"]
+    public static let scheduleWidgetSources: SourceFilesList = ["TDScheduleWidget/**"]
     public static let tests: SourceFilesList = ["Tests/**"]
 }

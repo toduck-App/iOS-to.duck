@@ -24,7 +24,8 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
-        .target(name: "TDDiaryWidget")
+        .target(name: "TDDiaryWidget"),
+        .target(name: "TDScheduleWidget")
     ],
     settings: .settings(
         base: [
@@ -38,16 +39,37 @@ let appTarget = Target.target(
     )
 )
 
-let widgetExtension = Target.target(
+let diaryWidgetExtension = Target.target(
     name: "TDDiaryWidget",
     product: .appExtension,
     deploymentTargets: .iOS("17.0"),
     infoPlist: .file(path: .relativeToRoot("Projects/toduck/TDDiaryWidget/Resources/Info.plist")),
-    sources: .widgetSources,
-    resources: [
-        .glob(pattern: .relativeToRoot("Projects/toduck/TDDiaryWidget/Resources/**"),
-              excluding: ["**/Info.plist"])
+    sources: .diaryWidgetSources,
+    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
+    scripts: [],
+    dependencies: [
+        .core(),
+        .domain(),
+        .design()
     ],
+    settings: .settings(
+        base: [
+            "DEVELOPMENT_LANGUAGE": "ko",
+            "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
+        ],
+        configurations: [
+            .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
+            .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
+        ]
+    )
+)
+
+let scheduleWidgetExtension = Target.target(
+    name: "TDScheduleWidget",
+    product: .appExtension,
+    deploymentTargets: .iOS("17.0"),
+    infoPlist: .file(path: .relativeToRoot("Projects/toduck/TDScheduleWidget/Resources/Info.plist")),
+    sources: .scheduleWidgetSources,
     entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
     scripts: [],
     dependencies: [
@@ -73,6 +95,7 @@ let project = Project.project(
     name: "toduck",
     targets: [
         appTarget,
-        widgetExtension
+        diaryWidgetExtension,
+        scheduleWidgetExtension
     ]
 )

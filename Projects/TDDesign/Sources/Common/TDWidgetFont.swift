@@ -1,8 +1,4 @@
-import Foundation
-import TDDesign
-
 import SwiftUI
-import TDDesign
 
 public enum CustomFont {
     case pretendardRegular
@@ -46,7 +42,7 @@ public extension Font {
     }
 }
 
-extension View {
+public extension View {
     func customFont(_ font: CustomFont, style: UIFont.TextStyle) -> some View {
         self.font(.custom(font, size: UIFont.preferredFont(forTextStyle: style).pointSize))
     }
