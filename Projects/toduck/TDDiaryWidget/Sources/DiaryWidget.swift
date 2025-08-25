@@ -39,7 +39,7 @@ struct Provider: TimelineProvider {
         let entry = DiaryEntry(date: now, lastWriteDate: snapshot.lastWriteDate, count: snapshot.count)
 
         // 다음 정각(1시간 간격)으로 트리거 설정
-        let next = TDDiaryUtils.nextHourlyTrigger(after: now)
+        let next = Calendar.current.nextHour(after: now)
 
         // 한 개 엔트리 + 다음 호출 예약
         completion(Timeline(entries: [entry], policy: .after(next)))
