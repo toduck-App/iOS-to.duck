@@ -56,7 +56,7 @@ public actor MFSession {
         }
         return response
     }
-
+    
     @discardableResult
     public func requestJSON(_ request: MFRequest) async throws(MFError) -> MFResponse<[String: Any]> {
         let response = try await perform(request) { data in
@@ -111,26 +111,35 @@ public actor MFSession {
             for plugin in plugins {
                 plugin.didFail(error: error, request: request.request, response: capturedResponse, data: capturedData, id: id)
             }
+            
             if let mfError = error.asMFError {
                 if case let MFError.serverError(apiError) = mfError {
                     switch apiError {
                     case .expiredAccessToken:
                         if retryCount > 0 {
-                            try await refreshToken()
+                            do {
+                                try await TDTokenRefresher.shared.refreshTokens()
+                            } catch let error as MFError {
+                                throw error
+                            } catch {
+                                throw MFError.networkFailure(underlyingError: error)
+                            }
+                            
                             if let newAccessToken = TDTokenManager.shared.accessToken {
                                 request.addHeaders([.authorization(bearerToken: newAccessToken)])
                             }
+                            
                             return try await perform(request, transformer: transformer, retryCount: retryCount - 1)
                         } else {
                             NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
                             throw mfError
                         }
                     case .emptyAccessToken,
-                         .malformedToken,
-                         .tamperedToken,
-                         .unsupportedJWTToken,
-                         .takenAwayToken,
-                         .expiredRefreshToken:
+                            .malformedToken,
+                            .tamperedToken,
+                            .unsupportedJWTToken,
+                            .takenAwayToken,
+                            .expiredRefreshToken:
                         NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
                         throw mfError
                     default:
@@ -142,26 +151,6 @@ public actor MFSession {
                 throw MFError.networkFailure(underlyingError: error)
             }
         }
-    }
-
-    private func refreshToken() async throws(MFError) {
-        let provider = MFProvider<AuthAPI>()
-        guard let refreshToken = TDTokenManager.shared.refreshToken else {
-            throw MFError.serverError(apiError: .expiredRefreshToken)
-        }
-        let target = AuthAPI.refreshToken(refreshToken: refreshToken)
-        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
-        guard let refreshToken = response.extractRefreshToken(),
-              let refreshTokenExpiredAt = response.extractRefreshTokenExpiry()
-        else {
-            throw MFError.requestJSONDecodingFailure
-        }
-        try? await TDTokenManager.shared.saveToken((
-            accessToken: response.value.accessToken,
-            refreshToken: refreshToken,
-            refreshTokenExpiredAt: refreshTokenExpiredAt,
-            userId: response.value.userId
-        ))
     }
 }
 
