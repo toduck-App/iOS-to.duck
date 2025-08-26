@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 public enum TDColor {
     public static let baseBlack = TDDesignAsset.Colors.baseBlack.color
@@ -46,6 +47,47 @@ public enum TDColor {
         public static let textPH = TDDesignAsset.Colors.ph.color
     }
     
+    public enum ScheduleSwiftUI {
+        public static let back1 = TDDesignAsset.Colors.back1.swiftUIColor
+        public static let back2 = TDDesignAsset.Colors.back2.swiftUIColor
+        public static let back3 = TDDesignAsset.Colors.back3.swiftUIColor
+        public static let back4 = TDDesignAsset.Colors.back4.swiftUIColor
+        public static let back5 = TDDesignAsset.Colors.back5.swiftUIColor
+        public static let back6 = TDDesignAsset.Colors.back6.swiftUIColor
+        public static let back7 = TDDesignAsset.Colors.back7.swiftUIColor
+        public static let back8 = TDDesignAsset.Colors.back8.swiftUIColor
+        public static let back9 = TDDesignAsset.Colors.back9.swiftUIColor
+        public static let back10 = TDDesignAsset.Colors.back10.swiftUIColor
+        public static let back11 = TDDesignAsset.Colors.back11.swiftUIColor
+        public static let back12 = TDDesignAsset.Colors.back12.swiftUIColor
+        public static let back13 = TDDesignAsset.Colors.back13.swiftUIColor
+        public static let back14 = TDDesignAsset.Colors.back14.swiftUIColor
+        public static let back15 = TDDesignAsset.Colors.back15.swiftUIColor
+        public static let back16 = TDDesignAsset.Colors.back16.swiftUIColor
+        public static let back17 = TDDesignAsset.Colors.back17.swiftUIColor
+        public static let back18 = TDDesignAsset.Colors.back18.swiftUIColor
+        public static let back19 = TDDesignAsset.Colors.back19.swiftUIColor
+        public static let back20 = TDDesignAsset.Colors.back20.swiftUIColor
+
+        public static let text1 = TDDesignAsset.Colors.text1.swiftUIColor
+        public static let text2 = TDDesignAsset.Colors.text2.swiftUIColor
+        public static let text3 = TDDesignAsset.Colors.text3.swiftUIColor
+        public static let text4 = TDDesignAsset.Colors.text4.swiftUIColor
+        public static let text5 = TDDesignAsset.Colors.text5.swiftUIColor
+        public static let text6 = TDDesignAsset.Colors.text6.swiftUIColor
+        public static let text7 = TDDesignAsset.Colors.text7.swiftUIColor
+        public static let text8 = TDDesignAsset.Colors.text8.swiftUIColor
+        public static let text9 = TDDesignAsset.Colors.text9.swiftUIColor
+        public static let text10 = TDDesignAsset.Colors.text10.swiftUIColor
+        public static let text11 = TDDesignAsset.Colors.text11.swiftUIColor
+        public static let text12 = TDDesignAsset.Colors.text12.swiftUIColor
+        public static let text13 = TDDesignAsset.Colors.text13.swiftUIColor
+        public static let text14 = TDDesignAsset.Colors.text14.swiftUIColor
+        public static let text15 = TDDesignAsset.Colors.text15.swiftUIColor
+        
+        public static let textPH = TDDesignAsset.Colors.ph.swiftUIColor
+    }
+    
     public enum ScheduleOpacity {
         public static let back1 = TDDesignAsset.Colors.opacityBack1.color
         public static let back2 = TDDesignAsset.Colors.opacityBack2.color
@@ -74,6 +116,19 @@ public enum TDColor {
         public static let neutral700 = TDDesignAsset.Colors.neutral700.color
         public static let neutral800 = TDDesignAsset.Colors.neutral800.color
         public static let neutral900 = TDDesignAsset.Colors.neutral900.color
+    }
+    
+    public enum NeutralSwiftUI {
+        public static let neutral50 = TDDesignAsset.Colors.neutral50.swiftUIColor
+        public static let neutral100 = TDDesignAsset.Colors.neutral100.swiftUIColor
+        public static let neutral200 = TDDesignAsset.Colors.neutral200.swiftUIColor
+        public static let neutral300 = TDDesignAsset.Colors.neutral300.swiftUIColor
+        public static let neutral400 = TDDesignAsset.Colors.neutral400.swiftUIColor
+        public static let neutral500 = TDDesignAsset.Colors.neutral500.swiftUIColor
+        public static let neutral600 = TDDesignAsset.Colors.neutral600.swiftUIColor
+        public static let neutral700 = TDDesignAsset.Colors.neutral700.swiftUIColor
+        public static let neutral800 = TDDesignAsset.Colors.neutral800.swiftUIColor
+        public static let neutral900 = TDDesignAsset.Colors.neutral900.swiftUIColor
     }
 
     public enum Primary {

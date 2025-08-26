@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import SwiftUI
 
 public enum TDImage {
     public static let appIcon = TDDesignAsset.Images.appIcon.image
@@ -308,6 +309,22 @@ public enum TDImage {
         public static let computer = TDDesignAsset.Images.categoryComputer.image
         public static let medicine = TDDesignAsset.Images.categoryMedicine.image
         public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.image
+    }
+    
+    public enum CategorySwiftUI {
+        public static let food = TDDesignAsset.Images.categoryFood.swiftUIImage
+        public static let none = TDDesignAsset.Images.categoryNone.swiftUIImage
+        public static let talk = TDDesignAsset.Images.categoryTalk.swiftUIImage
+        public static let heart = TDDesignAsset.Images.categoryHeart.swiftUIImage
+        public static let power = TDDesignAsset.Images.categoryPower.swiftUIImage
+        public static let sleep = TDDesignAsset.Images.categorySleep.swiftUIImage
+        public static let pencil = TDDesignAsset.Images.categoryPencil.swiftUIImage
+        public static let people = TDDesignAsset.Images.categoryPeople.swiftUIImage
+        public static let redBook = TDDesignAsset.Images.categoryRedbook.swiftUIImage
+        public static let vehicle = TDDesignAsset.Images.categoryVehicle.swiftUIImage
+        public static let computer = TDDesignAsset.Images.categoryComputer.swiftUIImage
+        public static let medicine = TDDesignAsset.Images.categoryMedicine.swiftUIImage
+        public static let yellowBook = TDDesignAsset.Images.categoryYellowbook.swiftUIImage
     }
     
     public enum Tomato {

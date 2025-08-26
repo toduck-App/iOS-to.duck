@@ -16,6 +16,10 @@ public enum TDWidgetImage {
         public static let D3 = TDDesignAsset.Images.widgetD3.swiftUIImage
     }
     
+    public enum Schedule {
+        public static let noSchedule = TDDesignAsset.Images.widgetNoSchedule.swiftUIImage
+    }
+    
     public static let tomato = TDDesignAsset.Images.widgetTomato.swiftUIImage
     public static let error = TDDesignAsset.Images.widgetError.swiftUIImage
 }
