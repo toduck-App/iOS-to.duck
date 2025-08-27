@@ -10,6 +10,8 @@ actor TDTokenRefresher {
     
     private var refreshTask: Task<Void, Error>?
     
+    private init() { }
+    
     func refreshTokens() async throws {
         if let existingTask = refreshTask {
             // 진행 중인 작업이 있다면, 해당 작업이 끝날 때까지 기다립니다.

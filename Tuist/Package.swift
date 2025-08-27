@@ -13,7 +13,6 @@ let packageSettings = PackageSettings(
         "FSCalendar": .framework,
         "FittedSheets": .framework,
         "Swinject": .framework,
-        "KeyChainManager": .framework,
         "FirebaseAnalytics": .framework,
     ]
 )
@@ -31,7 +30,6 @@ let package = Package(
         .package(url: "https://github.com/Swinject/Swinject.git", from: "2.9.1"),
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.2"),
         .package(url: "https://github.com/kakao/kakao-ios-sdk.git", from: "2.23.0"),
-        .package(url: "https://github.com/Kyxxn/SPM-KeyChainManager-KJ.git", from: "1.0.1"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "11.12.0"),
     ]
 )

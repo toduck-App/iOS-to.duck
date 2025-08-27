@@ -17,7 +17,6 @@ public enum External: String {
     case FirebaseAnalytics
     case FirebaseCrashlytics
     case FirebaseMessaging
-    case KeyChainManager = "KeyChainManager-KJ"
 }
 
 extension TargetDependency {
