@@ -41,39 +41,81 @@ struct ScheduleWidgetEntryView: View {
         switch widgetFamily {
         case .systemSmall:
             let todays = remainingTodos(from: entry.scheduleList, on: entry.date)
-            let firstToday = todays.first
-
-            SmallScheduleCardView(
-                dayText: dayString(entry.date),
-                weekdayText: weekdayString(entry.date),
-                title: firstToday?.title ?? "오늘\n일정이 없어요",
-                timeText: timeString(firstToday),
-                accentColor: firstToday == nil ? TDColor.NeutralSwiftUI.neutral500 : TDColor.ScheduleSwiftUI.text6,
-                bgColor: firstToday == nil ? TDColor.NeutralSwiftUI.neutral100 : TDColor.ScheduleSwiftUI.back6,
-                icon: firstToday == nil ? TDWidgetImage.Schedule.noSchedule : TDImage.CategorySwiftUI.computer
-            )
+            // 오늘 일정이 있는 경우
+            if let firstToday = todays.first {
+                SmallScheduleCardView(
+                    date: entry.date,
+                    time: firstToday.time,
+                    isAllDay: firstToday.isAllDay,
+                    title: firstToday.title,
+                    accentColor: Color.getAccentColor(for: firstToday.category) ?? .white,
+                    bgColor: Color(hex: firstToday.category.colorHex) ?? .white,
+                    icon: TDWidgetImage.Category(firstToday.category.imageName).swiftUIImage
+                )
+            }
+            // 오늘 일정이 없는 경우
+            else {
+                SmallScheduleCardView(
+                    date: entry.date,
+                    time: nil,
+                    isAllDay: false,
+                    title: "오늘\n일정이 없어요",
+                    accentColor: TDColor.NeutralSwiftUI.neutral500,
+                    bgColor: TDColor.NeutralSwiftUI.neutral100,
+                    icon: TDWidgetImage.Schedule.noSchedule
+                )
+            }
 
         case .systemMedium:
             GeometryReader { geo in
                 HStack(alignment: .top, spacing: 12) {
                     let todays = remainingTodos(from: entry.scheduleList, on: entry.date)
-                    let firstToday = todays.first
+                    let leftCard = todays.first
 
-                    SmallScheduleCardView(
-                        dayText: dayString(entry.date),
-                        weekdayText: weekdayString(entry.date),
-                        title: firstToday?.title ?? "오늘\n일정이 없어요",
-                        timeText: timeString(firstToday),
-                        accentColor: firstToday == nil ? TDColor.NeutralSwiftUI.neutral500 : TDColor.ScheduleSwiftUI.text6,
-                        bgColor: firstToday == nil ? TDColor.NeutralSwiftUI.neutral100 : TDColor.ScheduleSwiftUI.back6,
-                        icon: firstToday == nil ? TDWidgetImage.Schedule.noSchedule : TDImage.CategorySwiftUI.computer
-                    )
-                    .frame(width: geo.size.width * 0.45)
-
+                    if let firstToday = leftCard {
+                        SmallScheduleCardView(
+                            date: entry.date,
+                            time: firstToday.time,
+                            isAllDay: firstToday.isAllDay,
+                            title: firstToday.title,
+                            accentColor: Color.getAccentColor(for: firstToday.category) ?? .white,
+                            bgColor: Color(hex: firstToday.category.colorHex) ?? .white,
+                            icon: TDWidgetImage.Category(firstToday.category.imageName).swiftUIImage
+                        )
+                        .frame(width: geo.size.width * 0.45)
+                    } else {
+                        SmallScheduleCardView(
+                            date: entry.date,
+                            time: nil,
+                            isAllDay: false,
+                            title: "오늘\n일정이 없어요",
+                            accentColor: TDColor.NeutralSwiftUI.neutral500,
+                            bgColor: TDColor.NeutralSwiftUI.neutral100,
+                            icon: TDWidgetImage.Schedule.noSchedule
+                        )
+                        .frame(width: geo.size.width * 0.45)
+                    }
                     let ctx = rightPaneContext(for: entry)
+
+                    let listTitle: String = {
+                        guard let ctxDate = ctx.date else { return "투두" }
+                        return Calendar.current.isDateInToday(ctxDate)
+                            ? "투두"
+                            : ctxDate.convertToString(formatType: .monthDayWithWeekday)
+                    }()
+                    let rightItems: [Schedule] = {
+                        guard let ctxDate = ctx.date else { return [] }
+                        if let left = leftCard,
+                           Calendar.current.isDate(ctxDate, inSameDayAs: entry.date)
+                        {
+                            return ctx.items.filter { $0.id != left.id }
+                        }
+                        return ctx.items
+                    }()
+
                     TodoListView(
-                        title: ctx.date.map { $0.convertToString(formatType: .monthDayWithWeekday) } ?? "",
-                        items: ctx.items,
+                        title: listTitle,
+                        items: rightItems,
                         maxCount: 4
                     )
                     .frame(width: geo.size.width * 0.55)
@@ -85,9 +127,16 @@ struct ScheduleWidgetEntryView: View {
         }
     }
 
+   
+
     // MARK: - Helpers (공용)
 
-    private func rightPaneContext(for entry: ScheduleEntry) -> (date: Date?, items: [Schedule]) {
+    private func rightPaneContext(
+        for entry: ScheduleEntry
+    ) -> (
+        date: Date?,
+        items: [Schedule]
+    ) {
         let todays = remainingTodos(from: entry.scheduleList, on: entry.date)
         if !todays.isEmpty {
             return (entry.date, todays)
@@ -99,17 +148,20 @@ struct ScheduleWidgetEntryView: View {
     }
 
     /// 특정 날짜의 미완료 스케줄만 필터 + 시간순 정렬
-    private func remainingTodos(from list: [Schedule], on date: Date) -> [Schedule] {
-        let key = DateFormatter.yyyyMMdd.string(from: date)
+    private func remainingTodos(
+        from list: [Schedule],
+        on date: Date
+    ) -> [Schedule] {
+        let key = date.convertToString(formatType: .yearMonthDay)
         return list
             .filter { !$0.isFinished }
             .filter { $0.startDate <= key && key <= $0.endDate }
             .sorted { lhs, rhs in
                 switch (lhs.time, rhs.time) {
-                case let (lt?, rt?): return lt < rt
-                case (nil, _?): return false
-                case (_?, nil): return true
-                default: return lhs.title < rhs.title
+                case let (lt?, rt?): lt < rt
+                case (nil, _?): false
+                case (_?, nil): true
+                default: lhs.title < rhs.title
                 }
             }
     }
@@ -136,39 +188,15 @@ struct ScheduleWidgetEntryView: View {
 
         return candidates.min()
     }
-
-    private func dayString(_ date: Date) -> String {
-        Calendar.current.component(.day, from: date).description
-    }
-
-    private func weekdayString(_ date: Date) -> String {
-        let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "ko_KR")
-        fmt.dateFormat = "E"
-        return fmt.string(from: date)
-    }
-
-    private func monthDayString(_ date: Date) -> String {
-        let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "ko_KR")
-        fmt.dateFormat = "M월 d일 (E)"
-        return fmt.string(from: date)
-    }
-
-    private func timeString(_ schedule: Schedule?) -> String? {
-        guard let t = schedule?.time else { return nil }
-        return Date.convertFromString(t, format: .time24Hour)?
-            .convertToString(formatType: .time24Hour)
-    }
 }
 
 // MARK: - Reusable Small Card (좌측)
 
 struct SmallScheduleCardView: View {
-    let dayText: String
-    let weekdayText: String
+    let date: Date
+    let time: String?
+    let isAllDay: Bool
     let title: String
-    let timeText: String?
     let accentColor: Color
     let bgColor: Color
     let icon: Image
@@ -176,37 +204,37 @@ struct SmallScheduleCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 4) {
-                Text(dayText)
-                    .customFont(.pretendardSemiBold, size: 24)
+                Text(date.convertToString(formatType: .day))
+                    .tdFont(.boldHeader2)
                     .foregroundStyle(TDColor.NeutralSwiftUI.neutral900)
-                Text(weekdayText)
-                    .customFont(.pretendardSemiBold, size: 20)
+                Text(date.convertToString(formatType: .weekdayShort))
+                    .tdFont(.boldHeader3)
                     .foregroundStyle(TDColor.NeutralSwiftUI.neutral900)
             }
             .frame(width: .infinity, height: 24, alignment: .topLeading)
             .padding(.bottom, 12)
 
-            Rectangle()
+            RoundedRectangle(cornerRadius: 10)
                 .fill(bgColor)
-                .cornerRadius(10)
                 .overlay(alignment: .topLeading) {
-                    HStack {
-                        Rectangle()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title)
+                            .foregroundStyle(accentColor)
+                            .tdFont(.boldBody2)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.75)
+
+                        Text(isAllDay ? "종일" : (time ?? ""))
+                            .foregroundStyle(TDColor.NeutralSwiftUI.neutral800)
+                            .tdFont(.mediumCaption2)
+                            .lineLimit(1)
+                    }
+                    .padding(.leading, 6)
+                    .overlay(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 1)
                             .fill(accentColor)
-                            .frame(width: 2, height: 28)
-                            .cornerRadius(1)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(title)
-                                .foregroundStyle(accentColor)
-                                .customFont(.pretendardSemiBold, size: 14)
-                                .lineLimit(2)
-                            if let timeText {
-                                Text(timeText)
-                                    .foregroundStyle(TDColor.NeutralSwiftUI.neutral800)
-                                    .customFont(.pretendardMedium, size: 10)
-                                    .lineLimit(1)
-                            }
-                        }
+                            .frame(width: 2)
+                            .frame(maxHeight: .infinity)
                     }
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                     .padding(.leading, 10)
@@ -235,26 +263,26 @@ struct TodoListView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .customFont(.pretendardSemiBold, size: 12)
+                .tdFont(.boldCaption1)
                 .foregroundStyle(TDColor.NeutralSwiftUI.neutral600)
                 .frame(width: .infinity, height: 24, alignment: .center)
                 .padding(.bottom, 12)
 
             if items.isEmpty {
                 Text("예정된 일정이 없어요 !")
-                    .customFont(.pretendardMedium, size: 12)
+                    .tdFont(.boldCaption1)
                     .foregroundStyle(TDColor.NeutralSwiftUI.neutral500)
             } else {
                 ForEach(items.prefix(maxCount), id: \.id) { item in
                     HStack(alignment: .top, spacing: 6) {
                         Rectangle()
-                            .fill(Color(hex: item.category.colorHex) ?? TDColor.NeutralSwiftUI.neutral400)
+                            .fill(Color.getAccentColor(for: item.category) ?? TDColor.NeutralSwiftUI.neutral300)
                             .frame(width: 2, height: 16)
                             .cornerRadius(1)
 
                         Text(item.title)
-                            .customFont(.pretendardMedium, size: 12)
-                            .foregroundStyle(TDColor.NeutralSwiftUI.neutral900)
+                            .tdFont(.mediumCaption1)
+                            .foregroundStyle(TDColor.NeutralSwiftUI.neutral700)
                             .lineLimit(1)
                     }
                     .frame(height: 20)
@@ -276,14 +304,16 @@ struct ScheduleWidget: Widget {
             Group {
                 if #available(iOS 17.0, *) {
                     ScheduleWidgetEntryView(entry: entry)
-                        .containerBackground(.fill.tertiary, for: .widget)
-                        .padding(16)
+                        .containerBackground(for: .widget) {
+                            Color.white
+                        }
                 } else {
                     ScheduleWidgetEntryView(entry: entry)
                         .background()
-                        .padding(16)
                 }
             }
+            .padding(16)
+            .widgetURL(URL(string: "toduck://diary")!)
         }
         .supportedFamilies([.systemSmall, .systemMedium])
         .configurationDisplayName("토덕 - To.duck")
@@ -300,26 +330,14 @@ struct ScheduleWidget: Widget {
     ScheduleEntry(date: Date(), scheduleList: ScheduleEntry.sample)
 }
 
-// MARK: - Utils
-
-extension DateFormatter {
-    static let yyyyMMdd: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        f.locale = Locale(identifier: "ko_KR")
-        f.timeZone = .current
-        return f
-    }()
-}
-
 extension ScheduleEntry {
     static let sample: [Schedule] = [
         Schedule(
             id: 1,
             title: "팀 회의",
-            category: .init(colorHex: "#4C6EF5", imageName: "computer"),
-            startDate: "2025-08-25",
-            endDate: "2025-08-25",
+            category: .init(colorHex: "#DEEEFC", imageName: "computer"),
+            startDate: "2025-08-23",
+            endDate: "2025-08-26",
             isAllDay: false,
             time: "11:00",
             repeatDays: nil,
@@ -332,8 +350,8 @@ extension ScheduleEntry {
         Schedule(
             id: 2,
             title: "UI 작업",
-            category: .init(colorHex: "#FFA94D", imageName: "book"),
-            startDate: "2025-08-27",
+            category: .init(colorHex: "#DEEEFC", imageName: "book"),
+            startDate: "2025-08-22",
             endDate: "2025-08-27",
             isAllDay: false,
             time: "13:30",
@@ -347,7 +365,7 @@ extension ScheduleEntry {
         Schedule(
             id: 3,
             title: "점심 약속",
-            category: .init(colorHex: "#51CF66", imageName: "food"),
+            category: .init(colorHex: "#DEEEFC", imageName: "food"),
             startDate: "2025-08-27",
             endDate: "2025-08-27",
             isAllDay: false,
@@ -362,7 +380,7 @@ extension ScheduleEntry {
         Schedule(
             id: 4,
             title: "영화 보기",
-            category: .init(colorHex: "#748FFC", imageName: "food"),
+            category: .init(colorHex: "#FFF7D9", imageName: "food"),
             startDate: "2025-08-27",
             endDate: "2025-08-27",
             isAllDay: true,

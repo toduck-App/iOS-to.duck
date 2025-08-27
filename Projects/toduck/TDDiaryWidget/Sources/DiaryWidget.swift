@@ -181,7 +181,7 @@ struct DiaryWidgetEntryView: View {
                             }
 
                         Text("\(entry.visableCount)")
-                            .customFont(.pretendardSemiBold, size: 30)
+                            .tdFont(.boldHeader1)
                             .monospacedDigit()
                             .foregroundColor(.white)
                             .lineLimit(1)
@@ -193,7 +193,7 @@ struct DiaryWidgetEntryView: View {
                     .padding(.horizontal, 16)
 
                     Text("오늘을 기록하세요!")
-                        .customFont(.pretendardSemiBold, size: 14)
+                        .tdFont(.boldBody3)
                         .foregroundColor(.white)
                         .opacity(0.8)
                 }
