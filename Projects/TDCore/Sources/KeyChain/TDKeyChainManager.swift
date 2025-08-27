@@ -2,7 +2,7 @@ import Foundation
 import Security
 
 public actor TDKeyChainManager: KeyChainManaging {
-    public static let shared: KeyChainManaging = TDKeyChainManager()
+    public static var shared: KeyChainManaging = TDKeyChainManager()
     
     private init() { }
     

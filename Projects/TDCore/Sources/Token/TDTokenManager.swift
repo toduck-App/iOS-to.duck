@@ -90,4 +90,11 @@ public final class TDTokenManager {
     public func registerFCMToken(_ token: String) {
         pendingFCMToken = token
     }
+    
+#if DEBUG
+    func setTokensForTesting(accessToken: String?, refreshToken: String?) {
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+    }
+#endif
 }

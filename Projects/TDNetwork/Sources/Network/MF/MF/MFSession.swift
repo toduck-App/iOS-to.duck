@@ -3,7 +3,7 @@ import TDCore
 import TDData
 
 public actor MFSession {
-    public static let `default` = MFSession(plugins: [
+    public static var `default` = MFSession(plugins: [
         MFNetworkLoggerPlugin(),
     ])
     
