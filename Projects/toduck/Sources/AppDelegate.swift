@@ -35,7 +35,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Messaging.messaging().apnsToken = deviceToken
-        TDLogger.info("✅ APNs 디바이스 토큰 등록 완료")
+        TDLogger.info("✅ Messaging.messaging().apnsToken 디바이스 토큰 등록 완료")
     }
     
     func application(
