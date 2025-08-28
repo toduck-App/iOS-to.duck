@@ -2,6 +2,9 @@ import Foundation
 
 public final class TDTokenManager {
     public static let shared = TDTokenManager()
+    
+    // MARK: - Properties
+    
     public private(set) var accessToken: String?
     public private(set) var refreshToken: String?
     public private(set) var refreshTokenExpiredAt: Date?
@@ -15,27 +18,42 @@ public final class TDTokenManager {
     public var isFirstLogin: Bool {
         return UserDefaults.standard.bool(forKey: "isFirstLogin")
     }
-       
+    
+    // MARK: - Initializer
+    
     private init() { }
     
+    // MARK: - Keychain I/O
+    
     public func loadTokenFromKC() async throws {
-        guard let accessToken = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.accessToken.rawValue),
-              let refreshToken = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.refreshToken.rawValue),
-              let refreshTokenExpiredAtString = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.refreshTokenExpiredAt.rawValue),
-              let userIdData = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.userId.rawValue),
-              let userId = Int(userIdData)
-        else {
-            throw TDDataError.notFoundToken
-        }
+        let (accessToken, refreshToken, refreshTokenExpiredAtString, userId) = try await loadTokenStringsFromKeychain()
+        let refreshTokenExpiredAt = try validateRefreshToken(expiredAtString: refreshTokenExpiredAtString)
         
-        guard let refreshTokenExpiredAt = convertToDate(refreshTokenExpiredAtString), Date() < refreshTokenExpiredAt else {
-            try await removeToken()
-            throw TDDataError.expiredRefreshToken
-        }
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.refreshTokenExpiredAt = refreshTokenExpiredAt
         self.userId = userId
+    }
+    
+    private func loadTokenStringsFromKeychain() async throws -> (String, String, String, Int) {
+        guard
+            let accessToken = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.accessToken.rawValue),
+            let refreshToken = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.refreshToken.rawValue),
+            let refreshTokenExpiredAtString = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.refreshTokenExpiredAt.rawValue),
+            let userIdData = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.userId.rawValue),
+            let userId = Int(userIdData)
+        else { throw TDDataError.notFoundToken }
+        
+        return (accessToken, refreshToken, refreshTokenExpiredAtString, userId)
+    }
+    
+    private func validateRefreshToken(expiredAtString: String) throws -> Date {
+        guard let expiredAt = convertToDate(expiredAtString), Date() < expiredAt else {
+            Task { try await removeToken() }
+            throw TDDataError.expiredRefreshToken
+        }
+        
+        return expiredAt
     }
     
     /// 1. AccessToken이 만료되어 RefreshToken을 사용해 Token정보를 갱신할 때 사용
@@ -79,6 +97,15 @@ public final class TDTokenManager {
         return formatter.date(from: string)
     }
     
+#if DEBUG
+    func setTokensForTesting(accessToken: String?, refreshToken: String?) {
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+    }
+#endif
+    
+    // MARK: - First Launch / Login Flags
+    
     public func launchFirstLaunch() {
         UserDefaults.standard.set(true, forKey: "isFirstLaunch")
     }
@@ -90,11 +117,4 @@ public final class TDTokenManager {
     public func registerFCMToken(_ token: String) {
         pendingFCMToken = token
     }
-    
-#if DEBUG
-    func setTokensForTesting(accessToken: String?, refreshToken: String?) {
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
-    }
-#endif
 }

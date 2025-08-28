@@ -43,8 +43,6 @@ public final class AppCoordinator: Coordinator {
         Task {
             do {
                 try await TDTokenManager.shared.loadTokenFromKC()
-                let authRepository = injector.resolve(AuthRepository.self)
-                try await authRepository.refreshToken()
                 
                 await MainActor.run {
                     removeSplash()
