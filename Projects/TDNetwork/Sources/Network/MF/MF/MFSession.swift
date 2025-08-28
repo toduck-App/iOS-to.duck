@@ -3,7 +3,7 @@ import TDCore
 import TDData
 
 public actor MFSession {
-    public static let `default` = MFSession(plugins: [
+    public static var `default` = MFSession(plugins: [
         MFNetworkLoggerPlugin(),
     ])
     
@@ -56,7 +56,7 @@ public actor MFSession {
         }
         return response
     }
-
+    
     @discardableResult
     public func requestJSON(_ request: MFRequest) async throws(MFError) -> MFResponse<[String: Any]> {
         let response = try await perform(request) { data in
@@ -80,88 +80,112 @@ public actor MFSession {
             throw error
         }
         
-        var capturedData: Data? = nil
-        var capturedResponse: URLResponse? = nil
-        let id = request.id
-        
         do {
-            let urlRequest = try request.asURLRequest()
-            for plugin in plugins {
-                plugin.willSend(request: urlRequest, id: id)
-            }
-            
-            let (data, response) = try await session.data(for: urlRequest)
-            capturedData = data
-            capturedResponse = response
-            
-            for plugin in plugins {
-                plugin.didReceive(response: response, data: data, for: urlRequest, id: id)
-            }
-            
-            let transformedData = try transformer(data)
-            
-            let mfResponse = try MFResponse(
-                request: request.asURLRequest(),
-                response: response,
-                value: transformedData
+            return try await executeAndTransformRequest(
+                request,
+                transformer: transformer
             )
-            
-            return mfResponse
         } catch {
-            for plugin in plugins {
-                plugin.didFail(error: error, request: request.request, response: capturedResponse, data: capturedData, id: id)
-            }
-            if let mfError = error.asMFError {
-                if case let MFError.serverError(apiError) = mfError {
-                    switch apiError {
-                    case .expiredAccessToken:
-                        if retryCount > 0 {
-                            try await refreshToken()
-                            if let newAccessToken = TDTokenManager.shared.accessToken {
-                                request.addHeaders([.authorization(bearerToken: newAccessToken)])
-                            }
-                            return try await perform(request, transformer: transformer, retryCount: retryCount - 1)
-                        } else {
-                            NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
-                            throw mfError
-                        }
-                    case .emptyAccessToken,
-                         .malformedToken,
-                         .tamperedToken,
-                         .unsupportedJWTToken,
-                         .takenAwayToken,
-                         .expiredRefreshToken:
-                        NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
-                        throw mfError
-                    default:
-                        throw mfError
-                    }
-                }
-                throw mfError
-            } else {
-                throw MFError.networkFailure(underlyingError: error)
-            }
+            return try await handleError(
+                error,
+                for: request,
+                transformer: transformer,
+                retryCount: retryCount
+            )
         }
     }
-
-    private func refreshToken() async throws(MFError) {
-        let provider = MFProvider<AuthAPI>()
-        guard let refreshToken = TDTokenManager.shared.refreshToken else {
-            throw MFError.serverError(apiError: .expiredRefreshToken)
+    
+    /// URLRequest를 생성하고, 네트워크 요청을 보내고, 성공적인 응답 데이터를 transformer를 사용해 변환합니다.
+    private func executeAndTransformRequest<T>(
+        _ request: MFRequest,
+        transformer: @escaping (Data) throws -> T
+    ) async throws -> MFResponse<T> {
+        let urlRequest = try request.asURLRequest()
+        plugins.forEach { $0.willSend(request: urlRequest, id: request.id) }
+        
+        let (data, response) = try await session.data(for: urlRequest)
+        plugins.forEach { $0.didReceive(response: response, data: data, for: urlRequest, id: request.id) }
+        let transformedData = try transformer(data)
+        
+        return MFResponse(
+            request: urlRequest,
+            response: response,
+            value: transformedData
+        )
+    }
+    
+    /// 발생한 에러를 분석하고, 재시도가 필요한 경우와 그렇지 않은 경우를 구분하여 처리합니다.
+    private func handleError<T>(
+        _ error: Error,
+        for request: MFRequest,
+        transformer: @escaping (Data) throws -> T,
+        retryCount: Int
+    ) async throws(MFError) -> MFResponse<T> {
+        plugins.forEach { $0.didFail(error: error, request: request.request, response: nil, data: nil, id: request.id) }
+        
+        guard let mfError = error as? MFError else {
+            throw MFError.networkFailure(underlyingError: error)
         }
-        let target = AuthAPI.refreshToken(refreshToken: refreshToken)
-        let response = try await provider.requestDecodable(of: LoginUserResponseBody.self, target)
-        guard let refreshToken = response.extractRefreshToken(),
-              let refreshTokenExpiredAt = response.extractRefreshTokenExpiry()
-        else {
-            throw MFError.requestJSONDecodingFailure
+        
+        // 서버 에러 + Access Token 만료인 경우 재시도 로직 호출
+        if case .serverError(.expiredAccessToken) = mfError {
+            return try await retryRequestAfterTokenRefresh(
+                request,
+                transformer: transformer,
+                retryCount: retryCount
+            )
         }
-        try? await TDTokenManager.shared.saveToken((
-            accessToken: response.value.accessToken,
-            refreshToken: refreshToken,
-            refreshTokenExpiredAt: refreshTokenExpiredAt,
-            userId: response.value.userId
-        ))
+        
+        handleSideEffects(for: mfError)
+        throw mfError
+    }
+    
+    /// Access Token 만료 시 토큰을 갱신하고 원래 요청을 재시도합니다.
+    private func retryRequestAfterTokenRefresh<T>(
+        _ request: MFRequest,
+        transformer: @escaping (Data) throws -> T,
+        retryCount: Int
+    ) async throws(MFError) -> MFResponse<T> {
+        
+        guard retryCount > 0 else {
+            // 재시도 횟수 소진 시 로그아웃 알림 후 에러 발생
+            NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
+            throw MFError.serverError(apiError: .expiredAccessToken)
+        }
+        
+        // 토큰 갱신 시도
+        do {
+            try await TDTokenRefresher.shared.refreshTokens()
+        } catch {
+            NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
+            throw MFError.networkFailure(underlyingError: error)
+        }
+        
+        if let newAccessToken = TDTokenManager.shared.accessToken {
+            request.addHeaders([.authorization(bearerToken: newAccessToken)])
+        }
+        
+        return try await perform(
+            request,
+            transformer: transformer,
+            retryCount: retryCount - 1
+        )
+    }
+    
+    private func handleSideEffects(for error: MFError) {
+        guard case .serverError(let apiError) = error else { return }
+        
+        switch apiError {
+        case .emptyAccessToken,
+                .malformedToken,
+                .tamperedToken,
+                .unsupportedJWTToken,
+                .takenAwayToken,
+                .expiredRefreshToken:
+            NotificationCenter.default.post(name: .userRefreshTokenExpired, object: nil)
+        default:
+            break
+        }
     }
 }
 

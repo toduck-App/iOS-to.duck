@@ -1,5 +1,4 @@
 import Foundation
-import KeyChainManager_KJ
 
 public final class TDTokenManager {
     public static let shared = TDTokenManager()
@@ -17,13 +16,13 @@ public final class TDTokenManager {
         return UserDefaults.standard.bool(forKey: "isFirstLogin")
     }
        
-    private init() {}
+    private init() { }
     
     public func loadTokenFromKC() async throws {
-        guard let accessToken = try await KeyChainManagerWithActor.shared.loadString(account: KeyChainConstant.accessToken.rawValue),
-              let refreshToken = try await KeyChainManagerWithActor.shared.loadString(account: KeyChainConstant.refreshToken.rawValue),
-              let refreshTokenExpiredAtString = try await KeyChainManagerWithActor.shared.loadString(account: KeyChainConstant.refreshTokenExpiredAt.rawValue),
-              let userIdData = try await KeyChainManagerWithActor.shared.loadString(account: KeyChainConstant.userId.rawValue),
+        guard let accessToken = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.accessToken.rawValue),
+              let refreshToken = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.refreshToken.rawValue),
+              let refreshTokenExpiredAtString = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.refreshTokenExpiredAt.rawValue),
+              let userIdData = try await TDKeyChainManager.shared.loadString(account: KeyChainConstant.userId.rawValue),
               let userId = Int(userIdData)
         else {
             throw TDDataError.notFoundToken
@@ -39,8 +38,8 @@ public final class TDTokenManager {
         self.userId = userId
     }
     
-    // 1. AccessToken이 만료되어 RefreshToken을 사용해 Token정보를 갱신할 때 사용
-    // 2. 로그인 성공할 때 사용
+    /// 1. AccessToken이 만료되어 RefreshToken을 사용해 Token정보를 갱신할 때 사용
+    /// 2. 로그인 성공할 때 사용
     public func saveToken(
         _ token: (
             accessToken: String,
@@ -49,11 +48,11 @@ public final class TDTokenManager {
             userId: Int
         )
     ) async throws {
-        try await KeyChainManagerWithActor.shared.save(string: token.accessToken, account: KeyChainConstant.accessToken.rawValue)
-        try await KeyChainManagerWithActor.shared.save(string: token.refreshToken, account: KeyChainConstant.refreshToken.rawValue)
-        try await KeyChainManagerWithActor.shared.save(string: token.refreshTokenExpiredAt, account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
+        try await TDKeyChainManager.shared.save(string: token.accessToken, account: KeyChainConstant.accessToken.rawValue, accessibility: kSecAttrAccessibleAfterFirstUnlock)
+        try await TDKeyChainManager.shared.save(string: token.refreshToken, account: KeyChainConstant.refreshToken.rawValue, accessibility: kSecAttrAccessibleAfterFirstUnlock)
+        try await TDKeyChainManager.shared.save(string: token.refreshTokenExpiredAt, account: KeyChainConstant.refreshTokenExpiredAt.rawValue, accessibility: kSecAttrAccessibleAfterFirstUnlock)
         let saveUserIdData = try JSONEncoder().encode(token.userId)
-        try await KeyChainManagerWithActor.shared.save(with: saveUserIdData, account: KeyChainConstant.userId.rawValue)
+        try await TDKeyChainManager.shared.save(with: saveUserIdData, account: KeyChainConstant.userId.rawValue, accessibility: kSecAttrAccessibleAfterFirstUnlock)
         
         accessToken = token.accessToken
         refreshToken = token.refreshToken
@@ -67,10 +66,10 @@ public final class TDTokenManager {
         refreshTokenExpiredAt = nil
         userId = nil
         
-        try await KeyChainManagerWithActor.shared.delete(account: KeyChainConstant.accessToken.rawValue)
-        try await KeyChainManagerWithActor.shared.delete(account: KeyChainConstant.refreshToken.rawValue)
-        try await KeyChainManagerWithActor.shared.delete(account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
-        try await KeyChainManagerWithActor.shared.delete(account: KeyChainConstant.userId.rawValue)
+        try await TDKeyChainManager.shared.delete(account: KeyChainConstant.accessToken.rawValue)
+        try await TDKeyChainManager.shared.delete(account: KeyChainConstant.refreshToken.rawValue)
+        try await TDKeyChainManager.shared.delete(account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
+        try await TDKeyChainManager.shared.delete(account: KeyChainConstant.userId.rawValue)
     }
     
     private func convertToDate(_ string: String) -> Date? {
@@ -91,4 +90,11 @@ public final class TDTokenManager {
     public func registerFCMToken(_ token: String) {
         pendingFCMToken = token
     }
+    
+#if DEBUG
+    func setTokensForTesting(accessToken: String?, refreshToken: String?) {
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+    }
+#endif
 }
