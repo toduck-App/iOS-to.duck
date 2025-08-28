@@ -12,11 +12,11 @@ public final class TDTokenManager {
     public private(set) var userId: Int?
     
     public var isFirstLaunch: Bool {
-        return UserDefaults.standard.bool(forKey: "isFirstLaunch")
+        return UserDefaults.standard.bool(forKey: UserDefaultsConstant.isFirstLaunch)
     }
     
     public var isFirstLogin: Bool {
-        return UserDefaults.standard.bool(forKey: "isFirstLogin")
+        return UserDefaults.standard.bool(forKey: UserDefaultsConstant.isFirstLogin)
     }
     
     // MARK: - Initializer
@@ -107,11 +107,11 @@ public final class TDTokenManager {
     // MARK: - First Launch / Login Flags
     
     public func launchFirstLaunch() {
-        UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+        UserDefaults.standard.set(true, forKey: UserDefaultsConstant.isFirstLaunch)
     }
     
     public func launchFirstLogin() {
-        UserDefaults.standard.set(true, forKey: "isFirstLogin")
+        UserDefaults.standard.set(true, forKey: UserDefaultsConstant.isFirstLogin)
     }
     
     public func registerFCMToken(_ token: String) {
