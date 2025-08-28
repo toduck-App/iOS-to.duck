@@ -19,24 +19,24 @@ public enum TDLogger {
 #endif
     }
     
-    public static func debug<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function) {
-        log(object, level: .debug, category: category, file: file, function: function)
+    public static func debug<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function, line: Int = #line) {
+        log(object, level: .debug, category: category, file: file, function: function, line: line)
     }
     
-    public static func info<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function) {
-        log(object, level: .info, category: category, file: file, function: function)
+    public static func info<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function, line: Int = #line) {
+        log(object, level: .info, category: category, file: file, function: function, line: line)
     }
     
-    public static func network<T>(_ object: T?, category: OSLog = .network, file: String = #file, function: String = #function) {
-        log(object, level: .default, category: category, file: file, function: function)
+    public static func network<T>(_ object: T?, category: OSLog = .network, file: String = #file, function: String = #function, line: Int = #line) {
+        log(object, level: .default, category: category, file: file, function: function, line: line)
     }
     
-    public static func error<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function) {
-        log(object, level: .error, category: category, file: file, function: function)
+    public static func error<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function, line: Int = #line) {
+        log(object, level: .error, category: category, file: file, function: function, line: line)
     }
     
-    public static func fault<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function) {
-        log(object, level: .fault, category: category, file: file, function: function)
+    public static func fault<T>(_ object: T?, category: OSLog = .data, file: String = #file, function: String = #function, line: Int = #line) {
+        log(object, level: .fault, category: category, file: file, function: function, line: line)
     }
 }
 

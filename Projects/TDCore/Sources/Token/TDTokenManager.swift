@@ -27,7 +27,7 @@ public final class TDTokenManager {
     
     public func loadTokenFromKC() async throws {
         let (accessToken, refreshToken, refreshTokenExpiredAtString, userId) = try await loadTokenStringsFromKeychain()
-        let refreshTokenExpiredAt = try validateRefreshToken(expiredAtString: refreshTokenExpiredAtString)
+        let refreshTokenExpiredAt = try await validateRefreshToken(expiredAtString: refreshTokenExpiredAtString)
         
         self.accessToken = accessToken
         self.refreshToken = refreshToken
@@ -47,9 +47,9 @@ public final class TDTokenManager {
         return (accessToken, refreshToken, refreshTokenExpiredAtString, userId)
     }
     
-    private func validateRefreshToken(expiredAtString: String) throws -> Date {
+    private func validateRefreshToken(expiredAtString: String) async throws -> Date {
         guard let expiredAt = convertToDate(expiredAtString), Date() < expiredAt else {
-            Task { try await removeToken() }
+            try await removeToken()
             throw TDDataError.expiredRefreshToken
         }
         
