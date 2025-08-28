@@ -1,15 +1,15 @@
 import Foundation
 
 public protocol KeyChainManaging: Actor {
-    func save(with data: Data, account: String, accessibility: CFString) async throws
-    func save(string: String, account: String, accessibility: CFString) async throws
-    func save(bool: Bool, account: String, accessibility: CFString) async throws
-    func save<T: Codable>(object: T, account: String, accessibility: CFString) async throws
+    func save(with data: Data, account: String, accessibility: CFString) throws
+    func save(string: String, account: String, accessibility: CFString) throws
+    func save(bool: Bool, account: String, accessibility: CFString) throws
+    func save<T: Codable>(object: T, account: String, accessibility: CFString) throws
     
-    func loadData(account: String) async throws -> Data?
-    func loadString(account: String) async throws -> String?
-    func loadBool(account: String) async throws -> Bool?
-    func loadObject<T: Codable>(account: String, type: T.Type) async throws -> T?
+    func loadData(account: String) throws -> Data?
+    func loadString(account: String) throws -> String?
+    func loadBool(account: String) throws -> Bool?
+    func loadObject<T: Codable>(account: String, type: T.Type) throws -> T?
     
-    func delete(account: String) async throws
+    func delete(account: String) throws
 }

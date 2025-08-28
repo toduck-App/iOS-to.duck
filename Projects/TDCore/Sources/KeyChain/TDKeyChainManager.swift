@@ -11,11 +11,11 @@ public actor TDKeyChainManager: KeyChainManaging {
     /// - Parameters:
     ///  - data: 저장할 데이터
     ///  - account: 저장할 데이터의 키
-    ///  - accessibility: 데이터 접근성 (기본값: kSecAttrAccessibleWhenUnlocked)
+    ///  - accessibility: 데이터 접근성
     public func save(
         with data: Data,
         account: String,
-        accessibility: CFString = kSecAttrAccessibleAfterFirstUnlock
+        accessibility: CFString = kSecAttrAccessibleWhenUnlocked
     ) throws {
         let query: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
@@ -36,10 +36,6 @@ public actor TDKeyChainManager: KeyChainManaging {
         }
     }
     
-    /// 키체인에 데이터를 업데이트합니다.
-    /// - Parameters:
-    /// - data: 업데이트할 데이터
-    /// - account: 업데이트할 데이터의 키
     private func update(
         _ data: Data,
         account: String
