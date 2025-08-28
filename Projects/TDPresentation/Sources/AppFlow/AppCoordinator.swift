@@ -160,11 +160,8 @@ public final class AppCoordinator: Coordinator {
     // MARK: - DeepLink Helpers
     
     public func handleDeepLink(_ link: DeepLinkType) {
-        guard TDTokenManager.shared.accessToken != nil else {
+        if TDTokenManager.shared.accessToken == nil {
             pendingDeepLink = link
-            if !childCoordinators.contains(where: { $0 is AuthCoordinator }) {
-                startAuthFlow()
-            }
             return
         }
         
