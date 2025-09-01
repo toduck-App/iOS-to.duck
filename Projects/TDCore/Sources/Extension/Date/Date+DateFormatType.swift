@@ -10,7 +10,7 @@ public enum DateFormatType {
     case time24Hour
     case monthDay
     case monthDayWithWeekday
-    case serverDate  // 서버에서 받은 "yyyy-MM-dd HH:mm" 포맷을 변환할 때 사용
+    case serverDate
     case weekday
     
     public var formatter: DateFormatter {

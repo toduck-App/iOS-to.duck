@@ -11,6 +11,10 @@ protocol RegisterSuccessCoordinatorDelegate: AnyObject {
     func didFinishRegister(from coordinator: RegisterSuccessCoordinator)
 }
 
+protocol AuthCoordinatorDelegate: AnyObject {
+    func didLogin()
+}
+
 final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()

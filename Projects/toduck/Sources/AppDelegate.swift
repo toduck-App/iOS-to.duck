@@ -35,7 +35,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Messaging.messaging().apnsToken = deviceToken
-        TDLogger.info("✅ APNs 디바이스 토큰 등록 완료")
+        TDLogger.info("✅ Messaging.messaging().apnsToken 디바이스 토큰 등록 완료")
     }
     
     func application(
@@ -74,16 +74,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         guard let fcmToken else { return }
         TDLogger.info("🔄 FCM 토큰 갱신됨: \(fcmToken)")
         
-        if TDTokenManager.shared.accessToken == nil {
-            TDLogger.debug("🔒 아직 accessToken 없음. FCM 토큰을 보류 상태로 저장")
-            TDTokenManager.shared.registerFCMToken(fcmToken)
-        } else {
-            NotificationCenter.default.post(
-                name: .didReceiveFCMToken,
-                object: nil,
-                userInfo: ["token": fcmToken]
-            )
-        }
+        NotificationCenter.default.post(
+            name: .didReceiveFCMToken,
+            object: nil,
+            userInfo: ["token": fcmToken]
+        )
     }
     
     // MARK: - 카카오 로그인 처리
