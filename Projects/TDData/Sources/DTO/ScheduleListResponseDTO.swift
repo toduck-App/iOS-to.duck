@@ -55,7 +55,8 @@ public extension ScheduleHeadDTO {
             place: location,
             memo: memo,
             isFinished: false,
-            scheduleRecords: records
+            scheduleRecords: records,
+            source: .server
         )
     }
 }

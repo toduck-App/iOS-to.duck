@@ -6,22 +6,31 @@ final class MockScheduleRepository: ScheduleRepository {
     
     var didCallUpdate = false
     var updatedScheduleId: Int?
-
+    
     var didCallDelete = false
     var deletedScheduleId: Int?
-
+    
     var didCallMoveTomorrow = false
     var movedScheduleId: Int?
-
+    
     var didCallCreate = false
     var createdSchedule: Schedule?
     
-    init(_ schedules: [Schedule]) { self.mockScheduleList = schedules }
-
-    func fetchScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
+    var shouldThrowError = false
+    var mockError = TestError.repositoryError
+    
+    init() { }
+    
+    func fetchServerScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
+        if shouldThrowError { throw mockError }
         return mockScheduleList
     }
-
+    
+    func fetchLocalCalendarScheduleList(startDate: String, endDate: String) async throws -> [Schedule] {
+        if shouldThrowError { throw mockError }
+        return mockScheduleList
+    }
+    
     func fetchSchedule() async throws -> TDDomain.Schedule {
         return Schedule(
             id: 999,
@@ -36,10 +45,11 @@ final class MockScheduleRepository: ScheduleRepository {
             place: nil,
             memo: nil,
             isFinished: false,
-            scheduleRecords: nil
+            scheduleRecords: nil,
+            source: .server
         )
     }
-
+    
     func updateSchedule(scheduleId: Int) async throws {
         didCallUpdate = true
         updatedScheduleId = scheduleId
@@ -49,17 +59,21 @@ final class MockScheduleRepository: ScheduleRepository {
         didCallDelete = true
         deletedScheduleId = scheduleId
     }
-
+    
     func moveTomorrowSchedule(scheduleId: Int) async throws {
         didCallMoveTomorrow = true
         movedScheduleId = scheduleId
     }
-
-    func createSchedule(schedule: TDDomain.Schedule) async throws {
+    
+    func createSchedule(schedule: Schedule) async throws {
         didCallCreate = true
         createdSchedule = schedule
     }
     
     func finishSchedule(scheduleId: Int, isComplete: Bool, queryDate: String) async throws { }
-    func updateSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: TDDomain.Schedule) async throws { }
+    func updateSchedule(scheduleId: Int, isOneDayDeleted: Bool, queryDate: String, scheduleData: Schedule) async throws { }
+}
+
+enum TestError: Error {
+    case repositoryError
 }

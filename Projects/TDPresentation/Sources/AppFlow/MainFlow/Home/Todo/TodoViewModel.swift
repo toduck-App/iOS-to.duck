@@ -24,7 +24,7 @@ final class TodoViewModel: BaseViewModel {
     
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
-    private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let fetchAllSchedulesUseCase: FetchAllSchedulesUseCase
     private let fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
@@ -43,7 +43,7 @@ final class TodoViewModel: BaseViewModel {
     init(
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
-        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        fetchAllSchedulesUseCase: FetchAllSchedulesUseCase,
         fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
@@ -54,7 +54,7 @@ final class TodoViewModel: BaseViewModel {
     ) {
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
-        self.fetchScheduleListUseCase = fetchScheduleListUseCase
+        self.fetchAllSchedulesUseCase = fetchAllSchedulesUseCase
         self.fetchRoutineListForDatesUseCase = fetchRoutineListForDatesUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
@@ -121,7 +121,7 @@ final class TodoViewModel: BaseViewModel {
     // MARK: - 투두 리스트 가져오기
     private func fetchWeeklyTodoList(startDate: String, endDate: String) async {
         do {
-            let fetchedWeeklyScheduleList = try await fetchScheduleListUseCase.execute(
+            let fetchedWeeklyScheduleList = try await fetchAllSchedulesUseCase.execute(
                 startDate: startDate,
                 endDate: endDate
             )

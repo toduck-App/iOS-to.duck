@@ -1,3 +1,4 @@
+import EventKit
 import UIKit
 import TDCore
 
@@ -40,7 +41,55 @@ final class MainTabBarCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(true, animated: false)
         tabBarController.setViewControllers(viewControllers, animated: false)
         navigationController.viewControllers = [tabBarController]
+        
         configurePushNotification()
+        checkCalendarPermissions()
+    }
+    
+    private func configurePushNotification() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+                
+                if UserDefaults.standard.object(forKey: UserDefaultsConstant.pushEnabledKey) == nil {
+                    UserDefaults.standard.set(true, forKey: UserDefaultsConstant.pushEnabledKey)
+                }
+            } else {
+                TDLogger.info("❌ 푸시 알림 권한 거부 또는 오류: \(error?.localizedDescription ?? "unknown error")")
+                UserDefaults.standard.set(false, forKey: "PushEnabled")
+            }
+        }
+    }
+    
+    private func checkCalendarPermissions() {
+        let eventStore = EKEventStore()
+        let status = EKEventStore.authorizationStatus(for: .event)
+        
+        switch status {
+        case .authorized:
+            TDLogger.info("✅ 캘린더 접근 권한이 이미 승인되었습니다.")
+        case .notDetermined:
+            eventStore.requestAccess(to: .event) { (granted, error) in
+                if let error = error {
+                    TDLogger.error("🚨 캘린더 권한 요청 중 오류 발생: \(error.localizedDescription)")
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    if granted {
+                        TDLogger.info("✅ 캘린더 접근 권한이 승인되었습니다.")
+                    } else {
+                        TDLogger.info("❌ 캘린더 접근 권한이 거부되었습니다.")
+                    }
+                }
+            }
+        case .denied, .restricted:
+            TDLogger.info("❌ 캘린더 접근 권한이 거부되었거나 제한되었습니다.")
+        default:
+            TDLogger.info("Unhandled EKAuthorizationStatus case")
+        }
     }
     
     private func createNavigationController(for item: MainTabbarItem) -> UINavigationController {
@@ -166,27 +215,6 @@ extension MainTabBarCoordinator: MainTabBarControllerDelegate {
         if let navigationController = tabBarController.viewControllers?[MainTabbarItem.home.index] as? UINavigationController,
            let homeViewController = navigationController.viewControllers.first as? HomeViewController {
             homeViewController.resetToToduck()
-        }
-    }
-}
-
-extension MainTabBarCoordinator {
-    // MARK: - 푸시 알림 권한 요청
-    
-    private func configurePushNotification() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-                
-                if UserDefaults.standard.object(forKey: UserDefaultsConstant.pushEnabledKey) == nil {
-                    UserDefaults.standard.set(true, forKey: UserDefaultsConstant.pushEnabledKey)
-                }
-            } else {
-                print("❌ 푸시 알림 권한 거부 또는 오류: \(error?.localizedDescription ?? "unknown error")")
-                UserDefaults.standard.set(false, forKey: "PushEnabled")
-            }
         }
     }
 }

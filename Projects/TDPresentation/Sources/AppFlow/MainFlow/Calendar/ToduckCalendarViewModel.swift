@@ -20,7 +20,7 @@ final class ToduckCalendarViewModel: BaseViewModel {
     }
     
     // MARK: - Properties
-    private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let fetchScheduleListUseCase: FetchServerScheduleListUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let deleteScheduleUseCase: DeleteScheduleUseCase
     private let output = PassthroughSubject<Output, Never>()
@@ -30,7 +30,7 @@ final class ToduckCalendarViewModel: BaseViewModel {
     var selectedDate = Date()
     
     init(
-        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        fetchScheduleListUseCase: FetchServerScheduleListUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         deleteScheduleUseCase: DeleteScheduleUseCase
     ) {
@@ -127,7 +127,8 @@ final class ToduckCalendarViewModel: BaseViewModel {
                         place: updatedSchedule.place,
                         memo: updatedSchedule.memo,
                         isFinished: toggledFinished,
-                        scheduleRecords: updatedSchedule.scheduleRecords
+                        scheduleRecords: updatedSchedule.scheduleRecords,
+                        source: .server
                     )
                     schedules[index] = updatedSchedule
                     monthScheduleDict[key] = schedules
@@ -149,7 +150,8 @@ final class ToduckCalendarViewModel: BaseViewModel {
                     place: updated.place,
                     memo: updated.memo,
                     isFinished: toggledFinished,
-                    scheduleRecords: updated.scheduleRecords
+                    scheduleRecords: updated.scheduleRecords,
+                    source: .server
                 )
                 currentDayScheduleList[index] = updated
             }

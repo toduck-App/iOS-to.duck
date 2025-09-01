@@ -17,7 +17,7 @@ final class ToduckViewModel: BaseViewModel {
         case failure(error: String)
     }
     
-    private let fetchScheduleListUseCase: FetchScheduleListUseCase
+    private let fetchAllSchedulesUseCase: FetchAllSchedulesUseCase
     private let shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -41,10 +41,10 @@ final class ToduckViewModel: BaseViewModel {
     }
     
     init(
-        fetchScheduleListUseCase: FetchScheduleListUseCase,
+        fetchAllSchedulesUseCase: FetchAllSchedulesUseCase,
         shouldMarkAllDayUseCase: ShouldMarkAllDayUseCase
     ) {
-        self.fetchScheduleListUseCase = fetchScheduleListUseCase
+        self.fetchAllSchedulesUseCase = fetchAllSchedulesUseCase
         self.shouldMarkAllDayUseCase = shouldMarkAllDayUseCase
     }
     
@@ -63,35 +63,38 @@ final class ToduckViewModel: BaseViewModel {
         do {
             let todayNormalizedDate = Date().normalized
             let todayFormat = todayNormalizedDate.convertToString(formatType: .yearMonthDay)
-            let fetchedTodaySchedules = try await fetchScheduleListUseCase.execute(
+            
+            let allSchedules = try await fetchAllSchedulesUseCase.execute(
                 startDate: todayFormat,
                 endDate: todayFormat
             )
             
-            if let todaySchedules = fetchedTodaySchedules[todayNormalizedDate] {
+            if let todaySchedules = allSchedules[todayNormalizedDate], !todaySchedules.isEmpty {
                 isAllDays = shouldMarkAllDayUseCase.execute(with: todaySchedules)
-                currentSchedules = todaySchedules
-                    .sorted {
-                        Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
-                    }
+                let sortedSchedules = todaySchedules.sorted {
+                    Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
+                }
                 
-                uncompletedSchedules = todaySchedules
-                    .filter { schedule in
-                        guard let records = schedule.scheduleRecords, !records.isEmpty else {
-                            return true // 오늘 기록이 없으면 완료 안한 상태
-                        }
-                        
-                        if let todayRecord = records.first(where: { $0.recordDate == todayFormat }) {
-                            return !todayRecord.isComplete // 기록이 있다면, 완료안된 것만 포함
-                        } else {
-                            return true // 오늘 기록이 없으면 완료 안한 상태
-                        }
+                currentSchedules = sortedSchedules
+                
+                uncompletedSchedules = sortedSchedules.filter { schedule in
+                    if schedule.source == .localCalendar { return true }
+                    
+                    guard let records = schedule.scheduleRecords, !records.isEmpty else {
+                        return true // 오늘 기록이 없으면 완료 안한 상태
                     }
-                    .sorted {
-                        Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
+                    
+                    if let todayRecord = records.first(where: { $0.recordDate == todayFormat }) {
+                        return !todayRecord.isComplete // 기록이 있다면, 완료안된 것만 포함
+                    } else {
+                        return true // 오늘 기록이 없으면 완료 안한 상태
                     }
+                }
+                
                 output.send(.fetchedScheduleList(isEmpty: false))
             } else {
+                currentSchedules = []
+                uncompletedSchedules = []
                 output.send(.fetchedScheduleList(isEmpty: true))
             }
         } catch {

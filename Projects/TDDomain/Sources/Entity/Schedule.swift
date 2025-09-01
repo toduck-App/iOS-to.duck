@@ -1,6 +1,11 @@
 import Foundation
 
 public struct Schedule: TodoItem {
+    public enum Source {
+        case server
+        case localCalendar
+    }
+    
     public let id: Int? // 서버의 일정 PK
     public let title: String
     public let category: TDCategory
@@ -15,6 +20,7 @@ public struct Schedule: TodoItem {
     public let isFinished: Bool
     public let scheduleRecords: [ScheduleRecord]?
     public let eventMode: TDTodoMode = .schedule
+    public let source: Source
     
     public var isRepeating: Bool {
         repeatDays != nil || startDate != endDate
@@ -33,7 +39,8 @@ public struct Schedule: TodoItem {
         place: String?,
         memo: String?,
         isFinished: Bool,
-        scheduleRecords: [ScheduleRecord]?
+        scheduleRecords: [ScheduleRecord]?,
+        source: Source
     ) {
         self.id = id
         self.title = title
@@ -48,6 +55,7 @@ public struct Schedule: TodoItem {
         self.memo = memo
         self.isFinished = isFinished
         self.scheduleRecords = scheduleRecords
+        self.source = source
     }
 }
 
