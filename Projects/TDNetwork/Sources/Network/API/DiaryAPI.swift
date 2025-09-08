@@ -9,6 +9,7 @@ public enum DiaryAPI {
     case updateDiary(diary: DiaryPatchRequestDTO) // 다이어리 업데이트
     case deleteDiary(id: Int) // 다이어리 삭제
     case compareDiaryCount(yearMonth: String) // 특정 연월과 전월의 일기 개수를 비교
+    case fetchStreak // 일기 스트릭 조회
 }
 
 extension DiaryAPI: MFTarget {
@@ -28,6 +29,8 @@ extension DiaryAPI: MFTarget {
             "v1/diary/\(id)"
         case .compareDiaryCount:
             "v1/diary/count"
+        case .fetchStreak:
+            "v1/diary/streak"
         }
     }
     
@@ -43,12 +46,14 @@ extension DiaryAPI: MFTarget {
                 .delete
         case .compareDiaryCount:
                 .get
+        case .fetchStreak:
+                .get
         }
     }
     
     public var queries: Parameters? {
         switch self {
-        case .deleteDiary, .createDiary, .updateDiary:
+        case .deleteDiary, .createDiary, .updateDiary, .fetchStreak:
             return nil
         case .fetchDiaryList(let yearMonth):
             return ["yearMonth": yearMonth]
@@ -59,7 +64,7 @@ extension DiaryAPI: MFTarget {
     
     public var task: MFTask {
         switch self {
-        case .fetchDiaryList, .deleteDiary, .compareDiaryCount:
+        case .fetchDiaryList, .deleteDiary, .compareDiaryCount, .fetchStreak:
                 .requestPlain
         case .createDiary(let diary):
                 .requestParameters(parameters:

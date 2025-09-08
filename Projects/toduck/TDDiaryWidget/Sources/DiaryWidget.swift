@@ -1,6 +1,7 @@
 import SwiftUI
-import TDDesign
 import TDCore
+import TDDesign
+import TDDomain
 import WidgetKit
 
 struct Provider: TimelineProvider {
@@ -33,8 +34,6 @@ struct Provider: TimelineProvider {
      */
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         let now = Date()
-
-        // App Group 스냅샷을 읽어서 엔트리 생성
         let snapshot = TDDiaryUtils.fetchDiaryData()
         let entry = DiaryEntry(date: now, lastWriteDate: snapshot.lastWriteDate, count: snapshot.count)
 
