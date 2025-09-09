@@ -1,9 +1,9 @@
-import FSCalendar
-import TDDomain
-import TDCore
 import Combine
-import UIKit
+import FSCalendar
+import TDCore
 import TDDesign
+import TDDomain
+import UIKit
 
 final class TodoViewController: BaseViewController<BaseView> {
     enum TimeLineCellItem: Hashable {
@@ -12,12 +12,21 @@ final class TodoViewController: BaseViewController<BaseView> {
         case gap(startHour: Int, endHour: Int)
     }
     
+    // MARK: - Coach Mark Views
+
+    enum FloatingMenu {
+        case schedule
+        case routine
+    }
+    
     // MARK: - UI Components
+
     let weekCalendarView = HomeCalendar()
     let todoTableView = UITableView().then {
         $0.backgroundColor = TDColor.Neutral.neutral50
         $0.separatorStyle = .none
     }
+
     let noTodoContainerView = UIView()
     let noTodoImageView = UIImageView(image: TDImage.noEvent)
     let noTodoLabel = TDLabel(
@@ -31,6 +40,7 @@ final class TodoViewController: BaseViewController<BaseView> {
         $0.alpha = 0
         $0.isHidden = true
     }
+
     let floatingActionMenuView = FloatingActionMenuView()
     let buttonShadowWrapper = UIView()
     let eventMakorFloattingButton = TDBaseButton(
@@ -42,6 +52,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     )
     
     // MARK: - Properties
+
     private let viewModel: TodoViewModel
     private let input = PassthroughSubject<TodoViewModel.Input, Never>()
     private var timelineDataSource: UITableViewDiffableDataSource<Int, TimeLineCellItem>?
@@ -49,9 +60,13 @@ final class TodoViewController: BaseViewController<BaseView> {
     private var selectedDate = Date()
     private var isMenuVisible = false
     private var didAddDimmedView = false
+
+    public var isCoachMarkMenuLock = false // MARK: 코치마크가 플로팅 메뉴를 열어둔 상태 잠금
+
     weak var delegate: TodoViewControllerDelegate?
     
     // MARK: - Initializer
+
     init(
         viewModel: TodoViewModel
     ) {
@@ -65,6 +80,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     // MARK: - Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -106,6 +122,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     // MARK: 플로팅 버튼 처리
+
     private func setupFloatingUIInWindow() {
         guard
             !didAddDimmedView,
@@ -176,6 +193,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     // MARK: Base Method
+
     override func addView() {
         view.addSubview(weekCalendarView)
         view.addSubview(todoTableView)
@@ -235,8 +253,8 @@ final class TodoViewController: BaseViewController<BaseView> {
                     self?.noTodoContainerView.isHidden = !isHidden
                     self?.todoTableView.isHidden = isHidden
                 case .successFinishTodo,
-                        .tomorrowTodoCreated,
-                        .deletedTodo:
+                     .tomorrowTodoCreated,
+                     .deletedTodo:
                     self?.fetchWeekTodo(for: self?.selectedDate ?? Date())
                 case .failure(let error):
                     self?.showErrorAlert(errorMessage: error)
@@ -270,6 +288,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     // MARK: 플로팅 버튼 액션 처리
+
     private func configureEventMakorButton() {
         buttonShadowWrapper.layer.shadowColor = TDColor.Neutral.neutral800.cgColor
         buttonShadowWrapper.layer.shadowOpacity = 0.3
@@ -284,23 +303,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     }
     
     private func updateFloatingView() {
-        isMenuVisible.toggle()
-        floatingActionMenuView.isHidden = !isMenuVisible
-        dimmedView.isHidden = false
-        
-        UIView.animate(withDuration: 0.2, animations: {
-            self.dimmedView.alpha = self.isMenuVisible ? 1 : 0
-            self.eventMakorFloattingButton.updateBackgroundColor(
-                backgroundColor: self.isMenuVisible ? TDColor.baseWhite : TDColor.Primary.primary500,
-                foregroundColor: self.isMenuVisible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
-            )
-            let angle: CGFloat = self.isMenuVisible ? .pi / 4 : 0
-            self.eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
-        }) { _ in
-            if !self.isMenuVisible {
-                self.dimmedView.isHidden = true
-            }
-        }
+        setMenuVisible(!isMenuVisible)
     }
     
     private func configureDimmedViewGesture() {
@@ -313,7 +316,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     @objc
     private func didTapDimmedView() {
-        if isMenuVisible {
+        if isMenuVisible, !isCoachMarkMenuLock {
             updateFloatingView()
         }
     }
@@ -331,6 +334,7 @@ final class TodoViewController: BaseViewController<BaseView> {
 }
 
 // MARK: - FSCalendar Delegate
+
 extension TodoViewController: FSCalendarDelegate {
     func calendar(
         _ calendar: FSCalendar,
@@ -349,7 +353,7 @@ extension TodoViewController: FSCalendarDelegate {
         calendar.snp.updateConstraints { make in
             make.height.equalTo(bounds.height)
         }
-        self.view.layoutIfNeeded()
+        view.layoutIfNeeded()
     }
     
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
@@ -358,6 +362,7 @@ extension TodoViewController: FSCalendarDelegate {
 }
 
 // MARK: - FSCalendar Delegate Appearance
+
 extension TodoViewController: FSCalendarDelegateAppearance {
     private func colorForDate(_ date: Date) -> UIColor? {
         // 오늘 날짜 확인
@@ -388,6 +393,7 @@ extension TodoViewController: FSCalendarDelegateAppearance {
 }
 
 // MARK: - UITableView Delegate
+
 extension TodoViewController: UITableViewDelegate {
     func tableView(
         _ tableView: UITableView,
@@ -406,13 +412,14 @@ extension TodoViewController: UITableViewDelegate {
             detailEventViewController = DetailTodoViewController(todo: event, currentDate: currentDate)
             detailEventViewController.delegate = self
             presentPopup(with: detailEventViewController)
-        case .gap(_, _):
+        case .gap:
             break
         }
     }
 }
 
 // MARK: - FloatingActionMenuView Delegate
+
 extension TodoViewController: FloatingActionMenuViewDelegate {
     func didTapScheduleButton() {
         delegate?.didTapTodoMakor(
@@ -434,6 +441,7 @@ extension TodoViewController: FloatingActionMenuViewDelegate {
 }
 
 // MARK: - TableView Diffable DataSource
+
 extension TodoViewController {
     private func configureTodoDataSource() {
         timelineDataSource = UITableViewDiffableDataSource<Int, TimeLineCellItem>(
@@ -582,16 +590,17 @@ extension TodoViewController {
 }
 
 // MARK: - DeleteEventViewControllerDelegate
+
 extension TodoViewController: DeleteEventViewControllerDelegate {
     func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
-        if let eventId = eventId {
+        if let eventId {
             let isSchedule = eventMode == .schedule
             input.send(.deleteTodayTodo(todoId: eventId, isSchedule: isSchedule))
         }
     }
     
     func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
-        if let eventId = eventId {
+        if let eventId {
             let isSchedule = eventMode == .schedule
             input.send(.deleteAllTodo(todoId: eventId, isSchedule: isSchedule))
         }
@@ -599,6 +608,7 @@ extension TodoViewController: DeleteEventViewControllerDelegate {
 }
 
 // MARK: - EventMakorCoordinatorDelegate
+
 extension TodoViewController: TodoCreatorCoordinatorDelegate {
     func didTapSaveButton(createdDate: Date) {
         updateWeekCalendarForDate(at: createdDate)
@@ -606,6 +616,7 @@ extension TodoViewController: TodoCreatorCoordinatorDelegate {
 }
 
 // MARK: - DetailEventViewControllerDelegate
+
 extension TodoViewController: DetailTodoViewControllerDelegate {
     func didTapDeleteButton(event: any TodoItem) {
         let deleteEventViewController = DeleteEventViewController(
@@ -636,37 +647,37 @@ extension TodoViewController: DetailTodoViewControllerDelegate {
 extension TodoViewController.TimeLineCellItem: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
-        case let (.allDay(e1, s1), .allDay(e2, s2)):
-            return e1.id == e2.id &&
-                   e1.title == e2.title &&
-                   e1.isFinished == e2.isFinished &&
-                   s1 == s2
+        case (.allDay(let e1, let s1), .allDay(let e2, let s2)):
+            e1.id == e2.id &&
+                e1.title == e2.title &&
+                e1.isFinished == e2.isFinished &&
+                s1 == s2
 
-        case let (.timeEvent(h1, e1, s1), .timeEvent(h2, e2, s2)):
-            return h1 == h2 &&
-                   s1 == s2 &&
-                   e1.id == e2.id &&
-                   e1.title == e2.title &&
-                   e1.isFinished == e2.isFinished
+        case (.timeEvent(let h1, let e1, let s1), .timeEvent(let h2, let e2, let s2)):
+            h1 == h2 &&
+                s1 == s2 &&
+                e1.id == e2.id &&
+                e1.title == e2.title &&
+                e1.isFinished == e2.isFinished
 
-        case let (.gap(s1, e1), .gap(s2, e2)):
-            return s1 == s2 && e1 == e2
+        case (.gap(let s1, let e1), .gap(let s2, let e2)):
+            s1 == s2 && e1 == e2
 
         default:
-            return false
+            false
         }
     }
     
     func hash(into hasher: inout Hasher) {
         switch self {
-        case let .allDay(event, showTime):
+        case .allDay(let event, let showTime):
             hasher.combine("allDay")
             hasher.combine(event.id)
             hasher.combine(event.title)
             hasher.combine(event.isFinished)
             hasher.combine(showTime)
 
-        case let .timeEvent(hour, event, showTime):
+        case .timeEvent(let hour, let event, let showTime):
             hasher.combine("routine")
             hasher.combine(hour)
             hasher.combine(event.id)
@@ -674,7 +685,7 @@ extension TodoViewController.TimeLineCellItem: Equatable {
             hasher.combine(event.isFinished)
             hasher.combine(showTime)
 
-        case let .gap(startHour, endHour):
+        case .gap(let startHour, let endHour):
             hasher.combine("gap")
             hasher.combine(startHour)
             hasher.combine(endHour)
@@ -682,7 +693,60 @@ extension TodoViewController.TimeLineCellItem: Equatable {
     }
 }
 
+extension TodoViewController {
+    // MARK: - 코치마크용 플로팅 메뉴 노출
+
+    public func showFloatingMenuForCoachMark(menu: FloatingMenu) {
+        setupFloatingUIInWindow()
+        setMenuVisible(true)
+
+        switch menu {
+        case .schedule: floatingActionMenuView.highlightScheduleButton()
+        case .routine: floatingActionMenuView.highlightRoutineButton()
+        }
+        setCoachMarkMenuLock(true)
+    }
+    
+    public func setCoachMarkMenuLock(_ locked: Bool) {
+        isCoachMarkMenuLock = locked
+    }
+
+    // MARK: 코치마크 종료 시 호출
+
+    public func unlockFloatingMenuForCoachMark() {
+        setCoachMarkMenuLock(false)
+        setMenuVisible(false)
+    }
+    
+    private func setMenuVisible(_ visible: Bool, animated: Bool = true) {
+        guard visible != isMenuVisible else { return }
+        isMenuVisible = visible
+        floatingActionMenuView.isHidden = !visible
+        dimmedView.isHidden = false
+
+        let animations = {
+            self.dimmedView.alpha = visible ? 1 : 0
+            self.eventMakorFloattingButton.updateBackgroundColor(
+                backgroundColor: visible ? TDColor.baseWhite : TDColor.Primary.primary500,
+                foregroundColor: visible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
+            )
+            let angle: CGFloat = visible ? .pi / 4 : 0
+            self.eventMakorFloattingButton.transform = CGAffineTransform(rotationAngle: angle)
+        }
+
+        if animated {
+            UIView.animate(withDuration: 0.2, animations: animations) { _ in
+                if !visible { self.dimmedView.isHidden = true }
+            }
+        } else {
+            animations()
+            if !visible { dimmedView.isHidden = true }
+        }
+    }
+}
+
 // MARK: - Layout Constants
+
 extension TodoViewController {
     private enum LayoutConstants {
         static let calendarTopOffset: CGFloat = 20

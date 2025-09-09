@@ -316,6 +316,7 @@ public enum TDImage {
         public static let toast = TDDesignAsset.Images.tomatoToast.image
         public static let tomatoSmallFill = TDDesignAsset.Images.tomatoSmallFill.image
         public static let tomatoSmallEmtpy = TDDesignAsset.Images.tomatoSmallEmtpy.image
+        public static let neutral = TDDesignAsset.Images.tomatoMedium.image
     }
     
     public enum Illust {
@@ -357,8 +358,6 @@ public enum TDImage {
     }
     
     public enum CoachMark {
-        public static let first = TDDesignAsset.Images.coachMarkFirst.image
-        public static let second = TDDesignAsset.Images.coachMarkSecond.image
-        public static let third = TDDesignAsset.Images.coachMarkThird.image
+        public static let step2 = TDDesignAsset.Images.coatchMark2.image
     }
 }

@@ -24,13 +24,6 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     func start() {
-        if !TDTokenManager.shared.isFirstLogin {
-            TDTokenManager.shared.launchFirstLogin()
-            let walkThroughCoordinator = CoachCoordinator(navigationController: navigationController, injector: injector)
-            addCoordinator(walkThroughCoordinator)
-            walkThroughCoordinator.start()
-            return
-        }
         let items: [UINavigationController] = MainTabbarItem.allCases.map { createNavigationController(for: $0) }
         configureTabBarController(with: items)
     }
@@ -148,10 +141,6 @@ final class MainTabBarCoordinator: Coordinator {
 extension MainTabBarCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
-        if childCoordinator is CoachCoordinator {
-            let items: [UINavigationController] = MainTabbarItem.allCases.map { createNavigationController(for: $0) }
-            configureTabBarController(with: items)
-        }
     }
 }
 

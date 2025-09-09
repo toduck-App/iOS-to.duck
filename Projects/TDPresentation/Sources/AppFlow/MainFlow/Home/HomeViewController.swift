@@ -4,6 +4,8 @@ import TDCore
 import UIKit
 
 final class HomeViewController: BaseViewController<BaseView> {
+    private var coach: CoachMarkPresenter?
+
     // MARK: - UI Components
     let segmentedControl = TDSegmentedControl(items: ["토덕", "투두"])
     let dividedLine = UIView.dividedLine()
@@ -12,6 +14,14 @@ final class HomeViewController: BaseViewController<BaseView> {
     private var cachedViewControllers = [Int: UIViewController]()
     private var currentViewController: UIViewController?
     weak var coordinator: HomeCoordinator?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+//        if !TDTokenManager.shared.isFirstLogin {
+            TDTokenManager.shared.launchFirstLogin()
+            showFirstLoginCoachMarks()
+//        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -308,6 +318,92 @@ extension HomeViewController: ToduckViewDelegate {
     func didTapNoScheduleContainerView() {
         segmentedControl.setSelectedIndex(1)
         updateView()
+    }
+}
+
+extension HomeViewController {
+    private func showFirstLoginCoachMarks() {
+        guard
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = windowScene.windows.first(where: { $0.isKeyWindow })
+        else { return }
+
+        let presenter = CoachMarkPresenter(containerView: window)
+        presenter.delegate = self
+        presenter.nextTitle = "다음"
+        presenter.doneTitle = "완료"
+        presenter.skipTitle = "건너뛰기"
+        presenter.allowBackgroundTapToAdvance = false // 버튼으로만 이동(원하면 true로)
+        self.coach = presenter
+
+        let step1 = CoachStep(
+            targetProvider: { [weak self] in self?.segmentedControl.segmentView(at: 0) },
+            title: "토덕",
+            icon: TDImage.Tomato.neutral, // 적절한 아이콘으로 교체
+            description: "지금 할 일을 일러스트로 확인해요!\n급한 일정부터 집중해서 수행할 수 있도록 도와줘요.",
+            highlightTokens: ["급한 일정부터 집중"],
+            preferredDirection: .down,
+            onEnter: { [weak self] in
+                self?.segmentedControl.setSelectedIndex(0)
+                self?.updateView()
+            }
+        )
+
+        let step2 = CoachStep(
+            targetProvider: { [weak self] in self?.segmentedControl.segmentView(at: 1) },
+            title: "투두",
+            icon: nil, // 상단 아이콘은 빼고(선택)
+            description: "일정과 루틴을 시간 순으로 한 눈에 확인 하고,\n완료한 투두는 체크박스를 눌러 관리해요",
+            highlightTokens: ["시간 순", "완료한 투두는 체크박스"],
+            preferredDirection: .down,
+            onEnter: { [weak self] in
+                self?.segmentedControl.setSelectedIndex(1)
+                self?.updateView()
+            },
+            allowBackgroundTapToAdvance: nil,
+            centerImage: TDImage.CoachMark.step2,
+            centerImageMaxWidth: UIScreen.main.bounds.width,
+            centerImageYOffset: 0
+        )
+
+
+        let step3 = CoachStep(
+            targetProvider: { [weak self] in (self?.cachedViewControllers[1] as? TodoViewController)?.floatingActionMenuView },
+            title: "일정 추가",
+            icon: TDImage.checkNeutral,
+            description: "중요한 약속이나 업무 등, 날짜와 시간을 지정해 관리해야 할 일을 등록해요.",
+            highlightTokens: ["날짜와 시간을 지정해 관리해야 할 일"],
+            preferredDirection: .up,
+            onEnter: { [weak self] in
+                (self?.cachedViewControllers[1] as? TodoViewController)?.showFloatingMenuForCoachMark(menu: .schedule)
+            },
+            allowBackgroundTapToAdvance: false
+        )
+
+        let step4 = CoachStep(
+            targetProvider: { [weak self] in (self?.cachedViewControllers[1] as? TodoViewController)?.floatingActionMenuView },
+            title: "루틴 추가",
+            icon: TDImage.cycle,
+            description: "작은 습관이나 반복되는 일상은 루틴으로 등록해요.\n루틴은 캘린더에 나타나지 않아요",
+            highlightTokens: ["작은 습관", "반복되는 일상"],
+            preferredDirection: .up,
+            onEnter: { [weak self] in
+                (self?.cachedViewControllers[1] as? TodoViewController)?.showFloatingMenuForCoachMark(menu: .routine)
+            },
+            allowBackgroundTapToAdvance: false
+        )
+
+        presenter.start(steps: [step1, step2, step3, step4])
+    }
+
+}
+extension HomeViewController: CoachMarkPresenterDelegate {
+    func coachMarkDidFinish(_ presenter: CoachMarkPresenter, skipped: Bool) {
+        (cachedViewControllers[1] as? TodoViewController)?.unlockFloatingMenuForCoachMark()
+    }
+
+    func coachMarkDidMove(_ presenter: CoachMarkPresenter, to index: Int) {
+        // MARK: 더미 데이터 넣어주는 용도
     }
 }
 
