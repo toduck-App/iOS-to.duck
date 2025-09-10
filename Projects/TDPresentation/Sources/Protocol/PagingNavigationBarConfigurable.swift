@@ -25,6 +25,7 @@ extension PagingNavigationBarConfigurable where Self: UIViewController {
         let pageString = "\(currentPage)"
         let totalString = "/ \(totalPages)"
         pageLabel.setText(pageString + " " + totalString)
+        pageLabel.applyColor(to: pageString, with: highlightColor)
         
         guard let navigationBar = navigationController?.navigationBar else { return }
         
