@@ -230,16 +230,16 @@ public final class TDLabel: UILabel {
         let base = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: text ?? ""))
         let ns = base.string as NSString
         let rAll = NSRange(location: 0, length: ns.length)
-
+        
         base.addAttribute(.foregroundColor, value: textColor ?? UIColor.label, range: rAll)
-
+        
         func applyHighlight(range r: NSRange, spec: HighlightSpec) {
             base.addAttribute(.foregroundColor, value: spec.color, range: r)
             if let f = spec.font {
                 base.addAttribute(.font, value: f.font, range: r)
             }
         }
-
+        
         for spec in specs where !spec.token.isEmpty {
             if spec.options.contains(.regex) {
                 let regexOpts: NSRegularExpression.Options = spec.options.contains(.caseInsensitive) ? [.caseInsensitive] : []
@@ -272,7 +272,34 @@ public final class TDLabel: UILabel {
                 }
             }
         }
-
+        
         attributedText = base
+    }
+    /// 텍스트의 특정 부분에만 다른 색상을 적용합니다.
+    ///
+    /// 이 메서드는 전체 텍스트에서 `targetText`를 찾아 해당 부분의 색상만 변경합니다.
+    /// 나머지 텍스트의 속성은 그대로 유지됩니다.
+    /// - Parameters:
+    ///   - targetText: 색상을 변경할 대상 텍스트 (String)
+    ///   - color: 새로 적용할 색상 (UIColor)
+    public func applyColor(to targetText: String, with color: UIColor) {
+        // 1. 현재 attributedText를 기반으로 변경 가능한 복사본을 만듭니다.
+        //    이렇게 해야 기존의 폰트, 자간 등 다른 속성들이 유지됩니다.
+        guard let attributedString = self.attributedText?.mutableCopy() as? NSMutableAttributedString else {
+            return
+        }
+        
+        // 2. 전체 텍스트(String)에서 targetText의 위치(NSRange)를 찾습니다.
+        let fullText = attributedString.string
+        let range = (fullText as NSString).range(of: targetText)
+        
+        // 3. targetText를 찾았다면 (range.location != NSNotFound),
+        //    해당 위치에만 foregroundColor 속성을 새로 추가(덮어쓰기)합니다.
+        if range.location != NSNotFound {
+            attributedString.addAttribute(.foregroundColor, value: color, range: range)
+        }
+        
+        // 4. 최종적으로 변경된 attributedString을 라벨에 다시 적용합니다.
+        self.attributedText = attributedString
     }
 }
