@@ -255,13 +255,25 @@ public enum TDImage {
     public enum Mood {
         public static let happy = TDDesignAsset.Images.happyMood.image
         public static let good = TDDesignAsset.Images.goodMood.image
+        public static let love = TDDesignAsset.Images.loveMood.image
+        public static let soso = TDDesignAsset.Images.sosoMood.image
+        public static let sick = TDDesignAsset.Images.sickMood.image
         public static let sad = TDDesignAsset.Images.sadMood.image
         public static let angry = TDDesignAsset.Images.angryMood.image
         public static let anxious = TDDesignAsset.Images.anxietyMood.image
         public static let tired = TDDesignAsset.Images.tiredMood.image
-        public static let sick = TDDesignAsset.Images.sickMood.image
-        public static let soso = TDDesignAsset.Images.sosoMood.image
-        public static let love = TDDesignAsset.Images.loveMood.image
+        
+        public enum Large {
+            public static let happy = TDDesignAsset.Images.largeHappy.image
+            public static let good = TDDesignAsset.Images.largeGood.image
+            public static let love = TDDesignAsset.Images.largeLove.image
+            public static let soso = TDDesignAsset.Images.largeSoso.image
+            public static let sick = TDDesignAsset.Images.largeSick.image
+            public static let sad = TDDesignAsset.Images.largeSad.image
+            public static let angry = TDDesignAsset.Images.largeAngry.image
+            public static let anxious = TDDesignAsset.Images.largeAnxious.image
+            public static let tired = TDDesignAsset.Images.largeTired.image
+        }
     }
     
     public enum MoodCircle {
