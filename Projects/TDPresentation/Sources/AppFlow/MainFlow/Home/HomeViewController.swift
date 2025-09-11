@@ -201,8 +201,10 @@ final class HomeViewController: BaseViewController<BaseView> {
         case 1:
             let createScheduleUseCase = DIContainer.shared.resolve(CreateScheduleUseCase.self)
             let createRoutineUseCase = DIContainer.shared.resolve(CreateRoutineUseCase.self)
-            let fetchRoutineListForDatesUseCase = DIContainer.shared.resolve(FetchRoutineListForDatesUseCase.self)
             let fetchRoutineUseCase = DIContainer.shared.resolve(FetchRoutineUseCase.self)
+            let fetchWeeklyTodoListUseCase = DIContainer.shared.resolve(FetchWeeklyTodoListUseCase.self)
+            let processDailyTodoListUseCase = DIContainer.shared.resolve(ProcessDailyTodoListUseCase.self)
+            let removeTodoItemFromLocalDataUseCase = DIContainer.shared.resolve(RemoveTodoItemFromLocalDataUseCase.self)
             let finishScheduleUseCase = DIContainer.shared.resolve(FinishScheduleUseCase.self)
             let finishRoutineUseCase = DIContainer.shared.resolve(FinishRoutineUseCase.self)
             let deleteScheduleUseCase = DIContainer.shared.resolve(DeleteScheduleUseCase.self)
@@ -211,14 +213,15 @@ final class HomeViewController: BaseViewController<BaseView> {
             let viewModel = TodoViewModel(
                 createScheduleUseCase: createScheduleUseCase,
                 createRoutineUseCase: createRoutineUseCase,
-                fetchScheduleListUseCase: fetchScheduleListUseCase,
-                fetchRoutineListForDatesUseCase: fetchRoutineListForDatesUseCase,
+                fetchWeeklyTodoListUseCase: fetchWeeklyTodoListUseCase,
+                processDailyTodoListUseCase: processDailyTodoListUseCase,
                 fetchRoutineUseCase: fetchRoutineUseCase,
                 finishScheduleUseCase: finishScheduleUseCase,
                 finishRoutineUseCase: finishRoutineUseCase,
                 deleteScheduleUseCase: deleteScheduleUseCase,
                 deleteRoutineAfterCurrentDayUseCase: deleteRoutineAfterCurrentDayUseCase,
-                deleteRoutineForCurrentDayUseCase: deleteRoutineForCurrentDayUseCase
+                deleteRoutineForCurrentDayUseCase: deleteRoutineForCurrentDayUseCase,
+                removeTodoItemFromLocalDataUseCase: removeTodoItemFromLocalDataUseCase
             )
             let todoViewController = TodoViewController(viewModel: viewModel)
             todoViewController.delegate = coordinator
