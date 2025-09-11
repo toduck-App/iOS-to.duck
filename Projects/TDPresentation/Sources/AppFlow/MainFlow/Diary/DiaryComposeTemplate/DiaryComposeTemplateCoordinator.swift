@@ -24,7 +24,8 @@ final class DiaryComposeTemplateCoordinator: Coordinator {
         selectedDate: Date?,
         diary: Diary?
     ) {
-        let diaryComposeTemplateViewController = DiaryComposeTemplateViewController()
+        let viewModel = DiaryComposeTemplateViewModel()
+        let diaryComposeTemplateViewController = DiaryComposeTemplateViewController(viewModel: viewModel)
         diaryComposeTemplateViewController.coordinator = self
         diaryComposeTemplateViewController.hidesBottomBarWhenPushed = true
         navigationController.pushTDViewController(diaryComposeTemplateViewController, animated: true)
