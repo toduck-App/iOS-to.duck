@@ -221,7 +221,7 @@ final class HomeViewController: BaseViewController<BaseView> {
                 deleteScheduleUseCase: deleteScheduleUseCase,
                 deleteRoutineAfterCurrentDayUseCase: deleteRoutineAfterCurrentDayUseCase,
                 deleteRoutineForCurrentDayUseCase: deleteRoutineForCurrentDayUseCase,
-                removeTodoItemFromLocalDataUseCase: removeTodoItemFromLocalDataUseCase,
+                removeTodoItemFromLocalDataUseCase: removeTodoItemFromLocalDataUseCase
             )
             let todoViewController = TodoViewController(viewModel: viewModel)
             todoViewController.delegate = coordinator

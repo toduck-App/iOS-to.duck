@@ -2,4 +2,12 @@
 public struct DailyTodoList {
     public let allDayItems: [any TodoItem]
     public let timedItems: [any TodoItem]
+    
+    public init(
+        allDayItems: [any TodoItem],
+        timedItems: [any TodoItem]
+    ) {
+        self.allDayItems = allDayItems
+        self.timedItems = timedItems
+    }
 }

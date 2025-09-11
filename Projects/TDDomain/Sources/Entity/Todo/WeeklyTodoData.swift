@@ -4,4 +4,12 @@ import Foundation
 public struct WeeklyTodoData {
     public let schedules: [Date: [Schedule]]
     public let routines: [Date: [Routine]]
+    
+    public init(
+        schedules: [Date : [Schedule]],
+        routines: [Date : [Routine]]
+    ) {
+        self.schedules = schedules
+        self.routines = routines
+    }
 }
