@@ -47,7 +47,7 @@ final class DiaryComposeTemplateViewController: BaseViewController<DiaryComposeT
     
     override func configure() {
         configurePagingNavigationBar(currentPage: 1, totalPages: 3)
-        let emotionItems = viewModel.emotions.map { EmotionItem(image: $0.image.withRenderingMode(.alwaysOriginal)) }
+        let emotionItems = viewModel.emotions.map { EmotionItem(image: $0.largeImage.withRenderingMode(.alwaysOriginal)) }
         layoutView.emotionGridView.configure(with: emotionItems)
         layoutView.emotionGridView.onEmotionTapped = { [weak self] tappedIndex in
             guard let self else { return }

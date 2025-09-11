@@ -36,6 +36,20 @@ extension Emotion {
         }
     }
     
+    var largeImage: UIImage {
+        switch self {
+        case .happy: TDImage.Mood.Large.happy
+        case .good: TDImage.Mood.Large.good
+        case .sad: TDImage.Mood.Large.sad
+        case .angry: TDImage.Mood.Large.angry
+        case .anxious: TDImage.Mood.Large.anxious
+        case .tired: TDImage.Mood.Large.tired
+        case .sick: TDImage.Mood.Large.sick
+        case .soso: TDImage.Mood.Large.soso
+        case .love: TDImage.Mood.Large.love
+        }
+    }
+    
     var circleImage: UIImage {
         switch self {
         case .happy: TDImage.MoodCircle.happy
