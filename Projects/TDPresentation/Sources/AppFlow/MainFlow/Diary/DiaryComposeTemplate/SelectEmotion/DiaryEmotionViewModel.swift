@@ -19,6 +19,11 @@ final class DiaryEmotionViewModel: BaseViewModel {
     let selectedDate: Date
     let emotions = Emotion.allCases
     
+    var currentSelectedEmotion: String? {
+        guard let index = selectedEmotionIndex else { return nil }
+        return emotions[safe: index]?.rawValue.uppercased()
+    }
+    
     init(
         selectedDate: Date
     ) {
@@ -38,6 +43,7 @@ final class DiaryEmotionViewModel: BaseViewModel {
     
     private func selectEmotion(at index: Int?) {
         selectedEmotionIndex = index
+        
         let emotion = index != nil ? emotions[index ?? 0] : nil
         output.send(.selectedEmotion(emotion?.phrases.randomElement()))
     }
