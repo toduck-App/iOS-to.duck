@@ -30,6 +30,18 @@ final class DiaryEmotionCoordinator: Coordinator {
         navigationController.pushTDViewController(diaryEmotionViewController, animated: true)
     }
     
+    func showKeywordDiaryCompose(selectedMood: String, selectedDate: Date) {
+        let diaryKeywordCoordinator = DiaryKeywordCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            isEdit: isEdit
+        )
+        diaryKeywordCoordinator.finishDelegate = self
+        childCoordinators.append(diaryKeywordCoordinator)
+        finishDelegate?.didFinish(childCoordinator: self)
+        diaryKeywordCoordinator.start(selectedMood: selectedMood, selectedDate: selectedDate)
+    }
+    
     func showSimpleDiaryCompose(selectedDate: Date?, diary: Diary?) {
         let diaryEditCoordinator = SimpleDiaryCoordinator(
             navigationController: navigationController,
