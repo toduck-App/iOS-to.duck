@@ -17,15 +17,15 @@ final class HomeViewController: BaseViewController<BaseView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if !TDTokenManager.shared.isFirstLogin {
+            TDTokenManager.shared.launchFirstLogin()
+            showFirstLoginCoachMarks()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateNavigationBarColor(for: segmentedControl.selectedIndex)
-        if !TDTokenManager.shared.isFirstLogin {
-            TDTokenManager.shared.launchFirstLogin()
-            showFirstLoginCoachMarks()
-        }
     }
     
     // MARK: - Base Methods

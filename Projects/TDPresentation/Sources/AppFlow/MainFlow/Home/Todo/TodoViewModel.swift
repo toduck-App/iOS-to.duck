@@ -311,7 +311,10 @@ final class TodoViewModel: BaseViewModel {
     }
     
     private func setDummyData() {
-        weeklyScheduleList[selectedDate.normalized] = Schedule.dummyList
+        weeklyTodoData = .init(
+            schedules: [selectedDate.normalized : Schedule.dummyList],
+            routines: [:]
+        )
         unionTodoListForSelectedDate(selectedDate: selectedDate)
     }
 }
