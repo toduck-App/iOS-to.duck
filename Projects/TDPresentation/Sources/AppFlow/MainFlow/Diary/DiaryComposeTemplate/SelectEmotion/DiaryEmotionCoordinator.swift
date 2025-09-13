@@ -3,7 +3,7 @@ import TDDomain
 import TDDesign
 import TDCore
 
-final class DiaryComposeTemplateCoordinator: Coordinator {
+final class DiaryEmotionCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
@@ -23,15 +23,15 @@ final class DiaryComposeTemplateCoordinator: Coordinator {
     func start(
         selectedDate: Date
     ) {
-        let viewModel = DiaryComposeTemplateViewModel(selectedDate: selectedDate)
-        let diaryComposeTemplateViewController = DiaryComposeTemplateViewController(viewModel: viewModel)
-        diaryComposeTemplateViewController.coordinator = self
-        diaryComposeTemplateViewController.hidesBottomBarWhenPushed = true
-        navigationController.pushTDViewController(diaryComposeTemplateViewController, animated: true)
+        let viewModel = DiaryEmotionViewModel(selectedDate: selectedDate)
+        let diaryEmotionViewController = DiaryEmotionViewController(viewModel: viewModel)
+        diaryEmotionViewController.coordinator = self
+        diaryEmotionViewController.hidesBottomBarWhenPushed = true
+        navigationController.pushTDViewController(diaryEmotionViewController, animated: true)
     }
     
     func showSimpleDiaryCompose(selectedDate: Date?, diary: Diary?) {
-        let diaryEditCoordinator = DiaryEditCoordinator(
+        let diaryEditCoordinator = SimpleDiaryCoordinator(
             navigationController: navigationController,
             injector: injector,
             isEdit: isEdit
@@ -53,7 +53,7 @@ final class DiaryComposeTemplateCoordinator: Coordinator {
 
 // MARK: - Coordinator Finish Delegate
 
-extension DiaryComposeTemplateCoordinator: CoordinatorFinishDelegate {
+extension DiaryEmotionCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
     }
@@ -61,12 +61,12 @@ extension DiaryComposeTemplateCoordinator: CoordinatorFinishDelegate {
 
 // MARK: - DiaryEditCoordinator Delegate
 
-extension DiaryComposeTemplateCoordinator: DiaryEditCoordinatorDelegate {
-    func diaryEditCoordinatorDidFinish(_ coordinator: DiaryEditCoordinator) {
+extension DiaryEmotionCoordinator: SimpleDiaryCoordinatorDelegate {
+    func diaryEditCoordinatorDidFinish(_ coordinator: SimpleDiaryCoordinator) {
         childCoordinators.removeAll { $0 === coordinator }
     }
     
-    func diaryEditCoordinatorDidComplete(_ coordinator: DiaryEditCoordinator) {
+    func diaryEditCoordinatorDidComplete(_ coordinator: SimpleDiaryCoordinator) {
         childCoordinators.removeAll { $0 === coordinator }
         popViewController()
     }

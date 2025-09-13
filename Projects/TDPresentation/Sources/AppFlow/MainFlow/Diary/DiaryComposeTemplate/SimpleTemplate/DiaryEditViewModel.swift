@@ -2,7 +2,7 @@ import Combine
 import TDDomain
 import Foundation
 
-final class DiaryEditViewModel: BaseViewModel {
+final class SimpleDiaryViewModel: BaseViewModel {
     enum Input {
         case tapCategoryCell(String)
         case updateTitleTextField(String)

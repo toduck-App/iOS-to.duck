@@ -4,18 +4,18 @@ import Combine
 import TDDesign
 import TDCore
 
-final class DiaryEditViewController: BaseViewController<DiaryEditView> {
+final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
     // MARK: - Properties
-    private let viewModel: DiaryEditViewModel
+    private let viewModel: SimpleDiaryViewModel
     private let isEdit: Bool
-    private let input = PassthroughSubject<DiaryEditViewModel.Input, Never>()
+    private let input = PassthroughSubject<SimpleDiaryViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var isMoodSelected = false
-    weak var coordinator: DiaryEditCoordinator?
+    weak var coordinator: SimpleDiaryCoordinator?
     
     // MARK: - Initializer
     init(
-        viewModel: DiaryEditViewModel,
+        viewModel: SimpleDiaryViewModel,
         isEdit: Bool
     ) {
         self.viewModel = viewModel
@@ -77,7 +77,7 @@ final class DiaryEditViewController: BaseViewController<DiaryEditView> {
 }
 
 // MARK: - UIScrollViewDelegate
-extension DiaryEditViewController: UIScrollViewDelegate {
+extension SimpleDiaryViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
@@ -110,7 +110,7 @@ extension DiaryEditViewController: UIScrollViewDelegate {
 }
 
 // MARK: - DiaryMoodCollectionViewDelegate
-extension DiaryEditViewController: DiaryMoodCollectionViewDelegate {
+extension SimpleDiaryViewController: DiaryMoodCollectionViewDelegate {
     func didTapCategoryCell(
         _ diaryMoodCollectionView: TDDesign.DiaryMoodCollectionView,
         selectedMood: UIImage
@@ -123,7 +123,7 @@ extension DiaryEditViewController: DiaryMoodCollectionViewDelegate {
 }
 
 // MARK: - TextFieldDelegate
-extension DiaryEditViewController: TDFormTextFieldDelegate {
+extension SimpleDiaryViewController: TDFormTextFieldDelegate {
     func tdTextField(_ textField: TDFormTextField, didChangeText text: String) {
         if textField == layoutView.titleForm {
             input.send(.updateTitleTextField(text))
@@ -132,14 +132,14 @@ extension DiaryEditViewController: TDFormTextFieldDelegate {
 }
 
 // MARK: - TextViewDelegate
-extension DiaryEditViewController: TDFormTextViewDelegate {
+extension SimpleDiaryViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
         input.send(.updateMemoTextView(text))
     }
 }
 
 // MARK: - SocialAddPhotoViewDelegate
-extension DiaryEditViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
+extension SimpleDiaryViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
     func didSelectPhotos(_ picker: TDPhotoPickerController, photos: [Data]) {
         input.send(.setImages(photos))
     }
