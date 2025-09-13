@@ -405,6 +405,7 @@ extension HomeViewController {
 }
 extension HomeViewController: CoachMarkPresenterDelegate {
     func coachMarkDidFinish(_ presenter: CoachMarkPresenter, skipped: Bool) {
+        self.coach = nil
         (cachedViewControllers[1] as? TodoViewController)?.unlockFloatingMenuForCoachMark()
     }
 

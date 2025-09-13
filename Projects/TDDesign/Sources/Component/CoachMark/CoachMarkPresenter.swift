@@ -54,6 +54,9 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
 
     public func start(steps: [CoachStep]) {
         guard let container = containerView, !steps.isEmpty else { return }
+        if overlay != nil {
+            finish(skipped: true)
+        }
         self.steps = steps
         index = 0
 
@@ -222,6 +225,14 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
     private func finish(skipped: Bool) {
         overlay?.hideAnimated { [weak self] in
             guard let self else { return }
+            if let tap = bgTapGR, let overlay {
+                overlay.removeGestureRecognizer(tap)
+            }
+            bgTapGR = nil
+            bubble.removeFromSuperview()
+            accessoryView?.removeFromSuperview()
+            accessoryView = nil
+            overlay = nil
             delegate?.coachMarkDidFinish(self, skipped: skipped)
         }
     }
