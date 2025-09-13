@@ -68,7 +68,7 @@ public struct ScheduleRecord: Hashable {
 
 public extension Schedule {
     static let dummy: Schedule = .init(
-        id: 1,
+        id: nil,
         title: "디자인팀 회의",
         category: TDCategory(colorHex: "#FFD6E2", imageName: "RED_BOOK"),
         startDate: Date().convertToString(formatType: .yearMonthDay),
