@@ -3,11 +3,20 @@ import TDDomain
 import TDDesign
 import TDCore
 
+protocol DiaryEditCoordinatorDelegate: AnyObject {
+    /// 단순 뒤로가기 등으로 자식 코디네이터의 흐름이 끝났을 때 호출됩니다.
+    func diaryEditCoordinatorDidFinish(_ coordinator: DiaryEditCoordinator)
+    
+    /// 일기 작성을 '완료'하고 흐름이 끝났을 때 호출됩니다.
+    func diaryEditCoordinatorDidComplete(_ coordinator: DiaryEditCoordinator)
+}
+
 final class DiaryEditCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    weak var delegate: DiaryEditCoordinatorDelegate?
     private let isEdit: Bool
 
     init(
@@ -39,6 +48,16 @@ final class DiaryEditCoordinator: Coordinator {
         if let diary, isEdit {
             diaryEditViewController.updateEditView(preDiary: diary)
         }
+    }
+    
+    func popViewController() {
+        navigationController.popViewController(animated: true)
+        delegate?.diaryEditCoordinatorDidFinish(self)
+    }
+    
+    func completeAndPopViewController() {
+        navigationController.popViewController(animated: true)
+        delegate?.diaryEditCoordinatorDidComplete(self)
     }
     
     func start() { }

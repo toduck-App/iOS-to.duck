@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 import TDDomain
 
 final class DiaryComposeTemplateViewModel: BaseViewModel {
@@ -15,12 +16,13 @@ final class DiaryComposeTemplateViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private(set) var selectedEmotionIndex: Int?
+    let selectedDate: Date
     let emotions = Emotion.allCases
     
     init(
-        
+        selectedDate: Date
     ) {
-        
+        self.selectedDate = selectedDate
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {

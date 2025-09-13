@@ -39,7 +39,7 @@ final class DiaryEditViewController: BaseViewController<DiaryEditView> {
                 case .setImage:
                     self?.layoutView.formPhotoView.addPhotos(self?.viewModel.images ?? [])
                 case .savedDiary:
-                    self?.coordinator?.finish(by: .pop)
+                    self?.coordinator?.completeAndPopViewController()
                 case .failure(let message):
                     self?.layoutView.saveButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
