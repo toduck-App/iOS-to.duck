@@ -60,6 +60,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private var selectedDate = Date()
     private var isMenuVisible = false
     private var didAddDimmedView = false
+
     private var isCoachMarkOn = false // MARK: 코치마크용 더미 데이터 상태
 
     weak var delegate: TodoViewControllerDelegate?
@@ -678,7 +679,7 @@ extension TodoViewController.TimeLineCellItem: Equatable {
             hasher.combine(showTime)
 
         case .timeEvent(let hour, let event, let showTime):
-            hasher.combine("routine")
+            hasher.combine("timeEvent")
             hasher.combine(hour)
             hasher.combine(event.id)
             hasher.combine(event.title)
@@ -704,7 +705,7 @@ extension TodoViewController {
         
         switch menu {
         case .schedule: floatingActionMenuView.highlightScheduleButton()
-        case .routine:  floatingActionMenuView.highlightRoutineButton()
+        case .routine: floatingActionMenuView.highlightRoutineButton()
         }
     }
 
@@ -713,12 +714,15 @@ extension TodoViewController {
     func unlockFloatingMenuForCoachMark() {
         setMenuVisible(false)
         setCoachMarkData(false)
-        fetchWeekTodo(for: selectedDate)
     }
     
     func setCoachMarkData(_ on: Bool) {
         isCoachMarkOn = on
-        input.send(.setDummyData)
+        if on {
+            input.send(.setDummyData)
+        } else {
+            fetchWeekTodo(for: selectedDate)
+        }
     }
     
     private func setMenuVisible(_ visible: Bool, animated: Bool = true) {
@@ -748,7 +752,6 @@ extension TodoViewController {
             if !shouldShowDim { dimmedView.isHidden = true }
         }
     }
-
 }
 
 // MARK: - Layout Constants

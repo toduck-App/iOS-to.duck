@@ -8,7 +8,7 @@ protocol FloatingActionMenuViewDelegate: AnyObject {
 
 final class FloatingActionMenuView: BaseView {
     // MARK: UI Components
-    public private(set) var scheduleContainerView = UIView()
+    private(set) var scheduleContainerView = UIView()
     private let scheduleImageView = UIImageView()
     private let scheduleLabel = TDLabel(
         labelText: "일정 추가",
