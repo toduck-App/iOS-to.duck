@@ -47,27 +47,45 @@ final class DiaryEmotionViewController: BaseViewController<DiaryEmotionView> {
     
     override func configure() {
         configurePagingNavigationBar(currentPage: 1, totalPages: 3)
+        configureEmotionGrid()
+        configureButtonActions()
+    }
+    
+    private func configureEmotionGrid() {
+        let emotionItems = viewModel.emotions.map { EmotionItem(image: $0.largeImage.withRenderingMode(.alwaysOriginal)) }
+        layoutView.emotionGridView.configure(with: emotionItems)
+        
+        layoutView.emotionGridView.onEmotionTapped = { [weak self] tappedIndex in
+            guard let self = self else { return }
+            HapticManager.impact(.soft)
+            
+            if self.viewModel.selectedEmotionIndex == tappedIndex {
+                // 선택 해제
+                self.layoutView.emotionGridView.updateSelectionState(selectedIndex: nil)
+                self.input.send(.selectEmotion(nil))
+                self.layoutView.setNextButtonActive(false)
+            } else {
+                // 새로운 감정 선택
+                self.layoutView.emotionGridView.updateSelectionState(selectedIndex: tappedIndex)
+                self.input.send(.selectEmotion(tappedIndex))
+                self.layoutView.setNextButtonActive(true)
+            }
+        }
+    }
+    
+    private func configureButtonActions() {
+        layoutView.nextButton.addAction(UIAction { [weak self] _ in
+            guard
+                let selectedEmotion = self?.viewModel.currentSelectedEmotion,
+                let selectedDate = self?.viewModel.selectedDate
+            else { return }
+            
+            self?.coordinator?.showKeywordDiaryCompose(selectedMood: selectedEmotion, selectedDate: selectedDate)
+        }, for: .touchUpInside)
+        
         layoutView.simpleDiaryButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.showSimpleDiaryCompose(selectedDate: self?.viewModel.selectedDate, diary: nil)
         }, for: .touchUpInside)
-        let emotionItems = viewModel.emotions.map { EmotionItem(image: $0.largeImage.withRenderingMode(.alwaysOriginal)) }
-        layoutView.emotionGridView.configure(with: emotionItems)
-        layoutView.emotionGridView.onEmotionTapped = { [weak self] tappedIndex in
-            guard let self else { return }
-            HapticManager.impact(.soft)
-            
-            // 이미 선택된 버튼을 다시 탭한 경우 -> 선택 해제
-            if viewModel.selectedEmotionIndex == tappedIndex {
-                layoutView.emotionGridView.updateSelectionState(selectedIndex: nil)
-                input.send(.selectEmotion(nil))
-                layoutView.setNextButtonActive(false)
-            } else {
-                // 새로운 버튼을 탭한 경우 -> 선택
-                layoutView.emotionGridView.updateSelectionState(selectedIndex: tappedIndex)
-                input.send(.selectEmotion(tappedIndex))
-                layoutView.setNextButtonActive(true)
-            }
-        }
     }
     
     override func binding() {
