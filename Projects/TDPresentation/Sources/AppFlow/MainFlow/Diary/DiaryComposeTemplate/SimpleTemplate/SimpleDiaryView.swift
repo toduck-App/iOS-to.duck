@@ -3,7 +3,7 @@ import SnapKit
 import TDDesign
 import Then
 
-final class DiaryEditView: BaseView {
+final class SimpleDiaryView: BaseView {
     // MARK: - UI Components
     let scrollView = UIScrollView()
     private let stackView = UIStackView().then {
@@ -255,7 +255,7 @@ final class DiaryEditView: BaseView {
     }
 }
 
-private extension DiaryEditView {
+private extension SimpleDiaryView {
     // MARK: - Constants
     enum LayoutConstants {
         static let dummyViewHeight: CGFloat = 40

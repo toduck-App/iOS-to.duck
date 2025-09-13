@@ -1,7 +1,7 @@
 import UIKit
 import TDDesign
 
-final class DiaryComposeTemplateView: BaseView {
+final class DiaryEmotionView: BaseView {
     // MARK: - UI Components
     
     let titleLabel = TDLabel(

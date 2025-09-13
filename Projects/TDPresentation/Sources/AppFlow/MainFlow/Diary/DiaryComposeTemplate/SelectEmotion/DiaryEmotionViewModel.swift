@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import TDDomain
 
-final class DiaryComposeTemplateViewModel: BaseViewModel {
+final class DiaryEmotionViewModel: BaseViewModel {
     enum Input {
         case selectEmotion(Int?)
     }

@@ -4,7 +4,7 @@ import SnapKit
 import Then
 import TDDesign
 
-final class DiaryComposeTemplateViewController: BaseViewController<DiaryComposeTemplateView> {
+final class DiaryEmotionViewController: BaseViewController<DiaryEmotionView> {
     
     // MARK: - UI Components
     
@@ -18,14 +18,14 @@ final class DiaryComposeTemplateViewController: BaseViewController<DiaryComposeT
     
     // MARK: - Properties
     
-    private let viewModel: DiaryComposeTemplateViewModel
-    private let input = PassthroughSubject<DiaryComposeTemplateViewModel.Input, Never>()
+    private let viewModel: DiaryEmotionViewModel
+    private let input = PassthroughSubject<DiaryEmotionViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-    weak var coordinator: DiaryComposeTemplateCoordinator?
+    weak var coordinator: DiaryEmotionCoordinator?
     
     // MARK: - Initializers
     
-    init(viewModel: DiaryComposeTemplateViewModel) {
+    init(viewModel: DiaryEmotionViewModel) {
         self.viewModel = viewModel
         super.init()
     }
@@ -86,4 +86,4 @@ final class DiaryComposeTemplateViewController: BaseViewController<DiaryComposeT
 
 // MARK: - PagingNavigationBarConfigurable
 
-extension DiaryComposeTemplateViewController: PagingNavigationBarConfigurable { }
+extension DiaryEmotionViewController: PagingNavigationBarConfigurable { }
