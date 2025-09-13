@@ -296,6 +296,14 @@ public enum TDImage {
         public static let percent81to100 = TDDesignAsset.Images.percent81to100.image
     }
     
+    public enum BookKeyword {
+        public static let none = TDDesignAsset.Images.bookKeywordNone.image
+        public static let one = TDDesignAsset.Images.bookKeywordOne.image
+        public static let two = TDDesignAsset.Images.bookKeywordTwo.image
+        public static let three = TDDesignAsset.Images.bookKeywordThree.image
+        public static let four = TDDesignAsset.Images.bookKeywordFour.image
+    }
+    
     public enum Analyze {
         public static let bookIncrease = TDDesignAsset.Images.bookIncrease.image
         public static let bookDecrease = TDDesignAsset.Images.bookDecrease.image
