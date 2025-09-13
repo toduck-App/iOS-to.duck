@@ -1,3 +1,5 @@
+import SnapKit
+import Then
 import UIKit
 
 public protocol CoachMarkPresenterDelegate: AnyObject {
@@ -21,7 +23,7 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
     private var accessoryView: UIView?
     private weak var containerView: UIView?
     private var overlay: SpotlightOverlayView?
-    private var bubble = CoachBubbleView()
+    private let bubble = CoachBubbleView()
     private var steps: [CoachStep] = []
     private var index = 0
 
@@ -56,19 +58,16 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
         index = 0
 
         // Overlay
-        let overlay = SpotlightOverlayView(frame: container.bounds)
-        overlay.translatesAutoresizingMaskIntoConstraints = false
+        let overlay = SpotlightOverlayView(frame: .zero).then {
+            $0.backgroundColor = .clear
+        }
         container.addSubview(overlay)
-        NSLayoutConstraint.activate([
-            overlay.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            overlay.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            overlay.topAnchor.constraint(equalTo: container.topAnchor),
-            overlay.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-        ])
+        overlay.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         self.overlay = overlay
 
         // Bubble
-        bubble.translatesAutoresizingMaskIntoConstraints = false
         overlay.addSubview(bubble)
 
         // Top bar
@@ -79,9 +78,10 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
 
         // Background tap (다음)
         if allowBackgroundTapToAdvance {
-            let tap = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:)))
-            tap.cancelsTouchesInView = false
-            tap.delegate = self
+            let tap = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:))).then {
+                $0.cancelsTouchesInView = false
+                $0.delegate = self
+            }
             overlay.addGestureRecognizer(tap)
             bgTapGR = tap
         }
@@ -94,93 +94,95 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
     // MARK: - UI Builders
 
     private func buildTopBar(in overlay: UIView) {
-        topBar.translatesAutoresizingMaskIntoConstraints = false
         overlay.addSubview(topBar)
-        topBar.backgroundColor = .clear
+        topBar.do {
+            $0.backgroundColor = .clear
+            $0.isUserInteractionEnabled = true
+        }
+        topBar.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(overlay.safeAreaLayoutGuide.snp.top)
+            make.height.equalTo(44)
+        }
 
-        backButton.translatesAutoresizingMaskIntoConstraints = false
-        backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        backButton.tintColor = .white
-        backButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-
-        skipButton.translatesAutoresizingMaskIntoConstraints = false
-        skipButton.setTitle(skipTitle, for: .normal)
-        skipButton.setTitleColor(.white, for: .normal)
-        skipButton.titleLabel?.font = TDFont.boldHeader5.font
-        skipButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
-        skipButton.addTarget(self, action: #selector(skipTapped), for: .touchUpInside)
+        backButton.do {
+            $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+            $0.tintColor = .white
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            $0.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
+        }
+        skipButton.do {
+            $0.setTitle(skipTitle, for: .normal)
+            $0.setTitleColor(.white, for: .normal)
+            $0.titleLabel?.font = TDFont.boldHeader5.font
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+            $0.addTarget(self, action: #selector(skipTapped), for: .touchUpInside)
+        }
 
         topBar.addSubview(backButton)
         topBar.addSubview(skipButton)
 
-        NSLayoutConstraint.activate([
-            topBar.leadingAnchor.constraint(equalTo: overlay.leadingAnchor),
-            topBar.trailingAnchor.constraint(equalTo: overlay.trailingAnchor),
-            topBar.topAnchor.constraint(equalTo: overlay.safeAreaLayoutGuide.topAnchor),
-            topBar.heightAnchor.constraint(equalToConstant: 44),
-
-            backButton.leadingAnchor.constraint(equalTo: overlay.leadingAnchor, constant: 8),
-            backButton.centerYAnchor.constraint(equalTo: topBar.centerYAnchor),
-
-            skipButton.trailingAnchor.constraint(equalTo: overlay.trailingAnchor, constant: -12),
-            skipButton.centerYAnchor.constraint(equalTo: topBar.centerYAnchor),
-        ])
+        backButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(8)
+            make.centerY.equalToSuperview()
+        }
+        skipButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(12)
+            make.centerY.equalToSuperview()
+        }
     }
 
     private func buildBottomBar(in overlay: UIView) {
-        bottomBar.translatesAutoresizingMaskIntoConstraints = false
         overlay.addSubview(bottomBar)
-        bottomBar.backgroundColor = .clear
-
-        nextButton.translatesAutoresizingMaskIntoConstraints = false
-        nextButton.setTitle(nextTitle, for: .normal)
-        nextButton.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
+        bottomBar.do {
+            $0.backgroundColor = .clear
+            $0.isUserInteractionEnabled = true
+        }
+        bottomBar.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(overlay.safeAreaLayoutGuide.snp.bottom).inset(8)
+            make.height.greaterThanOrEqualTo(56)
+        }
 
         bottomBar.addSubview(nextButton)
-
-        NSLayoutConstraint.activate([
-            bottomBar.leadingAnchor.constraint(equalTo: overlay.leadingAnchor),
-            bottomBar.trailingAnchor.constraint(equalTo: overlay.trailingAnchor),
-            bottomBar.bottomAnchor.constraint(equalTo: overlay.safeAreaLayoutGuide.bottomAnchor, constant: -8),
-            bottomBar.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
-
-            nextButton.centerXAnchor.constraint(equalTo: bottomBar.centerXAnchor),
-            nextButton.topAnchor.constraint(equalTo: bottomBar.topAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor),
-            nextButton.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: 16),
-            nextButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -16),
-        ])
+        nextButton.do {
+            $0.setTitle(nextTitle, for: .normal)
+            $0.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
+        }
+        nextButton.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.centerX.equalToSuperview()
+        }
     }
 
-    // 센터 이미지 등 부가 뷰
     private func updateAccessoryView(for step: CoachStep) {
         accessoryView?.removeFromSuperview()
         accessoryView = nil
 
-        guard let overlay else { return }
-        guard let image = step.centerImage else { return }
+        guard let overlay, let image = step.centerImage else { return }
 
-        let iv = UIImageView(image: image)
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFit
-        iv.isUserInteractionEnabled = false
-        overlay.addSubview(iv)
+        let iv = UIImageView(image: image).then {
+            $0.contentMode = .scaleAspectFit
+            $0.isUserInteractionEnabled = false
+        }
 
         if overlay.subviews.contains(bubble) {
             overlay.insertSubview(iv, belowSubview: bubble)
+        } else {
+            overlay.addSubview(iv)
         }
 
         let maxW = min(step.centerImageMaxWidth ?? 240, overlay.bounds.width - sideMargin * 2)
         let aspect = (image.size.width > 0) ? (image.size.height / image.size.width) : 1.0
         let yOffset = step.centerImageYOffset ?? 0
 
-        NSLayoutConstraint.activate([
-            iv.leadingAnchor.constraint(equalTo: overlay.leadingAnchor),
-            iv.centerYAnchor.constraint(equalTo: overlay.centerYAnchor, constant: yOffset),
-            iv.widthAnchor.constraint(lessThanOrEqualToConstant: maxW),
-            iv.heightAnchor.constraint(equalTo: iv.widthAnchor, multiplier: aspect),
-        ])
+        iv.snp.makeConstraints { make in
+            make.leading.equalToSuperview() // 원래 코드와 동일하게 leading 기준
+            make.centerY.equalToSuperview().offset(yOffset)
+            make.width.lessThanOrEqualTo(maxW)
+            make.height.equalTo(iv.snp.width).multipliedBy(aspect)
+        }
 
         accessoryView = iv
         bringOverlayToFrontSafely()
@@ -251,7 +253,9 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
             backButton.frame.insetBy(dx: -10, dy: -10).contains(gr.location(in: backButton.superview)) ||
             skipButton.frame.insetBy(dx: -10, dy: -10).contains(gr.location(in: skipButton.superview)) ||
             nextButton.frame.insetBy(dx: -10, dy: -10).contains(gr.location(in: nextButton.superview))
-        { return }
+        {
+            return
+        }
 
         nextTapped()
     }
@@ -264,7 +268,6 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
         return true
     }
 
-    // 방향 선택 로직(자동)
     private func chooseDirection(for target: CGRect,
                                  in containerBounds: CGRect,
                                  preferred: CoachArrowDirection?) -> CoachArrowDirection
@@ -280,8 +283,6 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
         ]
         return candidates.max(by: { $0.1 < $1.1 })?.0 ?? .down
     }
-
-    // MARK: - 핵심: 고정 크기 버블 + 타겟을 향하는 말꼬리
 
     private func showCurrentStep(animated: Bool, haptic: Bool = false) {
         guard let overlay, index < steps.count else { return }
@@ -330,7 +331,7 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
             }
             let arrowDirection = opposite(placeDirection)
 
-            // 버블 텍스트 적용 (화살표 방향으로 넘김)
+            // 버블 텍스트 적용
             bubble.configure(
                 title: step.title,
                 icon: step.icon,
@@ -341,23 +342,13 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
                 direction: arrowDirection
             )
 
-            // 기존 버블 제약 제거
-            let toRemove = overlay.constraints.filter {
-                ($0.firstItem as AnyObject) === self.bubble || ($0.secondItem as AnyObject) === self.bubble
-            }
-            overlay.removeConstraints(toRemove)
-
-            // 고정 크기
-            let widthC = bubble.widthAnchor.constraint(equalToConstant: CoachBubbleView.fixedSize.width)
-            let heightC = bubble.heightAnchor.constraint(equalToConstant: CoachBubbleView.fixedSize.height)
-            widthC.priority = .required
-            heightC.priority = .required
+            // 고정 크기 상수
+            let bubbleW = CoachBubbleView.fixedSize.width
+            let bubbleH = CoachBubbleView.fixedSize.height
 
             // 화면 안으로 centerX/centerY 클램프
             let overlayW = container.bounds.width
             let overlayH = container.bounds.height
-            let bubbleW = CoachBubbleView.fixedSize.width
-            let bubbleH = CoachBubbleView.fixedSize.height
             let minCenterX = sideMargin + bubbleW / 2
             let maxCenterX = overlayW - sideMargin - bubbleW / 2
             let minCenterY = sideMargin + bubbleH / 2
@@ -366,37 +357,28 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
             let clampedCenterX = min(max(targetRect.midX, minCenterX), maxCenterX)
             let clampedCenterY = min(max(targetRect.midY, minCenterY), maxCenterY)
 
-            // 배치
-            switch placeDirection {
-            case .down: // 버블을 타겟 '아래'에 둠 → 화살표는 ↑
-                NSLayoutConstraint.activate([
-                    bubble.topAnchor.constraint(equalTo: overlay.topAnchor, constant: targetRect.maxY + spacing),
-                    bubble.centerXAnchor.constraint(equalTo: overlay.leadingAnchor, constant: clampedCenterX),
-                    widthC, heightC,
-                ])
-            case .up: // 버블을 타겟 '위'에 둠 → 화살표는 ↓
-                NSLayoutConstraint.activate([
-                    bubble.bottomAnchor.constraint(equalTo: overlay.topAnchor, constant: targetRect.minY - spacing),
-                    bubble.centerXAnchor.constraint(equalTo: overlay.leadingAnchor, constant: clampedCenterX),
-                    widthC, heightC,
-                ])
-            case .left: // 버블을 타겟 '왼쪽'에 둠 → 화살표는 →
-                NSLayoutConstraint.activate([
-                    bubble.trailingAnchor.constraint(equalTo: overlay.leadingAnchor, constant: targetRect.minX - spacing),
-                    bubble.centerYAnchor.constraint(equalTo: overlay.topAnchor, constant: clampedCenterY),
-                    widthC, heightC,
-                ])
-            case .right: // 버블을 타겟 '오른쪽'에 둠 → 화살표는 ←
-                NSLayoutConstraint.activate([
-                    bubble.leadingAnchor.constraint(equalTo: overlay.leadingAnchor, constant: targetRect.maxX + spacing),
-                    bubble.centerYAnchor.constraint(equalTo: overlay.topAnchor, constant: clampedCenterY),
-                    widthC, heightC,
-                ])
+            bubble.snp.remakeConstraints { make in
+                make.width.equalTo(bubbleW)
+                make.height.equalTo(bubbleH)
+
+                switch placeDirection {
+                case .down:
+                    make.top.equalToSuperview().inset(targetRect.maxY + self.spacing)
+                    make.centerX.equalTo(overlay.snp.leading).offset(clampedCenterX)
+                case .up:
+                    make.bottom.equalTo(overlay.snp.top).offset(targetRect.minY - self.spacing)
+                    make.centerX.equalTo(overlay.snp.leading).offset(clampedCenterX)
+                case .left:
+                    make.trailing.equalTo(overlay.snp.leading).offset(targetRect.minX - self.spacing)
+                    make.centerY.equalTo(overlay.snp.top).offset(clampedCenterY)
+                case .right:
+                    make.leading.equalTo(overlay.snp.leading).offset(targetRect.maxX + self.spacing)
+                    make.centerY.equalTo(overlay.snp.top).offset(clampedCenterY)
+                }
             }
 
             overlay.layoutIfNeeded()
 
-            // 말꼬리 앵커(타겟을 향하도록) - 화살표 방향 기준으로 축 선택
             let bubbleFrame = bubble.frame
             let anchorRatio: CGFloat
             switch arrowDirection {
