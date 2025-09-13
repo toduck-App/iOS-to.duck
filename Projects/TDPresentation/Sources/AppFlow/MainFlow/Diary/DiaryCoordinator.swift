@@ -67,7 +67,7 @@ extension DiaryCoordinator: DiaryCoordinatorDelegate {
         )
         diaryComposeTemplateCoordinator.finishDelegate = self
         childCoordinators.append(diaryComposeTemplateCoordinator)
-        diaryComposeTemplateCoordinator.start(selectedDate: selectedDate, diary: nil)
+        diaryComposeTemplateCoordinator.start(selectedDate: selectedDate)
     }
     
     func didTapEditDiaryButton(diary: Diary) {
