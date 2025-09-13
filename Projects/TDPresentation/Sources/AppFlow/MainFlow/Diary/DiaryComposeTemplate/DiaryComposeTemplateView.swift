@@ -53,21 +53,23 @@ final class DiaryComposeTemplateView: BaseView {
     
     func setNextButtonActive(_ isActive: Bool) {
         if isActive {
-            commentContainerView.isHidden = false
-            nextButton.setTitle("다음", for: .normal)
-            nextButton.layer.borderColor = UIColor.clear.cgColor
             nextButton.updateBackgroundColor(
                 backgroundColor: TDColor.Primary.primary500,
                 foregroundColor: TDColor.baseWhite
             )
+            nextButton.setTitle("다음", for: .normal)
+            nextButton.layer.borderColor = UIColor.clear.cgColor
+            nextButton.layer.borderWidth = 0
+            commentContainerView.isHidden = false
         } else {
-            commentContainerView.isHidden = true
-            nextButton.setTitle("건너뛰기", for: .normal)
-            nextButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
             nextButton.updateBackgroundColor(
                 backgroundColor: TDColor.baseWhite,
                 foregroundColor: TDColor.Neutral.neutral700
             )
+            nextButton.setTitle("건너뛰기", for: .normal)
+            nextButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            nextButton.layer.borderWidth = 1
+            commentContainerView.isHidden = true
         }
     }
     
