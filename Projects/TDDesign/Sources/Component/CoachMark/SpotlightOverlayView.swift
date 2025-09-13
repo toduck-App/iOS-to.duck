@@ -1,24 +1,22 @@
 import UIKit
 
 public final class SpotlightOverlayView: UIControl {
-
     private let dimLayer = CAShapeLayer()
     private let ringLayer = CAShapeLayer()
     
+    /// blocksHoleTouches:
+    /// - true  : 오버레이가 모든 터치를 포착(구멍 포함)
+    /// - false : 구멍 내부만 패스스루(외부는 오버레이가 포착)
     public var blocksHoleTouches: Bool = true
     private var cutoutRect: CGRect = .zero
     private var cutoutCornerRadius: CGFloat = 12
 
-    public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        // blocksHoleTouches가 false면 전체 터치 허용
-        guard blocksHoleTouches == false else { return true }
-        
-        // blocksHoleTouches가 true면 구멍 안 터치는 통과시킴
+    override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let inHole = UIBezierPath(roundedRect: cutoutRect, cornerRadius: cutoutCornerRadius).contains(point)
-        return !inHole
+        return blocksHoleTouches ? true : !inHole
     }
 
-    public override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         isOpaque = false
         accessibilityViewIsModal = true
@@ -43,6 +41,7 @@ public final class SpotlightOverlayView: UIControl {
         alpha = 0
     }
 
+    @available(*, unavailable)
     public required init?(coder: NSCoder) { fatalError() }
 
     public func setCutout(_ rect: CGRect, cornerRadius: CGFloat = 12, animated: Bool = true) {
@@ -68,7 +67,7 @@ public final class SpotlightOverlayView: UIControl {
         CATransaction.commit()
     }
 
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         updatePaths(animated: false)
     }
