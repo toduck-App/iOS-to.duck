@@ -16,7 +16,7 @@ final class FloatingActionMenuView: BaseView {
         toduckColor: TDColor.Neutral.neutral800
     )
     
-    public private(set) var routineContainerView = UIView()
+    private(set) var routineContainerView = UIView()
     private let routineImageView = UIImageView()
     private let routineLabel = TDLabel(
         labelText: "루틴 추가",
