@@ -348,6 +348,7 @@ extension HomeViewController {
             onEnter: { [weak self] in
                 toduckVC?.setCoachMarkData(true)
                 self?.segmentedControl.setSelectedIndex(0)
+                self?.updateView()
                 todoVC?.setCoachMarkData(true)
             }
         )
@@ -362,6 +363,7 @@ extension HomeViewController {
             onEnter: { [weak self] in
                 toduckVC?.setCoachMarkData(false)
                 self?.segmentedControl.setSelectedIndex(1)
+                self?.updateView()
                 todoVC?.setCoachMarkData(true)
             },
             allowBackgroundTapToAdvance: nil,
