@@ -1,14 +1,15 @@
 import Combine
 import Lottie
-import TDCore
-import TDDomain
-import UIKit
-import TDDesign
 import SnapKit
+import TDCore
+import TDDesign
+import TDDomain
 import Then
+import UIKit
 
 final class ToduckViewController: BaseViewController<ToduckView> {
     // MARK: - Properties
+
     private let viewModel: ToduckViewModel
     private let input = PassthroughSubject<ToduckViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
@@ -16,7 +17,10 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     
     weak var delegate: ToduckViewDelegate?
     
+    private var isCoachMarkOn: Bool = false
+    
     // MARK: - Initializer
+
     init(viewModel: ToduckViewModel) {
         self.viewModel = viewModel
         super.init()
@@ -28,14 +32,20 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     // MARK: - View Lifecycle
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         layoutView.scheduleSegmentedControl.selectedSegmentIndex = 0
-        input.send(.fetchScheduleList)
+        if isCoachMarkOn {
+            input.send(.setCoachMarkData)
+        } else {
+            input.send(.fetchScheduleList)
+        }
     }
     
     // MARK: Common Methods
+
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
         
@@ -82,6 +92,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     // MARK: 종일 일정만 있는 경우 자동스크롤 구현
+
     private func updateAutoScroll() {
         if viewModel.isAllDays {
             startAutoScroll()
@@ -137,7 +148,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
     }
     
     func reloadLottiePages() {
-        let lottieImageTypes = viewModel.currentDisplaySchedules.map { $0.category }
+        let lottieImageTypes = viewModel.currentDisplaySchedules.map(\.category)
             .compactMap { TDCategoryImageType(category: $0) }
         let newAnimations = lottieImageTypes.compactMap {
             ToduckLottieManager.shared.getLottieAnimation(for: $0)
@@ -148,6 +159,7 @@ final class ToduckViewController: BaseViewController<ToduckView> {
 }
 
 // MARK: - UIScrollViewDelegate
+
 extension ToduckViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard
@@ -168,6 +180,7 @@ extension ToduckViewController: UIScrollViewDelegate {
 }
 
 // MARK: - UICollectionViewDataSource
+
 extension ToduckViewController: UICollectionViewDataSource {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -202,6 +215,7 @@ extension ToduckViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
+
 extension ToduckViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -218,7 +232,7 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
     }
     
     // 스크롤이 끝날 때 셀 단위로 스냅하도록 targetContentOffset 조정
@@ -236,13 +250,12 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
         let offset = scrollView.contentOffset.x
         let estimatedIndex = offset / cellWidthWithSpacing
         
-        let index: CGFloat
-        if velocity.x > 0 {
-            index = ceil(estimatedIndex)
+        let index: CGFloat = if velocity.x > 0 {
+            ceil(estimatedIndex)
         } else if velocity.x < 0 {
-            index = floor(estimatedIndex)
+            floor(estimatedIndex)
         } else {
-            index = round(estimatedIndex)
+            round(estimatedIndex)
         }
         
         let lastIndex = CGFloat(viewModel.currentDisplaySchedules.count - 1)
@@ -260,5 +273,18 @@ extension ToduckViewController: UICollectionViewDelegateFlowLayout {
 extension ToduckViewController: ToduckViewDelegate {
     func didTapNoScheduleContainerView() {
         delegate?.didTapNoScheduleContainerView()
+    }
+}
+
+// MARK: 코치마크 데이터 추가
+
+extension ToduckViewController {
+    func setCoachMarkData(_ on: Bool) {
+        isCoachMarkOn = on
+        if isCoachMarkOn {
+            input.send(.setCoachMarkData)
+        } else {
+            input.send(.fetchScheduleList)
+        }
     }
 }

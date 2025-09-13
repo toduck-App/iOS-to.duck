@@ -174,4 +174,105 @@ public final class TDLabel: UILabel {
         
         attributedText = attributedString
     }
+    
+    // 하이라이트 옵션
+    public struct HighlightOptions: OptionSet {
+        public let rawValue: Int
+        public init(rawValue: Int) { self.rawValue = rawValue }
+        public static let caseInsensitive = HighlightOptions(rawValue: 1 << 0)
+        public static let wholeWord = HighlightOptions(rawValue: 1 << 1)
+        public static let regex = HighlightOptions(rawValue: 1 << 2)
+    }
+
+    // 토큰별 스펙 (색 + 폰트)
+    public struct HighlightSpec {
+        public let token: String
+        public let color: UIColor
+        public let font: TDFont?
+        public let options: HighlightOptions
+
+        public init(
+            token: String,
+            color: UIColor,
+            font: TDFont? = nil,
+            options: HighlightOptions = [.caseInsensitive]
+        ) {
+            self.token = token
+            self.color = color
+            self.font = font
+            self.options = options
+        }
+    }
+
+    /// 전체 하이라이트 제거(색상만 기본으로 리셋, 기존 폰트/커닝/문단 스타일 유지)
+    public func clearHighlights() {
+        if attributedText == nil { applyAttributes() } // 기존 클래스 메서드 그대로 호출
+        let base = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: text ?? ""))
+        let rAll = NSRange(location: 0, length: (base.string as NSString).length)
+        base.addAttribute(.foregroundColor, value: textColor ?? UIColor.label, range: rAll)
+        attributedText = base
+    }
+
+    /// 모든 토큰에 같은 색/폰트/옵션을 적용
+    public func highlight(
+        tokens: [String],
+        color: UIColor,
+        font: TDFont? = nil,
+        options: HighlightOptions = [.caseInsensitive]
+    ) {
+        let specs = tokens.map { HighlightSpec(token: $0, color: color, font: font, options: options) }
+        highlight(specs)
+    }
+
+    /// 상세 API: 토큰별 스펙 지정
+    public func highlight(_ specs: [HighlightSpec]) {
+        if attributedText == nil { applyAttributes() }
+        let base = NSMutableAttributedString(attributedString: attributedText ?? NSAttributedString(string: text ?? ""))
+        let ns = base.string as NSString
+        let rAll = NSRange(location: 0, length: ns.length)
+
+        base.addAttribute(.foregroundColor, value: textColor ?? UIColor.label, range: rAll)
+
+        func applyHighlight(range r: NSRange, spec: HighlightSpec) {
+            base.addAttribute(.foregroundColor, value: spec.color, range: r)
+            if let f = spec.font {
+                base.addAttribute(.font, value: f.font, range: r)
+            }
+        }
+
+        for spec in specs where !spec.token.isEmpty {
+            if spec.options.contains(.regex) {
+                let regexOpts: NSRegularExpression.Options = spec.options.contains(.caseInsensitive) ? [.caseInsensitive] : []
+                if let re = try? NSRegularExpression(pattern: spec.token, options: regexOpts) {
+                    re.enumerateMatches(in: base.string, options: [], range: rAll) { m, _, _ in
+                        guard let r = m?.range, r.location != NSNotFound, r.length > 0 else { return }
+                        applyHighlight(range: r, spec: spec)
+                    }
+                }
+            } else if spec.options.contains(.wholeWord) {
+                let escaped = NSRegularExpression.escapedPattern(for: spec.token)
+                let pattern = #"(?<![\p{L}\p{N}])\#(escaped)(?![\p{L}\p{N}])"#
+                let regexOpts: NSRegularExpression.Options = spec.options.contains(.caseInsensitive) ? [.caseInsensitive] : []
+                if let re = try? NSRegularExpression(pattern: pattern, options: regexOpts) {
+                    re.enumerateMatches(in: base.string, options: [], range: rAll) { m, _, _ in
+                        guard let r = m?.range, r.location != NSNotFound, r.length > 0 else { return }
+                        applyHighlight(range: r, spec: spec)
+                    }
+                }
+            } else {
+                let cmp: NSString.CompareOptions = spec.options.contains(.caseInsensitive) ? [.caseInsensitive] : []
+                var search = rAll
+                while true {
+                    let found = ns.range(of: spec.token, options: cmp, range: search)
+                    if found.location == NSNotFound { break }
+                    applyHighlight(range: found, spec: spec)
+                    let next = found.location + found.length
+                    if next >= ns.length { break }
+                    search = NSRange(location: next, length: ns.length - next)
+                }
+            }
+        }
+
+        attributedText = base
+    }
 }

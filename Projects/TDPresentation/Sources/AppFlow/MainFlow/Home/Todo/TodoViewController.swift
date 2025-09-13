@@ -60,8 +60,7 @@ final class TodoViewController: BaseViewController<BaseView> {
     private var selectedDate = Date()
     private var isMenuVisible = false
     private var didAddDimmedView = false
-
-    public var isCoachMarkMenuLock = false // MARK: 코치마크가 플로팅 메뉴를 열어둔 상태 잠금
+    private var isCoachMarkOn = false // MARK: 코치마크용 더미 데이터 상태
 
     weak var delegate: TodoViewControllerDelegate?
     
@@ -96,7 +95,6 @@ final class TodoViewController: BaseViewController<BaseView> {
         
         setupFloatingUIInWindow()
         fetchWeekTodo(for: selectedDate)
-        input.send(.didSelectedDate(date: selectedDate))
         eventMakorFloattingButton.isHidden = false
     }
     
@@ -108,7 +106,8 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     private func fetchWeekTodo(for date: Date) {
         guard
-            let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date)
+            let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: date),
+            !isCoachMarkOn
         else { return }
         
         let startDate = weekInterval.start.convertToString(formatType: .yearMonthDay)
@@ -316,12 +315,13 @@ final class TodoViewController: BaseViewController<BaseView> {
     
     @objc
     private func didTapDimmedView() {
-        if isMenuVisible, !isCoachMarkMenuLock {
+        if isMenuVisible, !isCoachMarkOn {
             updateFloatingView()
         }
     }
     
     func updateWeekCalendarForDate(at date: Date) {
+        if isCoachMarkOn { return }
         selectedDate = date
 
         let calendar = Calendar.current
@@ -696,36 +696,41 @@ extension TodoViewController.TimeLineCellItem: Equatable {
 extension TodoViewController {
     // MARK: - 코치마크용 플로팅 메뉴 노출
 
-    public func showFloatingMenuForCoachMark(menu: FloatingMenu) {
+    func showFloatingMenuForCoachMark(menu: FloatingMenu) {
         setupFloatingUIInWindow()
+        setCoachMarkData(true)
+        
         setMenuVisible(true)
-
+        
         switch menu {
         case .schedule: floatingActionMenuView.highlightScheduleButton()
-        case .routine: floatingActionMenuView.highlightRoutineButton()
+        case .routine:  floatingActionMenuView.highlightRoutineButton()
         }
-        setCoachMarkMenuLock(true)
-    }
-    
-    public func setCoachMarkMenuLock(_ locked: Bool) {
-        isCoachMarkMenuLock = locked
     }
 
     // MARK: 코치마크 종료 시 호출
 
-    public func unlockFloatingMenuForCoachMark() {
-        setCoachMarkMenuLock(false)
+    func unlockFloatingMenuForCoachMark() {
         setMenuVisible(false)
+        setCoachMarkData(false)
+        fetchWeekTodo(for: selectedDate)
+    }
+    
+    func setCoachMarkData(_ on: Bool) {
+        isCoachMarkOn = on
+        input.send(.setDummyData)
     }
     
     private func setMenuVisible(_ visible: Bool, animated: Bool = true) {
         guard visible != isMenuVisible else { return }
         isMenuVisible = visible
         floatingActionMenuView.isHidden = !visible
-        dimmedView.isHidden = false
+        let shouldShowDim = visible && !isCoachMarkOn
+
+        if shouldShowDim { dimmedView.isHidden = false }
 
         let animations = {
-            self.dimmedView.alpha = visible ? 1 : 0
+            self.dimmedView.alpha = shouldShowDim ? 1 : 0
             self.eventMakorFloattingButton.updateBackgroundColor(
                 backgroundColor: visible ? TDColor.baseWhite : TDColor.Primary.primary500,
                 foregroundColor: visible ? TDColor.Neutral.neutral700 : TDColor.baseWhite
@@ -736,13 +741,14 @@ extension TodoViewController {
 
         if animated {
             UIView.animate(withDuration: 0.2, animations: animations) { _ in
-                if !visible { self.dimmedView.isHidden = true }
+                if !shouldShowDim { self.dimmedView.isHidden = true }
             }
         } else {
             animations()
-            if !visible { dimmedView.isHidden = true }
+            if !shouldShowDim { dimmedView.isHidden = true }
         }
     }
+
 }
 
 // MARK: - Layout Constants

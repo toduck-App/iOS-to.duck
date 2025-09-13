@@ -1,26 +1,57 @@
 import UIKit
+import SnapKit
+import Then
 
 public final class CoachBubbleView: UIView {
     // MARK: - Fixed Size
-    public static let fixedSize = CGSize(width: 320, height: 124)
+    public static let fixedSize = CGSize(width: 320, height: 114)
 
     // MARK: - UI
-    private let bubble = UIView()
-    private let arrowLayer = CAShapeLayer()
+    private let bubble = UIView().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 16
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOpacity = 0.15
+        $0.layer.shadowRadius = 8
+        $0.layer.shadowOffset = .init(width: 0, height: 4)
+    }
+    private let arrowLayer = CAShapeLayer().then {
+        $0.fillColor = UIColor.white.cgColor
+        $0.lineJoin = .round
+    }
 
-    private let vStack = UIStackView()
-    private let topRow = UIStackView()
-    private let iconView = UIImageView()
-    private let titleLabel = TDLabel(toduckFont: .boldHeader5, toduckColor: TDColor.Neutral.neutral800)
-    private let descLabel  = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral700)
+    private let vStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
+    }
+    private let topRow = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 8
+    }
+    private let iconView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+    private let titleLabel = TDLabel(toduckFont: .boldHeader5, toduckColor: TDColor.Neutral.neutral800).then {
+        $0.numberOfLines = 1
+        $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+    private let descLabel  = TDLabel(toduckFont: .regularBody2, toduckColor: TDColor.Neutral.neutral700).then {
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
+        $0.setLineHeightMultiple(1.5)
+        $0.setContentHuggingPriority(.required, for: .vertical)
+        $0.setContentCompressionResistancePriority(.required, for: .vertical)
+    }
 
     // MARK: - Layout Const
-    private let contentInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16) // ★ 16
+    private let contentInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 28)
     private let arrowSize = CGSize(width: 16, height: 10)
     private let cornerRadius: CGFloat = 16
     private let iconSize: CGFloat = 24
-    private let rowSpacing: CGFloat = 16
-    private let colSpacing: CGFloat = 8
 
     private var direction: CoachArrowDirection = .down
     private var tailAnchorRatio: CGFloat = 0.5
@@ -32,78 +63,26 @@ public final class CoachBubbleView: UIView {
         backgroundColor = .clear
         layer.masksToBounds = false
 
-        bubble.backgroundColor = .white
-        bubble.layer.cornerRadius = cornerRadius
-        bubble.layer.shadowColor = UIColor.black.cgColor
-        bubble.layer.shadowOpacity = 0.15
-        bubble.layer.shadowRadius = 8
-        bubble.layer.shadowOffset = .init(width: 0, height: 4)
         addSubview(bubble)
-
-        // Stacks
-        vStack.axis = .vertical
-        vStack.spacing = rowSpacing
-        topRow.axis = .horizontal
-        topRow.alignment = .center
-        topRow.spacing = colSpacing
-
         bubble.addSubview(vStack)
         vStack.addArrangedSubview(topRow)
         topRow.addArrangedSubview(iconView)
         topRow.addArrangedSubview(titleLabel)
         vStack.addArrangedSubview(descLabel)
 
-        // Icon
-        iconView.contentMode = .scaleAspectFit
-        iconView.setContentHuggingPriority(.required, for: .horizontal)
-        iconView.setContentCompressionResistancePriority(.required, for: .horizontal)
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            iconView.widthAnchor.constraint(equalToConstant: iconSize),
-            iconView.heightAnchor.constraint(equalToConstant: iconSize),
-        ])
+        bubble.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
 
-        // Title
-        titleLabel.numberOfLines = 1
-        titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        vStack.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(contentInsets)
+        }
 
-        // Description
-        descLabel.numberOfLines = 0
-        descLabel.lineBreakMode = .byWordWrapping
-        descLabel.setLineHeightMultiple(1.5)
-        descLabel.setContentHuggingPriority(.required, for: .vertical)
-        descLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        iconView.snp.makeConstraints {
+            $0.width.height.equalTo(iconSize)
+        }
 
-        translatesAutoresizingMaskIntoConstraints = false
-        bubble.translatesAutoresizingMaskIntoConstraints = false
-        vStack.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(equalToConstant: CoachBubbleView.fixedSize.width),
-            heightAnchor.constraint(equalToConstant: CoachBubbleView.fixedSize.height),
-        ])
-
-        NSLayoutConstraint.activate([
-            bubble.leadingAnchor.constraint(equalTo: leadingAnchor),
-            bubble.trailingAnchor.constraint(equalTo: trailingAnchor),
-            bubble.topAnchor.constraint(equalTo: topAnchor),
-            bubble.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            vStack.leadingAnchor.constraint(equalTo: bubble.leadingAnchor, constant: contentInsets.left),
-            vStack.trailingAnchor.constraint(equalTo: bubble.trailingAnchor, constant: -contentInsets.right),
-            vStack.topAnchor.constraint(equalTo: bubble.topAnchor, constant: contentInsets.top),
-            vStack.bottomAnchor.constraint(equalTo: bubble.bottomAnchor, constant: -contentInsets.bottom),
-        ])
-
-        // Arrow
         layer.addSublayer(arrowLayer)
-        arrowLayer.fillColor = UIColor.white.cgColor
-        arrowLayer.lineJoin = .round
-
-        // A11y
-        isAccessibilityElement = true
-        accessibilityTraits = .staticText
     }
 
     @available(*, unavailable)
@@ -115,82 +94,43 @@ public final class CoachBubbleView: UIView {
 
     // MARK: - Public API
     public func configure(
-        title: String?,
-        image: UIImage?,
+        title: String,
+        icon: UIImage?,
+        iconSize: CGSize,
         description: String,
         highlightTokens: [String],
         highlightColor: UIColor,
         direction: CoachArrowDirection
     ) {
         self.direction = direction
-        iconView.isHidden = (image == nil)
-        iconView.image = image
 
-        titleLabel.isHidden = (title?.isEmpty ?? true)
-        titleLabel.setText(title ?? "")
+        iconView.isHidden = (icon == nil)
+        iconView.image = icon?.withRenderingMode(.alwaysOriginal).withTintColor(TDColor.Neutral.neutral800)
+        iconView.snp.updateConstraints {
+            $0.width.height.equalTo(icon == nil ? 0 : iconSize)
+        }
 
-        let attr = highlighted(
-            fullText: description,
-            tokens: highlightTokens,
-            baseFont: TDFont.regularBody2.font,
-            baseColor: descLabel.textColor,
-            highlightColor: highlightColor
-        )
-        descLabel.attributedText = attr
+        titleLabel.setText(title)
 
+        // 본문 + 하이라이트 (라인헤이트 1.5 고정)
+        descLabel.setText(description)
         descLabel.setLineHeightMultiple(1.5)
-
-        var axText = ""
-        if let t = title, !t.isEmpty { axText += t + "\n" }
-        axText += description
-        accessibilityLabel = axText
-        accessibilityHint = "화면 아무 곳이나 탭하면 다음 안내로 이동합니다."
+        if !highlightTokens.isEmpty {
+            // 필요 시 [.wholeWord] / [.regex] 변경
+            descLabel.highlight(tokens: highlightTokens,
+                                color: highlightColor,
+                                font: TDFont.boldBody2,
+                                options: [.caseInsensitive])
+        }
 
         setNeedsLayout()
         layoutIfNeeded()
     }
 
-
     public func setTail(direction: CoachArrowDirection, anchorRatio: CGFloat) {
         self.direction = direction
         tailAnchorRatio = max(0.0, min(1.0, anchorRatio))
         setNeedsLayout()
-    }
-
-    // MARK: - Highlight helper
-    private func highlighted(
-        fullText: String,
-        tokens: [String],
-        baseFont: UIFont,
-        baseColor: UIColor,
-        highlightColor: UIColor
-    ) -> NSAttributedString {
-        let attr = NSMutableAttributedString(
-            string: fullText,
-            attributes: [
-                .font: baseFont,
-                .foregroundColor: baseColor
-            ]
-        )
-        for token in tokens where !token.isEmpty {
-            var searchRange = NSRange(location: 0, length: attr.length)
-            let ns = attr.string as NSString
-            while true {
-                let r = ns.range(of: token, options: [], range: searchRange)
-                if r.location == NSNotFound { break }
-                attr.addAttributes(
-                    [
-                        .font: TDFont.boldBody2.font,
-                        .foregroundColor: highlightColor
-                    ],
-                    range: r
-                )
-                let nextLoc = r.location + r.length
-                if nextLoc >= attr.length { break }
-                searchRange = NSRange(location: nextLoc, length: attr.length - nextLoc)
-            }
-        }
-        return attr
     }
 
     // MARK: - Layout & Arrow

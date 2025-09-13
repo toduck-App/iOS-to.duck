@@ -333,7 +333,8 @@ public final class CoachMarkPresenter: NSObject, UIGestureRecognizerDelegate {
             // 버블 텍스트 적용 (화살표 방향으로 넘김)
             bubble.configure(
                 title: step.title,
-                image: step.icon,
+                icon: step.icon,
+                iconSize: step.iconSize,
                 description: step.description,
                 highlightTokens: step.highlightTokens,
                 highlightColor: TDColor.Primary.primary500,
