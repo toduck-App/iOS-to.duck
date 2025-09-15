@@ -10,6 +10,7 @@ enum ScheduleSegmentType {
 final class ToduckViewModel: BaseViewModel {
     enum Input {
         case fetchScheduleList
+        case setCoachMarkData
     }
     
     enum Output {
@@ -53,6 +54,9 @@ final class ToduckViewModel: BaseViewModel {
             switch event {
             case .fetchScheduleList:
                 Task { await self?.fetchScheduleList() }
+            case .setCoachMarkData:
+                self?.currentSchedules = [Schedule.dummy]
+                self?.output.send(.fetchedScheduleList(isEmpty: false))
             }
         }.store(in: &cancellables)
         

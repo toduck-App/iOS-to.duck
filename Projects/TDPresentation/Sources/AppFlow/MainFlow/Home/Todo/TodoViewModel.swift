@@ -10,6 +10,7 @@ final class TodoViewModel: BaseViewModel {
         case deleteAllTodo(todoId: Int, isSchedule: Bool)
         case checkBoxTapped(todo: any TodoItem)
         case moveToTomorrow(todoId: Int, event: any TodoItem)
+        case setDummyData
     }
     
     enum Output {
@@ -91,6 +92,8 @@ final class TodoViewModel: BaseViewModel {
                 case .didSelectedDate(let selectedDate):
                     self?.selectedDate = selectedDate
                     self?.unionTodoListForSelectedDate(selectedDate: selectedDate)
+                case .setDummyData:
+                    self?.setDummyData()
                 default:
                     break
                 }
@@ -305,5 +308,13 @@ final class TodoViewModel: BaseViewModel {
         } catch {
             output.send(.failure(error: "루틴을 생성할 수 없습니다."))
         }
+    }
+    
+    private func setDummyData() {
+        weeklyTodoData = .init(
+            schedules: [selectedDate.normalized : Schedule.dummyList],
+            routines: [:]
+        )
+        unionTodoListForSelectedDate(selectedDate: selectedDate)
     }
 }

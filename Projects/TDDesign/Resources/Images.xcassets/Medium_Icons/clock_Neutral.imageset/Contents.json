@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "coachMark2.png",
+      "filename" : "clock_Neutral.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "coachMark2@2x.png",
+      "filename" : "clock_Neutral@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "coachMark2@3x.png",
+      "filename" : "clock_Neutral@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

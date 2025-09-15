@@ -204,3 +204,10 @@ public final class TDSegmentedControl: UIControl {
         updateSelectedIndex()
     }
 }
+
+public extension TDSegmentedControl {
+    // MARK: 코치마크 등에서 특정 세그먼트 뷰 참조가 필요할 때 사용
+    func segmentView(at index: Int) -> UIView? {
+        return (index >= 0 && index < buttons.count) ? buttons[index] : nil
+    }
+}
