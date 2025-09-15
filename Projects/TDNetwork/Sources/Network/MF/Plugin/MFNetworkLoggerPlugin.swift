@@ -145,7 +145,7 @@ public struct MFNetworkLoggerPlugin: MFNetworkPlugin {
 
     private func isSensitiveHeader(_ name: String) -> Bool {
         let lower = name.lowercased()
-        return lower == "authorization2"
+        return lower == "authorization"
             || lower == "cookie"
             || lower == "set-cookie"
             || lower == "x-api-key"
