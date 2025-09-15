@@ -127,8 +127,6 @@ struct ScheduleWidgetEntryView: View {
         }
     }
 
-   
-
     // MARK: - Helpers (공용)
 
     private func rightPaneContext(
@@ -393,4 +391,14 @@ extension ScheduleEntry {
             scheduleRecords: nil
         )
     ]
+}
+
+extension Color {
+    static func getAccentColor(for category: TDCategory?) -> Color? {
+        guard let category, let color = Color(hex: category.colorHex) else {
+            return nil
+        }
+        let colorValue = ColorValue(color: color)
+        return Color.colorPair[colorValue]
+    }
 }

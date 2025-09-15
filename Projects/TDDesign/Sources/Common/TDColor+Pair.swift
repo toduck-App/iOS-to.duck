@@ -1,5 +1,4 @@
 import SwiftUI
-import TDDomain
 import UIKit
 
 public typealias TDColorPair = (text: UIColor, back: UIColor)
@@ -127,12 +126,4 @@ public extension Color {
         ColorValue(color: TDColor.ScheduleSwiftUI.back19): .white,
         ColorValue(color: TDColor.ScheduleSwiftUI.back20): .white,
     ]
-    
-    static func getAccentColor(for category: TDCategory?) -> Color? {
-        guard let category, let color = Color(hex: category.colorHex) else {
-            return nil
-        }
-        let colorValue = ColorValue(color: color)
-        return Color.colorPair[colorValue]
-    }
 }
