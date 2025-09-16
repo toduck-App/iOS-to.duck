@@ -55,6 +55,7 @@ public final class AppCoordinator: Coordinator {
                         startAuthFlow()
                     } else {
                         startTabBarFlow()
+                        fetchStreakData()
                         processPendingDeepLink()
                         registerPendingFCMToken()
                     }
@@ -196,6 +197,13 @@ public final class AppCoordinator: Coordinator {
             navigationController.viewControllers.removeFirst()
         }
         self.splashViewController = nil
+    }
+    
+    private func fetchStreakData() {
+        let fetchStreakUseCase = injector.resolve(FetchStreakUseCase.self)
+        Task {
+            try await fetchStreakUseCase.execute()
+        }
     }
 }
 

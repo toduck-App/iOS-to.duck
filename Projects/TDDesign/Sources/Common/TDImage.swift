@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import SwiftUI
 
 public enum TDImage {
     public static let appIcon = TDDesignAsset.Images.appIcon.image
