@@ -24,8 +24,8 @@ let appTarget = Target.target(
         .network(),
         .storage(),
         .domain(),
-        .target(name: "TDDiaryWidget"),
-        .target(name: "TDScheduleWidget")
+        .target(name: "TDDiaryWidget")
+//        .target(name: "TDScheduleWidget")
     ],
     settings: .settings(
         base: [
@@ -64,38 +64,41 @@ let diaryWidgetExtension = Target.target(
     )
 )
 
-let scheduleWidgetExtension = Target.target(
-    name: "TDScheduleWidget",
-    product: .appExtension,
-    deploymentTargets: .iOS("17.0"),
-    infoPlist: .file(path: .relativeToRoot("Projects/toduck/TDScheduleWidget/Resources/Info.plist")),
-    sources: .scheduleWidgetSources,
-    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
-    scripts: [],
-    dependencies: [
-        .core(),
-        .domain(),
-        .design()
-    ],
-    settings: .settings(
-        base: [
-            "DEVELOPMENT_LANGUAGE": "ko",
-            "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
-        ],
-        configurations: [
-            .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
-            .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
-        ]
-    )
-)
-
 // MARK: - Project
 
 let project = Project.project(
     name: "toduck",
     targets: [
         appTarget,
-        diaryWidgetExtension,
-        scheduleWidgetExtension
+        diaryWidgetExtension
     ]
 )
+
+/*
+ scheduleWidgetExtension 임시 백업용
+ //let scheduleWidgetExtension = Target.target(
+ //    name: "TDScheduleWidget",
+ //    product: .appExtension,
+ //    deploymentTargets: .iOS("17.0"),
+ //    infoPlist: .file(path: .relativeToRoot("Projects/toduck/TDScheduleWidget/Resources/Info.plist")),
+ //    sources: .scheduleWidgetSources,
+ //    entitlements: .file(path: .relativeToRoot("Projects/toduck/SupportingFiles/toduck.entitlements")),
+ //    scripts: [],
+ //    dependencies: [
+ //        .core(),
+ //        .domain(),
+ //        .design()
+ //    ],
+ //    settings: .settings(
+ //        base: [
+ //            "DEVELOPMENT_LANGUAGE": "ko",
+ //            "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
+ //        ],
+ //        configurations: [
+ //            .debug(name: "Debug", xcconfig: "SupportingFiles/Debug.xcconfig"),
+ //            .release(name: "Release", xcconfig: "SupportingFiles/Release.xcconfig")
+ //        ]
+ //    )
+ //)
+
+ */

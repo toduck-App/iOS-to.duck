@@ -122,6 +122,7 @@ struct DiaryEntry: TimelineEntry {
                 TDWidgetImage.Diary.B1,
                 TDWidgetImage.Diary.B2,
                 TDWidgetImage.Diary.B3,
+                TDWidgetImage.Diary.B4,
             ]
             let res = images[count % images.count]
             return res
@@ -131,6 +132,7 @@ struct DiaryEntry: TimelineEntry {
                     TDWidgetImage.Diary.C1,
                     TDWidgetImage.Diary.C2,
                     TDWidgetImage.Diary.C3,
+                    TDWidgetImage.Diary.C4,
                 ]
             let res = images[count % images.count]
             return res

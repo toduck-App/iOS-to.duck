@@ -8,9 +8,11 @@ public enum TDWidgetImage {
         public static let B1 = TDDesignAsset.Images.widgetB1.swiftUIImage
         public static let B2 = TDDesignAsset.Images.widgetB2.swiftUIImage
         public static let B3 = TDDesignAsset.Images.widgetB3.swiftUIImage
+        public static let B4 = TDDesignAsset.Images.widgetB4.swiftUIImage
         public static let C1 = TDDesignAsset.Images.widgetC1.swiftUIImage
         public static let C2 = TDDesignAsset.Images.widgetC2.swiftUIImage
         public static let C3 = TDDesignAsset.Images.widgetC3.swiftUIImage
+        public static let C4 = TDDesignAsset.Images.widgetC4.swiftUIImage
         public static let D1 = TDDesignAsset.Images.widgetD1.swiftUIImage
         public static let D2 = TDDesignAsset.Images.widgetD2.swiftUIImage
         public static let D3 = TDDesignAsset.Images.widgetD3.swiftUIImage
