@@ -29,6 +29,7 @@ let appTarget = Target.target(
     ],
     settings: .settings(
         base: [
+            "TARGETED_DEVICE_FAMILY": "1",
             "DEVELOPMENT_LANGUAGE": "ko",
             "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
         ],
@@ -54,6 +55,7 @@ let diaryWidgetExtension = Target.target(
     ],
     settings: .settings(
         base: [
+            "TARGETED_DEVICE_FAMILY": "1",
             "DEVELOPMENT_LANGUAGE": "ko",
             "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]
         ],
