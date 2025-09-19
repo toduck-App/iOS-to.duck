@@ -3,6 +3,7 @@ import TDCore
 
 public protocol FocusTimerUseCase {
     func start()
+    func start(from remainTime: Int)
     func stop()
     func reset()
     var isRunning: Bool { get }
@@ -56,8 +57,13 @@ final class FocusTimerUseCaseImpl: FocusTimerUseCase {
             }
         }
     }
+    
+    func start(from remainTime: Int) {
+        self.remainTime = remainTime
+        start()
+    }
 
-    func stop() {   
+    func stop() {
         guard isRunning else { return }
         timer?.invalidate()
         timer = nil

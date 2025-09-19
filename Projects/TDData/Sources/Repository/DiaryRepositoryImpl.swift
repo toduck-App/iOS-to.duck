@@ -1,5 +1,7 @@
-import TDDomain
 import Foundation
+import TDCore
+import TDDomain
+import WidgetKit
 
 public final class DiaryRepositoryImpl: DiaryRepository {
     private let diaryService: DiaryService
@@ -24,6 +26,12 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         diary.diaryImageUrls = imageUrls
         
         try await diaryService.createDiary(diary: diary)
+        Task {
+            // MARK: 휴대폰 기기가 느려서, 일기 작성 후 바로 스트릭을 조회하면, 서버에서 반영이 안된 상태로 조회되는 경우가 있을 수도 있음.
+            try? await Task.sleep(until: .now + .seconds(1))
+
+            _ = try await fetchStreak()
+        }
     }
     
     public func fetchDiaryList(year: Int, month: Int) async throws -> [Diary] {
@@ -54,5 +62,18 @@ public final class DiaryRepositoryImpl: DiaryRepository {
     
     public func fetchDiaryCompareCount(yearMonth: String) async throws -> Int {
         try await diaryService.fetchDiaryCompareCount(yearMonth: yearMonth)
+    }
+    
+    // 일기 스트릭 조회 성공, 해당 유저의 일기 스트릭과 최근에 작성한 일기 날짜를 반환합니다.
+    public func fetchStreak() async throws -> (streak: Int, lastWriteDate: String?) {
+        let response = try await diaryService.fetchStreak()
+        
+        let streak = response.streak
+        let lastDiaryDate = response.lastDiaryDate
+
+        UserDefaults(suiteName: UserDefaultsConstant.Diary.suiteName)?.setValue(streak, forKey: UserDefaultsConstant.Diary.countKey)
+        UserDefaults(suiteName: UserDefaultsConstant.Diary.suiteName)?.setValue(lastDiaryDate, forKey: UserDefaultsConstant.Diary.lastWriteDateKey)
+        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
+        return (streak, lastDiaryDate)
     }
 }

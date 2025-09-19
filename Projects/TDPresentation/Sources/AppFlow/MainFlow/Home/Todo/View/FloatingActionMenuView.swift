@@ -8,7 +8,7 @@ protocol FloatingActionMenuViewDelegate: AnyObject {
 
 final class FloatingActionMenuView: BaseView {
     // MARK: UI Components
-    private let scheduleContainerView = UIView()
+    private(set) var scheduleContainerView = UIView()
     private let scheduleImageView = UIImageView()
     private let scheduleLabel = TDLabel(
         labelText: "일정 추가",
@@ -16,7 +16,7 @@ final class FloatingActionMenuView: BaseView {
         toduckColor: TDColor.Neutral.neutral800
     )
     
-    private let routineContainerView = UIView()
+    private(set) var routineContainerView = UIView()
     private let routineImageView = UIImageView()
     private let routineLabel = TDLabel(
         labelText: "루틴 추가",
@@ -97,13 +97,9 @@ final class FloatingActionMenuView: BaseView {
         switch gesture.state {
         case .began:
             HapticManager.impact(.soft)
-            scheduleContainerView.backgroundColor = TDColor.Primary.primary50
-            scheduleImageView.tintColor = TDColor.Primary.primary400
-            scheduleLabel.textColor = TDColor.Primary.primary500
+            highlightScheduleButton()
         case .ended:
-            scheduleContainerView.backgroundColor = .clear
-            scheduleImageView.tintColor = TDColor.Neutral.neutral400
-            scheduleLabel.textColor = TDColor.Neutral.neutral800
+            resetButtonStates()
             delegate?.didTapScheduleButton()
         case .cancelled, .failed:
             scheduleContainerView.backgroundColor = .clear
@@ -117,18 +113,44 @@ final class FloatingActionMenuView: BaseView {
         switch gesture.state {
         case .began:
             HapticManager.impact(.soft)
-            routineContainerView.backgroundColor = TDColor.Primary.primary50
-            routineImageView.tintColor = TDColor.Primary.primary400
-            routineLabel.textColor = TDColor.Primary.primary500
+            highlightRoutineButton()
         case .ended:
-            routineContainerView.backgroundColor = .clear
-            routineImageView.tintColor = TDColor.Neutral.neutral400
-            routineLabel.textColor = TDColor.Neutral.neutral800
+            resetButtonStates()
             delegate?.didTapRoutineButton()
         case .cancelled, .failed:
             routineContainerView.backgroundColor = .clear
         default:
             break
         }
+    }
+    
+    public func highlightScheduleButton() {
+        routineContainerView.backgroundColor = .clear
+        routineImageView.tintColor = TDColor.Neutral.neutral400
+        routineLabel.textColor = TDColor.Neutral.neutral800
+        
+        scheduleContainerView.backgroundColor = TDColor.Primary.primary50
+        scheduleImageView.tintColor = TDColor.Primary.primary400
+        scheduleLabel.textColor = TDColor.Primary.primary500
+    }
+    
+    public func highlightRoutineButton() {
+        scheduleContainerView.backgroundColor = .clear
+        scheduleImageView.tintColor = TDColor.Neutral.neutral400
+        scheduleLabel.textColor = TDColor.Neutral.neutral800
+        
+        routineContainerView.backgroundColor = TDColor.Primary.primary50
+        routineImageView.tintColor = TDColor.Primary.primary400
+        routineLabel.textColor = TDColor.Primary.primary500
+    }
+    
+    public func resetButtonStates() {
+        scheduleContainerView.backgroundColor = .clear
+        scheduleImageView.tintColor = TDColor.Neutral.neutral400
+        scheduleLabel.textColor = TDColor.Neutral.neutral800
+        
+        routineContainerView.backgroundColor = .clear
+        routineImageView.tintColor = TDColor.Neutral.neutral400
+        routineLabel.textColor = TDColor.Neutral.neutral800
     }
 }

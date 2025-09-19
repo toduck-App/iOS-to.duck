@@ -10,11 +10,11 @@ enum ScheduleSegmentType {
 final class ToduckViewModel: BaseViewModel {
     enum Input {
         case fetchScheduleList
+        case setCoachMarkData
     }
     
     enum Output {
-        case fetchedScheduleList
-        case fetchedEmptyScheduleList
+        case fetchedScheduleList(isEmpty: Bool)
         case failure(error: String)
     }
     
@@ -54,6 +54,9 @@ final class ToduckViewModel: BaseViewModel {
             switch event {
             case .fetchScheduleList:
                 Task { await self?.fetchScheduleList() }
+            case .setCoachMarkData:
+                self?.currentSchedules = [Schedule.dummy]
+                self?.output.send(.fetchedScheduleList(isEmpty: false))
             }
         }.store(in: &cancellables)
         
@@ -91,9 +94,9 @@ final class ToduckViewModel: BaseViewModel {
                     .sorted {
                         Date.timeSortKey($0.time) < Date.timeSortKey($1.time)
                     }
-                output.send(.fetchedScheduleList)
+                output.send(.fetchedScheduleList(isEmpty: false))
             } else {
-                output.send(.fetchedEmptyScheduleList)
+                output.send(.fetchedScheduleList(isEmpty: true))
             }
         } catch {
             output.send(.failure(error: "일정을 불러오는데 실패했습니다."))

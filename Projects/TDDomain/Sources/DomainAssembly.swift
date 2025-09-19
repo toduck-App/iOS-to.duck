@@ -285,13 +285,6 @@ public struct DomainAssembly: Assembly {
             return FetchPostUseCaseImpl(repository: repository)
         }
         
-        container.register(FetchRoutineListUseCase.self) { resolver in
-            guard let repository = resolver.resolve(RoutineRepository.self) else {
-                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
-            }
-            return FetchRoutineListUseCaseImpl(repository: repository)
-        }
-        
         container.register(FetchFocusListUseCase.self) { resolver in
             guard let repository = resolver.resolve(FocusRepository.self) else {
                 fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
@@ -304,6 +297,13 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 FocusRepository가 등록되어 있지 않습니다.")
             }
             return FetchFocusPercentUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchScheduleUseCase.self) { resolver in
+            guard let repository = resolver.resolve(ScheduleRepository.self) else {
+                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchScheduleUseCaseImpl(repository: repository)
         }
         
         container.register(FetchRoutineUseCase.self) { resolver in
@@ -320,11 +320,32 @@ public struct DomainAssembly: Assembly {
             return FetchScheduleListUseCaseImpl(repository: repository)
         }
         
-        container.register(FetchScheduleUseCase.self) { resolver in
-            guard let repository = resolver.resolve(ScheduleRepository.self) else {
-                fatalError("컨테이너에 ScheduleRepository가 등록되어 있지 않습니다.")
+        container.register(FetchRoutineListUseCase.self) { resolver in
+            guard let repository = resolver.resolve(RoutineRepository.self) else {
+                fatalError("컨테이너에 RoutineRepository가 등록되어 있지 않습니다.")
             }
-            return FetchScheduleUseCaseImpl(repository: repository)
+            return FetchRoutineListUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchWeeklyTodoListUseCase.self) { resolver in
+            guard let fetchScheduleListUseCase = resolver.resolve(FetchScheduleListUseCase.self) else {
+                fatalError("컨테이너에 FetchScheduleListUseCase가 등록되어 있지 않습니다.")
+            }
+            guard let fetchRoutineListForDatesUseCase = resolver.resolve(FetchRoutineListForDatesUseCase.self) else {
+                fatalError("컨테이너에 FetchRoutineListUseCase가 등록되어 있지 않습니다.")
+            }
+            return FetchWeeklyTodoListUseCaseImpl(
+                fetchScheduleListUseCase: fetchScheduleListUseCase,
+                fetchRoutineListForDatesUseCase: fetchRoutineListForDatesUseCase
+            )
+        }
+        
+        container.register(ProcessDailyTodoListUseCase.self) { _ in
+            return ProcessDailyTodoListUseCaseImpl()
+        }
+
+        container.register(RemoveTodoItemFromLocalDataUseCase.self) { _ in
+            return RemoveTodoItemFromLocalDataUseCaseImpl()
         }
         
         container.register(FetchUserPostUseCase.self) { resolver in
@@ -605,6 +626,13 @@ public struct DomainAssembly: Assembly {
                 fatalError("컨테이너에 UserAuthRepository가 등록되어 있지 않습니다.")
             }
             return WithdrawUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchStreakUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchStreakUseCaseImpl(repository: repository)
         }
     }
 }

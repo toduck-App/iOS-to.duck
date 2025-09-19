@@ -87,7 +87,7 @@ final class FetchNotificationListUseCaseTests: XCTestCase {
             title: "팔로우 알림",
             body: "내용",
             actionUrl: nil,
-            data: NotificationInfo(commenterName: "", commentContent: "", postId: 0),
+            data: NotificationInfo.comment(commenterName: "", commentContent: "", postId: 0),
             isRead: false,
             createdAt: "2025-05-25"
         )
@@ -102,7 +102,7 @@ final class FetchNotificationListUseCaseTests: XCTestCase {
             title: "좋아요 알림",
             body: "내용",
             actionUrl: nil,
-            data: NotificationInfo(commenterName: "", commentContent: "", postId: 0),
+            data: NotificationInfo.comment(commenterName: "", commentContent: "", postId: 0),
             isRead: false,
             createdAt: "2025-05-25"
         )

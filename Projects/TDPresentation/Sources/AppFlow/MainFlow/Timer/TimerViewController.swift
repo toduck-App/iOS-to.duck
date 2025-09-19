@@ -13,6 +13,7 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private var theme: TDTimerTheme = .toduck
     private var focusCount: Int = 0 // 테마 변경시 stack 토마토를 그릴 수 있게 하기 위한 임시 변수
     private var isTimerRunning: Bool = false
+    private var backgroundEnterTime: Date?
     weak var coordinator: TimerCoordinator?
     
     // MARK: - Initializer
@@ -207,9 +208,9 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     }
     
     private func didTapStopTimerButton() {
-        isTimerRunning = false
         let timerCautionPopupViewController = TimerCautionPopupViewController(popupMode: .stop)
         timerCautionPopupViewController.onAction = { [weak self] in
+            self?.isTimerRunning = false
             self?.input.send(.didTapStopTimerButton)
             self?.dismissToast()
             self?.layoutView.dropDownView.dataSource = TimerDropDownMenuItem.allCases.map { $0.dropDownItem }
@@ -221,17 +222,39 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
     private func setupNotification() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(handleAppDidEnterBackground),
+            selector: #selector(appDidEnterBackground),
             name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
             object: nil
         )
     }
     
     @objc
-    private func handleAppDidEnterBackground() {
-        if isTimerRunning {
-            didTapPauseTimerButton()
-        }
+    private func appDidEnterBackground() {
+        guard isTimerRunning else { return }
+        backgroundEnterTime = Date()
+    }
+
+    @objc
+    private func appWillEnterForeground() {
+        guard isTimerRunning, let backgroundTime = backgroundEnterTime else { return }
+        
+        let elapsed = Date().timeIntervalSince(backgroundTime)
+        input.send(.subtractElapsedTime(elapsed))
+        
+        backgroundEnterTime = nil
+    }
+    
+    private func updateTimeDisplay() {
+        let secondsRemaining = viewModel.currentRemainingTime
+        let minutes = Int(secondsRemaining) / 60
+        let seconds = Int(secondsRemaining) % 60
+        layoutView.remainedFocusTimeLabel.setText(String(format: "%02d:%02d", minutes, seconds))
     }
     
     private func finishedTimerOneCycle() {
@@ -242,7 +265,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         guard let setting: TDTimerSetting = viewModel.timerSetting else { return }
         let elapsedTime = setting.toFocusDurationMinutes() - remainedTime
         
-        // Label 업데이트
         let second = remainedTime % 60
         let minute = (remainedTime / 60) % 60
         let hour = minute / 60
@@ -253,7 +275,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             : String(format: "%02d:%02d", minute, second)
         )
         
-        // progress 업데이트
         layoutView.simpleTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
         layoutView.bboduckTimerView.progress = CGFloat(elapsedTime) / CGFloat(setting.toFocusDurationMinutes())
     }
@@ -284,7 +305,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.simpleTimerView.isHidden = theme == .toduck
         layoutView.bboduckTimerView.isHidden = theme == .simple
         
-        // button theme
         layoutView.playButton.configuration?.image = theme == .simple ? TDImage.Timer.playNeutral : TDImage.Timer.playPrimary
         layoutView.pauseButton.configuration?.image = theme == .simple ? TDImage.Timer.pauseNeutral : TDImage.Timer.pausePrimary
         layoutView.resetButton.configuration?.image = theme == .simple ? TDImage.Timer.resetNeutral : TDImage.Timer.resetPrimary
@@ -303,10 +323,8 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
         }
         
-        // background theme
         layoutView.backgroundColor = theme.backgroundColor
         
-        // navigation theme
         navigationItem.rightBarButtonItem?.customView?.subviews.forEach { view in
             view.tintColor = theme.navigationColor
         }
@@ -323,7 +341,6 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
             index += 1
         }
         
-        // stack theme
         updateFocusCount(with: focusCount)
         applyNavigationAppearance(for: theme)
         layoutView.layoutIfNeeded()

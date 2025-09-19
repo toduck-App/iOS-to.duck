@@ -10,6 +10,7 @@ final class TodoViewModel: BaseViewModel {
         case deleteAllTodo(todoId: Int, isSchedule: Bool)
         case checkBoxTapped(todo: any TodoItem)
         case moveToTomorrow(todoId: Int, event: any TodoItem)
+        case setDummyData
     }
     
     enum Output {
@@ -24,18 +25,18 @@ final class TodoViewModel: BaseViewModel {
     
     private let createScheduleUseCase: CreateScheduleUseCase
     private let createRoutineUseCase: CreateRoutineUseCase
-    private let fetchScheduleListUseCase: FetchScheduleListUseCase
-    private let fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase
+    private let fetchWeeklyTodoListUseCase: FetchWeeklyTodoListUseCase
+    private let processDailyTodoListUseCase: ProcessDailyTodoListUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let finishScheduleUseCase: FinishScheduleUseCase
     private let finishRoutineUseCase: FinishRoutineUseCase
     private let deleteScheduleUseCase: DeleteScheduleUseCase
     private let deleteRoutineAfterCurrentDayUseCase: DeleteRoutineAfterCurrentDayUseCase
     private let deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
+    private let removeTodoItemFromLocalDataUseCase: RemoveTodoItemFromLocalDataUseCase
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private var weeklyScheduleList: [Date: [Schedule]] = [:]
-    private var weeklyRoutineList: [Date: [Routine]] = [:]
+    private var weeklyTodoData: WeeklyTodoData?
     private var selectedDate = Date()
     private(set) var allDayTodoList: [any TodoItem] = []
     private(set) var timedTodoList: [any TodoItem] = []
@@ -43,25 +44,27 @@ final class TodoViewModel: BaseViewModel {
     init(
         createScheduleUseCase: CreateScheduleUseCase,
         createRoutineUseCase: CreateRoutineUseCase,
-        fetchScheduleListUseCase: FetchScheduleListUseCase,
-        fetchRoutineListForDatesUseCase: FetchRoutineListForDatesUseCase,
+        fetchWeeklyTodoListUseCase: FetchWeeklyTodoListUseCase,
+        processDailyTodoListUseCase: ProcessDailyTodoListUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
         finishScheduleUseCase: FinishScheduleUseCase,
         finishRoutineUseCase: FinishRoutineUseCase,
         deleteScheduleUseCase: DeleteScheduleUseCase,
         deleteRoutineAfterCurrentDayUseCase: DeleteRoutineAfterCurrentDayUseCase,
-        deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase
+        deleteRoutineForCurrentDayUseCase: DeleteRoutineForCurrentDayUseCase,
+        removeTodoItemFromLocalDataUseCase: RemoveTodoItemFromLocalDataUseCase
     ) {
         self.createScheduleUseCase = createScheduleUseCase
         self.createRoutineUseCase = createRoutineUseCase
-        self.fetchScheduleListUseCase = fetchScheduleListUseCase
-        self.fetchRoutineListForDatesUseCase = fetchRoutineListForDatesUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
+        self.fetchWeeklyTodoListUseCase = fetchWeeklyTodoListUseCase
+        self.processDailyTodoListUseCase = processDailyTodoListUseCase
         self.finishScheduleUseCase = finishScheduleUseCase
         self.finishRoutineUseCase = finishRoutineUseCase
         self.deleteScheduleUseCase = deleteScheduleUseCase
         self.deleteRoutineAfterCurrentDayUseCase = deleteRoutineAfterCurrentDayUseCase
         self.deleteRoutineForCurrentDayUseCase = deleteRoutineForCurrentDayUseCase
+        self.removeTodoItemFromLocalDataUseCase = removeTodoItemFromLocalDataUseCase
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -89,6 +92,8 @@ final class TodoViewModel: BaseViewModel {
                 case .didSelectedDate(let selectedDate):
                     self?.selectedDate = selectedDate
                     self?.unionTodoListForSelectedDate(selectedDate: selectedDate)
+                case .setDummyData:
+                    self?.setDummyData()
                 default:
                     break
                 }
@@ -121,16 +126,10 @@ final class TodoViewModel: BaseViewModel {
     // MARK: - 투두 리스트 가져오기
     private func fetchWeeklyTodoList(startDate: String, endDate: String) async {
         do {
-            let fetchedWeeklyScheduleList = try await fetchScheduleListUseCase.execute(
+            self.weeklyTodoData = try await fetchWeeklyTodoListUseCase.execute(
                 startDate: startDate,
                 endDate: endDate
             )
-            let fetchedWeeklyRoutineList = try await fetchRoutineListForDatesUseCase.execute(
-                startDate: startDate,
-                endDate: endDate
-            )
-            self.weeklyScheduleList = fetchedWeeklyScheduleList
-            self.weeklyRoutineList = fetchedWeeklyRoutineList
             output.send(.fetchedTodoList)
         } catch {
             output.send(.failure(error: "투두를 불러오는데 실패했습니다."))
@@ -138,15 +137,15 @@ final class TodoViewModel: BaseViewModel {
     }
     
     private func unionTodoListForSelectedDate(selectedDate: Date) {
-        let selectedDateScheduleList = weeklyScheduleList[selectedDate.normalized] ?? []
-        let selectedDateRoutineList = weeklyRoutineList[selectedDate.normalized] ?? []
+        guard let weeklyTodoData = self.weeklyTodoData else { return }
         
-        let todoList: [any TodoItem] = (selectedDateScheduleList as [any TodoItem]) + (selectedDateRoutineList as [any TodoItem])
+        let dailyTodoList = processDailyTodoListUseCase.execute(
+            from: weeklyTodoData,
+            for: selectedDate
+        )
         
-        self.allDayTodoList = todoList.filter { $0.time == nil }
-        self.timedTodoList = todoList
-            .filter { $0.time != nil }
-            .sorted { Date.timeSortKey($0.time) < Date.timeSortKey($1.time) }
+        self.allDayTodoList = dailyTodoList.allDayItems
+        self.timedTodoList = dailyTodoList.timedItems
         
         output.send(.unionedTodoList)
     }
@@ -240,15 +239,16 @@ final class TodoViewModel: BaseViewModel {
     }
     
     private func removeEventFromWeeklyList(eventId: Int, isSchedule: Bool) {
-        if isSchedule {
-            if let events = weeklyScheduleList[selectedDate] {
-                weeklyScheduleList[selectedDate] = events.filter { $0.id != eventId }
-            }
-        } else {
-            if let events = weeklyRoutineList[selectedDate] {
-                weeklyRoutineList[selectedDate] = events.filter { $0.id != eventId }
-            }
-        }
+        guard let currentWeeklyData = self.weeklyTodoData else { return }
+        
+        let updatedWeeklyData = removeTodoItemFromLocalDataUseCase.execute(
+            from: currentWeeklyData,
+            eventId: eventId,
+            on: selectedDate,
+            isSchedule: isSchedule
+        )
+        
+        self.weeklyTodoData = updatedWeeklyData
         unionTodoListForSelectedDate(selectedDate: selectedDate)
     }
     
@@ -308,5 +308,13 @@ final class TodoViewModel: BaseViewModel {
         } catch {
             output.send(.failure(error: "루틴을 생성할 수 없습니다."))
         }
+    }
+    
+    private func setDummyData() {
+        weeklyTodoData = .init(
+            schedules: [selectedDate.normalized : Schedule.dummyList],
+            routines: [:]
+        )
+        unionTodoListForSelectedDate(selectedDate: selectedDate)
     }
 }

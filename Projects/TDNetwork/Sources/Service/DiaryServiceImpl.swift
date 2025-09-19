@@ -39,4 +39,10 @@ public struct DiaryServiceImpl: DiaryService {
         let response = try await provider.requestDecodable(of: DiaryCompareCountResponseDTO.self, target)
         return response.value.count
     }
+    
+    public func fetchStreak() async throws -> DiaryStreakResponseDTO {
+        let target = DiaryAPI.fetchStreak
+        let response = try await provider.requestDecodable(of: DiaryStreakResponseDTO.self, target)
+        return response.value
+    }
 }

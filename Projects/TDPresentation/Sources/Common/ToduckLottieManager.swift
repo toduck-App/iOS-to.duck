@@ -25,9 +25,10 @@ final class ToduckLottieManager {
         case .redBook: return "toduckRedbook"
         case .sleep: return "toduckSleep"
         case .talk: return "toduckTalk"
-        case .none: return "toduckNocategory"
+        case .`default`: return "toduckNocategory"
         case .food: return "toduckFood"
         case .heart: return "toduckHeart"
+        case .none: return "toduckNoTodo"
         }
     }
 }
