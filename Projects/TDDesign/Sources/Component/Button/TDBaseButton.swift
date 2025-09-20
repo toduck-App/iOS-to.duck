@@ -53,14 +53,13 @@ public class TDBaseButton: UIButton {
         config.imagePlacement = .leading
         config.imagePadding = 4
         
+        config.background.cornerRadius = radius
+        
         if let image = image {
             config.image = image.withRenderingMode(.alwaysTemplate)
         }
         
         self.configuration = config
-        
-        layer.cornerRadius = radius
-        layer.masksToBounds = true
     }
     
     // MARK: - State Management
