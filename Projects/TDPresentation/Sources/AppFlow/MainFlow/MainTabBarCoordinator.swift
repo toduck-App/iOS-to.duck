@@ -1,4 +1,5 @@
 import UIKit
+import FittedSheets
 import TDCore
 
 final class MainTabBarCoordinator: Coordinator {
@@ -26,6 +27,7 @@ final class MainTabBarCoordinator: Coordinator {
     func start() {
         let items: [UINavigationController] = MainTabbarItem.allCases.map { createNavigationController(for: $0) }
         configureTabBarController(with: items)
+        presentEventSheet()
     }
     
     // MARK: - Configuration
@@ -134,6 +136,24 @@ final class MainTabBarCoordinator: Coordinator {
     private func selectTab(_ item: MainTabbarItem) {
         guard let index = MainTabbarItem.allCases.firstIndex(of: item) else { return }
         tabBarController.selectedIndex = index
+    }
+    
+    private func presentEventSheet() {
+        let eventSheetViewController = EventSheetViewController()
+        let sheetController = SheetViewController(
+            controller: eventSheetViewController,
+            sizes: [.intrinsic],
+            options: .init(
+                pullBarHeight: 0,
+                shouldExtendBackground: false,
+                setIntrinsicHeightOnNavigationControllers: false,
+                useFullScreenMode: false,
+                shrinkPresentingViewController: false,
+                isRubberBandEnabled: false
+            )
+        )
+        sheetController.cornerRadius = 28
+        navigationController.present(sheetController, animated: true)
     }
 }
 
