@@ -61,17 +61,17 @@ final class SplashViewController: BaseViewController<BaseView> {
             showOneButtonAlert(
                 title: "업데이트가 필요해요",
                 message: "새로운 기능을 위해 업데이트가 필요해요 !",
-                confirmTitle: "업데이트 하러 가기") {
+                confirmTitle: "업데이트") {
                     guard let url = URL(string: "itms-apps://apps.apple.com/app/id\(Constant.appId)") else { return }
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 }
             
-        case .recommend:
+        case .recommended:
             showCommonAlert(
                 title: "토덕의 새로운 업데이트 버전이있어요 !",
                 message: "새로운 기능을 사용할 수 있어요 !",
                 cancelTitle: "다음에 하기",
-                confirmTitle: "업데이트 하러 가기") { [weak self] in
+                confirmTitle: "업데이트") { [weak self] in
                     self?.coordinator?.finish(by: .popNotAnimated)
                 } onConfirm: {
                     guard let url = URL(string: "itms-apps://apps.apple.com/app/id\(Constant.appId)") else { return }
