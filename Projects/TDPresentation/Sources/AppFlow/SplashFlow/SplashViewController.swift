@@ -62,8 +62,7 @@ final class SplashViewController: BaseViewController<BaseView> {
                 title: "업데이트가 필요해요",
                 message: "새로운 기능을 위해 업데이트가 필요해요 !",
                 confirmTitle: "업데이트") {
-                    guard let url = URL(string: "itms-apps://apps.apple.com/app/id\(Constant.appId)") else { return }
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(Constant.appStoreURL, options: [:], completionHandler: nil)
                 }
             
         case .recommended:
@@ -74,8 +73,7 @@ final class SplashViewController: BaseViewController<BaseView> {
                 confirmTitle: "업데이트") { [weak self] in
                     self?.coordinator?.finish(by: .popNotAnimated)
                 } onConfirm: {
-                    guard let url = URL(string: "itms-apps://apps.apple.com/app/id\(Constant.appId)") else { return }
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(Constant.appStoreURL, options: [:], completionHandler: nil)
                 }
         case .none:
             coordinator?.finish(by: .popNotAnimated)
