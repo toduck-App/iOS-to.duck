@@ -100,6 +100,13 @@ public struct DataAssembly: Assembly {
             }
             return NotificationRepositoryImpl(service: service)
         }.inObjectScope(.container)
+        
+        container.register(BackofficeRepository.self) { _ in
+            guard let service = container.resolve(BackofficeService.self) else {
+                fatalError("BackofficeService is not registered")
+            }
+            return BackofficeRepositoryImpl(service: service)
+        }.inObjectScope(.container)
     }
 }
 

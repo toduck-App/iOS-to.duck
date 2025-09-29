@@ -31,6 +31,9 @@ public final class AppCoordinator: Coordinator {
         observeFCMToken()
         observeTokenExpired()
         
+        // Validate App Version
+        
+        
         if !TDTokenManager.shared.isFirstLaunch {
             TDTokenManager.shared.launchFirstLaunch()
             startWalkThroughFlow()
@@ -47,6 +50,7 @@ public final class AppCoordinator: Coordinator {
     private func startDefaultFlow() {
         Task {
             do {
+                validateAppVersion()
                 try await TDTokenManager.shared.loadTokenFromKC()
                 
                 await MainActor.run {
@@ -203,6 +207,13 @@ public final class AppCoordinator: Coordinator {
         let fetchStreakUseCase = injector.resolve(FetchStreakUseCase.self)
         Task {
             try await fetchStreakUseCase.execute()
+        }
+    }
+    
+    private func validateAppVersion() {
+        let versionCheckUseCase = injector.resolve(ValidateVersionUseCase.self)
+        Task {
+            try await versionCheckUseCase.execute(Constant.toduckAppVersion)
         }
     }
 }
