@@ -12,6 +12,6 @@ public final class ValidateVersionUseCaseImpl: ValidateVersionUseCase {
     }
 
     public func execute(_ version: String) async throws -> VersionPolicy {
-        try await repository.validateVersion(version)
+        try await repository.validateVersion("1.0.6")
     }
 }

@@ -27,34 +27,25 @@ public final class AppCoordinator: Coordinator {
     // MARK: - Coordinator Lifecycle
     
     public func start() {
-        showSplash()
+        startSplashFlow()
         observeFCMToken()
         observeTokenExpired()
-        
-        // Validate App Version
-        
-        
-        if !TDTokenManager.shared.isFirstLaunch {
-            TDTokenManager.shared.launchFirstLaunch()
-            startWalkThroughFlow()
-            removeSplash()
-            startWalkThroughFlow()
-            return
-        }
-        
-        startDefaultFlow()
     }
     
     // MARK: - Flow Management
     
     private func startDefaultFlow() {
+        if !TDTokenManager.shared.isFirstLaunch {
+            TDTokenManager.shared.launchFirstLaunch()
+            startWalkThroughFlow()
+            return
+        }
+        
         Task {
             do {
-                validateAppVersion()
                 try await TDTokenManager.shared.loadTokenFromKC()
                 
                 await MainActor.run {
-                    removeSplash()
                     if TDTokenManager.shared.accessToken == nil {
                         startAuthFlow()
                     } else {
@@ -66,11 +57,20 @@ public final class AppCoordinator: Coordinator {
                 }
             } catch {
                 await MainActor.run {
-                    removeSplash()
                     startAuthFlow()
                 }
             }
         }
+    }
+    
+    private func startSplashFlow() {
+        let splashCoordinator = SplashCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        splashCoordinator.start()
+        splashCoordinator.finishDelegate = self
+        childCoordinators.append(splashCoordinator)
     }
     
     private func startWalkThroughFlow() {
@@ -189,31 +189,10 @@ public final class AppCoordinator: Coordinator {
     
     // MARK: - UI Helpers
     
-    private func showSplash() {
-        let splashViewController = SplashViewController()
-        self.splashViewController = splashViewController
-        navigationController.setViewControllers([splashViewController], animated: false)
-    }
-    
-    private func removeSplash() {
-        guard let splashViewController else { return }
-        if navigationController.viewControllers.first === splashViewController {
-            navigationController.viewControllers.removeFirst()
-        }
-        self.splashViewController = nil
-    }
-    
     private func fetchStreakData() {
         let fetchStreakUseCase = injector.resolve(FetchStreakUseCase.self)
         Task {
             try await fetchStreakUseCase.execute()
-        }
-    }
-    
-    private func validateAppVersion() {
-        let versionCheckUseCase = injector.resolve(ValidateVersionUseCase.self)
-        Task {
-            try await versionCheckUseCase.execute(Constant.toduckAppVersion)
         }
     }
 }
@@ -227,6 +206,10 @@ extension AppCoordinator: CoordinatorFinishDelegate {
         if childCoordinator is WalkThroughCoordinator {
             navigationController.popToRootViewController(animated: true)
             startAuthFlow()
+        }
+        
+        if childCoordinator is SplashCoordinator {
+            startDefaultFlow()
         }
         
         if childCoordinator is AuthCoordinator {
