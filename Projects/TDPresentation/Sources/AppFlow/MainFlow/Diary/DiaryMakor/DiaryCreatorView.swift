@@ -40,7 +40,7 @@ final class DiaryCreatorView: BaseView {
         titleFont: .boldHeader5,
         titleColor: TDColor.Neutral.neutral800,
         isRequired: false,
-        maxCharacter: 200,
+        maxCharacter: 5000,
         placeholder: "자유롭게 내용을 작성해 주세요.",
         maxHeight: 196
     )
