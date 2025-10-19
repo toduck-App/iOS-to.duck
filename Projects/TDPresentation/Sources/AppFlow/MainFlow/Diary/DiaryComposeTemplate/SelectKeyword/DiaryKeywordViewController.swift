@@ -1,7 +1,19 @@
 import UIKit
 import Combine
+import TDDesign
 
 final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
+    
+    // MARK: - UI Components
+    
+    let navigationProgressView = NavigationProgressView()
+    
+    let pageLabel = TDLabel(
+        labelText: "2 / 3",
+        toduckFont: .mediumHeader4,
+        toduckColor: TDColor.Neutral.neutral600,
+    )
+    
     // MARK: - Properties
     
     private let viewModel: DiaryKeywordViewModel
@@ -11,9 +23,7 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     
     // MARK: - Initializer
     
-    init(
-        viewModel: DiaryKeywordViewModel
-    ) {
+    init(viewModel: DiaryKeywordViewModel) {
         self.viewModel = viewModel
         super.init()
     }
@@ -22,4 +32,22 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Life Cycle
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeProgressViewFromNavigationBar()
+    }
+    
+    // MARK: - Common Methods
+    
+    override func configure() {
+        // 기존의 scrollView 관련 코드는 제거
+        configurePagingNavigationBar(currentPage: 2, totalPages: 3)
+    }
 }
+
+// MARK: - PagingNavigationBarConfigurable
+
+extension DiaryKeywordViewController: PagingNavigationBarConfigurable { }
