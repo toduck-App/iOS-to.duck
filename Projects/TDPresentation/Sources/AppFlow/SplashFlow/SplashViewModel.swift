@@ -4,7 +4,7 @@ import TDDomain
 
 final class SplashViewModel: BaseViewModel {
     enum Input {
-        case validateVerison
+        case validateVersion
     }
     
     enum Output {
@@ -24,7 +24,7 @@ final class SplashViewModel: BaseViewModel {
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             switch event {
-            case .validateVerison:
+            case .validateVersion:
                 Task { await self?.validateVersion() }
             }
         }

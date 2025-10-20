@@ -23,7 +23,7 @@ final class SplashViewController: BaseViewController<BaseView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        input.send(.validateVerison)
+        input.send(.validateVersion)
     }
 
     override func addView() {

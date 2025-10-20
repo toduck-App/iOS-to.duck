@@ -8,8 +8,8 @@ public struct BackofficeServiceImpl: BackofficeService {
         self.provider = provider
     }
     
-    public func validateVersion(_ version: String) async throws -> ValidateVerisonDTO {
+    public func validateVersion(_ version: String) async throws -> ValidateVersionDTO {
         let target = BackofficeAPI.validateVersion(version: version)
-        return try await provider.requestDecodable(of: ValidateVerisonDTO.self, target).value
+        return try await provider.requestDecodable(of: ValidateVersionDTO.self, target).value
     }
 }
