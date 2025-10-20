@@ -6,6 +6,7 @@ import UIKit
 class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<BaseView>, UIGestureRecognizerDelegate {
     let popupContentView = PopupContentView()
     var isPopupPresent: Bool = false
+    var isBackgroundGestureEnabled: Bool = true
     
     override func configure() {
         isPopupPresent = true
@@ -13,6 +14,8 @@ class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<Base
         setupGestureRecognizer()
     }
     
+    override func configureDismissKeyboardGesture() { }
+
     /// 배경을 어둡게 설정
     private func setupBackgroundDim() {
         view.backgroundColor = TDColor.baseBlack.withAlphaComponent(0.5)
@@ -22,9 +25,11 @@ class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<Base
     private func setupGestureRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissPopup))
         tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
         layoutView.addGestureRecognizer(tapGesture)
         layoutView.isUserInteractionEnabled = true
     }
+
     
     override func addView() {
         layoutView.addSubview(popupContentView)
@@ -57,6 +62,12 @@ class TDPopupViewController<PopupContentView: BaseView>: BaseViewController<Base
         _ gestureRecognizer: UIGestureRecognizer,
         shouldReceive touch: UITouch
     ) -> Bool {
-        return touch.view == gestureRecognizer.view
+        guard isBackgroundGestureEnabled else { return false }
+        
+        if let touchedView = touch.view,
+           touchedView.isDescendant(of: popupContentView) {
+            return false
+        }
+        return true
     }
 }

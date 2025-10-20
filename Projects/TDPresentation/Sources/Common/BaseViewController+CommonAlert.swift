@@ -20,7 +20,8 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
         cancelTitle: String = "취소",
         confirmTitle: String = "확인",
         onCancel: (() -> Void)? = nil,
-        onConfirm: (() -> Void)? = nil
+        onConfirm: (() -> Void)? = nil,
+        isBackgroundGestureEnabled: Bool = true
     ) {
         let alertVC = TDCommonAlertViewController()
         alertVC.configure(
@@ -30,7 +31,28 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
             cancelTitle: cancelTitle,
             confirmTitle: confirmTitle,
             onCancel: onCancel,
-            onConfirm: onConfirm
+            onConfirm: onConfirm,
+            isBackgroundGestureEnabled: isBackgroundGestureEnabled
+        )
+        presentPopup(with: alertVC)
+    }
+    
+    func showOneButtonAlert(
+        title: String? = nil,
+        message: String,
+        image: UIImage = TDImage.errorAlert,
+        confirmTitle: String = "확인",
+        onConfirm: (() -> Void)? = nil,
+        isBackgroundGestureEnabled: Bool = true
+    ) {
+        let alertVC = TDCommonAlertViewController()
+        alertVC.configureOneButton(
+            title: title,
+            message: message,
+            image: image,
+            confirmTitle: confirmTitle,
+            onConfirm: onConfirm,
+            isBackgroundGestureEnabled: isBackgroundGestureEnabled
         )
         presentPopup(with: alertVC)
     }
@@ -59,8 +81,41 @@ final class TDCommonAlertViewController: TDPopupViewController<TDCommonAlertView
         cancelTitle: String,
         confirmTitle: String,
         onCancel: (() -> Void)?,
-        onConfirm: (() -> Void)?
+        onConfirm: (() -> Void)?,
+        isBackgroundGestureEnabled: Bool = true
     ) {
+        applyCommonUI(title: title, message: message, image: image)
+
+        popupContentView.cancelButton.isHidden = false
+        popupContentView.buttonStack.spacing = 8
+        popupContentView.confirmButton.setTitle(confirmTitle, for: .normal)
+        popupContentView.cancelButton.setTitle(cancelTitle, for: .normal)
+
+        self.onCancel = onCancel
+        self.onConfirm = onConfirm
+        self.isBackgroundGestureEnabled = isBackgroundGestureEnabled
+    }
+
+    func configureOneButton(
+        title: String?,
+        message: String,
+        image: UIImage,
+        confirmTitle: String,
+        onConfirm: (() -> Void)?,
+        isBackgroundGestureEnabled: Bool = true
+    ) {
+        applyCommonUI(title: title, message: message, image: image)
+
+        popupContentView.cancelButton.isHidden = true
+        popupContentView.buttonStack.spacing = 0
+        popupContentView.confirmButton.setTitle(confirmTitle, for: .normal)
+
+        self.onCancel = nil
+        self.onConfirm = onConfirm
+        self.isBackgroundGestureEnabled = isBackgroundGestureEnabled
+    }
+
+    private func applyCommonUI(title: String?, message: String, image: UIImage) {
         if let title {
             popupContentView.titleLabel.setText(title)
             popupContentView.titleLabel.isHidden = false
@@ -69,33 +124,24 @@ final class TDCommonAlertViewController: TDPopupViewController<TDCommonAlertView
         }
         popupContentView.descriptionLabel.setText(message)
         popupContentView.errorImageView.image = image
-
-        popupContentView.cancelButton.setTitle(cancelTitle, for: .normal)
-        popupContentView.confirmButton.setTitle(confirmTitle, for: .normal)
-
-        self.onCancel = onCancel
-        self.onConfirm = onConfirm
     }
 
     private func setupButtonActions() {
         popupContentView.cancelButton.addAction(
             UIAction { [weak self] _ in
-                self?.dismiss(animated: true) {
-                    self?.onCancel?()
-                }
+                self?.dismiss(animated: true) { self?.onCancel?() }
             },
             for: .touchUpInside
         )
         popupContentView.confirmButton.addAction(
             UIAction { [weak self] _ in
-                self?.dismiss(animated: true) {
-                    self?.onConfirm?()
-                }
+                self?.dismiss(animated: true) { self?.onConfirm?() }
             },
             for: .touchUpInside
         )
     }
 }
+
 
 // MARK: – TDCommonAlertView.swift
 
@@ -144,7 +190,7 @@ final class TDCommonAlertView: BaseView {
         font: TDFont.boldBody1.font
     )
     
-    private let buttonStack = UIStackView().then {
+    let buttonStack = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .fillEqually
         $0.spacing = 8

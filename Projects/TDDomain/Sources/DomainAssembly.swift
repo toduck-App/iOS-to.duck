@@ -634,5 +634,12 @@ public struct DomainAssembly: Assembly {
             }
             return FetchStreakUseCaseImpl(repository: repository)
         }
+        
+        container.register(ValidateVersionUseCase.self) { resolver in
+            guard let repository = resolver.resolve(BackofficeRepository.self) else {
+                fatalError("컨테이너에 BackofficeRepository가 등록되어 있지 않습니다.")
+            }
+            return ValidateVersionUseCaseImpl(repository: repository)
+        }
     }
 }
