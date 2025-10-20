@@ -20,7 +20,8 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
         cancelTitle: String = "취소",
         confirmTitle: String = "확인",
         onCancel: (() -> Void)? = nil,
-        onConfirm: (() -> Void)? = nil
+        onConfirm: (() -> Void)? = nil,
+        isBackgroundGestureEnabled: Bool = true
     ) {
         let alertVC = TDCommonAlertViewController()
         alertVC.configure(
@@ -30,7 +31,8 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
             cancelTitle: cancelTitle,
             confirmTitle: confirmTitle,
             onCancel: onCancel,
-            onConfirm: onConfirm
+            onConfirm: onConfirm,
+            isBackgroundGestureEnabled: isBackgroundGestureEnabled
         )
         presentPopup(with: alertVC)
     }
@@ -40,7 +42,8 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
         message: String,
         image: UIImage = TDImage.errorAlert,
         confirmTitle: String = "확인",
-        onConfirm: (() -> Void)? = nil
+        onConfirm: (() -> Void)? = nil,
+        isBackgroundGestureEnabled: Bool = true
     ) {
         let alertVC = TDCommonAlertViewController()
         alertVC.configureOneButton(
@@ -48,7 +51,8 @@ extension BaseViewController where BaseViewController: TDPopupPresentable {
             message: message,
             image: image,
             confirmTitle: confirmTitle,
-            onConfirm: onConfirm
+            onConfirm: onConfirm,
+            isBackgroundGestureEnabled: isBackgroundGestureEnabled
         )
         presentPopup(with: alertVC)
     }
@@ -77,7 +81,8 @@ final class TDCommonAlertViewController: TDPopupViewController<TDCommonAlertView
         cancelTitle: String,
         confirmTitle: String,
         onCancel: (() -> Void)?,
-        onConfirm: (() -> Void)?
+        onConfirm: (() -> Void)?,
+        isBackgroundGestureEnabled: Bool = true
     ) {
         applyCommonUI(title: title, message: message, image: image)
 
@@ -88,6 +93,7 @@ final class TDCommonAlertViewController: TDPopupViewController<TDCommonAlertView
 
         self.onCancel = onCancel
         self.onConfirm = onConfirm
+        self.isBackgroundGestureEnabled = isBackgroundGestureEnabled
     }
 
     func configureOneButton(
@@ -95,7 +101,8 @@ final class TDCommonAlertViewController: TDPopupViewController<TDCommonAlertView
         message: String,
         image: UIImage,
         confirmTitle: String,
-        onConfirm: (() -> Void)?
+        onConfirm: (() -> Void)?,
+        isBackgroundGestureEnabled: Bool = true
     ) {
         applyCommonUI(title: title, message: message, image: image)
 
@@ -105,6 +112,7 @@ final class TDCommonAlertViewController: TDPopupViewController<TDCommonAlertView
 
         self.onCancel = nil
         self.onConfirm = onConfirm
+        self.isBackgroundGestureEnabled = isBackgroundGestureEnabled
     }
 
     private func applyCommonUI(title: String?, message: String, image: UIImage) {
