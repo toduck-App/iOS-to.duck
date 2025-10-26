@@ -1,8 +1,11 @@
 import TDDesign
+import TDDomain
 import UIKit
 
 final class EventSheetViewController: BaseViewController<EventSheetView> {
-    override init() {
+    let events: [TDEvent]
+    init(events: [TDEvent]) {
+        self.events = events
         super.init()
     }
 

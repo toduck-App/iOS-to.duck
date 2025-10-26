@@ -53,5 +53,9 @@ public struct ServiceAssembly: Assembly {
         container.register(BackofficeService.self) { _ in
             return BackofficeServiceImpl()
         }
+        
+        container.register(EventService.self) { _ in
+            return EventServiceImpl()
+        }
     }
 }

@@ -1,4 +1,5 @@
 import UIKit
+import TDDomain
 import FittedSheets
 import TDCore
 
@@ -139,21 +140,29 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func presentEventSheet() {
-        let eventSheetViewController = EventSheetViewController()
-        let sheetController = SheetViewController(
-            controller: eventSheetViewController,
-            sizes: [.intrinsic],
-            options: .init(
-                pullBarHeight: 0,
-                shouldExtendBackground: false,
-                setIntrinsicHeightOnNavigationControllers: false,
-                useFullScreenMode: false,
-                shrinkPresentingViewController: false,
-                isRubberBandEnabled: false
-            )
-        )
-        sheetController.cornerRadius = 28
-        navigationController.present(sheetController, animated: true)
+        let fetchEventUseCase = injector.resolve(FetchEventsUseCase.self)
+        Task {
+            let eventList = await fetchEventUseCase.execute()
+            if eventList.isEmpty { return }
+            
+            await MainActor.run {
+                let eventSheetViewController = EventSheetViewController(events: eventList)
+                let sheetController = SheetViewController(
+                    controller: eventSheetViewController,
+                    sizes: [.intrinsic],
+                    options: .init(
+                        pullBarHeight: 0,
+                        shouldExtendBackground: false,
+                        setIntrinsicHeightOnNavigationControllers: false,
+                        useFullScreenMode: false,
+                        shrinkPresentingViewController: false,
+                        isRubberBandEnabled: false
+                    )
+                )
+                sheetController.cornerRadius = 28
+                navigationController.present(sheetController, animated: true)
+            }
+        }
     }
 }
 
