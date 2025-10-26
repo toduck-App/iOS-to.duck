@@ -20,7 +20,7 @@ extension EventAPI: MFTarget {
         case .fetchEvents:
             "v1/events/get"
         case .fetchEventDetails:
-            "v1/events/details/get/"
+            "v1/events/detail/get/"
         case .hasParticipated:
             "v1/events-social/check"
         case .participate:
