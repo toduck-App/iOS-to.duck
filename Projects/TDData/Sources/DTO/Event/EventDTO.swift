@@ -2,6 +2,10 @@ import TDDomain
 import Foundation
 import TDCore
 
+public struct EventListDTO: Decodable {
+    public let eventsDtos: [EventDTO]
+}
+
 public struct EventDTO: Decodable, Sendable {
     public let id: Int
     public let eventName: String

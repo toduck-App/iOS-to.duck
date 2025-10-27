@@ -11,14 +11,14 @@ public struct EventServiceImpl: EventService {
     
     public func fetchEvents() async throws -> [EventDTO] {
         let target = EventAPI.fetchEvents
-        let response = try await provider.requestDecodable(of: [EventDTO].self, target)
-        return response.value
+        let response = try await provider.requestDecodable(of: EventListDTO.self, target)
+        return response.value.eventsDtos
     }
     
     public func fetchEventDetails(eventId: Int) async throws -> [EventDetailDTO] {
         let target = EventAPI.fetchEventDetails
-        let response = try await provider.requestDecodable(of: [EventDetailDTO].self, target)
-        return response.value
+        let response = try await provider.requestDecodable(of: EventDetailListDTO.self, target)
+        return response.value.eventsDetailDtos
     }
     
     public func hasParticipated() async throws -> Bool {

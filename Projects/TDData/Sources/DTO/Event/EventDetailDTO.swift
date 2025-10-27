@@ -1,6 +1,10 @@
 import TDDomain
 import Foundation
 
+public struct EventDetailListDTO: Decodable {
+    public let eventsDetailDtos: [EventDetailDTO]
+}
+
 public struct EventDetailDTO: Decodable {
     public let eventsDetailId: Int
     public let eventsId: Int
