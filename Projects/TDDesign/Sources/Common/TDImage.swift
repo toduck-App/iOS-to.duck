@@ -366,5 +366,6 @@ public enum TDImage {
     
     public enum Event {
         public static let socialThumnail = TDDesignAsset.Images.socialEvent.image
+        public static let eventGfit = TDDesignAsset.Images.eventGfit.image
     }
 }

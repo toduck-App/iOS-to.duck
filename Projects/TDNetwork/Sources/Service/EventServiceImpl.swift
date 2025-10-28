@@ -22,7 +22,7 @@ public struct EventServiceImpl: EventService {
     }
     
     public func hasParticipated() async throws -> Bool {
-        let target = EventAPI.fetchEvents
+        let target = EventAPI.hasParticipated
         let response = try await provider.requestDecodable(of: ParticipationCheckContentDTO.self, target)
         return response.value.participated
     }

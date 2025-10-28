@@ -1,5 +1,5 @@
 public protocol FetchParticipateEventUseCase {
-    func execute() async throws -> Bool
+    func execute() async -> Bool
 }
 
 final class FetchParticipateEventUseCaseImpl: FetchParticipateEventUseCase {
@@ -9,7 +9,11 @@ final class FetchParticipateEventUseCaseImpl: FetchParticipateEventUseCase {
         self.repository = repository
     }
 
-    func execute() async throws -> Bool {
-        try await repository.hasParticipated()
+    func execute() async -> Bool {
+        do {
+            return try await repository.hasParticipated()
+        } catch {
+            return false
+        }
     }
 }

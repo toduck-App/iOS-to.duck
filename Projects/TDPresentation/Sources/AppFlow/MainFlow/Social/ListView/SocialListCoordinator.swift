@@ -114,6 +114,7 @@ extension SocialListCoordinator: SocialListDelegate {
             injector: injector
         )
         createCoordinator.finishDelegate = self
+        createCoordinator.delegate = self
         childCoordinators.append(createCoordinator)
         createCoordinator.start()
     }
@@ -159,5 +160,15 @@ extension SocialListCoordinator: NavigationDelegate {
         toduckCalendarCoordinator.finishDelegate = self
         childCoordinators.append(toduckCalendarCoordinator)
         toduckCalendarCoordinator.start()
+    }
+}
+
+extension SocialListCoordinator: SocialCreatorDelegate {
+    func didFinishEventJoin() {
+        navigationController.dismiss(animated: true) { [weak self] in
+            if let listController = self?.navigationController.topViewController as? SocialListViewController {
+                listController.showEventJoinAlert()
+            }
+        }
     }
 }

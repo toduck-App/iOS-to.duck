@@ -7,7 +7,7 @@ public protocol SocialRepository {
 
     // MARK: - Post CRUD
 
-    func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws
+    func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws -> Int
     func updatePost(prevPost: Post, updatePost: Post, image: [(fileName: String, imageData: Data)]?) async throws
     func deletePost(postID: Post.ID) async throws
     func fetchPost(postID: Post.ID) async throws -> (Post, [Comment])
