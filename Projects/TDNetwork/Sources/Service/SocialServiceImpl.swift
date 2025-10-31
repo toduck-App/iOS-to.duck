@@ -1,6 +1,7 @@
 import TDData
 
 public struct SocialServiceImpl: SocialService {
+    
     private let provider: MFProvider<SocialAPI>
     
     public init(provider: MFProvider<SocialAPI> = MFProvider<SocialAPI>()) {
@@ -66,7 +67,6 @@ public struct SocialServiceImpl: SocialService {
         let target = SocialAPI.reportComment(postId: postID, commentId: commentID, reportType: reportType, reason: reason, blockAuthor: blockAuthor)
         try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
-    
     
     public func requestCreateComment(socialId: Int, content: String, parentId: Int?, imageUrl: String?) async throws -> Int {
         let target = SocialAPI.createComment(socialId: socialId, parentCommentId: parentId, content: content, imageUrl: imageUrl)

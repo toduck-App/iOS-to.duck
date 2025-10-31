@@ -10,8 +10,8 @@ public final class DeletePostUseCaseImpl: DeletePostUseCase {
     public init(repository: SocialRepository) {
         self.repository = repository
     }
-    
+
     public func execute(postID: Post.ID) async throws {
-        return try await repository.deletePost(postID: postID)
+        try await repository.deletePost(postID: postID)
     }
 }
