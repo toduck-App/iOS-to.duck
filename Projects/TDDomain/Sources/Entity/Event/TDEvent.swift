@@ -1,4 +1,5 @@
 import Foundation
+import TDCore
 
 public struct TDEvent: Identifiable, Sendable {
     public let id: Int
@@ -24,7 +25,21 @@ public struct TDEvent: Identifiable, Sendable {
         self.minAppVersion = minAppVersion
     }
     
-    func isActive(reference: Date = Date()) -> Bool {
-        return reference >= start && reference <= end
-    }
+   public func isActive(
+       reference: Date = Date(),
+       currentAppVersion: String = Constant.toduckAppVersion
+   ) -> Bool {
+       guard reference >= start && reference <= end else { return false }
+
+       if let min = minAppVersion, !min.isEmpty {
+           if currentAppVersion.asSemVer < min.asSemVer {
+               return false
+           }
+       }
+       return true
+   }
+}
+
+public extension String {
+    var asSemVer: SemVer { SemVer(self) }
 }

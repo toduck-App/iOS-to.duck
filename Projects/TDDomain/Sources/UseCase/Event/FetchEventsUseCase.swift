@@ -12,6 +12,7 @@ final class FetchEventsUseCaseImpl: FetchEventsUseCase {
     func execute() async -> [TDEvent] {
         do {
             return try await repository.fetchEvents()
+                .filter { $0.isActive() }
         } catch {
             return []
         }

@@ -18,8 +18,8 @@ public struct EventDTO: Decodable, Sendable {
         TDEvent(
             id: id,
             name: eventName,
-            start: Date.convertFromString(startAt, format: .serverDate) ?? Date() ,
-            end: Date.convertFromString(endAt, format: .serverDate) ?? Date(),
+            start: Date.convertFromString(startAt, format: .serverDateTime) ?? Date() ,
+            end: Date.convertFromString(endAt, format: .serverDateTime) ?? Date(),
             thumbURL: URL(string: thumbUrl),
             minAppVersion: appVersion
         )

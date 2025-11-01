@@ -27,7 +27,7 @@ final class EventSheetCoordinator: Coordinator {
 
             let urls = eventList.compactMap { $0.thumbURL }
             let aspects = await KingfisherManager.shared.fetchImageAspects(for: urls)
-
+            
             await MainActor.run {
                 let vc = EventSheetViewController(events: eventList,
                                                   precomputedAspects: aspects)

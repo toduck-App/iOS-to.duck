@@ -77,10 +77,7 @@ final class SocialEventJoinSuccessView: BaseView {
     }
 }
 
-final class SocialEventJoinSuccessViewController: TDPopupViewController<
-    SocialEventJoinSuccessView
->
-{
+final class SocialEventJoinSuccessViewController: TDPopupViewController<SocialEventJoinSuccessView> {
 
     override init() {
         super.init()
