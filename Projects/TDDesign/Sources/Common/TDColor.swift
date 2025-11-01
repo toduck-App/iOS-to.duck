@@ -180,5 +180,6 @@ public enum TDColor {
     
     public enum Event {
         public static let buttonEventBackground = TDDesignAsset.Colors.eventButtonColor.color
+        public static let containerEventBackground = TDDesignAsset.Colors.eventBackgroundColor.color
     }
 }

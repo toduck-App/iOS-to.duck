@@ -44,11 +44,10 @@ final class SocialEventJoinViewModel: BaseViewModel {
 
     private func joinEvent(phoneNumber: String) async {
         do {
-            // MARK: 수정 필요
-//            try await participateEventUseCase.execute(
-//                socialId: socialId,
-//                phone: phoneNumber
-//            )
+            try await participateEventUseCase.execute(
+                socialId: socialId,
+                phone: phoneNumber
+            )
             output.send(.success)
         } catch {
             output.send(.error("이벤트 참여에 실패하였습니다. \n다시 시도해주세요."))

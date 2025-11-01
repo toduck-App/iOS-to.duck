@@ -19,7 +19,7 @@ final class SocialEventJoinSuccessView: BaseView {
             bottom: 16,
             trailing: 16
         )
-        $0.backgroundColor = TDColor.baseWhite
+        $0.backgroundColor = .clear
         $0.layer.cornerRadius = 16
         $0.layer.masksToBounds = true
     }
@@ -33,14 +33,14 @@ final class SocialEventJoinSuccessView: BaseView {
         labelText: "이벤트 응모가 완료되었어요!",
         toduckFont: .boldHeader4,
         alignment: .center,
-        toduckColor: TDColor.Neutral.neutral600
+        toduckColor: TDColor.Neutral.neutral800
     )
 
     private let descriptionLabel = TDLabel(
         labelText: "상품권의 주인공은 혹시..?",
         toduckFont: .boldHeader5,
         alignment: .center,
-        toduckColor: TDColor.Neutral.neutral600
+        toduckColor: TDColor.Neutral.neutral800
     )
 
     var doneButton = TDBaseButton(
@@ -59,9 +59,11 @@ final class SocialEventJoinSuccessView: BaseView {
     }
 
     override func layout() {
+        
         containerStack.snp.makeConstraints { make in
+            make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
 
         giftImageView.snp.makeConstraints { make in
@@ -79,27 +81,45 @@ final class SocialEventJoinSuccessView: BaseView {
 
 final class SocialEventJoinSuccessViewController: TDPopupViewController<SocialEventJoinSuccessView> {
 
+    private let gradientLayer = CAGradientLayer()
+
     override init() {
         super.init()
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override func configure() {
         super.configure()
-        popupContentView.backgroundColor = TDColor.baseWhite
+
+        popupContentView.backgroundColor = .clear
+
+        gradientLayer.colors = [
+            TDColor.baseWhite.cgColor,
+            TDColor.Event.containerEventBackground.cgColor
+        ]
+        gradientLayer.locations  = [0.0, 1.0]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint   = CGPoint(x: 0.5, y: 1.0)
+
+        popupContentView.layer.masksToBounds = true
+        popupContentView.layer.cornerRadius = 16
+
+        popupContentView.layer.insertSublayer(gradientLayer, at: 0)
+
         popupContentView.doneButton.addAction(
-            UIAction { [weak self] _ in
-                self?.dismissPopup()
-            },
+            UIAction { [weak self] _ in self?.dismissPopup() },
             for: .touchUpInside
         )
     }
 
-    override func layout() {
-        super.layout()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        gradientLayer.frame = popupContentView.bounds
+        gradientLayer.cornerRadius = popupContentView.layer.cornerRadius
+        CATransaction.commit()
     }
 }
