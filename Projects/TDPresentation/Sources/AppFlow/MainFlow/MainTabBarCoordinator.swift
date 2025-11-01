@@ -1,9 +1,12 @@
 import UIKit
 import TDDomain
-import FittedSheets
 import TDCore
 
-final class MainTabBarCoordinator: Coordinator {
+public protocol DeepLinkRoutable: AnyObject {
+    func route(to deepLink: DeepLinkType, dismissPresented: Bool)
+}
+
+final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
     // MARK: - Properties
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
@@ -72,6 +75,14 @@ final class MainTabBarCoordinator: Coordinator {
         childCoordinators.append(coordinator)
     }
     
+    
+    func route(to deepLink: DeepLinkType, dismissPresented: Bool = true) {
+        if dismissPresented {
+            navigationController.presentedViewController?.dismiss(animated: false)
+        }
+        handleDeepLink(deepLink)
+    }
+    
     // MARK: - Deep Linking
     func handleDeepLink(_ link: DeepLinkType) {
         switch link {
@@ -92,7 +103,7 @@ final class MainTabBarCoordinator: Coordinator {
         case .diary:
             handleDiaryDeepLink(link)
             
-        case .profile, .post:
+        case .profile, .post, .createPost:
             handleSocialDeepLink(link)
         }
     }
@@ -118,6 +129,9 @@ final class MainTabBarCoordinator: Coordinator {
                 socialCoordinator.didTapPost(postId: postId, commentId: commentId)
             }
             
+        case .createPost:
+            socialCoordinator.didTapCreateButton()
+            
         default:
             break
         }
@@ -140,30 +154,13 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func presentEventSheet() {
-        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
-        let fetchEventUseCase = injector.resolve(FetchEventsUseCase.self)
-        Task {
-            let eventList = await fetchEventUseCase.execute()
-            if eventList.isEmpty { return }
-            
-            await MainActor.run {
-                let eventSheetViewController = EventSheetViewController(events: eventList)
-                let sheetController = SheetViewController(
-                    controller: eventSheetViewController,
-                    sizes: [.intrinsic],
-                    options: .init(
-                        pullBarHeight: 0,
-                        shouldExtendBackground: false,
-                        setIntrinsicHeightOnNavigationControllers: false,
-                        useFullScreenMode: false,
-                        shrinkPresentingViewController: false,
-                        isRubberBandEnabled: false
-                    )
-                )
-                sheetController.cornerRadius = 28
-                navigationController.present(sheetController, animated: true)
-            }
-        }
+        // TODO: 릴리즈에서 제거필요
+//        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
+        let eventCoordinator = EventSheetCoordinator(navigationController: navigationController, injector: injector)
+        eventCoordinator.deepLinkRouter = self
+        childCoordinators.append(eventCoordinator)
+        eventCoordinator.finishDelegate = self
+        eventCoordinator.start()
     }
 }
 

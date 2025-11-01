@@ -4,6 +4,8 @@ import TDDomain
 import UIKit
 
 final class EventSheetViewController: BaseViewController<EventSheetView>, EventSheetViewDelegate {
+    weak var coordinator: EventSheetCoordinator?
+    
     let events: [TDEvent]
     init(events: [TDEvent]) {
         self.events = events
@@ -26,15 +28,15 @@ final class EventSheetViewController: BaseViewController<EventSheetView>, EventS
     }
     
     func eventSheetDidTapViewDetails(_ view: EventSheetView) {
-        dismiss(animated: true)
+        coordinator?.didTapDetailView(eventId: 1)
     }
     
     func eventSheetDidTapHideToday(_ view: EventSheetView) {
         TDTokenManager.shared.markEventSheetHiddenForToday()
-        dismiss(animated: true)
+        coordinator?.finish(by: .sheet(completion: {}))
     }
     
     func eventSheetDidTapClose(_ view: EventSheetView) {
-        dismiss(animated: true)
+        coordinator?.finish(by: .sheet(completion: {}))
     }
 }

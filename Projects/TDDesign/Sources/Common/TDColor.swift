@@ -177,4 +177,8 @@ public enum TDColor {
         public static let kakaoBackground = TDDesignAsset.Colors.kakaoBackground.color
         public static let kakaoForeground = TDDesignAsset.Colors.kakaoForeground.color
     }
+    
+    public enum Event {
+        public static let buttonEventBackground = TDDesignAsset.Colors.eventButtonColor.color
+    }
 }
