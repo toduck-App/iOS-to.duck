@@ -140,6 +140,7 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func presentEventSheet() {
+        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
         let fetchEventUseCase = injector.resolve(FetchEventsUseCase.self)
         Task {
             let eventList = await fetchEventUseCase.execute()
