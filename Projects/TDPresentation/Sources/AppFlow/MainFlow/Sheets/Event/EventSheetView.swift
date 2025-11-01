@@ -63,7 +63,7 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
             }, for: .touchUpInside)
         }
 
-    private var heightConstraint: Constraint? // ✅ 상수로 관리
+    private var heightConstraint: Constraint?
     private var lastWidth: CGFloat = 0
 
     override func addview() {
@@ -86,7 +86,6 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
 
         vStack.snp.makeConstraints { $0.edges.equalTo(safeAreaLayoutGuide) }
 
-        // ✅ 높이=상수(0)로 시작 → 이후 (폭*비율)로 갱신
         pagerContainer.snp.makeConstraints { make in
             heightConstraint = make.height.equalTo(0).priority(900).constraint
         }
@@ -142,7 +141,6 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
         }
     }
 
-    // MARK: - Public
     func configure(events: [TDEvent], precomputedAspects: [CGFloat?]) {
         self.events = events
         self.aspectByIndex = precomputedAspects.count == events.count

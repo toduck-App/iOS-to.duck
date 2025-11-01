@@ -10,7 +10,6 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     weak var coordinator: EventSheetCoordinator?
     private var eventDetail: TDEventDetail
 
-    // MARK: - Nav appearance backup
     private var prevStandardAppearance: UINavigationBarAppearance?
     private var prevScrollEdgeAppearance: UINavigationBarAppearance?
     private var prevCompactAppearance: UINavigationBarAppearance?
@@ -166,7 +165,6 @@ final class EventDetailViewController: BaseViewController<BaseView> {
         }
     }
 
-    // MARK: - Image Loading
     private func appendImageView() -> (UIImageView, Constraint) {
         let iv = UIImageView().then {
             $0.contentMode = .scaleAspectFit
