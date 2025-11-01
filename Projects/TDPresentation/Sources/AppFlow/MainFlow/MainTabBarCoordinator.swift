@@ -154,8 +154,7 @@ final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
     }
     
     private func presentEventSheet() {
-        // TODO: 릴리즈에서 제거필요
-//        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
+        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
         let eventCoordinator = EventSheetCoordinator(navigationController: navigationController, injector: injector)
         eventCoordinator.deepLinkRouter = self
         childCoordinators.append(eventCoordinator)

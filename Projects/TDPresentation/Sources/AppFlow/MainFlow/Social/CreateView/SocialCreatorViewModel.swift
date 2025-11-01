@@ -106,13 +106,13 @@ extension SocialCreatorViewModel {
             )
             
             output.send(.canParticipateEvent(socialId))
-//            let participated =
-//                await fetchParticipateEventUseCase.execute()
-//            if !participated && content.count >= 10 {
-//                output.send(.canParticipateEvent(socialId))
-//                return
-//            }
-//            output.send(.success)
+            let participated =
+                await fetchParticipateEventUseCase.execute()
+            if !participated && content.count >= 10 {
+                output.send(.canParticipateEvent(socialId))
+                return
+            }
+            output.send(.success)
 
         } catch {
             output.send(.failure(error.localizedDescription))
