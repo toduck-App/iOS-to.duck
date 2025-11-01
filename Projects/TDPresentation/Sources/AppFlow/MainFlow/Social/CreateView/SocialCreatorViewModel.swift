@@ -105,7 +105,6 @@ extension SocialCreatorViewModel {
                 image: image
             )
             
-            output.send(.canParticipateEvent(socialId))
             let participated =
                 await fetchParticipateEventUseCase.execute()
             if !participated && content.count >= 10 {
