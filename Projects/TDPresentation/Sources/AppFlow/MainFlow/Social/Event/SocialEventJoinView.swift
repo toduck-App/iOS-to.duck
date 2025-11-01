@@ -127,7 +127,7 @@ final class SocialEventJoinView: BaseView {
         toduckColor: TDColor.Neutral.neutral600
     )
 
-    private lazy var joinButton = TDBaseButton(
+    lazy var joinButton = TDBaseButton(
         title: "참여하기",
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,

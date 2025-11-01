@@ -50,6 +50,7 @@ final class SocialEventJoinViewController: BaseViewController<SocialEventJoinVie
             case .success:
                 self?.coordinator?.didTapJoin()
             case .error(let message):
+                self?.layoutView.joinButton.isEnabled = true
                 self?.showErrorAlert(errorMessage: message)
             }
         }.store(in: &cancellables)
@@ -58,6 +59,7 @@ final class SocialEventJoinViewController: BaseViewController<SocialEventJoinVie
 
 extension SocialEventJoinViewController: SocialEventJoinViewDelegate {
     func eventSheetDidTapJoin(_ view: SocialEventJoinView, phoneNumber: String) {
+        layoutView.joinButton.isEnabled = false
         input.send(.joinEvent(phoneNumber))
     }
 }
