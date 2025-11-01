@@ -1,4 +1,5 @@
 import FittedSheets
+import Kingfisher
 import TDCore
 import TDDomain
 import UIKit
@@ -23,12 +24,16 @@ final class EventSheetCoordinator: Coordinator {
         Task {
             let eventList = await fetchEventUseCase.execute()
             if eventList.isEmpty { return }
-            
+
+            let urls = eventList.compactMap { $0.thumbURL }
+            let aspects = await KingfisherManager.shared.fetchImageAspects(for: urls)
+
             await MainActor.run {
-                let eventSheetViewController = EventSheetViewController(events: eventList)
-                eventSheetViewController.coordinator = self
-                let sheetController = SheetViewController(
-                    controller: eventSheetViewController,
+                let vc = EventSheetViewController(events: eventList,
+                                                  precomputedAspects: aspects)
+                vc.coordinator = self
+                let sheet = SheetViewController(
+                    controller: vc,
                     sizes: [.intrinsic],
                     options: .init(
                         pullBarHeight: 0,
@@ -39,12 +44,12 @@ final class EventSheetCoordinator: Coordinator {
                         isRubberBandEnabled: false
                     )
                 )
-                sheetController.cornerRadius = 28
-                navigationController.present(sheetController, animated: true)
+                sheet.cornerRadius = 28
+                navigationController.present(sheet, animated: true)
             }
         }
     }
-    
+
     func didTapDetailView(eventId: Int) {
         let fetchEventDetailUseCase = injector.resolve(FetchEventDetailsUseCase.self)
         Task {
