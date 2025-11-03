@@ -40,52 +40,69 @@ public class TDBaseButton: UIButton {
     // MARK: - Setup Button
     private func setupButton() {
         layer.borderWidth = 0
-        var config = UIButton.Configuration.filled()
+        var config = UIButton.Configuration.plain()
         config.title = title
-        config.baseBackgroundColor = backgroundToduckColor
-        config.baseForegroundColor = foregroundToduckColor
+        config.contentInsets = inset
+        config.imagePlacement = .leading
+        config.imagePadding = 4
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = self.font
             return outgoing
         }
-        config.contentInsets = inset
-        config.imagePlacement = .leading
-        config.imagePadding = 4
-        
-        config.background.cornerRadius = radius
-        
+        config.cornerStyle = .fixed
+
         if let image = image {
             config.image = image.withRenderingMode(.alwaysTemplate)
         }
         
         self.configuration = config
-    }
-    
-    // MARK: - State Management
-    override
-    public var isEnabled: Bool {
-        didSet {
-            if isEnabled {
-                configuration?.baseBackgroundColor = backgroundToduckColor
-                configuration?.baseForegroundColor = foregroundToduckColor
+        layer.masksToBounds = false
+
+        configurationUpdateHandler = { [weak self] button in
+            guard let self = self else { return }
+            var cfg = button.configuration ?? .plain()
+
+            let bgColor: UIColor
+            let fgColor: UIColor
+
+            if !button.isEnabled {
+                bgColor = TDColor.Neutral.neutral100
+                fgColor = TDColor.Neutral.neutral500
+            } else if button.isSelected {
+                bgColor = self.backgroundToduckColor
+                fgColor = self.foregroundToduckColor
             } else {
-                configuration?.baseBackgroundColor = TDColor.Neutral.neutral100
-                configuration?.baseForegroundColor = TDColor.Neutral.neutral500
+                bgColor = self.backgroundToduckColor
+                fgColor = self.foregroundToduckColor
             }
+            
+            var bg = UIBackgroundConfiguration.clear()
+            bg.backgroundColor = bgColor
+            bg.cornerRadius = self.radius
+            cfg.background = bg
+
+            var attrs = AttributeContainer()
+            attrs.font = self.font
+            attrs.foregroundColor = fgColor
+            cfg.attributedTitle = AttributedString(self.title, attributes: attrs)
+
+            cfg.baseForegroundColor = fgColor
+            if #available(iOS 15.0, *) {
+                cfg.imageColorTransformer = UIConfigurationColorTransformer { _ in fgColor }
+            }
+
+            cfg.contentInsets = self.inset
+            button.tintColor = fgColor
+            button.configuration = cfg
         }
+
     }
-    
-    override
-    public var isSelected: Bool {
-        didSet {
-            if isSelected {
-                configuration?.baseBackgroundColor = backgroundToduckColor
-                configuration?.baseForegroundColor = foregroundToduckColor
-            } else {
-                configuration?.baseBackgroundColor = TDColor.baseWhite
-                configuration?.baseForegroundColor = TDColor.Neutral.neutral500
-            }
+
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) == true {
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -98,35 +115,33 @@ public class TDBaseButton: UIButton {
         if let originalImage = image {
             image = originalImage.withRenderingMode(.alwaysTemplate)
         }
-        
-        self.tintColor = foregroundColor
-        setupButton()
+        setNeedsUpdateConfiguration()
     }
     
     /// 버튼의 `cornerRadius`를 설정합니다.
     public func setRadius(_ radius: CGFloat) {
         self.radius = radius
-        layer.cornerRadius = radius
+        setNeedsUpdateConfiguration()
     }
     
     /// 버튼의 `font`를 설정합니다.
     public func setFont(_ font: UIFont) {
         self.font = font
-        setupButton()
+        setNeedsUpdateConfiguration()
     }
     
     /// 버튼의 `inset`을 설정합니다.
     public func setInset(top: CGFloat = 0, leading: CGFloat = 0, bottom: CGFloat = 0, trailing: CGFloat = 0) {
         inset = NSDirectionalEdgeInsets(top: top, leading: leading, bottom: bottom, trailing: trailing)
-        setupButton()
+        setNeedsUpdateConfiguration()
     }
     
     /// 버튼에 그림자를 추가합니다.
     public func setShadow() {
-        layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+        layer.shadowColor = UIColor(white: 0, alpha: 0.16).cgColor
         layer.shadowOpacity = 1
         layer.shadowRadius = 10
-        layer.shadowOffset = CGSize(width: 0, height: 0)
+        layer.shadowOffset = .zero
     }
 }
 
