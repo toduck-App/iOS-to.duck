@@ -90,14 +90,25 @@ final class SocialEventJoinView: BaseView {
     }
 
     private let phoneNumberTextField = UITextField().then {
-        $0.placeholder = "- 없이 휴대전화 번호 입력"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.keyboardType = .numberPad
         $0.adjustsFontSizeToFitWidth = true
         $0.minimumFontSize = 10
         $0.clearButtonMode = .whileEditing
         $0.accessibilityTraits.insert(.updatesFrequently)
+        let placeholderText = "- 없이 휴대전화 번호 입력"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
 
     private let errorLabel = TDLabel(
