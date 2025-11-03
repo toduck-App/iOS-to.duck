@@ -306,6 +306,10 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
             input.send(.loadMorePosts)
         }
     }
+    
+    func showEventJoinAlert() {
+        presentPopup(with: SocialEventJoinSuccessViewController())
+    }
 }
 
 // MARK: - DeleteEventViewControllerDelegate

@@ -1,5 +1,6 @@
 import Combine
 import Kingfisher
+import TDCore
 import TDDesign
 import TDDomain
 import UIKit
@@ -11,7 +12,9 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
     private let input = PassthroughSubject<SocialCreatorViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var isAtBottom = false
-    private(set) var chips: [TDChipItem] = PostCategory.allCases.map { TDChipItem(title: $0.title) }
+    private(set) var chips: [TDChipItem] = PostCategory.allCases.map {
+        TDChipItem(title: $0.title)
+    }
     var post: Post? = nil
 
     init(viewModel: SocialCreatorViewModel) {
@@ -37,14 +40,18 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
         layoutView.socialSelectRoutineView.delegate = self
         layoutView.titleTextFieldView.delegate = self
         layoutView.descriptionTextFieldView.delegate = self
-        layoutView.socialSelectCategoryView.categorySelectView.chipDelegate = self
+        layoutView.socialSelectCategoryView.categorySelectView.chipDelegate =
+            self
         layoutView.socialSelectCategoryView.categorySelectView.setChips(chips)
         layoutView.scrollView.delegate = self
 
-        layoutView.saveButton.addAction(UIAction { [weak self] _ in
-            self?.didTapRegisterButton()
-        }, for: .touchUpInside)
-        
+        layoutView.saveButton.addAction(
+            UIAction { [weak self] _ in
+                self?.didTapRegisterButton()
+            },
+            for: .touchUpInside
+        )
+
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "",
             leftButtonAction: UIAction { [weak self] _ in
@@ -63,8 +70,12 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
                 switch event {
                 case .createPost:
                     coordinator?.finish(by: .pop)
+                case .canParticipateEvent(let socialId):
+                    coordinator?.presentEventJoinSheet(socialId: socialId)
                 case .setRoutine:
-                    layoutView.socialSelectRoutineView.setRoutine(string: viewModel.selectedRoutine?.title ?? "")
+                    layoutView.socialSelectRoutineView.setRoutine(
+                        string: viewModel.selectedRoutine?.title ?? ""
+                    )
                 case .setImage:
                     layoutView.formPhotoView.addPhotos(viewModel.images)
                 case .failure(let message):
@@ -81,7 +92,11 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
 
     func editPost(_ post: Post) {
         if let category = post.category {
-            layoutView.socialSelectCategoryView.categorySelectView.setSelectChips(chips, selectChipIndexs: category.map { $0.rawValue - 1 })
+            layoutView.socialSelectCategoryView.categorySelectView
+                .setSelectChips(
+                    chips,
+                    selectChipIndexs: category.map { $0.rawValue - 1 }
+                )
             for category in category {
                 input.send(.chipSelect(at: category.rawValue - 1))
             }
@@ -92,12 +107,15 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
             input.send(.setTitle(title))
         }
         if !post.contentText.isEmpty {
-            layoutView.descriptionTextFieldView.setupTextView(text: post.contentText)
+            layoutView.descriptionTextFieldView.setupTextView(
+                text: post.contentText
+            )
             input.send(.setContent(post.contentText))
         }
 
         if let urlStrings = post.imageList, !urlStrings.isEmpty {
-            let urls = urlStrings
+            let urls =
+                urlStrings
                 .compactMap { URL(string: $0) }
             var imageDatas: [Data] = []
             let group = DispatchGroup()
@@ -108,7 +126,9 @@ final class SocialCreatorViewController: BaseViewController<SocialCreatorView> {
                     defer { group.leave() }
                     switch result {
                     case .success(let value):
-                        if let data = value.image.jpegData(compressionQuality: 1.0) {
+                        if let data = value.image.jpegData(
+                            compressionQuality: 1.0
+                        ) {
                             imageDatas.append(data)
                         }
                     case .failure(let error):
@@ -145,15 +165,24 @@ extension SocialCreatorViewController: SocialRoutineInputDelegate {
 // MARK: - TDChipCollectionViewDelegate
 
 extension SocialCreatorViewController: TDChipCollectionViewDelegate {
-    func chipCollectionView(_ collectionView: TDDesign.TDChipCollectionView, didSelectChipAt index: Int, chipText: String) {
+    func chipCollectionView(
+        _ collectionView: TDDesign.TDChipCollectionView,
+        didSelectChipAt index: Int,
+        chipText: String
+    ) {
         input.send(.chipSelect(at: index))
     }
 }
 
 // MARK: - SocialAddPhotoViewDelegate
 
-extension SocialCreatorViewController: TDFormPhotoDelegate, TDPhotoPickerDelegate {
-    func didSelectPhotos(_ picker: TDDesign.TDPhotoPickerController, photos: [Data]) {
+extension SocialCreatorViewController: TDFormPhotoDelegate,
+    TDPhotoPickerDelegate
+{
+    func didSelectPhotos(
+        _ picker: TDDesign.TDPhotoPickerController,
+        photos: [Data]
+    ) {
         input.send(.setImages(photos, true))
     }
 
@@ -163,23 +192,34 @@ extension SocialCreatorViewController: TDFormPhotoDelegate, TDPhotoPickerDelegat
             message: "[앱 설정 → 앱 이름] 탭에서 접근을 활성화 해주세요",
             image: TDImage.Alert.permissionCamera,
             cancelTitle: "취소",
-            confirmTitle: "설정으로 이동", onConfirm: {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            confirmTitle: "설정으로 이동",
+            onConfirm: {
+                UIApplication.shared.open(
+                    URL(string: UIApplication.openSettingsURLString)!
+                )
             }
         )
     }
 
     func didTapAddPhotoButton(_ view: TDFormPhotoView?) {
-        let photoPickerController = TDPhotoPickerController(maximumSelectablePhotos: 5)
+        let photoPickerController = TDPhotoPickerController(
+            maximumSelectablePhotos: 5
+        )
         photoPickerController.pickerDelegate = self
-        navigationController?.pushTDViewController(photoPickerController, animated: true)
+        navigationController?.pushTDViewController(
+            photoPickerController,
+            animated: true
+        )
     }
 }
 
 // MARK: - TextFieldDelegate
 
 extension SocialCreatorViewController: TDFormTextFieldDelegate {
-    func tdTextField(_ textField: TDDesign.TDFormTextField, didChangeText text: String) {
+    func tdTextField(
+        _ textField: TDDesign.TDFormTextField,
+        didChangeText text: String
+    ) {
         input.send(.setTitle(text))
     }
 }
@@ -187,7 +227,10 @@ extension SocialCreatorViewController: TDFormTextFieldDelegate {
 // MARK: - TextViewDelegate
 
 extension SocialCreatorViewController: TDFormTextViewDelegate {
-    func tdTextView(_ textView: TDDesign.TDFormTextView, didChangeText text: String) {
+    func tdTextView(
+        _ textView: TDDesign.TDFormTextView,
+        didChangeText text: String
+    ) {
         input.send(.setContent(text))
     }
 }
@@ -205,7 +248,10 @@ extension SocialCreatorViewController {
 
 extension SocialCreatorViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if viewModel.canCreatePost { hideSnackBar(); return }
+        if viewModel.canCreatePost {
+            hideSnackBar()
+            return
+        }
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
@@ -218,7 +264,9 @@ extension SocialCreatorViewController: UIScrollViewDelegate {
     }
 
     private func showSnackBar() {
-        guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
+        guard let constraint = layoutView.noticeSnackBarBottomConstraint else {
+            return
+        }
         constraint.update(offset: 0)
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -226,7 +274,9 @@ extension SocialCreatorViewController: UIScrollViewDelegate {
     }
 
     private func hideSnackBar() {
-        guard let constraint = layoutView.noticeSnackBarBottomConstraint else { return }
+        guard let constraint = layoutView.noticeSnackBarBottomConstraint else {
+            return
+        }
         constraint.update(offset: 50)
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()

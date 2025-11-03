@@ -34,7 +34,7 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
     
-    public func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws {
+    public func createPost(post: Post, image: [(fileName: String, imageData: Data)]?) async throws -> Int {
         var imageUrls: [String] = []
         if let image {
             for (fileName, imageData) in image {
@@ -52,7 +52,7 @@ public final class SocialRepositoryImp: SocialRepository {
             socialCategoryIds: post.category?.compactMap(\.rawValue) ?? [],
             socialImageUrls: imageUrls
         )
-        try await socialService.requestCreatePost(requestDTO: requestDTO)
+        return try await socialService.requestCreatePost(requestDTO: requestDTO).socialId
     }
     
     public func updatePost(prevPost: Post, updatePost: Post, image: [(fileName: String, imageData: Data)]?) async throws {
