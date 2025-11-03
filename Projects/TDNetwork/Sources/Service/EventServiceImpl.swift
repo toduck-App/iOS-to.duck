@@ -29,7 +29,7 @@ public struct EventServiceImpl: EventService {
     
     public func participate(socialId: Int, phone: String) async throws {
         let target = EventAPI.participate(id: socialId, phone: phone)
-        try await provider.requestDecodable(of: EventDTO.self, target)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
     }
     
 }

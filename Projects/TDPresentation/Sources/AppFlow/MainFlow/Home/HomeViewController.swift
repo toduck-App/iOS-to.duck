@@ -21,6 +21,7 @@ final class HomeViewController: BaseViewController<BaseView> {
             TDTokenManager.shared.launchFirstLogin()
             showFirstLoginCoachMarks()
         }
+        coordinator?.presentEventSheet()
     }
     
     override func viewWillAppear(_ animated: Bool) {

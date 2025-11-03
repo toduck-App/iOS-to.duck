@@ -31,7 +31,6 @@ final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
     func start() {
         let items: [UINavigationController] = MainTabbarItem.allCases.map { createNavigationController(for: $0) }
         configureTabBarController(with: items)
-        presentEventSheet()
     }
     
     // MARK: - Configuration
@@ -55,7 +54,7 @@ final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
         
         switch item {
         case .home:
-            coordinator = HomeCoordinator(navigationController: navigationController, injector: injector)
+            coordinator = HomeCoordinator(navigationController: navigationController, injector: injector, deepLinkRouter: self)
         case .timer:
             coordinator = TimerCoordinator(navigationController: navigationController, injector: injector)
         case .diary:
@@ -151,15 +150,6 @@ final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
     private func selectTab(_ item: MainTabbarItem) {
         guard let index = MainTabbarItem.allCases.firstIndex(of: item) else { return }
         tabBarController.selectedIndex = index
-    }
-    
-    private func presentEventSheet() {
-        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
-        let eventCoordinator = EventSheetCoordinator(navigationController: navigationController, injector: injector)
-        eventCoordinator.deepLinkRouter = self
-        childCoordinators.append(eventCoordinator)
-        eventCoordinator.finishDelegate = self
-        eventCoordinator.start()
     }
 }
 
