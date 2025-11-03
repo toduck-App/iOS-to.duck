@@ -363,4 +363,9 @@ public enum TDImage {
     public enum CoachMark {
         public static let step2 = TDDesignAsset.Images.coatchMark2.image
     }
+    
+    public enum Event {
+        public static let socialThumnail = TDDesignAsset.Images.socialEvent.image
+        public static let eventGfit = TDDesignAsset.Images.eventGfit.image
+    }
 }

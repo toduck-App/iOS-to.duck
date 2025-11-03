@@ -11,6 +11,21 @@ public final class TDTokenManager {
     public private(set) var pendingFCMToken: String?
     public private(set) var userId: Int?
     
+    
+    /// 오늘 이벤트 시트를 보여줘야 하는지 여부 (자정 기준으로 자동 리셋)
+    public var shouldShowEventSheetToday: Bool {
+        guard let last = UserDefaults.standard.object(forKey: UserDefaultsConstant.lastHiddenEventSheetDate) as? Date
+        else { return true }
+
+        return !Calendar.current.isDate(Date(), inSameDayAs: last)
+    }
+
+    /// “오늘은 그만보기” 눌렀을 때 호출
+    public func markEventSheetHiddenForToday(now: Date = Date()) {
+        let start = Calendar.current.startOfDay(for: now)
+        UserDefaults.standard.set(start, forKey: UserDefaultsConstant.lastHiddenEventSheetDate)
+    }
+
     public var isFirstLaunch: Bool {
         return UserDefaults.standard.bool(forKey: UserDefaultsConstant.isFirstLaunch)
     }

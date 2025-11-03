@@ -45,12 +45,23 @@ final class PhoneVerificationView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let phoneNumberTextField = UITextField().then {
-        $0.placeholder = "휴대폰 번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.keyboardType = .numberPad
         $0.textContentType = .telephoneNumber
         $0.adjustsFontSizeToFitWidth = true
+        let placeholderText = "휴대폰 번호를 입력하세요"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     let postButton = TDBaseButton(
         title: "인증요청",
@@ -72,11 +83,22 @@ final class PhoneVerificationView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let verificationNumberTextField = UITextField().then {
-        $0.placeholder = "인증 번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.textContentType = .oneTimeCode
         $0.keyboardType = .numberPad
+        let placeholderText = "인증 번호를 입력하세요"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     let verificationNumberTimerLabel = TDLabel(
         labelText: "5:00",

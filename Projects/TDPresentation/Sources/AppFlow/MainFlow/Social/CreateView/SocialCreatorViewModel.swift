@@ -12,16 +12,17 @@ final class SocialCreatorViewModel: BaseViewModel {
         case setImages([Data], Bool)
         case createPost
     }
-    
+
     enum Output {
         case canCreatePost(Bool)
+        case canParticipateEvent(Int)
         case createPost
         case setRoutine
         case setImage
         case failure(String)
         case success
     }
-    
+
     private(set) var routines: [Routine] = []
     private(set) var selectedCategory: [PostCategory]?
     private(set) var selectedRoutine: Routine?
@@ -35,50 +36,55 @@ final class SocialCreatorViewModel: BaseViewModel {
     private var isChangeImage: Bool = false
 
     private(set) var canCreatePost: Bool = false
-    
+
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var category: [PostCategory] = []
-    
+
     private let createPostUseCase: CreatePostUseCase
-    private let UpdatePostUseCase: UpdatePostUseCase
-    
+    private let updatePostUseCase: UpdatePostUseCase
+    private let fetchParticipateEventUseCase: FetchParticipateEventUseCase
+
     init(
         createPostUseCase: CreatePostUseCase,
-        UpdatePostUseCase: UpdatePostUseCase,
+        updatePostUseCase: UpdatePostUseCase,
+        fetchParticipateEventUseCase: FetchParticipateEventUseCase,
         prevPost: Post? = nil
     ) {
         self.createPostUseCase = createPostUseCase
-        self.UpdatePostUseCase = UpdatePostUseCase
+        self.updatePostUseCase = updatePostUseCase
+        self.fetchParticipateEventUseCase = fetchParticipateEventUseCase
         self.prevPost = prevPost
     }
-    
-    func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
+
+    func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<
+        Output, Never
+    > {
         input
             .sink { [weak self] event in
-            guard let self else { return }
-            switch event {
-            case .chipSelect(let index):
-                setCategory(at: index)
-            case .setRoutine(let routine):
-                setRoutine(routine)
-            case .setContent(let content):
-                setContent(content)
-            case .setImages(let data, let isEditImage):
-                setImages(data, isEditImage)
-            case .setTitle(let title):
-                setTitle(title)
-            case .createPost:
-                Task {
-                    if self.isEditMode {
-                        await self.editPost()
-                    } else {
-                        await self.createPost()
+                guard let self else { return }
+                switch event {
+                case .chipSelect(let index):
+                    setCategory(at: index)
+                case .setRoutine(let routine):
+                    setRoutine(routine)
+                case .setContent(let content):
+                    setContent(content)
+                case .setImages(let data, let isEditImage):
+                    setImages(data, isEditImage)
+                case .setTitle(let title):
+                    setTitle(title)
+                case .createPost:
+                    Task {
+                        if self.isEditMode {
+                            await self.editPost()
+                        } else {
+                            await self.createPost()
+                        }
                     }
                 }
-            }
-        }.store(in: &cancellables)
-        
+            }.store(in: &cancellables)
+
         return output.eraseToAnyPublisher()
     }
 }
@@ -91,28 +97,50 @@ extension SocialCreatorViewModel {
             routine: selectedRoutine,
             category: category
         )
-        
+
         let image = images.map { ("\(UUID().uuidString).jpg", $0) }
         do {
-            try await createPostUseCase.execute(post: post, image: image)
+            let socialId = try await createPostUseCase.execute(
+                post: post,
+                image: image
+            )
+            
+            let participated =
+                await fetchParticipateEventUseCase.execute()
+            if !participated && content.count >= 10 {
+                output.send(.canParticipateEvent(socialId))
+                return
+            }
             output.send(.success)
+
         } catch {
             output.send(.failure(error.localizedDescription))
         }
     }
-    
+
     private func editPost() async {
         do {
             guard let prevPost else { return }
-            let imageList = isChangeImage ? images.map { ("\(UUID().uuidString).jpg", $0) } : nil
-            let updatePost = Post(title: title, content: content, routine: selectedRoutine, category: category)
-            try await UpdatePostUseCase.execute(prevPost: prevPost, updatePost: updatePost, image: imageList)
+            let imageList =
+                isChangeImage
+                ? images.map { ("\(UUID().uuidString).jpg", $0) } : nil
+            let updatePost = Post(
+                title: title,
+                content: content,
+                routine: selectedRoutine,
+                category: category
+            )
+            try await updatePostUseCase.execute(
+                prevPost: prevPost,
+                updatePost: updatePost,
+                image: imageList
+            )
             output.send(.success)
         } catch {
             output.send(.failure(error.localizedDescription))
         }
     }
-    
+
     private func setTitle(_ title: String) {
         self.title = title
         validateCreatePost()
@@ -120,7 +148,7 @@ extension SocialCreatorViewModel {
 
     private func setCategory(at index: Int) {
         let category = PostCategory.allCases[index]
-        
+
         if self.category.contains(category) {
             self.category.removeAll { $0 == category }
             return
@@ -128,12 +156,12 @@ extension SocialCreatorViewModel {
         self.category.append(category)
         validateCreatePost()
     }
-    
+
     private func setRoutine(_ routine: Routine) {
         selectedRoutine = routine
         output.send(.setRoutine)
     }
-    
+
     private func setContent(_ content: String) {
         if content.count > 500 {
             return
@@ -141,7 +169,7 @@ extension SocialCreatorViewModel {
         self.content = content
         validateCreatePost()
     }
-    
+
     private func setImages(_ images: [Data], _ isEditImage: Bool = false) {
         if images.count > 5 {
             output.send(.failure("이미지는 최대 5개까지 첨부 가능합니다."))
@@ -153,7 +181,7 @@ extension SocialCreatorViewModel {
         }
         output.send(.setImage)
     }
-    
+
     private func validateCreatePost() {
         if content.isEmpty || category.isEmpty {
             canCreatePost = false
