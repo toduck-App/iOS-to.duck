@@ -23,6 +23,7 @@ final class SocialSearchView: BaseView {
         $0.searchTextField.autocorrectionType = .no
         $0.searchTextField.spellCheckingType = .no
         $0.searchTextField.returnKeyType = .search
+        $0.searchBarStyle = .minimal
         let placeholderText = "제목이나 키워드를 검색해보세요."
         let placeholderColor = TDColor.Neutral.neutral500
         let placeholderFont = TDFont.boldBody2.font
@@ -34,11 +35,6 @@ final class SocialSearchView: BaseView {
                 .font: placeholderFont
             ]
         )
-//        if let leftImageView = $0.searchTextField.leftView as? UIImageView {
-//            let image = leftImageView.image?.withRenderingMode(.alwaysTemplate)
-//            leftImageView.image = image
-//            leftImageView.tintColor = TDColor.Neutral.neutral400
-//        }
         $0.searchTextField.leftView = nil
         $0.searchTextField.leftViewMode = .never
     }
@@ -119,3 +115,4 @@ extension SocialSearchView {
         }
     }
 }
+

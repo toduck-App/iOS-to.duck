@@ -12,6 +12,7 @@ public enum DateFormatType {
     case monthDay
     case monthDayWithWeekday
     case serverDate
+    case serverDateTime
     case weekday
     case weekdayShort
     
@@ -62,6 +63,10 @@ public enum DateFormatType {
         case .serverDate:
             return DateFormatter().then {
                 $0.dateFormat = "yyyy-MM-dd HH:mm"
+            }
+        case .serverDateTime:
+            return DateFormatter().then {
+                $0.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
             }
         case .weekday:
             return DateFormatter().then {

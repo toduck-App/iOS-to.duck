@@ -641,5 +641,33 @@ public struct DomainAssembly: Assembly {
             }
             return ValidateVersionUseCaseImpl(repository: repository)
         }
+        
+        container.register(FetchEventsUseCase.self) { resolver in
+            guard let repository = resolver.resolve(EventRepository.self) else {
+                fatalError("컨테이너에 EventRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchEventsUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchEventDetailsUseCase.self) { resolver in
+            guard let repository = resolver.resolve(EventRepository.self) else {
+                fatalError("컨테이너에 EventRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchEventDetailsUseCaseImpl(repository: repository)
+        }
+        
+        container.register(FetchParticipateEventUseCase.self) { resolver in
+            guard let repository = resolver.resolve(EventRepository.self) else {
+                fatalError("컨테이너에 EventRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchParticipateEventUseCaseImpl(repository: repository)
+        }
+        
+        container.register(ParticipateEventUseCase.self) { resolver in
+            guard let repository = resolver.resolve(EventRepository.self) else {
+                fatalError("컨테이너에 EventRepository가 등록되어 있지 않습니다.")
+            }
+            return ParticipateEventUseCaseImpl(repository: repository)
+        }
     }
 }

@@ -1,7 +1,12 @@
 import UIKit
+import TDDomain
 import TDCore
 
-final class MainTabBarCoordinator: Coordinator {
+public protocol DeepLinkRoutable: AnyObject {
+    func route(to deepLink: DeepLinkType, dismissPresented: Bool)
+}
+
+final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
     // MARK: - Properties
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
@@ -49,7 +54,7 @@ final class MainTabBarCoordinator: Coordinator {
         
         switch item {
         case .home:
-            coordinator = HomeCoordinator(navigationController: navigationController, injector: injector)
+            coordinator = HomeCoordinator(navigationController: navigationController, injector: injector, deepLinkRouter: self)
         case .timer:
             coordinator = TimerCoordinator(navigationController: navigationController, injector: injector)
         case .diary:
@@ -67,6 +72,14 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.finishDelegate = self
         coordinator.start()
         childCoordinators.append(coordinator)
+    }
+    
+    
+    func route(to deepLink: DeepLinkType, dismissPresented: Bool = true) {
+        if dismissPresented {
+            navigationController.presentedViewController?.dismiss(animated: false)
+        }
+        handleDeepLink(deepLink)
     }
     
     // MARK: - Deep Linking
@@ -89,7 +102,7 @@ final class MainTabBarCoordinator: Coordinator {
         case .diary:
             handleDiaryDeepLink(link)
             
-        case .profile, .post:
+        case .profile, .post, .createPost:
             handleSocialDeepLink(link)
         }
     }
@@ -114,6 +127,9 @@ final class MainTabBarCoordinator: Coordinator {
                let commentIdString, let commentId = Int(commentIdString) {
                 socialCoordinator.didTapPost(postId: postId, commentId: commentId)
             }
+            
+        case .createPost:
+            socialCoordinator.didTapCreateButton()
             
         default:
             break

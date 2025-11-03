@@ -1,11 +1,18 @@
 import TDCore
+import FittedSheets
 import TDDomain
 import UIKit
 
+protocol SocialCreatorDelegate: AnyObject {
+    func didFinishEventJoin()
+}
+
 final class SocialCreatorCoordinator: Coordinator {
+    
     var navigationController: UINavigationController
     var childCoordinators = [any Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
+    var delegate: SocialCreatorDelegate?
     var injector: DependencyResolvable
     var post: Post?
 
@@ -22,8 +29,9 @@ final class SocialCreatorCoordinator: Coordinator {
     func start() {
         let createPostUseCase = injector.resolve(CreatePostUseCase.self)
         let updatePostUseCase = injector.resolve(UpdatePostUseCase.self)
+        let fetchParticipateEventUseCase = injector.resolve(FetchParticipateEventUseCase.self)
         let socialCreateViewModel = SocialCreatorViewModel(createPostUseCase: createPostUseCase,
-                                                          UpdatePostUseCase: updatePostUseCase,
+                                                           updatePostUseCase: updatePostUseCase, fetchParticipateEventUseCase: fetchParticipateEventUseCase,
                                                           prevPost: post)
 
         let socialCreatorViewController = SocialCreatorViewController(
@@ -48,11 +56,32 @@ final class SocialCreatorCoordinator: Coordinator {
         childCoordinators.append(coordinator)
         coordinator.start()
     }
+    
+    func presentEventJoinSheet(socialId: Int) {
+        let coordinator = SocialEventJoinCoordinator(
+            navigationController: navigationController,
+            injector: injector,
+            socialId: socialId
+        )
+        coordinator.delegate = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
 }
 
 extension SocialCreatorCoordinator: SocialSelectRoutineDelegate {
     func didTapRoutine(_ routine: Routine) {
         guard let socialCreatorViewController = navigationController.viewControllers.last as? SocialCreatorViewController else { return }
         socialCreatorViewController.setRoutine(routine)
+    }
+}
+
+extension SocialCreatorCoordinator: SocialEventJoinDelegate {
+    func didTapJoin() {
+        delegate?.didFinishEventJoin()
+    }
+    
+    func didTapCancel() {
+        didTapDoneButton()
     }
 }

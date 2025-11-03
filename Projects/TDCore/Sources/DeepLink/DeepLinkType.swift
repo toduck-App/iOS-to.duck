@@ -3,6 +3,7 @@ import Foundation
 public enum DeepLinkType {
     case profile(userId: String)
     case post(postId: String, commentId: String?)
+    case createPost
     case todo
     case diary
     case home
@@ -26,6 +27,9 @@ public enum DeepLinkType {
             guard let postId = queryValue(for: "postId") else { return nil }
             let commentId = queryValue(for: "commentId")
             self = .post(postId: postId, commentId: commentId)
+            
+        case "createPost":
+            self = .createPost
             
         case "todo":
             self = .todo

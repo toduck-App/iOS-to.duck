@@ -11,13 +11,16 @@ final class HomeCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    var deepLinkRouter: DeepLinkRoutable
 
     init(
         navigationController: UINavigationController,
-        injector: DependencyResolvable
+        injector: DependencyResolvable,
+        deepLinkRouter: DeepLinkRoutable
     ) {
         self.navigationController = navigationController
         self.injector = injector
+        self.deepLinkRouter = deepLinkRouter
     }
 
     func start() {
@@ -37,6 +40,15 @@ final class HomeCoordinator: Coordinator {
             homeVC.segmentedControl.setSelectedIndex(1, animated: true)
             navigationController.pushViewController(homeVC, animated: false)
         }
+    }
+    
+    func presentEventSheet() {
+        guard TDTokenManager.shared.shouldShowEventSheetToday else { return }
+        let eventCoordinator = EventSheetCoordinator(navigationController: navigationController, injector: injector)
+        eventCoordinator.deepLinkRouter = self.deepLinkRouter
+        childCoordinators.append(eventCoordinator)
+        eventCoordinator.finishDelegate = self
+        eventCoordinator.start()
     }
 }
 

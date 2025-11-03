@@ -34,10 +34,21 @@ final class SignInView: BaseView {
     }
     
     let idTextField = UITextField().then {
-        $0.placeholder = "아이디를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.autocapitalizationType = .none
+        let placeholderText = "아이디를 입력하세요"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     
     let passwordContainerView = UIView().then {
@@ -48,12 +59,23 @@ final class SignInView: BaseView {
     }
     
     let passwordTextField = UITextField().then {
-        $0.placeholder = "비밀번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.isSecureTextEntry = true
         $0.autocapitalizationType = .none
         $0.rightViewMode = .always
+        let placeholderText = "비밀번호를 입력하세요"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     
     /// 아이디 · 비밀번호 찾기

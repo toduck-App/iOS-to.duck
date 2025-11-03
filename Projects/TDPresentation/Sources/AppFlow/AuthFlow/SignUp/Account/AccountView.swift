@@ -43,10 +43,21 @@ final class AccountView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let idTextField = UITextField().then {
-        $0.placeholder = "아이디를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.autocapitalizationType = .none
+        let placeholderText = "아이디를 입력하세요"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     let duplicateVerificationButton = TDBaseButton(
         title: "중복확인",
@@ -80,11 +91,22 @@ final class AccountView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let passwordTextField = UITextField().then {
-        $0.placeholder = "비밀번호를 입력하세요"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.isSecureTextEntry = true
         $0.autocapitalizationType = .none
+        let placeholderText = "비밀번호를 입력하세요"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     // TODO: 오토레이아웃 조정해서 애니메이션으로 Invalid 표시
     private let invaildPasswordHorizontalStackView = UIStackView().then {
@@ -110,10 +132,21 @@ final class AccountView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     let verifyPasswordTextField = UITextField().then {
-        $0.placeholder = "비밀번호 확인"
         $0.font = TDFont.mediumHeader3.font
         $0.textColor = TDColor.Neutral.neutral800
+        $0.backgroundColor = TDColor.Neutral.neutral50
         $0.isSecureTextEntry = true
+        let placeholderText = "비밀번호 확인"
+        let placeholderColor = TDColor.Neutral.neutral500
+        let placeholderFont = TDFont.mediumHeader3.font
+
+        $0.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: placeholderColor,
+                .font: placeholderFont
+            ]
+        )
     }
     private let invaildVerifyPasswordHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
