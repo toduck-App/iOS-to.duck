@@ -2,115 +2,120 @@
 /// 게시글 데이터를 메모리 내에서 관리합니다.
 /// 기본(PostList)과 검색(Search) 모드를 분리해 상태를 보존합니다.
 public actor PostCache {
-    /// 게시글 모드 (일반/검색)
+    // MARK: - 게시글 모드
     public enum Mode: Equatable {
         case `default`
         case search(keyword: String)
     }
 
-    // MARK: - 내부 저장 프로퍼티
+    // MARK: - 적용 범위
+    public enum Scope {
+        case current
+        case everywhere
+        case specific(Mode)
+    }
+
+    // MARK: - 내부 저장소
     private(set) var mode: Mode = .default
     private var defaultPosts: [Post] = []
     private var searchPosts: [Post] = []
 
-    /// 현재 모드에 따라 접근할 게시글 리스트
-    private var activeList: [Post] {
-        get {
-            switch mode {
-            case .default: return defaultPosts
-            case .search:  return searchPosts
-            }
-        }
-        set {
-            switch mode {
-            case .default: defaultPosts = newValue
-            case .search:  searchPosts  = newValue
-            }
-        }
-    }
-    
-    public init() { }
-
-    /// 두 리스트 모두에 대해 동일 작업을 수행할 때 사용
-    private func withAllLists(_ body: (inout [Post]) -> Void) {
-        body(&defaultPosts)
-        body(&searchPosts)
-    }
+    public init() {}
 
     // MARK: - 모드 관리
     public func setMode(_ newMode: Mode) { mode = newMode }
     public func currentMode() -> Mode { mode }
 
+    // MARK: - 내부 리스트 접근자
+
+    private func setList(_ new: [Post], for scope: Scope) {
+        switch scope {
+        case .current:
+            switch mode {
+            case .default: defaultPosts = new
+            case .search: searchPosts = new
+            }
+        case .specific(let target):
+            switch target {
+            case .default: defaultPosts = new
+            case .search: searchPosts = new
+            }
+        case .everywhere:
+            defaultPosts = new
+            searchPosts = new
+        }
+    }
+
+    private func withLists(for scope: Scope, _ body: (inout [Post]) -> Void) {
+        switch scope {
+        case .current:
+            switch mode {
+            case .default: body(&defaultPosts)
+            case .search: body(&searchPosts)
+            }
+        case .specific(let target):
+            switch target {
+            case .default: body(&defaultPosts)
+            case .search: body(&searchPosts)
+            }
+        case .everywhere:
+            body(&defaultPosts)
+            body(&searchPosts)
+        }
+    }
+
     // MARK: - 조회
-    public func current() -> [Post] { activeList }
-
-    // MARK: - 갱신 (현재 모드만)
-    public func replaceAll(with posts: [Post]) { activeList = posts }
-
-    /// 중복되지 않게 게시글을 추가 (커서 기반 append용)
-    public func appendDedup(_ newPosts: [Post]) {
-        guard !newPosts.isEmpty else { return }
-        var seen = Set(activeList.map(\.id))
-        var merged = activeList
-        merged.reserveCapacity(activeList.count + newPosts.count)
-        for p in newPosts where seen.insert(p.id).inserted {
-            merged.append(p)
-        }
-        activeList = merged
-    }
-    
-    public func append(_ newPost: Post) {
-        activeList.append(newPost)
-    }
-
-    /// 특정 게시글을 업데이트 (변환 클로저 사용)
-    public func update(_ id: Post.ID, transform: (Post) -> Post?) {
-        guard let i = activeList.firstIndex(where: { $0.id == id }) else { return }
-        if let new = transform(activeList[i]) {
-            var arr = activeList
-            arr[i] = new
-            activeList = arr
+    public func current() -> [Post] {
+        switch mode {
+        case .default: return defaultPosts
+        case .search: return searchPosts
         }
     }
 
-    /// 특정 게시글을 제거
-    public func remove(_ id: Post.ID) {
-        activeList.removeAll { $0.id == id }
+    // MARK: - 수정/갱신 (범위 지정형)
+
+    public func replaceAll(with posts: [Post], scope: Scope = .current) {
+        setList(posts, for: scope)
     }
 
-    // MARK: - 전체 리스트에 적용 (default + search)
-    public func appendEverywhere(_ post: Post) {
-        withAllLists { list in
-            list.append(post)
-        }
-    }
-    
-    public func updateEverywhere(_ id: Post.ID, transform: (Post) -> Post?) {
-        withAllLists { list in
-            if let i = list.firstIndex(where: { $0.id == id }) {
-                if let new = transform(list[i]) { list[i] = new }
+    public func append(_ newPosts: [Post], dedup: Bool = true, scope: Scope = .current) {
+        withLists(for: scope) { list in
+            guard !newPosts.isEmpty else { return }
+            if dedup {
+                var seen = Set(list.map(\.id))
+                for p in newPosts where seen.insert(p.id).inserted {
+                    list.append(p)
+                }
+            } else {
+                list.append(contentsOf: newPosts)
             }
         }
     }
 
-    public func replaceEveryWhere(_ post: Post) {
-        withAllLists { list in
-            if let i = list.firstIndex(where: { $0.id == post.id }) {
-                list[i] = post
+    public func insertAtTop(_ post: Post, scope: Scope = .current) {
+        withLists(for: scope) { list in
+            list.insert(post, at: 0)
+        }
+    }
+
+    public func update(_ id: Post.ID, scope: Scope = .current, transform: (Post) -> Post?) {
+        withLists(for: scope) { list in
+            if let i = list.firstIndex(where: { $0.id == id }),
+               let new = transform(list[i]) {
+                list[i] = new
             }
         }
     }
 
-    public func removeEverywhere(_ id: Post.ID) {
-        withAllLists { list in
+    public func remove(_ id: Post.ID, scope: Scope = .current) {
+        withLists(for: scope) { list in
             list.removeAll { $0.id == id }
         }
     }
 
-    // MARK: - 댓글 수 조정
-    public func adjustCommentCount(_ postID: Post.ID, by delta: Int) {
+    public func adjustCommentCount(_ postID: Post.ID, by delta: Int, scope: Scope = .current) {
         guard delta != 0 else { return }
-        withAllLists { list in
+        withLists(for: scope) { list in
             if let i = list.firstIndex(where: { $0.id == postID }) {
                 var p = list[i]
                 let current = p.commentCount ?? 0
@@ -120,13 +125,13 @@ public actor PostCache {
         }
     }
 
-    // MARK: - 스냅샷 (복원용)
+    // MARK: - 스냅샷
     public func snapshot() -> (default: [Post], search: [Post]) {
         (defaultPosts, searchPosts)
     }
 
     public func restore(_ snapshot: (default: [Post], search: [Post])) {
-        self.defaultPosts = snapshot.default
-        self.searchPosts  = snapshot.search
+        defaultPosts = snapshot.default
+        searchPosts = snapshot.search
     }
 }

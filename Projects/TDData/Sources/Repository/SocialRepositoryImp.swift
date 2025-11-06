@@ -42,8 +42,6 @@ public final class SocialRepositoryImp: SocialRepository {
     }
 
     // MARK: - 게시글 조회
-
-    /// 기본 피드(홈 피드) 게시글을 요청합니다.
     public func fetchPostList(
         cursor: Int? = nil,
         limit: Int = 20,
@@ -54,15 +52,14 @@ public final class SocialRepositoryImp: SocialRepository {
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
-            await store.replaceAll(with: posts)
+            await store.replaceAll(with: posts, scope: .specific(.default))
         } else {
-            await store.appendDedup(posts)
+            await store.append(posts, scope: .specific(.default))
         }
         await publishSnapshot()
         defaultCursor.update(with: (dto.hasMore, dto.nextCursor))
     }
 
-    /// 검색 결과 게시글을 요청합니다.
     public func searchPost(
         keyword: String,
         cursor: Int? = nil,
@@ -79,9 +76,9 @@ public final class SocialRepositoryImp: SocialRepository {
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
-            await store.replaceAll(with: posts)
+            await store.replaceAll(with: posts, scope: .specific(.search(keyword: keyword)))
         } else {
-            await store.appendDedup(posts)
+            await store.append(posts, scope: .specific(.search(keyword: keyword)))
         }
         await publishSnapshot()
         searchCursor.update(with: (dto.hasMore, dto.nextCursor))
@@ -89,7 +86,6 @@ public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 게시글 생성 / 수정 / 삭제
 
-    /// 게시글 좋아요를 토글합니다. (Optimistic UI 반영)
     public func togglePostLike(
         postID: Post.ID,
         currentLike: Bool
@@ -107,12 +103,12 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    /// 게시글을 생성합니다.
     public func createPost(
         post: Post,
         image: [(fileName: String, imageData: Data)]?
     ) async throws -> Int {
         var imageUrls: [String] = []
+
         if let image {
             for (fileName, data) in image {
                 let urls = try await awsService.requestPresignedUrl(fileName: fileName)
@@ -133,7 +129,7 @@ public final class SocialRepositoryImp: SocialRepository {
         let response = try await socialService.requestCreatePost(requestDTO: requestDTO)
         do {
             let createdPost = try await fetchPost(postID: response.socialId).0
-            await store.appendEverywhere(createdPost)
+            await store.insertAtTop(createdPost, scope: .everywhere)
             await publishSnapshot()
         } catch {
             try await fetchPostList(cursor: nil, limit: 20, category: nil)
@@ -142,7 +138,6 @@ public final class SocialRepositoryImp: SocialRepository {
         return response.socialId
     }
 
-    /// 게시글을 업데이트합니다.
     public func updatePost(
         prevPost: Post,
         updatePost: Post,
@@ -156,6 +151,7 @@ public final class SocialRepositoryImp: SocialRepository {
 
         var imageUrls: [String] = []
         var updatePost = updatePost
+
         if isChangeImage, let image {
             for (fileName, data) in image {
                 let urls = try await awsService.requestPresignedUrl(fileName: fileName)
@@ -186,12 +182,11 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    /// 게시글을 삭제합니다.
     public func deletePost(
         postID: Post.ID
     ) async throws {
         let snap = await store.snapshot()
-        await store.removeEverywhere(postID)
+        await store.remove(postID, scope: .everywhere)
         await publishSnapshot()
         do {
             try await socialService.requestDeletePost(postID: postID)
@@ -202,21 +197,17 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    /// 단일 게시글을 불러옵니다. (댓글 포함)
     public func fetchPost(
         postID: Post.ID
     ) async throws -> (Post, [Comment]) {
         let dto = try await socialService.requestPost(postID: postID)
         let post = dto.convertToPost()
         let comments = dto.convertToComment()
-
-        await store.replaceEveryWhere(post)
-        await publishSnapshot()
+        await store.update(postID, scope: .everywhere) { _ in post }
         return (post, comments)
     }
 
-    // MARK: - 댓글 처리
-
+    // MARK: - 댓글
     public func toggleCommentLike(
         postID: Post.ID,
         commentID: Comment.ID,
@@ -257,10 +248,7 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    public func deleteComment(
-        postID: Post.ID,
-        commentID: Comment.ID
-    ) async throws {
+    public func deleteComment(postID: Post.ID, commentID: Comment.ID) async throws {
         let rollback = await performOptimisticCommentAdjust(postID: postID, delta: -1)
         do {
             try await socialService.requestRemoveComment(postID: postID, commentID: commentID)
@@ -269,23 +257,12 @@ public final class SocialRepositoryImp: SocialRepository {
             throw error
         }
     }
-    
-    public func reportPost(
-        postID: Post.ID,
-        reportType: ReportType,
-        reason: String?,
-        blockAuthor: Bool
-    ) async throws {
+
+    public func reportPost(postID: Post.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws {
         try await socialService.requestReportPost(postID: postID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
     }
-    
-    public func reportComment(
-        postID: Post.ID,
-        commentID: Comment.ID,
-        reportType: ReportType,
-        reason: String?,
-        blockAuthor: Bool
-    ) async throws {
+
+    public func reportComment(postID: Post.ID, commentID: Comment.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws {
         try await socialService.requestReportComment(postID: postID, commentID: commentID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
     }
 
@@ -303,7 +280,7 @@ public final class SocialRepositoryImp: SocialRepository {
 private extension SocialRepositoryImp {
     func performOptimisticLikeToggle(postID: Post.ID, isLiked: Bool) async -> () async -> Void {
         let snapshot = await store.snapshot()
-        await store.updateEverywhere(postID) { var p = $0; p.toggleLike(); return p }
+        await store.update(postID, scope: .everywhere) { var p = $0; p.toggleLike(); return p }
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
@@ -314,7 +291,7 @@ private extension SocialRepositoryImp {
 
     func performOptimisticReplace(_ newPost: Post) async -> () async -> Void {
         let snapshot = await store.snapshot()
-        await store.replaceEveryWhere(newPost)
+        await store.update(newPost.id, scope: .everywhere) { _ in newPost }
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
@@ -325,7 +302,7 @@ private extension SocialRepositoryImp {
 
     func performOptimisticCommentAdjust(postID: Post.ID, delta: Int) async -> () async -> Void {
         let snapshot = await store.snapshot()
-        await store.adjustCommentCount(postID, by: delta)
+        await store.adjustCommentCount(postID, by: delta, scope: .everywhere)
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
@@ -335,7 +312,7 @@ private extension SocialRepositoryImp {
     }
 }
 
-// MARK: - Pagination 관련
+// MARK: - Pagination
 extension SocialRepositoryImp {
     public func refresh(limit: Int = 20, category: [PostCategory]? = nil) async throws {
         await store.setMode(.default)
@@ -361,9 +338,7 @@ extension SocialRepositoryImp {
         }
     }
 
-    /// 현재 게시글 목록을 반환합니다.
     public func currentPosts() async -> [Post] {
         await store.current()
     }
 }
-

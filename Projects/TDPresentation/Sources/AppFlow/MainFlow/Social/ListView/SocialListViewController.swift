@@ -121,8 +121,6 @@ final class SocialListViewController: BaseViewController<SocialListView> {
             .sink { [weak self] output in
                 guard let self else { return }
                 switch output {
-                    
-                // ✅ 변경: 단일 posts 스트림으로 통일
                 case .posts(let posts):
                     self.layoutView.showFinishView()
                     self.latestPosts = posts
