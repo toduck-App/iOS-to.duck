@@ -10,7 +10,7 @@ public final class SocialRepositoryImp: SocialRepository {
     private let awsService: AwsService
 
     // MARK: - 상태 관리 (SSOT)
-    private let store = PostCache()
+    private let cache = PostCache()
     private let postSubject = CurrentValueSubject<[Post], Never>([])
     private let publishQueue = DispatchQueue(label: "social.repo.publish", qos: .userInitiated)
 
@@ -34,11 +34,11 @@ public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 모드 관리
     public func setModeDefault() {
-        Task { await store.setMode(.default) }
+        Task { await cache.setMode(.default) }
     }
 
     public func setModeSearch(_ keyword: String) {
-        Task { await store.setMode(.search(keyword: keyword)) }
+        Task { await cache.setMode(.search(keyword: keyword)) }
     }
 
     // MARK: - 게시글 조회
@@ -52,9 +52,9 @@ public final class SocialRepositoryImp: SocialRepository {
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
-            await store.replaceAll(with: posts, scope: .specific(.default))
+            await cache.replaceAll(with: posts, scope: .specific(.default))
         } else {
-            await store.append(posts, scope: .specific(.default))
+            await cache.append(posts, scope: .specific(.default))
         }
         await publishSnapshot()
         defaultCursor.update(with: (dto.hasMore, dto.nextCursor))
@@ -76,9 +76,9 @@ public final class SocialRepositoryImp: SocialRepository {
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
-            await store.replaceAll(with: posts, scope: .specific(.search(keyword: keyword)))
+            await cache.replaceAll(with: posts, scope: .specific(.search(keyword: keyword)))
         } else {
-            await store.append(posts, scope: .specific(.search(keyword: keyword)))
+            await cache.append(posts, scope: .specific(.search(keyword: keyword)))
         }
         await publishSnapshot()
         searchCursor.update(with: (dto.hasMore, dto.nextCursor))
@@ -129,7 +129,7 @@ public final class SocialRepositoryImp: SocialRepository {
         let response = try await socialService.requestCreatePost(requestDTO: requestDTO)
         do {
             let createdPost = try await fetchPost(postID: response.socialId).0
-            await store.insertAtTop(createdPost, scope: .everywhere)
+            await cache.insertAtTop(createdPost, scope: .everywhere)
             await publishSnapshot()
         } catch {
             try await fetchPostList(cursor: nil, limit: 20, category: nil)
@@ -185,13 +185,13 @@ public final class SocialRepositoryImp: SocialRepository {
     public func deletePost(
         postID: Post.ID
     ) async throws {
-        let snap = await store.snapshot()
-        await store.remove(postID, scope: .everywhere)
+        let snap = await cache.snapshot()
+        await cache.remove(postID, scope: .everywhere)
         await publishSnapshot()
         do {
             try await socialService.requestDeletePost(postID: postID)
         } catch {
-            await store.restore(snap)
+            await cache.restore(snap)
             await publishSnapshot()
             throw error
         }
@@ -203,7 +203,7 @@ public final class SocialRepositoryImp: SocialRepository {
         let dto = try await socialService.requestPost(postID: postID)
         let post = dto.convertToPost()
         let comments = dto.convertToComment()
-        await store.update(postID, scope: .everywhere) { _ in post }
+        await cache.update(postID, scope: .everywhere) { _ in post }
         return (post, comments)
     }
 
@@ -268,7 +268,7 @@ public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 스냅샷 퍼블리시
     private func publishSnapshot() async {
-        let posts = await store.current()
+        let posts = await cache.current()
         let subject = postSubject
         publishQueue.async {
             subject.send(posts)
@@ -279,34 +279,34 @@ public final class SocialRepositoryImp: SocialRepository {
 // MARK: - Optimistic Helper
 private extension SocialRepositoryImp {
     func performOptimisticLikeToggle(postID: Post.ID, isLiked: Bool) async -> () async -> Void {
-        let snapshot = await store.snapshot()
-        await store.update(postID, scope: .everywhere) { var p = $0; p.toggleLike(); return p }
+        let snapshot = await cache.snapshot()
+        await cache.update(postID, scope: .everywhere) { var p = $0; p.toggleLike(); return p }
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
-            await self.store.restore(snapshot)
+            await self.cache.restore(snapshot)
             await self.publishSnapshot()
         }
     }
 
     func performOptimisticReplace(_ newPost: Post) async -> () async -> Void {
-        let snapshot = await store.snapshot()
-        await store.update(newPost.id, scope: .everywhere) { _ in newPost }
+        let snapshot = await cache.snapshot()
+        await cache.update(newPost.id, scope: .everywhere) { _ in newPost }
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
-            await self.store.restore(snapshot)
+            await self.cache.restore(snapshot)
             await self.publishSnapshot()
         }
     }
 
     func performOptimisticCommentAdjust(postID: Post.ID, delta: Int) async -> () async -> Void {
-        let snapshot = await store.snapshot()
-        await store.adjustCommentCount(postID, by: delta, scope: .everywhere)
+        let snapshot = await cache.snapshot()
+        await cache.adjustCommentCount(postID, by: delta, scope: .everywhere)
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
-            await self.store.restore(snapshot)
+            await self.cache.restore(snapshot)
             await self.publishSnapshot()
         }
     }
@@ -315,19 +315,19 @@ private extension SocialRepositoryImp {
 // MARK: - Pagination
 extension SocialRepositoryImp {
     public func refresh(limit: Int = 20, category: [PostCategory]? = nil) async throws {
-        await store.setMode(.default)
+        await cache.setMode(.default)
         defaultCursor.reset()
         try await fetchPostList(cursor: nil, limit: limit, category: category)
     }
 
     public func startSearch(keyword: String, limit: Int = 20, category: [PostCategory]? = nil) async throws {
-        await store.setMode(.search(keyword: keyword))
+        await cache.setMode(.search(keyword: keyword))
         searchCursor.reset()
         try await searchPost(keyword: keyword, cursor: nil, limit: limit, category: category)
     }
 
     public func loadMore(limit: Int = 20, category: [PostCategory]? = nil) async throws {
-        let mode = await store.currentMode()
+        let mode = await cache.currentMode()
         switch mode {
         case .default:
             guard defaultCursor.hasMore else { return }
@@ -339,6 +339,6 @@ extension SocialRepositoryImp {
     }
 
     public func currentPosts() async -> [Post] {
-        await store.current()
+        await cache.current()
     }
 }
