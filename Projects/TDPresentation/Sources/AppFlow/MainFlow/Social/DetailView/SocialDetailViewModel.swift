@@ -32,7 +32,8 @@ public final class SocialDetailViewModel: BaseViewModel {
         case failure(String)
     }
     
-    private(set) var postID: Int
+    // MARK: - Dependencies
+    private let repo: SocialRepository
     private let fetchPostUsecase: FetchPostUseCase
     private let togglePostLikeUseCase: TogglePostLikeUseCase
     private let toggleCommentLikeUseCase: ToggleCommentLikeUseCase
@@ -40,16 +41,21 @@ public final class SocialDetailViewModel: BaseViewModel {
     private let reportPostUseCase: ReportPostUseCase
     private let deleteCommentUseCase: DeleteCommentUseCase
     private let blockUserUseCase: BlockUserUseCase
+    
+    // MARK: - State
+    private(set) var postID: Int
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
     private var registerImage: Data?
-    private var currentComment: Comment? // 현재 댓글을 다려는 댓글?
+    private var currentComment: Comment? // 현재 댓글(답글 타겟)
     
     private(set) var post: Post?
     private(set) var comments: [Comment] = []
     
-    init(
+    // MARK: - Init
+    public init(
+        repo: SocialRepository,
         fetchPostUsecase: FetchPostUseCase,
         togglePostLikeUseCase: TogglePostLikeUseCase,
         toggleCommentLikeUseCase: ToggleCommentLikeUseCase,
@@ -59,6 +65,7 @@ public final class SocialDetailViewModel: BaseViewModel {
         blockUserUseCase: BlockUserUseCase,
         at postID: Post.ID
     ) {
+        self.repo = repo
         self.fetchPostUsecase = fetchPostUsecase
         self.togglePostLikeUseCase = togglePostLikeUseCase
         self.toggleCommentLikeUseCase = toggleCommentLikeUseCase
@@ -67,55 +74,87 @@ public final class SocialDetailViewModel: BaseViewModel {
         self.deleteCommentUseCase = deleteCommentUseCase
         self.blockUserUseCase = blockUserUseCase
         self.postID = postID
+        
+        bindRepository()
     }
     
+    // MARK: - Bind SSOT
+    private func bindRepository() {
+        repo.postPublisher
+            .compactMap { [weak self] posts -> Post? in
+                guard let self else { return nil }
+                return posts.first(where: { $0.id == self.postID })
+            }
+            .sink { [weak self] latest in
+                guard let self else { return }
+                self.post = latest
+                self.output.send(.post(latest))
+                self.output.send(.likePost(latest))
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Transform
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
         input.sink { [weak self] event in
             guard let self else { return }
             switch event {
             case .fetchPost:
                 Task { await self.fetchPost() }
+                
             case .likePost:
                 Task { await self.likePost() }
+                
             case .registerComment(let content):
                 Task { await self.registerComment(content: content) }
+                
             case .registerImage(let data):
-                registerImage = data
-                output.send(.registerImage(data))
+                self.registerImage = data
+                self.output.send(.registerImage(data))
+                
             case .deleteRegisterImage:
-                registerImage = nil
+                self.registerImage = nil
+                
             case .shareRoutine:
-                break
+                self.output.send(.shareRoutine)
+                
             case .reportPost:
-                break
+                self.output.send(.reportPost)
+                
             case .blockPost:
                 break
+                
             case .blockUser(let userID):
                 Task { await self.blockUser(to: userID) }
+                
             case .likeComment(let commentID):
                 Task { await self.likeComment(commentID: commentID) }
+                
             case .didTapComment(let commentID):
-                currentComment = comments.first(where: { $0.id == commentID })
-                guard let comment = currentComment else { return }
-                output.send(.didTapComment(comment))
+                self.currentComment = self.comments.first(where: { $0.id == commentID })
+                if let comment = self.currentComment {
+                    self.output.send(.didTapComment(comment))
+                }
+                
             case .deleteComment(let commentID):
                 Task { await self.deleteComment(commentID: commentID) }
             }
-        
-        }.store(in: &cancellables)
+        }
+        .store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
 }
 
+// MARK: - Private
 private extension SocialDetailViewModel {
     func fetchPost() async {
         do {
-            let result = try await fetchPostUsecase.execute(postID: postID)
-            post = result.post
-            comments = result.comments
-            output.send(.post(result.post))
-            output.send(.comments(result.comments))
+            let result = try await repo.fetchPost(postID: postID)
+            self.post = result.0
+            self.comments = result.1
+            output.send(.post(result.0))
+            output.send(.comments(result.1))
         } catch {
             post = nil
             comments = []
@@ -123,32 +162,26 @@ private extension SocialDetailViewModel {
         }
     }
     
-    // MARK: - Like(Post에 대한 Like)
-    
+    // MARK: - Like(Post)
     private func likePost() async {
         do {
-            guard var post else {
+            guard let post else {
                 output.send(.failure("게시글 정보가 없습니다."))
                 return
             }
             try await togglePostLikeUseCase.execute(postID: postID, currentLike: post.isLike)
-            post.toggleLike()
-            self.post = post
-            output.send(.likePost(post))
         } catch {
             output.send(.failure("게시글 좋아요에 실패했습니다."))
         }
     }
     
-    // MARK: - Reply에 대한 Like 구현
-    
+    // MARK: - Like(Comment)
     private func likeComment(commentID: Comment.ID) async {
         do {
             guard let post else {
                 output.send(.failure("게시글 정보가 없습니다."))
                 return
             }
-            
             guard let currentComment = getComment(by: commentID, from: comments) else {
                 output.send(.failure("해당 댓글을 찾을 수 없습니다."))
                 return
@@ -170,26 +203,32 @@ private extension SocialDetailViewModel {
         }
     }
     
-    // MARK: 댓글 달기
-    
+    // MARK: - Create Comment
     private func registerComment(content: String) async {
         do {
-            let image: (fileName: String, imageData: Data)? = registerImage != nil ? (fileName: "\(UUID().uuidString).jpg", imageData: registerImage!) : nil
-            let registerCommentID =  try await createCommentUseCase.execute(postID: postID, parentId: currentComment?.id, content: content, image: image)
-            
+            let image: (fileName: String, imageData: Data)? =
+                registerImage.map { (fileName: "\(UUID().uuidString).jpg", imageData: $0) }
+
+            let newID = try await createCommentUseCase.execute(
+                postID: postID,
+                parentId: currentComment?.id,
+                content: content,
+                image: image
+            )
             await fetchPost()
-            if let currentComment {
-                output.send(.reloadParentComment(currentComment))
+            if let parent = currentComment {
+                output.send(.reloadParentComment(parent))
             }
             currentComment = nil
             registerImage = nil
-            output.send(.createComment(registerCommentID))
+            output.send(.createComment(newID))
         } catch {
             output.send(.failure("댓글 등록에 실패했습니다."))
         }
     }
+
     
-    // MARK: 댓글 삭제
+    // MARK: - Delete Comment
     private func deleteComment(commentID: Comment.ID) async {
         do {
             try await deleteCommentUseCase.execute(postID: postID, commentID: commentID)
@@ -199,41 +238,39 @@ private extension SocialDetailViewModel {
             } else {
                 output.send(.comments(comments))
             }
+            await fetchPost()
         } catch {
             output.send(.failure("댓글 삭제에 실패했습니다."))
         }
     }
+
     
-    // MARK: Block User: 블락한 후 해당 유저의 모든 댓글을 제거
+    // MARK: - Block User: 블락 후 해당 유저 댓글 제거
     private func blockUser(to userID: User.ID) async {
         do {
             try await blockUserUseCase.execute(userID: userID)
             removeAllComments(by: userID, in: &comments)
             output.send(.comments(comments))
+            await fetchPost()
         } catch {
             output.send(.failure("사용자 차단에 실패했습니다."))
         }
     }
+
 }
 
+// MARK: - Comment Utilities
 private extension SocialDetailViewModel {
-    /// 전체 댓글(중첩 reply 포함) 에서 주어진 commentID에 해당하는 댓글을 검색
-    private func getComment(by id: Comment.ID, from comments: [Comment]) -> Comment? {
+    func getComment(by id: Comment.ID, from comments: [Comment]) -> Comment? {
         for comment in comments {
-            if comment.id == id {
-                return comment
-            }
-            if let found = getComment(by: id, from: comment.reply) {
-                return found
-            }
+            if comment.id == id { return comment }
+            if let found = getComment(by: id, from: comment.reply) { return found }
         }
         return nil
     }
     
-    /// 댓글 배열(inout)을 순회하며 주어진 commentID를 가진 댓글을 업데이트하는 함수
-    /// 만약 top-level 댓글이면 바로 업데이트한 후 반환하고,
-    /// nested reply인 경우, 해당 reply를 포함하고 있는 상위(top-level) 댓글을 반환합니다.
-    private func updateComment(in comments: inout [Comment], for commentID: Comment.ID) -> Comment? {
+    @discardableResult
+    func updateComment(in comments: inout [Comment], for commentID: Comment.ID) -> Comment? {
         if let index = comments.firstIndex(where: { $0.id == commentID }) {
             comments[index].toggleLike()
             return comments[index]
@@ -246,27 +283,22 @@ private extension SocialDetailViewModel {
         return nil
     }
     
-    /// 댓글 배열 내에서 주어진 commentID를 가진 댓글을 재귀적으로 검색하여 업데이트 (toggleLike)
-    private func updateNestedComment(in replies: inout [Comment], for commentID: Comment.ID) -> Bool {
+    func updateNestedComment(in replies: inout [Comment], for commentID: Comment.ID) -> Bool {
         if let index = replies.firstIndex(where: { $0.id == commentID }) {
             replies[index].toggleLike()
             return true
         }
         for i in 0..<replies.count {
-            if updateNestedComment(in: &replies[i].reply, for: commentID) {
-                return true
-            }
+            if updateNestedComment(in: &replies[i].reply, for: commentID) { return true }
         }
         return false
     }
     
-    /// 댓글 배열(inout)에서 주어진 commentID에 해당하는 댓글을 제거합니다.
-    /// - Top-level 댓글이면 배열에서 제거한 후 그 댓글을 반환합니다.
-    /// - Nested reply인 경우 해당 reply를 포함하고 있는 상위(부모) 댓글을 반환합니다.
-    private func removeComment(in comments: inout [Comment], for commentID: Comment.ID) -> Comment? {
+    @discardableResult
+    func removeComment(in comments: inout [Comment], for commentID: Comment.ID) -> Comment? {
         if let index = comments.firstIndex(where: { $0.id == commentID }) {
-            let removedComment = comments.remove(at: index)
-            return removedComment
+            let removed = comments.remove(at: index)
+            return removed
         }
         for i in 0..<comments.count {
             if let _ = removeComment(in: &comments[i].reply, for: commentID) {
@@ -276,11 +308,8 @@ private extension SocialDetailViewModel {
         return nil
     }
     
-    /// 재귀적으로 전체 댓글(중첩 reply 포함)에서 지정한 userID를 가진 댓글들을 제거합니다.
-    private func removeAllComments(by userID: User.ID, in comments: inout [Comment]) {
-        // top-level에서 해당 유저의 댓글을 제거
+    func removeAllComments(by userID: User.ID, in comments: inout [Comment]) {
         comments = comments.filter { $0.user.id != userID }
-        // 각 댓글의 reply 배열에 대해 재귀적으로 처리
         for i in 0..<comments.count {
             removeAllComments(by: userID, in: &comments[i].reply)
         }

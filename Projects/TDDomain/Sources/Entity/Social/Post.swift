@@ -10,7 +10,7 @@ public struct Post: Identifiable {
     
     public var likeCount: Int
     public var isLike: Bool
-    public let commentCount: Int?
+    public var commentCount: Int?
     public let shareCount: Int?
     public let routine: Routine?
     
@@ -186,5 +186,6 @@ extension Post: Equatable {
 extension Post: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(isLike)
     }
 }

@@ -2,6 +2,7 @@ import SnapKit
 import TDDesign
 import Then
 import UIKit
+import TDDomain
 
 final class SocialListView: BaseView {
     private(set) var searchButton = UIButton(type: .custom).then {

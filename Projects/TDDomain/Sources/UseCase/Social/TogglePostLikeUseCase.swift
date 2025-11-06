@@ -10,8 +10,8 @@ public final class TogglePostLikeUseCaseImpl: TogglePostLikeUseCase {
     public init(repository: SocialRepository) {
         self.repository = repository
     }
-    
+
     public func execute(postID: Post.ID, currentLike: Bool) async throws {
         try await repository.togglePostLike(postID: postID, currentLike: currentLike)
     }
-}   
+}

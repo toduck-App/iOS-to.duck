@@ -467,13 +467,6 @@ public struct DomainAssembly: Assembly {
             return UpdateCategoriesUseCaseImpl(repository: repository)
         }
         
-        container.register(UpdateCommentUseCase.self) { resolver in
-            guard let repository = resolver.resolve(SocialRepository.self) else {
-                fatalError("컨테이너에 SocialRepository가 등록되어 있지 않습니다.")
-            }
-            return UpdateCommentUseCaseImpl(repository: repository)
-        }
-        
         container.register(UpdateDiaryUseCase.self) { resolver in
             guard let repository = resolver.resolve(DiaryRepository.self) else {
                 fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")

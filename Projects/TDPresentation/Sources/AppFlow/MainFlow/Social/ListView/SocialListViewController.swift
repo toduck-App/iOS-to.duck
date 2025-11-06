@@ -5,13 +5,24 @@ import TDDomain
 import UIKit
 
 final class SocialListViewController: BaseViewController<SocialListView> {
+    // MARK: - Dependencies
     weak var coordinator: SocialListCoordinator?
     private let viewModel: SocialListViewModel!
+    
+    // MARK: - Combine
     private let input = PassthroughSubject<SocialListViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Data
     private var datasource: UICollectionViewDiffableDataSource<Int, Post.ID>?
     private var keywordDataSource: UICollectionViewDiffableDataSource<SocialSearchView.KeywordSection, Keyword>!
     
+    // ✅ 변경: VM 내부 컬렉션에 의존하지 않고 VC가 현재 스냅샷을 캐시
+    private var latestPosts: [Post] = []
+    // ✅ 변경: 셀 하이라이트를 위해 마지막 검색어를 VC가 보관
+    private var lastSearchTerm: String = ""
+    
+    // MARK: - Init
     init(viewModel: SocialListViewModel) {
         self.viewModel = viewModel
         super.init()
@@ -22,18 +33,15 @@ final class SocialListViewController: BaseViewController<SocialListView> {
         super.init(coder: coder)
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDefaultNavigationBar()
+        input.send(.appear)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        input.send(.fetchPosts)
-    }
-    
+    // MARK: - NavigationBar
     private func setupDefaultNavigationBar() {
-        // 좌측 네비게이션 바 버튼 설정 (캘린더 + 로고)
         let tomatoButton = UIButton(type: .custom)
         tomatoButton.setImage(TDImage.Diary.navigationImage, for: .normal)
         tomatoButton.addAction(UIAction { [weak self] _ in
@@ -47,7 +55,6 @@ final class SocialListViewController: BaseViewController<SocialListView> {
             UIBarButtonItem(customView: tomatoButton),
             UIBarButtonItem(customView: toduckLogoImageView)
         ]
-        
         navigationItem.leftBarButtonItems = leftBarButtonItems
         
         // 우측 버튼 설정 (검색 버튼 + 알람 버튼)
@@ -70,6 +77,7 @@ final class SocialListViewController: BaseViewController<SocialListView> {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: layoutView.searchView.cancleButton)
     }
     
+    // MARK: - Configure
     override func configure() {
         layoutView.searchButton.addAction(UIAction { [weak self] _ in
             self?.layoutView.showSearchView()
@@ -77,21 +85,16 @@ final class SocialListViewController: BaseViewController<SocialListView> {
             self?.input.send(.loadKeywords)
         }, for: .touchUpInside)
         
-        layoutView.searchView.backButton.addAction(UIAction {
-            [weak self] _ in
-            self?.layoutView.hideSearchView()
-            self?.layoutView.clearSearchText()
-            self?.setupDefaultNavigationBar()
-            self?.input.send(.clearSearch)
-        }, for: .touchUpInside)
-        
-        layoutView.searchView.cancleButton.addAction(UIAction {
-            [weak self] _ in
-            self?.layoutView.hideSearchView()
-            self?.layoutView.clearSearchText()
-            self?.setupDefaultNavigationBar()
-            self?.input.send(.clearSearch)
-        }, for: .touchUpInside)
+        let hideSearch: UIActionHandler = { [weak self] _ in
+            guard let self else { return }
+            self.layoutView.hideSearchView()
+            self.layoutView.clearSearchText()
+            self.setupDefaultNavigationBar()
+            self.lastSearchTerm = ""
+            self.input.send(.clearSearch)
+        }
+        layoutView.searchView.backButton.addAction(UIAction(handler: hideSearch), for: .touchUpInside)
+        layoutView.searchView.cancleButton.addAction(UIAction(handler: hideSearch), for: .touchUpInside)
         
         layoutView.searchView.searchBar.delegate = self
         layoutView.searchView.keywordCollectionView.delegate = self
@@ -100,36 +103,39 @@ final class SocialListViewController: BaseViewController<SocialListView> {
         layoutView.socialFeedCollectionView.refreshControl = layoutView.refreshControl
         layoutView.chipCollectionView.chipDelegate = self
         layoutView.chipCollectionView.setChips(PostCategory.allCases.map { TDChipItem(title: $0.title) })
+        
         setupDataSource()
+        
         layoutView.dropDownHoverView.delegate = self
         layoutView.addPostButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         layoutView.refreshControl.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
         layoutView.segmentedControl.addTarget(self, action: #selector(didTapSegmentedControl), for: .valueChanged)
     }
     
+    // MARK: - Binding
     override func binding() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
         
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] output in
+                guard let self else { return }
                 switch output {
-                case .fetchPosts(let posts):
-                    self?.layoutView.showFinishView()
-                    self?.applySnapshot(posts)
-                case .likePost(let post):
-                    self?.updateSnapshot(post)
-                case .failure(let message):
-                    self?.showErrorAlert(errorMessage: message)
-                case .searchPosts(let posts):
-                    // TODO: Search
-                    self?.layoutView.showFinishView()
-                    self?.layoutView.hideSearchView()
-                    self?.applySnapshot(posts)
+                    
+                // ✅ 변경: 단일 posts 스트림으로 통일
+                case .posts(let posts):
+                    self.layoutView.showFinishView()
+                    self.latestPosts = posts
+                    self.applySnapshot(posts)
+                    
                 case .updateKeywords:
-                    self?.applyKeywordSnapshot()
+                    self.applyKeywordSnapshot()
+                    
+                case .failure(let message):
+                    self.showErrorAlert(errorMessage: message)
                 }
-            }.store(in: &cancellables)
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -139,16 +145,21 @@ extension SocialListViewController: TDChipCollectionViewDelegate {
     }
 }
 
+// MARK: - CollectionView Delegate & DataSources
 extension SocialListViewController: UICollectionViewDelegate {
     private func setupDataSource() {
-        datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { collectionView, indexPath, postID in
-            guard let post = self.viewModel.posts.first(where: { $0.id == postID }) else { return UICollectionViewCell() }
+        // ✅ 변경: cellProvider에서 viewModel.posts 대신 VC의 latestPosts 사용
+        datasource = .init(collectionView: layoutView.socialFeedCollectionView, cellProvider: { [weak self] collectionView, indexPath, postID in
+            guard
+                let self,
+                let post = self.latestPosts.first(where: { $0.id == postID })
+            else { return UICollectionViewCell() }
+            
             let cell: SocialFeedCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
             cell.socialFeedCellDelegate = self
-            let highlight: String? = self.viewModel.isSearching ? self.viewModel.searchTerm : nil
-                        
-            cell.configure(with: post, highlightTerm: highlight)
             
+            let highlight: String? = self.lastSearchTerm.isEmpty ? nil : self.lastSearchTerm
+            cell.configure(with: post, highlightTerm: highlight)
             return cell
         })
         
@@ -156,26 +167,20 @@ extension SocialListViewController: UICollectionViewDelegate {
             collectionView: layoutView.searchView.keywordCollectionView
         ) { [weak self] collectionView, indexPath, keyword in
             guard let section = SocialSearchView.KeywordSection(rawValue: indexPath.section) else { return UICollectionViewCell() }
-            
             switch section {
             case .recent:
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: CancleTagCell.identifier,
                     for: indexPath
-                ) as? CancleTagCell else {
-                    return UICollectionViewCell()
-                }
+                ) as? CancleTagCell else { return UICollectionViewCell() }
                 cell.configure(tag: keyword.word)
                 cell.delegate = self
                 return cell
-                
             case .popular:
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: TagCell.identifier,
                     for: indexPath
-                ) as? TagCell else {
-                    return UICollectionViewCell()
-                }
+                ) as? TagCell else { return UICollectionViewCell() }
                 cell.configure(tag: keyword.word)
                 return cell
             }
@@ -193,14 +198,14 @@ extension SocialListViewController: UICollectionViewDelegate {
                 return UICollectionReusableView()
             }
             header.configure(section: section)
-            
             header.delegate = self
             return header
         }
     }
     
+    // ✅ 변경: 개수도 latestPosts 기준
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.posts.count
+        latestPosts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -216,10 +221,12 @@ extension SocialListViewController: UICollectionViewDelegate {
         switch section {
         case .recent:
             let keyword = viewModel.recentKeywords[indexPath.item].word
+            lastSearchTerm = keyword                // ✅ VC에서 보관
             input.send(.search(term: keyword))
             layoutView.searchView.searchBar.text = keyword
         case .popular:
             let keyword = viewModel.popularKeywords[indexPath.item].word
+            lastSearchTerm = keyword                // ✅ VC에서 보관
             input.send(.search(term: keyword))
             layoutView.searchView.searchBar.text = keyword
         }
@@ -227,13 +234,12 @@ extension SocialListViewController: UICollectionViewDelegate {
     }
     
     private func didTapPost(at indexPath: IndexPath) {
-        let postId = viewModel.posts[indexPath.item].id
+        let postId = latestPosts[indexPath.item].id
         coordinator?.didTapPost(postId: postId, commentId: nil)
     }
 }
 
-// MARK: Input
-
+// MARK: - Inputs from Cells / UI
 extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UIScrollViewDelegate {
     func didTapProfileImage(_ cell: UICollectionViewCell, _ userID: TDDomain.User.ID) {
         coordinator?.didTapUserProfile(id: userID)
@@ -242,7 +248,7 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     func didTapBlock(_ cell: UICollectionViewCell, _ userID: User.ID) {
         let controller = SocialBlockViewController()
         controller.onBlock = { [weak self] in
-            self?.input.send(.blockUser(to: userID))
+            self?.input.send(.blockUser(userID))
         }
         presentPopup(with: controller)
     }
@@ -274,7 +280,11 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     func didTapLikeButton(_ cell: UICollectionViewCell, _ postID: Post.ID) {
-        input.send(.likePost(postID))
+        // ✅ 변경: currentLike는 VC 캐시에서 조회
+        guard let current = latestPosts.first(where: { $0.id == postID }) else { return }
+        // 프로젝트에 따라 isLike / isLiked 네이밍 다를 수 있음
+        let currentLike = current.isLike   // or current.isLiked
+        input.send(.likePost(postID, currentLike: currentLike))
     }
     
     @objc func didTapSegmentedControl(sender: TDSegmentedControl) {
@@ -283,7 +293,7 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
     }
     
     @objc func didRefresh() {
-        input.send(.refreshPosts)
+        input.send(.refresh)
     }
     
     @objc func didTapCreateButton() {
@@ -301,9 +311,9 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let frameHeight = scrollView.frame.size.height
-
         if offsetY > contentHeight - frameHeight * 1.5 {
-            input.send(.loadMorePosts)
+            // ✅ 변경: .loadMorePosts → .loadMore
+            input.send(.loadMore)
         }
     }
     
@@ -313,18 +323,16 @@ extension SocialListViewController: SocialPostDelegate, TDDropDownDelegate, UISc
 }
 
 // MARK: - DeleteEventViewControllerDelegate
-
 extension SocialListViewController: DeleteEventViewControllerDelegate {
     func didTapTodayDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) {
-        input.send(.deletePost(eventId ?? 0))
+        guard let id = eventId else { return }
+        input.send(.deletePost(id))
         dismiss(animated: true)
     }
-    
     func didTapAllDeleteButton(eventId: Int?, eventMode: DeleteEventViewController.EventMode) { }
 }
 
-// MARK: - 검색 및 삭제버튼 처리
-
+// MARK: - Search & Keyword
 extension SocialListViewController: UISearchBarDelegate, CancleTagCellDelegate, KeywordHeaderCellDelegate {
     func didTapAllDeleteButton(cell: KeywordSectionHeaderView) {
         input.send(.deleteRecentAllKeywords)
@@ -341,8 +349,11 @@ extension SocialListViewController: UISearchBarDelegate, CancleTagCellDelegate, 
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let searchText = searchBar.text, !searchText.isEmpty else { return }
+        guard let searchText = searchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !searchText.isEmpty else { return }
         layoutView.hideSearchView()
+        // ✅ VC에서 검색어 보관 → 셀 하이라이트에 사용
+        lastSearchTerm = searchText
         input.send(.search(term: searchText))
     }
 
@@ -353,8 +364,7 @@ extension SocialListViewController: UISearchBarDelegate, CancleTagCellDelegate, 
     }
 }
 
-// MARK: Collection View Datasource Apply
-
+// MARK: - Diffable Snapshot
 extension SocialListViewController {
     private func applySnapshot(_ posts: [Post]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Post.ID>()
@@ -364,18 +374,11 @@ extension SocialListViewController {
         datasource?.apply(snapshot, animatingDifferences: false)
     }
     
-    private func updateSnapshot(_ post: Post) {
-        var snapshot = datasource?.snapshot()
-        snapshot?.reloadItems([post.id])
-        datasource?.apply(snapshot!, animatingDifferences: false)
-    }
-    
     private func applyKeywordSnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<SocialSearchView.KeywordSection, Keyword>()
         snapshot.appendSections(SocialSearchView.KeywordSection.allCases)
         snapshot.appendItems(viewModel.recentKeywords, toSection: .recent)
         snapshot.appendItems(viewModel.popularKeywords, toSection: .popular)
-
         keywordDataSource.apply(snapshot, animatingDifferences: false)
     }
 }
