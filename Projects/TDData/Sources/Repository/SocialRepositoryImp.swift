@@ -11,11 +11,11 @@ public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 상태 관리 (SSOT)
     private let store = PostCache()
-    private let _postSubject = CurrentValueSubject<[Post], Never>([])
+    private let postSubject = CurrentValueSubject<[Post], Never>([])
     private let publishQueue = DispatchQueue(label: "social.repo.publish", qos: .userInitiated)
 
     public var postPublisher: AnyPublisher<[Post], Never> {
-        _postSubject
+        postSubject
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -280,7 +280,7 @@ public final class SocialRepositoryImp: SocialRepository {
     // MARK: - 스냅샷 퍼블리시
     private func publishSnapshot() async {
         let posts = await store.current()
-        let subject = _postSubject
+        let subject = postSubject
         publishQueue.async {
             subject.send(posts)
         }
