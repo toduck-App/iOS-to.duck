@@ -186,6 +186,5 @@ extension Post: Equatable {
 extension Post: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(isLike)
     }
 }
