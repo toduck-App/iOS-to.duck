@@ -305,23 +305,25 @@ final class TimerViewController: BaseViewController<TimerView>, TDToastPresentab
         layoutView.simpleTimerView.isHidden = theme == .toduck
         layoutView.bboduckTimerView.isHidden = theme == .simple
         
-        layoutView.playButton.configuration?.image = theme == .simple ? TDImage.Timer.playNeutral : TDImage.Timer.playPrimary
-        layoutView.pauseButton.configuration?.image = theme == .simple ? TDImage.Timer.pauseNeutral : TDImage.Timer.pausePrimary
-        layoutView.resetButton.configuration?.image = theme == .simple ? TDImage.Timer.resetNeutral : TDImage.Timer.resetPrimary
-        layoutView.stopButton.configuration?.image = theme == .simple ? TDImage.Timer.stopNeutral : TDImage.Timer.stopPrimary
-        
-        if theme == .simple {
-            layoutView.playButton.configuration?.baseBackgroundColor = .white
-            layoutView.pauseButton.configuration?.baseBackgroundColor = .white
-            layoutView.resetButton.configuration?.baseBackgroundColor = .white
-            layoutView.stopButton.configuration?.baseBackgroundColor = .white
-        } else {
-            layoutView.resetButton.configuration?.baseBackgroundColor = .clear
-            layoutView.resetButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
-            
-            layoutView.stopButton.configuration?.baseBackgroundColor = .clear
-            layoutView.stopButton.configuration?.baseForegroundColor = theme.buttonCenterForegroundColor
-        }
+        layoutView.playButton.updateBackgroundColor(
+            backgroundColor: theme.buttonCenterBackgroundColor,
+            foregroundColor: theme.buttonCenterForegroundColor
+        )
+
+        layoutView.pauseButton.updateBackgroundColor(
+            backgroundColor: theme.buttonCenterBackgroundColor,
+            foregroundColor: theme.buttonCenterForegroundColor
+        )
+
+        layoutView.resetButton.updateBackgroundColor(
+            backgroundColor: .clear,
+            foregroundColor: theme.buttonForegroundColor
+        )
+
+        layoutView.stopButton.updateBackgroundColor(
+            backgroundColor: .clear,
+            foregroundColor: theme.buttonForegroundColor
+        )
         
         layoutView.backgroundColor = theme.backgroundColor
         

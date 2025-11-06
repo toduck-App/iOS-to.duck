@@ -40,12 +40,12 @@ final class TimerCautionPopupViewController: TDPopupViewController<TimerCautionP
             popupContentView.popupImageView.image = TDImage.Alert.deleteEvent
             popupContentView.popupTitleLabel.setText("현재 세트를 종료할까요?")
             popupContentView.descriptionLabel.setText("집중 기록은 저장되고, 현재 흐름은 마무리돼요.")
-            popupContentView.actionButton.setTitle("종료", for: .normal)
+            popupContentView.actionButton.updateTitle("종료")
         case .reset:
             popupContentView.popupImageView.image = TDImage.timerAlert
             popupContentView.popupTitleLabel.setText("타이머를 다시 시작할까요?")
             popupContentView.descriptionLabel.setText("완료된 집중 횟수는 유지되고, 시간만 새로 시작돼요.")
-            popupContentView.actionButton.setTitle("재시작", for: .normal)
+            popupContentView.actionButton.updateTitle("재시작")
         }
     }
 }
