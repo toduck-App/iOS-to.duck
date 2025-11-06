@@ -15,3 +15,4 @@ public final class BlockUserUseCaseImpl: BlockUserUseCase {
         try await repository.blockUser(userID: userID)
     }
 }
+

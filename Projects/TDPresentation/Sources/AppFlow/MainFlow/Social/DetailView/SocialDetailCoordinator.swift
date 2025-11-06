@@ -34,6 +34,7 @@ final class SocialDetailCoordinator: Coordinator, CoordinatorFinishDelegate {
         let blockUserUseCase = injector.resolve(BlockUserUseCase.self)
         
         let socialDetailViewModel = SocialDetailViewModel(
+            repo: injector.resolve(SocialRepository.self),
             fetchPostUsecase: fetchPostUseCase,
             togglePostLikeUseCase: togglePostLikeUseCase,
             toggleCommentLikeUseCase: toggleCommentLikeUseCase,
