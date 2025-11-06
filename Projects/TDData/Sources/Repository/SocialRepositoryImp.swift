@@ -86,18 +86,11 @@ private actor PostStore {
         }
     }
 
-    func insertOrReplaceEverywhere(_ post: Post) {
-        var inserted = false
+    func replaceEveryWhere(_ post: Post) {
         withAllLists { list in
             if let i = list.firstIndex(where: { $0.id == post.id }) {
                 list[i] = post
-                inserted = true
             }
-        }
-        if !inserted {
-            var arr = activeList
-            arr.insert(post, at: 0)
-            activeList = arr
         }
     }
 
@@ -271,6 +264,7 @@ public final class SocialRepositoryImp: SocialRepository {
         let isChangeImage = image != nil
 
         var imageUrls: [String] = []
+        var updatePost = updatePost
         if isChangeImage, let image {
             for (fileName, data) in image {
                 let urls = try await awsService.requestPresignedUrl(fileName: fileName)
@@ -290,6 +284,7 @@ public final class SocialRepositoryImp: SocialRepository {
             socialCategoryIds: isChangeCategory ? updatePost.category?.compactMap(\.rawValue) ?? [] : nil,
             socialImageUrls: isChangeImage ? imageUrls : nil
         )
+        updatePost.setImage(imagesURL: imageUrls)
 
         let rollback = await performOptimisticReplace(updatePost)
         do {
@@ -324,7 +319,7 @@ public final class SocialRepositoryImp: SocialRepository {
         var post = dto.convertToPost()
         let comments = dto.convertToComment()
 
-        await store.insertOrReplaceEverywhere(post)
+        await store.replaceEveryWhere(post)
         await publishSnapshot()
         return (post, comments)
     }
@@ -428,7 +423,7 @@ private extension SocialRepositoryImp {
 
     func performOptimisticReplace(_ newPost: Post) async -> () async -> Void {
         let snapshot = await store.snapshot()
-        await store.insertOrReplaceEverywhere(newPost)
+        await store.replaceEveryWhere(newPost)
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
