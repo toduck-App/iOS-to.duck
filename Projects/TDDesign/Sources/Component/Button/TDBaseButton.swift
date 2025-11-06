@@ -81,6 +81,8 @@ public class TDBaseButton: UIButton {
             bg.backgroundColor = bgColor
             bg.cornerRadius = self.radius
             cfg.background = bg
+            button.layer.cornerRadius = self.radius
+            button.layer.masksToBounds = true
 
             var attrs = AttributeContainer()
             attrs.font = self.font
@@ -142,6 +144,12 @@ public class TDBaseButton: UIButton {
         layer.shadowOpacity = 1
         layer.shadowRadius = 10
         layer.shadowOffset = .zero
+    }
+    
+    /// 버튼의 텍스트를 변경합니다.
+    public func updateTitle(_ newTitle: String) {
+        self.title = newTitle
+        setNeedsUpdateConfiguration()
     }
 }
 
