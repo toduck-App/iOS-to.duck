@@ -71,7 +71,7 @@ final class MyBlockCell: UICollectionViewCell {
         }
         
         if isBlocked {
-            blockButton.updateTitle("헤제")
+            blockButton.updateTitle("해제")
             blockButton.updateBackgroundColor(backgroundColor: TDColor.Primary.primary500, foregroundColor: TDColor.baseWhite)
         } else {
             blockButton.updateTitle("차단")
