@@ -323,7 +323,6 @@ public final class SocialRepositoryImp: SocialRepository {
         let dto = try await socialService.requestPost(postID: postID)
         var post = dto.convertToPost()
         let comments = dto.convertToComment()
-        post.commentCount = comments.count
 
         await store.insertOrReplaceEverywhere(post)
         await publishSnapshot()
