@@ -4,6 +4,7 @@ public enum UserDefaultsConstant {
     public static let isFirstLogin = "IsFirstLogin"
     public static let isFirstLaunch = "IsFirstLaunch"
     public static let lastHiddenEventSheetDate = "lastHiddenEventSheetDate"
+    public static let username = "username"
     
     public enum Diary {
         public static let suiteName = "group.TDWidgetAppGroup"

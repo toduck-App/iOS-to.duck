@@ -57,6 +57,7 @@ final class MyPageViewModel: BaseViewModel {
         do {
             let nickname = try await fetchUserNicknameUseCase.execute()
             self.nickName = nickname
+            TDTokenManager.shared.setUserName(name: nickname)
             output.send(.fetchedUserNickname(nickname))
         } catch {
             output.send(.failureAPI(error.localizedDescription))

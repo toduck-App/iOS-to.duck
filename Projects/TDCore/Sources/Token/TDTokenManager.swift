@@ -25,6 +25,10 @@ public final class TDTokenManager {
         let start = Calendar.current.startOfDay(for: now)
         UserDefaults.standard.set(start, forKey: UserDefaultsConstant.lastHiddenEventSheetDate)
     }
+    
+    public var username: String {
+        return UserDefaults.standard.string(forKey: UserDefaultsConstant.username) ?? "뽀덕이"
+    }
 
     public var isFirstLaunch: Bool {
         return UserDefaults.standard.bool(forKey: UserDefaultsConstant.isFirstLaunch)
@@ -127,6 +131,10 @@ public final class TDTokenManager {
     
     public func launchFirstLogin() {
         UserDefaults.standard.set(true, forKey: UserDefaultsConstant.isFirstLogin)
+    }
+    
+    public func setUserName(name: String) {
+        UserDefaults.standard.set(name, forKey: UserDefaultsConstant.username)
     }
     
     public func registerFCMToken(_ token: String) {
