@@ -49,7 +49,7 @@ public final class SocialRepositoryImp: SocialRepository {
         limit: Int = 20,
         category: [PostCategory]? = nil
     ) async throws {
-        let categoryIDs = category?.map(\.rawValue)
+        let categoryIDs = category?.map { $0.rawValue }
         let dto = try await socialService.requestPosts(cursor: cursor, limit: limit, categoryIDs: categoryIDs)
         let posts = dto.results.compactMap { $0.convertToPost() }
 
@@ -69,8 +69,13 @@ public final class SocialRepositoryImp: SocialRepository {
         limit: Int = 20,
         category: [PostCategory]? = nil
     ) async throws {
-        let categoryIDs = category?.map(\.rawValue)
-        let dto = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword, categoryIDs: categoryIDs)
+        let categoryIDs = category?.map { $0.rawValue }
+        let dto = try await socialService.requestSearchPosts(
+            cursor: cursor,
+            limit: limit,
+            keyword: keyword,
+            categoryIDs: categoryIDs
+        )
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
@@ -121,12 +126,19 @@ public final class SocialRepositoryImp: SocialRepository {
             content: post.contentText,
             routineId: post.routine?.id,
             isAnonymous: false,
-            socialCategoryIds: post.category?.compactMap(\.rawValue) ?? [],
+            socialCategoryIds: post.category?.compactMap { $0.rawValue } ?? [],
             socialImageUrls: imageUrls
         )
 
         let response = try await socialService.requestCreatePost(requestDTO: requestDTO)
-        try await fetchPostList(cursor: nil, limit: 20, category: nil)
+        do {
+            let createdPost = try await fetchPost(postID: response.socialId).0
+            await store.appendEverywhere(createdPost)
+            await publishSnapshot()
+        } catch {
+            try await fetchPostList(cursor: nil, limit: 20, category: nil)
+            return response.socialId
+        }
         return response.socialId
     }
 

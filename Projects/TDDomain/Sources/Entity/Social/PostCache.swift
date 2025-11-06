@@ -58,6 +58,10 @@ public actor PostCache {
         }
         activeList = merged
     }
+    
+    public func append(_ newPost: Post) {
+        activeList.append(newPost)
+    }
 
     /// 특정 게시글을 업데이트 (변환 클로저 사용)
     public func update(_ id: Post.ID, transform: (Post) -> Post?) {
@@ -75,6 +79,12 @@ public actor PostCache {
     }
 
     // MARK: - 전체 리스트에 적용 (default + search)
+    public func appendEverywhere(_ post: Post) {
+        withAllLists { list in
+            list.append(post)
+        }
+    }
+    
     public func updateEverywhere(_ id: Post.ID, transform: (Post) -> Post?) {
         withAllLists { list in
             if let i = list.firstIndex(where: { $0.id == id }) {
