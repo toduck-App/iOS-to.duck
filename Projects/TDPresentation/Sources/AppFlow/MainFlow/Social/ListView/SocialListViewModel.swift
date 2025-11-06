@@ -131,7 +131,7 @@ final class SocialListViewModel: BaseViewModel {
         case .clearSearch:
             searchTerm = ""
             repo.setModeDefault()
-            output.send(.posts(await repoCurrentPosts()))
+            output.send(.posts(await repo.currentPosts()))
 
         case .loadMore:
             guard !isLoadingMore else { return }
@@ -222,16 +222,12 @@ final class SocialListViewModel: BaseViewModel {
         var snapshot: [Post] = []
         let sema = DispatchSemaphore(value: 0)
         Task {
-            let posts = await repoCurrentPosts()
+            let posts = await repo.currentPosts()
             snapshot = sort(posts, by: currentSort)
             sema.signal()
         }
         sema.wait()
         return snapshot
-    }
-
-    private func repoCurrentPosts() async -> [Post] {
-        await repo.currentPosts()
     }
 
     // MARK: - Keywords
