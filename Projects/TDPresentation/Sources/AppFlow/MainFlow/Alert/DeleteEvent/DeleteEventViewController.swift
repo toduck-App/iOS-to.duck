@@ -54,16 +54,16 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
         let singleTitle = eventMode == .schedule ? "이 일정만 삭제" : "이 루틴만 삭제"
         let repeatingTitle = eventMode == .schedule ? "이후 일정 모두 삭제" : "이후 루틴 모두 삭제"
         let description = eventMode == .socialPost ? "삭제한 글은 다시 복구할 수 없어요" : "한번 삭제한 내용은 다시 복구할 수 없어요"
-
-        popupContentView.currentEventDeleteButton.setTitle(singleTitle, for: .normal)
-        popupContentView.afterEventDeleteButton.setTitle(repeatingTitle, for: .normal)
+        
+        popupContentView.currentEventDeleteButton.updateTitle(singleTitle)
+        popupContentView.afterEventDeleteButton.updateTitle(repeatingTitle)
         popupContentView.descriptionLabel.setText(description)
     }
     
     private func setupRepeatingMode() {
         if mode == .single {
             popupContentView.afterEventContainer.isHidden = mode == .single
-            popupContentView.currentEventDeleteButton.setTitle("삭제", for: .normal)
+            popupContentView.currentEventDeleteButton.updateTitle("삭제")
             popupContentView.currentEventDeleteButton.titleLabel?.font = TDFont.boldBody1.font
         }
     }

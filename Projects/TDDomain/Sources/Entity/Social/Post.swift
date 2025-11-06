@@ -5,7 +5,7 @@ public struct Post: Identifiable {
     public let user: User
     public let titleText: String?
     public let contentText: String
-    public let imageList: [String]?
+    public var imageList: [String]?
     public let timestamp: Date
     
     public var likeCount: Int
@@ -68,6 +68,10 @@ public struct Post: Identifiable {
             likeCount += 1
         }
         isLike.toggle()
+    }
+    
+    public mutating func setImage(imagesURL: [String]) {
+        self.imageList = imagesURL
     }
 }
 
@@ -186,6 +190,5 @@ extension Post: Equatable {
 extension Post: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(isLike)
     }
 }

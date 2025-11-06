@@ -85,17 +85,22 @@ extension MyBlockViewController: UICollectionViewDelegateFlowLayout {
             cell.blockButton.removeTarget(nil, action: nil, for: .allEvents)
 
             cell.blockButton.addAction(
-                UIAction { [weak self, weak cell] _ in
-                    guard let self, let cell else { return }
+                UIAction { [weak self] _ in
+                    guard let self else { return }
                     let newBlocked = !(viewModel.isBlockedState[userId] ?? true)
                     viewModel.isBlockedState[userId] = newBlocked
-                    cell.blockButton.isSelected = !newBlocked
                     input.send(newBlocked
                         ? .blockUser(userId: userId)
                         : .unblockUser(userId: userId))
+
+                    if var snapshot = datasource?.snapshot() {
+                        snapshot.reloadItems([userId])
+                        datasource?.apply(snapshot, animatingDifferences: false)
+                    }
                 },
                 for: .touchUpInside
             )
+
 
             return cell
         }

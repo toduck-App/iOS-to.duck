@@ -125,8 +125,16 @@ extension SocialCreatorViewModel {
                 isChangeImage
                 ? images.map { ("\(UUID().uuidString).jpg", $0) } : nil
             let updatePost = Post(
-                title: title,
-                content: content,
+                id: prevPost.id,
+                user: prevPost.user,
+                titleText: title,
+                contentText: content,
+                imageList: prevPost.imageList,
+                timestamp: prevPost.timestamp,
+                likeCount: prevPost.likeCount,
+                isLike: prevPost.isLike,
+                commentCount: prevPost.commentCount,
+                shareCount: prevPost.shareCount,
                 routine: selectedRoutine,
                 category: category
             )

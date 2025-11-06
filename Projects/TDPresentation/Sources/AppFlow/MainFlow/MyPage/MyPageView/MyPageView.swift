@@ -33,11 +33,19 @@ final class MyPageView: BaseView {
         radius: 12,
         font: TDFont.boldBody1.font
     )
-    let deleteAccountButton = TDBaseButton(
-        backgroundColor: TDColor.baseWhite,
-        foregroundColor: TDColor.Neutral.neutral500,
-        font: TDFont.regularBody2.font
-    )
+    
+    let deleteAccountLabel = UILabel().then {
+        let text = "회원탈퇴"
+        let attributes: [NSAttributedString.Key: Any] = [
+            .underlineStyle: NSUnderlineStyle.single.rawValue,
+            .foregroundColor: TDColor.Neutral.neutral500,
+            .font: TDFont.regularBody2.font
+        ]
+        $0.attributedText = NSAttributedString(string: text, attributes: attributes)
+        $0.textAlignment = .center
+        $0.isUserInteractionEnabled = true
+    }
+
     
     // MARK: - Default Methods
 
@@ -45,7 +53,7 @@ final class MyPageView: BaseView {
         addSubview(scrollView)
         scrollView.addSubview(containerView)
         scrollView.delegate = self
-        [profileView, socialButtonView, menuCollectionView, logoutButton, deleteAccountButton].forEach { containerView.addSubview($0) }
+        [profileView, socialButtonView, menuCollectionView, logoutButton, deleteAccountLabel].forEach { containerView.addSubview($0) }
     }
     
     override func configure() {
@@ -72,16 +80,6 @@ final class MyPageView: BaseView {
             withReuseIdentifier: MyPageMenuCollectionFooterView.identifier
         )
         menuCollectionView.reloadData()
-        
-        let underlineTitle = NSAttributedString(
-            string: "회원탈퇴",
-            attributes: [
-                .underlineStyle: NSUnderlineStyle.single.rawValue,
-                .foregroundColor: TDColor.Neutral.neutral500,
-                .font: TDFont.regularBody2.font
-            ]
-        )
-        deleteAccountButton.setAttributedTitle(underlineTitle, for: .normal)
     }
     
     override func layout() {
@@ -123,7 +121,7 @@ final class MyPageView: BaseView {
             $0.height.equalTo(48)
         }
         
-        deleteAccountButton.snp.makeConstraints {
+        deleteAccountLabel.snp.makeConstraints {
             $0.top.equalTo(logoutButton.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(LayoutConstants.sectionHorizontalInset)
             $0.height.equalTo(20)

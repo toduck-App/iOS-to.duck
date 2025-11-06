@@ -73,11 +73,10 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 }
             )
         }, for: .touchUpInside)
-
-        layoutView.deleteAccountButton.addAction(UIAction { [weak self] _ in
-            self?.coordinator?.didTapWithdrawButton()
-        }, for: .touchUpInside)
-
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapDeleteAccount))
+        layoutView.deleteAccountLabel.addGestureRecognizer(tapGesture)
+        
         layoutView.setMenuSections(menuSections)
 
         layoutView.didSelectMenuItem = { [weak self] menu in
@@ -195,6 +194,11 @@ extension MyPageViewController: MyPageSocialButtonDelegate {
 
     func didTapShareButton() {
         coordinator?.didTapShareProfile()
+    }
+    
+    @objc
+    func didTapDeleteAccount() {
+        coordinator?.didTapWithdrawButton()
     }
 }
 

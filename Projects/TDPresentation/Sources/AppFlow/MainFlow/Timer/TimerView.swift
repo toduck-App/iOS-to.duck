@@ -16,11 +16,9 @@ final class TimerView: BaseView {
         $0.spacing = 4
         $0.distribution = .fillEqually
     }
-
-    // Buttons
-
+    
     let playButton = TDBaseButton(
-        image: TDImage.Timer.playPrimary,
+        image: TDImage.Timer.playNeutral,
         backgroundColor: TDColor.Primary.primary200,
         foregroundColor: TDColor.Neutral.neutral400
     )
@@ -32,14 +30,13 @@ final class TimerView: BaseView {
     )
 
     let pauseButton = TDBaseButton(
-        image: TDImage.Timer.pausePrimary,
+        image: TDImage.Timer.pauseNeutral,
         backgroundColor: TDColor.Primary.primary200,
         foregroundColor: TDColor.Neutral.neutral400,
-        inset: NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
     )
 
     let resetButton = TDBaseButton(
-        image: TDImage.Timer.resetPrimary,
+        image: TDImage.Timer.resetNeutral,
         backgroundColor: .clear,
         foregroundColor: TDColor.Neutral.neutral400
     )

@@ -3,134 +3,6 @@ import Foundation
 import TDCore
 @preconcurrency import TDDomain
 
-// MARK: - 내부 데이터 캐시 관리용 Actor
-/// 게시글 데이터를 메모리 내에서 관리합니다.
-/// 기본(PostList)과 검색(Search) 모드를 분리해 상태를 보존합니다.
-private actor PostStore {
-    /// 게시글 모드 (일반/검색)
-    enum Mode: Equatable {
-        case `default`
-        case search(keyword: String)
-    }
-
-    // MARK: - 내부 저장 프로퍼티
-    private(set) var mode: Mode = .default
-    private var defaultPosts: [Post] = []
-    private var searchPosts: [Post] = []
-
-    /// 현재 모드에 따라 접근할 게시글 리스트
-    private var activeList: [Post] {
-        get {
-            switch mode {
-            case .default: return defaultPosts
-            case .search:  return searchPosts
-            }
-        }
-        set {
-            switch mode {
-            case .default: defaultPosts = newValue
-            case .search:  searchPosts  = newValue
-            }
-        }
-    }
-
-    /// 두 리스트 모두에 대해 동일 작업을 수행할 때 사용
-    private func withAllLists(_ body: (inout [Post]) -> Void) {
-        body(&defaultPosts)
-        body(&searchPosts)
-    }
-
-    // MARK: - 모드 관리
-    func setMode(_ newMode: Mode) { mode = newMode }
-    func currentMode() -> Mode { mode }
-
-    // MARK: - 조회
-    func current() -> [Post] { activeList }
-
-    // MARK: - 갱신 (현재 모드만)
-    func replaceAll(with posts: [Post]) { activeList = posts }
-
-    /// 중복되지 않게 게시글을 추가 (커서 기반 append용)
-    func appendDedup(_ newPosts: [Post]) {
-        guard !newPosts.isEmpty else { return }
-        var seen = Set(activeList.map(\.id))
-        var merged = activeList
-        merged.reserveCapacity(activeList.count + newPosts.count)
-        for p in newPosts where seen.insert(p.id).inserted {
-            merged.append(p)
-        }
-        activeList = merged
-    }
-
-    /// 특정 게시글을 업데이트 (변환 클로저 사용)
-    func update(_ id: Post.ID, transform: (Post) -> Post?) {
-        guard let i = activeList.firstIndex(where: { $0.id == id }) else { return }
-        if let new = transform(activeList[i]) {
-            var arr = activeList
-            arr[i] = new
-            activeList = arr
-        }
-    }
-
-    /// 특정 게시글을 제거
-    func remove(_ id: Post.ID) {
-        activeList.removeAll { $0.id == id }
-    }
-
-    // MARK: - 전체 리스트에 적용 (default + search)
-    func updateEverywhere(_ id: Post.ID, transform: (Post) -> Post?) {
-        withAllLists { list in
-            if let i = list.firstIndex(where: { $0.id == id }) {
-                if let new = transform(list[i]) { list[i] = new }
-            }
-        }
-    }
-
-    func insertOrReplaceEverywhere(_ post: Post) {
-        var inserted = false
-        withAllLists { list in
-            if let i = list.firstIndex(where: { $0.id == post.id }) {
-                list[i] = post
-                inserted = true
-            }
-        }
-        if !inserted {
-            var arr = activeList
-            arr.insert(post, at: 0)
-            activeList = arr
-        }
-    }
-
-    func removeEverywhere(_ id: Post.ID) {
-        withAllLists { list in
-            list.removeAll { $0.id == id }
-        }
-    }
-
-    // MARK: - 댓글 수 조정
-    func adjustCommentCount(_ postID: Post.ID, by delta: Int) {
-        guard delta != 0 else { return }
-        withAllLists { list in
-            if let i = list.firstIndex(where: { $0.id == postID }) {
-                var p = list[i]
-                let current = p.commentCount ?? 0
-                p.commentCount = max(0, current + delta)
-                list[i] = p
-            }
-        }
-    }
-
-    // MARK: - 스냅샷 (복원용)
-    func snapshot() -> (default: [Post], search: [Post]) {
-        (defaultPosts, searchPosts)
-    }
-
-    func restore(_ snapshot: (default: [Post], search: [Post])) {
-        self.defaultPosts = snapshot.default
-        self.searchPosts  = snapshot.search
-    }
-}
-
 public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 의존성 주입
@@ -138,12 +10,12 @@ public final class SocialRepositoryImp: SocialRepository {
     private let awsService: AwsService
 
     // MARK: - 상태 관리 (SSOT)
-    private let store = PostStore()
-    private let _postSubject = CurrentValueSubject<[Post], Never>([])
+    private let cache = PostCache()
+    private let postSubject = CurrentValueSubject<[Post], Never>([])
     private let publishQueue = DispatchQueue(label: "social.repo.publish", qos: .userInitiated)
 
     public var postPublisher: AnyPublisher<[Post], Never> {
-        _postSubject
+        postSubject
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -162,49 +34,51 @@ public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 모드 관리
     public func setModeDefault() {
-        Task { await store.setMode(.default) }
+        Task { await cache.setMode(.default) }
     }
 
     public func setModeSearch(_ keyword: String) {
-        Task { await store.setMode(.search(keyword: keyword)) }
+        Task { await cache.setMode(.search(keyword: keyword)) }
     }
 
     // MARK: - 게시글 조회
-
-    /// 기본 피드(홈 피드) 게시글을 요청합니다.
     public func fetchPostList(
         cursor: Int? = nil,
         limit: Int = 20,
         category: [PostCategory]? = nil
     ) async throws {
-        let categoryIDs = category?.map(\.rawValue)
+        let categoryIDs = category?.map { $0.rawValue }
         let dto = try await socialService.requestPosts(cursor: cursor, limit: limit, categoryIDs: categoryIDs)
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
-            await store.replaceAll(with: posts)
+            await cache.replaceAll(with: posts, scope: .specific(.default))
         } else {
-            await store.appendDedup(posts)
+            await cache.append(posts, scope: .specific(.default))
         }
         await publishSnapshot()
         defaultCursor.update(with: (dto.hasMore, dto.nextCursor))
     }
 
-    /// 검색 결과 게시글을 요청합니다.
     public func searchPost(
         keyword: String,
         cursor: Int? = nil,
         limit: Int = 20,
         category: [PostCategory]? = nil
     ) async throws {
-        let categoryIDs = category?.map(\.rawValue)
-        let dto = try await socialService.requestSearchPosts(cursor: cursor, limit: limit, keyword: keyword, categoryIDs: categoryIDs)
+        let categoryIDs = category?.map { $0.rawValue }
+        let dto = try await socialService.requestSearchPosts(
+            cursor: cursor,
+            limit: limit,
+            keyword: keyword,
+            categoryIDs: categoryIDs
+        )
         let posts = dto.results.compactMap { $0.convertToPost() }
 
         if cursor == nil {
-            await store.replaceAll(with: posts)
+            await cache.replaceAll(with: posts, scope: .specific(.search(keyword: keyword)))
         } else {
-            await store.appendDedup(posts)
+            await cache.append(posts, scope: .specific(.search(keyword: keyword)))
         }
         await publishSnapshot()
         searchCursor.update(with: (dto.hasMore, dto.nextCursor))
@@ -212,7 +86,6 @@ public final class SocialRepositoryImp: SocialRepository {
 
     // MARK: - 게시글 생성 / 수정 / 삭제
 
-    /// 게시글 좋아요를 토글합니다. (Optimistic UI 반영)
     public func togglePostLike(
         postID: Post.ID,
         currentLike: Bool
@@ -230,12 +103,12 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    /// 게시글을 생성합니다.
     public func createPost(
         post: Post,
         image: [(fileName: String, imageData: Data)]?
     ) async throws -> Int {
         var imageUrls: [String] = []
+
         if let image {
             for (fileName, data) in image {
                 let urls = try await awsService.requestPresignedUrl(fileName: fileName)
@@ -249,16 +122,22 @@ public final class SocialRepositoryImp: SocialRepository {
             content: post.contentText,
             routineId: post.routine?.id,
             isAnonymous: false,
-            socialCategoryIds: post.category?.compactMap(\.rawValue) ?? [],
+            socialCategoryIds: post.category?.compactMap { $0.rawValue } ?? [],
             socialImageUrls: imageUrls
         )
 
         let response = try await socialService.requestCreatePost(requestDTO: requestDTO)
-        try await fetchPostList(cursor: nil, limit: 20, category: nil)
+        do {
+            let createdPost = try await fetchPost(postID: response.socialId).0
+            await cache.insertAtTop(createdPost, scope: .everywhere)
+            await publishSnapshot()
+        } catch {
+            try await fetchPostList(cursor: nil, limit: 20, category: nil)
+            return response.socialId
+        }
         return response.socialId
     }
 
-    /// 게시글을 업데이트합니다.
     public func updatePost(
         prevPost: Post,
         updatePost: Post,
@@ -271,6 +150,8 @@ public final class SocialRepositoryImp: SocialRepository {
         let isChangeImage = image != nil
 
         var imageUrls: [String] = []
+        var updatePost = updatePost
+
         if isChangeImage, let image {
             for (fileName, data) in image {
                 let urls = try await awsService.requestPresignedUrl(fileName: fileName)
@@ -290,6 +171,7 @@ public final class SocialRepositoryImp: SocialRepository {
             socialCategoryIds: isChangeCategory ? updatePost.category?.compactMap(\.rawValue) ?? [] : nil,
             socialImageUrls: isChangeImage ? imageUrls : nil
         )
+        updatePost.setImage(imagesURL: imageUrls)
 
         let rollback = await performOptimisticReplace(updatePost)
         do {
@@ -300,38 +182,32 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    /// 게시글을 삭제합니다.
     public func deletePost(
         postID: Post.ID
     ) async throws {
-        let snap = await store.snapshot()
-        await store.removeEverywhere(postID)
+        let snap = await cache.snapshot()
+        await cache.remove(postID, scope: .everywhere)
         await publishSnapshot()
         do {
             try await socialService.requestDeletePost(postID: postID)
         } catch {
-            await store.restore(snap)
+            await cache.restore(snap)
             await publishSnapshot()
             throw error
         }
     }
 
-    /// 단일 게시글을 불러옵니다. (댓글 포함)
     public func fetchPost(
         postID: Post.ID
     ) async throws -> (Post, [Comment]) {
         let dto = try await socialService.requestPost(postID: postID)
-        var post = dto.convertToPost()
+        let post = dto.convertToPost()
         let comments = dto.convertToComment()
-        post.commentCount = comments.count
-
-        await store.insertOrReplaceEverywhere(post)
-        await publishSnapshot()
+        await cache.update(postID, scope: .everywhere) { _ in post }
         return (post, comments)
     }
 
-    // MARK: - 댓글 처리
-
+    // MARK: - 댓글
     public func toggleCommentLike(
         postID: Post.ID,
         commentID: Comment.ID,
@@ -372,10 +248,7 @@ public final class SocialRepositoryImp: SocialRepository {
         }
     }
 
-    public func deleteComment(
-        postID: Post.ID,
-        commentID: Comment.ID
-    ) async throws {
+    public func deleteComment(postID: Post.ID, commentID: Comment.ID) async throws {
         let rollback = await performOptimisticCommentAdjust(postID: postID, delta: -1)
         do {
             try await socialService.requestRemoveComment(postID: postID, commentID: commentID)
@@ -384,30 +257,19 @@ public final class SocialRepositoryImp: SocialRepository {
             throw error
         }
     }
-    
-    public func reportPost(
-        postID: Post.ID,
-        reportType: ReportType,
-        reason: String?,
-        blockAuthor: Bool
-    ) async throws {
+
+    public func reportPost(postID: Post.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws {
         try await socialService.requestReportPost(postID: postID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
     }
-    
-    public func reportComment(
-        postID: Post.ID,
-        commentID: Comment.ID,
-        reportType: ReportType,
-        reason: String?,
-        blockAuthor: Bool
-    ) async throws {
+
+    public func reportComment(postID: Post.ID, commentID: Comment.ID, reportType: ReportType, reason: String?, blockAuthor: Bool) async throws {
         try await socialService.requestReportComment(postID: postID, commentID: commentID, reportType: reportType.rawValue, reason: reason, blockAuthor: blockAuthor)
     }
 
     // MARK: - 스냅샷 퍼블리시
     private func publishSnapshot() async {
-        let posts = await store.current()
-        let subject = _postSubject
+        let posts = await cache.current()
+        let subject = postSubject
         publishQueue.async {
             subject.send(posts)
         }
@@ -417,55 +279,55 @@ public final class SocialRepositoryImp: SocialRepository {
 // MARK: - Optimistic Helper
 private extension SocialRepositoryImp {
     func performOptimisticLikeToggle(postID: Post.ID, isLiked: Bool) async -> () async -> Void {
-        let snapshot = await store.snapshot()
-        await store.updateEverywhere(postID) { var p = $0; p.toggleLike(); return p }
+        let snapshot = await cache.snapshot()
+        await cache.update(postID, scope: .everywhere) { var p = $0; p.toggleLike(); return p }
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
-            await self.store.restore(snapshot)
+            await self.cache.restore(snapshot)
             await self.publishSnapshot()
         }
     }
 
     func performOptimisticReplace(_ newPost: Post) async -> () async -> Void {
-        let snapshot = await store.snapshot()
-        await store.insertOrReplaceEverywhere(newPost)
+        let snapshot = await cache.snapshot()
+        await cache.update(newPost.id, scope: .everywhere) { _ in newPost }
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
-            await self.store.restore(snapshot)
+            await self.cache.restore(snapshot)
             await self.publishSnapshot()
         }
     }
 
     func performOptimisticCommentAdjust(postID: Post.ID, delta: Int) async -> () async -> Void {
-        let snapshot = await store.snapshot()
-        await store.adjustCommentCount(postID, by: delta)
+        let snapshot = await cache.snapshot()
+        await cache.adjustCommentCount(postID, by: delta, scope: .everywhere)
         await publishSnapshot()
         return { [weak self] in
             guard let self else { return }
-            await self.store.restore(snapshot)
+            await self.cache.restore(snapshot)
             await self.publishSnapshot()
         }
     }
 }
 
-// MARK: - Pagination 관련
+// MARK: - Pagination
 extension SocialRepositoryImp {
     public func refresh(limit: Int = 20, category: [PostCategory]? = nil) async throws {
-        await store.setMode(.default)
+        await cache.setMode(.default)
         defaultCursor.reset()
         try await fetchPostList(cursor: nil, limit: limit, category: category)
     }
 
     public func startSearch(keyword: String, limit: Int = 20, category: [PostCategory]? = nil) async throws {
-        await store.setMode(.search(keyword: keyword))
+        await cache.setMode(.search(keyword: keyword))
         searchCursor.reset()
         try await searchPost(keyword: keyword, cursor: nil, limit: limit, category: category)
     }
 
     public func loadMore(limit: Int = 20, category: [PostCategory]? = nil) async throws {
-        let mode = await store.currentMode()
+        let mode = await cache.currentMode()
         switch mode {
         case .default:
             guard defaultCursor.hasMore else { return }
@@ -476,9 +338,7 @@ extension SocialRepositoryImp {
         }
     }
 
-    /// 현재 게시글 목록을 반환합니다.
     public func currentPosts() async -> [Post] {
-        await store.current()
+        await cache.current()
     }
 }
-

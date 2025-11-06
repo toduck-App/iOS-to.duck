@@ -22,8 +22,6 @@ final class MyBlockCell: UICollectionViewCell {
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-        $0.setTitle("차단", for: .selected)
-        $0.setTitle("해제", for: .normal)
         $0.isSelected = false
     }
     
@@ -71,6 +69,15 @@ final class MyBlockCell: UICollectionViewCell {
         } else {
             avatarView.image = TDImage.Profile.medium
         }
+        
+        if isBlocked {
+            blockButton.updateTitle("해제")
+            blockButton.updateBackgroundColor(backgroundColor: TDColor.Primary.primary500, foregroundColor: TDColor.baseWhite)
+        } else {
+            blockButton.updateTitle("차단")
+            blockButton.updateBackgroundColor(backgroundColor: TDColor.baseWhite, foregroundColor: TDColor.Neutral.neutral600)
+        }
+
         nicknameLabel.setText(nickname)
     }
 }

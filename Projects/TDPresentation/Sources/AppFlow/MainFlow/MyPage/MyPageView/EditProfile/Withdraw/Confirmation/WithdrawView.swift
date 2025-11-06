@@ -1,4 +1,5 @@
 import UIKit
+import TDCore
 import TDDesign
 
 protocol WithdrawViewDelegate: AnyObject {
@@ -62,7 +63,7 @@ final class WithdrawView: BaseView {
     
     override func configure() {
         titleLabel.setText("""
-        뽀덕이님,
+        \(TDTokenManager.shared.username)님,
         탈퇴하시겠어요?
         """)
         infoLabel.setText("""
