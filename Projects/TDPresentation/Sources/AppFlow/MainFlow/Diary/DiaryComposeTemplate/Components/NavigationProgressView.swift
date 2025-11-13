@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import Then
+import TDDesign
 
 final class NavigationProgressView: UIView {
     
@@ -12,8 +13,8 @@ final class NavigationProgressView: UIView {
     }
     
     private let progressView = UIProgressView(progressViewStyle: .bar).then {
-        $0.progressTintColor = .orange
-        $0.trackTintColor = .systemGray5
+        $0.progressTintColor = TDColor.Primary.primary400
+        $0.trackTintColor = TDColor.Neutral.neutral200
         $0.transform = CGAffineTransform(scaleX: 1.0, y: 4.0)
     }
     
