@@ -57,7 +57,7 @@ final class DiaryEmotionView: BaseView {
                 backgroundColor: TDColor.Primary.primary500,
                 foregroundColor: TDColor.baseWhite
             )
-            nextButton.setTitle("다음", for: .normal)
+            nextButton.updateTitle("다음")
             nextButton.layer.borderColor = UIColor.clear.cgColor
             nextButton.layer.borderWidth = 0
             commentContainerView.isHidden = false
@@ -66,7 +66,7 @@ final class DiaryEmotionView: BaseView {
                 backgroundColor: TDColor.baseWhite,
                 foregroundColor: TDColor.Neutral.neutral700
             )
-            nextButton.setTitle("건너뛰기", for: .normal)
+            nextButton.updateTitle("건너뛰기")
             nextButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
             nextButton.layer.borderWidth = 1
             commentContainerView.isHidden = true
@@ -131,6 +131,6 @@ final class DiaryEmotionView: BaseView {
         backgroundColor = TDColor.baseWhite
         commentContainerView.isHidden = true
         commentLabel.adjustsFontSizeToFitWidth = true
-        commentLabel.minimumScaleFactor = 0.3
+        commentLabel.minimumScaleFactor = 0.5
     }
 }
