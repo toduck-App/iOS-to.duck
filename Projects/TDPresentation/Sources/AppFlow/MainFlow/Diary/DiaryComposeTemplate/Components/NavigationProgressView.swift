@@ -4,7 +4,18 @@ import Then
 import TDDesign
 
 final class NavigationProgressView: UIView {
+    var rightPageItemSize: CGSize?
+    private let horizontalPadding: CGFloat = 16
+    private let leftBarButtonItemSize: CGSize = CGSize(width: 44, height: 44)
     
+    override var intrinsicContentSize: CGSize {
+        let screenWidth: CGFloat = UIScreen.main.bounds.width
+        let totalHorizontalPadding: CGFloat = horizontalPadding * 2
+        let rightItemWidth: CGFloat = rightPageItemSize?.width ?? CGSize(width: 44, height: 44).width
+        let leftItemWidth: CGFloat = leftBarButtonItemSize.width
+        let availableWidth: CGFloat = screenWidth - totalHorizontalPadding - rightItemWidth - leftItemWidth
+        return CGSize(width: availableWidth, height: 8)
+    }
     // MARK: - UI Components
     
     private let containerView = UIView().then {
