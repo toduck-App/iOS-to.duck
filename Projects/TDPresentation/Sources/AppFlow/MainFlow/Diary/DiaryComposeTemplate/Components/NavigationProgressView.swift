@@ -47,7 +47,7 @@ final class NavigationProgressView: UIView {
     /// 프로그레스 뷰의 진행 상태를 설정합니다.
     /// - Parameter progress: 0.0 ~ 1.0 사이의 진행률 값
     func configure(progress: Float) {
-        progressView.setProgress(progress, animated: true)
+        progressView.setProgress(progress, animated: false)
     }
     
     // MARK: - Private Methods

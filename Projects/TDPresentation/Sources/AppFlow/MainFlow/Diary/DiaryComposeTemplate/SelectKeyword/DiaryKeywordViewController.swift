@@ -37,13 +37,11 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        removeProgressViewFromNavigationBar()
     }
     
     // MARK: - Common Methods
     
     override func configure() {
-        // 기존의 scrollView 관련 코드는 제거
         configurePagingNavigationBar(currentPage: 2, totalPages: 3)
     }
 }

@@ -39,8 +39,6 @@ final class DiaryEmotionViewController: BaseViewController<DiaryEmotionView> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        removeProgressViewFromNavigationBar()
     }
     
     // MARK: - Common Methods
