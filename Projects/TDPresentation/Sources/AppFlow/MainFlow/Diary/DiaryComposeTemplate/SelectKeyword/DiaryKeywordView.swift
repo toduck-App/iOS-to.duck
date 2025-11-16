@@ -122,12 +122,11 @@ final class DiaryKeywordView: BaseView {
     ).then {
         $0.backgroundColor = TDColor.baseWhite
         $0.isScrollEnabled = true
-        $0.register(with: CancleTagCell.self)
-        $0.register(with: TagCell.self)
+        $0.register(with: DiaryKeywordCell.self)
         $0.register(
-            KeywordSectionHeaderView.self,
+            DiaryKeywordHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: KeywordSectionHeaderView.identifier
+            withReuseIdentifier: DiaryKeywordHeader.identifier
         )
     }
     
@@ -204,6 +203,12 @@ final class DiaryKeywordView: BaseView {
         
         keywordRemoveButton.snp.makeConstraints { make in
             make.height.equalTo(32)
+        }
+        
+        keywordCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(keywordButtonStackView.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalTo(buttonStackView.snp.top).offset(-16)
         }
         
         buttonStackView.snp.makeConstraints {
