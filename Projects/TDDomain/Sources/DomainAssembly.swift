@@ -662,5 +662,12 @@ public struct DomainAssembly: Assembly {
             }
             return ParticipateEventUseCaseImpl(repository: repository)
         }
+        
+        container.register(FetchDiaryKeywordUseCase.self) { resolver in
+            guard let repository = resolver.resolve(DiaryRepository.self) else {
+                fatalError("컨테이너에 DiaryRepository가 등록되어 있지 않습니다.")
+            }
+            return FetchDiaryKeywordUseCaseImpl(repository: repository)
+        }
     }
 }

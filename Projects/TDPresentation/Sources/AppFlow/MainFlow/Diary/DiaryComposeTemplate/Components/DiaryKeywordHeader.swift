@@ -46,8 +46,9 @@ final class DiaryKeywordHeader: UICollectionReusableView {
         }
     }
     
-    func configure(title: String, image: UIImage) {
+    func configure(title: String, image: UIImage?) {
         titleLabel.setText(title)
         imageView.image = image
+        imageView.isHidden = (image == nil)
     }
 }

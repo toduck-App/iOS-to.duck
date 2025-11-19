@@ -24,7 +24,12 @@ final class DiaryKeywordCoordinator: Coordinator {
         selectedMood: String,
         selectedDate: Date
     ) {
-        let viewModel = DiaryKeywordViewModel(selectedMood: selectedMood, selectedDate: selectedDate)
+        let fetchDiaryKeywordsUseCase = injector.resolve(FetchDiaryKeywordUseCase.self)
+        let viewModel = DiaryKeywordViewModel(
+            selectedMood: selectedMood,
+            selectedDate: selectedDate,
+            fetchDiaryKeywordsUseCase: fetchDiaryKeywordsUseCase
+        )
         let diaryEmotionViewController = DiaryKeywordViewController(viewModel: viewModel)
         diaryEmotionViewController.coordinator = self
         diaryEmotionViewController.hidesBottomBarWhenPushed = true

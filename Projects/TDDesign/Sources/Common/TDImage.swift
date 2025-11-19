@@ -61,6 +61,9 @@ public enum TDImage {
     public static let checkNeutral = TDDesignAsset.Images.checkNeutral.image
     public static let timerAlert = TDDesignAsset.Images.timerAlert.image
     public static let logout = TDDesignAsset.Images.logout.image
+    public static let placeSmall = TDDesignAsset.Images.placeSmall.image
+    public static let talkNeutral = TDDesignAsset.Images.talkNeutral.image
+    public static let peopleNeutral = TDDesignAsset.Images.peopleNeutral.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image
