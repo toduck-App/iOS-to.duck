@@ -110,12 +110,12 @@ final class DiaryKeywordView: BaseView {
         collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
             $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
             $0.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 20)
-            $0.minimumLineSpacing = 10
-            $0.minimumInteritemSpacing = 10
+            $0.minimumLineSpacing = 12
+            $0.minimumInteritemSpacing = 8
             $0.sectionInset = UIEdgeInsets(
-                top: 12,
+                top: 16,
                 left: 0,
-                bottom: 28,
+                bottom: 32,
                 right: 0
             )
         }
@@ -148,6 +148,8 @@ final class DiaryKeywordView: BaseView {
         addSubview(keywordButtonStackView)
         keywordButtonStackView.addArrangedSubview(keywordAddButton)
         keywordButtonStackView.addArrangedSubview(keywordRemoveButton)
+        
+        addSubview(keywordCollectionView)
         
         addSubview(buttonStackView)
         buttonStackView.addArrangedSubview(skipButton)
