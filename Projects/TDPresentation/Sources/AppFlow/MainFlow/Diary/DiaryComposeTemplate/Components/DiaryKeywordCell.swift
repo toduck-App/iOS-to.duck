@@ -8,6 +8,9 @@ final class DiaryKeywordCell: UICollectionViewCell {
         toduckColor: TDColor.Neutral.neutral700
     ).then {
         $0.numberOfLines = 1
+        $0.lineBreakMode = .byTruncatingTail
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
     override init(frame: CGRect) {
@@ -32,8 +35,6 @@ final class DiaryKeywordCell: UICollectionViewCell {
         tagLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(12)
             make.top.bottom.equalToSuperview().inset(6)
-            make.centerY.equalToSuperview()
-            make.height.equalTo(33)
         }
     }
     
