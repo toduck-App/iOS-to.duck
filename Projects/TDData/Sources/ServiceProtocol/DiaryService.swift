@@ -8,4 +8,5 @@ public protocol DiaryService {
     func deleteDiary(id: Int) async throws
     func fetchDiaryCompareCount(yearMonth: String) async throws -> Int
     func fetchStreak() async throws -> DiaryStreakResponseDTO
+    func connectDiaryKeyword(diary: DiaryKeywordConnectRequestDTO) async throws
 }

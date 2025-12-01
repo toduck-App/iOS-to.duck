@@ -19,9 +19,9 @@ final class DiaryEmotionViewModel: BaseViewModel {
     let selectedDate: Date
     let emotions = Emotion.allCases
     
-    var currentSelectedEmotion: String? {
+    var currentSelectedEmotion: Emotion? {
         guard let index = selectedEmotionIndex else { return nil }
-        return emotions[safe: index]?.rawValue.uppercased()
+        return emotions[safe: index]
     }
     
     init(

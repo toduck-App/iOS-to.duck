@@ -24,10 +24,11 @@ public final class DiaryRepositoryImpl: DiaryRepository {
             }
         }
         
-        var diary = DiaryPostRequestDTO(diary: diary)
-        diary.diaryImageUrls = imageUrls
+        var diaryRequestDTO = DiaryPostRequestDTO(diary: diary)
+        diaryRequestDTO.diaryImageUrls = imageUrls
         
-        try await diaryService.createDiary(diary: diary)
+        try await diaryService.createDiary(diary: diaryRequestDTO)
+        try await connectDiaryKeywords(date: diary.date, keywords: diary.diaryKeywords)
         Task {
             // MARK: 휴대폰 기기가 느려서, 일기 작성 후 바로 스트릭을 조회하면, 서버에서 반영이 안된 상태로 조회되는 경우가 있을 수도 있음.
             try? await Task.sleep(until: .now + .seconds(1))
@@ -94,7 +95,7 @@ public final class DiaryRepositoryImpl: DiaryRepository {
     }
     
     public func saveDiaryKeyword(name: String, category: DiaryKeywordCategory) throws {
-        let diaryKeywordDTO = DiaryKeywordDTO(id: UUID(), name: name, category: category.rawValue)
+        let diaryKeywordDTO = DiaryKeywordDTO(id: 0, name: name, category: category.rawValue)
         let result = diarykeywordStroage.saveDiaryKeyword(diaryKeywordDTO)
         switch result {
         case .success:
@@ -113,5 +114,29 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         case .failure(let error):
             throw error
         }
+    }
+    
+    public func connectDiaryKeywords(date: Date, keywords: [DiaryKeyword]) async throws {
+        let dateString = date.convertToString(formatType: .yearMonthDay)
+
+        let yyyyMM = dateString.split(separator: "-")
+            .map { Int($0) }
+            .compactMap { $0 }
+        if yyyyMM.count < 2 {
+            return
+        }
+        
+        guard let diary = try await diaryService
+            .fetchDiaryList(year: yyyyMM[0], month: yyyyMM[1])
+            .convertToDiaryList()
+            .first(where: { $0.date == Date.convertFromString(dateString, format: .yearMonthDay)})
+        else { return }
+        
+        let diaryKeywordConnectRequestDTO = DiaryKeywordConnectRequestDTO(
+            diaryId: diary.id,
+            keywordIds: keywords.map { $0.id }
+        )
+        
+        try await diaryService.connectDiaryKeyword(diary: diaryKeywordConnectRequestDTO)
     }
 }

@@ -24,6 +24,12 @@ public final class TDFormPhotoView: UIView {
     
     // MARK: - UI Components
     
+    private let titleHorizontalStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+    }
+
+    private let titleImageView = UIImageView()
     /// 제목과 필수 표시(*)를 포함하는 레이블 뷰.
     private let title = TDRequiredTitle()
     
@@ -84,7 +90,9 @@ public final class TDFormPhotoView: UIView {
     ///   - maxCount: 추가할 수 있는 최대 사진 개수. 기본값은 `5`입니다.
     public init(
         frame: CGRect = .zero,
+        image: UIImage? = nil,
         titleText: String = "사진 첨부",
+        titleFont: TDFont = .boldBody1,
         titleColor: UIColor = TDColor.Neutral.neutral800,
         isRequired: Bool = false,
         maxCount: Int = 5
@@ -94,7 +102,10 @@ public final class TDFormPhotoView: UIView {
         super.init(frame: frame)
         
         // 타이틀 설정
+        titleImageView.contentMode = .scaleAspectFit
+        titleImageView.image = image
         title.setTitleLabel(titleText)
+        title.setTitleFont(titleFont)
         title.setTitleColor(titleColor)
         
         // 필수 항목 여부에 따라 별표(*) 표시
@@ -174,7 +185,9 @@ extension TDFormPhotoView {
     
     /// 서브뷰들을 추가합니다.
     private func addSubviews() {
-        addSubview(title)
+        addSubview(titleHorizontalStackView)
+        titleHorizontalStackView.addArrangedSubview(titleImageView)
+        titleHorizontalStackView.addArrangedSubview(title)
         addSubview(currentCounterLabel)
         addSubview(maxCounterLabel)
         addSubview(addPhotoButton)
@@ -185,8 +198,12 @@ extension TDFormPhotoView {
     
     /// 서브뷰들의 제약조건을 설정합니다.
     private func setConstraints() {
-        title.snp.makeConstraints { make in
+        titleHorizontalStackView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
+        }
+        
+        titleImageView.snp.makeConstraints { make in
+            make.size.equalTo(18)
         }
         
         maxCounterLabel.snp.makeConstraints { make in

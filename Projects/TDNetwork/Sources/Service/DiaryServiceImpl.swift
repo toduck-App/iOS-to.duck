@@ -45,4 +45,9 @@ public struct DiaryServiceImpl: DiaryService {
         let response = try await provider.requestDecodable(of: DiaryStreakResponseDTO.self, target)
         return response.value
     }
+    
+    public func connectDiaryKeyword(diary: TDData.DiaryKeywordConnectRequestDTO) async throws {
+        let target = DiaryAPI.connectKeyword(diary: diary)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }
