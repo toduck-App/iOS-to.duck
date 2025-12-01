@@ -39,6 +39,13 @@ final class WriteDiaryCoordinator: Coordinator {
         finishDelegate?.didFinish(childCoordinator: self)
     }
     
+    func showCompleteDiaryView() {
+        let coordinator = CompleteDiaryCoordinator(navigationController: navigationController, injector: injector)
+        childCoordinators.append(coordinator)
+        coordinator.finishDelegate = self
+        coordinator.start()
+    }
+    
     func start() { }
 }
 
@@ -47,5 +54,6 @@ final class WriteDiaryCoordinator: Coordinator {
 extension WriteDiaryCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }

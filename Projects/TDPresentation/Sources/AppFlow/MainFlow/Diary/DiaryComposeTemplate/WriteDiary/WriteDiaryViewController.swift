@@ -73,8 +73,7 @@ final class WriteDiaryViewController: BaseViewController<WriteDiaryView> {
                     layoutView.saveButton.isEnabled = true
                     showErrorAlert(errorMessage: message)
                 case .success:
-                    // TODO: 다이어리 작성 성공 화면으로 이동
-                    print("다이어리 작성 성공")
+                    coordinator?.showCompleteDiaryView()
                 }
             }.store(in: &cancellables)
     }

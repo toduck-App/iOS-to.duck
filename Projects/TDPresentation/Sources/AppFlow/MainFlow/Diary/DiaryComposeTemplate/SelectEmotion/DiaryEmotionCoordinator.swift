@@ -38,7 +38,6 @@ final class DiaryEmotionCoordinator: Coordinator {
         )
         diaryKeywordCoordinator.finishDelegate = self
         childCoordinators.append(diaryKeywordCoordinator)
-        finishDelegate?.didFinish(childCoordinator: self)
         diaryKeywordCoordinator.start(selectedMood: selectedMood, selectedDate: selectedDate)
     }
     
@@ -51,7 +50,6 @@ final class DiaryEmotionCoordinator: Coordinator {
         diaryEditCoordinator.finishDelegate = self
         diaryEditCoordinator.delegate = self
         childCoordinators.append(diaryEditCoordinator)
-        finishDelegate?.didFinish(childCoordinator: self)
         diaryEditCoordinator.start(selectedDate: selectedDate, diary: diary)
     }
     
@@ -68,6 +66,7 @@ final class DiaryEmotionCoordinator: Coordinator {
 extension DiaryEmotionCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }
 
