@@ -71,5 +71,6 @@ final class DiaryKeywordCoordinator: Coordinator {
 extension DiaryKeywordCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        finishDelegate?.didFinish(childCoordinator: self)
     }
 }

@@ -54,6 +54,10 @@ final class DiaryCoordinator: Coordinator {
 extension DiaryCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        navigationController.popToRootViewController(animated: true)
+        if navigationController.presentedViewController != nil {
+            navigationController.dismiss(animated: true)
+        }
     }
 }
 
