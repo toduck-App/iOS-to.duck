@@ -1,7 +1,10 @@
 import UIKit
+import TDDomain
 import TDDesign
 
 final class DiaryKeywordView: BaseView {
+    private var selectedKeywords: [DiaryKeyword] = []
+
     let labelStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 8
@@ -47,7 +50,7 @@ final class DiaryKeywordView: BaseView {
     }
     
     let keywordCategorySegment = TDSegmentedControl(
-        items: ["전체", "사람", "장소", "상황", "결과/느낌"],
+        items: ["전체"] + DiaryKeywordCategory.allCases.map { $0.rawValue },
         indicatorForeGroundColor: TDColor.baseWhite
     )
     
@@ -176,21 +179,22 @@ final class DiaryKeywordView: BaseView {
         
         selectedKeywordScrollView.snp.makeConstraints { make in
             make.top.equalTo(currentBookImageView.snp.bottom)
-            make.height.equalTo(48)
-            make.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(70)
+            make.horizontalEdges.equalToSuperview().inset(50)
         }
         
         selectedKeywordContainerView.snp.makeConstraints { make in
             make.edges.equalTo(selectedKeywordScrollView.contentLayoutGuide)
-            make.height.equalTo(selectedKeywordScrollView.frameLayoutGuide)
+            make.height.equalTo(selectedKeywordScrollView.frameLayoutGuide.snp.height)
         }
-        
+
         selectedKeywordStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            make.height.equalToSuperview()
         }
-        
+
         keywordCategorySegment.snp.makeConstraints { make in
-            make.top.equalTo(currentBookImageView.snp.bottom).offset(96)
+            make.top.equalTo(currentBookImageView.snp.bottom).offset(56)
             make.horizontalEdges.equalToSuperview().inset(16)
         }
         
@@ -225,5 +229,88 @@ final class DiaryKeywordView: BaseView {
         backgroundColor = TDColor.baseWhite
         skipButton.layer.borderWidth = 1
         skipButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+    }
+    
+    func addKeywordToStackView(keyword: DiaryKeyword) {
+        noSelectedLabel.isHidden = true
+        selectedKeywords.append(keyword)
+        let tagContainer = makeKeywordView(keyword: keyword.name)
+        selectedKeywordStackView.addArrangedSubview(tagContainer)
+        updateBookImage()
+        DispatchQueue.main.async {
+            self.selectedKeywordScrollView.flashScrollIndicators()
+        }
+    }
+    
+    func makeKeywordView(keyword: String) -> UIView {
+        let tagContainer = UIView().then {
+            $0.layer.borderWidth = 1
+            $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            $0.backgroundColor = TDColor.baseWhite
+            $0.layer.cornerRadius = 8
+        }
+        let tagLabel = TDLabel(
+            toduckFont: .mediumBody2,
+            toduckColor: TDColor.Neutral.neutral700
+        ).then {
+            $0.numberOfLines = 1
+            $0.setContentHuggingPriority(.required, for: .horizontal)
+            $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+            $0.setText(keyword)
+        }
+        
+        tagContainer.addSubview(tagLabel)
+        tagContainer.snp.makeConstraints { make in
+            make.height.equalTo(32)
+        }
+        tagLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.top.bottom.equalToSuperview().inset(6)
+            make.centerY.equalToSuperview()
+        }
+        return tagContainer
+    }
+    
+    func removeAllKeywordsFromStackView() {
+        noSelectedLabel.isHidden = false
+        selectedKeywords.removeAll()
+        selectedKeywordStackView.arrangedSubviews.forEach { view in
+            selectedKeywordStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        updateBookImage()
+    }
+
+    func removeKeywordFromStackView(keyword: DiaryKeyword) {
+        selectedKeywords.removeAll { $0.id == keyword.id }
+        for view in selectedKeywordStackView.arrangedSubviews {
+            if let label = view.subviews.first as? TDLabel,
+                label.text == keyword.name {
+                selectedKeywordStackView.removeArrangedSubview(view)
+                view.removeFromSuperview()
+                break
+            }
+        }
+
+        if selectedKeywordStackView.arrangedSubviews.isEmpty {
+            noSelectedLabel.isHidden = false
+        }
+        updateBookImage()
+    }
+    
+    private func updateBookImage() {
+        let categoryCount = Set(selectedKeywords.map { $0.category }).count
+        switch categoryCount {
+        case 1:
+            currentBookImageView.image = TDImage.BookKeyword.one
+        case 2:
+            currentBookImageView.image = TDImage.BookKeyword.two
+        case 3:
+            currentBookImageView.image = TDImage.BookKeyword.three
+        case 4:
+            currentBookImageView.image = TDImage.BookKeyword.four
+        default:
+            currentBookImageView.image = TDImage.BookKeyword.none
+        }
     }
 }

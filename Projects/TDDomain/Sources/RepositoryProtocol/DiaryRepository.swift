@@ -7,4 +7,7 @@ public protocol DiaryRepository {
     func deleteDiary(id: Int) async throws
     func fetchDiaryCompareCount(yearMonth: String) async throws -> Int
     func fetchStreak() async throws -> (streak: Int, lastWriteDate: String?)
+    func fetchDiaryKeyword() -> DiaryKeywordDictionary
+    func saveDiaryKeyword(name: String, category: DiaryKeywordCategory) throws
+    func deleteDiaryKeywords(keywords: [DiaryKeyword]) throws
 }
