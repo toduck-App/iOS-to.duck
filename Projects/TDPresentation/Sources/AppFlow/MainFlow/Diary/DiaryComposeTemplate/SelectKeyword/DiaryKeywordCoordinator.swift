@@ -21,7 +21,7 @@ final class DiaryKeywordCoordinator: Coordinator {
     }
     
     func start(
-        selectedMood: String,
+        selectedMood: Emotion,
         selectedDate: Date
     ) {
         let fetchDiaryKeywordsUseCase = injector.resolve(FetchDiaryKeywordUseCase.self)
@@ -41,7 +41,7 @@ final class DiaryKeywordCoordinator: Coordinator {
     }
     
     func showWriteDiaryCompose(
-        selectedMood: String,
+        selectedMood: Emotion,
         selectedDate: Date,
         selectedKeywords: [DiaryKeyword]
     ) {

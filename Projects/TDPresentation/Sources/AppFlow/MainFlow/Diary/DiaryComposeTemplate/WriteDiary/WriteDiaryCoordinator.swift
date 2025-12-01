@@ -18,14 +18,16 @@ final class WriteDiaryCoordinator: Coordinator {
     }
     
     func start(
-        selectedMood: String,
+        selectedMood: Emotion,
         selectedDate: Date,
         selectedKeyword: [DiaryKeyword]
     ) {
+        let createDiaryUseCase = injector.resolve(CreateDiaryUseCase.self)
         let vm = WriteDiaryViewModel(
             selectedMood: selectedMood,
             selectedDate: selectedDate,
-            selectedKeyword: selectedKeyword
+            selectedKeyword: selectedKeyword,
+            createDiaryUseCase: createDiaryUseCase
         )
         let vc = WriteDiaryViewController(viewModel: vm)
         vc.coordinator = self

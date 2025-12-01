@@ -6,7 +6,7 @@ import TDDomain
 public final class DiaryKeywordStorageImpl: DiaryKeywordStorage {
     private let userDefaults: UserDefaults
     private let key = "diaryKeywords"
-    private let initializedKey = "diaryKeywordInitialized"
+    private let initializedKey = "diaryKeywordInitialize"
 
     public init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults

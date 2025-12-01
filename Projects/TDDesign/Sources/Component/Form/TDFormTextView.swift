@@ -152,6 +152,10 @@ extension TDFormTextView {
             make.top.leading.trailing.equalToSuperview()
         }
         
+        titleImageView.snp.makeConstraints { make in
+            make.size.equalTo(18)
+        }
+        
         textView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
