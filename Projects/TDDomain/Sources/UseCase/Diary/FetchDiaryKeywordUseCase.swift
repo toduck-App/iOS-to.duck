@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol FetchDiaryKeywordUseCase {
-    func execute() async throws -> DiaryKeywordDictionary
+    func execute() -> DiaryKeywordDictionary
 }
 
 final class FetchDiaryKeywordUseCaseImpl: FetchDiaryKeywordUseCase {
@@ -18,7 +18,7 @@ final class FetchDiaryKeywordUseCaseImpl: FetchDiaryKeywordUseCase {
         self.repository = repository
     }
 
-    func execute() async throws -> DiaryKeywordDictionary {
-        return DefaultDiaryKeywords.all
+    func execute() -> DiaryKeywordDictionary {
+        return repository.fetchDiaryKeyword()
     }
 }

@@ -14,6 +14,21 @@ public enum DiaryKeywordCategory: String, CaseIterable, Hashable {
     case place = "장소"
     case situation = "상황"
     case result = "결과 / 느낌"
+    
+    public init(rawValue: String) {
+        switch rawValue {
+        case "사람":
+            self = .person
+        case "장소":
+            self = .place
+        case "상황":
+            self = .situation
+        case "결과 / 느낌":
+            self = .result
+        default:
+            self = .place
+        }
+    }
 }
 
 public struct DiaryKeyword: Equatable, Identifiable, Hashable {
@@ -21,11 +36,18 @@ public struct DiaryKeyword: Equatable, Identifiable, Hashable {
     public var name: String
     public var category: DiaryKeywordCategory
     public var isCustom: Bool
+    
+    public init(id: UUID, name: String, category: DiaryKeywordCategory, isCustom: Bool) {
+        self.id = id
+        self.name = name
+        self.category = category
+        self.isCustom = isCustom
+    }
 }
 
 
 public struct DefaultDiaryKeywords {
-    static let all: DiaryKeywordDictionary = [
+    public static let all: DiaryKeywordDictionary = [
         .person: person,
         .place: place,
         .situation: situation,

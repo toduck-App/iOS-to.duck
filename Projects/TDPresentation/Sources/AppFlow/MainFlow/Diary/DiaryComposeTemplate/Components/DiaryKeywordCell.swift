@@ -8,7 +8,6 @@ final class DiaryKeywordCell: UICollectionViewCell {
         toduckColor: TDColor.Neutral.neutral700
     ).then {
         $0.numberOfLines = 1
-        $0.lineBreakMode = .byTruncatingTail
         $0.setContentHuggingPriority(.required, for: .horizontal)
         $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }

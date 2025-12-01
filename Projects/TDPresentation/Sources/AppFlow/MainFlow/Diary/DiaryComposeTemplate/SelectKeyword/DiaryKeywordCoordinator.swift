@@ -25,15 +25,37 @@ final class DiaryKeywordCoordinator: Coordinator {
         selectedDate: Date
     ) {
         let fetchDiaryKeywordsUseCase = injector.resolve(FetchDiaryKeywordUseCase.self)
+        let createDiaryKeywordUseCase = injector.resolve(CreateDiaryKeywordUseCase.self)
+        let deleteDiaryKeywordUseCase = injector.resolve(DeleteDiaryKeywordUseCase.self)
         let viewModel = DiaryKeywordViewModel(
             selectedMood: selectedMood,
             selectedDate: selectedDate,
-            fetchDiaryKeywordsUseCase: fetchDiaryKeywordsUseCase
+            fetchDiaryKeywordsUseCase: fetchDiaryKeywordsUseCase,
+            createDiaryKeywordUseCase: createDiaryKeywordUseCase,
+            deleteDiaryKeywordUseCase: deleteDiaryKeywordUseCase
         )
         let diaryEmotionViewController = DiaryKeywordViewController(viewModel: viewModel)
         diaryEmotionViewController.coordinator = self
         diaryEmotionViewController.hidesBottomBarWhenPushed = true
         navigationController.pushTDViewController(diaryEmotionViewController, animated: true)
+    }
+    
+    func showWriteDiaryCompose(
+        selectedMood: String,
+        selectedDate: Date,
+        selectedKeywords: [DiaryKeyword]
+    ) {
+        let writeDiaryCoordinator = WriteDiaryCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        writeDiaryCoordinator.start(
+            selectedMood: selectedMood,
+            selectedDate: selectedDate,
+            selectedKeyword: selectedKeywords
+        )
+        writeDiaryCoordinator.finishDelegate = self
+        childCoordinators.append(writeDiaryCoordinator)
     }
     
     func popViewController() {

@@ -55,6 +55,41 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         configurePagingNavigationBar(currentPage: 2, totalPages: 3)
         layoutView.keywordCollectionView.delegate = self
         layoutView.keywordCategorySegment.addTarget(self, action: #selector(categoryChanged), for: .valueChanged)
+        layoutView.keywordAddButton.addAction(UIAction { [weak self] _ in
+            print("Add Keyword Button Tapped")
+        }, for: .touchUpInside)
+        
+        layoutView.keywordRemoveButton.addAction(UIAction { [weak self] _ in
+            print("Remove Keyword Button Tapped")
+        }, for: .touchUpInside)
+        
+        layoutView.skipButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                coordinator?.showWriteDiaryCompose(
+                    selectedMood: viewModel.selectedMood,
+                    selectedDate: viewModel.selectedDate,
+                    selectedKeywords: []
+                )
+            },
+            for: .touchUpInside)
+        
+        layoutView.saveButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            coordinator?.showWriteDiaryCompose(
+                selectedMood: viewModel.selectedMood,
+                selectedDate: viewModel.selectedDate,
+                selectedKeywords: viewModel.selectedKeywords
+            )
+        }, for: .touchUpInside)
+        
+        let longPress = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(handleBookLongPress)
+        )
+        longPress.minimumPressDuration = 0.6
+        layoutView.currentBookImageView.isUserInteractionEnabled = true
+        layoutView.currentBookImageView.addGestureRecognizer(longPress)
     }
     
     private func configureDataSource() {
@@ -77,7 +112,6 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
             
             let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
 
-            
             guard let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: DiaryKeywordHeader.identifier,
@@ -85,9 +119,6 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
             ) as? DiaryKeywordHeader else { return nil }
             
             header.configure(title: section.rawValue, image: section.image)
-
-            self.viewModel.currentCategory != nil ? (header.isHidden = true) : (header.isHidden = false)
-
             return header
         }
     }
@@ -130,13 +161,24 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         snapshot.reloadItems(snapshot.itemIdentifiers)
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
-
+    
+    @objc private func handleBookLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        HapticManager.impact(.medium)
+        layoutView.removeAllKeywordsFromStackView()
+        input.send(.clearKeywords)
+    }
 }
 
 extension DiaryKeywordViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
         input.send(.toggleKeyword(item))
+        if viewModel.selectedKeywords.contains(where: { $0.id == item.id }) {
+            layoutView.addKeywordToStackView(keyword: item)
+        } else {
+            layoutView.removeKeywordFromStackView(keyword: item)
+        }
     }
     
     @objc
