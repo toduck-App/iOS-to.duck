@@ -3,7 +3,7 @@ import TDDomain
 import TDDesign
 
 final class DiaryKeywordView: BaseView {
-    private var selectedKeywords: [DiaryKeyword] = []
+    private var selectedKeywords: [UserKeyword] = []
 
     let labelStackView = UIStackView().then {
         $0.axis = .vertical
@@ -50,7 +50,7 @@ final class DiaryKeywordView: BaseView {
     }
     
     let keywordCategorySegment = TDSegmentedControl(
-        items: ["전체"] + DiaryKeywordCategory.allCases.map { $0.rawValue },
+        items: ["전체"] + UserKeywordCategory.allCases.map { $0.rawValue },
         indicatorForeGroundColor: TDColor.baseWhite
     )
     
@@ -231,7 +231,7 @@ final class DiaryKeywordView: BaseView {
         skipButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
     
-    func addKeywordToStackView(keyword: DiaryKeyword) {
+    func addKeywordToStackView(keyword: UserKeyword) {
         noSelectedLabel.isHidden = true
         selectedKeywords.append(keyword)
         let tagContainer = makeKeywordView(keyword: keyword.name)
@@ -281,7 +281,7 @@ final class DiaryKeywordView: BaseView {
         updateBookImage()
     }
 
-    func removeKeywordFromStackView(keyword: DiaryKeyword) {
+    func removeKeywordFromStackView(keyword: UserKeyword) {
         selectedKeywords.removeAll { $0.id == keyword.id }
         for view in selectedKeywordStackView.arrangedSubviews {
             if let label = view.subviews.first as? TDLabel,

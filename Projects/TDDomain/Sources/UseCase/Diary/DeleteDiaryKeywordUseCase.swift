@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DeleteDiaryKeywordUseCase {
-    func execute(keywords: [DiaryKeyword]) throws
+    func execute(keywords: [UserKeyword]) async throws
 }
 
 final class DeleteDiaryKeywordUseCaseImpl: DeleteDiaryKeywordUseCase {
@@ -11,7 +11,7 @@ final class DeleteDiaryKeywordUseCaseImpl: DeleteDiaryKeywordUseCase {
         self.repository = repository
     }
 
-    func execute(keywords: [DiaryKeyword]) throws {
-        try repository.deleteDiaryKeywords(keywords: keywords)
+    func execute(keywords: [UserKeyword]) async throws {
+        try await repository.deleteDiaryKeywords(keywords: keywords)
     }
 }

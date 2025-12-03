@@ -25,7 +25,7 @@ final class WriteDiaryViewModel: BaseViewModel {
     private(set) var images: [Data] = []
     private(set) var selectedMood: Emotion
     private(set) var selectedDate: Date
-    private(set) var selectedKeyword: [DiaryKeyword] = []
+    private(set) var selectedKeyword: [UserKeyword] = []
     
     private let createDiaryUseCase: CreateDiaryUseCase
     
@@ -34,7 +34,7 @@ final class WriteDiaryViewModel: BaseViewModel {
     init(
         selectedMood: Emotion,
         selectedDate: Date,
-        selectedKeyword: [DiaryKeyword],
+        selectedKeyword: [UserKeyword],
         createDiaryUseCase: CreateDiaryUseCase,
     ) {
         self.selectedMood = selectedMood
@@ -87,7 +87,7 @@ final class WriteDiaryViewModel: BaseViewModel {
                 title: "",
                 memo: content,
                 diaryImageUrls: nil,
-                diaryKeywords: selectedKeyword
+                diaryKeywords: selectedKeyword.map { DiaryKeyword(id: $0.id, keywordName: $0.name) }
             )
             let image = images.map { ("\(UUID().uuidString).jpg", $0) }
             try await createDiaryUseCase.execute(diary: diary, image: image)

@@ -9,7 +9,7 @@ import TDDomain
 import TDDesign
 import UIKit
 
-extension DiaryKeywordCategory {
+extension UserKeywordCategory {
     var image: UIImage {
         switch self {
         case .person:
