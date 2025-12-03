@@ -7,9 +7,9 @@
 
 import Foundation
 
-public typealias DiaryKeywordDictionary = [DiaryKeywordCategory: [DiaryKeyword]]
+public typealias DiaryKeywordDictionary = [UserKeywordCategory: [UserKeyword]]
 
-public enum DiaryKeywordCategory: String, CaseIterable, Hashable {
+public enum UserKeywordCategory: String, CaseIterable, Hashable {
     case person = "사람"
     case place = "장소"
     case situation = "상황"
@@ -17,13 +17,13 @@ public enum DiaryKeywordCategory: String, CaseIterable, Hashable {
     
     public init(rawValue: String) {
         switch rawValue {
-        case "사람":
+        case "PERSON":
             self = .person
-        case "장소":
+        case "PLACE":
             self = .place
-        case "상황":
+        case "SITUATION":
             self = .situation
-        case "결과 / 느낌":
+        case "RESULT":
             self = .result
         default:
             self = .place
@@ -31,17 +31,25 @@ public enum DiaryKeywordCategory: String, CaseIterable, Hashable {
     }
 }
 
-public struct DiaryKeyword: Equatable, Identifiable, Hashable {
+public struct UserKeyword: Identifiable, Hashable {
     public let id: Int
     public var name: String
-    public var category: DiaryKeywordCategory
-    public var isCustom: Bool
+    public var category: UserKeywordCategory
     
-    public init(id: Int, name: String, category: DiaryKeywordCategory, isCustom: Bool) {
+    public init(id: Int, name: String, category: UserKeywordCategory) {
         self.id = id
         self.name = name
         self.category = category
-        self.isCustom = isCustom
+    }
+}
+
+public struct DiaryKeyword: Identifiable, Hashable {
+    public let id: Int
+    public let keywordName: String
+    
+    public init(id: Int, keywordName: String) {
+        self.id = id
+        self.keywordName = keywordName
     }
 }
 
@@ -55,30 +63,30 @@ public struct DefaultDiaryKeywords {
     ]
     
     // MARK: - Person
-    static let person: [DiaryKeyword] = [
-        .init(id: 1, name: "가족", category: .person, isCustom: true),
-        .init(id: 2, name: "부모님", category: .person, isCustom: true),
-        .init(id: 3, name: "형제/자매", category: .person, isCustom: true),
+    static let person: [UserKeyword] = [
+        .init(id: 1, name: "가족", category: .person),
+        .init(id: 2, name: "부모님", category: .person),
+        .init(id: 3, name: "형제/자매", category: .person),
     ]
     
     // MARK: - Place
-    static let place: [DiaryKeyword] = [
-        .init(id: 4, name: "집", category: .place, isCustom: true),
-        .init(id: 5, name: "회사", category: .place, isCustom: true),
-        .init(id: 6, name: "학교", category: .place, isCustom: true),
+    static let place: [UserKeyword] = [
+        .init(id: 4, name: "집", category: .place),
+        .init(id: 5, name: "회사", category: .place),
+        .init(id: 6, name: "학교", category: .place),
     ]
     
     // MARK: - Situation
-    static let situation: [DiaryKeyword] = [
-        .init(id: 7, name: "공부", category: .situation, isCustom: true),
-        .init(id: 8, name: "직업", category: .situation, isCustom: true),
-        .init(id: 9, name: "발표", category: .situation, isCustom: true),
+    static let situation: [UserKeyword] = [
+        .init(id: 7, name: "공부", category: .situation),
+        .init(id: 8, name: "직업", category: .situation),
+        .init(id: 9, name: "발표", category: .situation),
     ]
 
     // MARK: - Result
-    static let result: [DiaryKeyword] = [
-        .init(id: 10, name: "칭찬을 받음", category: .result, isCustom: true),
-        .init(id: 11, name: "혼남", category: .result, isCustom: true),
-        .init(id: 12, name: "기분 좋은 대화", category: .result, isCustom: true),
+    static let result: [UserKeyword] = [
+        .init(id: 10, name: "칭찬을 받음", category: .result),
+        .init(id: 11, name: "혼남", category: .result),
+        .init(id: 12, name: "기분 좋은 대화", category: .result),
     ]
 }

@@ -17,8 +17,5 @@ public struct StorageAssembly: Assembly {
         container.register(TimerStorage.self) { _ in
             TimerStorageImpl()
         }
-        container.register(DiaryKeywordStorage.self) { _ in
-            DiaryKeywordStorageImpl()
-        }
     }
 }

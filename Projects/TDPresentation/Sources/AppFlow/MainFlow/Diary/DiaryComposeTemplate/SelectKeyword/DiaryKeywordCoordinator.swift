@@ -43,7 +43,7 @@ final class DiaryKeywordCoordinator: Coordinator {
     func showWriteDiaryCompose(
         selectedMood: Emotion,
         selectedDate: Date,
-        selectedKeywords: [DiaryKeyword]
+        selectedKeywords: [UserKeyword]
     ) {
         let writeDiaryCoordinator = WriteDiaryCoordinator(
             navigationController: navigationController,

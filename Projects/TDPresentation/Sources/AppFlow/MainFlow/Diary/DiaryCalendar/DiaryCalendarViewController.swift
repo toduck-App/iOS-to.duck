@@ -239,6 +239,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
             emotionImage: diary.emotion.circleImage,
             date: diary.date.convertToString(formatType: .monthDayWithWeekday),
             title: diary.title,
+            keywords: diary.diaryKeywords.map { $0.keywordName },
             memo: diary.memo,
             photos: images,
             imageURLs: diary.diaryImageUrls

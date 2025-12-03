@@ -6,10 +6,10 @@ final class DiaryKeywordViewModel: BaseViewModel {
     enum Input {
         case fetchKeywords
         case clearKeywords
-        case toggleKeyword(DiaryKeyword)
-        case selectCategory(DiaryKeywordCategory?)
-        case createKeyword(String, DiaryKeywordCategory)
-        case deleteKeyword([DiaryKeyword])
+        case toggleKeyword(UserKeyword)
+        case selectCategory(UserKeywordCategory?)
+        case createKeyword(String, UserKeywordCategory)
+        case deleteKeyword([UserKeyword])
     }
     
     enum Output {
@@ -19,8 +19,8 @@ final class DiaryKeywordViewModel: BaseViewModel {
     }
     
     // MARK: - Properties
-    private(set) var selectedKeywords: [DiaryKeyword] = []
-    private(set) var currentCategory: DiaryKeywordCategory? = nil
+    private(set) var selectedKeywords: [UserKeyword] = []
+    private(set) var currentCategory: UserKeywordCategory? = nil
     private(set) var keywordDictionary: DiaryKeywordDictionary = [:]
 
     private let output = PassthroughSubject<Output, Never>()
@@ -54,7 +54,7 @@ final class DiaryKeywordViewModel: BaseViewModel {
             guard let self = self else { return }
             switch event {
             case .fetchKeywords:
-                self.fetchKeywords()
+                Task { await self.fetchKeywords() }
             case .clearKeywords:
                 selectedKeywords.removeAll()
                 self.output.send(.updateSelection)
@@ -70,19 +70,23 @@ final class DiaryKeywordViewModel: BaseViewModel {
                 let filteredKeywords = self.filterKeywords()
                 self.output.send(.updateKeywords(filteredKeywords))
             case .createKeyword(let name, let category):
-                self.addKeyword(name: name, category: category)
+                Task { await self.addKeyword(name: name, category: category) }
             case .deleteKeyword(let keywords):
-                self.deleteKeyword(keyword: keywords)
+                Task { await self.deleteKeyword(keyword: keywords) }
             }
         }.store(in: &cancellables)
         
         return output.eraseToAnyPublisher()
     }
     
-    private func fetchKeywords() {
-        let diaryKeywordsResult = fetchDiaryKeywordsUseCase.execute()
-        keywordDictionary = diaryKeywordsResult
-        output.send(.updateKeywords(keywordDictionary))
+    private func fetchKeywords() async {
+        do {
+            let diaryKeywordsResult = try await fetchDiaryKeywordsUseCase.execute()
+            keywordDictionary = diaryKeywordsResult
+            output.send(.updateKeywords(keywordDictionary))
+        } catch {
+            output.send(.failure("키워드를 불러오는데 실패했어요"))
+        }
     }
     
     private func filterKeywords() -> DiaryKeywordDictionary {
@@ -92,17 +96,17 @@ final class DiaryKeywordViewModel: BaseViewModel {
         return [currentCategory: keywordDictionary[currentCategory] ?? []]
     }
     
-    private func addKeyword(name: String, category: DiaryKeywordCategory) {
+    private func addKeyword(name: String, category: UserKeywordCategory) async {
         do {
-            try createDiaryKeywordUseCase.execute(name: name, category: category)
+            try await createDiaryKeywordUseCase.execute(name: name, category: category)
         } catch {
             output.send(.failure("키워드 추가에 실패 했어요"))
         }
     }
     
-    private func deleteKeyword(keyword: [DiaryKeyword]) {
+    private func deleteKeyword(keyword: [UserKeyword]) async {
         do {
-            try deleteDiaryKeywordUseCase.execute(keywords: keyword)
+            try await deleteDiaryKeywordUseCase.execute(keywords: keyword)
         } catch {
             output.send(.failure("키워드 삭제에 실패 했어요"))
         }

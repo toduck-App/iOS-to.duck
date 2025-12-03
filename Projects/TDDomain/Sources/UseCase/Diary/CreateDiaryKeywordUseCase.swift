@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol CreateDiaryKeywordUseCase {
-    func execute(name: String, category: DiaryKeywordCategory) throws
+    func execute(name: String, category: UserKeywordCategory) async throws
 }
 
 final class CreateDiaryKeywordUseCaseImpl: CreateDiaryKeywordUseCase {
@@ -11,7 +11,8 @@ final class CreateDiaryKeywordUseCaseImpl: CreateDiaryKeywordUseCase {
         self.repository = repository
     }
 
-    func execute(name: String, category: DiaryKeywordCategory) throws {
-        try repository.saveDiaryKeyword(name: name, category: category)
+    func execute(name: String, category: UserKeywordCategory) async throws {
+        let userKeyword = UserKeyword(id: 0, name: name, category: category)
+        try await repository.createDiaryKeyword(keyword: userKeyword)
     }
 }

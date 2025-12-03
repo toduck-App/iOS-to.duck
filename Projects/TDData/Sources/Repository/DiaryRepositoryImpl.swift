@@ -6,12 +6,10 @@ import WidgetKit
 public final class DiaryRepositoryImpl: DiaryRepository {
     private let diaryService: DiaryService
     private let awsService: AwsService
-    private let diarykeywordStroage: DiaryKeywordStorage
     
-    public init(diaryService: DiaryService, awsService: AwsService, diarykeywordStroage: DiaryKeywordStorage) {
+    public init(diaryService: DiaryService, awsService: AwsService) {
         self.diaryService = diaryService
         self.awsService = awsService
-        self.diarykeywordStroage = diarykeywordStroage
     }
     
     public func createDiary(diary: Diary, image: [(fileName: String, imageData: Data)]?) async throws {
@@ -80,9 +78,9 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         return (streak, lastDiaryDate)
     }
     
-    public func fetchDiaryKeyword() -> DiaryKeywordDictionary {
-        let storedKeywords = diarykeywordStroage
-            .fetchDiaryKeyword()
+    public func fetchDiaryKeyword() async throws -> DiaryKeywordDictionary {
+        let storedKeywords = try await diaryService
+            .fetchUserKeywords()
             .map { $0.toDomain() }
 
         var result: DiaryKeywordDictionary = [:]
@@ -94,25 +92,15 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         return result
     }
     
-    public func saveDiaryKeyword(name: String, category: DiaryKeywordCategory) throws {
-        let diaryKeywordDTO = DiaryKeywordDTO(id: 0, name: name, category: category.rawValue)
-        let result = diarykeywordStroage.saveDiaryKeyword(diaryKeywordDTO)
-        switch result {
-        case .success:
-            return
-        case .failure(let error):
-            throw error
-        }
+    public func createDiaryKeyword(keyword: UserKeyword) async throws {
+        let dto = UserKeywordDTO(id: 0, category: keyword.category.rawValue.uppercased(), keyword: keyword.name)
+        try await diaryService.createUserKeyword(dto: dto)
     }
  
-    public func deleteDiaryKeywords(keywords: [DiaryKeyword]) throws {
-        let keywordDTOs = keywords.map { DiaryKeywordDTO(id: $0.id, name: $0.name, category: $0.category.rawValue) }
-        let result = diarykeywordStroage.deleteDiaryKeyword(keywordDTOs)
-        switch result {
-        case .success:
-            return
-        case .failure(let error):
-            throw error
+    public func deleteDiaryKeywords(keywords: [UserKeyword]) async throws {
+        for keyword in keywords {
+            let dto = UserKeywordDTO(id: 0, category: keyword.category.rawValue.uppercased(), keyword: keyword.name)
+            try await diaryService.deleteUserKeywords(dto: dto)
         }
     }
     

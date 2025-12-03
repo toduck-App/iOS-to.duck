@@ -5,8 +5,8 @@ import TDDesign
 
 final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     
-    typealias KeywordSection = DiaryKeywordCategory
-    typealias KeywordItem = DiaryKeyword
+    typealias KeywordSection = UserKeywordCategory
+    typealias KeywordItem = UserKeyword
     // MARK: - UI Components
     private var dataSource: UICollectionViewDiffableDataSource<KeywordSection, KeywordItem>!
 
@@ -147,7 +147,7 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     
     private func applySnapshot(_ data: DiaryKeywordDictionary) {
         var snapshot = NSDiffableDataSourceSnapshot<KeywordSection, KeywordItem>()
-        for category in DiaryKeywordCategory.allCases {
+        for category in UserKeywordCategory.allCases {
             guard let items = data[category] else { continue }
             snapshot.appendSections([category])
             snapshot.appendItems(items, toSection: category)
@@ -189,7 +189,7 @@ extension DiaryKeywordViewController: UICollectionViewDelegate {
             input.send(.selectCategory(nil))
         
         } else {
-            let category = DiaryKeywordCategory.allCases[index - 1]
+            let category = UserKeywordCategory.allCases[index - 1]
             input.send(.selectCategory(category))
         }
         

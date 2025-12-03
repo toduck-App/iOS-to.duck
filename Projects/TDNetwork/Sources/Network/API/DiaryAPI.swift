@@ -11,6 +11,9 @@ public enum DiaryAPI {
     case compareDiaryCount(yearMonth: String) // 특정 연월과 전월의 일기 개수를 비교
     case fetchStreak // 일기 스트릭 조회
     case connectKeyword(diary: DiaryKeywordConnectRequestDTO) // 다이어리와 키워드 연결
+    case fetchUserKeywords
+    case createUserKeyword(diary: UserKeywordDTO)
+    case deleteUserKeywords(diary: UserKeywordDTO)
 }
 
 extension DiaryAPI: MFTarget {
@@ -34,6 +37,12 @@ extension DiaryAPI: MFTarget {
             "v1/diary/streak"
         case .connectKeyword:
             "v1/diaryKeyword"
+        case .fetchUserKeywords:
+            "v1/user-keywords"
+        case .createUserKeyword:
+            "v1/user-keywords/create"
+        case .deleteUserKeywords:
+            "v1/user-keywords/delete"
         }
     }
     
@@ -53,12 +62,18 @@ extension DiaryAPI: MFTarget {
                 .get
         case .connectKeyword:
                 .post
+        case .fetchUserKeywords:
+                .get
+        case .createUserKeyword:
+                .post
+        case .deleteUserKeywords:
+                .delete
         }
     }
     
     public var queries: Parameters? {
         switch self {
-        case .deleteDiary, .createDiary, .updateDiary, .fetchStreak, .connectKeyword:
+        case .deleteDiary, .createDiary, .updateDiary, .fetchStreak, .connectKeyword, .fetchUserKeywords, .createUserKeyword, .deleteUserKeywords:
             return nil
         case .fetchDiaryList(let yearMonth):
             return ["yearMonth": yearMonth]
@@ -69,7 +84,7 @@ extension DiaryAPI: MFTarget {
     
     public var task: MFTask {
         switch self {
-        case .fetchDiaryList, .deleteDiary, .compareDiaryCount, .fetchStreak:
+        case .fetchDiaryList, .deleteDiary, .compareDiaryCount, .fetchStreak, .fetchUserKeywords:
                 .requestPlain
         case .createDiary(let diary):
                 .requestParameters(parameters:
@@ -98,6 +113,16 @@ extension DiaryAPI: MFTarget {
                     "keywordIds": diary.keywordIds
                 ]
            )
+        case .createUserKeyword(let dto):
+            .requestParameters(parameters: [
+                "keywordCategory": dto.category.uppercased(),
+                "keyword": dto.keyword
+            ])
+        case .deleteUserKeywords(let dto):
+            .requestParameters(parameters: [
+                "keywordCategory": dto.category.uppercased(),
+                "keyword": dto.keyword
+            ])
         }
     }
     

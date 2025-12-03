@@ -13,7 +13,8 @@ public struct DiaryListResponseDTO: Decodable {
                 emotion: Emotion(rawValue: $0.emotion) ?? .happy,
                 title: $0.title ?? "",
                 memo: $0.memo ?? "",
-                diaryImageUrls: $0.diaryImages?.map { $0.url }
+                diaryImageUrls: $0.diaryImages?.map { $0.url },
+                diaryKeywords: $0.diaryKeywords.map { DiaryKeyword(id: $0.keywordId, keywordName: $0.keywordName) }
             )
         }
     }
@@ -26,6 +27,7 @@ public struct DiaryDTO: Decodable {
     public let title: String?
     public let memo: String?
     public let diaryImages: [DiaryImageDTO]?
+    public let diaryKeywords: [DiaryKeywordDTO]
 }
 
 public struct DiaryImageDTO: Decodable {

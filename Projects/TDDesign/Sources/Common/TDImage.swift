@@ -154,6 +154,7 @@ public enum TDImage {
         public static let medium = TDDesignAsset.Images.diaryMedium.image
         public static let navigationImage = TDDesignAsset.Images.diaryNavigation.image
         public static let diaryThumnail = TDDesignAsset.Images.diaryThumnail.image
+        public static let completeThumnail = TDDesignAsset.Images.completeDiary.image
     }
     
     public enum Dot {
