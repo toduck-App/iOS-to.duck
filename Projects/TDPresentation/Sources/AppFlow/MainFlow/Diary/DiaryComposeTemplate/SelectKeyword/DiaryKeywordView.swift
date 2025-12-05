@@ -3,7 +3,7 @@ import TDDomain
 import TDDesign
 
 final class DiaryKeywordView: BaseView {
-    private var selectedKeywords: [UserKeyword] = []
+    var selectedKeywords: [UserKeyword] = []
 
     let labelStackView = UIStackView().then {
         $0.axis = .vertical
@@ -108,6 +108,32 @@ final class DiaryKeywordView: BaseView {
         font: TDFont.boldHeader3.font
     )
     
+    /// 삭제 모드 일때 보여주는 버튼 뷰
+    let removeKeywordbuttonStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.backgroundColor = TDColor.baseWhite
+        $0.spacing = 10
+        $0.alignment = .leading
+    }
+    
+    let removeKeywordCancelButton = TDBaseButton(
+        title: "취소",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    )
+    
+    let removeKeywordRemoveButton = TDBaseButton(
+        title: "삭제",
+        backgroundColor: TDColor.Semantic.error,
+        foregroundColor: TDColor.baseWhite,
+        radius: 12,
+        font: TDFont.boldHeader3.font
+    ).then {
+        $0.isEnabled = false
+    }
+    
     private(set) lazy var keywordCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
@@ -157,6 +183,10 @@ final class DiaryKeywordView: BaseView {
         addSubview(buttonStackView)
         buttonStackView.addArrangedSubview(skipButton)
         buttonStackView.addArrangedSubview(saveButton)
+        
+        addSubview(removeKeywordbuttonStackView)
+        removeKeywordbuttonStackView.addArrangedSubview(removeKeywordCancelButton)
+        removeKeywordbuttonStackView.addArrangedSubview(removeKeywordRemoveButton)
     }
     
     override func layout() {
@@ -223,23 +253,48 @@ final class DiaryKeywordView: BaseView {
             $0.height.equalTo(56)
             $0.bottom.equalToSuperview().inset(28)
         }
+        
+        removeKeywordbuttonStackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(56)
+            $0.bottom.equalToSuperview().inset(28)
+        }
     }
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
         skipButton.layer.borderWidth = 1
         skipButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        removeKeywordCancelButton.layer.borderWidth = 1
+        removeKeywordCancelButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        removeKeywordbuttonStackView.isHidden = true
     }
     
-    func addKeywordToStackView(keyword: UserKeyword) {
-        noSelectedLabel.isHidden = true
-        selectedKeywords.append(keyword)
-        let tagContainer = makeKeywordView(keyword: keyword.name)
-        selectedKeywordStackView.addArrangedSubview(tagContainer)
-        updateBookImage()
-        DispatchQueue.main.async {
-            self.selectedKeywordScrollView.flashScrollIndicators()
+    func updateSelectedKeywords(_ keywords: [UserKeyword]) {
+        selectedKeywords = keywords
+        
+        selectedKeywordStackView.arrangedSubviews.forEach { view in
+            selectedKeywordStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
         }
+        
+        if keywords.isEmpty {
+            noSelectedLabel.isHidden = false
+            
+        } else {
+            noSelectedLabel.isHidden = true
+            for keyword in keywords {
+                let tagContainer = makeKeywordView(keyword: keyword.name)
+                selectedKeywordStackView.addArrangedSubview(tagContainer)
+            }
+            
+            DispatchQueue.main.async {
+                self.selectedKeywordScrollView.flashScrollIndicators()
+            }
+        }
+        
+        updateBookImage()
     }
     
     func makeKeywordView(keyword: String) -> UIView {
@@ -271,31 +326,22 @@ final class DiaryKeywordView: BaseView {
         return tagContainer
     }
     
-    func removeAllKeywordsFromStackView() {
-        noSelectedLabel.isHidden = false
-        selectedKeywords.removeAll()
-        selectedKeywordStackView.arrangedSubviews.forEach { view in
-            selectedKeywordStackView.removeArrangedSubview(view)
-            view.removeFromSuperview()
-        }
-        updateBookImage()
+    func setRemoveMode() {
+        keywordButtonStackView.isHidden = true
+        removeKeywordbuttonStackView.isHidden = false
+        buttonStackView.isHidden = true
+        currentBookImageView.alpha = 0.3
+        selectedKeywordContainerView.alpha = 0.3
+        currentBookImageView.isUserInteractionEnabled = false
     }
-
-    func removeKeywordFromStackView(keyword: UserKeyword) {
-        selectedKeywords.removeAll { $0.id == keyword.id }
-        for view in selectedKeywordStackView.arrangedSubviews {
-            if let label = view.subviews.first as? TDLabel,
-                label.text == keyword.name {
-                selectedKeywordStackView.removeArrangedSubview(view)
-                view.removeFromSuperview()
-                break
-            }
-        }
-
-        if selectedKeywordStackView.arrangedSubviews.isEmpty {
-            noSelectedLabel.isHidden = false
-        }
-        updateBookImage()
+    
+    func setNormalMode() {
+        keywordButtonStackView.isHidden = false
+        removeKeywordbuttonStackView.isHidden = true
+        buttonStackView.isHidden = false
+        currentBookImageView.alpha = 1
+        selectedKeywordContainerView.alpha = 1
+        currentBookImageView.isUserInteractionEnabled = true
     }
     
     private func updateBookImage() {

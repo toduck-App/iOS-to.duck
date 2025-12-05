@@ -3,6 +3,11 @@ import TDDesign
 import UIKit
 
 final class DiaryKeywordCell: UICollectionViewCell {
+    enum Mode {
+        case normal
+        case remove
+    }
+    
     private let tagLabel = TDLabel(
         toduckFont: .mediumBody2,
         toduckColor: TDColor.Neutral.neutral700
@@ -37,9 +42,28 @@ final class DiaryKeywordCell: UICollectionViewCell {
         }
     }
     
-    func configure(keyword: String, isSelected: Bool) {
+    func configure(mode: Mode, keyword: String, isSelected: Bool) {
+        switch mode {
+        case .normal:
+            normalConfigure(keyword: keyword, isSelected: isSelected)
+        case .remove:
+            removeConfigure(keyword: keyword, isSelected: isSelected)
+        }
+    }
+    
+    private func normalConfigure(keyword: String, isSelected: Bool) {
         tagLabel.setText(keyword)
         isSelected ? tagLabel.setColor(TDColor.Primary.primary500) : tagLabel.setColor(TDColor.Neutral.neutral700)
         isSelected ? (backgroundColor = TDColor.Primary.primary100) : (backgroundColor = TDColor.Neutral.neutral100)
+        self.layer.borderColor = nil
+        self.layer.borderWidth = 0
+    }
+    
+    private func removeConfigure(keyword: String, isSelected: Bool) {
+        tagLabel.setText(keyword)
+        isSelected ? tagLabel.setColor(TDColor.Semantic.error) : tagLabel.setColor(TDColor.Neutral.neutral700)
+        isSelected ? self.layer.borderColor = TDColor.Semantic.error.cgColor : (self.layer.borderColor = nil)
+        isSelected ? (self.layer.borderWidth = 1) : (self.layer.borderWidth = 0 )
+        isSelected ? (backgroundColor = TDColor.baseWhite) : (backgroundColor = TDColor.Neutral.neutral100)
     }
 }
