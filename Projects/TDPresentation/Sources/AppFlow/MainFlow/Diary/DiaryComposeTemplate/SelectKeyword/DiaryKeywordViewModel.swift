@@ -73,7 +73,7 @@ final class DiaryKeywordViewModel: BaseViewModel {
                 case .clearKeywords:
                     self.selectedKeywords.removeAll()
                     self.output.send(.updateSelection)
-                    
+                    self.output.send(.updateSelectedKeywords(selectedKeywords))
                 case .toggleKeyword(let keyword):
                     switch self.currentMode {
                     case .normal:
@@ -90,9 +90,7 @@ final class DiaryKeywordViewModel: BaseViewModel {
                     
                 case .changeMode(let mode):
                     self.currentMode = mode
-                    // 모드에 따라 셀 UI만 바뀌므로 snapshot 구조는 그대로, selection만 reload
                     self.output.send(.updateSelection)
-                    
                 case .clearDeleteKeywords:
                     self.clearRemoveKeywords()
                     
