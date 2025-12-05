@@ -168,7 +168,6 @@ final class CompleteDiaryView: BaseView {
     override func configure() {
         backgroundColor = TDColor.baseWhite
         doneButton.isEnabled = true
-        configure(count: 5)
     }
     
     private func resetStreakCircles() {

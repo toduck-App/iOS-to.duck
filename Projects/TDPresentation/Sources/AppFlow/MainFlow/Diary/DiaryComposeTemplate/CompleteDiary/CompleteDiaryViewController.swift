@@ -26,6 +26,7 @@ final class CompleteDiaryViewController: BaseViewController<CompleteDiaryView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        input.send(.fetchStreak)
     }
     
     // MARK: - Life Cycle
@@ -53,7 +54,7 @@ final class CompleteDiaryViewController: BaseViewController<CompleteDiaryView> {
                 guard let self else { return }
                 switch event {
                 case .streak(let streakCount):
-                    print("Streak Count = \(streakCount) ")
+                    layoutView.configure(count: streakCount)
                 case .failure(let message):
                     layoutView.doneButton.isEnabled = true
                     showErrorAlert(errorMessage: message)
