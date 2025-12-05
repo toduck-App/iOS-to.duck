@@ -50,7 +50,7 @@ final class DiaryKeywordView: BaseView {
     }
     
     let keywordCategorySegment = TDSegmentedControl(
-        items: ["전체"] + UserKeywordCategory.allCases.map { $0.rawValue },
+        items: ["전체"] + UserKeywordCategory.allCases.map { $0.title },
         indicatorForeGroundColor: TDColor.baseWhite
     )
     

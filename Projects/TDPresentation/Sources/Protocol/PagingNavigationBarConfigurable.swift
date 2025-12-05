@@ -25,7 +25,7 @@ extension PagingNavigationBarConfigurable where Self: UIViewController {
         let pageString = "\(currentPage)"
         let totalString = "/ \(totalPages)"
         pageLabel.setText(pageString + " " + totalString)
-        pageLabel.highlight(tokens: [pageString], color: highlightColor)
+        pageLabel.highlight(tokens: [pageString + " "], color: highlightColor)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: pageLabel)
         navigationProgressView.rightPageItemSize = pageLabel.intrinsicContentSize
         navigationItem.titleView = navigationProgressView
