@@ -56,7 +56,11 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         layoutView.keywordCollectionView.delegate = self
         layoutView.keywordCategorySegment.addTarget(self, action: #selector(categoryChanged), for: .valueChanged)
         layoutView.keywordAddButton.addAction(UIAction { [weak self] _ in
-            print("Add Keyword Button Tapped")
+            let vc = CreateKeywordPopupViewController()
+            vc.onCreateHandler = {
+                self?.input.send(.fetchKeywords)
+            }
+            self?.presentPopup(with: vc)
         }, for: .touchUpInside)
         
         layoutView.keywordRemoveButton.addAction(UIAction { [weak self] _ in
@@ -118,7 +122,7 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
                 for: indexPath
             ) as? DiaryKeywordHeader else { return nil }
             
-            header.configure(title: section.rawValue, image: section.image)
+            header.configure(title: section.title, image: section.image)
             return header
         }
     }

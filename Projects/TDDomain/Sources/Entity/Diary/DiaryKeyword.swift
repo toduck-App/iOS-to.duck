@@ -10,10 +10,23 @@ import Foundation
 public typealias DiaryKeywordDictionary = [UserKeywordCategory: [UserKeyword]]
 
 public enum UserKeywordCategory: String, CaseIterable, Hashable {
-    case person = "사람"
-    case place = "장소"
-    case situation = "상황"
-    case result = "결과 / 느낌"
+    case person = "PERSON"
+    case place = "PLACE"
+    case situation = "SITUATION"
+    case result = "RESULT"
+    
+    public var title: String {
+        switch self {
+        case .person:
+            return "사람"
+        case .place:
+            return "장소"
+        case .situation:
+            return "상황"
+        case .result:
+            return "결과 / 느낌"
+        }
+    }
     
     public init(rawValue: String) {
         switch rawValue {
