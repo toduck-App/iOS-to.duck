@@ -24,7 +24,7 @@ public struct EventRepositoryImpl: EventRepository {
     
     public func fetchEventDetails(eventId: Int) async throws -> TDEventDetail? {
         let detailList = try await service.fetchEventDetails(eventId: eventId).map { $0.convertToEventDetail() }
-        return detailList.filter { $0.id == eventId }.first
+        return detailList.filter { $0.eventsId == eventId }.first
     }
     
     public func hasParticipated() async throws -> Bool {
