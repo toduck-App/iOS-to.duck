@@ -34,21 +34,85 @@ final class SimpleDiaryView: BaseView {
         placeholder: "미작성 시 선택 감정에 따라 자동 입력돼요"
     )
     
+    // 키워드 섹션
+    private let keywordVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+        $0.distribution = .fill
+        $0.alignment = .leading
+    }
+    
+    private let keywordHeaderContainerView = UIView()
+
+    private let keywordHeaderTitleView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+    
+    private let keywordHeaderDeleteView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 16
+        $0.alignment = .center
+        $0.distribution = .fill
+    }
+    
+    private let diaryKeywordDeleteButton = TDBaseButton(
+        title: "삭제",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral600,
+        font: TDFont.boldBody2.font
+    )
+    
+    private let diaryKeywordDividerView = UIView.diviedHorizontalLine(color: TDColor.Neutral.neutral600)
+    
+    private let diaryKeywordCancelButton = TDBaseButton(
+        title: "취소",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral600,
+        font: TDFont.boldBody2.font
+    )
+    
+
+    private let keywordIcon = UIImageView(image: TDImage.Tomato.tomatoSmallEmtpy)
+    
+    private let keywordTitleLabel = TDLabel(
+        labelText: "오늘의 키워드",
+        toduckFont: TDFont.boldBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    
+    let keywordAddButton = TDBaseButton(
+        title: "키워드 추가 +",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
+        radius: 8,
+        font: TDFont.mediumBody2.font
+    ).then {
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+    }
+
+    private let keywordTagListView = TodayKeywordTagListView()
+    
     // 문장 기록
     let recordTextView = TDFormTextView(
+        image: TDImage.Pen.penNeutralColor,
         title: "문장 기록",
-        titleFont: .boldHeader5,
-        titleColor: TDColor.Neutral.neutral800,
+        titleFont: .boldBody2,
+        titleColor: TDColor.Neutral.neutral600,
         isRequired: false,
-        maxCharacter: 5000,
+        maxCharacter: 2000,
         placeholder: "자유롭게 내용을 작성해 주세요.",
         maxHeight: 196
     )
     
     // 사진 기록
     let formPhotoView = TDFormPhotoView(
+        image: TDImage.photo,
         titleText: "사진 기록",
-        titleColor: TDColor.Neutral.neutral800,
+        titleFont: .boldBody2,
+        titleColor: TDColor.Neutral.neutral600,
         isRequired: false,
         maxCount: 2
     )
@@ -94,14 +158,16 @@ final class SimpleDiaryView: BaseView {
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Semantic.error,
         radius: 12,
-        font: TDFont.boldHeader3.font
+        font: TDFont.boldHeader3.font,
+        inset: .init(top: 1, leading: 1, bottom: 1, trailing: 1)
     )
     let saveButton = TDBaseButton(
         title: "저장",
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
         radius: 12,
-        font: TDFont.boldHeader3.font
+        font: TDFont.boldHeader3.font,
+        inset: .init(top: 1, leading: 1, bottom: 1, trailing: 1)
     )
     let dummyView = UIView()
     
@@ -138,8 +204,25 @@ final class SimpleDiaryView: BaseView {
         diaryMoodLabelContainerView.addSubview(diaryMoodLabel)
         diaryMoodLabelContainerView.addSubview(infoLabel)
         
+        // 키워드
+        keywordHeaderContainerView.addSubview(keywordHeaderTitleView)
+        keywordHeaderContainerView.addSubview(keywordHeaderDeleteView)
+        
+        keywordHeaderTitleView.addArrangedSubview(keywordIcon)
+        keywordHeaderTitleView.addArrangedSubview(keywordTitleLabel)
+        
+        // 키워드 취소 / 삭제 뷰
+        keywordHeaderDeleteView.addArrangedSubview(diaryKeywordCancelButton)
+        keywordHeaderDeleteView.addArrangedSubview(diaryKeywordDividerView)
+        keywordHeaderDeleteView.addArrangedSubview(diaryKeywordDeleteButton)
+        
+        keywordVerticalStackView.addArrangedSubview(keywordHeaderContainerView)
+        keywordVerticalStackView.addArrangedSubview(keywordAddButton)
+        keywordVerticalStackView.addArrangedSubview(keywordTagListView)
+        
         // 폼 정보
         stackView.addArrangedSubview(titleForm)
+        stackView.addArrangedSubview(keywordVerticalStackView)
         stackView.addArrangedSubview(recordTextView)
         stackView.addArrangedSubview(formPhotoView)
         stackView.addArrangedSubview(descriptionStackView)
@@ -185,6 +268,38 @@ final class SimpleDiaryView: BaseView {
         // 제목
         titleForm.snp.makeConstraints { make in
             make.height.equalTo(LayoutConstants.titleFormHeight)
+        }
+        
+        // 키워드
+        keywordHeaderContainerView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+            make.height.equalTo(20)
+        }
+        
+        keywordHeaderTitleView.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+        
+        keywordHeaderDeleteView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+        
+        keywordIcon.snp.makeConstraints { make in
+            make.size.equalTo(16)
+        }
+        keywordAddButton.snp.makeConstraints { make in
+            make.height.equalTo(32)
+        }
+        
+        keywordTagListView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+        }
+        
+        diaryKeywordDividerView.snp.makeConstraints { make in
+            make.width.equalTo(1)
+            make.height.equalTo(16)
         }
 
         // 문장 기록
@@ -239,6 +354,8 @@ final class SimpleDiaryView: BaseView {
         diaryMoodLabel.setTitleLabel("감정 선택")
         diaryMoodLabel.setRequiredLabel()
         saveButton.isEnabled = false
+        keywordAddButton.setContentHuggingPriority(.required, for: .horizontal)
+        keywordAddButton.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
     // MARK: - Helper Method

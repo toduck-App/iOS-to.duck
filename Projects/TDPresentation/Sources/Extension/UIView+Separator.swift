@@ -12,4 +12,14 @@ extension UIView {
         
         return dividedLineView
     }
+    
+    static func diviedHorizontalLine(color: UIColor) -> UIView {
+        let dividedLineView = UIView()
+        dividedLineView.backgroundColor = color
+        dividedLineView.snp.makeConstraints {
+            $0.width.equalTo(1)
+        }
+        
+        return dividedLineView
+    }
 }
