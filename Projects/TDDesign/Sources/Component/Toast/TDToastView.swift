@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import TDCore
 
 public final class TDToastView: UIView {
     private let sideDumpView = UIView()
@@ -16,8 +17,8 @@ public final class TDToastView: UIView {
     
     // MARK: - Properties
     private let type: TDToastType
-    private var timer: Timer?
-    private var remainingSeconds: Int = 0
+    private var countdownTimer: TDCountdownTimer?
+    
     private let titleText: String
     private var contentText: String
     
@@ -44,7 +45,7 @@ public final class TDToastView: UIView {
     }
     
     deinit {
-        timer?.invalidate()
+        countdownTimer?.stop()
     }
     
     // MARK: - UI Setup
@@ -101,24 +102,29 @@ public final class TDToastView: UIView {
     // MARK: - Countdown
     @MainActor
     public func startCountdown(seconds: Int) {
-        timer?.invalidate()
-        remainingSeconds = seconds
-        updateCountdownMessage()
+        countdownTimer?.stop()
+
+        updateCountdownMessage(seconds: seconds)
         
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            self.remainingSeconds -= 1
-            if self.remainingSeconds > 0 {
-                self.updateCountdownMessage()
-            } else {
-                self.timer?.invalidate()
-                self.timer = nil
+        countdownTimer = TDCountdownTimer(
+            seconds: seconds,
+            tick: { [weak self] remaining in
+                guard let self else { return }
+                if remaining > 0 {
+                    self.updateCountdownMessage(seconds: remaining)
+                }
+            },
+            completion: { [weak self] in
+                guard let self else { return }
+                self.removeFromSuperview()
             }
-        }
+        )
+
+        countdownTimer?.start()
     }
     
-    private func updateCountdownMessage() {
-        contentLabel.setText("\(remainingSeconds)초 안에 재시작하면 집중시간이 이어집니다")
+    private func updateCountdownMessage(seconds: Int) {
+        contentLabel.setText("\(seconds)초 안에 재시작하면 집중시간이 이어집니다")
     }
     
     // MARK: - Gesture

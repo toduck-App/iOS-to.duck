@@ -120,7 +120,7 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
         bottomContainer.layer.borderColor = TDColor.Neutral.neutral400.cgColor
         bottomContainer.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             $0.height.greaterThanOrEqualTo(64)
         }
         bottomStack.axis = .horizontal
@@ -131,10 +131,22 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        if flowLayout.itemSize != pagerContainer.bounds.size {
-            flowLayout.itemSize = pagerContainer.bounds.size
-            collectionView.collectionViewLayout.invalidateLayout()
+        let containerSize = pagerContainer.bounds.size
+        if containerSize.width > 0 && containerSize.height > 0 {
+            if flowLayout.itemSize != containerSize {
+                flowLayout.itemSize = containerSize
+                collectionView.collectionViewLayout.invalidateLayout()
+            }
+        } else {
+            let fallbackWidth = max(containerSize.width, lastWidth, UIScreen.main.bounds.width)
+            let fallbackHeight = max(containerSize.height, fallbackWidth * currentAspect, 1)
+            let fallbackSize = CGSize(width: fallbackWidth, height: fallbackHeight)
+            if flowLayout.itemSize != fallbackSize {
+                flowLayout.itemSize = fallbackSize
+                collectionView.collectionViewLayout.invalidateLayout()
+            }
         }
+
         if abs(pagerContainer.bounds.width - lastWidth) > .ulpOfOne {
             lastWidth = pagerContainer.bounds.width
             applyHeight(for: currentAspect, animated: false)

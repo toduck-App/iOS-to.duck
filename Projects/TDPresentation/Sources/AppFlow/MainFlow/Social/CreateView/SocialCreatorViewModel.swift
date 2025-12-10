@@ -44,16 +44,20 @@ final class SocialCreatorViewModel: BaseViewModel {
     private let createPostUseCase: CreatePostUseCase
     private let updatePostUseCase: UpdatePostUseCase
     private let fetchParticipateEventUseCase: FetchParticipateEventUseCase
-
+    private let fetchEventsUseCase: FetchEventsUseCase
+    
+    
     init(
         createPostUseCase: CreatePostUseCase,
         updatePostUseCase: UpdatePostUseCase,
         fetchParticipateEventUseCase: FetchParticipateEventUseCase,
+        fetchEventsUseCase: FetchEventsUseCase,
         prevPost: Post? = nil
     ) {
         self.createPostUseCase = createPostUseCase
         self.updatePostUseCase = updatePostUseCase
         self.fetchParticipateEventUseCase = fetchParticipateEventUseCase
+        self.fetchEventsUseCase = fetchEventsUseCase
         self.prevPost = prevPost
     }
 
@@ -105,12 +109,18 @@ extension SocialCreatorViewModel {
                 image: image
             )
             
-            let participated =
-                await fetchParticipateEventUseCase.execute()
-            if !participated && content.count >= 10 {
-                output.send(.canParticipateEvent(socialId))
-                return
+            let eventDetail = await fetchEventsUseCase.execute()
+
+            if let socialEvent = eventDetail.first(where: { $0.id == 4 }) {
+                
+                let participated =
+                    await fetchParticipateEventUseCase.execute()
+                if !participated && content.count >= 100 {
+                    output.send(.canParticipateEvent(socialId))
+                    return
+                }
             }
+            
             output.send(.success)
 
         } catch {

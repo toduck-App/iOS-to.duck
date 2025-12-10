@@ -30,8 +30,9 @@ final class SocialCreatorCoordinator: Coordinator {
         let createPostUseCase = injector.resolve(CreatePostUseCase.self)
         let updatePostUseCase = injector.resolve(UpdatePostUseCase.self)
         let fetchParticipateEventUseCase = injector.resolve(FetchParticipateEventUseCase.self)
+        let fetchEventsUseCase = injector.resolve(FetchEventsUseCase.self)
         let socialCreateViewModel = SocialCreatorViewModel(createPostUseCase: createPostUseCase,
-                                                           updatePostUseCase: updatePostUseCase, fetchParticipateEventUseCase: fetchParticipateEventUseCase,
+                                                           updatePostUseCase: updatePostUseCase, fetchParticipateEventUseCase: fetchParticipateEventUseCase, fetchEventsUseCase: fetchEventsUseCase,
                                                           prevPost: post)
 
         let socialCreatorViewController = SocialCreatorViewController(
