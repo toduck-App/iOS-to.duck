@@ -100,11 +100,13 @@ final class SheetTimeView: BaseView {
     )
     let saveButton = TDBaseButton(
         title: "저장",
-        backgroundColor: TDColor.Neutral.neutral100,
-        foregroundColor: TDColor.Neutral.neutral700,
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
         radius: LayoutConstants.buttonCornerRadius,
         font: TDFont.boldHeader3.font
-    )
+    ).then {
+        $0.isEnabled = false
+    }
     
     override func addview() {
         addSubview(closeButton)
