@@ -50,7 +50,7 @@ final class SocialEventJoinViewModel: BaseViewModel {
             )
             output.send(.success)
         } catch {
-            output.send(.error(error.localizedDescription))
+            output.send(.error("이벤트 참여에 실패하였습니다. \n다시 시도해주세요."))
         }
     }
 
