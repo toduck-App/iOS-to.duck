@@ -154,10 +154,7 @@ final class SheetTimeViewController: BaseViewController<SheetTimeView> {
         layoutView.saveButton.isUserInteractionEnabled = isSaveEnabled
         layoutView.saveButton.layer.borderWidth = 0
         
-        var configuration = layoutView.saveButton.configuration ?? UIButton.Configuration.filled()
-        configuration.baseBackgroundColor = isSaveEnabled ? TDColor.Primary.primary500 : TDColor.Neutral.neutral100
-        configuration.baseForegroundColor = isSaveEnabled ? TDColor.baseWhite : TDColor.Neutral.neutral700
-        layoutView.saveButton.configuration = configuration
+        layoutView.saveButton.isEnabled = isSaveEnabled
     }
 }
 
