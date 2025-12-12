@@ -5,7 +5,7 @@ echo "ci_post_clone Script"
 echo "=================================================================="
 brew tap tuist/tuist
 echo "installing Tuist.."
-brew install tuist@4.30.0
+brew install tuist@4.115.1
 echo "installed Tuist"
 echo "------------------------------------------------------------------"
 
