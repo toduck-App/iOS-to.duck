@@ -15,6 +15,8 @@ tuist clean
 echo "tuist installing"
 tuist install
 
+echo "current directory: $(pwd)"
+
 # *.xcconfig 파일이 생성될 폴더 경로
 FOLDER_PATH="/Volumes/workspace/repository/Projects/toduck/SupportingFiles"
 # 폴더가 없으면 생성
