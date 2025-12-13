@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import TDCore
 
 public final class TDToastView: UIView {
     private let sideDumpView = UIView()
