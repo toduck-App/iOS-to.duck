@@ -11,6 +11,7 @@ let project = Project.project(
             sources: .sources,
             resources: .default,
             dependencies: [
+                .core(),
                 .external(dependency: .Then),
                 .external(dependency: .SnapKit),
                 .external(dependency: .Lottie),

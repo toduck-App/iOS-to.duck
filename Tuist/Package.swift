@@ -14,7 +14,13 @@ let packageSettings = PackageSettings(
         "FittedSheets": .framework,
         "Swinject": .framework,
         "FirebaseAnalytics": .framework,
-    ]
+    ],
+    baseSettings: .settings(
+        configurations: [
+            .debug(name: "Debug"),
+            .release(name: "Release")
+        ]
+    )
 )
 #endif
 
