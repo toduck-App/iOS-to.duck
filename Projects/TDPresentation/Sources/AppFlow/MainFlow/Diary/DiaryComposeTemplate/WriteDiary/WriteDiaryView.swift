@@ -140,6 +140,6 @@ final class WriteDiaryView: BaseView {
     
     override func configure() {
         backgroundColor = TDColor.baseWhite
-        saveButton.isEnabled = false
+        saveButton.isEnabled = true
     }
 }
