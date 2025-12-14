@@ -86,7 +86,8 @@ final class SimpleDiaryViewModel: BaseViewModel {
             emotion: Emotion(rawValue: selectedMood ?? "") ?? .angry,
             title: title ?? "",
             memo: memo ?? "",
-            diaryImageUrls: nil
+            diaryImageUrls: nil,
+            diaryKeywords: selectedKeywords.map { DiaryKeyword(id: $0.id, keywordName: $0.name) }
         )
     }
     

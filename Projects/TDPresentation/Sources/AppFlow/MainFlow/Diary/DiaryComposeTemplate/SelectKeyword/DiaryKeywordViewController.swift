@@ -3,6 +3,11 @@ import TDDomain
 import Combine
 import TDDesign
 
+enum DiaryKeywordViewType {
+    case navigation
+    case sheet
+}
+
 final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     typealias KeywordSection = UserKeywordCategory
     typealias KeywordItem = UserKeyword
@@ -24,10 +29,12 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: DiaryKeywordCoordinator?
     var onKeywordsSelected: (([UserKeyword]) -> Void)?
+    private let viewType: DiaryKeywordViewType
     
     // MARK: - Initializer
-    init(viewModel: DiaryKeywordViewModel) {
+    init(viewModel: DiaryKeywordViewModel, viewType: DiaryKeywordViewType = .navigation) {
         self.viewModel = viewModel
+        self.viewType = viewType
         super.init()
     }
     
@@ -46,20 +53,16 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         super.configure()
         configureDataSource()
         
-        // 시트 모드가 아닐 때만 네비게이션 바 설정
-        if coordinator != nil {
+        switch viewType {
+        case .navigation:
             configurePagingNavigationBar(currentPage: 2, totalPages: 3)
-        } else {
+        case .sheet:
             navigationItem.hidesBackButton = true
         }
         
+        layoutView.configure(for: viewType)
         layoutView.keywordCollectionView.delegate = self
         setupButtonAction()
-        
-        // 시트 모드일 때 skipButton 숨김
-        if onKeywordsSelected != nil {
-            layoutView.skipButton.isHidden = true
-        }
     }
     
     // MARK: - Diffable DataSource
@@ -172,34 +175,14 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         layoutView.skipButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                if let onKeywordsSelected = self.onKeywordsSelected {
-                    onKeywordsSelected([])
-                    self.dismiss(animated: true)
-                } else if let coordinator = self.coordinator {
-                    coordinator.showWriteDiaryCompose(
-                        selectedMood: viewModel.selectedMood,
-                        selectedDate: viewModel.selectedDate,
-                        selectedKeywords: []
-                    )
-                }
+                self.handleSkipButton()
             },
             for: .touchUpInside
         )
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            if let onKeywordsSelected = self.onKeywordsSelected {
-                // 시트 모드: 콜백 호출 후 닫기
-                onKeywordsSelected(self.viewModel.selectedKeywords)
-                self.dismiss(animated: true)
-            } else if let coordinator = self.coordinator {
-                // 네비게이션 모드: 기존 로직
-                coordinator.showWriteDiaryCompose(
-                    selectedMood: viewModel.selectedMood,
-                    selectedDate: viewModel.selectedDate,
-                    selectedKeywords: viewModel.selectedKeywords
-                )
-            }
+            self.handleSaveButton()
         }, for: .touchUpInside)
         
         let longPress = UILongPressGestureRecognizer(
@@ -237,6 +220,40 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         guard gesture.state == .began else { return }
         HapticManager.impact(.medium)
         input.send(.clearKeywords)
+    }
+    
+    private func handleSkipButton() {
+        switch viewType {
+        case .sheet:
+            onKeywordsSelected?([])
+            dismiss(animated: true)
+        case .navigation:
+            guard let coordinator = coordinator,
+                  let selectedMood = viewModel.selectedMood,
+                  let selectedDate = viewModel.selectedDate else { return }
+            coordinator.showWriteDiaryCompose(
+                selectedMood: selectedMood,
+                selectedDate: selectedDate,
+                selectedKeywords: []
+            )
+        }
+    }
+    
+    private func handleSaveButton() {
+        switch viewType {
+        case .sheet:
+            onKeywordsSelected?(viewModel.selectedKeywords)
+            dismiss(animated: true)
+        case .navigation:
+            guard let coordinator = coordinator,
+                  let selectedMood = viewModel.selectedMood,
+                  let selectedDate = viewModel.selectedDate else { return }
+            coordinator.showWriteDiaryCompose(
+                selectedMood: selectedMood,
+                selectedDate: selectedDate,
+                selectedKeywords: viewModel.selectedKeywords
+            )
+        }
     }
 }
 

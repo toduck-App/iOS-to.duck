@@ -38,8 +38,8 @@ final class DiaryKeywordViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
-    private(set) var selectedMood: Emotion
-    private(set) var selectedDate: Date
+    private(set) var selectedMood: Emotion?
+    private(set) var selectedDate: Date?
     
     private let fetchDiaryKeywordsUseCase: FetchDiaryKeywordUseCase
     private let createDiaryKeywordUseCase: CreateDiaryKeywordUseCase
@@ -47,8 +47,8 @@ final class DiaryKeywordViewModel: BaseViewModel {
     
     // MARK: - Initializer
     init(
-        selectedMood: Emotion,
-        selectedDate: Date,
+        selectedMood: Emotion?,
+        selectedDate: Date?,
         fetchDiaryKeywordsUseCase: FetchDiaryKeywordUseCase,
         createDiaryKeywordUseCase: CreateDiaryKeywordUseCase,
         deleteDiaryKeywordUseCase: DeleteDiaryKeywordUseCase

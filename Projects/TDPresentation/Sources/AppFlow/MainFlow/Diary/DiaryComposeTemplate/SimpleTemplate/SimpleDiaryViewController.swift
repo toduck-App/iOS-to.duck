@@ -98,35 +98,31 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
     
     // MARK: - Keyword Methods
     private func showKeywordSelectionSheet() {
-        guard let coordinator = coordinator,
-              let selectedMood = viewModel.selectedMood,
-              let emotion = Emotion(rawValue: selectedMood),
-              let selectedDate = viewModel.selectedDate else {
+
+        guard let injector = self.coordinator?.injector else {
             return
         }
-        
-        let injector = coordinator.injector
         let fetchDiaryKeywordsUseCase = injector.resolve(FetchDiaryKeywordUseCase.self)
         let createDiaryKeywordUseCase = injector.resolve(CreateDiaryKeywordUseCase.self)
         let deleteDiaryKeywordUseCase = injector.resolve(DeleteDiaryKeywordUseCase.self)
         
         let keywordViewModel = DiaryKeywordViewModel(
-            selectedMood: emotion,
-            selectedDate: selectedDate,
+            selectedMood: nil,
+            selectedDate: nil,
             fetchDiaryKeywordsUseCase: fetchDiaryKeywordsUseCase,
             createDiaryKeywordUseCase: createDiaryKeywordUseCase,
             deleteDiaryKeywordUseCase: deleteDiaryKeywordUseCase
         )
         
         
-        let keywordViewController = DiaryKeywordViewController(viewModel: keywordViewModel)
+        let keywordViewController = DiaryKeywordViewController(viewModel: keywordViewModel, viewType: .sheet)
         keywordViewController.onKeywordsSelected = { [weak self] keywords in
             self?.input.send(.updateSelectedKeywords(keywords))
         }
         
         let sheetController = SheetViewController(
             controller: keywordViewController,
-            sizes: [.intrinsic],
+            sizes: [.fixed(560)],
             options: .init(
                 pullBarHeight: 0,
                 shouldExtendBackground: false,
