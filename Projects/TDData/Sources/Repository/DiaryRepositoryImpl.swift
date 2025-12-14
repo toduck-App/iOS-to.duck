@@ -51,10 +51,12 @@ public final class DiaryRepositoryImpl: DiaryRepository {
             }
         }
         
-        var diary = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
-        diary.diaryImageUrls = imageUrls
+        var patchRequestDTO = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
+        patchRequestDTO.diaryImageUrls = imageUrls
         
-        try await diaryService.updateDiary(diary: diary)
+        try await diaryService.updateDiary(diary: patchRequestDTO)
+        let keywordRequestDTO = DiaryKeywordConnectRequestDTO(diaryId: diary.id, keywordIds: diary.diaryKeywords.map { $0.id})
+        try await diaryService.connectDiaryKeyword(diary: keywordRequestDTO)
     }
     
     public func deleteDiary(id: Int) async throws {

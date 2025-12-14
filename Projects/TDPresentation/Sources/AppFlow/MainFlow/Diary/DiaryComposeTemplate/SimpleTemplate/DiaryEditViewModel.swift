@@ -46,6 +46,13 @@ final class SimpleDiaryViewModel: BaseViewModel {
         self.selectedMood = preDiary?.emotion.rawValue
         self.title = preDiary?.title
         self.memo = preDiary?.memo
+
+        // 기존 일기의 키워드를 초기 selectedKeywords에 설정
+        if let preDiary = preDiary {
+            self.selectedKeywords = preDiary.diaryKeywords.map { diaryKeyword in
+                UserKeyword(id: diaryKeyword.id, name: diaryKeyword.keywordName, category: .place)
+            }
+        }
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {

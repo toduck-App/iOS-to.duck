@@ -57,7 +57,7 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
         layoutView.formPhotoView.delegate = self
         layoutView.recordTextView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
-        layoutView.keywordTagListView.delegate = self
+        // keywordTagListView.delegate는 삭제 모드 진입 시에만 설정
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             if self?.isEdit == true {
@@ -73,13 +73,14 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
             self?.showKeywordSelectionSheet()
         }, for: .touchUpInside)
         
+        // 헤더 삭제 버튼 액션
+        layoutView.keywordHeaderDeleteButton.addAction(UIAction { [weak self] _ in
+            self?.enterDeleteMode()
+        }, for: .touchUpInside)
+        
+        // 삭제 모드의 삭제 버튼 액션
         layoutView.diaryKeywordDeleteButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            if self.layoutView.isDeleteMode {
-                self.deleteSelectedKeywords()
-            } else {
-                self.enterDeleteMode()
-            }
+            self?.deleteSelectedKeywords()
         }, for: .touchUpInside)
         
         layoutView.diaryKeywordCancelButton.addAction(UIAction { [weak self] _ in
@@ -94,6 +95,10 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
         layoutView.titleForm.setupTextField(preDiary.title)
         layoutView.noticeSnackBarView.isHidden = true
         layoutView.recordTextView.setupTextView(text: preDiary.memo)
+
+        let keywordNames = preDiary.diaryKeywords.map { $0.keywordName }
+        let keywordIds = preDiary.diaryKeywords.map { $0.id }
+        layoutView.updateKeywordTags(keywords: keywordNames, keywordIds: keywordIds)
     }
     
     // MARK: - Keyword Methods
@@ -140,20 +145,24 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
     private func enterDeleteMode() {
         layoutView.isDeleteMode = true
         layoutView.updateDeleteModeUI()
+        // 삭제 모드 진입 시 키워드 선택 가능하도록 설정
+        layoutView.keywordTagListView.delegate = self
     }
     
     private func exitDeleteMode() {
         layoutView.isDeleteMode = false
         layoutView.selectedKeywordsForDeletion.removeAll()
         layoutView.updateDeleteModeUI()
+        // 삭제 모드 종료 시 delegate 제거
+        layoutView.keywordTagListView.delegate = nil
     }
     
     private func deleteSelectedKeywords() {
         let idsToDelete = layoutView.selectedKeywordsForDeletion
         let keywordsToDelete = viewModel.selectedKeywords.filter { idsToDelete.contains($0.id) }
-        
+
         guard !keywordsToDelete.isEmpty else { return }
-        
+
         input.send(.deleteSelectedKeywords(keywordsToDelete))
         exitDeleteMode()
     }
@@ -161,8 +170,7 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
     private func updateKeywordTags(keywords: [UserKeyword]) {
         let keywordNames = keywords.map { $0.name }
         let keywordIds = keywords.map { $0.id }
-        layoutView.updateKeywordTags(keywords: keywordNames)
-        layoutView.keywordTagListView.configure(keywords: keywordNames, keywordIds: keywordIds)
+        layoutView.updateKeywordTags(keywords: keywordNames, keywordIds: keywordIds)
         
         if layoutView.isDeleteMode {
             layoutView.keywordTagListView.updateSelectedKeywords(layoutView.selectedKeywordsForDeletion)

@@ -85,7 +85,8 @@ final class TodayKeywordTagListView: UIView, UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension TodayKeywordTagListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard !selectedKeywordIds.isEmpty else { return }
+        // delegate가 있고 selectedKeywordIds가 비어있지 않으면 삭제 모드로 간주
+        guard delegate != nil else { return }
         let keywordId = indexPath.item < keywordIds.count ? keywordIds[indexPath.item] : indexPath.item
         delegate?.didSelectKeyword(at: keywordId)
     }

@@ -41,9 +41,11 @@ final class KeywordChipCell: UICollectionViewCell {
         titleLabel.setText(text)
         if isSelectedForDeletion {
             contentView.layer.borderColor = TDColor.Semantic.error.cgColor
+            titleLabel.setColor(TDColor.Semantic.error)
             contentView.layer.borderWidth = 1
         } else {
             contentView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            titleLabel.setColor(TDColor.Neutral.neutral700)
             contentView.layer.borderWidth = 1
         }
     }

@@ -82,7 +82,7 @@ final class DiaryKeywordView: BaseView {
     
     // 삭제 모드용 레이블
     private let deleteModeLabel = TDLabel(
-        labelText: "삭제 할 키워드를 선택해주세요",
+        labelText: "· 삭제 할 키워드를 선택해주세요",
         toduckFont: .boldBody2,
         toduckColor: TDColor.Semantic.error
     )

@@ -22,7 +22,6 @@ final class CompleteDiaryCoordinator: Coordinator {
         let vm = CompleteDiaryViewModel(fetchDiaryStreakUseCase: fetchStreakUseCase)
         let vc = CompleteDiaryViewController(viewModel: vm)
         vc.coordinator = self
-        vc.modalPresentationStyle = .fullScreen
-        navigationController.present(vc, animated: true)
+        navigationController.pushTDViewController(vc, animated: true)
     }
 }
