@@ -32,15 +32,15 @@ final class CompleteDiaryViewController: BaseViewController<CompleteDiaryView> {
     // MARK: - Life Cycle
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        super.viewDidAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        super.viewWillDisappear(animated)
     }
     
     // MARK: - Common Methods
