@@ -36,7 +36,7 @@ final class WriteDiaryView: BaseView {
         title: "회고 작성",
         titleFont: .boldBody2,
         titleColor: TDColor.Neutral.neutral600,
-        isRequired: true,
+        isRequired: false,
         maxCharacter: 2000,
         placeholder: "자유롭게 내용을 작성해 주세요.",
         maxHeight: 196

@@ -25,15 +25,15 @@ final class DiaryEmotionView: BaseView {
         toduckColor: TDColor.Neutral.neutral600
     )
     let nextButton = TDBaseButton(
-        title: "건너뛰기",
-        backgroundColor: TDColor.baseWhite,
-        foregroundColor: TDColor.Neutral.neutral700,
+        title: "다음",
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
         radius: 12,
         font: TDFont.boldHeader3.font,
     ).then {
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+        $0.isEnabled = false
     }
+    
     let simpleDiaryButton = TDBaseButton(
         title: "심플 일기 작성",
         backgroundColor: TDColor.baseWhite,
@@ -52,25 +52,8 @@ final class DiaryEmotionView: BaseView {
     }
     
     func setNextButtonActive(_ isActive: Bool) {
-        if isActive {
-            nextButton.updateBackgroundColor(
-                backgroundColor: TDColor.Primary.primary500,
-                foregroundColor: TDColor.baseWhite
-            )
-            nextButton.updateTitle("다음")
-            nextButton.layer.borderColor = UIColor.clear.cgColor
-            nextButton.layer.borderWidth = 0
-            commentContainerView.isHidden = false
-        } else {
-            nextButton.updateBackgroundColor(
-                backgroundColor: TDColor.baseWhite,
-                foregroundColor: TDColor.Neutral.neutral700
-            )
-            nextButton.updateTitle("건너뛰기")
-            nextButton.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-            nextButton.layer.borderWidth = 1
-            commentContainerView.isHidden = true
-        }
+        nextButton.isEnabled = isActive
+        commentContainerView.isHidden = !isActive
     }
     
     // MARK: - Common Methods

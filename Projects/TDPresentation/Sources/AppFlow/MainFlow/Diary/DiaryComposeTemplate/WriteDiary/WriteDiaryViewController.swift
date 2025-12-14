@@ -53,6 +53,13 @@ final class WriteDiaryViewController: BaseViewController<WriteDiaryView> {
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             self?.input.send(.createDiary)
             self?.layoutView.saveButton.isEnabled = false
+            self?.layoutView.skipButton.isEnabled = false
+        }, for: .touchUpInside)
+        
+        layoutView.skipButton.addAction(UIAction { [weak self] _ in
+            self?.input.send(.createDiary)
+            self?.layoutView.skipButton.isEnabled = false
+            self?.layoutView.saveButton.isEnabled = false
         }, for: .touchUpInside)
     }
     
@@ -67,10 +74,9 @@ final class WriteDiaryViewController: BaseViewController<WriteDiaryView> {
                 switch event {
                 case .setImage:
                     layoutView.formPhotoView.addPhotos(viewModel.images)
-                case .enableSaveButton(let isEnabled):
-                    layoutView.saveButton.isEnabled = isEnabled
                 case .failure(let message):
                     layoutView.saveButton.isEnabled = true
+                    layoutView.skipButton.isEnabled = true
                     showErrorAlert(errorMessage: message)
                 case .success:
                     coordinator?.showCompleteDiaryView()

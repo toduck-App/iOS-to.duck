@@ -368,7 +368,7 @@ final class DiaryKeywordView: BaseView {
     
     func configure(for viewType: DiaryKeywordViewType) {
         self.viewType = viewType
-        
+
         switch viewType {
         case .sheet:
             sheetHeaderStackView.isHidden = false
@@ -376,16 +376,17 @@ final class DiaryKeywordView: BaseView {
             currentBookImageView.isHidden = true
             noSelectedLabel.isHidden = true
             selectedKeywordScrollView.isHidden = true
-            skipButton.isHidden = true
+            skipButton.isHidden = false
+            skipButton.updateTitle("취소")
         case .navigation:
             sheetHeaderStackView.isHidden = true
             labelStackView.isHidden = false
             currentBookImageView.isHidden = false
-            // noSelectedLabel은 updateSelectedKeywords에서 관리되므로 여기서는 설정하지 않음
             selectedKeywordScrollView.isHidden = false
             skipButton.isHidden = false
+            skipButton.updateTitle("건너뛰기")
         }
-        
+
         // 제약조건 업데이트
         updateLayoutConstraints()
     }

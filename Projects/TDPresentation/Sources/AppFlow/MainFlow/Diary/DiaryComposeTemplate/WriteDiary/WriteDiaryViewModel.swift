@@ -7,11 +7,11 @@ final class WriteDiaryViewModel: BaseViewModel {
         case setContent(String)
         case setImages([Data])
         case createDiary
+        case createSkipDiary
     }
     
     enum Output {
         case setImage
-        case enableSaveButton(Bool)
         case success
         case failure(String)
     }
@@ -56,6 +56,8 @@ final class WriteDiaryViewModel: BaseViewModel {
                 setImages(data)
             case .createDiary:
                 Task { await self.createDiary() }
+            case .createSkipDiary:
+                Task { await self.createSkipDiary() }
             }
         }.store(in: &cancellables)
         
@@ -63,11 +65,10 @@ final class WriteDiaryViewModel: BaseViewModel {
     }
     
     private func setContent(_ content: String) {
-        if content.count > 500 {
+        if content.count > 2000 {
             return
         }
         self.content = content
-        output.send(.enableSaveButton(!content.isEmpty))
     }
     
     private func setImages(_ images: [Data], _ isEditImage: Bool = false) {
@@ -93,6 +94,25 @@ final class WriteDiaryViewModel: BaseViewModel {
             )
             let image = images.map { ("\(UUID().uuidString).jpg", $0) }
             try await createDiaryUseCase.execute(diary: diary, image: image)
+            output.send(.success)
+        } catch {
+            output.send(.failure(error.localizedDescription))
+        }
+    }
+    
+    private func createSkipDiary() async {
+        do {
+            setTitleIfNeeded()
+            let diary = Diary(
+                id: 0,
+                date: selectedDate,
+                emotion: selectedMood,
+                title: title,
+                memo: "",
+                diaryImageUrls: nil,
+                diaryKeywords: selectedKeyword.map { DiaryKeyword(id: $0.id, keywordName: $0.name) }
+            )
+            try await createDiaryUseCase.execute(diary: diary, image: nil)
             output.send(.success)
         } catch {
             output.send(.failure(error.localizedDescription))
