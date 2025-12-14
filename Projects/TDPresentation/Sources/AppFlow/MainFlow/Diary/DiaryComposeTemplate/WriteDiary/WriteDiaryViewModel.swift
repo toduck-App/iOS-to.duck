@@ -21,6 +21,7 @@ final class WriteDiaryViewModel: BaseViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
     
+    private(set) var title: String = ""
     private(set) var content: String = ""
     private(set) var images: [Data] = []
     private(set) var selectedMood: Emotion
@@ -80,11 +81,12 @@ final class WriteDiaryViewModel: BaseViewModel {
     
     private func createDiary() async {
         do {
+            setTitleIfNeeded()
             let diary = Diary(
                 id: 0,
                 date: selectedDate,
                 emotion: selectedMood,
-                title: "",
+                title: title,
                 memo: content,
                 diaryImageUrls: nil,
                 diaryKeywords: selectedKeyword.map { DiaryKeyword(id: $0.id, keywordName: $0.name) }
@@ -95,5 +97,26 @@ final class WriteDiaryViewModel: BaseViewModel {
         } catch {
             output.send(.failure(error.localizedDescription))
         }
+    }
+    
+    private func setTitleIfNeeded() {
+        guard title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return
+        }
+        
+        let mood = selectedMood.rawValue
+        let moodToKorean: [String: String] = [
+            "HAPPY": "기분 좋은 하루",
+            "GOOD": "마음이 평온했던 하루",
+            "LOVE": "따뜻함이 느껴진 하루",
+            "SOSO": "평범하게 흘러간 하루",
+            "SICK": "몸과 마음이 힘들었던 하루",
+            "SAD": "울컥했던 하루",
+            "ANGRY": "신경이 곤두섰던 하루",
+            "ANXIOUS": "마음이 불안했던 하루",
+            "TIRED": "기운이 빠졌던 하루"
+        ]
+        
+        title = moodToKorean[mood] ?? "좋아용"
     }
 }
