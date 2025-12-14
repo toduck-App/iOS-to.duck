@@ -3,6 +3,7 @@ import TDDomain
 import Combine
 import TDDesign
 import TDCore
+import FittedSheets
 
 final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
     // MARK: - Properties
@@ -43,6 +44,8 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
                 case .failure(let message):
                     self?.layoutView.saveButton.isEnabled = true
                     self?.showErrorAlert(errorMessage: message)
+                case .updateKeywords(let keywords):
+                    self?.updateKeywordTags(keywords: keywords)
                 }
             }.store(in: &cancellables)
     }
@@ -54,6 +57,7 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
         layoutView.formPhotoView.delegate = self
         layoutView.recordTextView.delegate = self
         layoutView.diaryMoodCollectionView.delegate = self
+        layoutView.keywordTagListView.delegate = self
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             if self?.isEdit == true {
@@ -64,6 +68,23 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
             }
             self?.layoutView.saveButton.isEnabled = false
         }, for: .touchUpInside)
+        
+        layoutView.keywordAddButton.addAction(UIAction { [weak self] _ in
+            self?.showKeywordSelectionSheet()
+        }, for: .touchUpInside)
+        
+        layoutView.diaryKeywordDeleteButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            if self.layoutView.isDeleteMode {
+                self.deleteSelectedKeywords()
+            } else {
+                self.enterDeleteMode()
+            }
+        }, for: .touchUpInside)
+        
+        layoutView.diaryKeywordCancelButton.addAction(UIAction { [weak self] _ in
+            self?.exitDeleteMode()
+        }, for: .touchUpInside)
     }
     
     func updateEditView(preDiary: Diary) {
@@ -73,6 +94,83 @@ final class SimpleDiaryViewController: BaseViewController<SimpleDiaryView> {
         layoutView.titleForm.setupTextField(preDiary.title)
         layoutView.noticeSnackBarView.isHidden = true
         layoutView.recordTextView.setupTextView(text: preDiary.memo)
+    }
+    
+    // MARK: - Keyword Methods
+    private func showKeywordSelectionSheet() {
+        guard let coordinator = coordinator,
+              let selectedMood = viewModel.selectedMood,
+              let emotion = Emotion(rawValue: selectedMood),
+              let selectedDate = viewModel.selectedDate else {
+            return
+        }
+        
+        let injector = coordinator.injector
+        let fetchDiaryKeywordsUseCase = injector.resolve(FetchDiaryKeywordUseCase.self)
+        let createDiaryKeywordUseCase = injector.resolve(CreateDiaryKeywordUseCase.self)
+        let deleteDiaryKeywordUseCase = injector.resolve(DeleteDiaryKeywordUseCase.self)
+        
+        let keywordViewModel = DiaryKeywordViewModel(
+            selectedMood: emotion,
+            selectedDate: selectedDate,
+            fetchDiaryKeywordsUseCase: fetchDiaryKeywordsUseCase,
+            createDiaryKeywordUseCase: createDiaryKeywordUseCase,
+            deleteDiaryKeywordUseCase: deleteDiaryKeywordUseCase
+        )
+        
+        
+        let keywordViewController = DiaryKeywordViewController(viewModel: keywordViewModel)
+        keywordViewController.onKeywordsSelected = { [weak self] keywords in
+            self?.input.send(.updateSelectedKeywords(keywords))
+        }
+        
+        let sheetController = SheetViewController(
+            controller: keywordViewController,
+            sizes: [.intrinsic],
+            options: .init(
+                pullBarHeight: 0,
+                shouldExtendBackground: false,
+                setIntrinsicHeightOnNavigationControllers: false,
+                useFullScreenMode: false,
+                shrinkPresentingViewController: false,
+                isRubberBandEnabled: false
+            )
+        )
+        sheetController.cornerRadius = 28
+        
+        present(sheetController, animated: true)
+    }
+    
+    private func enterDeleteMode() {
+        layoutView.isDeleteMode = true
+        layoutView.updateDeleteModeUI()
+    }
+    
+    private func exitDeleteMode() {
+        layoutView.isDeleteMode = false
+        layoutView.selectedKeywordsForDeletion.removeAll()
+        layoutView.updateDeleteModeUI()
+    }
+    
+    private func deleteSelectedKeywords() {
+        let idsToDelete = layoutView.selectedKeywordsForDeletion
+        let keywordsToDelete = viewModel.selectedKeywords.filter { idsToDelete.contains($0.id) }
+        
+        guard !keywordsToDelete.isEmpty else { return }
+        
+        input.send(.deleteSelectedKeywords(keywordsToDelete))
+        exitDeleteMode()
+    }
+    
+    private func updateKeywordTags(keywords: [UserKeyword]) {
+        let keywordNames = keywords.map { $0.name }
+        let keywordIds = keywords.map { $0.id }
+        layoutView.updateKeywordTags(keywords: keywordNames)
+        layoutView.keywordTagListView.configure(keywords: keywordNames, keywordIds: keywordIds)
+        
+        if layoutView.isDeleteMode {
+            layoutView.keywordTagListView.updateSelectedKeywords(layoutView.selectedKeywordsForDeletion)
+        }
     }
 }
 
@@ -135,6 +233,21 @@ extension SimpleDiaryViewController: TDFormTextFieldDelegate {
 extension SimpleDiaryViewController: TDFormTextViewDelegate {
     func tdTextView(_ textView: TDFormTextView, didChangeText text: String) {
         input.send(.updateMemoTextView(text))
+    }
+}
+
+// MARK: - TodayKeywordTagListViewDelegate
+extension SimpleDiaryViewController: TodayKeywordTagListViewDelegate {
+    func didSelectKeyword(at id: Int) {
+        guard layoutView.isDeleteMode else { return }
+        
+        if layoutView.selectedKeywordsForDeletion.contains(id) {
+            layoutView.selectedKeywordsForDeletion.remove(id)
+        } else {
+            layoutView.selectedKeywordsForDeletion.insert(id)
+        }
+        
+        layoutView.keywordTagListView.updateSelectedKeywords(layoutView.selectedKeywordsForDeletion)
     }
 }
 

@@ -23,6 +23,7 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     private let input = PassthroughSubject<DiaryKeywordViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: DiaryKeywordCoordinator?
+    var onKeywordsSelected: (([UserKeyword]) -> Void)?
     
     // MARK: - Initializer
     init(viewModel: DiaryKeywordViewModel) {
@@ -44,10 +45,21 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
     override func configure() {
         super.configure()
         configureDataSource()
-        configurePagingNavigationBar(currentPage: 2, totalPages: 3)
+        
+        // 시트 모드가 아닐 때만 네비게이션 바 설정
+        if coordinator != nil {
+            configurePagingNavigationBar(currentPage: 2, totalPages: 3)
+        } else {
+            navigationItem.hidesBackButton = true
+        }
         
         layoutView.keywordCollectionView.delegate = self
         setupButtonAction()
+        
+        // 시트 모드일 때 skipButton 숨김
+        if onKeywordsSelected != nil {
+            layoutView.skipButton.isHidden = true
+        }
     }
     
     // MARK: - Diffable DataSource
@@ -160,22 +172,34 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
         layoutView.skipButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                coordinator?.showWriteDiaryCompose(
-                    selectedMood: viewModel.selectedMood,
-                    selectedDate: viewModel.selectedDate,
-                    selectedKeywords: []
-                )
+                if let onKeywordsSelected = self.onKeywordsSelected {
+                    onKeywordsSelected([])
+                    self.dismiss(animated: true)
+                } else if let coordinator = self.coordinator {
+                    coordinator.showWriteDiaryCompose(
+                        selectedMood: viewModel.selectedMood,
+                        selectedDate: viewModel.selectedDate,
+                        selectedKeywords: []
+                    )
+                }
             },
             for: .touchUpInside
         )
         
         layoutView.saveButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            coordinator?.showWriteDiaryCompose(
-                selectedMood: viewModel.selectedMood,
-                selectedDate: viewModel.selectedDate,
-                selectedKeywords: viewModel.selectedKeywords
-            )
+            if let onKeywordsSelected = self.onKeywordsSelected {
+                // 시트 모드: 콜백 호출 후 닫기
+                onKeywordsSelected(self.viewModel.selectedKeywords)
+                self.dismiss(animated: true)
+            } else if let coordinator = self.coordinator {
+                // 네비게이션 모드: 기존 로직
+                coordinator.showWriteDiaryCompose(
+                    selectedMood: viewModel.selectedMood,
+                    selectedDate: viewModel.selectedDate,
+                    selectedKeywords: viewModel.selectedKeywords
+                )
+            }
         }, for: .touchUpInside)
         
         let longPress = UILongPressGestureRecognizer(

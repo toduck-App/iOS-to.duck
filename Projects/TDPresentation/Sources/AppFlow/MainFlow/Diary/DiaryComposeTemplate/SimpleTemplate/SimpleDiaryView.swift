@@ -57,7 +57,7 @@ final class SimpleDiaryView: BaseView {
         $0.distribution = .fill
     }
     
-    private let diaryKeywordDeleteButton = TDBaseButton(
+    let diaryKeywordDeleteButton = TDBaseButton(
         title: "삭제",
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral600,
@@ -66,7 +66,7 @@ final class SimpleDiaryView: BaseView {
     
     private let diaryKeywordDividerView = UIView.diviedHorizontalLine(color: TDColor.Neutral.neutral600)
     
-    private let diaryKeywordCancelButton = TDBaseButton(
+    let diaryKeywordCancelButton = TDBaseButton(
         title: "취소",
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Neutral.neutral600,
@@ -93,7 +93,7 @@ final class SimpleDiaryView: BaseView {
         $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
     }
 
-    private let keywordTagListView = TodayKeywordTagListView()
+    let keywordTagListView = TodayKeywordTagListView()
     
     // 문장 기록
     let recordTextView = TDFormTextView(
@@ -178,6 +178,12 @@ final class SimpleDiaryView: BaseView {
             updateDeleteButtonVisibility()
         }
     }
+    var isDeleteMode: Bool = false {
+        didSet {
+            updateDeleteModeUI()
+        }
+    }
+    var selectedKeywordsForDeletion: Set<Int> = []
     
     // MARK: - Initialize
     override init(frame: CGRect) {
@@ -215,6 +221,9 @@ final class SimpleDiaryView: BaseView {
         keywordHeaderDeleteView.addArrangedSubview(diaryKeywordCancelButton)
         keywordHeaderDeleteView.addArrangedSubview(diaryKeywordDividerView)
         keywordHeaderDeleteView.addArrangedSubview(diaryKeywordDeleteButton)
+        
+        // 초기에는 삭제 뷰 숨김
+        keywordHeaderDeleteView.isHidden = true
         
         keywordVerticalStackView.addArrangedSubview(keywordHeaderContainerView)
         keywordVerticalStackView.addArrangedSubview(keywordAddButton)
@@ -369,6 +378,25 @@ final class SimpleDiaryView: BaseView {
             deleteButton.removeFromSuperview()
             buttonStackView.addArrangedSubview(saveButton)
         }
+    }
+    
+    func updateDeleteModeUI() {
+        if isDeleteMode {
+            // 삭제 모드 진입
+            keywordHeaderDeleteView.isHidden = false
+            diaryKeywordDeleteButton.setTitleColor(TDColor.Semantic.error, for: .normal)
+            keywordAddButton.isHidden = true
+        } else {
+            // 일반 모드
+            keywordHeaderDeleteView.isHidden = true
+            diaryKeywordDeleteButton.setTitleColor(TDColor.Neutral.neutral600, for: .normal)
+            keywordAddButton.isHidden = false
+            selectedKeywordsForDeletion.removeAll()
+        }
+    }
+    
+    func updateKeywordTags(keywords: [String]) {
+        keywordTagListView.configure(keywords: keywords)
     }
 }
 

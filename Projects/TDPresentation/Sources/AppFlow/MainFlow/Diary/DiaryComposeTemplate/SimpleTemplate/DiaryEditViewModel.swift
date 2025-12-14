@@ -10,12 +10,15 @@ final class SimpleDiaryViewModel: BaseViewModel {
         case setImages([Data])
         case tapSaveButton
         case tapEditButton
+        case updateSelectedKeywords([UserKeyword])
+        case deleteSelectedKeywords([UserKeyword])
     }
     
     enum Output {
         case setImage
         case savedDiary
         case failure(String)
+        case updateKeywords([UserKeyword])
     }
     
     private let createDiaryUseCase: CreateDiaryUseCase
@@ -28,6 +31,7 @@ final class SimpleDiaryViewModel: BaseViewModel {
     private(set) var memo: String?
     private(set) var images: [Data] = []
     private(set) var preDiary: Diary?
+    private(set) var selectedKeywords: [UserKeyword] = []
     
     init(
         createDiaryUseCase: CreateDiaryUseCase,
@@ -61,6 +65,14 @@ final class SimpleDiaryViewModel: BaseViewModel {
                     Task { await self?.saveDiary() }
                 case .tapEditButton:
                     Task { await self?.editDiary() }
+                case .updateSelectedKeywords(let keywords):
+                    self?.selectedKeywords = keywords
+                    self?.output.send(.updateKeywords(keywords))
+                case .deleteSelectedKeywords(let keywords):
+                    self?.selectedKeywords.removeAll { keyword in
+                        keywords.contains(where: { $0.id == keyword.id })
+                    }
+                    self?.output.send(.updateKeywords(self?.selectedKeywords ?? []))
                 }
             }.store(in: &cancellables)
         

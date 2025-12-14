@@ -37,7 +37,14 @@ final class KeywordChipCell: UICollectionViewCell {
         contentView.layer.masksToBounds = true
     }
     
-    func configure(text: String) {
+    func configure(text: String, isSelectedForDeletion: Bool = false) {
         titleLabel.setText(text)
+        if isSelectedForDeletion {
+            contentView.layer.borderColor = TDColor.Semantic.error.cgColor
+            contentView.layer.borderWidth = 1
+        } else {
+            contentView.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+            contentView.layer.borderWidth = 1
+        }
     }
 }
