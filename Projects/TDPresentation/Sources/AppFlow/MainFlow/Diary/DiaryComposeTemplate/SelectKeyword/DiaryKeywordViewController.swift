@@ -130,6 +130,10 @@ final class DiaryKeywordViewController: BaseViewController<DiaryKeywordView> {
                     layoutView.removeKeywordRemoveButton.isEnabled = !viewModel.removedKeywords.isEmpty
                 case .updateSelectedKeywords(let keywords):
                     layoutView.updateSelectedKeywords(keywords)
+                    // 키워드가 변경되면 콜백 호출 (시트 모드일 때만)
+                    if viewType == .sheet {
+                        onKeywordsSelected?(keywords)
+                    }
                 case .failure(let desc):
                     showErrorAlert(errorMessage: desc)
                 }
