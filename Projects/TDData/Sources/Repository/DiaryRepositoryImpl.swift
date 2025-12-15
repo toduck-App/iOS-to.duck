@@ -22,10 +22,11 @@ public final class DiaryRepositoryImpl: DiaryRepository {
             }
         }
         
-        var diary = DiaryPostRequestDTO(diary: diary)
-        diary.diaryImageUrls = imageUrls
+        var diaryRequestDTO = DiaryPostRequestDTO(diary: diary)
+        diaryRequestDTO.diaryImageUrls = imageUrls
         
-        try await diaryService.createDiary(diary: diary)
+        try await diaryService.createDiary(diary: diaryRequestDTO)
+        try await connectDiaryKeywords(date: diary.date, keywords: diary.diaryKeywords)
         Task {
             // MARK: 휴대폰 기기가 느려서, 일기 작성 후 바로 스트릭을 조회하면, 서버에서 반영이 안된 상태로 조회되는 경우가 있을 수도 있음.
             try? await Task.sleep(until: .now + .seconds(1))
@@ -50,10 +51,12 @@ public final class DiaryRepositoryImpl: DiaryRepository {
             }
         }
         
-        var diary = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
-        diary.diaryImageUrls = imageUrls
+        var patchRequestDTO = DiaryPatchRequestDTO(isChangeEmotion: isChangeEmotion, diary: diary)
+        patchRequestDTO.diaryImageUrls = imageUrls
         
-        try await diaryService.updateDiary(diary: diary)
+        try await diaryService.updateDiary(diary: patchRequestDTO)
+        let keywordRequestDTO = DiaryKeywordConnectRequestDTO(diaryId: diary.id, keywordIds: diary.diaryKeywords.map { $0.id})
+        try await diaryService.connectDiaryKeyword(diary: keywordRequestDTO)
     }
     
     public func deleteDiary(id: Int) async throws {
@@ -75,5 +78,55 @@ public final class DiaryRepositoryImpl: DiaryRepository {
         UserDefaults(suiteName: UserDefaultsConstant.Diary.suiteName)?.setValue(lastDiaryDate, forKey: UserDefaultsConstant.Diary.lastWriteDateKey)
         WidgetCenter.shared.reloadTimelines(ofKind: WidgetConstant.diary.kindIdentifier)
         return (streak, lastDiaryDate)
+    }
+    
+    public func fetchDiaryKeyword() async throws -> DiaryKeywordDictionary {
+        let storedKeywords = try await diaryService
+            .fetchUserKeywords()
+            .map { $0.toDomain() }
+
+        var result: DiaryKeywordDictionary = [:]
+
+        for keyword in storedKeywords {
+            result[keyword.category, default: []].append(keyword)
+        }
+
+        return result
+    }
+    
+    public func createDiaryKeyword(keyword: UserKeyword) async throws {
+        let dto = UserKeywordDTO(id: 0, category: keyword.category.rawValue.uppercased(), keyword: keyword.name)
+        try await diaryService.createUserKeyword(dto: dto)
+    }
+ 
+    public func deleteDiaryKeywords(keywords: [UserKeyword]) async throws {
+        for keyword in keywords {
+            let dto = UserKeywordDTO(id: 0, category: keyword.category.rawValue.uppercased(), keyword: keyword.name)
+            try await diaryService.deleteUserKeywords(dto: dto)
+        }
+    }
+    
+    public func connectDiaryKeywords(date: Date, keywords: [DiaryKeyword]) async throws {
+        let dateString = date.convertToString(formatType: .yearMonthDay)
+
+        let yyyyMM = dateString.split(separator: "-")
+            .map { Int($0) }
+            .compactMap { $0 }
+        if yyyyMM.count < 2 {
+            return
+        }
+        
+        guard let diary = try await diaryService
+            .fetchDiaryList(year: yyyyMM[0], month: yyyyMM[1])
+            .convertToDiaryList()
+            .first(where: { $0.date == Date.convertFromString(dateString, format: .yearMonthDay)})
+        else { return }
+        
+        let diaryKeywordConnectRequestDTO = DiaryKeywordConnectRequestDTO(
+            diaryId: diary.id,
+            keywordIds: keywords.map { $0.id }
+        )
+        
+        try await diaryService.connectDiaryKeyword(diary: diaryKeywordConnectRequestDTO)
     }
 }

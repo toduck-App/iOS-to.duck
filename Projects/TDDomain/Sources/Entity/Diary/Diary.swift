@@ -7,6 +7,7 @@ public struct Diary: Hashable, Identifiable {
     public let title: String
     public let memo: String
     public let diaryImageUrls: [String]?
+    public let diaryKeywords: [DiaryKeyword]
     
     public init(
         id: Int,
@@ -14,7 +15,8 @@ public struct Diary: Hashable, Identifiable {
         emotion: Emotion,
         title: String,
         memo: String,
-        diaryImageUrls: [String]?
+        diaryImageUrls: [String]?,
+        diaryKeywords: [DiaryKeyword] = []
     ) {
         self.id = id
         self.date = date
@@ -22,5 +24,6 @@ public struct Diary: Hashable, Identifiable {
         self.title = title
         self.memo = memo
         self.diaryImageUrls = diaryImageUrls
+        self.diaryKeywords = diaryKeywords
     }
 }
