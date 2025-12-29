@@ -55,14 +55,14 @@ final class CompleteDiaryViewController: BaseViewController<CompleteDiaryView> {
     override func binding() {
         super.binding()
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
-        
+
         output
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 guard let self else { return }
                 switch event {
                 case .streak(let streakCount):
-                    layoutView.configure(count: streakCount)
+                    layoutView.configure(count: streakCount, emotion: viewModel.emotion)
                 case .failure(let message):
                     layoutView.doneButton.isEnabled = true
                     showErrorAlert(errorMessage: message)

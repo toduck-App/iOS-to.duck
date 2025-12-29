@@ -8,6 +8,7 @@ final class WriteDiaryCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var finishDelegate: CoordinatorFinishDelegate?
     var injector: DependencyResolvable
+    private var selectedMood: Emotion?
 
     init(
         navigationController: UINavigationController,
@@ -16,12 +17,13 @@ final class WriteDiaryCoordinator: Coordinator {
         self.navigationController = navigationController
         self.injector = injector
     }
-    
+
     func start(
         selectedMood: Emotion,
         selectedDate: Date,
         selectedKeyword: [UserKeyword]
     ) {
+        self.selectedMood = selectedMood
         let createDiaryUseCase = injector.resolve(CreateDiaryUseCase.self)
         let vm = WriteDiaryViewModel(
             selectedMood: selectedMood,
@@ -33,17 +35,17 @@ final class WriteDiaryCoordinator: Coordinator {
         vc.coordinator = self
         navigationController.pushTDViewController(vc, animated: true)
     }
-    
+
     func popViewController() {
         navigationController.popViewController(animated: true)
         finishDelegate?.didFinish(childCoordinator: self)
     }
-    
+
     func showCompleteDiaryView() {
         let coordinator = CompleteDiaryCoordinator(navigationController: navigationController, injector: injector)
         childCoordinators.append(coordinator)
         coordinator.finishDelegate = self
-        coordinator.start()
+        coordinator.start(emotion: selectedMood ?? .happy)
     }
     
     func start() { }

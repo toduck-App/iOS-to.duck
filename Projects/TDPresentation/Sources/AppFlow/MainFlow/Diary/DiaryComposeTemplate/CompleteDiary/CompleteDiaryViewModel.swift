@@ -6,25 +6,28 @@ final class CompleteDiaryViewModel: BaseViewModel {
     enum Input {
         case fetchStreak
     }
-    
+
     enum Output {
         case streak(Int)
         case failure(String)
     }
-    
+
     // MARK: - Properties
-    
+
     private let output = PassthroughSubject<Output, Never>()
     private var cancellables = Set<AnyCancellable>()
-    
+
     private let fetchDiaryStreakUseCase: FetchStreakUseCase
-    
+    let emotion: Emotion
+
     // MARK: - Initializer
-    
+
     init(
         fetchDiaryStreakUseCase: FetchStreakUseCase,
+        emotion: Emotion
     ) {
         self.fetchDiaryStreakUseCase = fetchDiaryStreakUseCase
+        self.emotion = emotion
     }
     
     // MARK: - Transform
