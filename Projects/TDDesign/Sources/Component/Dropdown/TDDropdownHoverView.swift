@@ -28,7 +28,8 @@ public final class TDDropdownHoverView: UIView {
     private var locate: LocateLayout = .leading
     private(set) var selectedOption: String?
     private var width: CGFloat = 0
-    private let anchorView: UIView
+    // anchorView는 외부에서 참조할 필요가 있어 public으로 변경합니다.
+    public let anchorView: UIView
     private lazy var overlayView = UIView().then {
         $0.backgroundColor = UIColor.clear
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleOverlayTap(_:)))

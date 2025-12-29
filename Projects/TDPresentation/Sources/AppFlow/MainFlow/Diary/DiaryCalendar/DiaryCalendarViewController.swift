@@ -48,6 +48,9 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     }
     let diaryDetailView = DiaryDetailView()
     let diaryDetailViewBottomSpacer = UIView()
+
+    let archiveButtonContainerView = UIView()
+    let archiveButton = DiaryArchiveButton()
     
     // MARK: - Properties
     
@@ -79,7 +82,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         viewModel.selectedDate = selectedDate
         fetchDiaryList(for: calendar.currentPage)
     }
@@ -88,22 +91,25 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
     
     override func addView() {
         view.addSubview(contentStackView)
-        
+
         contentStackView.addArrangedSubview(calendarContainerView)
         contentStackView.addArrangedSubview(noDiaryContainerView)
         contentStackView.addArrangedSubview(diaryDetailViewTopSpacer)
         contentStackView.addArrangedSubview(diaryDetailVerticalStackView)
-        
+        contentStackView.addArrangedSubview(archiveButtonContainerView)
+
         calendarContainerView.addSubview(calendarHeaderContainerView)
         calendarContainerView.addSubview(calendar)
         calendarHeaderContainerView.addSubview(calendarHeader)
-        
+
         noDiaryContainerView.addSubview(noDiaryImageView)
         noDiaryContainerView.addSubview(noDiaryLabel)
-        
+
         diaryDetailVerticalStackView.addArrangedSubview(diaryDetailView)
         diaryDetailVerticalStackView.addArrangedSubview(diaryDetailViewBottomSpacer)
-        
+
+        archiveButtonContainerView.addSubview(archiveButton)
+
         calendarHeader.delegate = self
         calendar.delegate = self
     }
@@ -151,6 +157,14 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         diaryDetailViewBottomSpacer.snp.makeConstraints {
             $0.height.equalTo(1)
         }
+
+        archiveButtonContainerView.snp.makeConstraints {
+            $0.height.equalTo(72)
+        }
+        archiveButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview()
+        }
     }
     
     override func configure() {
@@ -158,6 +172,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         layoutView.backgroundColor = TDColor.baseWhite
         noDiaryContainerView.backgroundColor = TDColor.Neutral.neutral100
         diaryDetailViewTopSpacer.backgroundColor = TDColor.Neutral.neutral100
+        archiveButtonContainerView.backgroundColor = TDColor.Neutral.neutral100
         calendarHeaderContainerView.layer.borderWidth = 1
         calendarHeaderContainerView.layer.borderColor = TDColor.Neutral.neutral200.cgColor
         calendarHeaderContainerView.layer.cornerRadius = 8
@@ -166,6 +181,11 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         diaryDetailView.dropdownButton.addAction(UIAction { [weak self] _ in
             self?.diaryDetailView.dropDownHoverView.showDropDown()
         }, for: .touchUpInside)
+
+        archiveButtonContainerView.isUserInteractionEnabled = true
+        archiveButton.isUserInteractionEnabled = true
+        let archiveTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapArchiveButton))
+        archiveButton.addGestureRecognizer(archiveTapGesture)
     }
     
     override func binding() {
@@ -210,7 +230,11 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         guard let year = components.year, let month = components.month else { return }
         input.send(.fetchDiaryList(year, month))
     }
-    
+
+    @objc private func didTapArchiveButton() {
+        coordinator?.didTapArchiveButton()
+    }
+
     // MARK: 일기 불러온 후 이미지 불러오기
     
     private func updateDiaryView(with diary: Diary? = nil) {
@@ -232,6 +256,7 @@ final class DiaryCalendarViewController: BaseViewController<BaseView> {
         diaryDetailViewTopSpacer.isHidden = diary == nil
         diaryDetailVerticalStackView.isHidden = diary == nil
         noDiaryContainerView.isHidden = diary != nil
+        archiveButtonContainerView.isHidden = diary == nil
     }
     
     private func configureDiaryDetailView(diary: Diary, images: [UIImage]) {

@@ -17,9 +17,11 @@ final class CompleteDiaryCoordinator: Coordinator {
         self.injector = injector
     }
     
-    func start() {
+    func start() {}
+    
+    func start(emotion: Emotion = .happy) {
         let fetchStreakUseCase = injector.resolve(FetchStreakUseCase.self)
-        let vm = CompleteDiaryViewModel(fetchDiaryStreakUseCase: fetchStreakUseCase)
+        let vm = CompleteDiaryViewModel(fetchDiaryStreakUseCase: fetchStreakUseCase, emotion: emotion)
         let vc = CompleteDiaryViewController(viewModel: vm)
         vc.coordinator = self
         navigationController.pushTDViewController(vc, animated: true)

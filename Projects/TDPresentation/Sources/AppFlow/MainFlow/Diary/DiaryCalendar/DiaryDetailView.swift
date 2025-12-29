@@ -225,11 +225,13 @@ public final class DiaryDetailView: UIView {
             configurePhotos(photos)
             photoVerticalStackView.isHidden = false
             mainStackView.addArrangedSubview(photoVerticalStackView)
-        } else {
-            photoVerticalStackView.isHidden = true
-            let addPhotoButton = createAddPhotoButton(isEmpty: true)
-            mainStackView.addArrangedSubview(addPhotoButton)
         }
+// MARK: 1.1.0V 부터 사진 추가 버튼 제거
+//        else {
+//            photoVerticalStackView.isHidden = true
+//            let addPhotoButton = createAddPhotoButton(isEmpty: true)
+//            mainStackView.addArrangedSubview(addPhotoButton)
+//        }
     }
     
     // MARK: - Helpers
@@ -241,9 +243,17 @@ public final class DiaryDetailView: UIView {
             let imageView = createPhotoView(photo, index: index)
             photoContentStackView.addArrangedSubview(imageView)
         }
+// MARK: 1.1.0V 부터 사진 추가 버튼 제거
+//        if photos.count == 1 {
+//            photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
+//        }
         
         if photos.count == 1 {
-            photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
+            let emptyView = UIView()
+            emptyView.snp.makeConstraints {
+                $0.width.height.equalTo(52).priority(.medium)
+            }
+            photoContentStackView.addArrangedSubview(emptyView)
         }
     }
     
@@ -287,7 +297,7 @@ public final class DiaryDetailView: UIView {
             $0.layer.cornerRadius = 12
             $0.layer.borderWidth = 1
             $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-            $0.snp.makeConstraints { $0.height.equalTo(52) }
+            $0.snp.makeConstraints { $0.size.equalTo(52) }
         }
         
         button.addAction(UIAction { [weak self] _ in

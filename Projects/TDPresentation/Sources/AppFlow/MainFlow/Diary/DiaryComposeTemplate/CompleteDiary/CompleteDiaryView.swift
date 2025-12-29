@@ -1,6 +1,7 @@
 import UIKit
 import TDDomain
 import TDDesign
+import Lottie
 
 final class CompleteDiaryView: BaseView {
     private var currentStreakCount: Int = 0
@@ -24,9 +25,10 @@ final class CompleteDiaryView: BaseView {
         $0.contentMode = .scaleAspectFit
     }
     
-    let imageView = UIImageView().then {
-        $0.image = TDImage.Diary.completeThumnail
+    let lottieAnimationView = LottieAnimationView().then {
         $0.contentMode = .scaleAspectFit
+        $0.loopMode = .loop
+        $0.backgroundBehavior = .pauseAndRestore
     }
     
     let commentContainerView = UIView().then {
@@ -91,7 +93,7 @@ final class CompleteDiaryView: BaseView {
         addSubview(titleLabel)
         addSubview(descriptionLabel)
         addSubview(descriptionIcon)
-        addSubview(imageView)
+        addSubview(lottieAnimationView)
         addSubview(streakStackView)
         addSubview(commentContainerView)
         commentContainerView.addSubview(commentLabel)
@@ -125,14 +127,14 @@ final class CompleteDiaryView: BaseView {
             $0.centerY.equalTo(descriptionLabel)
         }
         
-        imageView.snp.makeConstraints {
+        lottieAnimationView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(26)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(280)
         }
-        
+
         streakStackView.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(28)
+            $0.top.equalTo(lottieAnimationView.snp.bottom).offset(28)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(30)
         }
@@ -156,12 +158,21 @@ final class CompleteDiaryView: BaseView {
         }
     }
     
-    func configure(count: Int) {
+    func configure(count: Int, emotion: Emotion) {
         currentStreakCount = count
         titleLabel.setText("연속 일기 작성 \(count)일째")
         titleLabel.highlight([.init(token: "\(count)일째", color: TDColor.Primary.primary500)])
         fillStreakCircles(count: count)
+        configureLottieAnimation(emotion: emotion)
         setNeedsLayout()
+    }
+
+    private func configureLottieAnimation(emotion: Emotion) {
+        guard let animation = ToduckLottieManager.shared.getLottieAnimation(for: emotion) else {
+            return
+        }
+        lottieAnimationView.animation = animation
+        lottieAnimationView.play()
     }
 
     
