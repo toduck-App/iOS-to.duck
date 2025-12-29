@@ -166,7 +166,6 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedDiaryList(let diaries):
                     self?.updateDiaryList(diaries)
-                    self?.diaryPostButton.isHidden = false
                 case .deletedDiary:
                     self?.input.send(.fetchDiaryList(year: self?.currentYearMonth.year ?? 2024, month: self?.currentYearMonth.month ?? 1))
                 case .failureAPI(let message):
@@ -187,6 +186,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
 
         guard !diaries.isEmpty else {
             showEmptyState()
+            updateTodayDiaryButtonVisibility(diaries: diaries)
             return
         }
 
@@ -199,6 +199,14 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
                 diaryListStackView.addArrangedSubview(divider)
             }
         }
+
+        updateTodayDiaryButtonVisibility(diaries: diaries)
+    }
+
+    private func updateTodayDiaryButtonVisibility(diaries: [Diary]) {
+        let today = Date().normalized
+        let hasTodayDiary = diaries.contains { $0.date.normalized == today }
+        diaryPostButton.isHidden = hasTodayDiary
     }
 
     private func createDiaryCardView(diary: Diary) -> UIView {
