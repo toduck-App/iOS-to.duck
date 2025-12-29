@@ -250,7 +250,9 @@ public final class DiaryDetailView: UIView {
         
         if photos.count == 1 {
             let emptyView = UIView()
-            emptyView.snp.makeConstraints() { $0.size.equalTo(52) }
+            emptyView.snp.makeConstraints {
+                $0.width.height.equalTo(52).priority(.medium)
+            }
             photoContentStackView.addArrangedSubview(emptyView)
         }
     }

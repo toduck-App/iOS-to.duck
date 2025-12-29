@@ -48,7 +48,9 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
         foregroundColor: TDColor.baseWhite,
         font: TDFont.boldHeader3.font,
         radius: 12
-    )
+    ).then {
+        $0.isHidden = true
+    }
 
     // MARK: - Properties
 
@@ -111,7 +113,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
         calendarHeaderContainerView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             $0.leading.equalToSuperview().offset(16)
-            $0.height.equalTo(40)
+            $0.height.equalTo(44)
         }
 
         calendarHeader.snp.makeConstraints {
@@ -164,6 +166,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
                 switch event {
                 case .fetchedDiaryList(let diaries):
                     self?.updateDiaryList(diaries)
+                    self?.diaryPostButton.isHidden = false
                 case .deletedDiary:
                     self?.input.send(.fetchDiaryList(year: self?.currentYearMonth.year ?? 2024, month: self?.currentYearMonth.month ?? 1))
                 case .failureAPI(let message):
