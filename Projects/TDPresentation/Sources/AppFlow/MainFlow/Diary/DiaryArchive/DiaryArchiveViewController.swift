@@ -38,8 +38,10 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
     }
 
     private let diaryPostButtonContainerView = UIView().then {
-        $0.backgroundColor = TDColor.baseWhite
+        $0.backgroundColor = .clear
         $0.layer.masksToBounds = false
+    }.then {
+        $0.isHidden = true
     }
 
     private let diaryPostButton = TDBaseButton(
@@ -48,9 +50,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
         foregroundColor: TDColor.baseWhite,
         font: TDFont.boldHeader3.font,
         radius: 12
-    ).then {
-        $0.isHidden = true
-    }
+    )
 
     // MARK: - Properties
 
@@ -59,6 +59,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
     private var cancellables = Set<AnyCancellable>()
     weak var coordinator: DiaryCoordinator?
     private var currentYearMonth: (year: Int, month: Int)
+    private var scrollViewBottomConstraint: Constraint?
 
     // MARK: - Initializer
 
@@ -123,7 +124,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
         scrollView.snp.makeConstraints {
             $0.top.equalTo(calendarHeaderContainerView.snp.bottom).offset(12)
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(diaryPostButtonContainerView.snp.top)
+            scrollViewBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16).constraint
         }
 
         contentStackView.snp.makeConstraints {
@@ -210,13 +211,35 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
         // 현재 선택된 월이 오늘이 속한 월이 아니면 버튼 숨김
         guard currentYearMonth.year == todayComponents.year,
               currentYearMonth.month == todayComponents.month else {
-            diaryPostButton.isHidden = true
+            hidePostButton()
             return
         }
 
         // 오늘이 속한 월이면, 오늘 일기 작성 여부에 따라 버튼 표시/숨김
         let hasTodayDiary = diaries.contains { $0.date.normalized == today.normalized }
-        diaryPostButton.isHidden = hasTodayDiary
+        if hasTodayDiary {
+            hidePostButton()
+        } else {
+            showPostButton()
+        }
+    }
+
+    private func showPostButton() {
+        diaryPostButtonContainerView.isHidden = false
+        scrollViewBottomConstraint?.deactivate()
+        scrollView.snp.makeConstraints {
+            scrollViewBottomConstraint = $0.bottom.equalTo(diaryPostButtonContainerView.snp.top).constraint
+        }
+        self.view.layoutIfNeeded()
+    }
+
+    private func hidePostButton() {
+        diaryPostButtonContainerView.isHidden = true
+        scrollViewBottomConstraint?.deactivate()
+        scrollView.snp.makeConstraints {
+            scrollViewBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16).constraint
+        }
+        self.view.layoutIfNeeded()
     }
 
     private func createDiaryCardView(diary: Diary) -> UIView {
