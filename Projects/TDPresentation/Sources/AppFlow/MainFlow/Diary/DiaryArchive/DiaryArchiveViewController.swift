@@ -80,7 +80,7 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
         navigationController?.setupNestedNavigationBar(
             leftButtonTitle: "전체 일기 모아보기",
             leftButtonAction: UIAction { [weak self] _ in
-                self?.coordinator?.finish(by: .pop)
+                self?.navigationController?.popViewController(animated: true)
             }
         )
         loadInitialData()
