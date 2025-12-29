@@ -5,6 +5,7 @@ import TDCore
 protocol DiaryCoordinatorDelegate: AnyObject {
     func didTapCreateDiaryButton(selectedDate: Date)
     func didTapEditDiaryButton(diary: Diary)
+    func didTapArchiveButton()
 }
 
 final class DiaryCoordinator: Coordinator {
@@ -83,5 +84,17 @@ extension DiaryCoordinator: DiaryCoordinatorDelegate {
         diaryEditCoordinator.finishDelegate = self
         childCoordinators.append(diaryEditCoordinator)
         diaryEditCoordinator.start(selectedDate: nil, diary: diary)
+    }
+
+    func didTapArchiveButton() {
+        let fetchDiaryListUseCase = injector.resolve(FetchDiaryListUseCase.self)
+        let deleteDiaryUseCase = injector.resolve(DeleteDiaryUseCase.self)
+        let viewModel = DiaryArchiveViewModel(
+            fetchDiaryListUseCase: fetchDiaryListUseCase,
+            deleteDiaryUseCase: deleteDiaryUseCase
+        )
+        let archiveViewController = DiaryArchiveViewController(viewModel: viewModel)
+        archiveViewController.coordinator = self
+        navigationController.pushTDViewController(archiveViewController, animated: true)
     }
 }
