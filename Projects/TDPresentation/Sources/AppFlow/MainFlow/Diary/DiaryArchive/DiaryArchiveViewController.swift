@@ -204,8 +204,18 @@ final class DiaryArchiveViewController: BaseViewController<BaseView> {
     }
 
     private func updateTodayDiaryButtonVisibility(diaries: [Diary]) {
-        let today = Date().normalized
-        let hasTodayDiary = diaries.contains { $0.date.normalized == today }
+        let today = Date()
+        let todayComponents = Calendar.current.dateComponents([.year, .month], from: today)
+
+        // 현재 선택된 월이 오늘이 속한 월이 아니면 버튼 숨김
+        guard currentYearMonth.year == todayComponents.year,
+              currentYearMonth.month == todayComponents.month else {
+            diaryPostButton.isHidden = true
+            return
+        }
+
+        // 오늘이 속한 월이면, 오늘 일기 작성 여부에 따라 버튼 표시/숨김
+        let hasTodayDiary = diaries.contains { $0.date.normalized == today.normalized }
         diaryPostButton.isHidden = hasTodayDiary
     }
 
