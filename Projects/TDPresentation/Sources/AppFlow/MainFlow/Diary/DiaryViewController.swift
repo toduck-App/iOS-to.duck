@@ -169,7 +169,6 @@ final class DiaryViewController: BaseViewController<BaseView> {
         scrollView.delegate = self
     }
     
-    
     // MARK: - View Update
     
     private func updateView() {

@@ -3,7 +3,7 @@ import SnapKit
 import TDDesign
 import Then
 
-final class DiaryCreatorView: BaseView {
+final class SimpleDiaryView: BaseView {
     // MARK: - UI Components
     let scrollView = UIScrollView()
     private let stackView = UIStackView().then {
@@ -34,21 +34,100 @@ final class DiaryCreatorView: BaseView {
         placeholder: "미작성 시 선택 감정에 따라 자동 입력돼요"
     )
     
+    // 키워드 섹션
+    private let keywordVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+        $0.distribution = .fill
+        $0.alignment = .leading
+    }
+    
+    private let keywordHeaderContainerView = UIView()
+
+    private let keywordHeaderTitleView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+    
+    private let keywordHeaderDeleteView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 0
+        $0.alignment = .center
+        $0.distribution = .fill
+        $0.isUserInteractionEnabled = true
+    }
+    
+    // 키워드 헤더에 있는 삭제 버튼 (오늘의 키워드 옆)
+    let keywordHeaderDeleteButton = TDBaseButton(
+        title: "삭제",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral600,
+        font: TDFont.boldBody2.font
+    )
+    
+    let diaryKeywordDeleteButton = TDBaseButton(
+        title: "삭제",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral600,
+        font: TDFont.boldBody2.font
+    )
+    
+    private let diaryKeywordDividerView = UIView.diviedHorizontalLine(color: TDColor.Neutral.neutral600)
+    
+    let diaryKeywordCancelButton = TDBaseButton(
+        title: "취소",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral600,
+        font: TDFont.boldBody2.font
+    )
+    
+
+    private let keywordIcon = UIImageView(image: TDImage.Tomato.tomatoSmallEmtpy)
+    
+    private let keywordTitleLabel = TDLabel(
+        labelText: "오늘의 키워드",
+        toduckFont: TDFont.boldBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+    
+    let keywordAddButton = TDBaseButton(
+        title: "키워드 추가 +",
+        backgroundColor: TDColor.baseWhite,
+        foregroundColor: TDColor.Neutral.neutral700,
+        radius: 8,
+        font: TDFont.mediumBody2.font
+    ).then {
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
+    }
+
+    let keywordTagListView = TodayKeywordTagListView()
+
+    private let deleteModeLabel = TDLabel(
+        labelText: "· 삭제 할 키워드를 선택해주세요",
+        toduckFont: .boldBody2,
+        toduckColor: TDColor.Semantic.error
+    )
+
     // 문장 기록
     let recordTextView = TDFormTextView(
+        image: TDImage.Pen.penNeutralColor,
         title: "문장 기록",
-        titleFont: .boldHeader5,
-        titleColor: TDColor.Neutral.neutral800,
+        titleFont: .boldBody2,
+        titleColor: TDColor.Neutral.neutral600,
         isRequired: false,
-        maxCharacter: 5000,
+        maxCharacter: 2000,
         placeholder: "자유롭게 내용을 작성해 주세요.",
         maxHeight: 196
     )
     
     // 사진 기록
     let formPhotoView = TDFormPhotoView(
+        image: TDImage.photo,
         titleText: "사진 기록",
-        titleColor: TDColor.Neutral.neutral800,
+        titleFont: .boldBody2,
+        titleColor: TDColor.Neutral.neutral600,
         isRequired: false,
         maxCount: 2
     )
@@ -94,14 +173,16 @@ final class DiaryCreatorView: BaseView {
         backgroundColor: TDColor.baseWhite,
         foregroundColor: TDColor.Semantic.error,
         radius: 12,
-        font: TDFont.boldHeader3.font
+        font: TDFont.boldHeader3.font,
+        inset: .init(top: 1, leading: 1, bottom: 1, trailing: 1)
     )
     let saveButton = TDBaseButton(
         title: "저장",
         backgroundColor: TDColor.Primary.primary500,
         foregroundColor: TDColor.baseWhite,
         radius: 12,
-        font: TDFont.boldHeader3.font
+        font: TDFont.boldHeader3.font,
+        inset: .init(top: 1, leading: 1, bottom: 1, trailing: 1)
     )
     let dummyView = UIView()
     
@@ -112,6 +193,12 @@ final class DiaryCreatorView: BaseView {
             updateDeleteButtonVisibility()
         }
     }
+    var isDeleteMode: Bool = false {
+        didSet {
+            updateDeleteModeUI()
+        }
+    }
+    var selectedKeywordsForDeletion: Set<Int> = []
     
     // MARK: - Initialize
     override init(frame: CGRect) {
@@ -138,12 +225,40 @@ final class DiaryCreatorView: BaseView {
         diaryMoodLabelContainerView.addSubview(diaryMoodLabel)
         diaryMoodLabelContainerView.addSubview(infoLabel)
         
+        // 키워드
+        keywordHeaderContainerView.addSubview(keywordHeaderTitleView)
+        keywordHeaderContainerView.addSubview(keywordHeaderDeleteButton)
+        keywordHeaderContainerView.addSubview(keywordHeaderDeleteView)
+
+        keywordHeaderTitleView.addArrangedSubview(keywordIcon)
+        keywordHeaderTitleView.addArrangedSubview(keywordTitleLabel)
+
+        // 키워드 취소 / 삭제 뷰
+        keywordHeaderDeleteView.addArrangedSubview(diaryKeywordCancelButton)
+        keywordHeaderDeleteView.addArrangedSubview(diaryKeywordDividerView)
+        keywordHeaderDeleteView.addArrangedSubview(diaryKeywordDeleteButton)
+
+        // 초기에는 삭제 뷰 숨김
+        keywordHeaderDeleteView.isHidden = true
+        
+        keywordVerticalStackView.addArrangedSubview(keywordHeaderContainerView)
+        keywordVerticalStackView.addArrangedSubview(keywordAddButton)
+        keywordVerticalStackView.addArrangedSubview(keywordTagListView)
+        keywordVerticalStackView.addArrangedSubview(deleteModeLabel)
+
+        // 초기에는 삭제 모드 레이블 숨김
+        deleteModeLabel.isHidden = true
+
         // 폼 정보
         stackView.addArrangedSubview(titleForm)
+        stackView.addArrangedSubview(keywordVerticalStackView)
         stackView.addArrangedSubview(recordTextView)
         stackView.addArrangedSubview(formPhotoView)
         stackView.addArrangedSubview(descriptionStackView)
         stackView.addArrangedSubview(dummyView)
+
+        // titleForm과 keywordVerticalStackView 사이의 spacing을 32로 설정
+        stackView.setCustomSpacing(32, after: titleForm)
         descriptionStackView.addArrangedSubview(descriptionLabel1)
         descriptionStackView.addArrangedSubview(descriptionLabel2)
         
@@ -185,6 +300,53 @@ final class DiaryCreatorView: BaseView {
         // 제목
         titleForm.snp.makeConstraints { make in
             make.height.equalTo(LayoutConstants.titleFormHeight)
+        }
+        
+        // 키워드
+        keywordHeaderContainerView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+            make.height.equalTo(20)
+        }
+        
+        keywordHeaderTitleView.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+
+        keywordHeaderDeleteButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(20)
+        }
+
+        keywordHeaderDeleteView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(20)
+        }
+
+        diaryKeywordCancelButton.snp.makeConstraints { make in
+            make.height.equalTo(20)
+        }
+
+        diaryKeywordDeleteButton.snp.makeConstraints { make in
+            make.height.equalTo(20)
+        }
+
+        diaryKeywordDividerView.snp.makeConstraints { make in
+            make.width.equalTo(1)
+            make.height.equalTo(16)
+        }
+
+        keywordIcon.snp.makeConstraints { make in
+            make.size.equalTo(16)
+        }
+        keywordAddButton.snp.makeConstraints { make in
+            make.height.equalTo(32)
+        }
+
+        keywordTagListView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
         }
 
         // 문장 기록
@@ -239,6 +401,8 @@ final class DiaryCreatorView: BaseView {
         diaryMoodLabel.setTitleLabel("감정 선택")
         diaryMoodLabel.setRequiredLabel()
         saveButton.isEnabled = false
+        keywordAddButton.setContentHuggingPriority(.required, for: .horizontal)
+        keywordAddButton.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
     // MARK: - Helper Method
@@ -253,9 +417,34 @@ final class DiaryCreatorView: BaseView {
             buttonStackView.addArrangedSubview(saveButton)
         }
     }
+    
+    func updateDeleteModeUI() {
+        if isDeleteMode {
+            // 삭제 모드 진입
+            keywordHeaderDeleteButton.isHidden = true
+            keywordHeaderDeleteView.isHidden = false
+            deleteModeLabel.isHidden = false
+            diaryKeywordDeleteButton.updateBackgroundColor(backgroundColor: TDColor.baseWhite, foregroundColor: TDColor.Semantic.error)
+        } else {
+            // 일반 모드
+            keywordHeaderDeleteButton.isHidden = false
+            keywordHeaderDeleteView.isHidden = true
+            deleteModeLabel.isHidden = true
+            diaryKeywordDeleteButton.updateBackgroundColor(backgroundColor: TDColor.baseWhite, foregroundColor: TDColor.Neutral.neutral600)
+            selectedKeywordsForDeletion.removeAll()
+            keywordTagListView.updateSelectedKeywords([])
+        }
+    }
+    
+    func updateKeywordTags(keywords: [String], keywordIds: [Int] = []) {
+        keywordTagListView.configure(keywords: keywords, keywordIds: keywordIds)
+        if isDeleteMode {
+            keywordTagListView.updateSelectedKeywords(selectedKeywordsForDeletion)
+        }
+    }
 }
 
-private extension DiaryCreatorView {
+private extension SimpleDiaryView {
     // MARK: - Constants
     enum LayoutConstants {
         static let dummyViewHeight: CGFloat = 40

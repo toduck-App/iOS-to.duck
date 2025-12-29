@@ -52,19 +52,21 @@ final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
         popupContentView.closeButton.addAction(UIAction { [weak self] _ in
             self?.dismissPopup()
         }, for: .touchUpInside)
-        
+
         popupContentView.deleteButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            delegate?.didTapDeleteButton(event: todo)
-            dismissPopup()
+            dismiss(animated: true) {
+                self.delegate?.didTapDeleteButton(event: self.todo)
+            }
         }, for: .touchUpInside)
-        
+
         popupContentView.delayToTomorrowButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            delegate?.didTapTomorrowButton(event: todo)
-            dismissPopup()
+            dismiss(animated: true) {
+                self.delegate?.didTapTomorrowButton(event: self.todo)
+            }
         }, for: .touchUpInside)
-        
+
         popupContentView.editAreaView.addGestureRecognizer(
             UITapGestureRecognizer(
                 target: self,
@@ -75,8 +77,9 @@ final class DetailTodoViewController: TDPopupViewController<DetailTodoView> {
     
     @objc
     private func editButtonTapped() {
-        dismissPopup()
-        delegate?.didTapEditButton(event: todo)
+        dismiss(animated: true) {
+            self.delegate?.didTapEditButton(event: self.todo)
+        }
     }
     
     // MARK: - UI Configuration

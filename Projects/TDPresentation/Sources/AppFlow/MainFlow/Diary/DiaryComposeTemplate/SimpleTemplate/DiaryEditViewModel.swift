@@ -2,7 +2,7 @@ import Combine
 import TDDomain
 import Foundation
 
-final class DiaryCreatorViewModel: BaseViewModel {
+final class SimpleDiaryViewModel: BaseViewModel {
     enum Input {
         case tapCategoryCell(String)
         case updateTitleTextField(String)
@@ -10,12 +10,15 @@ final class DiaryCreatorViewModel: BaseViewModel {
         case setImages([Data])
         case tapSaveButton
         case tapEditButton
+        case updateSelectedKeywords([UserKeyword])
+        case deleteSelectedKeywords([UserKeyword])
     }
     
     enum Output {
         case setImage
         case savedDiary
         case failure(String)
+        case updateKeywords([UserKeyword])
     }
     
     private let createDiaryUseCase: CreateDiaryUseCase
@@ -28,6 +31,7 @@ final class DiaryCreatorViewModel: BaseViewModel {
     private(set) var memo: String?
     private(set) var images: [Data] = []
     private(set) var preDiary: Diary?
+    private(set) var selectedKeywords: [UserKeyword] = []
     
     init(
         createDiaryUseCase: CreateDiaryUseCase,
@@ -42,6 +46,13 @@ final class DiaryCreatorViewModel: BaseViewModel {
         self.selectedMood = preDiary?.emotion.rawValue
         self.title = preDiary?.title
         self.memo = preDiary?.memo
+
+        // 기존 일기의 키워드를 초기 selectedKeywords에 설정
+        if let preDiary = preDiary {
+            self.selectedKeywords = preDiary.diaryKeywords.map { diaryKeyword in
+                UserKeyword(id: diaryKeyword.id, name: diaryKeyword.keywordName, category: .place)
+            }
+        }
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -61,6 +72,14 @@ final class DiaryCreatorViewModel: BaseViewModel {
                     Task { await self?.saveDiary() }
                 case .tapEditButton:
                     Task { await self?.editDiary() }
+                case .updateSelectedKeywords(let keywords):
+                    self?.selectedKeywords = keywords
+                    self?.output.send(.updateKeywords(keywords))
+                case .deleteSelectedKeywords(let keywords):
+                    self?.selectedKeywords.removeAll { keyword in
+                        keywords.contains(where: { $0.id == keyword.id })
+                    }
+                    self?.output.send(.updateKeywords(self?.selectedKeywords ?? []))
                 }
             }.store(in: &cancellables)
         
@@ -74,7 +93,8 @@ final class DiaryCreatorViewModel: BaseViewModel {
             emotion: Emotion(rawValue: selectedMood ?? "") ?? .angry,
             title: title ?? "",
             memo: memo ?? "",
-            diaryImageUrls: nil
+            diaryImageUrls: nil,
+            diaryKeywords: selectedKeywords.map { DiaryKeyword(id: $0.id, keywordName: $0.name) }
         )
     }
     

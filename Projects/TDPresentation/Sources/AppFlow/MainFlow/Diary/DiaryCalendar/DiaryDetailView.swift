@@ -37,6 +37,28 @@ public final class DiaryDetailView: UIView {
     private let dateLabel = TDLabel(toduckFont: TDFont.mediumCaption1, toduckColor: TDColor.Neutral.neutral600)
     private let titleLabel = TDLabel(toduckFont: TDFont.mediumBody2, toduckColor: TDColor.Neutral.neutral900)
     
+    // 키워드 섹션
+    private let keywordVerticalStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+    }
+
+    private let keywordHeaderStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+
+    private let keywordIcon = UIImageView(image: TDImage.Tomato.tomatoSmallEmtpy)
+    
+    private let keywordTitleLabel = TDLabel(
+        labelText: "오늘의 키워드",
+        toduckFont: TDFont.boldBody2,
+        toduckColor: TDColor.Neutral.neutral600
+    )
+
+    private let keywordTagListView = TodayKeywordTagListView()
+    
     // 문장 섹션
     private let sentenceVerticalStackView = UIStackView().then {
         $0.axis = .vertical
@@ -104,8 +126,8 @@ public final class DiaryDetailView: UIView {
     
     private func setupHierarchy() {
         addSubview(mainStackView)
-        
         setupDateSection()
+        setupKeywordSection()
         setupSentenceSection()
         setupPhotoSection()
     }
@@ -119,6 +141,14 @@ public final class DiaryDetailView: UIView {
         
         dateVerticalStackView.addArrangedSubview(dateLabel)
         dateVerticalStackView.addArrangedSubview(titleLabel)
+    }
+    
+    private func setupKeywordSection() {
+        keywordHeaderStackView.addArrangedSubview(keywordIcon)
+        keywordHeaderStackView.addArrangedSubview(keywordTitleLabel)
+        
+        keywordVerticalStackView.addArrangedSubview(keywordHeaderStackView)
+        keywordVerticalStackView.addArrangedSubview(keywordTagListView)
     }
     
     private func setupSentenceSection() {
@@ -146,6 +176,7 @@ public final class DiaryDetailView: UIView {
         pencilIcon.snp.makeConstraints { $0.size.equalTo(16) }
         photoIcon.snp.makeConstraints { $0.size.equalTo(16) }
         photoContentStackView.snp.makeConstraints { $0.height.equalTo(160) }
+        keywordIcon.snp.makeConstraints { $0.size.equalTo(16) }
     }
     
     private func configureUI() {
@@ -159,6 +190,7 @@ public final class DiaryDetailView: UIView {
         emotionImage: UIImage,
         date: String,
         title: String,
+        keywords: [String]? = nil,
         memo: String? = nil,
         photos: [UIImage]? = nil,
         imageURLs: [String]? = nil
@@ -171,6 +203,14 @@ public final class DiaryDetailView: UIView {
             .filter { $0 != dateHeaderStackView }
             .forEach { $0.removeFromSuperview() }
         
+        if let keywords, !keywords.isEmpty {
+            keywordTagListView.configure(keywords: keywords)
+            keywordVerticalStackView.isHidden = false
+            mainStackView.addArrangedSubview(keywordVerticalStackView)
+        } else {
+            keywordVerticalStackView.isHidden = true
+        }
+
         if let memo, !memo.isEmpty {
             sentenceContentLabel.setText(memo)
             sentenceVerticalStackView.isHidden = false
@@ -180,15 +220,18 @@ public final class DiaryDetailView: UIView {
         photoContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         currentImageURLs = imageURLs ?? []
         
+        
         if let photos, !photos.isEmpty {
             configurePhotos(photos)
             photoVerticalStackView.isHidden = false
             mainStackView.addArrangedSubview(photoVerticalStackView)
-        } else {
-            photoVerticalStackView.isHidden = true
-            let addPhotoButton = createAddPhotoButton(isEmpty: true)
-            mainStackView.addArrangedSubview(addPhotoButton)
         }
+// MARK: 1.1.0V 부터 사진 추가 버튼 제거
+//        else {
+//            photoVerticalStackView.isHidden = true
+//            let addPhotoButton = createAddPhotoButton(isEmpty: true)
+//            mainStackView.addArrangedSubview(addPhotoButton)
+//        }
     }
     
     // MARK: - Helpers
@@ -200,9 +243,17 @@ public final class DiaryDetailView: UIView {
             let imageView = createPhotoView(photo, index: index)
             photoContentStackView.addArrangedSubview(imageView)
         }
+// MARK: 1.1.0V 부터 사진 추가 버튼 제거
+//        if photos.count == 1 {
+//            photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
+//        }
         
         if photos.count == 1 {
-            photoContentStackView.addArrangedSubview(createAddPhotoButton(isEmpty: false))
+            let emptyView = UIView()
+            emptyView.snp.makeConstraints {
+                $0.width.height.equalTo(52).priority(.medium)
+            }
+            photoContentStackView.addArrangedSubview(emptyView)
         }
     }
     
@@ -246,7 +297,7 @@ public final class DiaryDetailView: UIView {
             $0.layer.cornerRadius = 12
             $0.layer.borderWidth = 1
             $0.layer.borderColor = TDColor.Neutral.neutral300.cgColor
-            $0.snp.makeConstraints { $0.height.equalTo(52) }
+            $0.snp.makeConstraints { $0.size.equalTo(52) }
         }
         
         button.addAction(UIAction { [weak self] _ in

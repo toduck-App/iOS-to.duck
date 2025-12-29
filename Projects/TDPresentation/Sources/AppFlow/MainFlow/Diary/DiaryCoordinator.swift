@@ -5,6 +5,7 @@ import TDCore
 protocol DiaryCoordinatorDelegate: AnyObject {
     func didTapCreateDiaryButton(selectedDate: Date)
     func didTapEditDiaryButton(diary: Diary)
+    func didTapArchiveButton()
 }
 
 final class DiaryCoordinator: Coordinator {
@@ -54,30 +55,46 @@ final class DiaryCoordinator: Coordinator {
 extension DiaryCoordinator: CoordinatorFinishDelegate {
     func didFinish(childCoordinator: Coordinator) {
         childCoordinators.removeAll { $0 === childCoordinator }
+        navigationController.popToRootViewController(animated: true)
+        if navigationController.presentedViewController != nil {
+            navigationController.dismiss(animated: true)
+        }
     }
 }
 
 // MARK: - Diary Coordinator Delegate
 extension DiaryCoordinator: DiaryCoordinatorDelegate {
     func didTapCreateDiaryButton(selectedDate: Date) {
-        let diaryMakorCoordinator = DiaryCreatorCoordinator(
+        let diaryComposeTemplateCoordinator = DiaryEmotionCoordinator(
             navigationController: navigationController,
             injector: injector,
             isEdit: false
         )
-        diaryMakorCoordinator.finishDelegate = self
-        childCoordinators.append(diaryMakorCoordinator)
-        diaryMakorCoordinator.start(selectedDate: selectedDate, diary: nil)
+        diaryComposeTemplateCoordinator.finishDelegate = self
+        childCoordinators.append(diaryComposeTemplateCoordinator)
+        diaryComposeTemplateCoordinator.start(selectedDate: selectedDate)
     }
     
     func didTapEditDiaryButton(diary: Diary) {
-        let diaryMakorCoordinator = DiaryCreatorCoordinator(
+        let diaryEditCoordinator = SimpleDiaryCoordinator(
             navigationController: navigationController,
             injector: injector,
             isEdit: true
         )
-        diaryMakorCoordinator.finishDelegate = self
-        childCoordinators.append(diaryMakorCoordinator)
-        diaryMakorCoordinator.start(selectedDate: nil, diary: diary)
+        diaryEditCoordinator.finishDelegate = self
+        childCoordinators.append(diaryEditCoordinator)
+        diaryEditCoordinator.start(selectedDate: nil, diary: diary)
+    }
+
+    func didTapArchiveButton() {
+        let fetchDiaryListUseCase = injector.resolve(FetchDiaryListUseCase.self)
+        let deleteDiaryUseCase = injector.resolve(DeleteDiaryUseCase.self)
+        let viewModel = DiaryArchiveViewModel(
+            fetchDiaryListUseCase: fetchDiaryListUseCase,
+            deleteDiaryUseCase: deleteDiaryUseCase
+        )
+        let archiveViewController = DiaryArchiveViewController(viewModel: viewModel)
+        archiveViewController.coordinator = self
+        navigationController.pushTDViewController(archiveViewController, animated: true)
     }
 }

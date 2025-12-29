@@ -45,4 +45,26 @@ public struct DiaryServiceImpl: DiaryService {
         let response = try await provider.requestDecodable(of: DiaryStreakResponseDTO.self, target)
         return response.value
     }
+    
+    
+    public func fetchUserKeywords() async throws -> [UserKeywordDTO] {
+        let target = DiaryAPI.fetchUserKeywords
+        let response = try await provider.requestDecodable(of: UserKeywordDtos.self, target)
+        return response.value.userKeywordDtos
+    }
+    
+    public func connectDiaryKeyword(diary: DiaryKeywordConnectRequestDTO) async throws {
+        let target = DiaryAPI.connectKeyword(diary: diary)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func createUserKeyword(dto: UserKeywordDTO) async throws {
+        let target = DiaryAPI.createUserKeyword(diary: dto)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+    
+    public func deleteUserKeywords(dto: UserKeywordDTO) async throws {
+        let target = DiaryAPI.deleteUserKeywords(diary: dto)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
 }

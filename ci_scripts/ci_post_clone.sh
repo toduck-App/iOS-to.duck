@@ -5,7 +5,7 @@ echo "ci_post_clone Script"
 echo "=================================================================="
 brew tap tuist/tuist
 echo "installing Tuist.."
-brew install tuist@4.30.0
+brew install tuist@4.115.1
 echo "installed Tuist"
 echo "------------------------------------------------------------------"
 
@@ -14,6 +14,8 @@ echo "tuist cleaning"
 tuist clean
 echo "tuist installing"
 tuist install
+
+echo "current directory: $(pwd)"
 
 # *.xcconfig 파일이 생성될 폴더 경로
 FOLDER_PATH="/Volumes/workspace/repository/Projects/toduck/SupportingFiles"

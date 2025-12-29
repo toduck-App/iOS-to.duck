@@ -71,12 +71,14 @@ final class DeleteEventViewController: TDPopupViewController<DeleteEventView> {
     private func setupButtonAction() {
         popupContentView.currentEventDeleteButton.addAction(UIAction { [weak self] _ in
             self?.delegate?.didTapTodayDeleteButton(eventId: self?.eventId, eventMode: self?.eventMode ?? .schedule)
+            self?.dismissPopup()
         }, for: .touchUpInside)
-        
+
         popupContentView.afterEventDeleteButton.addAction(UIAction { [weak self] _ in
             self?.delegate?.didTapAllDeleteButton(eventId: self?.eventId, eventMode: self?.eventMode ?? .schedule)
+            self?.dismissPopup()
         }, for: .touchUpInside)
-        
+
         popupContentView.cancelButton.addAction(UIAction { [weak self] _ in
             self?.dismiss(animated: true)
         }, for: .touchUpInside)

@@ -26,7 +26,11 @@ public struct DataAssembly: Assembly {
             guard let awsService = container.resolve(AwsService.self) else {
                 fatalError("awsService is not registered")
             }
-            return DiaryRepositoryImpl(diaryService: diaryService, awsService: awsService)
+            
+            return DiaryRepositoryImpl(
+                diaryService: diaryService,
+                awsService: awsService
+            )
         }.inObjectScope(.container)
         
         container.register(FocusRepository.self) { _ in
