@@ -123,8 +123,8 @@ final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
             }
             
         case .post(let postId, let commentIdString):
-            if let postId = Int(postId),
-               let commentIdString, let commentId = Int(commentIdString) {
+            if let postId = Int(postId) {
+                let commentId = commentIdString.flatMap { Int($0) }
                 socialCoordinator.didTapPost(postId: postId, commentId: commentId)
             }
             
