@@ -233,7 +233,7 @@ extension SocialDetailViewController: SocialPostDelegate, TDPhotoPickerDelegate,
     
     func didTapSharePost(_ cell: UICollectionViewCell, _ postID: Post.ID) {
         let icon = TDImage.appIcon
-        let profileURL = URL(string: "toduck://post?postId=\(viewModel.postID)")!
+        let profileURL = URL(string: "https://toduck.app/_ul/post?postId=\(viewModel.postID)")!
         let shareItem = PostShareItem(
             url: profileURL,
             title: "Toduck에서 게시물을 확인하세요!",
