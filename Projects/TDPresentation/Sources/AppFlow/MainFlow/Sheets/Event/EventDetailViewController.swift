@@ -75,6 +75,7 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     override func configure() {
         super.configure()
         loadImages()
+        configureActionButton()
 
         backButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.finish(by: .pop)
@@ -85,6 +86,13 @@ final class EventDetailViewController: BaseViewController<BaseView> {
                   let deepLinkType = DeepLinkType(url: url) else { return }
             self?.coordinator?.deepLinkRouter?.route(to: deepLinkType, dismissPresented: true)
         }, for: .touchUpInside)
+    }
+
+    private func configureActionButton() {
+        actionButton.isHidden = !eventDetail.isButtonVisible
+        if let buttonText = eventDetail.buttonText, !buttonText.isEmpty {
+            actionButton.setTitle(buttonText, for: .normal)
+        }
     }
 
     override func layout() {
@@ -197,7 +205,7 @@ final class EventDetailViewController: BaseViewController<BaseView> {
             .scaleFactor(UIScreen.main.scale)
         ]
 
-        for url in eventDetail.imageURLs.reversed() {
+        for url in eventDetail.imageURLs {
             let (iv, h) = appendImageView()
             heightConstraints.append(h)
 
