@@ -30,7 +30,7 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     }
 
     private(set) var actionButton = TDBaseButton(
-        title: "게시글 작성하러 가기",
+        title: "이벤트 참여하러 가기",
         backgroundColor: TDColor.Event.buttonEventBackground,
         foregroundColor: TDColor.baseWhite,
         radius: 12,
@@ -92,6 +92,8 @@ final class EventDetailViewController: BaseViewController<BaseView> {
         actionButton.isHidden = !eventDetail.isButtonVisible
         if let buttonText = eventDetail.buttonText, !buttonText.isEmpty {
             actionButton.setTitle(buttonText, for: .normal)
+        } else {
+            actionButton.setTitle("이벤트 참여하러 가기", for: .normal)
         }
     }
 
@@ -119,7 +121,9 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let bottomInset = view.safeAreaInsets.bottom + 24 + 56 + 12
+        let bottomInset: CGFloat = actionButton.isHidden
+            ? view.safeAreaInsets.bottom
+            : view.safeAreaInsets.bottom + 24 + 56 + 12
         if scrollView.contentInset.bottom != bottomInset {
             scrollView.contentInset.bottom = bottomInset
             var verticalInsets = scrollView.verticalScrollIndicatorInsets

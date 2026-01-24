@@ -181,6 +181,8 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
         detailsButton.isHidden = !event.isButtonVisible
         if let buttonText = event.buttonText, !buttonText.isEmpty {
             detailsButton.setTitle(buttonText, for: .normal)
+        } else {
+            detailsButton.setTitle("이벤트 내용 보기", for: .normal)
         }
     }
 
