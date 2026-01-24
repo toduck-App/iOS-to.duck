@@ -69,7 +69,9 @@ final class DetailTodoView: BaseView {
     let memoContentLabel = TDLabel(
         toduckFont: TDFont.mediumBody2,
         toduckColor: TDColor.Neutral.neutral800
-    )
+    ).then {
+        $0.numberOfLines = 0
+    }
     
     private let buttonContainerHorizontalStackView = UIStackView().then {
         $0.axis = .horizontal
