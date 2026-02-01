@@ -29,16 +29,17 @@ final class DiaryKeywordCell: UICollectionViewCell {
     }
     
     func setupUI() {
-        backgroundColor = TDColor.Neutral.neutral100
-        layer.cornerRadius = 8
+        contentView.backgroundColor = TDColor.Neutral.neutral100
+        contentView.layer.cornerRadius = 8
     }
-    
+
     func setupLayout() {
         contentView.addSubview(tagLabel)
-        
+
         tagLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(12)
             make.top.bottom.equalToSuperview().inset(6)
+            make.height.equalTo(20)
         }
     }
     
@@ -54,16 +55,16 @@ final class DiaryKeywordCell: UICollectionViewCell {
     private func normalConfigure(keyword: String, isSelected: Bool) {
         tagLabel.setText(keyword)
         isSelected ? tagLabel.setColor(TDColor.Primary.primary500) : tagLabel.setColor(TDColor.Neutral.neutral700)
-        isSelected ? (backgroundColor = TDColor.Primary.primary100) : (backgroundColor = TDColor.Neutral.neutral100)
-        self.layer.borderColor = nil
-        self.layer.borderWidth = 0
+        contentView.backgroundColor = isSelected ? TDColor.Primary.primary100 : TDColor.Neutral.neutral100
+        contentView.layer.borderColor = nil
+        contentView.layer.borderWidth = 0
     }
-    
+
     private func removeConfigure(keyword: String, isSelected: Bool) {
         tagLabel.setText(keyword)
         isSelected ? tagLabel.setColor(TDColor.Semantic.error) : tagLabel.setColor(TDColor.Neutral.neutral700)
-        isSelected ? self.layer.borderColor = TDColor.Semantic.error.cgColor : (self.layer.borderColor = nil)
-        isSelected ? (self.layer.borderWidth = 1) : (self.layer.borderWidth = 0 )
-        isSelected ? (backgroundColor = TDColor.baseWhite) : (backgroundColor = TDColor.Neutral.neutral100)
+        contentView.layer.borderColor = isSelected ? TDColor.Semantic.error.cgColor : nil
+        contentView.layer.borderWidth = isSelected ? 1 : 0
+        contentView.backgroundColor = isSelected ? TDColor.baseWhite : TDColor.Neutral.neutral100
     }
 }

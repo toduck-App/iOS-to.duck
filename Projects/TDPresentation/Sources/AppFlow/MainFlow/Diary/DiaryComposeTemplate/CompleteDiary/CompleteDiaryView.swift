@@ -165,6 +165,23 @@ final class CompleteDiaryView: BaseView {
         fillStreakCircles(count: count)
         configureLottieAnimation(emotion: emotion)
         setNeedsLayout()
+        animateCommentToast()
+    }
+
+    private func animateCommentToast() {
+        commentContainerView.alpha = 0
+        commentContainerView.transform = CGAffineTransform(translationX: 0, y: 30)
+
+        UIView.animate(
+            withDuration: 0.6,
+            delay: 0.5,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 0.5,
+            options: .curveEaseOut
+        ) {
+            self.commentContainerView.alpha = 1
+            self.commentContainerView.transform = .identity
+        }
     }
 
     private func configureLottieAnimation(emotion: Emotion) {
