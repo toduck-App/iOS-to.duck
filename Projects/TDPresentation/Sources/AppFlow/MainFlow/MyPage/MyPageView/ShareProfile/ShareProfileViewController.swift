@@ -32,7 +32,7 @@ final class ShareProfileViewController: BaseViewController<ShareProfileView> {
     private func didTapShareButton() {
         guard let userId = TDTokenManager.shared.userId else { return }
         let icon = TDImage.appIcon
-        let profileURL = URL(string: "toduck://profile?userId=\(userId)")!
+        let profileURL = URL(string: "https://toduck.app/_ul/profile?userId=\(userId)")!
         let shareItem = ProfileShareItem(
             url: profileURL,
             title: "Toduck에서 나의 프로필을 확인하세요!",

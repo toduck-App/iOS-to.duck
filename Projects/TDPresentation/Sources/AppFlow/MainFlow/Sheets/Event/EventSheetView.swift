@@ -171,7 +171,19 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
         lastWidth = pagerContainer.bounds.width > 0 ? pagerContainer.bounds.width : UIScreen.main.bounds.width
         applyHeight(for: currentAspect, animated: false)
 
+        updateDetailsButton(for: currentPageIndex)
         collectionView.reloadData()
+    }
+
+    private func updateDetailsButton(for index: Int) {
+        guard events.indices.contains(index) else { return }
+        let event = events[index]
+        detailsButton.isHidden = !event.isButtonVisible
+        if let buttonText = event.buttonText, !buttonText.isEmpty {
+            detailsButton.setTitle(buttonText, for: .normal)
+        } else {
+            detailsButton.setTitle("이벤트 내용 보기", for: .normal)
+        }
     }
 
     // MARK: - DataSource
@@ -204,6 +216,7 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
         pageControl.currentPage = targetPage
         currentPageIndex = targetPage
 
+        updateDetailsButton(for: targetPage)
         if let ar = aspectByIndex[targetPage] {
             applyHeight(for: ar, animated: true)
         }
@@ -215,6 +228,7 @@ final class EventSheetView: BaseView, UICollectionViewDataSource, UICollectionVi
         guard events.indices.contains(page) else { return }
         pageControl.currentPage = page
         currentPageIndex = page
+        updateDetailsButton(for: page)
         if let ar = aspectByIndex[page] {
             applyHeight(for: ar, animated: true)
         }

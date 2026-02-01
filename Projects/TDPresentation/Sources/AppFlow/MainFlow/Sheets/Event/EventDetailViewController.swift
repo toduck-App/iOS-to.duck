@@ -30,7 +30,7 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     }
 
     private(set) var actionButton = TDBaseButton(
-        title: "게시글 작성하러 가기",
+        title: "이벤트 참여하러 가기",
         backgroundColor: TDColor.Event.buttonEventBackground,
         foregroundColor: TDColor.baseWhite,
         radius: 12,
@@ -75,6 +75,7 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     override func configure() {
         super.configure()
         loadImages()
+        configureActionButton()
 
         backButton.addAction(UIAction { [weak self] _ in
             self?.coordinator?.finish(by: .pop)
@@ -85,6 +86,15 @@ final class EventDetailViewController: BaseViewController<BaseView> {
                   let deepLinkType = DeepLinkType(url: url) else { return }
             self?.coordinator?.deepLinkRouter?.route(to: deepLinkType, dismissPresented: true)
         }, for: .touchUpInside)
+    }
+
+    private func configureActionButton() {
+        actionButton.isHidden = !eventDetail.isButtonVisible
+        if let buttonText = eventDetail.buttonText, !buttonText.isEmpty {
+            actionButton.setTitle(buttonText, for: .normal)
+        } else {
+            actionButton.setTitle("이벤트 참여하러 가기", for: .normal)
+        }
     }
 
     override func layout() {
@@ -111,7 +121,9 @@ final class EventDetailViewController: BaseViewController<BaseView> {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let bottomInset = view.safeAreaInsets.bottom + 24 + 56 + 12
+        let bottomInset: CGFloat = actionButton.isHidden
+            ? view.safeAreaInsets.bottom
+            : view.safeAreaInsets.bottom + 24 + 56 + 12
         if scrollView.contentInset.bottom != bottomInset {
             scrollView.contentInset.bottom = bottomInset
             var verticalInsets = scrollView.verticalScrollIndicatorInsets
@@ -197,7 +209,7 @@ final class EventDetailViewController: BaseViewController<BaseView> {
             .scaleFactor(UIScreen.main.scale)
         ]
 
-        for url in eventDetail.imageURLs.reversed() {
+        for url in eventDetail.imageURLs {
             let (iv, h) = appendImageView()
             heightConstraints.append(h)
 
