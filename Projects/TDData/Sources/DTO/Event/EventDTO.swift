@@ -13,7 +13,9 @@ public struct EventDTO: Decodable, Sendable {
     public let endAt: String
     public let thumbUrl: String
     public let appVersion: String
-    
+    public let isButtonVisible: Bool?
+    public let buttonText: String?
+
     func convertToEvent() -> TDEvent {
         TDEvent(
             id: id,
@@ -21,7 +23,9 @@ public struct EventDTO: Decodable, Sendable {
             start: Date.convertFromString(startAt, format: .serverDateTime) ?? Date() ,
             end: Date.convertFromString(endAt, format: .serverDateTime) ?? Date(),
             thumbURL: URL(string: thumbUrl),
-            minAppVersion: appVersion
+            minAppVersion: appVersion,
+            isButtonVisible: isButtonVisible ?? false,
+            buttonText: buttonText
         )
     }
 }
