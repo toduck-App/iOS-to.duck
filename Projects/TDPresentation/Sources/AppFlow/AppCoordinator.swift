@@ -155,6 +155,7 @@ public final class AppCoordinator: Coordinator {
                 TDLogger.info("✅ FCM 토큰 서버 등록 시도: \(token)")
                 try await registerDeviceTokenUseCase.execute(token: token)
                 TDLogger.info("✅ FCM 토큰 서버 등록 성공")
+                TDTokenManager.shared.registerFCMToken(token)
             } catch {
                 TDLogger.error("❌ FCM 토큰 서버 등록 실패: \(error)")
                 self.pendingFCMToken = token
