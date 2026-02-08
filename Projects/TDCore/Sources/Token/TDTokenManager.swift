@@ -102,7 +102,8 @@ public final class TDTokenManager {
         refreshToken = nil
         refreshTokenExpiredAt = nil
         userId = nil
-        
+        pendingFCMToken = nil
+
         try await TDKeyChainManager.shared.delete(account: KeyChainConstant.accessToken.rawValue)
         try await TDKeyChainManager.shared.delete(account: KeyChainConstant.refreshToken.rawValue)
         try await TDKeyChainManager.shared.delete(account: KeyChainConstant.refreshTokenExpiredAt.rawValue)
