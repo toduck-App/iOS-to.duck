@@ -20,6 +20,16 @@ final class MyPageViewController: BaseViewController<MyPageView> {
             ]
         ),
         MenuSection(
+            header: "고객센터",
+            items: [
+                .faq,
+                .inquiry,
+                .inquiryHistory,
+                .notice,
+                .userGuide
+            ]
+        ),
+        MenuSection(
             header: "서비스 약관",
             items: [
                 .termsOfUse,
@@ -90,6 +100,16 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 coordinator?.didTapMyComments()
             case .blockManagement:
                 coordinator?.didTapBlockManagement()
+            case .faq:
+                coordinator?.didTapFAQ()
+            case .inquiry:
+                coordinator?.didTapInquiry()
+            case .inquiryHistory:
+                coordinator?.didTapInquiryHistory()
+            case .notice:
+                coordinator?.didTapNotice()
+            case .userGuide:
+                coordinator?.didTapUserGuide()
             case .termsOfUse:
                 coordinator?.didTapTermsOfUse()
             case .privacyPolicy:
@@ -212,6 +232,11 @@ enum MenuItem {
     case postManagement
     case myComments
     case blockManagement
+    case faq
+    case inquiry
+    case inquiryHistory
+    case notice
+    case userGuide
     case termsOfUse
     case privacyPolicy
 
@@ -221,6 +246,11 @@ enum MenuItem {
         case .postManagement: "작성 글 관리"
         case .myComments: "나의 댓글"
         case .blockManagement: "차단 관리"
+        case .faq: "자주 묻는 질문"
+        case .inquiry: "문의 하기"
+        case .inquiryHistory: "문의 내역"
+        case .notice: "공지사항"
+        case .userGuide: "토덕 이용가이드"
         case .termsOfUse: "이용 약관"
         case .privacyPolicy: "개인정보 처리방침"
         }

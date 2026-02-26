@@ -143,6 +143,26 @@ extension MyPageCoordinator: NavigationDelegate {
         myBlockCoordinator.start()
     }
 
+    func didTapFAQ() {
+        // TODO: FAQ 화면 연결
+    }
+
+    func didTapInquiry() {
+        // TODO: 문의 하기 화면 연결
+    }
+
+    func didTapInquiryHistory() {
+        // TODO: 문의 내역 화면 연결
+    }
+
+    func didTapNotice() {
+        // TODO: 공지사항 화면 연결
+    }
+
+    func didTapUserGuide() {
+        // TODO: 토덕 이용가이드 화면 연결
+    }
+
     func didTapTermsOfUse() {
         let termOfUseCoordinator = TermOfUseCoordinator(
             navigationController: navigationController,
