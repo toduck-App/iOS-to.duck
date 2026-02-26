@@ -64,6 +64,7 @@ public enum TDImage {
     public static let placeSmall = TDDesignAsset.Images.placeSmall.image
     public static let talkNeutral = TDDesignAsset.Images.talkNeutral.image
     public static let peopleNeutral = TDDesignAsset.Images.peopleNeutral.image
+    public static let counselMedium = TDDesignAsset.Images.counselMedium.image
     
     public enum Alert {
         public static let deleteEvent = TDDesignAsset.Images.deleteEvent.image

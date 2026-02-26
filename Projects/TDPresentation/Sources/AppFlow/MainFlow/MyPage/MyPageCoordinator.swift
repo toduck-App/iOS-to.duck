@@ -144,7 +144,13 @@ extension MyPageCoordinator: NavigationDelegate {
     }
 
     func didTapFAQ() {
-        // TODO: FAQ 화면 연결
+        let faqCoordinator = FAQCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        faqCoordinator.finishDelegate = self
+        childCoordinators.append(faqCoordinator)
+        faqCoordinator.start()
     }
 
     func didTapInquiry() {
