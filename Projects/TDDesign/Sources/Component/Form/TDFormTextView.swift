@@ -92,10 +92,11 @@ public final class TDFormTextView: UIView {
         maxHeight: CGFloat = 112
     ) {
         titleImageView.image = image
+        titleImageView.isHidden = (image == nil)
         self.maxCharacter = maxCharacter
         self.maxHeight = maxHeight
         super.init(frame: .zero)
-        
+
         // Title 설정
         titleImageView.contentMode = .scaleAspectFit
         titleLabel.setTitleLabel(title)

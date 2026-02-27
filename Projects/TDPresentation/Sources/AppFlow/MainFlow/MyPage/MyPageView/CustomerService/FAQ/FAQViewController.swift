@@ -20,5 +20,8 @@ final class FAQViewController: BaseViewController<FAQView> {
                 self?.coordinator?.finish(by: .pop)
             })
         )
+        layoutView.inquiryButton.addAction(UIAction(handler: { [weak self] _ in
+            self?.coordinator?.didTapInquiry()
+        }), for: .touchUpInside)
     }
 }

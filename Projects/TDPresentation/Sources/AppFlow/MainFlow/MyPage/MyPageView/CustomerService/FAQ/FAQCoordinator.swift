@@ -21,4 +21,22 @@ final class FAQCoordinator: Coordinator {
         faqViewController.coordinator = self
         navigationController.pushTDViewController(faqViewController, animated: true)
     }
+
+    func didTapInquiry() {
+        let inquiryCoordinator = InquiryCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        inquiryCoordinator.finishDelegate = self
+        childCoordinators.append(inquiryCoordinator)
+        inquiryCoordinator.start()
+    }
+}
+
+// MARK: - Coordinator Finish Delegate
+
+extension FAQCoordinator: CoordinatorFinishDelegate {
+    func didFinish(childCoordinator: Coordinator) {
+        childCoordinators.removeAll { $0 === childCoordinator }
+    }
 }

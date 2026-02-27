@@ -104,6 +104,7 @@ public final class TDFormPhotoView: UIView {
         // 타이틀 설정
         titleImageView.contentMode = .scaleAspectFit
         titleImageView.image = image
+        titleImageView.isHidden = (image == nil)
         title.setTitleLabel(titleText)
         title.setTitleFont(titleFont)
         title.setTitleColor(titleColor)

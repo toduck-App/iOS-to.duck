@@ -154,7 +154,13 @@ extension MyPageCoordinator: NavigationDelegate {
     }
 
     func didTapInquiry() {
-        // TODO: 문의 하기 화면 연결
+        let inquiryCoordinator = InquiryCoordinator(
+            navigationController: navigationController,
+            injector: injector
+        )
+        inquiryCoordinator.finishDelegate = self
+        childCoordinators.append(inquiryCoordinator)
+        inquiryCoordinator.start()
     }
 
     func didTapInquiryHistory() {

@@ -16,11 +16,21 @@ final class FAQView: BaseView {
         $0.alignment = .fill
     }
 
+    private(set) lazy var inquiryButton = TDBaseButton(
+        title: "문의하기",
+        image: TDImage.addSmall.withRenderingMode(.alwaysTemplate).withTintColor(.white),
+        backgroundColor: TDColor.Primary.primary500,
+        foregroundColor: TDColor.baseWhite,
+        radius: 25,
+        font: TDFont.boldHeader4.font
+    )
+
     // MARK: - Setup
 
     override func addview() {
         addSubview(scrollView)
         scrollView.addSubview(contentStackView)
+        addSubview(inquiryButton)
     }
 
     override func configure() {
@@ -35,6 +45,12 @@ final class FAQView: BaseView {
         contentStackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalToSuperview()
+        }
+        inquiryButton.snp.makeConstraints {
+            $0.width.equalTo(120)
+            $0.height.equalTo(50)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(20)
         }
     }
 
