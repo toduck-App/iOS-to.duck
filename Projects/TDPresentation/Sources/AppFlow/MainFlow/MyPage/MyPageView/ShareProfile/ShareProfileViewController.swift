@@ -8,6 +8,7 @@ final class ShareProfileViewController: BaseViewController<ShareProfileView> {
 
     override init() {
         super.init()
+        hidesBottomBarWhenPushed = true
     }
 
     override func configure() {

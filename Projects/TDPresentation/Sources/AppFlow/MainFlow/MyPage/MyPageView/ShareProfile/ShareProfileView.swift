@@ -21,7 +21,7 @@ final class ShareProfileView: BaseView {
     )
     
     private let imageView = UIImageView().then {
-        $0.contentMode = .center
+        $0.contentMode = .scaleAspectFill
         $0.image = TDImage.Illust.shareProfile
     }
     
@@ -38,11 +38,12 @@ final class ShareProfileView: BaseView {
     override func configure() {
         backgroundColor = TDColor.baseWhite
         titleLabel.setText("""
-        나와 함께할 친구에게
-        초대장을 보내보세요!
+        혼자보다 함께, 실행이 더 쉬워져요!
+        나와 함께할 친구에게 초대장을 보내보세요 ✉️
         """)
         infoLabel.setText("""
-        친구와 함께 하면 더 큰 시너지를 낼 수 있어요!
+        함께하는 친구는 또 다른 동기부여가 돼요.
+        당신의 루틴에 힘을 더해 보세요!
         """)
         titleLabel.numberOfLines = 0
         infoLabel.numberOfLines = 0
@@ -66,9 +67,7 @@ final class ShareProfileView: BaseView {
         }
         
         imageView.snp.makeConstraints {
-            $0.top.equalTo(labelStack.snp.bottom)
-            $0.bottom.equalTo(inviteButton.snp.top)
-            $0.leading.trailing.equalToSuperview()
+            $0.bottom.leading.trailing.equalToSuperview()
         }
     }
 }

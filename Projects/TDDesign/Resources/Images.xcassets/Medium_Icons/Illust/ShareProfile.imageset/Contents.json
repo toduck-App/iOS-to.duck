@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Ilust_ShareProfile.png",
+      "filename" : "shareProfile.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Ilust_ShareProfile@2x.png",
+      "filename" : "shareProfile@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Ilust_ShareProfile@3x.png",
+      "filename" : "shareProfile@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
