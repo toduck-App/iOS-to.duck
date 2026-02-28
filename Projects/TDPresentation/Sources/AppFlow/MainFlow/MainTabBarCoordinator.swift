@@ -104,7 +104,21 @@ final class MainTabBarCoordinator: Coordinator, DeepLinkRoutable {
             
         case .profile, .post, .createPost:
             handleSocialDeepLink(link)
+
+        case .qrWebLogin(let sessionToken):
+            showQRWebLoginPopup(sessionToken: sessionToken)
         }
+    }
+
+    private func showQRWebLoginPopup(sessionToken: String) {
+        let authorizeWebSessionUseCase = injector.resolve(AuthorizeWebSessionUseCase.self)
+        let popupVC = QRWebLoginPopupViewController(
+            sessionToken: sessionToken,
+            authorizeWebSessionUseCase: authorizeWebSessionUseCase
+        )
+        popupVC.modalPresentationStyle = .overFullScreen
+        popupVC.modalTransitionStyle = .crossDissolve
+        tabBarController.present(popupVC, animated: true)
     }
     
     private func handleSocialDeepLink(_ link: DeepLinkType) {

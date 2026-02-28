@@ -106,6 +106,11 @@ public struct AuthServiceImpl: AuthService {
         }
     }
     
+    public func authorizeWebSession(sessionToken: String) async throws {
+        let target = AuthAPI.authorizeWebSession(sessionToken: sessionToken)
+        try await provider.requestDecodable(of: EmptyResponse.self, target)
+    }
+
     private func mapToLoginUserResponseDTO(from response: MFResponse<LoginUserResponseBody>) throws -> LoginUserResponseDTO {
         if let refreshToken = response.extractRefreshToken(),
            let refreshTokenExpiredAt = response.extractRefreshTokenExpiry() {
