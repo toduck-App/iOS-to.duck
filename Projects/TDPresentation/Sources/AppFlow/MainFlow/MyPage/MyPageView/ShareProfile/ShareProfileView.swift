@@ -30,9 +30,11 @@ final class ShareProfileView: BaseView {
         size: .large
     )
     
+    private let topBlurGradientView = TopBlurGradientCircleView(color: TDColor.Primary.primary500)
+    
     override func addview() {
         [titleLabel, infoLabel].forEach { labelStack.addArrangedSubview($0) }
-        [labelStack, imageView, inviteButton].forEach(addSubview)
+        [labelStack, imageView, inviteButton, topBlurGradientView].forEach(addSubview)
     }
     
     override func configure() {
@@ -68,6 +70,12 @@ final class ShareProfileView: BaseView {
         
         imageView.snp.makeConstraints {
             $0.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        topBlurGradientView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.equalToSuperview().multipliedBy(1.2)
+            $0.height.equalTo(topBlurGradientView.snp.width)
         }
     }
 }
