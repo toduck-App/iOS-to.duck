@@ -10,4 +10,5 @@ public protocol AuthService {
     func requestKakaoLogin() async throws -> String
     func requestLogin(loginId: String, password: String) async throws -> LoginUserResponseDTO
     func refreshToken() async throws -> LoginUserResponseDTO
+    func authorizeWebSession(sessionToken: String) async throws
 }

@@ -169,7 +169,7 @@ public final class AppCoordinator: Coordinator {
             pendingDeepLink = link
             return
         }
-        
+
         guard let tabBarCoordinator = childCoordinators.first(where: { $0 is MainTabBarCoordinator }) as? MainTabBarCoordinator else {
             pendingDeepLink = link
             startTabBarFlow { [weak self] in
@@ -177,7 +177,7 @@ public final class AppCoordinator: Coordinator {
             }
             return
         }
-        
+
         tabBarCoordinator.handleDeepLink(link)
     }
     

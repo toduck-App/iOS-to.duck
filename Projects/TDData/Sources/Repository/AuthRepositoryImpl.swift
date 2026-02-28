@@ -72,6 +72,10 @@ public struct AuthRepositoryImpl: AuthRepository {
         let loginUserResponseDTO = try await service.refreshToken()
         try await saveToken(response: loginUserResponseDTO)
     }
+
+    public func authorizeWebSession(sessionToken: String) async throws {
+        try await service.authorizeWebSession(sessionToken: sessionToken)
+    }
     
     private func saveToken(response: LoginUserResponseDTO) async throws {
         let accessToken = response.accessToken

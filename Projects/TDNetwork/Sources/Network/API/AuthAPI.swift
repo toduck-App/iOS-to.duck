@@ -1,4 +1,5 @@
 import Foundation
+import TDCore
 
 public enum AuthAPI {
     case requestPhoneVerification(phoneNumber: String) // 휴대폰 본인 인증 요청
@@ -10,6 +11,7 @@ public enum AuthAPI {
     case refreshToken(refreshToken: String) // 리프래시 토큰 발급
     case saveFCMToken(userId: Int, fcmToken: String) // FCM 토큰 저장
     case deleteUser(userId: Int) // 유저 삭제
+    case authorizeWebSession(sessionToken: String) // QR 코드 웹 로그인 인증
 }
 
 extension AuthAPI: MFTarget {
@@ -37,6 +39,8 @@ extension AuthAPI: MFTarget {
             return "/users/\(userId)/fcm-token"
         case .deleteUser(let userId):
             return "/users/\(userId)"
+        case .authorizeWebSession:
+            return "/v1/auth/web/authorize"
         }
     }
     
@@ -50,7 +54,8 @@ extension AuthAPI: MFTarget {
         case .registerUser,
                 .login,
                 .loginOauth,
-                .saveFCMToken:
+                .saveFCMToken,
+                .authorizeWebSession:
             return .post
         case .deleteUser:
             return .delete
@@ -73,7 +78,8 @@ extension AuthAPI: MFTarget {
         case .registerUser,
                 .login,
                 .saveFCMToken,
-                .refreshToken:
+                .refreshToken,
+                .authorizeWebSession:
             return nil
         case .deleteUser(let userId):
             // TODO: - 나중 결정?
@@ -110,6 +116,10 @@ extension AuthAPI: MFTarget {
                 parameters: ["fcmToken": fcmToken]
             )
             
+        case .authorizeWebSession(let sessionToken):
+            return .requestParameters(
+                parameters: ["sessionToken": sessionToken]
+            )
         case .checkDuplicateUserID,
                 .requestPhoneVerification,
                 .checkPhoneVerification,
@@ -132,6 +142,11 @@ extension AuthAPI: MFTarget {
             let cookieHeaderValue = "refreshToken=\(refreshToken)"
             let headers: MFHeaders = [.cookie(cookieHeaderValue), .accept("application/json")]
             return headers
+        case .authorizeWebSession:
+            return [
+                .authorization(bearerToken: TDTokenManager.shared.accessToken ?? ""),
+                .contentType("application/json")
+            ]
         case .requestPhoneVerification,
                 .saveFCMToken,
                 .deleteUser:
