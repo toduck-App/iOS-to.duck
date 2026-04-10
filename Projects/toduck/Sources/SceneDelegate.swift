@@ -77,6 +77,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // /_ul/ 이후 경로 추출
         let pathWithoutPrefix = String(url.path.dropFirst(5)) // "/_ul/" 제거
 
+        // QR 웹 로그인 처리: /_ul/w/{sessionToken}
+        if pathWithoutPrefix.hasPrefix("w/") {
+            let sessionToken = String(pathWithoutPrefix.dropFirst(2))
+            guard !sessionToken.isEmpty else { return }
+            var components = URLComponents()
+            components.scheme = "toduck"
+            components.host = "qrWebLogin"
+            components.queryItems = [URLQueryItem(name: "sessionToken", value: sessionToken)]
+            guard let customSchemeURL = components.url else { return }
+            handleDeepLink(url: customSchemeURL)
+            return
+        }
+
         // toduck:// 스킴으로 변환
         var components = URLComponents()
         components.scheme = "toduck"

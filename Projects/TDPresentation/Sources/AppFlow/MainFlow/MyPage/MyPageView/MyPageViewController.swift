@@ -16,7 +16,8 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 .notificationSettings,
                 .postManagement,
                 .myComments,
-                .blockManagement
+                .blockManagement,
+                .qrCodeScan
             ]
         ),
         MenuSection(
@@ -94,6 +95,8 @@ final class MyPageViewController: BaseViewController<MyPageView> {
                 coordinator?.didTapTermsOfUse()
             case .privacyPolicy:
                 coordinator?.didTapPrivacyPolicy()
+            case .qrCodeScan:
+                coordinator?.didTapQRCodeScan()
             }
         }
     }
@@ -212,6 +215,7 @@ enum MenuItem {
     case postManagement
     case myComments
     case blockManagement
+    case qrCodeScan
     case termsOfUse
     case privacyPolicy
 
@@ -221,6 +225,7 @@ enum MenuItem {
         case .postManagement: "작성 글 관리"
         case .myComments: "나의 댓글"
         case .blockManagement: "차단 관리"
+        case .qrCodeScan: "QR 코드 스캔"
         case .termsOfUse: "이용 약관"
         case .privacyPolicy: "개인정보 처리방침"
         }

@@ -10,4 +10,5 @@ public protocol AuthRepository {
     func requestAppleLogin(oauthId: String, idToken: String) async throws
     func requestLogin(loginId: String, password: String) async throws
     func refreshToken() async throws
+    func authorizeWebSession(sessionToken: String) async throws
 }
