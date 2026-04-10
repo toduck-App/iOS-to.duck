@@ -162,4 +162,24 @@ extension MyPageCoordinator: NavigationDelegate {
         childCoordinators.append(privacyPolicyCoordinator)
         privacyPolicyCoordinator.start()
     }
+
+    func didTapQRCodeScan() {
+        let scannerVC = QRScannerViewController()
+        scannerVC.modalPresentationStyle = .fullScreen
+        scannerVC.onSessionTokenDetected = { [weak self, weak scannerVC] sessionToken in
+            guard let self, let scannerVC else { return }
+            let authorizeWebSessionUseCase = injector.resolve(AuthorizeWebSessionUseCase.self)
+            let popupVC = QRWebLoginPopupViewController(
+                sessionToken: sessionToken,
+                authorizeWebSessionUseCase: authorizeWebSessionUseCase
+            )
+            popupVC.modalPresentationStyle = .overFullScreen
+            popupVC.modalTransitionStyle = .crossDissolve
+            popupVC.onLoginSuccess = {
+                scannerVC.dismiss(animated: true)
+            }
+            scannerVC.present(popupVC, animated: true)
+        }
+        navigationController.present(scannerVC, animated: true)
+    }
 }
