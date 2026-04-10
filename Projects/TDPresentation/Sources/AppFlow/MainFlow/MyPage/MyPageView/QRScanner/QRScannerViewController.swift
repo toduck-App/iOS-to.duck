@@ -21,17 +21,14 @@ final class QRScannerViewController: UIViewController {
     }
 
     private let scanFrameView = UIView().then {
-        $0.layer.borderColor = TDColor.Primary.primary500.cgColor
-        $0.layer.borderWidth = 3
-        $0.layer.cornerRadius = 16
         $0.backgroundColor = .clear
     }
 
     private let guideLabel = TDLabel(
-        toduckFont: .mediumBody2,
+        toduckFont: .mediumHeader5,
         toduckColor: TDColor.baseWhite
     ).then {
-        $0.setText("웹 페이지의 QR 코드를 네모 안에 맞춰주세요")
+        $0.setText("QR코드를 스캔하여 로그인하세요")
         $0.textAlignment = .center
     }
 
@@ -118,7 +115,7 @@ final class QRScannerViewController: UIViewController {
         }
 
         guideLabel.snp.makeConstraints {
-            $0.top.equalTo(scanFrameView.snp.bottom).offset(24)
+            $0.bottom.equalTo(scanFrameView.snp.top).offset(-24)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
 
@@ -150,10 +147,60 @@ final class QRScannerViewController: UIViewController {
         dimView.layer.mask = maskLayer
     }
 
+    private func drawCornerFrame() {
+        scanFrameView.layer.sublayers?.removeAll(where: { $0.name == "cornerFrame" })
+
+        let bounds = scanFrameView.bounds
+        let cornerLength: CGFloat = 36
+        let radius: CGFloat = 16
+        let lineWidth: CGFloat = 4
+
+        let path = UIBezierPath()
+
+        // Top-left
+        path.move(to: CGPoint(x: 0, y: cornerLength))
+        path.addLine(to: CGPoint(x: 0, y: radius))
+        path.addArc(withCenter: CGPoint(x: radius, y: radius), radius: radius,
+                    startAngle: .pi, endAngle: 3 * .pi / 2, clockwise: true)
+        path.addLine(to: CGPoint(x: cornerLength, y: 0))
+
+        // Top-right
+        path.move(to: CGPoint(x: bounds.width - cornerLength, y: 0))
+        path.addLine(to: CGPoint(x: bounds.width - radius, y: 0))
+        path.addArc(withCenter: CGPoint(x: bounds.width - radius, y: radius), radius: radius,
+                    startAngle: 3 * .pi / 2, endAngle: 0, clockwise: true)
+        path.addLine(to: CGPoint(x: bounds.width, y: cornerLength))
+
+        // Bottom-left
+        path.move(to: CGPoint(x: 0, y: bounds.height - cornerLength))
+        path.addLine(to: CGPoint(x: 0, y: bounds.height - radius))
+        path.addArc(withCenter: CGPoint(x: radius, y: bounds.height - radius), radius: radius,
+                    startAngle: .pi, endAngle: .pi / 2, clockwise: false)
+        path.addLine(to: CGPoint(x: cornerLength, y: bounds.height))
+
+        // Bottom-right
+        path.move(to: CGPoint(x: bounds.width - cornerLength, y: bounds.height))
+        path.addLine(to: CGPoint(x: bounds.width - radius, y: bounds.height))
+        path.addArc(withCenter: CGPoint(x: bounds.width - radius, y: bounds.height - radius), radius: radius,
+                    startAngle: .pi / 2, endAngle: 0, clockwise: false)
+        path.addLine(to: CGPoint(x: bounds.width, y: bounds.height - cornerLength))
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.name = "cornerFrame"
+        shapeLayer.path = path.cgPath
+        shapeLayer.strokeColor = TDColor.Primary.primary500.cgColor
+        shapeLayer.lineWidth = lineWidth
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.lineCap = .round
+
+        scanFrameView.layer.addSublayer(shapeLayer)
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.bounds
         applyDimMask()
+        drawCornerFrame()
         updateScanRectOfInterest()
     }
 
